@@ -47,12 +47,15 @@ Implemented now:
   - `native/xpact_eiffel_bridge.h` defines the private bridge table used to connect those symbols to the Eiffel parser;
   - `scripts/build_native.ps1` builds `build/native/xpact.dll`, `build/native/xpact.lib`, and `build/native/libxpact.so`;
   - until the Eiffel bridge is connected, parse calls fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
+- ABI/link tests for C callers against the native export layer:
+  - `tests/native/xpact_abi_smoke.c` links against the public `include/xpact.h` surface only;
+  - `tests/native/xpact_bridge_smoke.c` links against the private bridge header and verifies forwarding to a fake Eiffel bridge;
+  - `scripts/run_native_abi_tests.ps1` builds and runs both smoke tests on Windows and WSL.
 - Resource contracts for input size, element depth, attribute count, name length, and token length.
 
 Still required before a credible public release:
 
 - Connect the native export bridge to the Eiffel parser implementation.
-- ABI/link tests for C callers against the native export layer.
 - Make the upstream libexpat C suite pass through `adapters/libexpat` with an explicit expected-failure list while parity gaps remain.
 - Native xpact-vs-libexpat benchmark through the same C ABI once xpact exports the full native library.
 
@@ -100,6 +103,12 @@ Build the native export artifacts:
 
 ```powershell
 .\scripts\build_native.ps1 -Target All
+```
+
+Build and run the native ABI/link smoke tests:
+
+```powershell
+.\scripts\run_native_abi_tests.ps1 -Target All
 ```
 
 Extract an upstream libexpat test manifest and run fixture smoke parsing:

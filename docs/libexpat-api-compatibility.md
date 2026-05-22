@@ -20,6 +20,9 @@ contract-tested manifest of the public names.
   `scripts/build_native.ps1`, that exports the public C names and delegates
   parser behavior through a private Eiffel bridge. It intentionally does not
   tokenize, expand entities, or validate XML in C.
+- Native ABI/link smoke tests in `tests/native`, built by
+  `scripts/run_native_abi_tests.ps1`, covering public C callers and bridge
+  forwarding.
 
 ## Implemented Behind The Surface
 
@@ -30,7 +33,6 @@ and error reporting.
 
 ## Still Required
 
-- ABI tests that compile and link C callers against xpact.
 - Eiffel bridge wiring behind the native export layer.
 - Green behavioral parity runs through `adapters/libexpat` for each public
   handler and option.

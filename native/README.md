@@ -13,3 +13,9 @@ Until the Eiffel bridge is wired in, `XML_Parse` returns an explicit
 `XML_ERROR_NOT_STARTED` failure rather than falling back to a C parser. The next
 native work should compile/link C callers against this layer, then connect the
 bridge to the Eiffel implementation.
+
+Run the native ABI smoke tests with:
+
+```powershell
+.\scripts\run_native_abi_tests.ps1 -Target All
+```

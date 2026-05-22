@@ -10,7 +10,7 @@ The Phase 1 target is a credible contracted parser release:
 - publish honest benchmark results,
 - keep the Design by Contract annotations visible in source.
 
-This checkpoint contains a contract-enabled Eiffel streaming parser core, XML 1.0 tokenization, internal/external entity handling through an opt-in resolver policy, a SAX-style event handler interface, test and benchmark ECF targets, a published same-machine benchmark table, a libexpat 2.8.1-compatible public API header/manifest, a bridge-only native DLL/SO export layer, and an upstream libexpat test-suite adapter.
+This checkpoint contains a contract-enabled Eiffel streaming parser core, XML 1.0 tokenization, internal/external entity handling through an opt-in resolver policy, a SAX-style event handler interface, test and benchmark ECF targets, a published same-machine benchmark table, a libexpat 2.8.1-compatible public API header/manifest, a bridge-only native DLL/SO export layer with C ABI/link smoke tests, and an upstream libexpat test-suite adapter.
 
 ## Build
 
