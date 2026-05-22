@@ -32,6 +32,7 @@ feature {NONE} -- Initialization
 			test_expat_api_manifest
 			test_libexpat_adapter_files
 			test_benchmark_publication_files
+			test_native_export_layer_files
 			if failed then
 				check tests_passed: False end
 			else
@@ -441,6 +442,33 @@ feature {NONE} -- Tests
 			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))
 			assert ("published benchmark includes libexpat row", l_table.has_substring ("libexpat via CPython pyexpat"))
 			assert ("published benchmark includes WSL C libexpat row", l_table.has_substring ("libexpat C callbacks via WSL2 gcc"))
+		end
+
+	test_native_export_layer_files
+		local
+			l_source: STRING_8
+			l_bridge: STRING_8
+			l_script: STRING_8
+			l_notes: STRING_8
+		do
+			l_source := file_text ("native\xpact_native.c")
+			assert ("native export source present", not l_source.is_empty)
+			assert ("native layer exports parser create", l_source.has_substring ("XML_ParserCreate"))
+			assert ("native layer exports parse", l_source.has_substring ("XML_Parse"))
+			assert ("native layer exports handler setters", l_source.has_substring ("XML_SetElementHandler"))
+			assert ("native layer reports Eiffel bridge version", l_source.has_substring ("expat_2.8.1-xpact-eiffel-bridge"))
+			assert ("native layer does not decode XML entities in C", not l_source.has_substring ("xp_decode_entity"))
+			assert ("native layer does not parse XML names in C", not l_source.has_substring ("xp_parse_name"))
+			l_bridge := file_text ("native\xpact_eiffel_bridge.h")
+			assert ("Eiffel bridge header present", l_bridge.has_substring ("XPACT_EiffelBridge"))
+			assert ("Eiffel bridge can be registered", l_bridge.has_substring ("XPACT_SetEiffelBridge"))
+			l_script := file_text ("scripts\build_native.ps1")
+			assert ("native build script present", not l_script.is_empty)
+			assert ("native build script builds Windows DLL", l_script.has_substring ("xpact.dll"))
+			assert ("native build script builds WSL shared object", l_script.has_substring ("libxpact.so"))
+			l_notes := file_text ("native\README.md")
+			assert ("native export notes present", l_notes.has_substring ("bridge-only"))
+			assert ("native export notes keep parser semantics in Eiffel", l_notes.has_substring ("must not implement XML tokenization"))
 		end
 
 feature {NONE} -- Assertions

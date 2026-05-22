@@ -16,6 +16,10 @@ contract-tested manifest of the public names.
   reparse-deferral declarations.
 - Macro compatibility for `XML_GetUserData`, `XML_GetErrorLineNumber`,
   `XML_GetErrorColumnNumber`, and `XML_GetErrorByteIndex`.
+- A native export layer in `native/xpact_native.c`, built with
+  `scripts/build_native.ps1`, that exports the public C names and delegates
+  parser behavior through a private Eiffel bridge. It intentionally does not
+  tokenize, expand entities, or validate XML in C.
 
 ## Implemented Behind The Surface
 
@@ -26,8 +30,8 @@ and error reporting.
 
 ## Still Required
 
-- Native DLL/SO export layer for every declaration in `include/xpact.h`.
 - ABI tests that compile and link C callers against xpact.
+- Eiffel bridge wiring behind the native export layer.
 - Green behavioral parity runs through `adapters/libexpat` for each public
   handler and option.
 - Exact byte, line, and column accounting for Expat-compatible position APIs.
