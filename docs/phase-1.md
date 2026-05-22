@@ -10,7 +10,8 @@ This repository starts that track with a contracted parser core:
 
 - `src/xp_parser.e` implements a streaming event parser with explicit preconditions, postconditions, class invariants, loop invariants, and loop variants.
 - `src/xp_event_handler.e` defines the SAX-style callback surface used internally and by tests.
-- `include/xpact.h` records the intended libexpat-compatible C ABI names.
+- `include/xpact.h` records the libexpat 2.8.1-compatible public API surface.
+- `src/xp_expat_api.e` keeps the public API manifest under contract-enabled tests.
 - `tests/xpact_tests.ecf` runs the current contract-enabled regression tests.
 - `benchmarks/xpact_benchmarks.ecf` gives a repeatable harness for publishing early results.
 
@@ -35,14 +36,15 @@ Implemented now:
   - external general entities, external parameter entities, and external DTD subsets are separately policy-gated;
   - resolver denial (`Void`) is a parse error;
   - unparsed external entities (`NDATA`) are rejected when referenced as parsed entities.
+- Full libexpat 2.8.1 public API compatibility at the header/manifest level, including parser creation, parse-buffer, handler, DTD, namespace, external entity, error, position, memory, feature, attack-protection, hash-salt, and reparse-deferral declarations.
 - Resource contracts for input size, element depth, attribute count, name length, and token length.
 
 Still required before a credible public release:
 
-- Full libexpat public API compatibility.
 - Adapter for the upstream libexpat test suite.
 - Published benchmark table against libexpat on the same machine.
 - Native DLL/SO export layer behind `include/xpact.h`.
+- ABI/link tests for C callers against the native export layer.
 
 ## External Entity Policy
 

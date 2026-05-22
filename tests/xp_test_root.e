@@ -29,6 +29,7 @@ feature {NONE} -- Initialization
 			test_external_policy_blocks_parameter_entities
 			test_token_well_formedness_errors
 			test_document_structure
+			test_expat_api_manifest
 			if failed then
 				check tests_passed: False end
 			else
@@ -361,6 +362,34 @@ feature {NONE} -- Tests
 			assert ("outside root error", l_parser.last_error.same_string ("character data outside document element"))
 		end
 
+	test_expat_api_manifest
+		local
+			l_api: XP_EXPAT_API
+			l_header: STRING_8
+		do
+			create l_api
+			assert ("Expat 2.8.1 major version tracked", l_api.Xml_major_version = 2)
+			assert ("Expat 2.8.1 minor version tracked", l_api.Xml_minor_version = 8)
+			assert ("Expat 2.8.1 micro version tracked", l_api.Xml_micro_version = 1)
+			assert ("suspended status tracked", l_api.Xml_status_suspended = 2)
+			assert ("latest error enum tracked", l_api.Xml_error_not_started = 44)
+			assert ("full public API manifest count", l_api.public_function_count = 77)
+			assert ("core parser creation API tracked", l_api.has_public_function ("XML_ParserCreate"))
+			assert ("namespace parser creation API tracked", l_api.has_public_function ("XML_ParserCreateNS"))
+			assert ("external entity parser API tracked", l_api.has_public_function ("XML_ExternalEntityParserCreate"))
+			assert ("user data macro API tracked", l_api.has_public_function ("XML_GetUserData"))
+			assert ("hash salt 16-byte API tracked", l_api.has_public_function ("XML_SetHashSalt16Bytes"))
+			assert ("allocation tracker API tracked", l_api.has_public_function ("XML_SetAllocTrackerMaximumAmplification"))
+			assert ("reparse deferral API tracked", l_api.has_public_function ("XML_SetReparseDeferralEnabled"))
+			l_header := file_text ("include\xpact.h")
+			assert ("public header loaded", not l_header.is_empty)
+			assert ("public header has version macro", l_header.has_substring ("#define XML_MINOR_VERSION 8"))
+			assert ("public header has status suspended", l_header.has_substring ("XML_STATUS_SUSPENDED"))
+			assert ("public header has external entity declaration", l_header.has_substring ("XML_SetExternalEntityRefHandler"))
+			assert ("public header has parser buffer declaration", l_header.has_substring ("XML_ParseBuffer"))
+			assert ("public header has reparse deferral declaration", l_header.has_substring ("XML_SetReparseDeferralEnabled"))
+		end
+
 feature {NONE} -- Assertions
 
 	assert (a_label: READABLE_STRING_8; a_condition: BOOLEAN)
@@ -375,6 +404,34 @@ feature {NONE} -- Assertions
 				io.put_string (a_label)
 				io.put_new_line
 			end
+		end
+
+	file_text (a_path: READABLE_STRING_8): STRING_8
+			-- Entire text of `a_path', or empty if it cannot be opened.
+		require
+			path_attached: a_path /= Void
+			path_not_empty: not a_path.is_empty
+		local
+			l_file: PLAIN_TEXT_FILE
+		do
+			create Result.make_empty
+			create l_file.make_with_name (a_path)
+			if l_file.exists and then l_file.is_readable then
+				l_file.open_read
+				from
+				invariant
+					result_attached: Result /= Void
+				until
+					l_file.end_of_file
+				loop
+					l_file.read_line
+					Result.append (l_file.last_string)
+					Result.append_character ('%N')
+				end
+				l_file.close
+			end
+		ensure
+			result_attached: Result /= Void
 		end
 
 	failed: BOOLEAN
