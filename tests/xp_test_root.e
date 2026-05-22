@@ -31,6 +31,7 @@ feature {NONE} -- Initialization
 			test_document_structure
 			test_expat_api_manifest
 			test_libexpat_adapter_files
+			test_benchmark_publication_files
 			if failed then
 				check tests_passed: False end
 			else
@@ -418,6 +419,25 @@ feature {NONE} -- Tests
 			assert ("libexpat expat_config.h shim present", l_config.has_substring ("XML_CONTEXT_BYTES") and l_config.has_substring ("BYTEORDER"))
 			l_notes := file_text ("adapters\libexpat\README.md")
 			assert ("libexpat adapter docs present", l_notes.has_substring ("R_2_8_1") and l_notes.has_substring ("ctest"))
+		end
+
+	test_benchmark_publication_files
+		local
+			l_script: STRING_8
+			l_python: STRING_8
+			l_table: STRING_8
+		do
+			l_script := file_text ("scripts\run_benchmarks.ps1")
+			assert ("benchmark publication script present", not l_script.is_empty)
+			assert ("benchmark script runs xpact benchmark", l_script.has_substring ("xpact_benchmarks.exe"))
+			assert ("benchmark script records pyexpat baseline", l_script.has_substring ("pyexpat") and l_script.has_substring ("libexpat_py_benchmark.py"))
+			assert ("benchmark script writes docs table", l_script.has_substring ("docs\benchmarks.md"))
+			l_python := file_text ("benchmarks\libexpat_py_benchmark.py")
+			assert ("libexpat Python benchmark present", l_python.has_substring ("xml.parsers") and l_python.has_substring ("EXPAT_VERSION"))
+			l_table := file_text ("docs\benchmarks.md")
+			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
+			assert ("published benchmark includes xpact row", l_table.has_substring ("xpact Eiffel, contracts enabled"))
+			assert ("published benchmark includes libexpat row", l_table.has_substring ("libexpat via CPython pyexpat"))
 		end
 
 feature {NONE} -- Assertions
