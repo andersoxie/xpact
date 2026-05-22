@@ -75,7 +75,7 @@ feature -- Element change
 feature -- Validation
 
 	is_valid_name (a_name: READABLE_STRING_8): BOOLEAN
-			-- Is `a_name' a conservative XML name accepted by Phase 1?
+			-- Is `a_name' an XML 1.0 name in the current UTF-8/8-bit token model?
 		require
 			name_attached: a_name /= Void
 		local
@@ -99,15 +99,21 @@ feature -- Validation
 		end
 
 	is_name_start_character (c: CHARACTER_8): BOOLEAN
-			-- Is `c' an ASCII XML name-start character?
+			-- Is `c' an XML 1.0 name-start character representable in CHARACTER_8?
+		local
+			l_code: INTEGER
 		do
-			Result := c.is_alpha or c = '_' or c = ':'
+			l_code := c.code
+			Result := c.is_alpha or c = '_' or c = ':' or else (l_code >= 192 and l_code <= 255)
 		end
 
 	is_name_character (c: CHARACTER_8): BOOLEAN
-			-- Is `c' an ASCII XML name character?
+			-- Is `c' an XML 1.0 name character representable in CHARACTER_8?
+		local
+			l_code: INTEGER
 		do
-			Result := is_name_start_character (c) or c.is_digit or c = '-' or c = '.'
+			l_code := c.code
+			Result := is_name_start_character (c) or c.is_digit or c = '-' or c = '.' or l_code = 183
 		end
 
 feature {NONE} -- Implementation

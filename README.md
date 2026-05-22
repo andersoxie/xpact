@@ -10,7 +10,7 @@ The Phase 1 target is a credible contracted parser release:
 - publish honest benchmark results,
 - keep the Design by Contract annotations visible in source.
 
-This first checkpoint contains a contract-enabled Eiffel streaming parser core, a SAX-style event handler interface, test and benchmark ECF targets, and the intended C ABI header for a libexpat-compatible surface.
+This checkpoint contains a contract-enabled Eiffel streaming parser core, XML 1.0 tokenization and internal entity handling, a SAX-style event handler interface, test and benchmark ECF targets, and the intended C ABI header for a libexpat-compatible surface.
 
 ## Build
 
@@ -20,4 +20,3 @@ ec -batch -config tests\xpact_tests.ecf -target xpact_tests
 ```
 
 See [docs/phase-1.md](docs/phase-1.md) for the current scope and remaining Phase 1 work.
-

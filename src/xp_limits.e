@@ -21,5 +21,10 @@ feature -- Defaults
 	Default_max_token_length: INTEGER = 1048576
 			-- Maximum text, comment, CDATA, or declaration token length.
 
-end
+	Default_max_entity_depth: INTEGER = 32
+			-- Maximum recursive general/parameter entity expansion depth.
 
+	Default_max_entity_expansion_bytes: INTEGER = 8388608
+			-- Maximum total replacement text processed during one parse.
+
+end

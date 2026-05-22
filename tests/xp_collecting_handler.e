@@ -15,6 +15,7 @@ feature {NONE} -- Initialization
 	make
 		do
 			create events.make (16)
+			create last_attribute_value.make_empty
 		ensure
 			empty: events.count = 0
 		end
@@ -23,6 +24,9 @@ feature -- Access
 
 	events: ARRAYED_LIST [STRING_8]
 			-- Captured events.
+
+	last_attribute_value: STRING_8
+			-- Last value of attribute `a' seen by `on_start_element'.
 
 feature -- Events
 
@@ -34,6 +38,10 @@ feature -- Events
 			l_event.append (a_name)
 			l_event.append_character (':')
 			l_event.append_integer (a_attributes.count)
+			if a_attributes.has ("a") and then attached a_attributes.item ("a") as l_value then
+				last_attribute_value.wipe_out
+				last_attribute_value.append (l_value)
+			end
 			events.extend (l_event)
 		end
 
@@ -57,6 +65,6 @@ feature -- Events
 
 invariant
 	events_attached: events /= Void
+	last_attribute_value_attached: last_attribute_value /= Void
 
 end
-

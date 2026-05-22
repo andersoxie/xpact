@@ -6,7 +6,7 @@ Phase 1 is the credible-release track described in the Eiffel.org article:
 - Benchmark results are published honestly, including slower paths.
 - Contract annotations are visible in the public repository.
 
-This repository starts that track with the smallest useful contracted parser core:
+This repository starts that track with a contracted parser core:
 
 - `src/xp_parser.e` implements a streaming event parser with explicit preconditions, postconditions, class invariants, loop invariants, and loop variants.
 - `src/xp_event_handler.e` defines the SAX-style callback surface used internally and by tests.
@@ -18,15 +18,22 @@ This repository starts that track with the smallest useful contracted parser cor
 
 Implemented now:
 
-- ASCII XML names.
 - Start tags, end tags, and empty-element tags.
 - Attribute counting and duplicate-attribute rejection.
-- Comments, processing instructions, declarations, and CDATA sections.
+- XML 1.0 document structure checks: one root element, whitespace-only misc text outside the root, optional doctype before the root.
+- XML 1.0 tokenization for comments, processing instructions, XML declaration position, doctype declarations, internal subsets, CDATA sections, character data, attributes, names, and line-end normalization.
+- Predefined entities: `lt`, `gt`, `amp`, `apos`, and `quot`.
+- Decimal and hexadecimal character references, emitted as UTF-8 bytes in the current `STRING_8` event surface.
+- Internal general entity declarations and recursive expansion in content and attributes.
+- Internal parameter entity declarations and parameter-entity expansion inside the internal subset.
+- Entity-generated markup in element content.
+- Recursive entity detection and entity expansion byte/depth limits.
+- External general entity declarations are recognized and rejected on use until the project has a resolver callback and native ABI layer.
 - Resource contracts for input size, element depth, attribute count, name length, and token length.
 
 Still required before a credible public release:
 
-- Complete XML 1.0 tokenization and entity handling.
+- External entity resolver API and loader policy.
 - Full libexpat public API compatibility.
 - Adapter for the upstream libexpat test suite.
 - Published benchmark table against libexpat on the same machine.
@@ -47,4 +54,3 @@ Compile and run the benchmark harness:
 ec -batch -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
 .\EIFGENs\xpact_benchmarks\W_code\xpact_benchmarks.exe
 ```
-
