@@ -3,7 +3,8 @@ param(
 	[int] $Iterations = 1000,
 	[int] $Repetitions = 3,
 	[string] $OutputDir = "build\benchmarks",
-	[switch] $SkipBuild
+	[switch] $SkipBuild,
+	[switch] $SkipWslC
 )
 
 Set-StrictMode -Version Latest
@@ -81,6 +82,15 @@ function Format-MarkdownRow {
 	"| $($Row.Benchmark) | $($Row.Engine) | $($Row.Version) | $($Row.Iterations) | $($Row.DocumentBytes) | $($Row.ElapsedMs) | $($Row.DocsPerSecond) | $($Row.MiBPerSecond) | $($Row.Notes) |"
 }
 
+function ConvertTo-WslPath {
+	param(
+		[string] $WindowsPath,
+		[string] $WslExecutable
+	)
+	$Normalized = $WindowsPath -replace "\\", "/"
+	(& $WslExecutable -- wslpath -a $Normalized | Out-String).Trim()
+}
+
 if (-not $SkipBuild) {
 	& ec -batch -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
 	if ($LASTEXITCODE -ne 0) {
@@ -127,6 +137,50 @@ $AllRows.AddRange((Invoke-TimedCommand `
 	-DocumentBytes $DocumentBytes `
 	-Notes "Parser created per document; no callbacks"))
 
+$CompilerNote = $null
+$Wsl = Get-Command wsl.exe -ErrorAction SilentlyContinue
+if (-not $SkipWslC -and $null -ne $Wsl) {
+	$WslProbe = & $Wsl.Source -- bash -lc "command -v gcc >/dev/null && printf available" 2>$null
+	if ($LASTEXITCODE -eq 0 -and (($WslProbe | Out-String).Trim()) -eq "available") {
+		$RepoRootWsl = ConvertTo-WslPath $RepoRoot $Wsl.Source
+		$SourceWsl = ConvertTo-WslPath (Join-Path $RepoRoot "benchmarks\libexpat_c_benchmark.c") $Wsl.Source
+		$ExeWin = Join-Path $OutputRoot "libexpat_c_benchmark"
+		$ExeWsl = ConvertTo-WslPath $ExeWin $Wsl.Source
+		$CompileCommand = "cd '$RepoRootWsl' && gcc -O2 '$SourceWsl' -lexpat -o '$ExeWsl'"
+		& $Wsl.Source -- bash -lc $CompileCommand
+		if ($LASTEXITCODE -eq 0) {
+			$WslGccVersion = (& $Wsl.Source -- bash -lc "gcc --version | head -n 1" | Out-String).Trim()
+			$CExpatVersion = (& $Wsl.Source -- $ExeWsl --version | Out-String).Trim()
+			$AllRows.AddRange((Invoke-TimedCommand `
+				-Name "catalog-100-items" `
+				-Executable $Wsl.Source `
+				-Arguments @("--", $ExeWsl, "--iterations", "$Iterations", "--mode", "callbacks") `
+				-Engine "libexpat C callbacks via WSL2 gcc" `
+				-Version $CExpatVersion `
+				-IterationCount $Iterations `
+				-DocumentBytes $DocumentBytes `
+				-Notes "$WslGccVersion; parser created per document; C callbacks; launched through wsl.exe"))
+			$AllRows.AddRange((Invoke-TimedCommand `
+				-Name "catalog-100-items" `
+				-Executable $Wsl.Source `
+				-Arguments @("--", $ExeWsl, "--iterations", "$Iterations", "--mode", "tokenizer") `
+				-Engine "libexpat C tokenizer via WSL2 gcc" `
+				-Version $CExpatVersion `
+				-IterationCount $Iterations `
+				-DocumentBytes $DocumentBytes `
+				-Notes "$WslGccVersion; parser created per document; no callbacks; launched through wsl.exe"))
+		} else {
+			$CompilerNote = "WSL2 gcc was visible, but compiling the direct C libexpat benchmark failed."
+		}
+	} else {
+		$CompilerNote = "No direct C libexpat benchmark was run: WSL2 gcc was not visible to this process."
+	}
+} elseif ($SkipWslC) {
+	$CompilerNote = "Direct C libexpat benchmark skipped by -SkipWslC."
+} else {
+	$CompilerNote = "No direct C libexpat benchmark was run: wsl.exe was not on PATH."
+}
+
 $TsvPath = Join-Path $OutputRoot "benchmark-results.tsv"
 $AllRows | Export-Csv -LiteralPath $TsvPath -NoTypeInformation -Delimiter "`t" -Encoding UTF8
 
@@ -144,7 +198,6 @@ try {
 	$Machine = "$env:PROCESSOR_IDENTIFIER; $env:OS"
 }
 
-$CompilerNote = "No direct C libexpat benchmark was run: cl, clang, gcc were not on PATH in this session."
 $Markdown = New-Object System.Collections.Generic.List[string]
 $Markdown.Add("# Benchmarks")
 $Markdown.Add("")
@@ -157,7 +210,9 @@ $Markdown.Add("")
 $Markdown.Add("- Eiffel target: ``benchmarks\xpact_benchmarks.ecf`` with assertions enabled.")
 $Markdown.Add("- Python: ``$PythonVersion``.")
 $Markdown.Add("- libexpat baseline available on this machine through CPython ``pyexpat``: ``$ExpatVersion``.")
-$Markdown.Add("- $CompilerNote")
+if ($null -ne $CompilerNote -and -not [string]::IsNullOrWhiteSpace($CompilerNote)) {
+	$Markdown.Add("- $CompilerNote")
+}
 $Markdown.Add("")
 $Markdown.Add("Workload: parse the same UTF-8 catalog document containing 100 ``<item>`` elements. Each table row reports the median of $Repetitions process-level runs.")
 $Markdown.Add("")
@@ -169,7 +224,7 @@ foreach ($Row in $MedianRows) {
 $Markdown.Add("")
 $Markdown.Add("Raw run data is written to ``build\benchmarks\benchmark-results.tsv``.")
 $Markdown.Add("")
-$Markdown.Add("Interpretation: the libexpat rows are same-machine Expat baselines through CPython's binding, not a direct C executable. The callback row includes Python callback overhead; the tokenizer row shows the lower-overhead binding path available in this environment.")
+$Markdown.Add("Interpretation: the `pyexpat` rows are same-machine Expat baselines through CPython's binding. The WSL2 C rows compile and link against Ubuntu libexpat directly, but elapsed times are measured from Windows at the process level and include `wsl.exe` launch overhead, so they are conservative for libexpat core throughput.")
 
 $MarkdownPath = Join-Path $RepoRoot "docs\benchmarks.md"
 $Markdown | Set-Content -LiteralPath $MarkdownPath -Encoding UTF8
