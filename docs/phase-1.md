@@ -37,14 +37,18 @@ Implemented now:
   - resolver denial (`Void`) is a parse error;
   - unparsed external entities (`NDATA`) are rejected when referenced as parsed entities.
 - Full libexpat 2.8.1 public API compatibility at the header/manifest level, including parser creation, parse-buffer, handler, DTD, namespace, external entity, error, position, memory, feature, attack-protection, hash-salt, and reparse-deferral declarations.
+- Adapter for the upstream libexpat test suite:
+  - `scripts/run_libexpat_adapter.ps1` extracts a `START_TEST(...)` manifest from an upstream Expat checkout;
+  - the same script can run xpact over upstream XML fixture files through `xpact --parse-file`;
+  - `adapters/libexpat` contains the CMake overlay and header shims needed to build upstream `runtests` against xpact's native libexpat ABI once the DLL/SO exists.
 - Resource contracts for input size, element depth, attribute count, name length, and token length.
 
 Still required before a credible public release:
 
-- Adapter for the upstream libexpat test suite.
 - Published benchmark table against libexpat on the same machine.
 - Native DLL/SO export layer behind `include/xpact.h`.
 - ABI/link tests for C callers against the native export layer.
+- Make the upstream libexpat C suite pass through `adapters/libexpat` with an explicit expected-failure list while parity gaps remain.
 
 ## External Entity Policy
 
@@ -78,4 +82,10 @@ Compile and run the benchmark harness:
 ```powershell
 ec -batch -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
 .\EIFGENs\xpact_benchmarks\W_code\xpact_benchmarks.exe
+```
+
+Extract an upstream libexpat test manifest and run fixture smoke parsing:
+
+```powershell
+.\scripts\run_libexpat_adapter.ps1 -ExpatSourceDir C:\src\libexpat -Mode All
 ```

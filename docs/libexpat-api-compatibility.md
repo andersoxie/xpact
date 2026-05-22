@@ -28,6 +28,6 @@ and error reporting.
 
 - Native DLL/SO export layer for every declaration in `include/xpact.h`.
 - ABI tests that compile and link C callers against xpact.
-- Behavioral parity tests against the upstream libexpat suite for each public
+- Green behavioral parity runs through `adapters/libexpat` for each public
   handler and option.
 - Exact byte, line, and column accounting for Expat-compatible position APIs.

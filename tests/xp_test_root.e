@@ -30,6 +30,7 @@ feature {NONE} -- Initialization
 			test_token_well_formedness_errors
 			test_document_structure
 			test_expat_api_manifest
+			test_libexpat_adapter_files
 			if failed then
 				check tests_passed: False end
 			else
@@ -388,6 +389,35 @@ feature {NONE} -- Tests
 			assert ("public header has external entity declaration", l_header.has_substring ("XML_SetExternalEntityRefHandler"))
 			assert ("public header has parser buffer declaration", l_header.has_substring ("XML_ParseBuffer"))
 			assert ("public header has reparse deferral declaration", l_header.has_substring ("XML_SetReparseDeferralEnabled"))
+		end
+
+	test_libexpat_adapter_files
+		local
+			l_script: STRING_8
+			l_cmake: STRING_8
+			l_shim: STRING_8
+			l_config: STRING_8
+			l_notes: STRING_8
+		do
+			l_script := file_text ("scripts\run_libexpat_adapter.ps1")
+			assert ("libexpat adapter script present", not l_script.is_empty)
+			assert ("adapter extracts upstream START_TEST names", l_script.has_substring ("START_TEST"))
+			assert ("adapter writes test manifest", l_script.has_substring ("libexpat-runtests-manifest.tsv"))
+			assert ("adapter drives xpact file parser", l_script.has_substring ("--parse-file"))
+			assert ("adapter knows Expat split test sources", l_script.has_substring ("basic_tests.c") and l_script.has_substring ("nsalloc_tests.c"))
+
+			l_cmake := file_text ("adapters\libexpat\CMakeLists.txt")
+			assert ("libexpat CMake adapter present", not l_cmake.is_empty)
+			assert ("CMake adapter imports xpact native library", l_cmake.has_substring ("XPACT_LIBRARY"))
+			assert ("CMake adapter builds upstream runtests", l_cmake.has_substring ("xpact_libexpat_runtests"))
+			assert ("CMake adapter enables DTD and general entities", l_cmake.has_substring ("XML_DTD=1") and l_cmake.has_substring ("XML_GE=1"))
+
+			l_shim := file_text ("adapters\libexpat\include\expat.h")
+			assert ("libexpat expat.h shim present", l_shim.has_substring ("xpact.h"))
+			l_config := file_text ("adapters\libexpat\include\expat_config.h")
+			assert ("libexpat expat_config.h shim present", l_config.has_substring ("XML_CONTEXT_BYTES") and l_config.has_substring ("BYTEORDER"))
+			l_notes := file_text ("adapters\libexpat\README.md")
+			assert ("libexpat adapter docs present", l_notes.has_substring ("R_2_8_1") and l_notes.has_substring ("ctest"))
 		end
 
 feature {NONE} -- Assertions
