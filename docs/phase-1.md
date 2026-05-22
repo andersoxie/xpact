@@ -28,16 +28,39 @@ Implemented now:
 - Internal parameter entity declarations and parameter-entity expansion inside the internal subset.
 - Entity-generated markup in element content.
 - Recursive entity detection and entity expansion byte/depth limits.
-- External general entity declarations are recognized and rejected on use until the project has a resolver callback and native ABI layer.
+- External entity resolver API and loader policy:
+  - default policy is `No_external_entities`;
+  - xpact never opens files, URLs, or sockets itself;
+  - callers opt in with `set_external_entity_resolver` and `set_external_entity_policy`;
+  - external general entities, external parameter entities, and external DTD subsets are separately policy-gated;
+  - resolver denial (`Void`) is a parse error;
+  - unparsed external entities (`NDATA`) are rejected when referenced as parsed entities.
 - Resource contracts for input size, element depth, attribute count, name length, and token length.
 
 Still required before a credible public release:
 
-- External entity resolver API and loader policy.
 - Full libexpat public API compatibility.
 - Adapter for the upstream libexpat test suite.
 - Published benchmark table against libexpat on the same machine.
 - Native DLL/SO export layer behind `include/xpact.h`.
+
+## External Entity Policy
+
+The resolver API is deliberately capability-based. The parser stores public/system identifiers from the DTD, but it does not perform I/O. Applications that want external entities must provide an `XP_EXTERNAL_ENTITY_RESOLVER` implementation:
+
+```eiffel
+parser.set_external_entity_resolver (resolver)
+parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.All_external_entities)
+```
+
+Policies:
+
+- `No_external_entities`: reject external entity use and skip external subsets.
+- `External_general_entities`: allow external general entities only.
+- `External_parameter_entities`: allow external parameter entities and external DTD subsets only.
+- `All_external_entities`: allow both classes.
+
+The resolver returns replacement text or `Void`. Replacement text is still parsed under the same contracts, recursion detection, and expansion byte/depth limits as internal entities.
 
 ## Local Commands
 

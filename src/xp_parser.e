@@ -6,6 +6,7 @@ class
 
 inherit
 	XP_LIMITS
+	XP_EXTERNAL_ENTITY_POLICY
 
 create
 	make,
@@ -44,8 +45,10 @@ feature {NONE} -- Initialization
 			create entity_table.make (8)
 			create parameter_entity_table.make (4)
 			create external_entity_table.make (4)
+			create external_parameter_entity_table.make (4)
 			create last_error.make_empty
 			create doctype_name.make_empty
+			external_entity_policy := No_external_entities
 			reset
 		ensure
 			handler_set: handler = a_handler
@@ -74,6 +77,32 @@ feature -- Access
 
 	has_error: BOOLEAN
 			-- Did the last parse fail?
+
+	external_entity_policy: INTEGER
+			-- Current external entity loading policy.
+
+	external_entity_resolver: detachable XP_EXTERNAL_ENTITY_RESOLVER
+			-- Application-provided external entity resolver.
+
+feature -- Configuration
+
+	set_external_entity_policy (a_policy: INTEGER)
+			-- Set external entity loading policy.
+		require
+			valid_policy: is_valid_policy (a_policy)
+		do
+			external_entity_policy := a_policy
+		ensure
+			policy_set: external_entity_policy = a_policy
+		end
+
+	set_external_entity_resolver (a_resolver: detachable XP_EXTERNAL_ENTITY_RESOLVER)
+			-- Set resolver used when `external_entity_policy' permits loading.
+		do
+			external_entity_resolver := a_resolver
+		ensure
+			resolver_set: external_entity_resolver = a_resolver
+		end
 
 feature -- Parsing
 
@@ -512,10 +541,16 @@ feature {NONE} -- Markup parsing
 			l_end: INTEGER
 			l_subset_start: INTEGER
 			l_subset_end: INTEGER
+			l_external_end: INTEGER
 			l_subset: STRING_8
+			l_public_id: STRING_8
+			l_system_id: STRING_8
+			l_has_external_subset: BOOLEAN
 			l_attributes: XP_ATTRIBUTES
 		do
 			create l_attributes.make
+			create l_public_id.make_empty
+			create l_system_id.make_empty
 			if has_doctype or document_element_count > 0 or element_stack.count > 0 then
 				set_error ("doctype not allowed here")
 				Result := a_input.count + 1
@@ -540,6 +575,47 @@ feature {NONE} -- Markup parsing
 						has_doctype := True
 						l_subset_start := find_unquoted_character (a_input, '[', i, l_end)
 						if l_subset_start > 0 then
+							l_external_end := l_subset_start
+						else
+							l_external_end := l_end
+						end
+						i := skip_spaces (a_input, i)
+						if i < l_external_end then
+							if has_keyword_at (a_input, i, "SYSTEM") then
+								l_has_external_subset := True
+								i := skip_spaces (a_input, i + 6)
+								if i < l_external_end and then is_quote (a_input.item (i)) then
+									i := read_quoted_literal (a_input, i, l_external_end, l_system_id)
+								else
+									set_error ("missing external system identifier")
+								end
+							elseif has_keyword_at (a_input, i, "PUBLIC") then
+								l_has_external_subset := True
+								i := skip_spaces (a_input, i + 6)
+								if i < l_external_end and then is_quote (a_input.item (i)) then
+									i := read_quoted_literal (a_input, i, l_external_end, l_public_id)
+									if not has_error then
+										i := skip_spaces (a_input, i)
+										if i < l_external_end and then is_quote (a_input.item (i)) then
+											i := read_quoted_literal (a_input, i, l_external_end, l_system_id)
+										else
+											set_error ("missing external system identifier")
+										end
+									end
+								else
+									set_error ("missing external public identifier")
+								end
+							else
+								set_error ("invalid doctype external identifier")
+							end
+							if not has_error then
+								i := skip_spaces (a_input, i)
+								if i /= l_external_end then
+									set_error ("unexpected doctype declaration content")
+								end
+							end
+						end
+						if l_subset_start > 0 then
 							l_subset_end := find_subset_end (a_input, l_subset_start + 1, l_end)
 							if l_subset_end = 0 then
 								set_error ("unterminated internal subset")
@@ -547,6 +623,9 @@ feature {NONE} -- Markup parsing
 								create l_subset.make_from_string (a_input.substring (l_subset_start + 1, l_subset_end - 1))
 								process_internal_subset (l_subset)
 							end
+						end
+						if not has_error and l_has_external_subset then
+							include_external_subset (l_public_id, l_system_id)
 						end
 						if has_error then
 							Result := a_input.count + 1
@@ -729,8 +808,8 @@ feature {NONE} -- Character data and references
 					parse_entity_content (l_value)
 					pop_entity
 				end
-			elseif is_external_entity (a_name) then
-				set_error ("external entity not loaded")
+			elseif attached external_entity (a_name) as l_external then
+				include_external_entity_in_content (l_external)
 			else
 				set_error ("undefined entity")
 			end
@@ -754,10 +833,131 @@ feature {NONE} -- Character data and references
 					expand_literal_text (l_value, a_text)
 					pop_entity
 				end
-			elseif is_external_entity (a_name) then
-				set_error ("external entity not loaded")
+			elseif attached external_entity (a_name) as l_external then
+				include_external_entity_in_literal (l_external, a_text)
 			else
 				set_error ("undefined entity")
+			end
+		end
+
+	include_external_entity_in_content (a_entity: XP_EXTERNAL_ENTITY)
+			-- Resolve and include external parsed entity as content.
+		require
+			entity_attached: a_entity /= Void
+			general_entity: not a_entity.is_parameter
+		do
+			if a_entity.is_unparsed then
+				set_error ("unparsed entity reference")
+			elseif not allows_general_entities (external_entity_policy) then
+				set_error ("external entity not loaded")
+			elseif external_entity_resolver = Void then
+				set_error ("external entity resolver missing")
+			elseif attached external_entity_resolver as l_resolver then
+				if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, False) as l_value then
+					note_entity_expansion (l_value.count)
+					if not has_error then
+						push_entity (a_entity.name)
+						parse_entity_content (l_value)
+						pop_entity
+					end
+				else
+					set_error ("external entity not resolved")
+				end
+			end
+		end
+
+	include_external_entity_in_literal (a_entity: XP_EXTERNAL_ENTITY; a_text: STRING_8)
+			-- Resolve and include external parsed entity as literal text.
+		require
+			entity_attached: a_entity /= Void
+			general_entity: not a_entity.is_parameter
+			text_attached: a_text /= Void
+		do
+			if a_entity.is_unparsed then
+				set_error ("unparsed entity reference")
+			elseif not allows_general_entities (external_entity_policy) then
+				set_error ("external entity not loaded")
+			elseif external_entity_resolver = Void then
+				set_error ("external entity resolver missing")
+			elseif attached external_entity_resolver as l_resolver then
+				if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, False) as l_value then
+					note_entity_expansion (l_value.count)
+					if not has_error then
+						push_entity (a_entity.name)
+						expand_literal_text (l_value, a_text)
+						pop_entity
+					end
+				else
+					set_error ("external entity not resolved")
+				end
+			end
+		end
+
+	include_external_parameter_entity_in_subset (a_entity: XP_EXTERNAL_ENTITY)
+			-- Resolve and process external parameter entity as DTD subset content.
+		require
+			entity_attached: a_entity /= Void
+			parameter_entity: a_entity.is_parameter
+		do
+			if not allows_parameter_entities (external_entity_policy) then
+				set_error ("external entity not loaded")
+			elseif external_entity_resolver = Void then
+				set_error ("external entity resolver missing")
+			elseif external_entity_resolver /= Void and then attached external_entity_resolver as l_resolver then
+				if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
+					note_entity_expansion (l_value.count)
+					if not has_error then
+						process_internal_subset (l_value)
+					end
+				else
+					set_error ("external entity not resolved")
+				end
+			end
+		end
+
+	append_external_parameter_entity_in_literal (a_entity: XP_EXTERNAL_ENTITY; a_text: STRING_8)
+			-- Resolve and append external parameter entity replacement text.
+		require
+			entity_attached: a_entity /= Void
+			parameter_entity: a_entity.is_parameter
+			text_attached: a_text /= Void
+		do
+			if not allows_parameter_entities (external_entity_policy) then
+				set_error ("external entity not loaded")
+			elseif external_entity_resolver = Void then
+				set_error ("external entity resolver missing")
+			elseif external_entity_resolver /= Void and then attached external_entity_resolver as l_resolver then
+				if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
+					note_entity_expansion (l_value.count)
+					if not has_error then
+						a_text.append (l_value)
+					end
+				else
+					set_error ("external entity not resolved")
+				end
+			end
+		end
+
+	include_external_subset (a_public_id, a_system_id: READABLE_STRING_8)
+			-- Resolve and process external DTD subset if policy permits it.
+		require
+			public_id_attached: a_public_id /= Void
+			system_id_attached: a_system_id /= Void
+			system_id_not_empty: not a_system_id.is_empty
+		do
+			if allows_parameter_entities (external_entity_policy) then
+				if external_entity_resolver = Void then
+					set_error ("external entity resolver missing")
+				elseif attached external_entity_resolver as l_resolver then
+					if attached l_resolver.resolve_external_entity (doctype_name, a_public_id, a_system_id, True) as l_value then
+						note_entity_expansion (l_value.count)
+						if not has_error then
+							process_internal_subset (l_value)
+						end
+					else
+						set_error ("external entity not resolved")
+					end
+				end
 			end
 		end
 
@@ -917,14 +1117,85 @@ feature {NONE} -- DTD entity declarations
 							Result := a_subset.count + 1
 						end
 					else
-						if l_is_parameter then
-							put_parameter_entity (l_name, "")
-						else
-							put_external_entity (l_name)
-						end
-						Result := l_end + 1
+						Result := parse_external_entity_declaration (a_subset, i, l_end, l_name, l_is_parameter)
 					end
 				end
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_subset.count + 1
+		end
+
+	parse_external_entity_declaration (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN): INTEGER
+			-- Parse external ID and optional NDATA for entity `a_name'.
+		require
+			subset_attached: a_subset /= Void
+			valid_bounds: a_start_index >= 1 and a_start_index <= a_end_index and a_end_index <= a_subset.count
+			valid_name: is_valid_name (a_name)
+		local
+			i: INTEGER
+			l_public_id: STRING_8
+			l_system_id: STRING_8
+			l_notation_name: STRING_8
+			l_is_unparsed: BOOLEAN
+			name_start: INTEGER
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_public_id.make_empty
+			create l_system_id.make_empty
+			create l_notation_name.make_empty
+			create l_attributes.make
+			i := a_start_index
+			if has_keyword_at (a_subset, i, "SYSTEM") then
+				i := skip_spaces (a_subset, i + 6)
+				if i <= a_end_index and then is_quote (a_subset.item (i)) then
+					i := read_quoted_literal (a_subset, i, a_end_index, l_system_id)
+				else
+					set_error ("missing external system identifier")
+				end
+			elseif has_keyword_at (a_subset, i, "PUBLIC") then
+				i := skip_spaces (a_subset, i + 6)
+				if i <= a_end_index and then is_quote (a_subset.item (i)) then
+					i := read_quoted_literal (a_subset, i, a_end_index, l_public_id)
+					if not has_error then
+						i := skip_spaces (a_subset, i)
+						if i <= a_end_index and then is_quote (a_subset.item (i)) then
+							i := read_quoted_literal (a_subset, i, a_end_index, l_system_id)
+						else
+							set_error ("missing external system identifier")
+						end
+					end
+				else
+					set_error ("missing external public identifier")
+				end
+			else
+				set_error ("invalid external entity declaration")
+			end
+			if not has_error then
+				i := skip_spaces (a_subset, i)
+				if not a_is_parameter and then i < a_end_index and then has_keyword_at (a_subset, i, "NDATA") then
+					l_is_unparsed := True
+					i := skip_spaces (a_subset, i + 5)
+					if i <= a_end_index and then l_attributes.is_name_start_character (a_subset.item (i)) then
+						name_start := i
+						i := scan_name (a_subset, i)
+						l_notation_name.append (a_subset.substring (name_start, i - 1))
+						i := skip_spaces (a_subset, i)
+					else
+						set_error ("missing notation name")
+					end
+				end
+			end
+			if not has_error then
+				if i /= a_end_index then
+					set_error ("unexpected external entity declaration content")
+					Result := a_subset.count + 1
+				else
+					put_external_entity (a_name, l_public_id, l_system_id, l_notation_name, a_is_parameter, l_is_unparsed)
+					Result := a_end_index + 1
+				end
+			else
+				Result := a_subset.count + 1
 			end
 		ensure
 			progress_or_error: Result > a_start_index or has_error
@@ -1035,6 +1306,13 @@ feature {NONE} -- DTD entity declarations
 				elseif attached parameter_entity_value (l_name) as l_value then
 					a_text.append (l_value)
 					Result := l_end + 1
+				elseif attached external_parameter_entity (l_name) as l_external then
+					append_external_parameter_entity_in_literal (l_external, a_text)
+					if has_error then
+						Result := a_input.count + 1
+					else
+						Result := l_end + 1
+					end
 				else
 					set_error ("undefined parameter entity")
 					Result := a_input.count + 1
@@ -1069,6 +1347,15 @@ feature {NONE} -- DTD entity declarations
 				elseif attached parameter_entity_value (l_name) as l_value then
 					push_entity (l_name)
 					process_internal_subset (l_value)
+					pop_entity
+					if has_error then
+						Result := a_subset.count + 1
+					else
+						Result := l_end + 1
+					end
+				elseif attached external_parameter_entity (l_name) as l_external then
+					push_entity (l_name)
+					include_external_parameter_entity_in_subset (l_external)
 					pop_entity
 					if has_error then
 						Result := a_subset.count + 1
@@ -1429,6 +1716,52 @@ feature {NONE} -- Scanning
 			Result := find_unquoted_character (a_input, ']', a_start_index, a_end_index)
 		end
 
+	read_quoted_literal (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
+			-- Read quoted literal starting at `a_start_index' and return index after closing quote.
+		require
+			input_attached: a_input /= Void
+			value_attached: a_value /= Void
+			valid_bounds: a_start_index >= 1 and a_start_index <= a_end_index and a_end_index <= a_input.count
+			starts_with_quote: is_quote (a_input.item (a_start_index))
+		local
+			i: INTEGER
+			l_quote: CHARACTER_8
+			c: CHARACTER_8
+		do
+			l_quote := a_input.item (a_start_index)
+			from
+				i := a_start_index + 1
+			invariant
+				index_in_bounds: i >= a_start_index + 1 and i <= a_end_index + 1
+			until
+				i > a_end_index or has_error or else a_input.item (i) = l_quote
+			loop
+				c := a_input.item (i)
+				if not is_xml_character_code (c.code) then
+					set_error ("invalid XML character")
+					i := a_end_index + 1
+				else
+					a_value.append_character (c)
+					i := i + 1
+				end
+			variant
+				a_end_index - i + 1
+			end
+			if not has_error then
+				if i > a_end_index then
+					set_error ("unterminated literal")
+					Result := a_input.count + 1
+				else
+					Result := i + 1
+				end
+			else
+				Result := a_input.count + 1
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_input.count + 1
+		end
+
 	has_at (a_input: READABLE_STRING_8; a_index: INTEGER; a_marker: READABLE_STRING_8): BOOLEAN
 			-- Does `a_marker' appear at `a_index' in `a_input'?
 		require
@@ -1453,6 +1786,24 @@ feature {NONE} -- Scanning
 				variant
 					a_marker.count - i + 1
 				end
+			end
+		end
+
+	has_keyword_at (a_input: READABLE_STRING_8; a_index: INTEGER; a_keyword: READABLE_STRING_8): BOOLEAN
+			-- Does keyword `a_keyword' appear at `a_index' with a token boundary after it?
+		require
+			input_attached: a_input /= Void
+			keyword_attached: a_keyword /= Void
+			keyword_not_empty: not a_keyword.is_empty
+			valid_index: a_index >= 1 and a_index <= a_input.count + 1
+		local
+			l_next: INTEGER
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_attributes.make
+			if has_at (a_input, a_index, a_keyword) then
+				l_next := a_index + a_keyword.count
+				Result := l_next > a_input.count or else not l_attributes.is_name_character (a_input.item (l_next))
 			end
 		end
 
@@ -1709,16 +2060,28 @@ feature {NONE} -- Entity tables
 			end
 		end
 
-	put_external_entity (a_name: READABLE_STRING_8)
-			-- Mark general entity as external.
+	put_external_entity (a_name, a_public_id, a_system_id, a_notation_name: READABLE_STRING_8; a_is_parameter, a_is_unparsed: BOOLEAN)
+			-- Record external entity metadata if not already bound.
 		require
 			valid_name: is_valid_name (a_name)
+			public_id_attached: a_public_id /= Void
+			system_id_attached: a_system_id /= Void
+			system_id_not_empty: not a_system_id.is_empty
+			notation_name_attached: a_notation_name /= Void
+			unparsed_only_for_general: a_is_unparsed implies not a_is_parameter
 		local
 			l_name: STRING_8
+			l_entity: XP_EXTERNAL_ENTITY
 		do
 			create l_name.make_from_string (a_name)
-			if not external_entity_table.has (l_name) and then not entity_table.has (l_name) then
-				external_entity_table.put ("external", l_name)
+			if a_is_parameter then
+				if not parameter_entity_table.has (l_name) and then not external_parameter_entity_table.has (l_name) then
+					create l_entity.make (a_name, a_public_id, a_system_id, a_notation_name, True, False)
+					external_parameter_entity_table.put (l_entity, l_name)
+				end
+			elseif not entity_table.has (l_name) and then not external_entity_table.has (l_name) then
+				create l_entity.make (a_name, a_public_id, a_system_id, a_notation_name, False, a_is_unparsed)
+				external_entity_table.put (l_entity, l_name)
 			end
 		end
 
@@ -1744,15 +2107,26 @@ feature {NONE} -- Entity tables
 			Result := parameter_entity_table.item (l_name)
 		end
 
-	is_external_entity (a_name: READABLE_STRING_8): BOOLEAN
-			-- Is `a_name' declared as an external entity?
+	external_entity (a_name: READABLE_STRING_8): detachable XP_EXTERNAL_ENTITY
+			-- External general entity metadata for `a_name', if declared.
 		require
 			valid_name: is_valid_name (a_name)
 		local
 			l_name: STRING_8
 		do
 			create l_name.make_from_string (a_name)
-			Result := external_entity_table.has (l_name)
+			Result := external_entity_table.item (l_name)
+		end
+
+	external_parameter_entity (a_name: READABLE_STRING_8): detachable XP_EXTERNAL_ENTITY
+			-- External parameter entity metadata for `a_name', if declared.
+		require
+			valid_name: is_valid_name (a_name)
+		local
+			l_name: STRING_8
+		do
+			create l_name.make_from_string (a_name)
+			Result := external_parameter_entity_table.item (l_name)
 		end
 
 	is_predefined_entity (a_name: READABLE_STRING_8): BOOLEAN
@@ -1847,6 +2221,7 @@ feature {NONE} -- State
 			entity_table.wipe_out
 			parameter_entity_table.wipe_out
 			external_entity_table.wipe_out
+			external_parameter_entity_table.wipe_out
 			document_element_count := 0
 			expanded_entity_bytes := 0
 			has_doctype := False
@@ -1886,8 +2261,11 @@ feature {NONE} -- State
 	parameter_entity_table: HASH_TABLE [STRING_8, STRING_8]
 			-- Internal parameter entities.
 
-	external_entity_table: HASH_TABLE [STRING_8, STRING_8]
-			-- External general entities that cannot be loaded by this target yet.
+	external_entity_table: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
+			-- External general entities.
+
+	external_parameter_entity_table: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
+			-- External parameter entities.
 
 	document_element_count: INTEGER
 			-- Number of root-level document elements seen.
@@ -1909,7 +2287,9 @@ invariant
 	entity_table_attached: entity_table /= Void
 	parameter_entity_table_attached: parameter_entity_table /= Void
 	external_entity_table_attached: external_entity_table /= Void
+	external_parameter_entity_table_attached: external_parameter_entity_table /= Void
 	doctype_name_attached: doctype_name /= Void
+	valid_external_entity_policy: is_valid_policy (external_entity_policy)
 	input_limit_positive: max_input_bytes > 0
 	depth_limit_positive: max_element_depth > 0
 	attribute_limit_positive: max_attribute_count > 0

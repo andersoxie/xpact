@@ -22,6 +22,11 @@ feature {NONE} -- Initialization
 			test_attribute_entity_expansion
 			test_recursive_entity_is_rejected
 			test_external_entity_is_rejected
+			test_external_general_entity_resolver
+			test_external_entity_resolver_denial
+			test_external_parameter_entity_resolver
+			test_external_subset_resolver
+			test_external_policy_blocks_parameter_entities
 			test_token_well_formedness_errors
 			test_document_structure
 			if failed then
@@ -218,6 +223,114 @@ feature {NONE} -- Tests
 			l_ok := l_parser.parse ("<!DOCTYPE root [<!ENTITY ext SYSTEM %"file:///tmp/ext.xml%">]><root>&ext;</root>")
 			assert ("external entity rejected", not l_ok)
 			assert ("external entity error reported", l_parser.last_error.same_string ("external entity not loaded"))
+		end
+
+	test_external_general_entity_resolver
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_resolver: XP_TEST_EXTERNAL_ENTITY_RESOLVER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_resolver.make
+			l_parser.set_external_entity_resolver (l_resolver)
+			l_parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
+			l_ok := l_parser.parse ("<!DOCTYPE root [<!ENTITY ext SYSTEM %"mem://external-item%">]><root>&ext;</root>")
+			assert ("external general entity accepted by resolver", l_ok)
+			if l_ok then
+				assert ("external entity produced markup", l_handler.events.i_th (2).same_string ("start:item:0"))
+				assert ("external entity produced text", l_handler.events.i_th (3).same_string ("text:external"))
+				assert ("resolver saw general entity", not l_resolver.last_is_parameter)
+				assert ("resolver saw system id", l_resolver.last_system_id.same_string ("mem://external-item"))
+			else
+				io.put_string ("external general resolver error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+		end
+
+	test_external_entity_resolver_denial
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+			l_resolver: XP_TEST_EXTERNAL_ENTITY_RESOLVER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_resolver.make
+			l_parser.set_external_entity_resolver (l_resolver)
+			l_parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
+			l_ok := l_parser.parse ("<!DOCTYPE root [<!ENTITY ext SYSTEM %"mem://missing%">]><root>&ext;</root>")
+			assert ("resolver denial rejected", not l_ok)
+			assert ("resolver denial error", l_parser.last_error.same_string ("external entity not resolved"))
+		end
+
+	test_external_parameter_entity_resolver
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_resolver: XP_TEST_EXTERNAL_ENTITY_RESOLVER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_resolver.make
+			l_parser.set_external_entity_resolver (l_resolver)
+			l_parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.All_external_entities)
+			l_ok := l_parser.parse ("<!DOCTYPE root [<!ENTITY %% ext SYSTEM %"mem://parameter-declarations%">%%ext;]><root>&from_external;</root>")
+			assert ("external parameter entity accepted by resolver", l_ok)
+			if l_ok then
+				assert ("external parameter entity introduced general entity", l_handler.events.i_th (2).same_string ("text:loaded"))
+				assert ("resolver saw parameter entity", l_resolver.last_is_parameter)
+			else
+				io.put_string ("external parameter resolver error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+		end
+
+	test_external_subset_resolver
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_resolver: XP_TEST_EXTERNAL_ENTITY_RESOLVER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_resolver.make
+			l_parser.set_external_entity_resolver (l_resolver)
+			l_parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_parameter_entities)
+			l_ok := l_parser.parse ("<!DOCTYPE root SYSTEM %"mem://subset%"><root>&subset_entity;</root>")
+			assert ("external subset accepted by resolver", l_ok)
+			if l_ok then
+				assert ("external subset introduced entity", l_handler.events.i_th (2).same_string ("text:subset loaded"))
+				assert ("resolver saw subset as parameter-class load", l_resolver.last_is_parameter)
+			else
+				io.put_string ("external subset resolver error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+		end
+
+	test_external_policy_blocks_parameter_entities
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+			l_resolver: XP_TEST_EXTERNAL_ENTITY_RESOLVER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_resolver.make
+			l_parser.set_external_entity_resolver (l_resolver)
+			l_parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
+			l_ok := l_parser.parse ("<!DOCTYPE root [<!ENTITY %% ext SYSTEM %"mem://parameter-declarations%">%%ext;]><root/>")
+			assert ("general-only policy blocks parameter entity", not l_ok)
+			assert ("policy block error", l_parser.last_error.same_string ("external entity not loaded"))
 		end
 
 	test_token_well_formedness_errors
