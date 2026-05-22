@@ -1,0 +1,12 @@
+EIFGENs/
+*.exe
+*.dll
+*.so
+*.dylib
+*.lib
+*.obj
+*.o
+*.pdb
+*.ilk
+*.log
+*.rc
