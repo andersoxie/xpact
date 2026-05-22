@@ -438,7 +438,7 @@ feature {NONE} -- Tests
 			assert ("libexpat C benchmark present", file_text ("benchmarks\libexpat_c_benchmark.c").has_substring ("XML_ExpatVersion"))
 			l_table := file_text ("docs\benchmarks.md")
 			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
-			assert ("published benchmark includes xpact row", l_table.has_substring ("xpact Eiffel, contracts enabled"))
+			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))
 			assert ("published benchmark includes libexpat row", l_table.has_substring ("libexpat via CPython pyexpat"))
 			assert ("published benchmark includes WSL C libexpat row", l_table.has_substring ("libexpat C callbacks via WSL2 gcc"))
 		end

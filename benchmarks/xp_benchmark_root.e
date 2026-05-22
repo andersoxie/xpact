@@ -44,7 +44,7 @@ feature {NONE} -- Initialization
 			if l_ok then
 				io.put_string ("xpact benchmark harness parsed ")
 				io.put_integer (l_iterations)
-				io.put_string (" documents with contracts enabled.%N")
+				io.put_string (" documents.%N")
 			end
 		end
 

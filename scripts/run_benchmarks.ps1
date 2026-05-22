@@ -3,6 +3,8 @@ param(
 	[int] $Iterations = 1000,
 	[int] $Repetitions = 3,
 	[string] $OutputDir = "build\benchmarks",
+	[ValidateSet("Finalized", "Workbench")]
+	[string] $EiffelBuild = "Finalized",
 	[switch] $SkipBuild,
 	[switch] $SkipWslC
 )
@@ -92,15 +94,48 @@ function ConvertTo-WslPath {
 }
 
 if (-not $SkipBuild) {
-	& ec -batch -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
-	if ($LASTEXITCODE -ne 0) {
-		throw "Benchmark target compilation failed."
+	if ($EiffelBuild -eq "Finalized") {
+		& ec -batch -finalize -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
+		if ($LASTEXITCODE -ne 0) {
+			throw "Finalized benchmark target generation failed."
+		}
+		$FinalCodeDir = Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\F_code"
+		Push-Location $FinalCodeDir
+		try {
+			& finish_freezing
+			if ($LASTEXITCODE -ne 0) {
+				throw "Finalized benchmark C compilation failed."
+			}
+		} finally {
+			Pop-Location
+		}
+	} else {
+		& ec -batch -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
+		if ($LASTEXITCODE -ne 0) {
+			throw "Workbench benchmark target compilation failed."
+		}
 	}
 }
 
-$XpactExe = Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\W_code\xpact_benchmarks.exe"
+$XpactExe = if ($EiffelBuild -eq "Finalized") {
+	Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\F_code\xpact_benchmarks.exe"
+} else {
+	Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\W_code\xpact_benchmarks.exe"
+}
 if (-not (Test-Path -LiteralPath $XpactExe -PathType Leaf)) {
 	throw "xpact benchmark executable not found: $XpactExe"
+}
+
+$XpactEngine = if ($EiffelBuild -eq "Finalized") {
+	"xpact Eiffel finalized, assertions discarded"
+} else {
+	"xpact Eiffel workbench, contracts enabled"
+}
+$XpactVersion = if ($EiffelBuild -eq "Finalized") { "Phase 1 finalized" } else { "Phase 1 workbench" }
+$XpactNotes = if ($EiffelBuild -eq "Finalized") {
+	"Parser object reused; no-op event handler; finalized Eiffel C compilation"
+} else {
+	"Parser object reused; no-op event handler; runtime assertions enabled"
 }
 
 $Python = (Get-Command python -ErrorAction Stop).Source
@@ -113,11 +148,11 @@ $AllRows.AddRange((Invoke-TimedCommand `
 	-Name "catalog-100-items" `
 	-Executable $XpactExe `
 	-Arguments @("--iterations", "$Iterations") `
-	-Engine "xpact Eiffel, contracts enabled" `
-	-Version "Phase 1" `
+	-Engine $XpactEngine `
+	-Version $XpactVersion `
 	-IterationCount $Iterations `
 	-DocumentBytes $DocumentBytes `
-	-Notes "Parser object reused; no-op event handler"))
+	-Notes $XpactNotes))
 $AllRows.AddRange((Invoke-TimedCommand `
 	-Name "catalog-100-items" `
 	-Executable $Python `
@@ -207,7 +242,7 @@ $Markdown.Add("Machine: $Machine")
 $Markdown.Add("")
 $Markdown.Add("Runtime context:")
 $Markdown.Add("")
-$Markdown.Add("- Eiffel target: ``benchmarks\xpact_benchmarks.ecf`` with assertions enabled.")
+$Markdown.Add("- Eiffel target: ``benchmarks\xpact_benchmarks.ecf`` built as ``$EiffelBuild``.")
 $Markdown.Add("- Python: ``$PythonVersion``.")
 $Markdown.Add("- libexpat baseline available on this machine through CPython ``pyexpat``: ``$ExpatVersion``.")
 if ($null -ne $CompilerNote -and -not [string]::IsNullOrWhiteSpace($CompilerNote)) {
@@ -224,7 +259,7 @@ foreach ($Row in $MedianRows) {
 $Markdown.Add("")
 $Markdown.Add("Raw run data is written to ``build\benchmarks\benchmark-results.tsv``.")
 $Markdown.Add("")
-$Markdown.Add("Interpretation: the `pyexpat` rows are same-machine Expat baselines through CPython's binding. The WSL2 C rows compile and link against Ubuntu libexpat directly, but elapsed times are measured from Windows at the process level and include `wsl.exe` launch overhead, so they are conservative for libexpat core throughput.")
+$Markdown.Add("Interpretation: the ``pyexpat`` rows are same-machine Expat baselines through CPython's binding. The WSL2 C rows compile and link against Ubuntu libexpat directly, but elapsed times are measured from Windows at the process level and include ``wsl.exe`` launch overhead, so they are conservative for libexpat core throughput.")
 
 $MarkdownPath = Join-Path $RepoRoot "docs\benchmarks.md"
 $Markdown | Set-Content -LiteralPath $MarkdownPath -Encoding UTF8
