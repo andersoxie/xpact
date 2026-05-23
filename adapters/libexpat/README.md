@@ -25,6 +25,8 @@ Outputs are written under `build\libexpat-adapter`:
   C test sources.
 - `libexpat-expected-failures-expanded.tsv`: expected-failure patterns expanded
   against the upstream manifest.
+- `libexpat-parity-expanded.tsv`: green/red/blocked parity rows expanded
+  against the upstream manifest.
 - `libexpat-corpus-results.tsv`: xpact parse results for upstream `.xml`
   fixture files discovered under `expat\tests` and `expat\xmlwf`.
 
@@ -49,10 +51,12 @@ header.
 On Windows, pass the import `.lib` as `XPACT_LIBRARY`. On Unix-like systems,
 pass the shared object or static archive.
 
-The current expected-failure list contains one deliberately broad wildcard:
-the native ABI is bridge-only and `XML_Parse` returns `XML_ERROR_NOT_STARTED`
-until the Eiffel parser bridge is connected. When that bridge lands, replace
-the wildcard with specific remaining libexpat parity gaps. If the native suite
-passes while expected failures remain, the runner fails and requires the list to
-be updated. Internally the runner still configures the CMake adapter, builds the
-upstream `runtests` executable, and runs it through `ctest --output-on-failure`.
+The expected-failure list no longer allows a suite-wide `*/*` wildcard. It now
+contains specific source/name patterns for the remaining red parity gaps, while
+`adapters/libexpat/parity.tsv` records green, red, and blocked rows for the
+Windows-only release scope. If the native suite passes while expected failures
+remain, the runner fails and requires the list to be updated. Internally the
+runner still configures the CMake adapter, builds the upstream `runtests`
+executable, and runs it through `ctest --output-on-failure`.
+
+See `docs/libexpat-parity.md` for the current Windows Phase 1 parity summary.

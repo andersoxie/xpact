@@ -488,12 +488,16 @@ feature {NONE} -- Tests
 			l_shim: STRING_8
 			l_config: STRING_8
 			l_notes: STRING_8
+			l_expected: STRING_8
+			l_parity: STRING_8
 		do
 			l_script := file_text ("scripts\run_libexpat_adapter.ps1")
 			assert ("libexpat adapter script present", not l_script.is_empty)
 			assert ("adapter extracts upstream START_TEST names", l_script.has_substring ("START_TEST"))
 			assert ("adapter writes test manifest", l_script.has_substring ("libexpat-runtests-manifest.tsv"))
 			assert ("adapter expands expected failures", l_script.has_substring ("libexpat-expected-failures-expanded.tsv"))
+			assert ("adapter expands parity rows", l_script.has_substring ("libexpat-parity-expanded.tsv"))
+			assert ("adapter rejects suite-wide expected failure", l_script.has_substring ("Suite-wide expected-failure wildcard is not allowed"))
 			assert ("adapter can run native suite", l_script.has_substring ("NativeSuite"))
 			assert ("adapter fails stale expected failures", l_script.has_substring ("passed while expected failures remain"))
 			assert ("adapter drives xpact file parser", l_script.has_substring ("--parse-file"))
@@ -511,7 +515,14 @@ feature {NONE} -- Tests
 			assert ("libexpat expat_config.h shim present", l_config.has_substring ("XML_CONTEXT_BYTES") and l_config.has_substring ("BYTEORDER"))
 			l_notes := file_text ("adapters\libexpat\README.md")
 			assert ("libexpat adapter docs present", l_notes.has_substring ("R_2_8_1") and l_notes.has_substring ("ctest"))
-			assert ("expected-failure list present", file_text ("adapters\libexpat\expected-failures.tsv").has_substring ("XML_ERROR_NOT_STARTED"))
+			l_expected := file_text ("adapters\libexpat\expected-failures.tsv")
+			assert ("expected-failure list has specific rows", l_expected.has_substring ("acc_tests.c%Ttest_accounting_precision") and l_expected.has_substring ("basic_tests.c%Ttest_*utf16*"))
+			assert ("expected-failure list has no suite-wide wildcard", not l_expected.has_substring ("*%T*%T"))
+			l_parity := file_text ("adapters\libexpat\parity.tsv")
+			assert ("parity list has green rows", l_parity.has_substring ("green%Tlocal%TWindows DLL XML_Parse smoke"))
+			assert ("parity list has red rows", l_parity.has_substring ("red%Tns_tests.c%Ttest_*"))
+			assert ("parity list records blocked native suite", l_parity.has_substring ("blocked%Tupstream-native-suite"))
+			assert ("libexpat parity docs present", file_text ("docs\libexpat-parity.md").has_substring ("suite-wide expected failure"))
 		end
 
 	test_benchmark_publication_files
@@ -611,6 +622,7 @@ feature {NONE} -- Tests
 			assert ("Windows release package script present", l_script.has_substring ("build_native_eiffel.ps1"))
 			assert ("Windows release package script stages DLL", l_script.has_substring ("xpact.dll") and l_script.has_substring ("xpact.lib"))
 			assert ("Windows release package script stages public header", l_script.has_substring ("include\xpact.h"))
+			assert ("Windows release package script stages parity doc", l_script.has_substring ("libexpat-parity.md"))
 			assert ("Windows release package script writes archive", l_script.has_substring ("Compress-Archive") and l_script.has_substring ("windows-x64"))
 			assert ("Windows release package script writes checksums", l_script.has_substring ("SHA256SUMS.txt"))
 			l_notes := file_text ("docs\windows-release.md")

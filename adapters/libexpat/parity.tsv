@@ -1,0 +1,57 @@
+status	source	name	evidence
+green	local	Windows DLL XML_Parse smoke	tests/native/xpact_eiffel_dll_smoke.c links through include/xpact.h and verifies XML_Parse reaches the Eiffel parser.
+green	local	Windows native C ABI benchmark	benchmarks/xpact_native_c_benchmark.c links against build/native-eiffel/xpact.lib and records measured rows in docs/benchmarks.md.
+green	basic_tests.c	test_predefined_entities	Eiffel parser regression covers predefined entity expansion and the Windows native text callback path is measured.
+green	basic_tests.c	test_attributes	Eiffel parser regression covers attribute collection; native start-element callbacks pass attribute vectors for simple documents.
+green	basic_tests.c	test_duplicate_cdata_attribute	Eiffel parser rejects duplicate attributes and maps the native error to XML_ERROR_DUPLICATE_ATTRIBUTE.
+green	basic_tests.c	test_empty_parse	Eiffel parser maps missing document element to XML_ERROR_NO_ELEMENTS through the native bridge.
+green	basic_tests.c	test_get_buffer_1	XML_GetBuffer and XML_ParseBuffer are implemented through the Eiffel runtime bridge for the Windows native path.
+red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
+red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
+red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
+red	alloc_tests.c	test_alloc_*	Upstream allocation-failure injection and allocator exhaustion checks are not implemented in the native bridge.
+red	nsalloc_tests.c	test_nsalloc_*	Namespace allocation and namespace-context exhaustion checks are not implemented.
+red	ns_tests.c	test_*	Namespace parsing, namespace callbacks, namespace triplets, and namespace error parity are not implemented.
+red	misc_tests.c	test_misc_alloc_*	Allocator edge cases in parser creation are not fully implemented.
+red	misc_tests.c	test_misc_features	The feature list is intentionally minimal and does not claim full upstream feature parity.
+red	misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks are not yet audited against the Eiffel-backed native bridge.
+red	misc_tests.c	test_misc_utf16le	UTF-16 input parity is outside the Windows Phase 1 UTF-8 native path.
+red	misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
+red	misc_tests.c	test_misc_resume*	Stop/resume parser state is not implemented.
+red	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	External entity parser creation is not implemented.
+red	misc_tests.c	test_misc_general_entities_support	Native Expat general-entity feature signaling is not fully implemented.
+red	misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state is not implemented.
+red	misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
+red	misc_tests.c	test_misc_expected_event_ptr_issue_980	Internal event pointer semantics are not implemented.
+red	misc_tests.c	test_misc_sync_entity_tolerated	Entity timing semantics are not fully matched to libexpat.
+red	misc_tests.c	test_misc_async_entity_rejected	Entity timing semantics are not fully matched to libexpat.
+red	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
+red	basic_tests.c	test_*utf16*	UTF-16 input and handler parity are outside the Windows Phase 1 UTF-8 native path.
+red	basic_tests.c	test_*encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
+red	basic_tests.c	test_bad_encoding	Encoding error parity is outside the Windows Phase 1 UTF-8 native path.
+red	basic_tests.c	test_explicit_encoding	Encoding-switch parity is not implemented.
+red	basic_tests.c	test_ext_entity*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_external*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_*external*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
+red	basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
+red	basic_tests.c	test_*dtd*	DTD declaration callback and DTD content-model parity are not implemented.
+red	basic_tests.c	test_*doctype*	Doctype declaration callback and public-id parity are not implemented.
+red	basic_tests.c	test_*notation*	Notation declaration callbacks are not implemented.
+red	basic_tests.c	test_*attlist*	Attribute-list declaration callbacks and default-attribute parity are not implemented.
+red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
+red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
+red	basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
+red	basic_tests.c	test_abort*	Abort semantics are not implemented.
+red	basic_tests.c	test_*byte*	Exact byte index/count APIs are placeholders.
+red	basic_tests.c	test_line*	Exact line/column accounting is not implemented.
+red	basic_tests.c	test_column*	Exact line/column accounting is not implemented.
+red	basic_tests.c	test_default_current	Default-current/default-handler replay semantics are not implemented.
+red	basic_tests.c	test_*default*	Default handler and DTD default handling are not fully implemented.
+red	basic_tests.c	test_hash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
+red	basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
+red	basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.
+red	basic_tests.c	test_reparse*	Reparse deferral behavior is not implemented.
+red	basic_tests.c	test_bypass_heuristic_when_close_to_bufsize	Reparse deferral/buffer heuristic behavior is not implemented.
+red	basic_tests.c	test_varying_buffer_fills	Reparse deferral/buffer heuristic behavior is not implemented.
+blocked	upstream-native-suite	upstream-libexpat-runtests	The current Windows verification environment has no cmake on PATH; the adapter still produces the manifest and expected-failure expansion.

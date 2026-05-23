@@ -51,6 +51,9 @@ contract-tested manifest of the public names.
 - The upstream libexpat C-suite adapter can configure, build, and run through
   `scripts/run_libexpat_adapter.ps1 -Mode NativeSuite` with an explicit
   expected-failure list in `adapters/libexpat/expected-failures.tsv`.
+- `adapters/libexpat/parity.tsv` records green, red, and blocked Windows Phase
+  1 parity rows; the adapter expands those rows into
+  `build/libexpat-adapter/libexpat-parity-expanded.tsv`.
 
 ## Implemented Behind The Surface
 
@@ -59,11 +62,13 @@ streaming path: parser reset semantics, start/end element callbacks, character
 data, XML 1.0 tokenization, entity expansion, external-entity resolver policy,
 and error reporting.
 
-## Still Required
+## Tracked Parity Gaps
 
-- Replace the temporary suite-wide expected failure with specific green/red
-  parity rows as the Eiffel bridge and API behavior land.
 - Exact byte, line, and column accounting for Expat-compatible position APIs.
+- Namespace processing and namespace callback parity.
+- UTF-16, custom encoding, external entity parser, DTD declaration, notation,
+  default handler, stop/resume, allocation-failure, and upstream accounting
+  parity.
 
 Linux/WSL `libxpact.so` packaging is future platform work. It is not part of
 the initial Windows-only native release.

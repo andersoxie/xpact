@@ -54,6 +54,7 @@ $WindowsReadme = Join-Path $RepoRoot "docs\windows-release.md"
 $ProjectReadme = Join-Path $RepoRoot "README.md"
 $BenchmarkDoc = Join-Path $RepoRoot "docs\benchmarks.md"
 $ApiDoc = Join-Path $RepoRoot "docs\libexpat-api-compatibility.md"
+$ParityDoc = Join-Path $RepoRoot "docs\libexpat-parity.md"
 $SmokeSource = Join-Path $RepoRoot "tests\native\xpact_eiffel_dll_smoke.c"
 
 Require-File $Dll
@@ -63,6 +64,7 @@ Require-File $WindowsReadme
 Require-File $ProjectReadme
 Require-File $BenchmarkDoc
 Require-File $ApiDoc
+Require-File $ParityDoc
 Require-File $SmokeSource
 
 if (Test-Path -LiteralPath $StageRoot) {
@@ -87,6 +89,7 @@ Copy-Item -LiteralPath $ProjectReadme -Destination (Join-Path $StageRoot "PROJEC
 Copy-Item -LiteralPath $SmokeSource -Destination (Join-Path $ExampleDir "xpact_eiffel_dll_smoke.c")
 Copy-Item -LiteralPath $BenchmarkDoc -Destination (Join-Path $DocsDir "benchmarks.md")
 Copy-Item -LiteralPath $ApiDoc -Destination (Join-Path $DocsDir "libexpat-api-compatibility.md")
+Copy-Item -LiteralPath $ParityDoc -Destination (Join-Path $DocsDir "libexpat-parity.md")
 
 $VersionText = @(
 	"Package: $PackageName",

@@ -6,6 +6,7 @@ param(
 	[string] $OutputDir = "build\libexpat-adapter",
 	[string] $XpactLibrary = $env:XPACT_EXPAT_LIBRARY,
 	[string] $ExpectedFailuresFile = "adapters\libexpat\expected-failures.tsv",
+	[string] $ParityFile = "adapters\libexpat\parity.tsv",
 	[switch] $SkipXpactBuild,
 	[switch] $SkipNativeBuild,
 	[switch] $FailOnCorpusRejection
@@ -78,10 +79,44 @@ function Read-ExpectedFailures {
 		if ($Parts.Count -ne 3 -or [string]::IsNullOrWhiteSpace($Parts[0]) -or [string]::IsNullOrWhiteSpace($Parts[1]) -or [string]::IsNullOrWhiteSpace($Parts[2])) {
 			throw "Invalid expected-failure row in ${ResolvedPath}: $Line"
 		}
+		if ($Parts[0] -eq "*" -and $Parts[1] -eq "*") {
+			throw "Suite-wide expected-failure wildcard is not allowed: $Line"
+		}
 		$Rows.Add([pscustomobject]@{
 			Source = $Parts[0]
 			Name = $Parts[1]
 			Reason = $Parts[2]
+		})
+	}
+	$Rows
+}
+
+function Read-ParityRows {
+	param([string] $Path)
+	$ResolvedPath = if ([System.IO.Path]::IsPathRooted($Path)) { $Path } else { Join-Path $RepoRoot $Path }
+	if (-not (Test-Path -LiteralPath $ResolvedPath -PathType Leaf)) {
+		throw "Parity file not found: $ResolvedPath"
+	}
+	$Rows = New-Object System.Collections.Generic.List[object]
+	foreach ($Line in Get-Content -LiteralPath $ResolvedPath) {
+		if ([string]::IsNullOrWhiteSpace($Line) -or $Line.StartsWith("#")) {
+			continue
+		}
+		if ($Line -eq "status`tsource`tname`tevidence") {
+			continue
+		}
+		$Parts = $Line -split "`t", 4
+		if ($Parts.Count -ne 4 -or [string]::IsNullOrWhiteSpace($Parts[0]) -or [string]::IsNullOrWhiteSpace($Parts[1]) -or [string]::IsNullOrWhiteSpace($Parts[2]) -or [string]::IsNullOrWhiteSpace($Parts[3])) {
+			throw "Invalid parity row in ${ResolvedPath}: $Line"
+		}
+		if ($Parts[0] -notin @("green", "red", "blocked")) {
+			throw "Invalid parity status in ${ResolvedPath}: $Line"
+		}
+		$Rows.Add([pscustomobject]@{
+			Status = $Parts[0]
+			Source = $Parts[1]
+			Name = $Parts[2]
+			Evidence = $Parts[3]
 		})
 	}
 	$Rows
@@ -166,6 +201,40 @@ function Write-ExpectedFailureExpansion {
 	Write-Host "libexpat expected failures: $($Matched.Count) manifest entries -> $Destination"
 	if ($ExpectedFailures.Count -gt 0 -and $Matched.Count -eq 0) {
 		throw "Expected-failure file did not match any upstream START_TEST entries."
+	}
+}
+
+function Write-ParityExpansion {
+	param(
+		[object[]] $ManifestRows,
+		[object[]] $ParityRows,
+		[string] $Destination
+	)
+	"source`tname`tstatus`tevidence" | Set-Content -LiteralPath $Destination -Encoding UTF8
+	$Matched = New-Object System.Collections.Generic.HashSet[string]
+	foreach ($Row in $ManifestRows) {
+		foreach ($Parity in $ParityRows) {
+			if (($Parity.Status -eq "green" -or $Parity.Status -eq "red") -and $Row.Source -like $Parity.Source -and $Row.Name -like $Parity.Name) {
+				$Key = "$($Row.Source)`t$($Row.Name)`t$($Parity.Status)"
+				if ($Matched.Add($Key)) {
+					"$($Row.Source)`t$($Row.Name)`t$($Parity.Status)`t$($Parity.Evidence)" | Add-Content -LiteralPath $Destination -Encoding UTF8
+				}
+				break
+			}
+		}
+	}
+	foreach ($Parity in $ParityRows) {
+		if ($Parity.Status -eq "blocked") {
+			"$($Parity.Source)`t$($Parity.Name)`t$($Parity.Status)`t$($Parity.Evidence)" | Add-Content -LiteralPath $Destination -Encoding UTF8
+			[void]$Matched.Add("$($Parity.Source)`t$($Parity.Name)`t$($Parity.Status)")
+		}
+	}
+	$Green = @($ParityRows | Where-Object { $_.Status -eq "green" }).Count
+	$Red = @($ParityRows | Where-Object { $_.Status -eq "red" }).Count
+	$Blocked = @($ParityRows | Where-Object { $_.Status -eq "blocked" }).Count
+	Write-Host "libexpat parity rows: $Green green patterns, $Red red patterns, $Blocked blocked rows -> $Destination"
+	if ($Green -eq 0 -or $Red -eq 0) {
+		throw "Parity file must contain both green and red rows."
 	}
 }
 
@@ -320,6 +389,8 @@ if ($Mode -eq "All" -or $Mode -eq "Manifest") {
 	Write-TestManifest $ManifestRows (Join-Path $OutputRoot "libexpat-runtests-manifest.tsv")
 	$ExpectedFailures = @(Read-ExpectedFailures $ExpectedFailuresFile)
 	Write-ExpectedFailureExpansion $ManifestRows $ExpectedFailures (Join-Path $OutputRoot "libexpat-expected-failures-expanded.tsv")
+	$ParityRows = @(Read-ParityRows $ParityFile)
+	Write-ParityExpansion $ManifestRows $ParityRows (Join-Path $OutputRoot "libexpat-parity-expanded.tsv")
 }
 
 if ($Mode -eq "All" -or $Mode -eq "Corpus") {
@@ -345,5 +416,7 @@ if ($Mode -eq "NativeSuite") {
 	Write-TestManifest $ManifestRows (Join-Path $OutputRoot "libexpat-runtests-manifest.tsv")
 	$ExpectedFailures = @(Read-ExpectedFailures $ExpectedFailuresFile)
 	Write-ExpectedFailureExpansion $ManifestRows $ExpectedFailures (Join-Path $OutputRoot "libexpat-expected-failures-expanded.tsv")
+	$ParityRows = @(Read-ParityRows $ParityFile)
+	Write-ParityExpansion $ManifestRows $ParityRows (Join-Path $OutputRoot "libexpat-parity-expanded.tsv")
 	Invoke-NativeSuite $ExpatRoot $OutputRoot $XpactLibrary $ExpectedFailures
 }
