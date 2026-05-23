@@ -26,6 +26,7 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelIntegerQueryRoutine get_current_column_number;
 	XPACT_EiffelIntegerQueryRoutine get_current_byte_index;
 	XPACT_EiffelIntegerQueryRoutine get_current_byte_count;
+	XPACT_EiffelInputContextRoutine get_input_context;
 	XPACT_EiffelParsingStatusRoutine get_parsing_status;
 	XPACT_EiffelBridge bridge;
 } XPACT_EiffelRuntimeBridgeState;
@@ -333,6 +334,27 @@ xp_rt_get_current_byte_count(void *context, void *parser) {
 	return (int)state->get_current_byte_count(installer, (EIF_POINTER)parser);
 }
 
+static const char *XMLCALL
+xp_rt_get_input_context(void *context, void *parser, int *offset, int *size) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+	EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->get_input_context == NULL) {
+		if (offset != NULL) {
+			*offset = 0;
+		}
+		if (size != NULL) {
+			*size = 0;
+		}
+		return NULL;
+	}
+	return (const char *)state->get_input_context(
+		installer,
+		(EIF_POINTER)parser,
+		(EIF_POINTER)offset,
+		(EIF_POINTER)size
+	);
+}
+
 static void XMLCALL
 xp_rt_get_parsing_status(void *context, void *parser, XML_ParsingStatus *status) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
@@ -361,6 +383,7 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->get_buffer != NULL
 		&& state->parse_buffer != NULL
 		&& state->get_error_code != NULL
+		&& state->get_input_context != NULL
 		&& state->get_parsing_status != NULL;
 }
 
@@ -392,6 +415,7 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->get_current_column_number = xp_rt_get_current_column_number;
 	bridge->get_current_byte_index = xp_rt_get_current_byte_index;
 	bridge->get_current_byte_count = xp_rt_get_current_byte_count;
+	bridge->get_input_context = xp_rt_get_input_context;
 	bridge->get_parsing_status = xp_rt_get_parsing_status;
 }
 
@@ -419,6 +443,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelIntegerQueryRoutine get_current_column_number,
 	XPACT_EiffelIntegerQueryRoutine get_current_byte_index,
 	XPACT_EiffelIntegerQueryRoutine get_current_byte_count,
+	XPACT_EiffelInputContextRoutine get_input_context,
 	XPACT_EiffelParsingStatusRoutine get_parsing_status
 ) {
 	if (installer == NULL
@@ -432,6 +457,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| get_buffer == NULL
 		|| parse_buffer == NULL
 		|| get_error_code == NULL
+		|| get_input_context == NULL
 		|| get_parsing_status == NULL) {
 		return XML_FALSE;
 	}
@@ -459,6 +485,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.get_current_column_number = get_current_column_number;
 	xp_runtime_bridge.get_current_byte_index = get_current_byte_index;
 	xp_runtime_bridge.get_current_byte_count = get_current_byte_count;
+	xp_runtime_bridge.get_input_context = get_input_context;
 	xp_runtime_bridge.get_parsing_status = get_parsing_status;
 	if (!xp_has_required_eiffel_routines(&xp_runtime_bridge)) {
 		xp_release_runtime_bridge();
@@ -496,6 +523,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER get_current_column_number,
     EIF_POINTER get_current_byte_index,
     EIF_POINTER get_current_byte_count,
+    EIF_POINTER get_input_context,
     EIF_POINTER get_parsing_status
 ) {
 	return XPACT_RegisterEiffelRuntimeBridge(
@@ -521,6 +549,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelIntegerQueryRoutine)get_current_column_number,
 		(XPACT_EiffelIntegerQueryRoutine)get_current_byte_index,
 		(XPACT_EiffelIntegerQueryRoutine)get_current_byte_count,
+		(XPACT_EiffelInputContextRoutine)get_input_context,
 		(XPACT_EiffelParsingStatusRoutine)get_parsing_status
 	);
 }

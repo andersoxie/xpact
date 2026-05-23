@@ -6,6 +6,19 @@ green	basic_tests.c	test_attributes	Eiffel parser regression covers attribute co
 green	basic_tests.c	test_duplicate_cdata_attribute	Eiffel parser rejects duplicate attributes and maps the native error to XML_ERROR_DUPLICATE_ATTRIBUTE.
 green	basic_tests.c	test_empty_parse	Eiffel parser maps missing document element to XML_ERROR_NO_ELEMENTS through the native bridge.
 green	basic_tests.c	test_get_buffer_1	XML_GetBuffer and XML_ParseBuffer are implemented through the Eiffel runtime bridge for the Windows native path.
+green	basic_tests.c	test_line_number_after_parse	Eiffel parser reports Expat-compatible end-of-parse line numbers through XML_GetCurrentLineNumber.
+green	basic_tests.c	test_column_number_after_parse	Eiffel parser reports Expat-compatible end-of-parse columns through XML_GetCurrentColumnNumber.
+green	basic_tests.c	test_line_number_after_error	Eiffel parser reports Expat-compatible error line numbers through XML_GetCurrentLineNumber.
+green	basic_tests.c	test_column_number_after_error	Eiffel parser reports Expat-compatible error columns through XML_GetCurrentColumnNumber.
+green	basic_tests.c	test_byte_info_at_end	Eiffel parser reports terminal byte index/count through XML_GetCurrentByteIndex and XML_GetCurrentByteCount.
+green	basic_tests.c	test_byte_info_at_error	Eiffel parser reports error byte index/count through XML_GetCurrentByteIndex and XML_GetCurrentByteCount.
+green	basic_tests.c	test_nul_byte	The Eiffel-backed native parser now accepts non-final chunks and defers tokenization until the final chunk.
+green	basic_tests.c	test_good_cdata_ascii	Eiffel parser emits CDATA character data and CDATA boundary callbacks through the native bridge on chunked input.
+green	basic_tests.c	test_line_and_column_numbers_inside_handlers	Eiffel parser updates line and column state immediately before start/end callback dispatch.
+green	basic_tests.c	test_byte_info_at_cdata	Eiffel parser reports handler-time byte index/count and XML_GetInputContext windows through the native bridge.
+green	basic_tests.c	test_pi_handled_in_default	Eiffel parser forwards raw processing-instruction tokens to the native default handler.
+green	basic_tests.c	test_comment_handled_in_default	Eiffel parser forwards raw comment tokens and outside-root whitespace to the native default handler.
+green	basic_tests.c	test_cdata_default	Eiffel parser forwards raw CDATA section tokens to the native default handler.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -43,11 +56,10 @@ red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not impleme
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_abort*	Abort semantics are not implemented.
-red	basic_tests.c	test_*byte*	Exact byte index/count APIs are placeholders.
-red	basic_tests.c	test_line*	Exact line/column accounting is not implemented.
-red	basic_tests.c	test_column*	Exact line/column accounting is not implemented.
-red	basic_tests.c	test_default_current	Default-current/default-handler replay semantics are not implemented.
-red	basic_tests.c	test_*default*	Default handler and DTD default handling are not fully implemented.
+red	basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
+red	basic_tests.c	test_dtd_default_handling	DTD default handling is not fully implemented.
+red	basic_tests.c	test_ns_in_attribute_default_without_namespaces	Namespace/default-attribute interaction is not implemented.
+red	basic_tests.c	test_default_doctype_handler	Doctype default-handler replay semantics are not fully implemented.
 red	basic_tests.c	test_hash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 red	basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 red	basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.

@@ -123,21 +123,33 @@ feature -- Handler callbacks
 	set_processing_instruction_handler (a_parser, a_handler: POINTER)
 			-- Record processing-instruction handler slot.
 		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_processing_instruction_handler (a_handler)
+			end
 		end
 
 	set_comment_handler (a_parser, a_handler: POINTER)
 			-- Record comment handler slot.
 		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_comment_handler (a_handler)
+			end
 		end
 
 	set_cdata_section_handler (a_parser, a_start, a_end: POINTER)
 			-- Record CDATA section handler slots.
 		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_cdata_section_handlers (a_start, a_end)
+			end
 		end
 
 	set_default_handler (a_parser, a_handler: POINTER; a_expand: BOOLEAN)
 			-- Record default handler slot.
 		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_default_handler (a_handler, a_expand)
+			end
 		end
 
 	set_doctype_decl_handler (a_parser, a_start, a_end: POINTER)
@@ -212,25 +224,45 @@ feature -- Status callbacks
 	get_current_line_number (a_parser: POINTER): INTEGER
 			-- Current line number reported through the native ABI.
 		do
-			Result := 1
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.current_line_number
+			else
+				Result := 1
+			end
 		end
 
 	get_current_column_number (a_parser: POINTER): INTEGER
 			-- Current column number reported through the native ABI.
 		do
-			Result := 0
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.current_column_number
+			end
 		end
 
 	get_current_byte_index (a_parser: POINTER): INTEGER
 			-- Current byte index reported through the native ABI.
 		do
-			Result := -1
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.current_byte_index
+			else
+				Result := -1
+			end
 		end
 
 	get_current_byte_count (a_parser: POINTER): INTEGER
 			-- Current token byte count reported through the native ABI.
 		do
-			Result := 0
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.current_byte_count
+			end
+		end
+
+	get_input_context (a_parser, a_offset, a_size: POINTER): POINTER
+			-- Current input context buffer reported through the native ABI.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.input_context (a_offset, a_size)
+			end
 		end
 
 	get_parsing_status (a_parser, a_status: POINTER)

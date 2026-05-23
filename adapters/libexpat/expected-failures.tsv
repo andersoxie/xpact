@@ -36,11 +36,10 @@ basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented
 basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_abort*	Abort semantics are not implemented.
-basic_tests.c	test_*byte*	Exact byte index/count APIs are placeholders.
-basic_tests.c	test_line*	Exact line/column accounting is not implemented.
-basic_tests.c	test_column*	Exact line/column accounting is not implemented.
-basic_tests.c	test_default_current	Default-current/default-handler replay semantics are not implemented.
-basic_tests.c	test_*default*	Default handler and DTD default handling are not fully implemented.
+basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
+basic_tests.c	test_dtd_default_handling	DTD default handling is not fully implemented.
+basic_tests.c	test_ns_in_attribute_default_without_namespaces	Namespace/default-attribute interaction is not implemented.
+basic_tests.c	test_default_doctype_handler	Doctype default-handler replay semantics are not fully implemented.
 basic_tests.c	test_hash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.

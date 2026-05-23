@@ -649,7 +649,14 @@ XML_GetCurrentByteCount(XML_Parser parser) {
 
 const char *XMLCALL
 XML_GetInputContext(XML_Parser parser, int *offset, int *size) {
-	(void)parser;
+	if (
+		parser != NULL
+		&& parser->bridge != NULL
+		&& parser->bridge->get_input_context != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->get_input_context(parser->bridge->context, parser->eiffelParser, offset, size);
+	}
 	if (offset != NULL) {
 		*offset = 0;
 	}

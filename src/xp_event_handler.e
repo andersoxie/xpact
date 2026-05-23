@@ -29,5 +29,37 @@ feature -- Events
 		deferred
 		end
 
-end
+	on_processing_instruction (a_target, a_data: READABLE_STRING_8)
+			-- Processing instruction was parsed.
+		require
+			target_attached: a_target /= Void
+			target_not_empty: not a_target.is_empty
+			data_attached: a_data /= Void
+		do
+		end
 
+	on_comment (a_text: READABLE_STRING_8)
+			-- Comment text was parsed.
+		require
+			text_attached: a_text /= Void
+		do
+		end
+
+	on_start_cdata_section
+			-- CDATA section started.
+		do
+		end
+
+	on_end_cdata_section
+			-- CDATA section ended.
+		do
+		end
+
+	on_default (a_text: READABLE_STRING_8)
+			-- Raw default-handler text was parsed.
+		require
+			text_attached: a_text /= Void
+		do
+		end
+
+end

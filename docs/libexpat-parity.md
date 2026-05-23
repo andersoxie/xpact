@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 293 named upstream tests in the downloaded
+expected-failure patterns expand to 281 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -31,7 +31,18 @@ The Windows release has green evidence for:
 - native C callbacks through the Windows MSVC DLL benchmark;
 - basic entity, attribute, duplicate-attribute, empty-document, and
   `XML_GetBuffer` / `XML_ParseBuffer` coverage in the Eiffel/native bridge
-  path.
+  path;
+- Expat-compatible line, column, and byte index/count reporting after complete
+  parses and parse errors;
+- non-final native `XML_Parse` chunks accumulated in Eiffel until the final
+  chunk, covering upstream single-byte feed helpers for supported syntax;
+- native callback forwarding for Eiffel-tokenized comments, processing
+  instructions, and CDATA section boundaries;
+- handler-time line and column positions during start/end element callbacks;
+- handler-time byte index/count and `XML_GetInputContext` windows during
+  character-data callbacks;
+- default-handler delivery for raw processing-instruction, comment, and CDATA
+  section tokens in the Eiffel-backed Windows DLL path.
 
 ## Red Rows
 
@@ -42,8 +53,8 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - UTF-16 and custom/unknown encoding tests;
 - external entity parser creation/loading through the Expat C callback model;
 - DTD declaration, notation, default-handler, and content-model callbacks;
+- DTD default-handler replay and default-current edge cases;
 - stop/suspend/resume/abort parser state;
-- exact byte, line, and column accounting;
 - Expat hash/reparse-deferral/accounting semantics.
 
 ## Blocked Row

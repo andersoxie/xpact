@@ -66,6 +66,12 @@ typedef EIF_INTEGER (*XPACT_EiffelParseBufferRoutine) (
 	 EIF_BOOLEAN is_final
 );
 typedef EIF_INTEGER (*XPACT_EiffelIntegerQueryRoutine) (EIF_REFERENCE installer, EIF_POINTER parser);
+typedef EIF_POINTER (*XPACT_EiffelInputContextRoutine) (
+	 EIF_REFERENCE installer,
+	 EIF_POINTER parser,
+	 EIF_POINTER offset,
+	 EIF_POINTER size
+);
 typedef void (*XPACT_EiffelParsingStatusRoutine) (
 	 EIF_REFERENCE installer,
 	 EIF_POINTER parser,
@@ -96,6 +102,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelIntegerQueryRoutine get_current_column_number,
 	 XPACT_EiffelIntegerQueryRoutine get_current_byte_index,
 	 XPACT_EiffelIntegerQueryRoutine get_current_byte_count,
+	 XPACT_EiffelInputContextRoutine get_input_context,
 	 XPACT_EiffelParsingStatusRoutine get_parsing_status
 );
 
@@ -123,6 +130,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER get_current_column_number,
 	 EIF_POINTER get_current_byte_index,
 	 EIF_POINTER get_current_byte_count,
+	 EIF_POINTER get_input_context,
 	 EIF_POINTER get_parsing_status
 );
 

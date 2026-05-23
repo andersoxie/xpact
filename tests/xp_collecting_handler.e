@@ -6,6 +6,12 @@ class
 
 inherit
 	XP_EVENT_HANDLER
+		redefine
+			on_processing_instruction,
+			on_comment,
+			on_start_cdata_section,
+			on_end_cdata_section
+		end
 
 create
 	make
@@ -61,6 +67,36 @@ feature -- Events
 			create l_event.make_from_string ("text:")
 			l_event.append (a_text)
 			events.extend (l_event)
+		end
+
+	on_processing_instruction (a_target, a_data: READABLE_STRING_8)
+		local
+			l_event: STRING_8
+		do
+			create l_event.make_from_string ("pi:")
+			l_event.append (a_target)
+			l_event.append_character (':')
+			l_event.append (a_data)
+			events.extend (l_event)
+		end
+
+	on_comment (a_text: READABLE_STRING_8)
+		local
+			l_event: STRING_8
+		do
+			create l_event.make_from_string ("comment:")
+			l_event.append (a_text)
+			events.extend (l_event)
+		end
+
+	on_start_cdata_section
+		do
+			events.extend ("start-cdata")
+		end
+
+	on_end_cdata_section
+		do
+			events.extend ("end-cdata")
 		end
 
 invariant

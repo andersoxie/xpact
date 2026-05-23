@@ -13,6 +13,7 @@ feature {NONE} -- Initialization
 		do
 			create handler.make
 			create parser.make (handler)
+			create input_buffer.make_empty
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
 		ensure
@@ -79,12 +80,50 @@ feature -- Access
 	final_buffer: BOOLEAN
 			-- Was the last parse call final?
 
+	input_buffer: STRING_8
+			-- Native chunks accumulated until the final parse call.
+
+	context_buffer: detachable C_STRING
+			-- C-visible copy of the current final input while parsing.
+
 	last_error_text: STRING_8
 			-- Last Eiffel parser error text.
 		do
 			create Result.make_from_string (parser.last_error)
 		ensure
 			result_attached: Result /= Void
+		end
+
+	current_line_number: INTEGER
+			-- Current 1-based XML line number.
+		do
+			Result := parser.current_line_number
+		ensure
+			line_positive: Result >= 1
+		end
+
+	current_column_number: INTEGER
+			-- Current 0-based XML column number.
+		do
+			Result := parser.current_column_number
+		ensure
+			column_non_negative: Result >= 0
+		end
+
+	current_byte_index: INTEGER
+			-- Current 0-based byte index, or -1 before parsing starts.
+		do
+			Result := parser.current_byte_index
+		ensure
+			valid_before_or_after_start: Result >= -1
+		end
+
+	current_byte_count: INTEGER
+			-- Current token byte count, or zero at parse end and errors.
+		do
+			Result := parser.current_byte_count
+		ensure
+			byte_count_non_negative: Result >= 0
 		end
 
 feature -- Element change
@@ -114,10 +153,46 @@ feature -- Element change
 			handler_set: handler.character_data_callback = a_handler
 		end
 
+	set_processing_instruction_handler (a_handler: POINTER)
+			-- Set native processing-instruction callback.
+		do
+			handler.set_processing_instruction_handler (a_handler)
+		ensure
+			handler_set: handler.processing_instruction_callback = a_handler
+		end
+
+	set_comment_handler (a_handler: POINTER)
+			-- Set native comment callback.
+		do
+			handler.set_comment_handler (a_handler)
+		ensure
+			handler_set: handler.comment_callback = a_handler
+		end
+
+	set_cdata_section_handlers (a_start, a_end: POINTER)
+			-- Set native CDATA section callbacks.
+		do
+			handler.set_cdata_section_handlers (a_start, a_end)
+		ensure
+			start_set: handler.start_cdata_section_callback = a_start
+			end_set: handler.end_cdata_section_callback = a_end
+		end
+
+	set_default_handler (a_handler: POINTER; a_expand: BOOLEAN)
+			-- Set native default callback.
+		do
+			handler.set_default_handler (a_handler, a_expand)
+		ensure
+			handler_set: handler.default_callback = a_handler
+			expand_set: handler.default_expands_entities = a_expand
+		end
+
 	reset: BOOLEAN
 			-- Reset parser state while preserving callback registrations.
 		do
 			create parser.make (handler)
+			input_buffer.wipe_out
+			context_buffer := Void
 			handler.reset_events
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
@@ -140,14 +215,16 @@ feature -- Parsing
 			l_ok: BOOLEAN
 		do
 			final_buffer := a_is_final
+			input_buffer.append (a_input)
 			if not a_is_final then
-				last_error_code := Xml_error_not_started
-				parsing_status := Xml_finished
-				Result := Xml_status_error
+				last_error_code := Xml_error_none
+				parsing_status := Xml_parsing
+				Result := Xml_status_ok
 			else
 				parsing_status := Xml_parsing
 				handler.reset_events
-				l_ok := parser.parse (a_input)
+				create context_buffer.make (input_buffer)
+				l_ok := parser.parse (input_buffer)
 				parsing_status := Xml_finished
 				if l_ok then
 					last_error_code := Xml_error_none
@@ -156,12 +233,35 @@ feature -- Parsing
 					last_error_code := error_code_for (parser.last_error)
 					Result := Xml_status_error
 				end
+				input_buffer.wipe_out
 			end
 		ensure
 			valid_status: Result = Xml_status_ok or Result = Xml_status_error
 			success_has_no_error: Result = Xml_status_ok implies last_error_code = Xml_error_none
-			finished: parsing_status = Xml_finished
+			final_finished: a_is_final implies parsing_status = Xml_finished
+			non_final_parsing: not a_is_final implies parsing_status = Xml_parsing
 			final_recorded: final_buffer = a_is_final
+		end
+
+	input_context (a_offset, a_size: POINTER): POINTER
+			-- Current input context buffer for `XML_GetInputContext'.
+		do
+			if parsing_status = Xml_parsing and then attached context_buffer as l_context then
+				if a_offset /= default_pointer then
+					put_integer (a_offset, current_byte_index)
+				end
+				if a_size /= default_pointer then
+					put_integer (a_size, l_context.count)
+				end
+				Result := l_context.item
+			else
+				if a_offset /= default_pointer then
+					put_integer (a_offset, 0)
+				end
+				if a_size /= default_pointer then
+					put_integer (a_size, 0)
+				end
+			end
 		end
 
 feature {NONE} -- Error mapping
@@ -200,9 +300,22 @@ feature {NONE} -- Error mapping
 			known_error: Result /= Xml_error_none
 		end
 
+feature {NONE} -- Native helpers
+
+	put_integer (a_target: POINTER; a_value: INTEGER)
+			-- Write C `int' value.
+		require
+			target_attached: a_target /= default_pointer
+		external
+			"C inline"
+		alias
+			"*((int *) $a_target) = (int) $a_value;"
+		end
+
 invariant
 	handler_attached: handler /= Void
 	parser_attached: parser /= Void
+	input_buffer_attached: input_buffer /= Void
 	valid_parsing_status: parsing_status = Xml_initialized or parsing_status = Xml_parsing or parsing_status = Xml_finished
 	valid_last_error_code: last_error_code >= Xml_error_none
 

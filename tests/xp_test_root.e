@@ -29,6 +29,8 @@ feature {NONE} -- Initialization
 			test_external_policy_blocks_parameter_entities
 			test_token_well_formedness_errors
 			test_document_structure
+			test_position_accounting
+			test_handler_position_accounting
 			test_native_eiffel_bridge_parser
 			test_native_bridge_installer
 			test_expat_api_manifest
@@ -100,7 +102,16 @@ feature {NONE} -- Tests
 			create l_parser.make (l_handler)
 			l_ok := l_parser.parse ("<root><!-- comment --><![CDATA[raw < text]]></root>")
 			assert ("CDATA document accepted", l_ok)
-			assert ("CDATA emitted", l_handler.events.i_th (2).same_string ("text:raw < text"))
+			assert ("comment emitted", l_handler.events.i_th (2).same_string ("comment: comment "))
+			assert ("CDATA start emitted", l_handler.events.i_th (3).same_string ("start-cdata"))
+			assert ("CDATA text emitted", l_handler.events.i_th (4).same_string ("text:raw < text"))
+			assert ("CDATA end emitted", l_handler.events.i_th (5).same_string ("end-cdata"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<?work now?><root />")
+			assert ("processing instruction document accepted", l_ok)
+			assert ("processing instruction emitted", l_handler.events.i_th (1).same_string ("pi:work:now"))
 		end
 
 	test_predefined_and_numeric_entities
@@ -367,6 +378,60 @@ feature {NONE} -- Tests
 			assert ("outside root error", l_parser.last_error.same_string ("character data outside document element"))
 		end
 
+	test_position_accounting
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+			l_error_text: STRING_8
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("position starts at line one", l_parser.current_line_number = 1)
+			assert ("position starts at column zero", l_parser.current_column_number = 0)
+			assert ("byte index starts before input", l_parser.current_byte_index = -1)
+			assert ("byte count starts at zero", l_parser.current_byte_count = 0)
+
+			assert ("line document parses", l_parser.parse ("<tag>%N%N%N</tag>"))
+			assert ("line after parse matches Expat", l_parser.current_line_number = 4)
+			assert ("byte count after parse is zero", l_parser.current_byte_count = 0)
+
+			assert ("column document parses", l_parser.parse ("<tag></tag>"))
+			assert ("column after parse matches Expat", l_parser.current_column_number = 11)
+			assert ("byte index after parse is end", l_parser.current_byte_index = 11)
+			assert ("byte count after second parse is zero", l_parser.current_byte_count = 0)
+
+			l_error_text := "<a>%N  <b>%N  </a>"
+			assert ("mismatch document rejected for position", not l_parser.parse (l_error_text))
+			assert ("line after error matches Expat", l_parser.current_line_number = 3)
+			assert ("column after error matches Expat", l_parser.current_column_number = 4)
+			assert ("byte index after error matches Expat", l_parser.current_byte_index = 14)
+			assert ("byte count after error is zero", l_parser.current_byte_count = 0)
+		end
+
+	test_handler_position_accounting
+		local
+			l_handler: XP_POSITION_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_input: STRING_8
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_handler.set_parser (l_parser)
+			l_input := "<a>%N  <b>%R%N    <c/>%R  </b>%N  <d>%N    <f/>%N  </d>%N</a>"
+			assert ("positioned handler document parses", l_parser.parse (l_input))
+			assert ("start a handler position", l_handler.events.i_th (1).same_string ("start:a:1:0:0:0"))
+			assert ("start b handler line and column", l_handler.events.i_th (2).has_substring (":2:2:"))
+			assert ("empty c end handler line and column", l_handler.events.i_th (4).has_substring (":3:8:"))
+			assert ("end b handler line and column", l_handler.events.i_th (5).has_substring (":4:2:"))
+			assert ("end a handler line and column", l_handler.events.i_th (10).has_substring (":8:0:"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_handler.set_parser (l_parser)
+			assert ("byte handler document parses", l_parser.parse ("<e>Hello</e>"))
+			assert ("text byte info inside handler", l_handler.events.i_th (2).same_string ("text:Hello:1:3:3:5"))
+		end
+
 	test_native_eiffel_bridge_parser
 		local
 			l_attributes: XP_ATTRIBUTES
@@ -385,6 +450,10 @@ feature {NONE} -- Tests
 			l_status := l_native.parse ("<root><child a=%"1%">text</child></root>", True)
 			assert ("native Eiffel parser accepts document", l_status = l_native.Xml_status_ok)
 			assert ("native Eiffel parser reports no error", l_native.last_error_code = l_native.Xml_error_none)
+			assert ("native Eiffel parser reports end line", l_native.current_line_number = 1)
+			assert ("native Eiffel parser reports end column", l_native.current_column_number = 38)
+			assert ("native Eiffel parser reports end byte index", l_native.current_byte_index = 38)
+			assert ("native Eiffel parser reports zero byte count", l_native.current_byte_count = 0)
 			assert ("native Eiffel parser saw start callbacks", l_native.handler.start_element_count = 2)
 			assert ("native Eiffel parser saw text callback", l_native.handler.character_data_count = 1)
 			assert ("native Eiffel parser saw end callbacks", l_native.handler.end_element_count = 2)
@@ -396,9 +465,27 @@ feature {NONE} -- Tests
 			l_status := l_native.parse ("<root><child></root>", True)
 			assert ("native Eiffel parser rejects mismatch", l_status = l_native.Xml_status_error)
 			assert ("native Eiffel parser maps mismatch", l_native.last_error_code = l_native.Xml_error_tag_mismatch)
-			l_status := l_native.parse ("<root />", False)
-			assert ("native Eiffel parser rejects non-final parse", l_status = l_native.Xml_status_error)
-			assert ("native Eiffel parser marks non-final unsupported", l_native.last_error_code = l_native.Xml_error_not_started)
+			assert ("native Eiffel parser reports mismatch line", l_native.current_line_number = 1)
+			assert ("native Eiffel parser reports mismatch column", l_native.current_column_number = 15)
+			assert ("native Eiffel parser reports mismatch byte index", l_native.current_byte_index = 15)
+
+			assert ("native Eiffel parser resets for chunked input", l_native.reset)
+			l_status := l_native.parse ("<root", False)
+			assert ("native Eiffel parser accepts non-final chunk", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser keeps chunked parse open", l_native.parsing_status = l_native.Xml_parsing)
+			assert ("native Eiffel parser reports no chunk error", l_native.last_error_code = l_native.Xml_error_none)
+			l_status := l_native.parse (" />", True)
+			assert ("native Eiffel parser accepts final chunk", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser finishes chunked parse", l_native.parsing_status = l_native.Xml_finished)
+			assert ("native Eiffel parser emits chunked start", l_native.handler.start_element_count = 1)
+
+			assert ("native Eiffel parser resets for extended callbacks", l_native.reset)
+			l_status := l_native.parse ("<?work now?><root><!-- note --><![CDATA[payload]]></root>", True)
+			assert ("native Eiffel parser accepts callback document", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser emits PI event", l_native.handler.processing_instruction_count = 1)
+			assert ("native Eiffel parser emits comment event", l_native.handler.comment_count = 1)
+			assert ("native Eiffel parser emits CDATA start event", l_native.handler.start_cdata_section_count = 1)
+			assert ("native Eiffel parser emits CDATA end event", l_native.handler.end_cdata_section_count = 1)
 		end
 
 	test_native_bridge_installer
@@ -410,6 +497,9 @@ feature {NONE} -- Tests
 			l_status_buffer: MANAGED_POINTER
 			l_buffer: POINTER
 			l_status: INTEGER
+			l_error_input: C_STRING
+			l_chunk_start: C_STRING
+			l_chunk_end: C_STRING
 		do
 			create l_installer.make
 			l_handle := l_installer.parser_create (default_pointer, default_pointer, default_pointer)
@@ -433,12 +523,31 @@ feature {NONE} -- Tests
 
 			create l_status_buffer.make (8)
 			l_installer.get_parsing_status (l_handle, l_status_buffer.item)
-			assert ("native bridge installer has line default", l_installer.get_current_line_number (l_handle) = 1)
-			assert ("native bridge installer has column default", l_installer.get_current_column_number (l_handle) = 0)
-			assert ("native bridge installer has byte index default", l_installer.get_current_byte_index (l_handle) = -1)
-			assert ("native bridge installer has byte count default", l_installer.get_current_byte_count (l_handle) = 0)
+			assert ("native bridge installer reports end line", l_installer.get_current_line_number (l_handle) = 1)
+			assert ("native bridge installer reports end column", l_installer.get_current_column_number (l_handle) = l_input.count)
+			assert ("native bridge installer reports end byte index", l_installer.get_current_byte_index (l_handle) = l_input.count)
+			assert ("native bridge installer reports zero byte count", l_installer.get_current_byte_count (l_handle) = 0)
+
+			create l_error_input.make ("<a>%N  <b>%N  </a>")
+			l_status := l_installer.parse (l_handle, l_error_input.item, l_error_input.count, True)
+			assert ("native bridge installer parse rejects mismatch", l_status = l_installer.Xml_status_error)
+			assert ("native bridge installer reports mismatch error", l_installer.get_error_code (l_handle) = 7)
+			assert ("native bridge installer reports error line", l_installer.get_current_line_number (l_handle) = 3)
+			assert ("native bridge installer reports error column", l_installer.get_current_column_number (l_handle) = 4)
+			assert ("native bridge installer reports error byte index", l_installer.get_current_byte_index (l_handle) = 14)
+			assert ("native bridge installer reports error byte count", l_installer.get_current_byte_count (l_handle) = 0)
 
 			assert ("native bridge installer resets parser", l_installer.parser_reset (l_handle, default_pointer))
+			create l_chunk_start.make ("<root")
+			create l_chunk_end.make (" />")
+			l_status := l_installer.parse (l_handle, l_chunk_start.item, l_chunk_start.count, False)
+			assert ("native bridge installer accepts non-final chunk", l_status = 1)
+			assert ("native bridge installer has no chunk error", l_installer.get_error_code (l_handle) = 0)
+			l_status := l_installer.parse (l_handle, l_chunk_end.item, l_chunk_end.count, True)
+			assert ("native bridge installer accepts final chunk", l_status = 1)
+			assert ("native bridge installer reports chunked byte index", l_installer.get_current_byte_index (l_handle) = l_chunk_start.count + l_chunk_end.count)
+
+			assert ("native bridge installer resets before parse buffer", l_installer.parser_reset (l_handle, default_pointer))
 			create l_buffer_input.make ("<root />")
 			l_buffer := l_installer.get_buffer (l_handle, l_buffer_input.count)
 			assert ("native bridge installer allocates parse buffer", l_buffer /= default_pointer)

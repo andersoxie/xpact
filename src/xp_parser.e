@@ -48,6 +48,7 @@ feature {NONE} -- Initialization
 			create external_parameter_entity_table.make (4)
 			create last_error.make_empty
 			create doctype_name.make_empty
+			create position_input.make_empty
 			external_entity_policy := No_external_entities
 			reset
 		ensure
@@ -77,6 +78,18 @@ feature -- Access
 
 	has_error: BOOLEAN
 			-- Did the last parse fail?
+
+	current_line_number: INTEGER
+			-- Current 1-based XML line number.
+
+	current_column_number: INTEGER
+			-- Current 0-based XML column number.
+
+	current_byte_index: INTEGER
+			-- Current 0-based byte index, or -1 before parsing starts.
+
+	current_byte_count: INTEGER
+			-- Current token byte count, or zero at parse end and errors.
 
 	external_entity_policy: INTEGER
 			-- Current external entity loading policy.
@@ -117,6 +130,9 @@ feature -- Parsing
 		do
 			reset
 			l_input := normalized_input (a_input)
+			position_input.wipe_out
+			position_input.append (l_input)
+			note_position (1)
 			if not has_error then
 				from
 					i := 1
@@ -126,20 +142,29 @@ feature -- Parsing
 				until
 					i > l_input.count or has_error
 				loop
+					note_position (i)
 					if l_input.item (i) = '<' then
 						i := parse_markup (l_input, i)
 					else
 						i := parse_character_data (l_input, i)
+					end
+					if not has_error then
+						note_position (i)
 					end
 				variant
 					l_input.count - i + 1
 				end
 			end
 			if not has_error and element_stack.count /= 0 then
+				note_position (l_input.count + 1)
 				set_error ("unclosed element")
 			end
 			if not has_error and document_element_count = 0 then
+				note_position (l_input.count + 1)
 				set_error ("missing document element")
+			end
+			if not has_error then
+				note_position (l_input.count + 1)
 			end
 			Result := not has_error
 		ensure
@@ -243,8 +268,11 @@ feature {NONE} -- Markup parsing
 						Result := a_input.count + 1
 					end
 					if not has_error then
+						emit_default (a_input.substring (a_start_index, Result - 1))
+						note_position (a_start_index)
 						open_element (l_name, l_attributes)
 						if l_empty_element and not has_error then
+							note_position (Result)
 							close_element (l_name)
 						end
 					end
@@ -269,6 +297,7 @@ feature {NONE} -- Markup parsing
 		do
 			create l_attributes.make
 			i := a_start_index + 2
+			note_position (i)
 			if i > a_input.count or else not l_attributes.is_name_start_character (a_input.item (i)) then
 				set_error ("invalid end tag name")
 				Result := a_input.count + 1
@@ -282,9 +311,16 @@ feature {NONE} -- Markup parsing
 					create l_name.make_from_string (a_input.substring (name_start, i - 1))
 					i := skip_spaces (a_input, i)
 					if i <= a_input.count and then a_input.item (i) = '>' then
+						if element_stack.count > 0 and then element_stack.item.same_string (l_name) then
+							note_position (a_start_index)
+						else
+							note_position (name_start)
+						end
+						emit_default (a_input.substring (a_start_index, i))
 						close_element (l_name)
 						Result := i + 1
 					else
+						note_position (i)
 						set_error ("unterminated end tag")
 						Result := a_input.count + 1
 					end
@@ -409,6 +445,7 @@ feature {NONE} -- Markup parsing
 		local
 			l_end: INTEGER
 			i: INTEGER
+			l_text: STRING_8
 		do
 			l_end := find_sequence (a_input, "-->", a_start_index + 4)
 			if l_end = 0 then
@@ -440,6 +477,10 @@ feature {NONE} -- Markup parsing
 				if has_error then
 					Result := a_input.count + 1
 				else
+					create l_text.make_from_string (a_input.substring (a_start_index + 4, l_end - 1))
+					emit_default (a_input.substring (a_start_index, l_end + 2))
+					note_token_position (a_start_index, l_end + 3 - a_start_index)
+					handler.on_comment (l_text)
 					Result := l_end + 3
 				end
 			end
@@ -469,12 +510,20 @@ feature {NONE} -- Markup parsing
 					set_error ("CDATA token exceeds limit")
 					Result := a_input.count + 1
 				else
+					emit_default (a_input.substring (a_start_index, l_end + 2))
+					note_position (a_start_index)
+					handler.on_start_cdata_section
 					if l_end > a_start_index + 9 then
 						create l_text.make_from_string (a_input.substring (a_start_index + 9, l_end - 1))
 						validate_xml_text (l_text)
 						if not has_error then
+							note_token_position (a_start_index + 9, l_text.count)
 							emit_text (l_text)
 						end
+					end
+					if not has_error then
+						note_position (l_end + 3)
+						handler.on_end_cdata_section
 					end
 					if has_error then
 						Result := a_input.count + 1
@@ -498,6 +547,7 @@ feature {NONE} -- Markup parsing
 			i: INTEGER
 			name_start: INTEGER
 			l_target: STRING_8
+			l_data: STRING_8
 			l_attributes: XP_ATTRIBUTES
 		do
 			create l_attributes.make
@@ -521,6 +571,18 @@ feature {NONE} -- Markup parsing
 						set_error ("xml declaration must be first")
 						Result := a_input.count + 1
 					else
+						create l_data.make_empty
+						if not same_name_case_insensitive (l_target, "xml") then
+							if i < l_end and then is_xml_space (a_input.item (i)) then
+								i := skip_spaces (a_input, i)
+							end
+							if i <= l_end - 1 then
+								l_data.append (a_input.substring (i, l_end - 1))
+							end
+							emit_default (a_input.substring (a_start_index, l_end + 1))
+							note_token_position (a_start_index, l_end + 2 - a_start_index)
+							handler.on_processing_instruction (l_target, l_data)
+						end
 						Result := l_end + 2
 					end
 				end
@@ -661,6 +723,7 @@ feature {NONE} -- Character data and references
 			until
 				i > a_input.count or has_error or else a_input.item (i) = '<'
 			loop
+				note_position (i)
 				c := a_input.item (i)
 				if has_at (a_input, i, "]]>") then
 					set_error ("CDATA close marker in character data")
@@ -688,9 +751,12 @@ feature {NONE} -- Character data and references
 						set_error ("character data outside document element")
 						Result := a_input.count + 1
 					else
+						emit_default (l_text)
 						Result := i
 					end
 				else
+					emit_default (l_text)
+					note_token_position (a_start_index, l_text.count)
 					emit_text (l_text)
 					Result := i
 				end
@@ -1428,6 +1494,16 @@ feature {NONE} -- Event dispatch
 		do
 			if a_text.count > 0 then
 				handler.on_character_data (a_text)
+			end
+		end
+
+	emit_default (a_text: READABLE_STRING_8)
+			-- Emit raw default-handler text.
+		require
+			text_attached: a_text /= Void
+		do
+			if not a_text.is_empty then
+				handler.on_default (a_text)
 			end
 		end
 
@@ -2215,6 +2291,12 @@ feature {NONE} -- State
 		do
 			has_error := False
 			last_error.wipe_out
+			position_input.wipe_out
+			current_position_index := 0
+			current_line_number := 1
+			current_column_number := 0
+			current_byte_index := -1
+			current_byte_count := 0
 			doctype_name.wipe_out
 			element_stack.wipe_out
 			entity_stack.wipe_out
@@ -2233,6 +2315,107 @@ feature {NONE} -- State
 			one_predefined_entity: attached entity_value ("lt") as l_value and then l_value.same_string ("<")
 		end
 
+	note_position (a_index: INTEGER)
+			-- Record the current parser position as a 1-based input index.
+		local
+			l_index: INTEGER
+		do
+			if not position_input.is_empty or else a_index > 0 then
+				l_index := bounded_position_index (a_index)
+				current_position_index := l_index
+				current_line_number := line_number_at (l_index)
+				current_column_number := column_number_at (l_index)
+				current_byte_index := l_index - 1
+				current_byte_count := 0
+			end
+		ensure
+			line_positive: current_line_number >= 1
+			column_non_negative: current_column_number >= 0
+			byte_count_non_negative: current_byte_count >= 0
+		end
+
+	note_token_position (a_index, a_byte_count: INTEGER)
+			-- Record current parser position and token byte count.
+		require
+			non_negative_byte_count: a_byte_count >= 0
+		do
+			note_position (a_index)
+			current_byte_count := a_byte_count
+		ensure
+			line_positive: current_line_number >= 1
+			column_non_negative: current_column_number >= 0
+			byte_count_set: current_byte_count = a_byte_count
+		end
+
+	bounded_position_index (a_index: INTEGER): INTEGER
+			-- `a_index' clamped to the current normalized input bounds.
+		do
+			if a_index < 1 then
+				Result := 1
+			elseif a_index > position_input.count + 1 then
+				Result := position_input.count + 1
+			else
+				Result := a_index
+			end
+		ensure
+			in_bounds: Result >= 1 and Result <= position_input.count + 1
+		end
+
+	line_number_at (a_index: INTEGER): INTEGER
+			-- 1-based line number before character at `a_index'.
+		require
+			index_in_bounds: a_index >= 1 and a_index <= position_input.count + 1
+		local
+			i: INTEGER
+		do
+			from
+				Result := 1
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_index
+				line_positive: Result >= 1
+			until
+				i >= a_index
+			loop
+				if position_input.item (i) = '%N' then
+					Result := Result + 1
+				end
+				i := i + 1
+			variant
+				a_index - i
+			end
+		ensure
+			line_positive: Result >= 1
+		end
+
+	column_number_at (a_index: INTEGER): INTEGER
+			-- 0-based column number before character at `a_index'.
+		require
+			index_in_bounds: a_index >= 1 and a_index <= position_input.count + 1
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_index
+				column_non_negative: Result >= 0
+			until
+				i >= a_index
+			loop
+				if position_input.item (i) = '%N' then
+					Result := 0
+				else
+					Result := Result + 1
+				end
+				i := i + 1
+			variant
+				a_index - i
+			end
+		ensure
+			column_non_negative: Result >= 0
+		end
+
 	set_error (a_message: READABLE_STRING_8)
 			-- Record first parse error.
 		require
@@ -2243,6 +2426,9 @@ feature {NONE} -- State
 				has_error := True
 				last_error.wipe_out
 				last_error.append (a_message)
+				if current_position_index > 0 then
+					note_position (current_position_index)
+				end
 			end
 		ensure
 			error_set: has_error
@@ -2278,6 +2464,12 @@ feature {NONE} -- State
 
 	doctype_name: STRING_8
 			-- Declared document element name, if present.
+
+	position_input: STRING_8
+			-- Normalized document text used for position reporting.
+
+	current_position_index: INTEGER
+			-- Current 1-based position in `position_input'.
 
 invariant
 	handler_attached: handler /= Void

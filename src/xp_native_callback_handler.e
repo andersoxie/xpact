@@ -6,6 +6,13 @@ class
 
 inherit
 	XP_EVENT_HANDLER
+		redefine
+			on_processing_instruction,
+			on_comment,
+			on_start_cdata_section,
+			on_end_cdata_section,
+			on_default
+		end
 	PLATFORM
 
 create
@@ -34,6 +41,24 @@ feature -- Access
 	character_data_callback: POINTER
 			-- `XML_CharacterDataHandler' callback pointer.
 
+	processing_instruction_callback: POINTER
+			-- `XML_ProcessingInstructionHandler' callback pointer.
+
+	comment_callback: POINTER
+			-- `XML_CommentHandler' callback pointer.
+
+	start_cdata_section_callback: POINTER
+			-- `XML_StartCdataSectionHandler' callback pointer.
+
+	end_cdata_section_callback: POINTER
+			-- `XML_EndCdataSectionHandler' callback pointer.
+
+	default_callback: POINTER
+			-- `XML_DefaultHandler' callback pointer.
+
+	default_expands_entities: BOOLEAN
+			-- Was the default handler registered through the expanding API?
+
 	events: ARRAYED_LIST [STRING_8]
 			-- Eiffel-visible event log used by tests and diagnostics.
 
@@ -47,6 +72,21 @@ feature -- Metrics
 
 	character_data_count: INTEGER
 			-- Number of non-empty character-data events emitted.
+
+	processing_instruction_count: INTEGER
+			-- Number of processing-instruction events emitted.
+
+	comment_count: INTEGER
+			-- Number of comment events emitted.
+
+	start_cdata_section_count: INTEGER
+			-- Number of CDATA start events emitted.
+
+	end_cdata_section_count: INTEGER
+			-- Number of CDATA end events emitted.
+
+	default_count: INTEGER
+			-- Number of default-handler events emitted.
 
 feature -- Element change
 
@@ -76,6 +116,42 @@ feature -- Element change
 			handler_set: character_data_callback = a_handler
 		end
 
+	set_processing_instruction_handler (a_handler: POINTER)
+			-- Set native processing-instruction callback.
+		do
+			processing_instruction_callback := a_handler
+		ensure
+			handler_set: processing_instruction_callback = a_handler
+		end
+
+	set_comment_handler (a_handler: POINTER)
+			-- Set native comment callback.
+		do
+			comment_callback := a_handler
+		ensure
+			handler_set: comment_callback = a_handler
+		end
+
+	set_cdata_section_handlers (a_start, a_end: POINTER)
+			-- Set native CDATA section callbacks.
+		do
+			start_cdata_section_callback := a_start
+			end_cdata_section_callback := a_end
+		ensure
+			start_set: start_cdata_section_callback = a_start
+			end_set: end_cdata_section_callback = a_end
+		end
+
+	set_default_handler (a_handler: POINTER; a_expand: BOOLEAN)
+			-- Set native default callback.
+		do
+			default_callback := a_handler
+			default_expands_entities := a_expand
+		ensure
+			handler_set: default_callback = a_handler
+			expand_set: default_expands_entities = a_expand
+		end
+
 	reset_events
 			-- Clear observable event state.
 		do
@@ -83,11 +159,21 @@ feature -- Element change
 			start_element_count := 0
 			end_element_count := 0
 			character_data_count := 0
+			processing_instruction_count := 0
+			comment_count := 0
+			start_cdata_section_count := 0
+			end_cdata_section_count := 0
+			default_count := 0
 		ensure
 			no_events: events.count = 0
 			no_start_events: start_element_count = 0
 			no_end_events: end_element_count = 0
 			no_text_events: character_data_count = 0
+			no_pi_events: processing_instruction_count = 0
+			no_comment_events: comment_count = 0
+			no_start_cdata_events: start_cdata_section_count = 0
+			no_end_cdata_events: end_cdata_section_count = 0
+			no_default_events: default_count = 0
 		end
 
 feature -- Events
@@ -169,6 +255,69 @@ feature -- Events
 			end
 		end
 
+	on_processing_instruction (a_target, a_data: READABLE_STRING_8)
+		local
+			l_event: STRING_8
+			l_target: C_STRING
+			l_data: C_STRING
+		do
+			processing_instruction_count := processing_instruction_count + 1
+			create l_event.make_from_string ("pi:")
+			l_event.append (a_target)
+			l_event.append_character (':')
+			l_event.append (a_data)
+			events.extend (l_event)
+			if processing_instruction_callback /= default_pointer then
+				create l_target.make (a_target)
+				create l_data.make (a_data)
+				call_processing_instruction_callback (processing_instruction_callback, user_data, l_target.item, l_data.item)
+			end
+		end
+
+	on_comment (a_text: READABLE_STRING_8)
+		local
+			l_event: STRING_8
+			l_text: C_STRING
+		do
+			comment_count := comment_count + 1
+			create l_event.make_from_string ("comment:")
+			l_event.append (a_text)
+			events.extend (l_event)
+			if comment_callback /= default_pointer then
+				create l_text.make (a_text)
+				call_comment_callback (comment_callback, user_data, l_text.item)
+			end
+		end
+
+	on_start_cdata_section
+		do
+			start_cdata_section_count := start_cdata_section_count + 1
+			events.extend ("start-cdata")
+			if start_cdata_section_callback /= default_pointer then
+				call_cdata_section_callback (start_cdata_section_callback, user_data)
+			end
+		end
+
+	on_end_cdata_section
+		do
+			end_cdata_section_count := end_cdata_section_count + 1
+			events.extend ("end-cdata")
+			if end_cdata_section_callback /= default_pointer then
+				call_cdata_section_callback (end_cdata_section_callback, user_data)
+			end
+		end
+
+	on_default (a_text: READABLE_STRING_8)
+		local
+			l_text: C_STRING
+		do
+			if default_callback /= default_pointer and then not a_text.is_empty then
+				default_count := default_count + 1
+				create l_text.make (a_text)
+				call_default_callback (default_callback, user_data, l_text.item, a_text.count)
+			end
+		end
+
 feature {NONE} -- Native callback calls
 
 	call_start_element_callback (a_callback, a_user_data, a_name, a_attributes: POINTER)
@@ -206,10 +355,60 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_text, (int) $a_length);"
 		end
 
+	call_processing_instruction_callback (a_callback, a_user_data, a_target, a_data: POINTER)
+			-- Invoke native `XML_ProcessingInstructionHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			target_attached: a_target /= default_pointer
+			data_attached: a_data /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_target, (const char *) $a_data);"
+		end
+
+	call_comment_callback (a_callback, a_user_data, a_text: POINTER)
+			-- Invoke native `XML_CommentHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			text_attached: a_text /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_text);"
+		end
+
+	call_cdata_section_callback (a_callback, a_user_data: POINTER)
+			-- Invoke native CDATA start/end handler.
+		require
+			callback_attached: a_callback /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *)) $a_callback) ((void *) $a_user_data);"
+		end
+
+	call_default_callback (a_callback, a_user_data, a_text: POINTER; a_length: INTEGER)
+			-- Invoke native `XML_DefaultHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			text_attached: a_text /= default_pointer
+			non_negative_length: a_length >= 0
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_text, (int) $a_length);"
+		end
+
 invariant
 	events_attached: events /= Void
 	non_negative_start_count: start_element_count >= 0
 	non_negative_end_count: end_element_count >= 0
 	non_negative_text_count: character_data_count >= 0
+	non_negative_pi_count: processing_instruction_count >= 0
+	non_negative_comment_count: comment_count >= 0
+	non_negative_start_cdata_count: start_cdata_section_count >= 0
+	non_negative_end_cdata_count: end_cdata_section_count >= 0
+	non_negative_default_count: default_count >= 0
 
 end
