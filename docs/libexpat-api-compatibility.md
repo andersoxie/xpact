@@ -38,6 +38,11 @@ contract-tested manifest of the public names.
 - `tests/xpact_native_runtime.ecf` plus
   `scripts/run_native_runtime_smoke.ps1` build the C bridge objects and verify
   `XML_Parse` entering through the C ABI reaches the Eiffel parser.
+- `tests/xpact_native_library.ecf`, `native/xpact_eiffel_dllmain.c`, and
+  `scripts/build_native_eiffel.ps1` package that path as
+  `build/native-eiffel/xpact.dll` on Windows, with
+  `tests/native/xpact_eiffel_dll_smoke.c` verifying an external C caller can
+  link against the DLL import library and parse through the Eiffel core.
 - The upstream libexpat C-suite adapter can configure, build, and run through
   `scripts/run_libexpat_adapter.ps1 -Mode NativeSuite` with an explicit
   expected-failure list in `adapters/libexpat/expected-failures.tsv`.
@@ -51,8 +56,11 @@ and error reporting.
 
 ## Still Required
 
-- Package the verified Eiffel runtime bridge path as the standalone native
-  DLL/SO export artifact.
+- Package the verified Eiffel runtime bridge path as the Linux/WSL
+  `libxpact.so` export artifact, or document the first native-library release
+  as Windows-only.
+- Replace the native C ABI benchmark status row with measured throughput from
+  the Eiffel-backed native library.
 - Replace the temporary suite-wide expected failure with specific green/red
   parity rows as the Eiffel bridge and API behavior land.
 - Exact byte, line, and column accounting for Expat-compatible position APIs.

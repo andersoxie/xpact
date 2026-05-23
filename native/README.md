@@ -20,12 +20,21 @@ installer object with the Eiffel runtime and registers a populated
 `XP_NATIVE_BRIDGE_EXPORT` is the Eiffel-side installer/export object that passes
 its `$feature` routine addresses into that trampoline.
 
-Until the Eiffel bridge is wired in, `XML_Parse` returns an explicit
-`XML_ERROR_NOT_STARTED` failure rather than falling back to a C parser. The
-runtime smoke target now proves the end-to-end path in an Eiffel executable,
-but the standalone DLL/SO build still remains C-only. The next native work
-should package the verified runtime bridge path as the standalone native export
-artifact.
+The bridge-only build from `scripts/build_native.ps1` still returns an explicit
+`XML_ERROR_NOT_STARTED` failure rather than falling back to a C parser when no
+Eiffel bridge has been installed.
+
+`scripts/build_native_eiffel.ps1` packages the Eiffel-backed Windows native
+library. It compiles the C export layer and Eiffel runtime trampoline, finalizes
+`tests/xpact_native_library.ecf`, links the finalized Eiffel objects with
+`xpact_eiffel_dllmain.c`, and produces `build/native-eiffel/xpact.dll` plus
+`build/native-eiffel/xpact.lib`. The script then builds
+`tests/native/xpact_eiffel_dll_smoke.c` as an external C caller and verifies
+that `XML_Parse` reaches the Eiffel parser through the public `include/xpact.h`
+ABI.
+
+The next native packaging work is the equivalent Linux/WSL `libxpact.so` path
+and then the native xpact-vs-libexpat benchmark through the same C ABI.
 
 Run the native ABI smoke tests with:
 
@@ -37,4 +46,10 @@ Run the Eiffel-runtime bridge smoke test with:
 
 ```powershell
 .\scripts\run_native_runtime_smoke.ps1
+```
+
+Build and smoke the Eiffel-backed Windows DLL with:
+
+```powershell
+.\scripts\build_native_eiffel.ps1
 ```

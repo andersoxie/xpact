@@ -55,9 +55,11 @@ Implemented now:
   - `src/xp_native_callback_handler.e` adapts Eiffel parser events to Expat-style callback slots;
   - `src/xp_native_bridge_installer.e` owns Eiffel parser handles for the runtime bridge, using Eiffel object ids to keep native handles opaque while resolving them back to `XP_NATIVE_PARSER`;
   - `src/xp_native_bridge_export.e` installs the runtime bridge from Eiffel by passing `$feature` addresses to `XPACT_RegisterEiffelRuntimeBridgePointers`;
+  - `src/xp_native_library_root.e` retains the Eiffel bridge object and installs it during native-library startup;
   - `tests/xpact_native_runtime.ecf` and `scripts/run_native_runtime_smoke.ps1` verify the first end-to-end path where `XML_Parse` enters through the C ABI and reaches the Eiffel parser;
   - `scripts/build_native.ps1` builds `build/native/xpact.dll`, `build/native/xpact.lib`, and `build/native/libxpact.so`;
-  - until the standalone DLL/SO build is changed to include the Eiffel runtime export target, parse calls through the standalone native DLL/SO fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
+  - `native/xpact_eiffel_dllmain.c`, `tests/xpact_native_library.ecf`, and `scripts/build_native_eiffel.ps1` package the verified bridge path as `build/native-eiffel/xpact.dll` on Windows;
+  - `tests/native/xpact_eiffel_dll_smoke.c` links as an external C caller against that DLL import library and verifies `XML_Parse` reaches the Eiffel parser.
 - ABI/link tests for C callers against the native export layer:
   - `tests/native/xpact_abi_smoke.c` links against the public `include/xpact.h` surface only;
   - `tests/native/xpact_bridge_smoke.c` links against the private bridge header and verifies forwarding to a fake Eiffel bridge;
@@ -66,7 +68,7 @@ Implemented now:
 
 Still required before a credible public release:
 
-- Package the verified Eiffel runtime bridge path as the standalone native DLL/SO export artifact.
+- Package the verified Eiffel runtime bridge path as the Linux/WSL `libxpact.so` export artifact, or document the initial native-library release as Windows-only.
 - Replace the native C ABI benchmark status row with measured throughput once the Eiffel bridge is connected.
 
 ## External Entity Policy
@@ -125,6 +127,12 @@ Build and run the native runtime smoke test where the C ABI calls into Eiffel:
 
 ```powershell
 .\scripts\run_native_runtime_smoke.ps1
+```
+
+Build and run the Windows native DLL backed by the Eiffel parser:
+
+```powershell
+.\scripts\build_native_eiffel.ps1
 ```
 
 Extract an upstream libexpat test manifest and run fixture smoke parsing:

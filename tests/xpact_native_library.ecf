@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-20-0 http://www.eiffel.com/developers/xml/configuration-1-20-0.xsd" name="xpact_native_library" uuid="BCBFBC1D-A80D-457D-A938-E7BFAC5A52A8">
+	<target name="xpact_native_library">
+		<root class="XP_NATIVE_LIBRARY_ROOT" feature="make"/>
+		<option warning="true" is_obsolete_routine_type="true">
+			<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+		</option>
+		<setting name="console_application" value="false"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="none"/>
+		</capability>
+		<external_include location="..\..\..\..\include\"/>
+		<external_include location="..\..\..\..\native\"/>
+		<external_object location="..\..\..\build\native-eiffel\xpact_native.obj"/>
+		<external_object location="..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj"/>
+		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<cluster name="src" location="..\src\"/>
+	</target>
+</system>
