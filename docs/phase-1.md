@@ -54,8 +54,10 @@ Implemented now:
   - `src/xp_native_parser.e` owns the Eiffel parser object that the native bridge will call;
   - `src/xp_native_callback_handler.e` adapts Eiffel parser events to Expat-style callback slots;
   - `src/xp_native_bridge_installer.e` owns Eiffel parser handles for the runtime bridge, using Eiffel object ids to keep native handles opaque while resolving them back to `XP_NATIVE_PARSER`;
+  - `src/xp_native_bridge_export.e` installs the runtime bridge from Eiffel by passing `$feature` addresses to `XPACT_RegisterEiffelRuntimeBridgePointers`;
+  - `tests/xpact_native_runtime.ecf` and `scripts/run_native_runtime_smoke.ps1` verify the first end-to-end path where `XML_Parse` enters through the C ABI and reaches the Eiffel parser;
   - `scripts/build_native.ps1` builds `build/native/xpact.dll`, `build/native/xpact.lib`, and `build/native/libxpact.so`;
-  - until an Eiffel shared-library/export target links and invokes the runtime trampoline, parse calls through the standalone native DLL/SO fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
+  - until the standalone DLL/SO build is changed to include the Eiffel runtime export target, parse calls through the standalone native DLL/SO fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
 - ABI/link tests for C callers against the native export layer:
   - `tests/native/xpact_abi_smoke.c` links against the public `include/xpact.h` surface only;
   - `tests/native/xpact_bridge_smoke.c` links against the private bridge header and verifies forwarding to a fake Eiffel bridge;
@@ -64,7 +66,7 @@ Implemented now:
 
 Still required before a credible public release:
 
-- Add an Eiffel shared-library/export target that compiles the runtime trampoline and invokes `XPACT_RegisterEiffelRuntimeBridge`.
+- Package the verified Eiffel runtime bridge path as the standalone native DLL/SO export artifact.
 - Replace the native C ABI benchmark status row with measured throughput once the Eiffel bridge is connected.
 
 ## External Entity Policy
@@ -117,6 +119,12 @@ Build and run the native ABI/link smoke tests:
 
 ```powershell
 .\scripts\run_native_abi_tests.ps1 -Target All
+```
+
+Build and run the native runtime smoke test where the C ABI calls into Eiffel:
+
+```powershell
+.\scripts\run_native_runtime_smoke.ps1
 ```
 
 Extract an upstream libexpat test manifest and run fixture smoke parsing:

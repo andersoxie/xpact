@@ -99,6 +99,33 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelParsingStatusRoutine get_parsing_status
 );
 
+XPACT_NATIVE_API XML_Bool XMLCALL
+XPACT_RegisterEiffelRuntimeBridgePointers(
+	 EIF_OBJECT installer,
+	 EIF_POINTER parser_create,
+	 EIF_POINTER parser_reset,
+	 EIF_POINTER parser_free,
+	 EIF_POINTER set_user_data,
+	 EIF_POINTER set_element_handler,
+	 EIF_POINTER set_character_data_handler,
+	 EIF_POINTER set_processing_instruction_handler,
+	 EIF_POINTER set_comment_handler,
+	 EIF_POINTER set_cdata_section_handler,
+	 EIF_POINTER set_default_handler,
+	 EIF_POINTER set_doctype_decl_handler,
+	 EIF_POINTER set_external_entity_ref_handler,
+	 EIF_POINTER set_external_entity_ref_handler_arg,
+	 EIF_POINTER parse,
+	 EIF_POINTER get_buffer,
+	 EIF_POINTER parse_buffer,
+	 EIF_POINTER get_error_code,
+	 EIF_POINTER get_current_line_number,
+	 EIF_POINTER get_current_column_number,
+	 EIF_POINTER get_current_byte_index,
+	 EIF_POINTER get_current_byte_count,
+	 EIF_POINTER get_parsing_status
+);
+
 XPACT_NATIVE_API void XMLCALL
 XPACT_UnregisterEiffelRuntimeBridge(void);
 

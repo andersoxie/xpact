@@ -17,15 +17,24 @@ supports both direct `XML_Parse` bytes and `XML_GetBuffer` / `XML_ParseBuffer`
 style input. `xpact_eiffel_runtime_bridge.c` is that trampoline; it adopts the
 installer object with the Eiffel runtime and registers a populated
 `XPACT_EiffelBridge` table through `XPACT_SetEiffelBridge`.
+`XP_NATIVE_BRIDGE_EXPORT` is the Eiffel-side installer/export object that passes
+its `$feature` routine addresses into that trampoline.
 
 Until the Eiffel bridge is wired in, `XML_Parse` returns an explicit
 `XML_ERROR_NOT_STARTED` failure rather than falling back to a C parser. The
-trampoline is intentionally not part of the standalone C-only native build yet;
-the next native work should add an Eiffel shared-library/export target that
-links it and calls `XPACT_RegisterEiffelRuntimeBridge`.
+runtime smoke target now proves the end-to-end path in an Eiffel executable,
+but the standalone DLL/SO build still remains C-only. The next native work
+should package the verified runtime bridge path as the standalone native export
+artifact.
 
 Run the native ABI smoke tests with:
 
 ```powershell
 .\scripts\run_native_abi_tests.ps1 -Target All
+```
+
+Run the Eiffel-runtime bridge smoke test with:
+
+```powershell
+.\scripts\run_native_runtime_smoke.ps1
 ```
