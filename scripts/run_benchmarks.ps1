@@ -6,7 +6,8 @@ param(
 	[ValidateSet("Finalized", "Workbench")]
 	[string] $EiffelBuild = "Finalized",
 	[switch] $SkipBuild,
-	[switch] $SkipWslC
+	[switch] $SkipWslC,
+	[switch] $SkipNativeXpactC
 )
 
 Set-StrictMode -Version Latest
@@ -82,6 +83,38 @@ function Get-MedianRow {
 function Format-MarkdownRow {
 	param([object] $Row)
 	"| $($Row.Benchmark) | $($Row.Engine) | $($Row.Version) | $($Row.Iterations) | $($Row.DocumentBytes) | $($Row.ElapsedMs) | $($Row.DocsPerSecond) | $($Row.MiBPerSecond) | $($Row.Notes) |"
+}
+
+function New-StatusRow {
+	param(
+		[string] $Name,
+		[string] $Engine,
+		[string] $Version,
+		[int] $IterationCount,
+		[int] $DocumentBytes,
+		[string] $Notes
+	)
+	[pscustomobject]@{
+		Benchmark = $Name
+		Engine = $Engine
+		Version = $Version
+		Repetition = 1
+		Iterations = $IterationCount
+		DocumentBytes = $DocumentBytes
+		ElapsedMs = "not measured"
+		DocsPerSecond = "not measured"
+		MiBPerSecond = "not measured"
+		Notes = $Notes
+	}
+}
+
+function Add-CompilerNote {
+	param([string] $Note)
+	if ([string]::IsNullOrWhiteSpace($script:CompilerNote)) {
+		$script:CompilerNote = $Note
+	} else {
+		$script:CompilerNote = "$script:CompilerNote $Note"
+	}
 }
 
 function ConvertTo-WslPath {
@@ -205,15 +238,83 @@ if (-not $SkipWslC -and $null -ne $Wsl) {
 				-DocumentBytes $DocumentBytes `
 				-Notes "$WslGccVersion; parser created per document; no callbacks; launched through wsl.exe"))
 		} else {
-			$CompilerNote = "WSL2 gcc was visible, but compiling the direct C libexpat benchmark failed."
+			Add-CompilerNote "WSL2 gcc was visible, but compiling the direct C libexpat benchmark failed."
+		}
+
+		if (-not $SkipNativeXpactC) {
+			$NativeBuildOutput = & powershell -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "build_native.ps1") -Target Wsl 2>&1
+			if ($LASTEXITCODE -eq 0) {
+				$XpactNativeSourceWsl = ConvertTo-WslPath (Join-Path $RepoRoot "benchmarks\xpact_native_c_benchmark.c") $Wsl.Source
+				$XpactNativeExeWin = Join-Path $OutputRoot "xpact_native_c_benchmark"
+				$XpactNativeExeWsl = ConvertTo-WslPath $XpactNativeExeWin $Wsl.Source
+				$XpactCompileCommand = "cd '$RepoRootWsl' && gcc -O2 -Iinclude '$XpactNativeSourceWsl' build/native/libxpact.so -o '$XpactNativeExeWsl'"
+				& $Wsl.Source -- bash -lc $XpactCompileCommand
+				if ($LASTEXITCODE -eq 0) {
+					$XpactNativeVersion = (& $Wsl.Source -- bash -lc "cd '$RepoRootWsl' && LD_LIBRARY_PATH=build/native '$XpactNativeExeWsl' --version" | Out-String).Trim()
+					$ProbeCommand = "cd '$RepoRootWsl' && LD_LIBRARY_PATH=build/native '$XpactNativeExeWsl' --iterations 1 --mode callbacks"
+					$PreviousErrorActionPreference = $ErrorActionPreference
+					$ErrorActionPreference = "Continue"
+					try {
+						$ProbeOutput = & $Wsl.Source -- bash -lc $ProbeCommand 2>&1
+						$ProbeExitCode = $LASTEXITCODE
+					} finally {
+						$ErrorActionPreference = $PreviousErrorActionPreference
+					}
+					if ($ProbeExitCode -eq 77) {
+						$AllRows.Add((New-StatusRow `
+							-Name "catalog-100-items" `
+							-Engine "xpact native C ABI via WSL2 gcc" `
+							-Version $XpactNativeVersion `
+							-IterationCount $Iterations `
+							-DocumentBytes $DocumentBytes `
+							-Notes "Compiled and linked through include/xpact.h; XML_Parse reports XML_ERROR_NOT_STARTED because the Eiffel bridge is not connected yet"))
+					} elseif ($ProbeExitCode -eq 0) {
+						$NativeRunCallbacks = "cd '$RepoRootWsl' && LD_LIBRARY_PATH=build/native '$XpactNativeExeWsl' --iterations $Iterations --mode callbacks"
+						$NativeRunTokenizer = "cd '$RepoRootWsl' && LD_LIBRARY_PATH=build/native '$XpactNativeExeWsl' --iterations $Iterations --mode tokenizer"
+						$AllRows.AddRange((Invoke-TimedCommand `
+							-Name "catalog-100-items" `
+							-Executable $Wsl.Source `
+							-Arguments @("--", "bash", "-lc", $NativeRunCallbacks) `
+							-Engine "xpact native C ABI callbacks via WSL2 gcc" `
+							-Version $XpactNativeVersion `
+							-IterationCount $Iterations `
+							-DocumentBytes $DocumentBytes `
+							-Notes "$WslGccVersion; parser created per document through include/xpact.h; C callbacks; launched through wsl.exe"))
+						$AllRows.AddRange((Invoke-TimedCommand `
+							-Name "catalog-100-items" `
+							-Executable $Wsl.Source `
+							-Arguments @("--", "bash", "-lc", $NativeRunTokenizer) `
+							-Engine "xpact native C ABI tokenizer via WSL2 gcc" `
+							-Version $XpactNativeVersion `
+							-IterationCount $Iterations `
+							-DocumentBytes $DocumentBytes `
+							-Notes "$WslGccVersion; parser created per document through include/xpact.h; no callbacks; launched through wsl.exe"))
+					} else {
+						Add-CompilerNote "xpact native C ABI benchmark compiled, but the probe failed: $(($ProbeOutput | Out-String).Trim())"
+					}
+				} else {
+					Add-CompilerNote "WSL2 gcc was visible, but compiling the xpact native C ABI benchmark failed."
+				}
+			} else {
+				Add-CompilerNote "xpact native C ABI benchmark skipped: WSL native build failed. $(($NativeBuildOutput | Out-String).Trim())"
+			}
 		}
 	} else {
-		$CompilerNote = "No direct C libexpat benchmark was run: WSL2 gcc was not visible to this process."
+		Add-CompilerNote "No direct C libexpat benchmark was run: WSL2 gcc was not visible to this process."
+		if (-not $SkipNativeXpactC) {
+			Add-CompilerNote "No xpact native C ABI benchmark was run: WSL2 gcc was not visible to this process."
+		}
 	}
 } elseif ($SkipWslC) {
-	$CompilerNote = "Direct C libexpat benchmark skipped by -SkipWslC."
+	Add-CompilerNote "Direct C libexpat benchmark skipped by -SkipWslC."
+	if (-not $SkipNativeXpactC) {
+		Add-CompilerNote "xpact native C ABI benchmark skipped because WSL C benchmarks were skipped."
+	}
 } else {
-	$CompilerNote = "No direct C libexpat benchmark was run: wsl.exe was not on PATH."
+	Add-CompilerNote "No direct C libexpat benchmark was run: wsl.exe was not on PATH."
+	if (-not $SkipNativeXpactC) {
+		Add-CompilerNote "No xpact native C ABI benchmark was run: wsl.exe was not on PATH."
+	}
 }
 
 $TsvPath = Join-Path $OutputRoot "benchmark-results.tsv"
@@ -260,6 +361,8 @@ $Markdown.Add("")
 $Markdown.Add("Raw run data is written to ``build\benchmarks\benchmark-results.tsv``.")
 $Markdown.Add("")
 $Markdown.Add("Interpretation: the ``pyexpat`` rows are same-machine Expat baselines through CPython's binding. The WSL2 C rows compile and link against Ubuntu libexpat directly, but elapsed times are measured from Windows at the process level and include ``wsl.exe`` launch overhead, so they are conservative for libexpat core throughput.")
+$Markdown.Add("")
+$Markdown.Add("Native ABI note: the ``xpact native C ABI`` row is generated from a C executable linked against ``include/xpact.h`` and ``build\native\libxpact.so``. Until the Eiffel bridge is connected, it is reported as ``not measured`` when ``XML_Parse`` returns ``XML_ERROR_NOT_STARTED``.")
 
 $MarkdownPath = Join-Path $RepoRoot "docs\benchmarks.md"
 $Markdown | Set-Content -LiteralPath $MarkdownPath -Encoding UTF8

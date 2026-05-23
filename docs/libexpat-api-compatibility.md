@@ -23,6 +23,9 @@ contract-tested manifest of the public names.
 - Native ABI/link smoke tests in `tests/native`, built by
   `scripts/run_native_abi_tests.ps1`, covering public C callers and bridge
   forwarding.
+- Native C ABI benchmark wiring in `benchmarks/xpact_native_c_benchmark.c` and
+  `scripts/run_benchmarks.ps1`; it reports `not measured` while the bridge-only
+  native layer returns `XML_ERROR_NOT_STARTED`.
 - The upstream libexpat C-suite adapter can configure, build, and run through
   `scripts/run_libexpat_adapter.ps1 -Mode NativeSuite` with an explicit
   expected-failure list in `adapters/libexpat/expected-failures.tsv`.

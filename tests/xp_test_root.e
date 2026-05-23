@@ -437,15 +437,19 @@ feature {NONE} -- Tests
 			assert ("benchmark script runs xpact benchmark", l_script.has_substring ("xpact_benchmarks.exe"))
 			assert ("benchmark script records pyexpat baseline", l_script.has_substring ("pyexpat") and l_script.has_substring ("libexpat_py_benchmark.py"))
 			assert ("benchmark script can record WSL C baseline", l_script.has_substring ("libexpat_c_benchmark.c") and l_script.has_substring ("WSL2 gcc"))
+			assert ("benchmark script can record xpact native C ABI", l_script.has_substring ("xpact_native_c_benchmark.c"))
+			assert ("benchmark script reports unconnected Eiffel bridge", l_script.has_substring ("XML_ERROR_NOT_STARTED"))
 			assert ("benchmark script writes docs table", l_script.has_substring ("docs\benchmarks.md"))
 			l_python := file_text ("benchmarks\libexpat_py_benchmark.py")
 			assert ("libexpat Python benchmark present", l_python.has_substring ("xml.parsers") and l_python.has_substring ("EXPAT_VERSION"))
 			assert ("libexpat C benchmark present", file_text ("benchmarks\libexpat_c_benchmark.c").has_substring ("XML_ExpatVersion"))
+			assert ("xpact native C benchmark present", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("XML_ERROR_NOT_STARTED"))
 			l_table := file_text ("docs\benchmarks.md")
 			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
 			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))
 			assert ("published benchmark includes libexpat row", l_table.has_substring ("libexpat via CPython pyexpat"))
 			assert ("published benchmark includes WSL C libexpat row", l_table.has_substring ("libexpat C callbacks via WSL2 gcc"))
+			assert ("published benchmark includes native C ABI status", l_table.has_substring ("xpact native C ABI"))
 		end
 
 	test_native_export_layer_files
