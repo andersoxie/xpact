@@ -1,28 +1,28 @@
 ﻿# Benchmarks
 
-Generated: 2026-05-23 06:06:30 +02:00
+Generated: 2026-05-23 07:41:40 +02:00
 
-Machine: AMD Ryzen Threadripper 3970X 32-Core Processor ; 63.9 GiB RAM; Microsoft Windows 11 Pro
+Machine: AMD64 Family 23 Model 49 Stepping 0, AuthenticAMD; Windows_NT
 
 Runtime context:
 
 - Eiffel target: `benchmarks\xpact_benchmarks.ecf` built as `Finalized`.
 - Python: `Python 3.14.0`.
 - libexpat baseline available on this machine through CPython `pyexpat`: `expat_2.7.3`.
+- No direct C libexpat benchmark was run: WSL2 gcc was not visible to this process. No WSL xpact native C ABI benchmark was run: WSL2 gcc was not visible to this process.
 
 Workload: parse the same UTF-8 catalog document containing 100 `<item>` elements. Each table row reports the median of 3 process-level runs.
 
 | Benchmark | Engine | Version | Iterations | Bytes/doc | Median elapsed ms | Docs/sec | MiB/sec | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 250 | 2611 | 112.569 | 2220.858 | 5.53 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
-| catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 250 | 2611 | 104.902 | 2383.17 | 5.934 | Parser created per document; Python callbacks |
-| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 250 | 2611 | 86.846 | 2878.652 | 7.168 | Parser created per document; no callbacks |
-| catalog-100-items | libexpat C callbacks via WSL2 gcc | expat_2.2.9 | 250 | 2611 | 134.633 | 1856.897 | 4.624 | gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0; parser created per document; C callbacks; launched through wsl.exe |
-| catalog-100-items | libexpat C tokenizer via WSL2 gcc | expat_2.2.9 | 250 | 2611 | 138.4 | 1806.362 | 4.498 | gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0; parser created per document; no callbacks; launched through wsl.exe |
-| catalog-100-items | xpact native C ABI via WSL2 gcc | expat_2.8.1-xpact-eiffel-bridge | 250 | 2611 | not measured | not measured | not measured | Compiled and linked through include/xpact.h; XML_Parse reports XML_ERROR_NOT_STARTED because the Eiffel bridge is not connected yet |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1000 | 2611 | 454.971 | 2197.941 | 5.473 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
+| catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 1000 | 2611 | 179.743 | 5563.505 | 13.853 | Parser created per document; Python callbacks |
+| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1000 | 2611 | 106.727 | 9369.709 | 23.331 | Parser created per document; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 1865.28 | 536.112 | 1.335 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 1572.192 | 636.055 | 1.584 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks |
 
 Raw run data is written to `build\benchmarks\benchmark-results.tsv`.
 
-Interpretation: the `pyexpat` rows are same-machine Expat baselines through CPython's binding. The WSL2 C rows compile and link against Ubuntu libexpat directly, but elapsed times are measured from Windows at the process level and include `wsl.exe` launch overhead, so they are conservative for libexpat core throughput.
+Interpretation: the `pyexpat` rows are same-machine Expat baselines through CPython's binding. When present, WSL2 C rows compile and link against Ubuntu libexpat directly, but elapsed times are measured from Windows at the process level and include `wsl.exe` launch overhead, so they are conservative for libexpat core throughput.
 
-Native ABI note: the `xpact native C ABI` row is generated from a C executable linked against `include/xpact.h` and `build\native\libxpact.so`. Until the Eiffel bridge is connected, it is reported as `not measured` when `XML_Parse` returns `XML_ERROR_NOT_STARTED`.
+Native ABI note: the Windows `xpact native C ABI` rows are generated from a C executable linked against `include/xpact.h` and `build\native-eiffel\xpact.lib` and run against the Eiffel-backed `build\native-eiffel\xpact.dll`. Any WSL `xpact native C ABI` status row still targets the older bridge-only `build\native\libxpact.so` path and remains `not measured` until the Linux/WSL Eiffel-backed shared object is packaged.

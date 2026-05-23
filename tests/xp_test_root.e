@@ -526,7 +526,8 @@ feature {NONE} -- Tests
 			assert ("benchmark script records pyexpat baseline", l_script.has_substring ("pyexpat") and l_script.has_substring ("libexpat_py_benchmark.py"))
 			assert ("benchmark script can record WSL C baseline", l_script.has_substring ("libexpat_c_benchmark.c") and l_script.has_substring ("WSL2 gcc"))
 			assert ("benchmark script can record xpact native C ABI", l_script.has_substring ("xpact_native_c_benchmark.c"))
-			assert ("benchmark script reports unconnected Eiffel bridge", l_script.has_substring ("XML_ERROR_NOT_STARTED"))
+			assert ("benchmark script can record Windows Eiffel-backed native DLL", l_script.has_substring ("build_native_eiffel.ps1") and l_script.has_substring ("Windows MSVC DLL"))
+			assert ("benchmark script distinguishes bridge-only WSL path", l_script.has_substring ("XML_ERROR_NOT_STARTED") and l_script.has_substring ("build\native\libxpact.so"))
 			assert ("benchmark script writes docs table", l_script.has_substring ("docs\benchmarks.md"))
 			l_python := file_text ("benchmarks\libexpat_py_benchmark.py")
 			assert ("libexpat Python benchmark present", l_python.has_substring ("xml.parsers") and l_python.has_substring ("EXPAT_VERSION"))
@@ -536,8 +537,8 @@ feature {NONE} -- Tests
 			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
 			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))
 			assert ("published benchmark includes libexpat row", l_table.has_substring ("libexpat via CPython pyexpat"))
-			assert ("published benchmark includes WSL C libexpat row", l_table.has_substring ("libexpat C callbacks via WSL2 gcc"))
-			assert ("published benchmark includes native C ABI status", l_table.has_substring ("xpact native C ABI"))
+			assert ("published benchmark documents optional WSL C rows", l_table.has_substring ("When present, WSL2 C rows"))
+			assert ("published benchmark includes Windows native C ABI rows", l_table.has_substring ("xpact native C ABI callbacks via Windows MSVC DLL"))
 		end
 
 	test_native_export_layer_files

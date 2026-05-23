@@ -43,6 +43,11 @@ under `dist/`. The archive contains `bin/xpact.dll`, `lib/xpact.lib`,
 `include/xpact.h`, Windows release notes, checksum rows, and the C smoke source
 used to verify a consumer link.
 
+`scripts/run_benchmarks.ps1` also measures that Windows DLL through the public
+C ABI. It compiles `benchmarks/xpact_native_c_benchmark.c` with MSVC, links
+against `build/native-eiffel/xpact.lib`, runs with `build/native-eiffel` on
+`PATH`, and publishes the measured rows in `docs/benchmarks.md`.
+
 Run the native ABI smoke tests with:
 
 ```powershell

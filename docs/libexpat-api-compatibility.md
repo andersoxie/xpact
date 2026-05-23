@@ -28,8 +28,10 @@ contract-tested manifest of the public names.
   `scripts/run_native_abi_tests.ps1`, covering public C callers and bridge
   forwarding.
 - Native C ABI benchmark wiring in `benchmarks/xpact_native_c_benchmark.c` and
-  `scripts/run_benchmarks.ps1`; it reports `not measured` while the bridge-only
-  native layer returns `XML_ERROR_NOT_STARTED`.
+  `scripts/run_benchmarks.ps1`; the Windows path links with
+  `build/native-eiffel/xpact.lib` and runs against the Eiffel-backed
+  `build/native-eiffel/xpact.dll`, while the older WSL bridge-only shared
+  object path remains separate until Linux/WSL packaging exists.
 - Eiffel-side bridge classes, `XP_NATIVE_PARSER`,
   `XP_NATIVE_CALLBACK_HANDLER`, `XP_NATIVE_BRIDGE_INSTALLER`, and
   `XP_NATIVE_BRIDGE_EXPORT`, that drive the Eiffel parser, adapt events to
@@ -59,8 +61,6 @@ and error reporting.
 
 ## Still Required
 
-- Replace the native C ABI benchmark status row with measured throughput from
-  the Eiffel-backed native library.
 - Replace the temporary suite-wide expected failure with specific green/red
   parity rows as the Eiffel bridge and API behavior land.
 - Exact byte, line, and column accounting for Expat-compatible position APIs.
