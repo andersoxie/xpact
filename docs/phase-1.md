@@ -59,17 +59,25 @@ Implemented now:
   - `tests/xpact_native_runtime.ecf` and `scripts/run_native_runtime_smoke.ps1` verify the first end-to-end path where `XML_Parse` enters through the C ABI and reaches the Eiffel parser;
   - `scripts/build_native.ps1` builds `build/native/xpact.dll`, `build/native/xpact.lib`, and `build/native/libxpact.so`;
   - `native/xpact_eiffel_dllmain.c`, `tests/xpact_native_library.ecf`, and `scripts/build_native_eiffel.ps1` package the verified bridge path as `build/native-eiffel/xpact.dll` on Windows;
-  - `tests/native/xpact_eiffel_dll_smoke.c` links as an external C caller against that DLL import library and verifies `XML_Parse` reaches the Eiffel parser.
+  - `tests/native/xpact_eiffel_dll_smoke.c` links as an external C caller against that DLL import library and verifies `XML_Parse` reaches the Eiffel parser;
+  - `scripts/package_windows_release.ps1` creates the initial Windows x64 release archive with `xpact.dll`, `xpact.lib`, `include/xpact.h`, release notes, and smoke-test source.
 - ABI/link tests for C callers against the native export layer:
   - `tests/native/xpact_abi_smoke.c` links against the public `include/xpact.h` surface only;
   - `tests/native/xpact_bridge_smoke.c` links against the private bridge header and verifies forwarding to a fake Eiffel bridge;
   - `scripts/run_native_abi_tests.ps1` builds and runs both smoke tests on Windows and WSL.
 - Resource contracts for input size, element depth, attribute count, name length, and token length.
 
+## Initial Native Release Scope
+
+The first native-library package is Windows x64 only. It ships the
+Eiffel-backed `xpact.dll` and MSVC import library produced by
+`scripts/build_native_eiffel.ps1`. Linux/WSL `libxpact.so` packaging is deferred
+platform expansion, not part of this Windows-only release promise.
+
 Still required before a credible public release:
 
-- Package the verified Eiffel runtime bridge path as the Linux/WSL `libxpact.so` export artifact, or document the initial native-library release as Windows-only.
 - Replace the native C ABI benchmark status row with measured throughput once the Eiffel bridge is connected.
+- Replace the temporary suite-wide expected failure with specific green/red parity rows as the Eiffel bridge and API behavior land.
 
 ## External Entity Policy
 
@@ -133,6 +141,12 @@ Build and run the Windows native DLL backed by the Eiffel parser:
 
 ```powershell
 .\scripts\build_native_eiffel.ps1
+```
+
+Package the Windows-only native release:
+
+```powershell
+.\scripts\package_windows_release.ps1
 ```
 
 Extract an upstream libexpat test manifest and run fixture smoke parsing:

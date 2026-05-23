@@ -606,6 +606,16 @@ feature {NONE} -- Tests
 			l_notes := file_text ("native\README.md")
 			assert ("native export notes present", l_notes.has_substring ("bridge-only"))
 			assert ("native export notes keep parser semantics in Eiffel", l_notes.has_substring ("must not implement XML tokenization"))
+			l_script := file_text ("scripts\package_windows_release.ps1")
+			assert ("Windows release package script present", l_script.has_substring ("build_native_eiffel.ps1"))
+			assert ("Windows release package script stages DLL", l_script.has_substring ("xpact.dll") and l_script.has_substring ("xpact.lib"))
+			assert ("Windows release package script stages public header", l_script.has_substring ("include\xpact.h"))
+			assert ("Windows release package script writes archive", l_script.has_substring ("Compress-Archive") and l_script.has_substring ("windows-x64"))
+			assert ("Windows release package script writes checksums", l_script.has_substring ("SHA256SUMS.txt"))
+			l_notes := file_text ("docs\windows-release.md")
+			assert ("Windows release notes present", l_notes.has_substring ("Windows x64 only"))
+			assert ("Windows release notes exclude Linux package", l_notes.has_substring ("Out of scope") and l_notes.has_substring ("Linux/WSL `libxpact.so`"))
+			assert ("Phase 1 documents Windows-only native release", file_text ("docs\phase-1.md").has_substring ("The first native-library package is Windows x64 only"))
 		end
 
 feature {NONE} -- Assertions

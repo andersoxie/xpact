@@ -1,5 +1,6 @@
 EIFGENs/
 build/
+dist/
 *.exe
 *.dll
 *.so

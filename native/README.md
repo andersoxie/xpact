@@ -34,7 +34,14 @@ that `XML_Parse` reaches the Eiffel parser through the public `include/xpact.h`
 ABI.
 
 The next native packaging work is the equivalent Linux/WSL `libxpact.so` path
-and then the native xpact-vs-libexpat benchmark through the same C ABI.
+and then the native xpact-vs-libexpat benchmark through the same C ABI. That
+Linux/WSL package is deferred platform expansion; the initial native package is
+Windows x64 only.
+
+`scripts/package_windows_release.ps1` creates the Windows-only release archive
+under `dist/`. The archive contains `bin/xpact.dll`, `lib/xpact.lib`,
+`include/xpact.h`, Windows release notes, checksum rows, and the C smoke source
+used to verify a consumer link.
 
 Run the native ABI smoke tests with:
 
@@ -52,4 +59,10 @@ Build and smoke the Eiffel-backed Windows DLL with:
 
 ```powershell
 .\scripts\build_native_eiffel.ps1
+```
+
+Package the Windows-only native release with:
+
+```powershell
+.\scripts\package_windows_release.ps1
 ```
