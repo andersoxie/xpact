@@ -26,9 +26,10 @@ contract-tested manifest of the public names.
 - Native C ABI benchmark wiring in `benchmarks/xpact_native_c_benchmark.c` and
   `scripts/run_benchmarks.ps1`; it reports `not measured` while the bridge-only
   native layer returns `XML_ERROR_NOT_STARTED`.
-- Eiffel-side bridge target classes, `XP_NATIVE_PARSER` and
-  `XP_NATIVE_CALLBACK_HANDLER`, that drive the Eiffel parser and adapt events to
-  Expat-style callback slots.
+- Eiffel-side bridge classes, `XP_NATIVE_PARSER`,
+  `XP_NATIVE_CALLBACK_HANDLER`, and `XP_NATIVE_BRIDGE_INSTALLER`, that drive the
+  Eiffel parser, adapt events to Expat-style callback slots, and map native
+  opaque handles to Eiffel parser objects.
 - The upstream libexpat C-suite adapter can configure, build, and run through
   `scripts/run_libexpat_adapter.ps1 -Mode NativeSuite` with an explicit
   expected-failure list in `adapters/libexpat/expected-failures.tsv`.
@@ -42,7 +43,7 @@ and error reporting.
 
 ## Still Required
 
-- Eiffel runtime/export wiring that registers `XP_NATIVE_PARSER` with
+- Native trampoline wiring that registers `XP_NATIVE_BRIDGE_INSTALLER` with
   `XPACT_SetEiffelBridge`.
 - Replace the temporary suite-wide expected failure with specific green/red
   parity rows as the Eiffel bridge and API behavior land.

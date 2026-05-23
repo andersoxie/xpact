@@ -30,6 +30,7 @@ feature {NONE} -- Initialization
 			test_token_well_formedness_errors
 			test_document_structure
 			test_native_eiffel_bridge_parser
+			test_native_bridge_installer
 			test_expat_api_manifest
 			test_libexpat_adapter_files
 			test_benchmark_publication_files
@@ -400,6 +401,58 @@ feature {NONE} -- Tests
 			assert ("native Eiffel parser marks non-final unsupported", l_native.last_error_code = l_native.Xml_error_not_started)
 		end
 
+	test_native_bridge_installer
+		local
+			l_installer: XP_NATIVE_BRIDGE_INSTALLER
+			l_handle: POINTER
+			l_input: C_STRING
+			l_buffer_input: C_STRING
+			l_status_buffer: MANAGED_POINTER
+			l_buffer: POINTER
+			l_status: INTEGER
+		do
+			create l_installer.make
+			l_handle := l_installer.parser_create (default_pointer, default_pointer, default_pointer)
+			assert ("native bridge installer returns parser handle", l_handle /= default_pointer)
+			assert ("native bridge installer tracks parser", l_installer.active_parser_count = 1)
+			assert ("native bridge installer resolves handle", attached l_installer.parser_for (l_handle))
+
+			create l_input.make ("<root><child>text</child></root>")
+			l_installer.set_user_data (l_handle, l_input.item)
+			l_installer.set_element_handler (l_handle, default_pointer, default_pointer)
+			l_installer.set_character_data_handler (l_handle, default_pointer)
+			l_status := l_installer.parse (l_handle, l_input.item, l_input.count, True)
+			assert ("native bridge installer parse succeeds", l_status = 1)
+			assert ("native bridge installer reports no error", l_installer.get_error_code (l_handle) = 0)
+			if attached l_installer.parser_for (l_handle) as l_native then
+				assert ("native bridge installer forwards user data", l_native.handler.user_data = l_input.item)
+				assert ("native bridge installer emitted start events", l_native.handler.start_element_count = 2)
+				assert ("native bridge installer emitted text event", l_native.handler.character_data_count = 1)
+				assert ("native bridge installer emitted end events", l_native.handler.end_element_count = 2)
+			end
+
+			create l_status_buffer.make (8)
+			l_installer.get_parsing_status (l_handle, l_status_buffer.item)
+			assert ("native bridge installer has line default", l_installer.get_current_line_number (l_handle) = 1)
+			assert ("native bridge installer has column default", l_installer.get_current_column_number (l_handle) = 0)
+			assert ("native bridge installer has byte index default", l_installer.get_current_byte_index (l_handle) = -1)
+			assert ("native bridge installer has byte count default", l_installer.get_current_byte_count (l_handle) = 0)
+
+			assert ("native bridge installer resets parser", l_installer.parser_reset (l_handle, default_pointer))
+			create l_buffer_input.make ("<root />")
+			l_buffer := l_installer.get_buffer (l_handle, l_buffer_input.count)
+			assert ("native bridge installer allocates parse buffer", l_buffer /= default_pointer)
+			l_buffer.memory_copy (l_buffer_input.item, l_buffer_input.count)
+			l_status := l_installer.parse_buffer (l_handle, l_buffer_input.count, True)
+			assert ("native bridge installer parse buffer succeeds", l_status = 1)
+
+			l_installer.parser_free (l_handle)
+			assert ("native bridge installer releases parser", l_installer.active_parser_count = 0)
+			assert ("native bridge installer drops handle", not attached l_installer.parser_for (l_handle))
+			l_status := l_installer.parse (l_handle, l_input.item, l_input.count, True)
+			assert ("native bridge installer rejects freed handle", l_status = l_installer.Xml_status_error)
+		end
+
 	test_expat_api_manifest
 		local
 			l_api: XP_EXPAT_API
@@ -507,6 +560,8 @@ feature {NONE} -- Tests
 			assert ("Eiffel bridge can be registered", l_bridge.has_substring ("XPACT_SetEiffelBridge"))
 			assert ("Eiffel native parser target present", file_text ("src\xp_native_parser.e").has_substring ("XP_PARSER"))
 			assert ("Eiffel native callback adapter present", file_text ("src\xp_native_callback_handler.e").has_substring ("XML_StartElementHandler"))
+			assert ("Eiffel native bridge installer present", file_text ("src\xp_native_bridge_installer.e").has_substring ("XP_NATIVE_PARSER"))
+			assert ("Eiffel native bridge installer uses runtime object ids", file_text ("src\xp_native_bridge_installer.e").has_substring ("eif_object_id"))
 			l_script := file_text ("scripts\build_native.ps1")
 			assert ("native build script present", not l_script.is_empty)
 			assert ("native build script builds Windows DLL", l_script.has_substring ("xpact.dll"))
