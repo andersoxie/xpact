@@ -20,6 +20,10 @@ contract-tested manifest of the public names.
   `scripts/build_native.ps1`, that exports the public C names and delegates
   parser behavior through a private Eiffel bridge. It intentionally does not
   tokenize, expand entities, or validate XML in C.
+- A runtime trampoline in `native/xpact_eiffel_runtime_bridge.c` that adopts an
+  Eiffel `XP_NATIVE_BRIDGE_INSTALLER` object, forwards bridge callbacks to
+  Eiffel feature pointers, and registers the populated bridge table with
+  `XPACT_SetEiffelBridge`.
 - Native ABI/link smoke tests in `tests/native`, built by
   `scripts/run_native_abi_tests.ps1`, covering public C callers and bridge
   forwarding.
@@ -43,8 +47,8 @@ and error reporting.
 
 ## Still Required
 
-- Native trampoline wiring that registers `XP_NATIVE_BRIDGE_INSTALLER` with
-  `XPACT_SetEiffelBridge`.
+- Eiffel shared-library/export target wiring that compiles the runtime
+  trampoline and invokes `XPACT_RegisterEiffelRuntimeBridge`.
 - Replace the temporary suite-wide expected failure with specific green/red
   parity rows as the Eiffel bridge and API behavior land.
 - Exact byte, line, and column accounting for Expat-compatible position APIs.

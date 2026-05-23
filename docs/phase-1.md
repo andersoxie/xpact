@@ -50,11 +50,12 @@ Implemented now:
 - Native DLL/SO export layer behind `include/xpact.h`:
   - `native/xpact_native.c` exports the public `XML_*` C symbols without implementing XML parsing in C;
   - `native/xpact_eiffel_bridge.h` defines the private bridge table used to connect those symbols to the Eiffel parser;
+  - `native/xpact_eiffel_runtime_bridge.c` and `.h` provide the Eiffel-runtime trampoline that adopts an `XP_NATIVE_BRIDGE_INSTALLER` object and forwards bridge-table calls to Eiffel feature pointers;
   - `src/xp_native_parser.e` owns the Eiffel parser object that the native bridge will call;
   - `src/xp_native_callback_handler.e` adapts Eiffel parser events to Expat-style callback slots;
   - `src/xp_native_bridge_installer.e` owns Eiffel parser handles for the runtime bridge, using Eiffel object ids to keep native handles opaque while resolving them back to `XP_NATIVE_PARSER`;
   - `scripts/build_native.ps1` builds `build/native/xpact.dll`, `build/native/xpact.lib`, and `build/native/libxpact.so`;
-  - until the C trampoline registration is linked to `XPACT_SetEiffelBridge`, parse calls through the standalone native DLL/SO fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
+  - until an Eiffel shared-library/export target links and invokes the runtime trampoline, parse calls through the standalone native DLL/SO fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
 - ABI/link tests for C callers against the native export layer:
   - `tests/native/xpact_abi_smoke.c` links against the public `include/xpact.h` surface only;
   - `tests/native/xpact_bridge_smoke.c` links against the private bridge header and verifies forwarding to a fake Eiffel bridge;
@@ -63,7 +64,7 @@ Implemented now:
 
 Still required before a credible public release:
 
-- Link the Eiffel runtime bridge installer to `XPACT_SetEiffelBridge` with a native trampoline layer.
+- Add an Eiffel shared-library/export target that compiles the runtime trampoline and invokes `XPACT_RegisterEiffelRuntimeBridge`.
 - Replace the native C ABI benchmark status row with measured throughput once the Eiffel bridge is connected.
 
 ## External Entity Policy

@@ -544,6 +544,8 @@ feature {NONE} -- Tests
 		local
 			l_source: STRING_8
 			l_bridge: STRING_8
+			l_runtime: STRING_8
+			l_runtime_header: STRING_8
 			l_script: STRING_8
 			l_notes: STRING_8
 		do
@@ -562,6 +564,17 @@ feature {NONE} -- Tests
 			assert ("Eiffel native callback adapter present", file_text ("src\xp_native_callback_handler.e").has_substring ("XML_StartElementHandler"))
 			assert ("Eiffel native bridge installer present", file_text ("src\xp_native_bridge_installer.e").has_substring ("XP_NATIVE_PARSER"))
 			assert ("Eiffel native bridge installer uses runtime object ids", file_text ("src\xp_native_bridge_installer.e").has_substring ("eif_object_id"))
+			l_runtime_header := file_text ("native\xpact_eiffel_runtime_bridge.h")
+			assert ("Eiffel runtime bridge header present", l_runtime_header.has_substring ("XPACT_RegisterEiffelRuntimeBridge"))
+			assert ("Eiffel runtime bridge header accepts installer object", l_runtime_header.has_substring ("EIF_OBJECT installer"))
+			l_runtime := file_text ("native\xpact_eiffel_runtime_bridge.c")
+			assert ("Eiffel runtime bridge source present", l_runtime.has_substring ("XPACT_RegisterEiffelRuntimeBridge"))
+			assert ("Eiffel runtime bridge adopts installer", l_runtime.has_substring ("eif_adopt"))
+			assert ("Eiffel runtime bridge accesses installer", l_runtime.has_substring ("eif_access"))
+			assert ("Eiffel runtime bridge releases installer", l_runtime.has_substring ("eif_wean"))
+			assert ("Eiffel runtime bridge registers bridge table", l_runtime.has_substring ("XPACT_SetEiffelBridge"))
+			assert ("Eiffel runtime bridge does not decode XML entities in C", not l_runtime.has_substring ("xp_decode_entity"))
+			assert ("Eiffel runtime bridge does not parse XML names in C", not l_runtime.has_substring ("xp_parse_name"))
 			l_script := file_text ("scripts\build_native.ps1")
 			assert ("native build script present", not l_script.is_empty)
 			assert ("native build script builds Windows DLL", l_script.has_substring ("xpact.dll"))
