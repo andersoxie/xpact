@@ -23,6 +23,9 @@ contract-tested manifest of the public names.
 - Native ABI/link smoke tests in `tests/native`, built by
   `scripts/run_native_abi_tests.ps1`, covering public C callers and bridge
   forwarding.
+- The upstream libexpat C-suite adapter can configure, build, and run through
+  `scripts/run_libexpat_adapter.ps1 -Mode NativeSuite` with an explicit
+  expected-failure list in `adapters/libexpat/expected-failures.tsv`.
 
 ## Implemented Behind The Surface
 
@@ -34,6 +37,6 @@ and error reporting.
 ## Still Required
 
 - Eiffel bridge wiring behind the native export layer.
-- Green behavioral parity runs through `adapters/libexpat` for each public
-  handler and option.
+- Replace the temporary suite-wide expected failure with specific green/red
+  parity rows as the Eiffel bridge and API behavior land.
 - Exact byte, line, and column accounting for Expat-compatible position APIs.

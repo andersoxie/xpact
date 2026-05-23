@@ -1,0 +1,2 @@
+source	name	reason
+*	*	Native XML_Parse returns XML_ERROR_NOT_STARTED until the Eiffel parser bridge is connected; remove this wildcard and replace it with specific parity gaps when the bridge lands.

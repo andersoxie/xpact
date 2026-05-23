@@ -405,6 +405,9 @@ feature {NONE} -- Tests
 			assert ("libexpat adapter script present", not l_script.is_empty)
 			assert ("adapter extracts upstream START_TEST names", l_script.has_substring ("START_TEST"))
 			assert ("adapter writes test manifest", l_script.has_substring ("libexpat-runtests-manifest.tsv"))
+			assert ("adapter expands expected failures", l_script.has_substring ("libexpat-expected-failures-expanded.tsv"))
+			assert ("adapter can run native suite", l_script.has_substring ("NativeSuite"))
+			assert ("adapter fails stale expected failures", l_script.has_substring ("passed while expected failures remain"))
 			assert ("adapter drives xpact file parser", l_script.has_substring ("--parse-file"))
 			assert ("adapter knows Expat split test sources", l_script.has_substring ("basic_tests.c") and l_script.has_substring ("nsalloc_tests.c"))
 
@@ -420,6 +423,7 @@ feature {NONE} -- Tests
 			assert ("libexpat expat_config.h shim present", l_config.has_substring ("XML_CONTEXT_BYTES") and l_config.has_substring ("BYTEORDER"))
 			l_notes := file_text ("adapters\libexpat\README.md")
 			assert ("libexpat adapter docs present", l_notes.has_substring ("R_2_8_1") and l_notes.has_substring ("ctest"))
+			assert ("expected-failure list present", file_text ("adapters\libexpat\expected-failures.tsv").has_substring ("XML_ERROR_NOT_STARTED"))
 		end
 
 	test_benchmark_publication_files
