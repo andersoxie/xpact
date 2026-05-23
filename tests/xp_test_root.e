@@ -29,6 +29,7 @@ feature {NONE} -- Initialization
 			test_external_policy_blocks_parameter_entities
 			test_token_well_formedness_errors
 			test_document_structure
+			test_native_eiffel_bridge_parser
 			test_expat_api_manifest
 			test_libexpat_adapter_files
 			test_benchmark_publication_files
@@ -365,6 +366,40 @@ feature {NONE} -- Tests
 			assert ("outside root error", l_parser.last_error.same_string ("character data outside document element"))
 		end
 
+	test_native_eiffel_bridge_parser
+		local
+			l_attributes: XP_ATTRIBUTES
+			l_native: XP_NATIVE_PARSER
+			l_status: INTEGER
+		do
+			create l_attributes.make
+			l_attributes.put ("first", "1")
+			l_attributes.put ("second", "2")
+			assert ("attribute insertion order first", l_attributes.i_th_name (1).same_string ("first"))
+			assert ("attribute insertion order second", l_attributes.i_th_name (2).same_string ("second"))
+			assert ("attribute insertion value first", l_attributes.i_th_value (1).same_string ("1"))
+			assert ("attribute insertion value second", l_attributes.i_th_value (2).same_string ("2"))
+
+			create l_native.make
+			l_status := l_native.parse ("<root><child a=%"1%">text</child></root>", True)
+			assert ("native Eiffel parser accepts document", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser reports no error", l_native.last_error_code = l_native.Xml_error_none)
+			assert ("native Eiffel parser saw start callbacks", l_native.handler.start_element_count = 2)
+			assert ("native Eiffel parser saw text callback", l_native.handler.character_data_count = 1)
+			assert ("native Eiffel parser saw end callbacks", l_native.handler.end_element_count = 2)
+			assert ("native Eiffel event log starts at root", l_native.handler.events.i_th (1).same_string ("start:root:0"))
+			assert ("native Eiffel event log has text", l_native.handler.events.i_th (3).same_string ("text:text"))
+
+			assert ("native Eiffel parser resets", l_native.reset)
+			assert ("native Eiffel reset clears events", l_native.handler.events.count = 0)
+			l_status := l_native.parse ("<root><child></root>", True)
+			assert ("native Eiffel parser rejects mismatch", l_status = l_native.Xml_status_error)
+			assert ("native Eiffel parser maps mismatch", l_native.last_error_code = l_native.Xml_error_tag_mismatch)
+			l_status := l_native.parse ("<root />", False)
+			assert ("native Eiffel parser rejects non-final parse", l_status = l_native.Xml_status_error)
+			assert ("native Eiffel parser marks non-final unsupported", l_native.last_error_code = l_native.Xml_error_not_started)
+		end
+
 	test_expat_api_manifest
 		local
 			l_api: XP_EXPAT_API
@@ -470,6 +505,8 @@ feature {NONE} -- Tests
 			l_bridge := file_text ("native\xpact_eiffel_bridge.h")
 			assert ("Eiffel bridge header present", l_bridge.has_substring ("XPACT_EiffelBridge"))
 			assert ("Eiffel bridge can be registered", l_bridge.has_substring ("XPACT_SetEiffelBridge"))
+			assert ("Eiffel native parser target present", file_text ("src\xp_native_parser.e").has_substring ("XP_PARSER"))
+			assert ("Eiffel native callback adapter present", file_text ("src\xp_native_callback_handler.e").has_substring ("XML_StartElementHandler"))
 			l_script := file_text ("scripts\build_native.ps1")
 			assert ("native build script present", not l_script.is_empty)
 			assert ("native build script builds Windows DLL", l_script.has_substring ("xpact.dll"))

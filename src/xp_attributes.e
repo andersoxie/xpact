@@ -15,6 +15,7 @@ feature {NONE} -- Initialization
 	make
 		do
 			create table.make (8)
+			create names.make (8)
 		ensure
 			empty: count = 0
 		end
@@ -51,6 +52,29 @@ feature -- Access
 			Result := table.item (l_name)
 		end
 
+	i_th_name (i: INTEGER): STRING_8
+			-- Attribute name at insertion index `i'.
+		require
+			valid_index: i >= 1 and i <= count
+		do
+			Result := names.i_th (i)
+		ensure
+			result_attached: Result /= Void
+			valid_name: is_valid_name (Result)
+		end
+
+	i_th_value (i: INTEGER): STRING_8
+			-- Attribute value at insertion index `i'.
+		require
+			valid_index: i >= 1 and i <= count
+		do
+			check attached table.item (i_th_name (i)) as l_value then
+				Result := l_value
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
 feature -- Element change
 
 	put (a_name, a_value: READABLE_STRING_8)
@@ -67,6 +91,7 @@ feature -- Element change
 			create l_name.make_from_string (a_name)
 			create l_value.make_from_string (a_value)
 			table.put (l_value, l_name)
+			names.extend (l_name)
 		ensure
 			one_more: count = old count + 1
 			inserted: has (a_name)
@@ -121,8 +146,13 @@ feature {NONE} -- Implementation
 	table: HASH_TABLE [STRING_8, STRING_8]
 			-- Values keyed by attribute name.
 
+	names: ARRAYED_LIST [STRING_8]
+			-- Attribute names in parser insertion order.
+
 invariant
 	table_attached: table /= Void
+	names_attached: names /= Void
 	count_within_limit: count <= Default_max_attribute_count
+	table_names_count_match: table.count = names.count
 
 end

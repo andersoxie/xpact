@@ -50,8 +50,10 @@ Implemented now:
 - Native DLL/SO export layer behind `include/xpact.h`:
   - `native/xpact_native.c` exports the public `XML_*` C symbols without implementing XML parsing in C;
   - `native/xpact_eiffel_bridge.h` defines the private bridge table used to connect those symbols to the Eiffel parser;
+  - `src/xp_native_parser.e` owns the Eiffel parser object that the native bridge will call;
+  - `src/xp_native_callback_handler.e` adapts Eiffel parser events to Expat-style callback slots;
   - `scripts/build_native.ps1` builds `build/native/xpact.dll`, `build/native/xpact.lib`, and `build/native/libxpact.so`;
-  - until the Eiffel bridge is connected, parse calls fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
+  - until the C registration/export installer is connected, parse calls through the standalone native DLL/SO fail explicitly with `XML_ERROR_NOT_STARTED` instead of falling back to a C reimplementation.
 - ABI/link tests for C callers against the native export layer:
   - `tests/native/xpact_abi_smoke.c` links against the public `include/xpact.h` surface only;
   - `tests/native/xpact_bridge_smoke.c` links against the private bridge header and verifies forwarding to a fake Eiffel bridge;
@@ -60,7 +62,7 @@ Implemented now:
 
 Still required before a credible public release:
 
-- Connect the native export bridge to the Eiffel parser implementation.
+- Bind the native `XPACT_SetEiffelBridge` registration to `XP_NATIVE_PARSER` through the Eiffel runtime/export layer.
 - Replace the native C ABI benchmark status row with measured throughput once the Eiffel bridge is connected.
 
 ## External Entity Policy

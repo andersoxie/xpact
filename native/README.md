@@ -8,11 +8,14 @@ an Eiffel-owned bridge registered through `XPACT_SetEiffelBridge`.
 
 It must not implement XML tokenization, entity expansion, validation, or parser
 state in C. Those semantics belong to the Eiffel parser classes under `src/`.
+The Eiffel-side target for this bridge is `XP_NATIVE_PARSER`, with
+`XP_NATIVE_CALLBACK_HANDLER` adapting parser events to Expat-style callback
+slots.
 
 Until the Eiffel bridge is wired in, `XML_Parse` returns an explicit
 `XML_ERROR_NOT_STARTED` failure rather than falling back to a C parser. The next
-native work should compile/link C callers against this layer, then connect the
-bridge to the Eiffel implementation.
+native work should register the Eiffel bridge table from an Eiffel runtime or
+shared-library export layer.
 
 Run the native ABI smoke tests with:
 
