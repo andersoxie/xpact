@@ -57,6 +57,8 @@ feature -- Expat-compatible constants
 
 	Xml_error_recursive_entity_ref: INTEGER = 12
 
+	Xml_error_async_entity: INTEGER = 13
+
 	Xml_error_bad_char_ref: INTEGER = 14
 
 	Xml_error_unclosed_cdata_section: INTEGER = 20
@@ -393,6 +395,8 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_undefined_entity
 			elseif a_error.same_string ("recursive entity reference") then
 				Result := Xml_error_recursive_entity_ref
+			elseif a_error.same_string ("asynchronous entity") then
+				Result := Xml_error_async_entity
 			elseif a_error.same_string ("invalid character reference") then
 				Result := Xml_error_bad_char_ref
 			elseif a_error.same_string ("unterminated CDATA section") then

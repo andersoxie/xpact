@@ -903,6 +903,8 @@ feature {NONE} -- Character data and references
 			-- Include general entity `a_name' as parsed content.
 		require
 			valid_name: is_valid_name (a_name)
+		local
+			l_element_depth: INTEGER
 		do
 			if is_entity_active (a_name) then
 				set_error ("recursive entity reference")
@@ -911,9 +913,14 @@ feature {NONE} -- Character data and references
 			elseif attached entity_value (a_name) as l_value then
 				note_entity_expansion (l_value.count)
 				if not has_error then
+					l_element_depth := element_stack.count
 					push_entity (a_name)
 					parse_entity_content (l_value)
 					pop_entity
+					if not has_error and then element_stack.count /= l_element_depth then
+						note_current_entity_reference_position
+						set_error ("asynchronous entity")
+					end
 				end
 			elseif attached external_entity (a_name) as l_external then
 				include_external_entity_in_content (l_external)
@@ -3086,6 +3093,14 @@ feature {NONE} -- Entity tables
 			one_less_start: entity_reference_start_stack.count = old entity_reference_start_stack.count - 1
 			one_less_count: entity_reference_count_stack.count = old entity_reference_count_stack.count - 1
 			stacks_aligned: entity_reference_start_stack.count = entity_reference_count_stack.count
+		end
+
+	note_current_entity_reference_position
+			-- Move current position to the active document entity-reference token.
+		do
+			if entity_reference_start_stack.count > 0 then
+				note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+			end
 		end
 
 feature {NONE} -- State

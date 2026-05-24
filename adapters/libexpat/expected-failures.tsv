@@ -14,7 +14,6 @@ misc_tests.c	test_misc_resume*	Stop/resume parser state is not implemented.
 misc_tests.c	test_misc_create_external_entity_parser_with_null_context	External entity parser creation is not implemented.
 misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state is not implemented.
 misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
-misc_tests.c	test_misc_async_entity_rejected	Entity timing semantics are not fully matched to libexpat.
 misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 basic_tests.c	test_*utf16*	UTF-16 input and handler parity are outside the Windows Phase 1 UTF-8 native path.
 basic_tests.c	test_*encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.

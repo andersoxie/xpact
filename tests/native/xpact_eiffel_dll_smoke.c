@@ -43,6 +43,13 @@ struct malformed_doctype_case {
 	int use_unknown_encoding_handler;
 };
 
+struct async_entity_case {
+	const char *label;
+	const char *input;
+	XML_Size expected_line;
+	XML_Size expected_column;
+};
+
 static int XMLCALL
 smoke_prefix_converter(void *data, const char *s) {
 	(void)data;
@@ -126,6 +133,59 @@ static const struct malformed_doctype_case g_malformed_doctype_cases[] = {
 		"<!DOCTYPE doc PUBLIC 'foo' 'bar' 'baz'></doc>",
 		XML_ERROR_SYNTAX,
 		0
+	}
+};
+
+static const struct async_entity_case g_async_entity_cases[] = {
+	{
+		"opened by one entity and closed by another",
+		"<!DOCTYPE t0 [\n"
+		"   <!ENTITY open '<t1>'>\n"
+		"   <!ENTITY close '</t1>'>\n"
+		"]>\n"
+		"<t0>&open;&close;</t0>\n",
+		5,
+		4
+	},
+	{
+		"opened by tag and closed by entity",
+		"<!DOCTYPE t0 [\n"
+		"  <!ENTITY g0 ''>\n"
+		"  <!ENTITY g1 '&g0;</t1>'>\n"
+		"]>\n"
+		"<t0><t1>&g1;</t0>\n",
+		5,
+		8
+	},
+	{
+		"root opened by tag and closed by entity",
+		"<!DOCTYPE t0 [\n"
+		"  <!ENTITY g0 ''>\n"
+		"  <!ENTITY g1 '&g0;</t0>'>\n"
+		"]>\n"
+		"<t0>&g1;\n",
+		5,
+		4
+	},
+	{
+		"opened by entity and closed by tag",
+		"<!DOCTYPE t0 [\n"
+		"  <!ENTITY g0 ''>\n"
+		"  <!ENTITY g1 '<t1>&g0;'>\n"
+		"]>\n"
+		"<t0>&g1;</t1></t0>\n",
+		5,
+		4
+	},
+	{
+		"closed by entity then opened by entity",
+		"<!DOCTYPE t0 [\n"
+		"  <!ENTITY open '<t1>'>\n"
+		"  <!ENTITY close '</t1>'>\n"
+		"]>\n"
+		"<t0><t1>&close;&open;</t1></t0>\n",
+		5,
+		8
 	}
 };
 
@@ -426,6 +486,7 @@ main(void) {
 	enum XML_Error actual_error;
 	XML_Parser parser = XML_ParserCreate("UTF-8");
 	size_t malformed_index;
+	size_t async_index;
 	const char *default_input = "<?test processing instruction?>\n<doc/>";
 	const char *doctype_input = "<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>";
 	const char *dtd_default_input =
@@ -647,6 +708,40 @@ main(void) {
 	if (!check(g_sync_entity_start_count == 7 && !g_sync_entity_failed, "synchronous entity markup is emitted")) return 1;
 	if (!check(strcmp(g_sync_entity_text, "twothreefourthreetwo") == 0, "synchronous entity character data is emitted")) return 1;
 	XML_ParserFree(parser);
+
+	for (async_index = 0; async_index < sizeof(g_async_entity_cases) / sizeof(g_async_entity_cases[0]); async_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for async entity check")) return 1;
+		status = XML_Parse(
+			parser,
+			g_async_entity_cases[async_index].input,
+			(int)strlen(g_async_entity_cases[async_index].input),
+			XML_TRUE
+		);
+		if (status != XML_STATUS_ERROR) {
+			fprintf(stderr, "FAIL: async entity %s rejected\n", g_async_entity_cases[async_index].label);
+			return 1;
+		}
+		actual_error = XML_GetErrorCode(parser);
+		if (actual_error != XML_ERROR_ASYNC_ENTITY) {
+			fprintf(
+				stderr,
+				"FAIL: async entity %s mapped to %d, expected %d\n",
+				g_async_entity_cases[async_index].label,
+				(int)actual_error,
+				(int)XML_ERROR_ASYNC_ENTITY
+			);
+			return 1;
+		}
+		if (
+			XML_GetCurrentLineNumber(parser) != g_async_entity_cases[async_index].expected_line
+			|| XML_GetCurrentColumnNumber(parser) != g_async_entity_cases[async_index].expected_column
+		) {
+			fprintf(stderr, "FAIL: async entity %s position\n", g_async_entity_cases[async_index].label);
+			return 1;
+		}
+		XML_ParserFree(parser);
+	}
 
 	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created for entity context check")) return 1;

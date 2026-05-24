@@ -25,6 +25,7 @@ feature {NONE} -- Initialization
 			test_internal_entity_declarations
 			test_parameter_entity_declarations
 			test_entity_markup_expansion
+			test_async_internal_entities_are_rejected
 			test_attribute_entity_expansion
 			test_recursive_entity_is_rejected
 			test_external_entity_is_rejected
@@ -504,6 +505,40 @@ feature {NONE} -- Tests
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end
+		end
+
+	test_async_internal_entities_are_rejected
+		do
+			assert_async_entity_rejected (
+				"opened by one entity and closed by another",
+				"<!DOCTYPE t0 [%N   <!ENTITY open '<t1>'>%N   <!ENTITY close '</t1>'>%N]>%N<t0>&open;&close;</t0>%N",
+				5,
+				4
+			)
+			assert_async_entity_rejected (
+				"opened by tag and closed by entity",
+				"<!DOCTYPE t0 [%N  <!ENTITY g0 ''>%N  <!ENTITY g1 '&g0;</t1>'>%N]>%N<t0><t1>&g1;</t0>%N",
+				5,
+				8
+			)
+			assert_async_entity_rejected (
+				"root opened by tag and closed by entity",
+				"<!DOCTYPE t0 [%N  <!ENTITY g0 ''>%N  <!ENTITY g1 '&g0;</t0>'>%N]>%N<t0>&g1;%N",
+				5,
+				4
+			)
+			assert_async_entity_rejected (
+				"opened by entity and closed by tag",
+				"<!DOCTYPE t0 [%N  <!ENTITY g0 ''>%N  <!ENTITY g1 '<t1>&g0;'>%N]>%N<t0>&g1;</t1></t0>%N",
+				5,
+				4
+			)
+			assert_async_entity_rejected (
+				"closed by entity then opened by entity",
+				"<!DOCTYPE t0 [%N  <!ENTITY open '<t1>'>%N  <!ENTITY close '</t1>'>%N]>%N<t0><t1>&close;&open;</t1></t0>%N",
+				5,
+				8
+			)
 		end
 
 	test_recursive_entity_is_rejected
@@ -1059,6 +1094,36 @@ feature {NONE} -- Tests
 			assert ("Windows release notes present", l_notes.has_substring ("Windows x64 only"))
 			assert ("Windows release notes exclude Linux package", l_notes.has_substring ("Out of scope") and l_notes.has_substring ("Linux/WSL `libxpact.so`"))
 			assert ("Phase 1 documents Windows-only native release", file_text ("docs\phase-1.md").has_substring ("The first native-library package is Windows x64 only"))
+		end
+
+	assert_async_entity_rejected (a_label, a_input: READABLE_STRING_8; a_line, a_column: INTEGER)
+			-- Assert Expat-compatible asynchronous entity rejection.
+		require
+			label_attached: a_label /= Void
+			input_attached: a_input /= Void
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+			l_assertion: STRING_8
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_assertion.make_empty
+			l_assertion.append (a_label)
+			l_assertion.append (" rejected")
+			assert (l_assertion, not l_parser.parse (a_input))
+			create l_assertion.make_empty
+			l_assertion.append (a_label)
+			l_assertion.append (" async error")
+			assert (l_assertion, l_parser.last_error.same_string ("asynchronous entity"))
+			create l_assertion.make_empty
+			l_assertion.append (a_label)
+			l_assertion.append (" line")
+			assert (l_assertion, l_parser.current_line_number = a_line)
+			create l_assertion.make_empty
+			l_assertion.append (a_label)
+			l_assertion.append (" column")
+			assert (l_assertion, l_parser.current_column_number = a_column)
 		end
 
 feature {NONE} -- Assertions
