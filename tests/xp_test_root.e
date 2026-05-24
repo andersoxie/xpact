@@ -17,6 +17,7 @@ feature {NONE} -- Initialization
 			test_comments_and_cdata
 			test_attlist_declaration_callbacks
 			test_attlist_default_attributes
+			test_element_declaration_callbacks
 			test_predefined_and_numeric_entities
 			test_internal_entity_declarations
 			test_parameter_entity_declarations
@@ -227,6 +228,40 @@ feature {NONE} -- Tests
 				assert ("default not duplicated", l_handler.events.i_th (1).same_string ("start:doc:1"))
 			else
 				io.put_string ("attlist explicit error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+		end
+
+	test_element_declaration_callbacks
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			l_handler.enable_element_decl_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<!ELEMENT doc (chapter)><!ELEMENT chapter (#PCDATA)>]><doc><chapter>Wombats are go</chapter></doc>")
+			assert ("element declaration document accepted", l_ok)
+			if l_ok then
+				assert ("element declaration callback for doc", l_handler.events.i_th (1).same_string ("element-decl:doc:6:0:1"))
+				assert ("element declaration callback for chapter", l_handler.events.i_th (2).same_string ("element-decl:chapter:3:0:0"))
+			else
+				io.put_string ("element declaration error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+
+			create l_handler.make
+			l_handler.enable_element_decl_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE foo [<!ELEMENT junk ((bar|foo|xyz+), zebra*)>]><foo/>")
+			assert ("nested element declaration document accepted", l_ok)
+			if l_ok then
+				assert ("nested element declaration callback", l_handler.events.i_th (1).same_string ("element-decl:junk:6:0:2"))
+			else
+				io.put_string ("nested element declaration error: ")
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end

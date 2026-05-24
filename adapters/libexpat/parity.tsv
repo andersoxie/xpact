@@ -26,6 +26,8 @@ green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl	Eiffel p
 green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_2	Eiffel parser applies ATTLIST defaults per element across multiple declarations.
 green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_3	Eiffel parser preserves first-binding ATTLIST defaults when later declarations add another attribute and duplicate an existing one.
 green	basic_tests.c	test_duplicate_id_attribute_multiple_attlistdecl	Eiffel parser reports explicit attribute counts and ID attribute indexes while applying default attributes through the native ABI.
+green	basic_tests.c	test_dtd_elements	Eiffel parser emits XML_SetElementDeclHandler callbacks and freeable XML_Content models for DTD element declarations.
+green	basic_tests.c	test_dtd_elements_nesting	Eiffel parser builds Expat-compatible nested XML_Content arrays for sequence, choice, name, and quantifier content models.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -55,8 +57,6 @@ red	basic_tests.c	test_external*	External entity parser creation and callback lo
 red	basic_tests.c	test_*external*	External entity parser creation and callback loading are not implemented.
 red	basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
 red	basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
-red	basic_tests.c	test_dtd_elements	Element declaration callbacks and content-model parity are not implemented.
-red	basic_tests.c	test_dtd_elements_nesting	Element declaration callbacks and content-model parity are not implemented.
 red	basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_bad_public_doctype	Malformed public doctype diagnostics are not fully audited against libexpat.

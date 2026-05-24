@@ -16,6 +16,7 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetElementHandlerRoutine set_cdata_section_handler;
 	XPACT_EiffelSetDefaultHandlerRoutine set_default_handler;
 	XPACT_EiffelSetElementHandlerRoutine set_doctype_decl_handler;
+	XPACT_EiffelSetPointerRoutine set_element_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_attlist_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler;
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg;
@@ -220,6 +221,19 @@ xp_rt_set_doctype_decl_handler(
 			(EIF_POINTER)parser,
 			xp_callback_pointer((uintptr_t)start),
 			xp_callback_pointer((uintptr_t)end)
+		);
+	}
+}
+
+static void XMLCALL
+xp_rt_set_element_decl_handler(void *context, void *parser, XML_ElementDeclHandler handler) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer != NULL && state->set_element_decl_handler != NULL) {
+		state->set_element_decl_handler(
+			installer,
+			(EIF_POINTER)parser,
+			xp_callback_pointer((uintptr_t)handler)
 		);
 	}
 }
@@ -443,6 +457,7 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_cdata_section_handler = xp_rt_set_cdata_section_handler;
 	bridge->set_default_handler = xp_rt_set_default_handler;
 	bridge->set_doctype_decl_handler = xp_rt_set_doctype_decl_handler;
+	bridge->set_element_decl_handler = xp_rt_set_element_decl_handler;
 	bridge->set_attlist_decl_handler = xp_rt_set_attlist_decl_handler;
 	bridge->set_external_entity_ref_handler = xp_rt_set_external_entity_ref_handler;
 	bridge->set_external_entity_ref_handler_arg = xp_rt_set_external_entity_ref_handler_arg;
@@ -474,6 +489,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetElementHandlerRoutine set_cdata_section_handler,
 	XPACT_EiffelSetDefaultHandlerRoutine set_default_handler,
 	XPACT_EiffelSetElementHandlerRoutine set_doctype_decl_handler,
+	XPACT_EiffelSetPointerRoutine set_element_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_attlist_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler,
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg,
@@ -521,6 +537,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_cdata_section_handler = set_cdata_section_handler;
 	xp_runtime_bridge.set_default_handler = set_default_handler;
 	xp_runtime_bridge.set_doctype_decl_handler = set_doctype_decl_handler;
+	xp_runtime_bridge.set_element_decl_handler = set_element_decl_handler;
 	xp_runtime_bridge.set_attlist_decl_handler = set_attlist_decl_handler;
 	xp_runtime_bridge.set_external_entity_ref_handler = set_external_entity_ref_handler;
 	xp_runtime_bridge.set_external_entity_ref_handler_arg = set_external_entity_ref_handler_arg;
@@ -562,6 +579,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_cdata_section_handler,
     EIF_POINTER set_default_handler,
     EIF_POINTER set_doctype_decl_handler,
+    EIF_POINTER set_element_decl_handler,
     EIF_POINTER set_attlist_decl_handler,
     EIF_POINTER set_external_entity_ref_handler,
     EIF_POINTER set_external_entity_ref_handler_arg,
@@ -591,6 +609,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetElementHandlerRoutine)set_cdata_section_handler,
 		(XPACT_EiffelSetDefaultHandlerRoutine)set_default_handler,
 		(XPACT_EiffelSetElementHandlerRoutine)set_doctype_decl_handler,
+		(XPACT_EiffelSetPointerRoutine)set_element_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_attlist_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_external_entity_ref_handler,
 		(XPACT_EiffelSetPointerRoutine)set_external_entity_ref_handler_arg,

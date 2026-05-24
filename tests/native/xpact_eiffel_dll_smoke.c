@@ -14,6 +14,8 @@ static int g_attlist_count;
 static int g_attlist_failed;
 static int g_default_attr_start_count;
 static int g_default_attr_failed;
+static int g_element_decl_count;
+static int g_element_decl_failed;
 
 static int
 check(int condition, const char *label) {
@@ -113,6 +115,52 @@ default_attr_start_handler(void *userData, const XML_Char *name, const XML_Char 
 	}
 }
 
+static void XMLCALL
+element_decl_handler(void *userData, const XML_Char *name, XML_Content *model) {
+	(void)userData;
+	g_element_decl_count++;
+	if (strcmp(name, "junk") != 0 || model == NULL) {
+		g_element_decl_failed = 1;
+		if (model != NULL) {
+			XML_FreeContentModel(g_parser, model);
+		}
+		return;
+	}
+	if (
+		model[0].type != XML_CTYPE_SEQ
+		|| model[0].quant != XML_CQUANT_NONE
+		|| model[0].numchildren != 2
+		|| model[0].children != &model[1]
+		|| model[0].name != NULL
+		|| model[1].type != XML_CTYPE_CHOICE
+		|| model[1].quant != XML_CQUANT_NONE
+		|| model[1].numchildren != 3
+		|| model[1].children != &model[3]
+		|| model[1].name != NULL
+		|| model[2].type != XML_CTYPE_NAME
+		|| model[2].quant != XML_CQUANT_REP
+		|| model[2].numchildren != 0
+		|| model[2].children != NULL
+		|| model[2].name == NULL
+		|| strcmp(model[2].name, "zebra") != 0
+		|| model[3].type != XML_CTYPE_NAME
+		|| model[3].quant != XML_CQUANT_NONE
+		|| model[3].name == NULL
+		|| strcmp(model[3].name, "bar") != 0
+		|| model[4].type != XML_CTYPE_NAME
+		|| model[4].quant != XML_CQUANT_NONE
+		|| model[4].name == NULL
+		|| strcmp(model[4].name, "foo") != 0
+		|| model[5].type != XML_CTYPE_NAME
+		|| model[5].quant != XML_CQUANT_PLUS
+		|| model[5].name == NULL
+		|| strcmp(model[5].name, "xyz") != 0
+	) {
+		g_element_decl_failed = 1;
+	}
+	XML_FreeContentModel(g_parser, model);
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -142,6 +190,10 @@ main(void) {
 		"<!ATTLIST doc b CDATA 'second_expected_doc' a CDATA 'ignored_doc'>\n"
 		"<!ATTLIST doc id ID #REQUIRED>\n"
 		"]><doc id='doc_identity'><tag></tag></doc>";
+	const char *element_decl_input =
+		"<!DOCTYPE foo [\n"
+		"<!ELEMENT junk ((bar|foo|xyz+), zebra*)>\n"
+		"]><foo/>";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -211,6 +263,17 @@ main(void) {
 	status = XML_Parse(parser, default_attr_input, (int)strlen(default_attr_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for default attribute check")) return 1;
 	if (!check(g_default_attr_start_count == 2 && !g_default_attr_failed, "default attributes delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for element declaration check")) return 1;
+	g_parser = parser;
+	g_element_decl_count = 0;
+	g_element_decl_failed = 0;
+	XML_SetElementDeclHandler(parser, element_decl_handler);
+	status = XML_Parse(parser, element_decl_input, (int)strlen(element_decl_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for element declaration check")) return 1;
+	if (!check(g_element_decl_count == 1 && !g_element_decl_failed, "element declaration content model delegated")) return 1;
 	XML_ParserFree(parser);
 
 	puts("xpact Eiffel DLL smoke: ok");

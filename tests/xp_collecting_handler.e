@@ -13,6 +13,7 @@ inherit
 			on_end_cdata_section,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
+			on_element_decl,
 			on_attlist_decl,
 			on_default
 		end
@@ -47,6 +48,9 @@ feature -- Access
 	record_attlist_events: BOOLEAN
 			-- Should attribute-list declaration events be added to `events'?
 
+	record_element_decl_events: BOOLEAN
+			-- Should element declaration events be added to `events'?
+
 feature -- Configuration
 
 	enable_doctype_events
@@ -71,6 +75,14 @@ feature -- Configuration
 			record_attlist_events := True
 		ensure
 			attlist_events_enabled: record_attlist_events
+		end
+
+	enable_element_decl_events
+			-- Record element declaration events in `events'.
+		do
+			record_element_decl_events := True
+		ensure
+			element_decl_events_enabled: record_element_decl_events
 		end
 
 feature -- Events
@@ -167,6 +179,23 @@ feature -- Events
 		do
 			if record_doctype_events then
 				events.extend ("end-doctype")
+			end
+		end
+
+	on_element_decl (a_name: READABLE_STRING_8; a_model: XP_CONTENT_MODEL)
+		local
+			l_event: STRING_8
+		do
+			if record_element_decl_events then
+				create l_event.make_from_string ("element-decl:")
+				l_event.append (a_name)
+				l_event.append_character (':')
+				l_event.append_integer (a_model.content_type)
+				l_event.append_character (':')
+				l_event.append_integer (a_model.quantifier)
+				l_event.append_character (':')
+				l_event.append_integer (a_model.children.count)
+				events.extend (l_event)
 			end
 		end
 

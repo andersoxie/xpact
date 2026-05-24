@@ -1143,7 +1143,9 @@ feature {NONE} -- DTD entity declarations
 					i := parse_entity_declaration (a_subset, i)
 				elseif has_at (a_subset, i, "<!ATTLIST") then
 					i := parse_attlist_declaration (a_subset, i)
-				elseif has_at (a_subset, i, "<!ELEMENT") or else has_at (a_subset, i, "<!NOTATION") then
+				elseif has_at (a_subset, i, "<!ELEMENT") then
+					i := parse_element_declaration (a_subset, i)
+				elseif has_at (a_subset, i, "<!NOTATION") then
 					l_end := find_markup_declaration_end (a_subset, i)
 					if l_end = 0 then
 						set_error ("unterminated doctype declaration")
@@ -1178,6 +1180,222 @@ feature {NONE} -- DTD entity declarations
 			variant
 				a_subset.count - i + 1
 			end
+		end
+
+	parse_element_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Parse an element declaration and emit its content model.
+		require
+			subset_attached: a_subset /= Void
+			starts_element: has_at (a_subset, a_start_index, "<!ELEMENT")
+		local
+			i: INTEGER
+			l_end: INTEGER
+			name_start: INTEGER
+			l_name: STRING_8
+			l_model: detachable XP_CONTENT_MODEL
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_attributes.make
+			l_end := find_markup_declaration_end (a_subset, a_start_index)
+			if l_end = 0 then
+				set_error ("unterminated element declaration")
+				Result := a_subset.count + 1
+			else
+				i := skip_spaces (a_subset, a_start_index + 9)
+				if i >= l_end or else not l_attributes.is_name_start_character (a_subset.item (i)) then
+					set_error ("invalid element declaration name")
+					Result := a_subset.count + 1
+				else
+					name_start := i
+					i := scan_name (a_subset, i)
+					create l_name.make_from_string (a_subset.substring (name_start, i - 1))
+					i := skip_spaces (a_subset, i)
+					parsed_content_model := Void
+					if has_keyword_at (a_subset, i, "EMPTY") then
+						create l_model.make ({XP_CONTENT_MODEL}.Type_empty, {XP_CONTENT_MODEL}.Quant_none, Void)
+						i := i + 5
+					elseif has_keyword_at (a_subset, i, "ANY") then
+						create l_model.make ({XP_CONTENT_MODEL}.Type_any, {XP_CONTENT_MODEL}.Quant_none, Void)
+						i := i + 3
+					elseif i <= l_end - 1 and then a_subset.item (i) = '(' then
+						i := parse_content_particle (a_subset, i, l_end - 1)
+						if not has_error then
+							l_model := parsed_content_model
+						end
+					else
+						set_error ("invalid element content model")
+					end
+					if not has_error then
+						i := skip_spaces (a_subset, i)
+						if i /= l_end then
+							set_error ("unexpected element declaration content")
+							Result := a_subset.count + 1
+						elseif attached l_model as l_attached_model then
+							handler.on_element_decl (l_name, l_attached_model)
+							Result := l_end + 1
+						else
+							set_error ("invalid element content model")
+							Result := a_subset.count + 1
+						end
+					else
+						Result := a_subset.count + 1
+					end
+				end
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_subset.count + 1
+		end
+
+	parse_content_particle (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
+			-- Parse one element-content particle and store it in `parsed_content_model'.
+		require
+			subset_attached: a_subset /= Void
+			valid_bounds: a_start_index >= 1 and a_start_index <= a_end_index and a_end_index <= a_subset.count
+		local
+			i: INTEGER
+			name_start: INTEGER
+			l_name: STRING_8
+			l_node: XP_CONTENT_MODEL
+			l_child: XP_CONTENT_MODEL
+			l_separator: CHARACTER_8
+			l_done: BOOLEAN
+			l_type: INTEGER
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_attributes.make
+			i := a_start_index
+			parsed_content_model := Void
+			if i <= a_end_index and then a_subset.item (i) = '(' then
+				i := skip_spaces (a_subset, i + 1)
+				if has_at (a_subset, i, "#PCDATA") then
+					create l_node.make ({XP_CONTENT_MODEL}.Type_mixed, {XP_CONTENT_MODEL}.Quant_none, Void)
+					i := skip_spaces (a_subset, i + 7)
+					from
+					invariant
+						index_in_bounds: i >= 1 and i <= a_end_index + 1
+					until
+						has_error or l_done
+					loop
+						if i <= a_end_index and then a_subset.item (i) = ')' then
+							i := i + 1
+							l_done := True
+						elseif i <= a_end_index and then a_subset.item (i) = '|' then
+							i := skip_spaces (a_subset, i + 1)
+							if i <= a_end_index and then l_attributes.is_name_start_character (a_subset.item (i)) then
+								name_start := i
+								i := scan_name (a_subset, i)
+								create l_name.make_from_string (a_subset.substring (name_start, i - 1))
+								create l_child.make ({XP_CONTENT_MODEL}.Type_name, {XP_CONTENT_MODEL}.Quant_none, l_name)
+								l_node.add_child (l_child)
+								i := skip_spaces (a_subset, i)
+							else
+								set_error ("invalid mixed content model")
+							end
+						else
+							set_error ("invalid mixed content model")
+						end
+					variant
+						a_end_index - i + 2
+					end
+					if not has_error then
+						i := apply_content_quantifier (l_node, a_subset, i, a_end_index)
+						parsed_content_model := l_node
+						Result := i
+					else
+						Result := a_subset.count + 1
+					end
+				else
+					i := parse_content_particle (a_subset, i, a_end_index)
+					if not has_error and then attached parsed_content_model as l_first_child then
+						i := skip_spaces (a_subset, i)
+						if i <= a_end_index and then (a_subset.item (i) = ',' or else a_subset.item (i) = '|') then
+							l_separator := a_subset.item (i)
+							if l_separator = ',' then
+								l_type := {XP_CONTENT_MODEL}.Type_sequence
+							else
+								l_type := {XP_CONTENT_MODEL}.Type_choice
+							end
+							create l_node.make (l_type, {XP_CONTENT_MODEL}.Quant_none, Void)
+							l_node.add_child (l_first_child)
+							from
+							invariant
+								index_in_bounds: i >= 1 and i <= a_end_index + 1
+							until
+								has_error or l_done
+							loop
+								i := skip_spaces (a_subset, i + 1)
+								i := parse_content_particle (a_subset, i, a_end_index)
+								if not has_error and then attached parsed_content_model as l_next_child then
+									l_node.add_child (l_next_child)
+									i := skip_spaces (a_subset, i)
+									if i <= a_end_index and then a_subset.item (i) = l_separator then
+									elseif i <= a_end_index and then a_subset.item (i) = ')' then
+										i := i + 1
+										l_done := True
+									else
+										set_error ("invalid element content separator")
+									end
+								end
+							variant
+								a_end_index - i + 2
+							end
+						elseif i <= a_end_index and then a_subset.item (i) = ')' then
+							create l_node.make ({XP_CONTENT_MODEL}.Type_sequence, {XP_CONTENT_MODEL}.Quant_none, Void)
+							l_node.add_child (l_first_child)
+							i := i + 1
+						else
+							set_error ("unterminated element content model")
+						end
+						if not has_error and then attached l_node as l_attached_node then
+							i := apply_content_quantifier (l_attached_node, a_subset, i, a_end_index)
+							parsed_content_model := l_attached_node
+							Result := i
+						else
+							Result := a_subset.count + 1
+						end
+					else
+						Result := a_subset.count + 1
+					end
+				end
+			elseif i <= a_end_index and then l_attributes.is_name_start_character (a_subset.item (i)) then
+				name_start := i
+				i := scan_name (a_subset, i)
+				create l_name.make_from_string (a_subset.substring (name_start, i - 1))
+				create l_node.make ({XP_CONTENT_MODEL}.Type_name, {XP_CONTENT_MODEL}.Quant_none, l_name)
+				i := apply_content_quantifier (l_node, a_subset, i, a_end_index)
+				parsed_content_model := l_node
+				Result := i
+			else
+				set_error ("invalid element content particle")
+				Result := a_subset.count + 1
+			end
+		ensure
+			result_in_bounds: Result <= a_subset.count + 1
+		end
+
+	apply_content_quantifier (a_model: XP_CONTENT_MODEL; a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
+			-- Apply optional quantifier at `a_start_index' and return next index.
+		require
+			model_attached: a_model /= Void
+			subset_attached: a_subset /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_end_index + 1
+		do
+			Result := a_start_index
+			if Result <= a_end_index then
+				if a_subset.item (Result) = '?' then
+					a_model.set_quantifier ({XP_CONTENT_MODEL}.Quant_optional)
+					Result := Result + 1
+				elseif a_subset.item (Result) = '*' then
+					a_model.set_quantifier ({XP_CONTENT_MODEL}.Quant_repetition)
+					Result := Result + 1
+				elseif a_subset.item (Result) = '+' then
+					a_model.set_quantifier ({XP_CONTENT_MODEL}.Quant_plus)
+					Result := Result + 1
+				end
+			end
+		ensure
+			result_in_bounds: Result >= a_start_index and Result <= a_end_index + 1
 		end
 
 	parse_attlist_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
@@ -2849,6 +3067,9 @@ feature {NONE} -- State
 
 	current_position_index: INTEGER
 			-- Current 1-based position in `position_input'.
+
+	parsed_content_model: detachable XP_CONTENT_MODEL
+			-- Scratch content model produced by recursive DTD parsing.
 
 invariant
 	handler_attached: handler /= Void

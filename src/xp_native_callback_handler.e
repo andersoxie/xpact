@@ -13,6 +13,7 @@ inherit
 			on_end_cdata_section,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
+			on_element_decl,
 			on_attlist_decl,
 			on_default
 		end
@@ -70,6 +71,9 @@ feature -- Access
 	end_doctype_decl_callback: POINTER
 			-- `XML_EndDoctypeDeclHandler' callback pointer.
 
+	element_decl_callback: POINTER
+			-- `XML_ElementDeclHandler' callback pointer.
+
 	attlist_decl_callback: POINTER
 			-- `XML_AttlistDeclHandler' callback pointer.
 
@@ -107,6 +111,9 @@ feature -- Metrics
 
 	end_doctype_decl_count: INTEGER
 			-- Number of doctype end events emitted.
+
+	element_decl_count: INTEGER
+			-- Number of element declaration events emitted.
 
 	attlist_decl_count: INTEGER
 			-- Number of attribute-list declaration events emitted.
@@ -191,6 +198,14 @@ feature -- Element change
 			end_set: end_doctype_decl_callback = a_end
 		end
 
+	set_element_decl_handler (a_handler: POINTER)
+			-- Set native element declaration callback.
+		do
+			element_decl_callback := a_handler
+		ensure
+			handler_set: element_decl_callback = a_handler
+		end
+
 	set_attlist_decl_handler (a_handler: POINTER)
 			-- Set native attribute-list declaration callback.
 		do
@@ -213,6 +228,7 @@ feature -- Element change
 			default_count := 0
 			start_doctype_decl_count := 0
 			end_doctype_decl_count := 0
+			element_decl_count := 0
 			attlist_decl_count := 0
 			current_specified_attribute_count := 0
 			current_id_attribute_index := -1
@@ -228,6 +244,7 @@ feature -- Element change
 			no_default_events: default_count = 0
 			no_start_doctype_events: start_doctype_decl_count = 0
 			no_end_doctype_events: end_doctype_decl_count = 0
+			no_element_decl_events: element_decl_count = 0
 			no_attlist_events: attlist_decl_count = 0
 			no_current_specified_attributes: current_specified_attribute_count = 0
 			no_current_id_attribute: current_id_attribute_index = -1
@@ -397,6 +414,33 @@ feature -- Events
 			end
 		end
 
+	on_element_decl (a_name: READABLE_STRING_8; a_model: XP_CONTENT_MODEL)
+		local
+			l_event: STRING_8
+			l_name: C_STRING
+			l_model_names: ARRAYED_LIST [C_STRING]
+			l_model: POINTER
+		do
+			element_decl_count := element_decl_count + 1
+			create l_event.make_from_string ("element-decl:")
+			l_event.append (a_name)
+			l_event.append_character (':')
+			l_event.append_integer (a_model.content_type)
+			l_event.append_character (':')
+			l_event.append_integer (a_model.quantifier)
+			l_event.append_character (':')
+			l_event.append_integer (a_model.children.count)
+			events.extend (l_event)
+			if element_decl_callback /= default_pointer then
+				create l_name.make (a_name)
+				create l_model_names.make (a_model.node_count)
+				l_model := content_model_array (a_model, l_model_names)
+				if l_model /= default_pointer then
+					call_element_decl_callback (element_decl_callback, user_data, l_name.item, l_model)
+				end
+			end
+		end
+
 	on_attlist_decl (a_element_name, a_attribute_name, a_attribute_type: READABLE_STRING_8; a_default_value: detachable READABLE_STRING_8; a_is_required: BOOLEAN)
 		local
 			l_event: STRING_8
@@ -448,6 +492,157 @@ feature -- Events
 		end
 
 feature {NONE} -- Native callback calls
+
+	content_model_array (a_model: XP_CONTENT_MODEL; a_name_strings: ARRAYED_LIST [C_STRING]): POINTER
+			-- Newly allocated Expat-shaped content model array for `a_model'.
+		require
+			model_attached: a_model /= Void
+			name_strings_attached: a_name_strings /= Void
+		local
+			l_nodes: ARRAYED_LIST [XP_CONTENT_MODEL]
+			l_node: XP_CONTENT_MODEL
+			l_name: C_STRING
+			l_name_pointer: POINTER
+			i: INTEGER
+		do
+			create l_nodes.make (a_model.node_count)
+			append_content_model_nodes (l_nodes, a_model)
+			Result := c_malloc (l_nodes.count * content_struct_size)
+			if Result /= default_pointer then
+				from
+					i := 1
+				invariant
+					index_in_bounds: i >= 1 and i <= l_nodes.count + 1
+				until
+					i > l_nodes.count
+				loop
+					l_node := l_nodes.i_th (i)
+					l_name_pointer := default_pointer
+					if attached l_node.name as l_attached_name then
+						create l_name.make (l_attached_name)
+						a_name_strings.extend (l_name)
+						l_name_pointer := l_name.item
+					end
+					put_content_model_node (
+						Result,
+						i - 1,
+						l_node.content_type,
+						l_node.quantifier,
+						l_name_pointer,
+						l_node.children.count,
+						first_content_child_index (l_nodes, l_node)
+					)
+					i := i + 1
+				variant
+					l_nodes.count - i + 1
+				end
+			end
+		end
+
+	append_content_model_nodes (a_nodes: ARRAYED_LIST [XP_CONTENT_MODEL]; a_root: XP_CONTENT_MODEL)
+			-- Append `a_root' and descendants in Expat's breadth-first array order.
+		require
+			nodes_attached: a_nodes /= Void
+			nodes_empty: a_nodes.is_empty
+			root_attached: a_root /= Void
+		local
+			i, j, l_total: INTEGER
+			l_node: XP_CONTENT_MODEL
+		do
+			a_nodes.extend (a_root)
+			l_total := a_root.node_count
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= l_total + 1
+				count_bounded: a_nodes.count <= l_total
+			until
+				i > l_total
+			loop
+				l_node := a_nodes.i_th (i)
+				from
+					j := 1
+				invariant
+					child_index_in_bounds: j >= 1 and j <= l_node.children.count + 1
+				until
+					j > l_node.children.count
+				loop
+					a_nodes.extend (l_node.children.i_th (j))
+					j := j + 1
+				variant
+					l_node.children.count - j + 1
+				end
+				i := i + 1
+			variant
+				l_total - i + 1
+			end
+		ensure
+			all_nodes_added: a_nodes.count = old a_nodes.count + a_root.node_count
+		end
+
+	first_content_child_index (a_nodes: ARRAYED_LIST [XP_CONTENT_MODEL]; a_node: XP_CONTENT_MODEL): INTEGER
+			-- Zero-based index of `a_node''s first child in `a_nodes', or -1.
+		require
+			nodes_attached: a_nodes /= Void
+			node_attached: a_node /= Void
+		local
+			i: INTEGER
+			l_found: BOOLEAN
+			l_first_child: XP_CONTENT_MODEL
+		do
+			Result := -1
+			if not a_node.children.is_empty then
+				l_first_child := a_node.children.i_th (1)
+				from
+					i := 1
+				invariant
+					index_in_bounds: i >= 1 and i <= a_nodes.count + 1
+				until
+					i > a_nodes.count or l_found
+				loop
+					if a_nodes.i_th (i) = l_first_child then
+						Result := i - 1
+						l_found := True
+					end
+					i := i + 1
+				variant
+					a_nodes.count - i + 1
+				end
+			end
+		ensure
+			valid_index: Result >= -1
+		end
+
+	content_struct_size: INTEGER
+			-- Size of native `XML_Content' under the C ABI used by `include/xpact.h'.
+		external
+			"C inline"
+		alias
+			"typedef struct { int type; int quant; char *name; unsigned int numchildren; void *children; } XPACT_EiffelContentModel; return (EIF_INTEGER) sizeof (XPACT_EiffelContentModel);"
+		end
+
+	c_malloc (a_size: INTEGER): POINTER
+			-- Allocate native memory that `XML_FreeContentModel' can release with the default allocator.
+		require
+			non_negative_size: a_size >= 0
+		external
+			"C inline use <stdlib.h>"
+		alias
+			"return (EIF_POINTER) malloc ((size_t) $a_size);"
+		end
+
+	put_content_model_node (a_base: POINTER; a_index, a_type, a_quant: INTEGER; a_name: POINTER; a_numchildren, a_first_child_index: INTEGER)
+			-- Write one native content model node.
+		require
+			base_attached: a_base /= default_pointer
+			valid_index: a_index >= 0
+			non_negative_children: a_numchildren >= 0
+			valid_child_index: a_first_child_index >= -1
+		external
+			"C inline"
+		alias
+			"typedef struct { int type; int quant; char *name; unsigned int numchildren; void *children; } XPACT_EiffelContentModel; XPACT_EiffelContentModel *items = (XPACT_EiffelContentModel *) $a_base; items[$a_index].type = (int) $a_type; items[$a_index].quant = (int) $a_quant; items[$a_index].name = (char *) $a_name; items[$a_index].numchildren = (unsigned int) $a_numchildren; items[$a_index].children = ($a_first_child_index >= 0) ? (void *) &items[$a_first_child_index] : (void *) 0;"
+		end
 
 	call_start_element_callback (a_callback, a_user_data, a_name, a_attributes: POINTER)
 			-- Invoke native `XML_StartElementHandler'.
@@ -550,6 +745,18 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *)) $a_callback) ((void *) $a_user_data);"
 		end
 
+	call_element_decl_callback (a_callback, a_user_data, a_name, a_model: POINTER)
+			-- Invoke native `XML_ElementDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			name_attached: a_name /= default_pointer
+			model_attached: a_model /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, void *)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, (void *) $a_model);"
+		end
+
 	call_attlist_decl_callback (a_callback, a_user_data, a_element_name, a_attribute_name, a_attribute_type, a_default_value: POINTER; a_is_required: BOOLEAN)
 			-- Invoke native `XML_AttlistDeclHandler'.
 		require
@@ -575,6 +782,7 @@ invariant
 	non_negative_default_count: default_count >= 0
 	non_negative_start_doctype_count: start_doctype_decl_count >= 0
 	non_negative_end_doctype_count: end_doctype_decl_count >= 0
+	non_negative_element_decl_count: element_decl_count >= 0
 	non_negative_attlist_count: attlist_decl_count >= 0
 	non_negative_current_specified_attribute_count: current_specified_attribute_count >= 0
 	current_id_attribute_index_valid: current_id_attribute_index >= -1

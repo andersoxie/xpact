@@ -65,6 +65,11 @@ typedef struct XPACT_EiffelBridge {
 		XML_StartDoctypeDeclHandler start,
 		XML_EndDoctypeDeclHandler end
 	);
+	void (XMLCALL *set_element_decl_handler) (
+		void *context,
+		void *parser,
+		XML_ElementDeclHandler handler
+	);
 	void (XMLCALL *set_attlist_decl_handler) (
 		void *context,
 		void *parser,

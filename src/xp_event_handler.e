@@ -68,6 +68,15 @@ feature -- Events
 		do
 		end
 
+	on_element_decl (a_name: READABLE_STRING_8; a_model: XP_CONTENT_MODEL)
+			-- Element declaration was parsed.
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+			model_attached: a_model /= Void
+		do
+		end
+
 	on_attlist_decl (a_element_name, a_attribute_name, a_attribute_type: READABLE_STRING_8; a_default_value: detachable READABLE_STRING_8; a_is_required: BOOLEAN)
 			-- Attribute-list declaration was parsed.
 		require

@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 274 named upstream tests in the downloaded
+expected-failure patterns expand to 272 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -50,7 +50,9 @@ The Windows release has green evidence for:
   and default-value declarations;
 - ATTLIST default-attribute merging, first-declaration-wins behavior,
   explicit-attribute counts, and ID attribute indexes for the covered native
-  callback path.
+  callback path;
+- `XML_SetElementDeclHandler` callbacks with freeable `XML_Content` content
+  models for simple and nested sequence/choice/name quantifier declarations.
 
 ## Red Rows
 
@@ -60,7 +62,7 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - allocation-failure injection and allocation accounting tests;
 - UTF-16 and custom/unknown encoding tests;
 - external entity parser creation/loading through the Expat C callback model;
-- DTD declaration, notation, default-handler, and content-model callbacks;
+- remaining DTD diagnostics, notation callbacks, and default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;
 - stop/suspend/resume/abort parser state;
 - Expat hash/reparse-deferral/accounting semantics.
