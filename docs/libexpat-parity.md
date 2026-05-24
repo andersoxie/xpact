@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 279 named upstream tests in the downloaded
+expected-failure patterns expand to 278 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -45,7 +45,9 @@ The Windows release has green evidence for:
   section tokens in the Eiffel-backed Windows DLL path;
 - doctype start/end callbacks and default-handler replay for public/system
   identifiers;
-- internal-subset default-handler whitespace for handled DTD declarations.
+- internal-subset default-handler whitespace for handled DTD declarations;
+- `XML_AttlistDeclHandler` callbacks for ATTLIST enumeration, NOTATION, CDATA,
+  and default-value declarations.
 
 ## Red Rows
 

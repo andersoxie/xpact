@@ -10,6 +10,8 @@ static int g_default_len;
 static int g_doctype_start_count;
 static int g_doctype_end_count;
 static int g_doctype_failed;
+static int g_attlist_count;
+static int g_attlist_failed;
 
 static int
 check(int condition, const char *label) {
@@ -63,6 +65,23 @@ end_doctype_handler(void *userData) {
 	g_doctype_end_count++;
 }
 
+static void XMLCALL
+attlist_handler(void *userData, const XML_Char *elname, const XML_Char *attname, const XML_Char *att_type, const XML_Char *dflt, int isrequired) {
+	(void)userData;
+	g_attlist_count++;
+	if (g_attlist_count == 1) {
+		if (strcmp(elname, "doc") != 0 || strcmp(attname, "a") != 0 || strcmp(att_type, "(one|two|three)") != 0 || dflt != NULL || !isrequired) {
+			g_attlist_failed = 1;
+		}
+	} else if (g_attlist_count == 2) {
+		if (strcmp(elname, "doc") != 0 || strcmp(attname, "b") != 0 || strcmp(att_type, "NOTATION(foo)") != 0 || dflt == NULL || strcmp(dflt, "bar") != 0 || isrequired) {
+			g_attlist_failed = 1;
+		}
+	} else {
+		g_attlist_failed = 1;
+	}
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -78,6 +97,13 @@ main(void) {
 		"<?pi in dtd?>\n"
 		"<!--comment in dtd-->\n"
 		"]><doc/>";
+	const char *attlist_input =
+		"<!DOCTYPE doc [\n"
+		"<!ELEMENT doc EMPTY>\n"
+		"<!NOTATION foo SYSTEM 'http://example.org/foo'>\n"
+		"<!ATTLIST doc a ( one | two | three ) #REQUIRED>\n"
+		"<!ATTLIST doc b NOTATION (foo) 'bar'>\n"
+		"]><doc a='two'/>";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -126,6 +152,16 @@ main(void) {
 	status = XML_Parse(parser, dtd_default_input, (int)strlen(dtd_default_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for DTD default check")) return 1;
 	if (!check(strcmp(g_default_text, "\n\n\n\n\n\n\n<doc/>") == 0, "default handler receives DTD whitespace")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for attlist check")) return 1;
+	g_attlist_count = 0;
+	g_attlist_failed = 0;
+	XML_SetAttlistDeclHandler(parser, attlist_handler);
+	status = XML_Parse(parser, attlist_input, (int)strlen(attlist_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for attlist check")) return 1;
+	if (!check(g_attlist_count == 2 && !g_attlist_failed, "attlist declaration callbacks delegated")) return 1;
 	XML_ParserFree(parser);
 
 	puts("xpact Eiffel DLL smoke: ok");

@@ -68,6 +68,18 @@ feature -- Events
 		do
 		end
 
+	on_attlist_decl (a_element_name, a_attribute_name, a_attribute_type: READABLE_STRING_8; a_default_value: detachable READABLE_STRING_8; a_is_required: BOOLEAN)
+			-- Attribute-list declaration was parsed.
+		require
+			element_name_attached: a_element_name /= Void
+			element_name_not_empty: not a_element_name.is_empty
+			attribute_name_attached: a_attribute_name /= Void
+			attribute_name_not_empty: not a_attribute_name.is_empty
+			attribute_type_attached: a_attribute_type /= Void
+			attribute_type_not_empty: not a_attribute_type.is_empty
+		do
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 			-- Raw default-handler text was parsed.
 		require

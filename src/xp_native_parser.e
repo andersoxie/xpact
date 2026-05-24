@@ -196,6 +196,14 @@ feature -- Element change
 			end_set: handler.end_doctype_decl_callback = a_end
 		end
 
+	set_attlist_decl_handler (a_handler: POINTER)
+			-- Set native attribute-list declaration callback.
+		do
+			handler.set_attlist_decl_handler (a_handler)
+		ensure
+			handler_set: handler.attlist_decl_callback = a_handler
+		end
+
 	reset: BOOLEAN
 			-- Reset parser state while preserving callback registrations.
 		do

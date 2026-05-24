@@ -13,6 +13,7 @@ inherit
 			on_end_cdata_section,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
+			on_attlist_decl,
 			on_default
 		end
 
@@ -43,6 +44,9 @@ feature -- Access
 	record_default_events: BOOLEAN
 			-- Should default-handler events be added to `events'?
 
+	record_attlist_events: BOOLEAN
+			-- Should attribute-list declaration events be added to `events'?
+
 feature -- Configuration
 
 	enable_doctype_events
@@ -59,6 +63,14 @@ feature -- Configuration
 			record_default_events := True
 		ensure
 			default_events_enabled: record_default_events
+		end
+
+	enable_attlist_events
+			-- Record attribute-list declaration events in `events'.
+		do
+			record_attlist_events := True
+		ensure
+			attlist_events_enabled: record_attlist_events
 		end
 
 feature -- Events
@@ -155,6 +167,31 @@ feature -- Events
 		do
 			if record_doctype_events then
 				events.extend ("end-doctype")
+			end
+		end
+
+	on_attlist_decl (a_element_name, a_attribute_name, a_attribute_type: READABLE_STRING_8; a_default_value: detachable READABLE_STRING_8; a_is_required: BOOLEAN)
+		local
+			l_event: STRING_8
+		do
+			if record_attlist_events then
+				create l_event.make_from_string ("attlist:")
+				l_event.append (a_element_name)
+				l_event.append_character (':')
+				l_event.append (a_attribute_name)
+				l_event.append_character (':')
+				l_event.append (a_attribute_type)
+				l_event.append_character (':')
+				if attached a_default_value as l_default_value then
+					l_event.append (l_default_value)
+				end
+				l_event.append_character (':')
+				if a_is_required then
+					l_event.append ("1")
+				else
+					l_event.append ("0")
+				end
+				events.extend (l_event)
 			end
 		end
 

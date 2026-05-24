@@ -32,6 +32,7 @@ struct XML_ParserStruct {
 	XML_DefaultHandler defaultHandler;
 	XML_StartDoctypeDeclHandler startDoctypeDeclHandler;
 	XML_EndDoctypeDeclHandler endDoctypeDeclHandler;
+	XML_AttlistDeclHandler attlistDeclHandler;
 	XML_ExternalEntityRefHandler externalEntityRefHandler;
 	void *externalEntityRefArg;
 };
@@ -346,6 +347,17 @@ XML_SetEndDoctypeDeclHandler(XML_Parser parser, XML_EndDoctypeDeclHandler end) {
 }
 
 void XMLCALL
+XML_SetAttlistDeclHandler(XML_Parser parser, XML_AttlistDeclHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->attlistDeclHandler = handler;
+	if (parser->bridge != NULL && parser->bridge->set_attlist_decl_handler != NULL && parser->eiffelParser != NULL) {
+		parser->bridge->set_attlist_decl_handler(parser->bridge->context, parser->eiffelParser, handler);
+	}
+}
+
+void XMLCALL
 XML_SetExternalEntityRefHandler(XML_Parser parser, XML_ExternalEntityRefHandler handler) {
 	if (parser == NULL) {
 		return;
@@ -371,7 +383,6 @@ XML_SetExternalEntityRefHandlerArg(XML_Parser parser, void *arg) {
 	void XMLCALL name(XML_Parser parser, type handler) { (void)parser; (void)handler; }
 
 XPACT_UNUSED_HANDLER_SETTER(XML_SetElementDeclHandler, XML_ElementDeclHandler)
-XPACT_UNUSED_HANDLER_SETTER(XML_SetAttlistDeclHandler, XML_AttlistDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetXmlDeclHandler, XML_XmlDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetEntityDeclHandler, XML_EntityDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetUnparsedEntityDeclHandler, XML_UnparsedEntityDeclHandler)

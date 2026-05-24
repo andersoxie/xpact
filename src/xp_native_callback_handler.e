@@ -13,6 +13,7 @@ inherit
 			on_end_cdata_section,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
+			on_attlist_decl,
 			on_default
 		end
 	PLATFORM
@@ -67,6 +68,9 @@ feature -- Access
 	end_doctype_decl_callback: POINTER
 			-- `XML_EndDoctypeDeclHandler' callback pointer.
 
+	attlist_decl_callback: POINTER
+			-- `XML_AttlistDeclHandler' callback pointer.
+
 	events: ARRAYED_LIST [STRING_8]
 			-- Eiffel-visible event log used by tests and diagnostics.
 
@@ -101,6 +105,9 @@ feature -- Metrics
 
 	end_doctype_decl_count: INTEGER
 			-- Number of doctype end events emitted.
+
+	attlist_decl_count: INTEGER
+			-- Number of attribute-list declaration events emitted.
 
 feature -- Element change
 
@@ -176,6 +183,14 @@ feature -- Element change
 			end_set: end_doctype_decl_callback = a_end
 		end
 
+	set_attlist_decl_handler (a_handler: POINTER)
+			-- Set native attribute-list declaration callback.
+		do
+			attlist_decl_callback := a_handler
+		ensure
+			handler_set: attlist_decl_callback = a_handler
+		end
+
 	reset_events
 			-- Clear observable event state.
 		do
@@ -190,6 +205,7 @@ feature -- Element change
 			default_count := 0
 			start_doctype_decl_count := 0
 			end_doctype_decl_count := 0
+			attlist_decl_count := 0
 		ensure
 			no_events: events.count = 0
 			no_start_events: start_element_count = 0
@@ -202,6 +218,7 @@ feature -- Element change
 			no_default_events: default_count = 0
 			no_start_doctype_events: start_doctype_decl_count = 0
 			no_end_doctype_events: end_doctype_decl_count = 0
+			no_attlist_events: attlist_decl_count = 0
 		end
 
 feature -- Events
@@ -366,6 +383,45 @@ feature -- Events
 			end
 		end
 
+	on_attlist_decl (a_element_name, a_attribute_name, a_attribute_type: READABLE_STRING_8; a_default_value: detachable READABLE_STRING_8; a_is_required: BOOLEAN)
+		local
+			l_event: STRING_8
+			l_element_name: C_STRING
+			l_attribute_name: C_STRING
+			l_attribute_type: C_STRING
+			l_default_value: detachable C_STRING
+			l_default_pointer: POINTER
+		do
+			attlist_decl_count := attlist_decl_count + 1
+			create l_event.make_from_string ("attlist:")
+			l_event.append (a_element_name)
+			l_event.append_character (':')
+			l_event.append (a_attribute_name)
+			l_event.append_character (':')
+			l_event.append (a_attribute_type)
+			l_event.append_character (':')
+			if attached a_default_value as l_attached_default_value then
+				l_event.append (l_attached_default_value)
+			end
+			l_event.append_character (':')
+			if a_is_required then
+				l_event.append ("1")
+			else
+				l_event.append ("0")
+			end
+			events.extend (l_event)
+			if attlist_decl_callback /= default_pointer then
+				create l_element_name.make (a_element_name)
+				create l_attribute_name.make (a_attribute_name)
+				create l_attribute_type.make (a_attribute_type)
+				if attached a_default_value as l_attached_default_value then
+					create l_default_value.make (l_attached_default_value)
+					l_default_pointer := l_default_value.item
+				end
+				call_attlist_decl_callback (attlist_decl_callback, user_data, l_element_name.item, l_attribute_name.item, l_attribute_type.item, l_default_pointer, a_is_required)
+			end
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 		local
 			l_text: C_STRING
@@ -480,6 +536,19 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *)) $a_callback) ((void *) $a_user_data);"
 		end
 
+	call_attlist_decl_callback (a_callback, a_user_data, a_element_name, a_attribute_name, a_attribute_type, a_default_value: POINTER; a_is_required: BOOLEAN)
+			-- Invoke native `XML_AttlistDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			element_name_attached: a_element_name /= default_pointer
+			attribute_name_attached: a_attribute_name /= default_pointer
+			attribute_type_attached: a_attribute_type /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, const char *, const char *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_element_name, (const char *) $a_attribute_name, (const char *) $a_attribute_type, (const char *) $a_default_value, $a_is_required ? 1 : 0);"
+		end
+
 invariant
 	events_attached: events /= Void
 	non_negative_start_count: start_element_count >= 0
@@ -492,5 +561,6 @@ invariant
 	non_negative_default_count: default_count >= 0
 	non_negative_start_doctype_count: start_doctype_decl_count >= 0
 	non_negative_end_doctype_count: end_doctype_decl_count >= 0
+	non_negative_attlist_count: attlist_decl_count >= 0
 
 end

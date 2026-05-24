@@ -1140,7 +1140,9 @@ feature {NONE} -- DTD entity declarations
 			loop
 				if has_at (a_subset, i, "<!ENTITY") then
 					i := parse_entity_declaration (a_subset, i)
-				elseif has_at (a_subset, i, "<!ELEMENT") or else has_at (a_subset, i, "<!ATTLIST") or else has_at (a_subset, i, "<!NOTATION") then
+				elseif has_at (a_subset, i, "<!ATTLIST") then
+					i := parse_attlist_declaration (a_subset, i)
+				elseif has_at (a_subset, i, "<!ELEMENT") or else has_at (a_subset, i, "<!NOTATION") then
 					l_end := find_markup_declaration_end (a_subset, i)
 					if l_end = 0 then
 						set_error ("unterminated doctype declaration")
@@ -1175,6 +1177,240 @@ feature {NONE} -- DTD entity declarations
 			variant
 				a_subset.count - i + 1
 			end
+		end
+
+	parse_attlist_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Parse an attribute-list declaration and emit one callback per attribute definition.
+		require
+			subset_attached: a_subset /= Void
+			starts_attlist: has_at (a_subset, a_start_index, "<!ATTLIST")
+		local
+			i: INTEGER
+			l_end: INTEGER
+			name_start: INTEGER
+			l_element_name: STRING_8
+			l_attribute_name: STRING_8
+			l_attribute_type: STRING_8
+			l_default_value: detachable STRING_8
+			l_new_default_value: STRING_8
+			l_is_required: BOOLEAN
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_attributes.make
+			l_end := find_markup_declaration_end (a_subset, a_start_index)
+			if l_end = 0 then
+				set_error ("unterminated attlist declaration")
+				Result := a_subset.count + 1
+			else
+				i := skip_spaces (a_subset, a_start_index + 9)
+				if i >= l_end or else not l_attributes.is_name_start_character (a_subset.item (i)) then
+					set_error ("invalid attlist element name")
+					Result := a_subset.count + 1
+				else
+					name_start := i
+					i := scan_name (a_subset, i)
+					create l_element_name.make_from_string (a_subset.substring (name_start, i - 1))
+					i := skip_spaces (a_subset, i)
+					from
+					invariant
+						index_in_bounds: i >= 1 and i <= l_end
+						element_name_attached: l_element_name /= Void
+					until
+						has_error or i >= l_end
+					loop
+						if not l_attributes.is_name_start_character (a_subset.item (i)) then
+							set_error ("invalid attlist attribute name")
+						else
+							name_start := i
+							i := scan_name (a_subset, i)
+							create l_attribute_name.make_from_string (a_subset.substring (name_start, i - 1))
+							i := skip_spaces (a_subset, i)
+							create l_attribute_type.make_empty
+							if i <= l_end - 1 then
+								i := parse_attlist_type (a_subset, i, l_end - 1, l_attribute_type)
+							else
+								set_error ("missing attlist type")
+							end
+							if not has_error then
+								i := skip_spaces (a_subset, i)
+								l_default_value := Void
+								l_is_required := False
+								if has_at (a_subset, i, "#REQUIRED") then
+									l_is_required := True
+									i := i + 9
+								elseif has_at (a_subset, i, "#IMPLIED") then
+									i := i + 8
+								elseif has_at (a_subset, i, "#FIXED") then
+									i := skip_spaces (a_subset, i + 6)
+									if i <= l_end - 1 and then is_quote (a_subset.item (i)) then
+										create l_new_default_value.make_empty
+										i := parse_attlist_default_value (a_subset, i, l_end - 1, l_new_default_value)
+										l_default_value := l_new_default_value
+									else
+										set_error ("missing fixed attlist default")
+									end
+								elseif i <= l_end - 1 and then is_quote (a_subset.item (i)) then
+									create l_new_default_value.make_empty
+									i := parse_attlist_default_value (a_subset, i, l_end - 1, l_new_default_value)
+									l_default_value := l_new_default_value
+								else
+									set_error ("missing attlist default declaration")
+								end
+								if not has_error then
+									handler.on_attlist_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
+									i := skip_spaces (a_subset, i)
+								end
+							end
+						end
+					variant
+						l_end - i
+					end
+					if has_error then
+						Result := a_subset.count + 1
+					else
+						Result := l_end + 1
+					end
+				end
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_subset.count + 1
+		end
+
+	parse_attlist_type (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_type: STRING_8): INTEGER
+			-- Parse an attribute type and append Expat-compatible spelling to `a_type'.
+		require
+			subset_attached: a_subset /= Void
+			type_attached: a_type /= Void
+			valid_bounds: a_start_index >= 1 and a_start_index <= a_end_index and a_end_index <= a_subset.count
+		local
+			i: INTEGER
+			name_start: INTEGER
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_attributes.make
+			i := a_start_index
+			if has_keyword_at (a_subset, i, "NOTATION") then
+				a_type.append ("NOTATION")
+				i := skip_spaces (a_subset, i + 8)
+				if i <= a_end_index and then a_subset.item (i) = '(' then
+					Result := append_attlist_group (a_subset, i, a_end_index, a_type)
+				else
+					set_error ("missing notation attlist group")
+					Result := a_subset.count + 1
+				end
+			elseif i <= a_end_index and then a_subset.item (i) = '(' then
+				Result := append_attlist_group (a_subset, i, a_end_index, a_type)
+			elseif i <= a_end_index and then l_attributes.is_name_start_character (a_subset.item (i)) then
+				name_start := i
+				i := scan_name (a_subset, i)
+				a_type.append (a_subset.substring (name_start, i - 1))
+				Result := i
+			else
+				set_error ("invalid attlist type")
+				Result := a_subset.count + 1
+			end
+		ensure
+			result_in_bounds: Result <= a_subset.count + 1
+		end
+
+	append_attlist_group (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_type: STRING_8): INTEGER
+			-- Append an enumeration/notation group with XML whitespace removed.
+		require
+			subset_attached: a_subset /= Void
+			type_attached: a_type /= Void
+			valid_bounds: a_start_index >= 1 and a_start_index <= a_end_index and a_end_index <= a_subset.count
+			starts_group: a_subset.item (a_start_index) = '('
+		local
+			i: INTEGER
+			c: CHARACTER_8
+			l_done: BOOLEAN
+		do
+			from
+				i := a_start_index
+			invariant
+				index_in_bounds: i >= a_start_index and i <= a_end_index + 1
+			until
+				i > a_end_index or has_error or l_done
+			loop
+				c := a_subset.item (i)
+				if not is_xml_character_code (c.code) then
+					set_error ("invalid XML character")
+				elseif not is_xml_space (c) then
+					a_type.append_character (c)
+				end
+				if c = ')' then
+					l_done := True
+					Result := i + 1
+				end
+				i := i + 1
+			variant
+				a_end_index - i + 1
+			end
+			if not has_error and not l_done then
+				set_error ("unterminated attlist type")
+				Result := a_subset.count + 1
+			end
+		ensure
+			result_in_bounds: Result <= a_subset.count + 1
+		end
+
+	parse_attlist_default_value (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
+			-- Parse and normalize an attribute default literal bounded by `a_end_index'.
+		require
+			subset_attached: a_subset /= Void
+			value_attached: a_value /= Void
+			valid_bounds: a_start_index >= 1 and a_start_index <= a_end_index and a_end_index <= a_subset.count
+			starts_with_quote: is_quote (a_subset.item (a_start_index))
+		local
+			i: INTEGER
+			l_quote: CHARACTER_8
+			l_reference_end: INTEGER
+			c: CHARACTER_8
+		do
+			l_quote := a_subset.item (a_start_index)
+			from
+				i := a_start_index + 1
+			invariant
+				index_in_bounds: i >= a_start_index + 1 and i <= a_end_index + 1
+			until
+				i > a_end_index or has_error or else a_subset.item (i) = l_quote
+			loop
+				c := a_subset.item (i)
+				if c = '<' then
+					set_error ("left angle bracket in attlist default")
+				elseif c = '&' then
+					l_reference_end := find_character (a_subset, ';', i + 1)
+					if l_reference_end = 0 or else l_reference_end > a_end_index then
+						set_error ("unterminated reference")
+					else
+						i := append_reference_in_literal (a_subset, i, a_value)
+					end
+				elseif not is_xml_character_code (c.code) then
+					set_error ("invalid XML character")
+				else
+					if is_xml_space (c) then
+						a_value.append_character (' ')
+					else
+						a_value.append_character (c)
+					end
+					i := i + 1
+				end
+			variant
+				a_end_index - i + 1
+			end
+			if not has_error then
+				if i > a_end_index then
+					set_error ("unterminated attlist default")
+					Result := a_subset.count + 1
+				else
+					Result := i + 1
+				end
+			else
+				Result := a_subset.count + 1
+			end
+		ensure
+			result_in_bounds: Result <= a_subset.count + 1
 		end
 
 	parse_entity_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER

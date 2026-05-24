@@ -21,6 +21,7 @@ green	basic_tests.c	test_comment_handled_in_default	Eiffel parser forwards raw c
 green	basic_tests.c	test_cdata_default	Eiffel parser forwards raw CDATA section tokens to the native default handler.
 green	basic_tests.c	test_default_doctype_handler	Eiffel parser forwards doctype start/end callbacks and public/system literals to the native default handler.
 green	basic_tests.c	test_dtd_default_handling	Eiffel internal-subset scanning preserves default-handler whitespace while suppressing handled DTD declarations.
+green	basic_tests.c	test_dtd_attr_handling	Eiffel parser tokenizes ATTLIST declarations and forwards XML_AttlistDeclHandler callbacks for enumeration, NOTATION, CDATA, and default values.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -50,7 +51,6 @@ red	basic_tests.c	test_external*	External entity parser creation and callback lo
 red	basic_tests.c	test_*external*	External entity parser creation and callback loading are not implemented.
 red	basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
 red	basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
-red	basic_tests.c	test_dtd_attr_handling	Attribute-list declaration callbacks and default-attribute parity are not implemented.
 red	basic_tests.c	test_dtd_elements	Element declaration callbacks and content-model parity are not implemented.
 red	basic_tests.c	test_dtd_elements_nesting	Element declaration callbacks and content-model parity are not implemented.
 red	basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.

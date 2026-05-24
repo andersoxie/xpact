@@ -15,6 +15,7 @@ feature {NONE} -- Initialization
 			test_mismatched_tag_is_rejected
 			test_depth_limit_is_enforced
 			test_comments_and_cdata
+			test_attlist_declaration_callbacks
 			test_predefined_and_numeric_entities
 			test_internal_entity_declarations
 			test_parameter_entity_declarations
@@ -159,6 +160,39 @@ feature {NONE} -- Tests
 				assert ("attribute references expanded", l_handler.last_attribute_value.same_string ("Tom & %"A%" A <"))
 			else
 				io.put_string ("predefined error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+		end
+
+	test_attlist_declaration_callbacks
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			l_handler.enable_attlist_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<!ELEMENT doc EMPTY><!ATTLIST doc a ( one | two | three ) #REQUIRED>]><doc a='two'/>")
+			assert ("attlist enumeration document accepted", l_ok)
+			if l_ok then
+				assert ("attlist enumeration callback", l_handler.events.i_th (1).same_string ("attlist:doc:a:(one|two|three)::1"))
+			else
+				io.put_string ("attlist enumeration error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+
+			create l_handler.make
+			l_handler.enable_attlist_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<!ELEMENT doc EMPTY><!ATTLIST doc a NOTATION (foo) 'bar'>]><doc/>")
+			assert ("attlist notation document accepted", l_ok)
+			if l_ok then
+				assert ("attlist notation callback", l_handler.events.i_th (1).same_string ("attlist:doc:a:NOTATION(foo):bar:0"))
+			else
+				io.put_string ("attlist notation error: ")
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end
