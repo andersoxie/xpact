@@ -657,6 +657,26 @@ main(void) {
 	if (!check(saw_xml_char_feature && saw_xml_lchar_feature, "feature list includes size entries")) return 1;
 
 	if (!check(parser != NULL, "parser created")) return 1;
+	if (!check(XML_SetEncoding(parser, NULL) == XML_STATUS_OK, "explicit encoding null accepted before parse")) return 1;
+	if (!check(XML_SetEncoding(parser, "utf-8") == XML_STATUS_OK, "explicit UTF-8 encoding accepted before parse")) return 1;
+	status = XML_Parse(parser, "<doc>Hello ", 11, XML_FALSE);
+	if (!check(status == XML_STATUS_OK, "explicit encoding non-final parse accepted")) return 1;
+	if (!check(XML_SetEncoding(parser, "us-ascii") == XML_STATUS_ERROR, "explicit encoding change rejected mid-parse")) return 1;
+	status = XML_Parse(parser, " World</doc>", 12, XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "explicit encoding final parse accepted")) return 1;
+	if (!check(XML_SetEncoding(parser, NULL) == XML_STATUS_OK, "explicit encoding unset accepted after parse")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for bad explicit encoding")) return 1;
+	if (!check(XML_SetEncoding(parser, "unknown-encoding") == XML_STATUS_OK, "unknown explicit encoding accepted before parse")) return 1;
+	status = XML_Parse(parser, "<doc>Hi</doc>", 13, XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "unknown explicit encoding rejected during parse")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "unknown explicit encoding maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created")) return 1;
 	if (!check(XML_SetHashSalt16Bytes(NULL, hash_entropy) == XML_FALSE, "hash salt rejects null parser")) return 1;
 	if (!check(XML_SetHashSalt16Bytes(parser, NULL) == XML_FALSE, "hash salt rejects null entropy")) return 1;
 	if (!check(XML_SetHashSalt16Bytes(parser, hash_entropy) == XML_TRUE, "hash salt accepts entropy before parse")) return 1;

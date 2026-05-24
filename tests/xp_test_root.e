@@ -777,6 +777,8 @@ feature {NONE} -- Tests
 			l_native: XP_NATIVE_PARSER
 			l_status: INTEGER
 			l_hash_entropy: C_STRING
+			l_utf8_encoding: C_STRING
+			l_bad_encoding: C_STRING
 		do
 			create l_attributes.make
 			l_attributes.put ("first", "1")
@@ -787,6 +789,22 @@ feature {NONE} -- Tests
 			assert ("attribute insertion value second", l_attributes.i_th_value (2).same_string ("2"))
 
 			create l_native.make
+			create l_utf8_encoding.make ("utf-8")
+			create l_bad_encoding.make ("unknown-encoding")
+			assert ("native Eiffel parser accepts null explicit encoding", l_native.set_encoding (default_pointer) = l_native.Xml_status_ok)
+			assert ("native Eiffel parser accepts UTF-8 explicit encoding", l_native.set_encoding (l_utf8_encoding.item) = l_native.Xml_status_ok)
+			l_status := l_native.parse ("<doc>Hello ", False)
+			assert ("native Eiffel parser accepts non-final explicit encoding parse", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser rejects mid-parse encoding change", l_native.set_encoding (l_bad_encoding.item) = l_native.Xml_status_error)
+			l_status := l_native.parse (" World</doc>", True)
+			assert ("native Eiffel parser accepts final explicit encoding parse", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser accepts encoding unset after parse", l_native.set_encoding (default_pointer) = l_native.Xml_status_ok)
+			assert ("native Eiffel parser resets before bad explicit encoding", l_native.reset)
+			assert ("native Eiffel parser accepts bad explicit encoding before parse", l_native.set_encoding (l_bad_encoding.item) = l_native.Xml_status_ok)
+			l_status := l_native.parse ("<doc>Hi</doc>", True)
+			assert ("native Eiffel parser rejects bad explicit encoding during parse", l_status = l_native.Xml_status_error)
+			assert ("native Eiffel parser maps bad explicit encoding", l_native.last_error_code = l_native.Xml_error_unknown_encoding)
+			assert ("native Eiffel parser resets after bad explicit encoding", l_native.reset)
 			create l_hash_entropy.make ("0123456789abcdef")
 			assert ("native Eiffel parser accepts hash salt before parse", l_native.set_hash_salt (305419896))
 			assert ("native Eiffel parser records hash salt", l_native.has_hash_salt and then l_native.hash_salt = 305419896)
@@ -869,12 +887,34 @@ feature {NONE} -- Tests
 			l_chunk_start: C_STRING
 			l_chunk_end: C_STRING
 			l_hash_entropy: C_STRING
+			l_utf8_encoding: C_STRING
+			l_bad_encoding: C_STRING
 		do
 			create l_installer.make
 			l_handle := l_installer.parser_create (default_pointer, default_pointer, default_pointer)
 			assert ("native bridge installer returns parser handle", l_handle /= default_pointer)
 			assert ("native bridge installer tracks parser", l_installer.active_parser_count = 1)
 			assert ("native bridge installer resolves handle", attached l_installer.parser_for (l_handle))
+
+			create l_utf8_encoding.make ("utf-8")
+			create l_bad_encoding.make ("unknown-encoding")
+			assert ("native bridge installer accepts null explicit encoding", l_installer.set_encoding (l_handle, default_pointer) = l_installer.Xml_status_ok)
+			assert ("native bridge installer accepts UTF-8 explicit encoding", l_installer.set_encoding (l_handle, l_utf8_encoding.item) = l_installer.Xml_status_ok)
+			create l_chunk_start.make ("<doc>Hello ")
+			create l_chunk_end.make (" World</doc>")
+			l_status := l_installer.parse (l_handle, l_chunk_start.item, l_chunk_start.count, False)
+			assert ("native bridge installer accepts explicit encoding non-final parse", l_status = l_installer.Xml_status_ok)
+			assert ("native bridge installer rejects mid-parse encoding change", l_installer.set_encoding (l_handle, l_bad_encoding.item) = l_installer.Xml_status_error)
+			l_status := l_installer.parse (l_handle, l_chunk_end.item, l_chunk_end.count, True)
+			assert ("native bridge installer accepts explicit encoding final parse", l_status = l_installer.Xml_status_ok)
+			assert ("native bridge installer accepts encoding unset after parse", l_installer.set_encoding (l_handle, default_pointer) = l_installer.Xml_status_ok)
+			assert ("native bridge installer resets after explicit encoding parse", l_installer.parser_reset (l_handle, default_pointer))
+			assert ("native bridge installer accepts bad explicit encoding", l_installer.set_encoding (l_handle, l_bad_encoding.item) = l_installer.Xml_status_ok)
+			create l_error_input.make ("<doc>Hi</doc>")
+			l_status := l_installer.parse (l_handle, l_error_input.item, l_error_input.count, True)
+			assert ("native bridge installer rejects bad explicit encoding during parse", l_status = l_installer.Xml_status_error)
+			assert ("native bridge installer maps bad explicit encoding", l_installer.get_error_code (l_handle) = 18)
+			assert ("native bridge installer resets after bad explicit encoding", l_installer.parser_reset (l_handle, default_pointer))
 
 			create l_hash_entropy.make ("0123456789abcdef")
 			assert ("native bridge installer sets hash salt", l_installer.set_hash_salt (l_handle, 305419896))

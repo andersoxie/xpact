@@ -48,6 +48,8 @@ green	misc_tests.c	test_misc_async_entity_rejected	Eiffel parser rejects interna
 green	misc_tests.c	test_misc_features	XML_GetFeatureList returns the Expat-compatible terminal list with correct XML_Char and XML_LChar size feature values.
 green	basic_tests.c	test_ext_entity_no_handler	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
+green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
+green	basic_tests.c	test_explicit_encoding	Eiffel-owned explicit encoding state accepts UTF-8 before parse, rejects mid-parse changes, and allows reset after parsing finishes.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -64,9 +66,12 @@ red	misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser sta
 red	misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 red	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 red	basic_tests.c	test_*utf16*	UTF-16 input and handler parity are outside the Windows Phase 1 UTF-8 native path.
-red	basic_tests.c	test_*encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
-red	basic_tests.c	test_bad_encoding	Encoding error parity is outside the Windows Phase 1 UTF-8 native path.
-red	basic_tests.c	test_explicit_encoding	Encoding-switch parity is not implemented.
+red	basic_tests.c	test_unknown_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
+red	basic_tests.c	test_unknown_ascii_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
+red	basic_tests.c	test_unrecognised_encoding_internal_entity	Unknown/custom encoding callbacks are stubbed in the native ABI.
+red	basic_tests.c	test_missing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
+red	basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
+red	basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
 red	basic_tests.c	test_ext_entity_set_*	External entity parser creation and callback loading are not implemented.
 red	basic_tests.c	test_ext_entity_bad_encoding*	External entity parser creation and callback loading are not implemented.
 red	basic_tests.c	test_ext_entity_invalid*	External entity parser creation and callback loading are not implemented.

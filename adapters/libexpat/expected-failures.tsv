@@ -15,9 +15,12 @@ misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state i
 misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 basic_tests.c	test_*utf16*	UTF-16 input and handler parity are outside the Windows Phase 1 UTF-8 native path.
-basic_tests.c	test_*encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
-basic_tests.c	test_bad_encoding	Encoding error parity is outside the Windows Phase 1 UTF-8 native path.
-basic_tests.c	test_explicit_encoding	Encoding-switch parity is not implemented.
+basic_tests.c	test_unknown_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
+basic_tests.c	test_unknown_ascii_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
+basic_tests.c	test_unrecognised_encoding_internal_entity	Unknown/custom encoding callbacks are stubbed in the native ABI.
+basic_tests.c	test_missing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
+basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
+basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
 basic_tests.c	test_ext_entity_set_*	External entity parser creation and callback loading are not implemented.
 basic_tests.c	test_ext_entity_bad_encoding*	External entity parser creation and callback loading are not implemented.
 basic_tests.c	test_ext_entity_invalid*	External entity parser creation and callback loading are not implemented.

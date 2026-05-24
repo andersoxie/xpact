@@ -485,7 +485,16 @@ XML_SetReturnNSTriplet(XML_Parser parser, int do_nst) {
 
 enum XML_Status XMLCALL
 XML_SetEncoding(XML_Parser parser, const XML_Char *encoding) {
-	(void)encoding;
+	if (parser == NULL) {
+		return XML_STATUS_ERROR;
+	}
+	if (
+		parser->bridge != NULL
+		&& parser->bridge->set_encoding != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->set_encoding(parser->bridge->context, parser->eiffelParser, encoding);
+	}
 	xp_set_error(parser, XML_ERROR_NOT_STARTED);
 	return XML_STATUS_ERROR;
 }

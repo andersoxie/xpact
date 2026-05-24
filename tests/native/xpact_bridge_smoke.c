@@ -7,6 +7,7 @@ typedef struct FakeParser {
 	int create_count;
 	int reset_count;
 	int free_count;
+	int set_encoding_count;
 	int user_data_count;
 	int element_handler_count;
 	int text_handler_count;
@@ -17,6 +18,7 @@ typedef struct FakeParser {
 	XML_StartElementHandler start_handler;
 	XML_EndElementHandler end_handler;
 	XML_CharacterDataHandler text_handler;
+	const XML_Char *last_encoding;
 	int last_len;
 	int last_is_final;
 	unsigned long last_hash_salt;
@@ -55,6 +57,15 @@ fake_free(void *context, void *parser) {
 	FakeParser *fake = (FakeParser *)context;
 	(void)parser;
 	fake->free_count++;
+}
+
+static enum XML_Status XMLCALL
+fake_set_encoding(void *context, void *parser, const XML_Char *encoding) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	fake->set_encoding_count++;
+	fake->last_encoding = encoding;
+	return XML_STATUS_OK;
 }
 
 static void XMLCALL
@@ -211,6 +222,7 @@ main(void) {
 	bridge.parser_create = fake_create;
 	bridge.parser_reset = fake_reset;
 	bridge.parser_free = fake_free;
+	bridge.set_encoding = fake_set_encoding;
 	bridge.set_user_data = fake_set_user_data;
 	bridge.set_element_handler = fake_set_element_handler;
 	bridge.set_character_data_handler = fake_set_text_handler;
@@ -228,6 +240,10 @@ main(void) {
 	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created through bridge")) return 1;
 	if (!check(fake_parser.create_count == 1, "bridge create called")) return 1;
+
+	if (!check(XML_SetEncoding(parser, "utf-8") == XML_STATUS_OK, "encoding forwarded")) return 1;
+	if (!check(fake_parser.set_encoding_count == 1, "bridge set encoding called")) return 1;
+	if (!check(strcmp(fake_parser.last_encoding, "utf-8") == 0, "encoding value forwarded")) return 1;
 
 	XML_SetUserData(parser, &marker);
 	if (!check(fake_parser.user_data_count == 1, "user data forwarded")) return 1;

@@ -67,6 +67,8 @@ feature -- Expat-compatible constants
 
 	Xml_error_external_entity_handling: INTEGER = 21
 
+	Xml_error_unknown_encoding: INTEGER = 18
+
 	Xml_error_publicid: INTEGER = 32
 
 	Xml_error_not_started: INTEGER = 44
@@ -87,6 +89,12 @@ feature -- Access
 
 	final_buffer: BOOLEAN
 			-- Was the last parse call final?
+
+	explicit_encoding: detachable STRING_8
+			-- Native `XML_SetEncoding' value, if any.
+
+	has_unsupported_explicit_encoding: BOOLEAN
+			-- Should the next parse fail because `explicit_encoding' is unsupported?
 
 	hash_salt: INTEGER_64
 			-- Last legacy Expat hash salt accepted before parsing started.
@@ -311,6 +319,31 @@ feature -- Element change
 			handle_set: handler.native_parser_handle = a_parser
 		end
 
+	set_encoding (a_encoding: POINTER): INTEGER
+			-- Set explicit native input encoding.
+		local
+			l_encoding: C_STRING
+			l_name: STRING_8
+		do
+			if parsing_status = Xml_parsing then
+				Result := Xml_status_error
+			else
+				if a_encoding = default_pointer then
+					explicit_encoding := Void
+					has_unsupported_explicit_encoding := False
+				else
+					create l_encoding.make_by_pointer (a_encoding)
+					l_name := l_encoding.string
+					explicit_encoding := l_name.twin
+					has_unsupported_explicit_encoding := not is_supported_explicit_encoding (l_name)
+				end
+				Result := Xml_status_ok
+			end
+		ensure
+			valid_status: Result = Xml_status_ok or Result = Xml_status_error
+			rejected_only_while_parsing: Result = Xml_status_error implies parsing_status = Xml_parsing
+		end
+
 	set_hash_salt (a_hash_salt: INTEGER_64): BOOLEAN
 			-- Set legacy Expat hash salt before parsing starts.
 		do
@@ -357,6 +390,8 @@ feature -- Element change
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
 			final_buffer := False
+			explicit_encoding := Void
+			has_unsupported_explicit_encoding := False
 			hash_salt := 0
 			has_hash_salt := False
 			hash_salt_16_bytes.wipe_out
@@ -367,6 +402,7 @@ feature -- Element change
 			no_error: last_error_code = Xml_error_none
 			initialized: parsing_status = Xml_initialized
 			not_final: not final_buffer
+			no_explicit_encoding: explicit_encoding = Void and not has_unsupported_explicit_encoding
 			no_hash_salt: not has_hash_salt and not has_hash_salt_16_bytes
 		end
 
@@ -380,31 +416,37 @@ feature -- Parsing
 			l_ok: BOOLEAN
 		do
 			final_buffer := a_is_final
-			input_buffer.append (a_input)
-			if not a_is_final then
-				last_error_code := Xml_error_none
-				parsing_status := Xml_parsing
-				Result := Xml_status_ok
-			else
-				parsing_status := Xml_parsing
-				handler.reset_events
-				create context_buffer.make (input_buffer)
-				l_ok := parser.parse (input_buffer)
+			if has_unsupported_explicit_encoding then
+				last_error_code := Xml_error_unknown_encoding
 				parsing_status := Xml_finished
-				if l_ok then
+				Result := Xml_status_error
+			else
+				input_buffer.append (a_input)
+				if not a_is_final then
 					last_error_code := Xml_error_none
+					parsing_status := Xml_parsing
 					Result := Xml_status_ok
 				else
-					last_error_code := error_code_for (parser.last_error)
-					Result := Xml_status_error
+					parsing_status := Xml_parsing
+					handler.reset_events
+					create context_buffer.make (input_buffer)
+					l_ok := parser.parse (input_buffer)
+					parsing_status := Xml_finished
+					if l_ok then
+						last_error_code := Xml_error_none
+						Result := Xml_status_ok
+					else
+						last_error_code := error_code_for (parser.last_error)
+						Result := Xml_status_error
+					end
+					input_buffer.wipe_out
 				end
-				input_buffer.wipe_out
 			end
 		ensure
 			valid_status: Result = Xml_status_ok or Result = Xml_status_error
 			success_has_no_error: Result = Xml_status_ok implies last_error_code = Xml_error_none
 			final_finished: a_is_final implies parsing_status = Xml_finished
-			non_final_parsing: not a_is_final implies parsing_status = Xml_parsing
+			success_non_final_parsing: Result = Xml_status_ok and not a_is_final implies parsing_status = Xml_parsing
 			final_recorded: final_buffer = a_is_final
 		end
 
@@ -427,6 +469,20 @@ feature -- Parsing
 					put_integer (a_size, 0)
 				end
 			end
+		end
+
+feature {NONE} -- Encoding
+
+	is_supported_explicit_encoding (a_encoding: READABLE_STRING_8): BOOLEAN
+			-- Is `a_encoding' supported by the current native parser path?
+		require
+			encoding_attached: a_encoding /= Void
+		do
+			Result :=
+				a_encoding.same_string ("UTF-8")
+				or else a_encoding.same_string ("utf-8")
+				or else a_encoding.same_string ("UTF8")
+				or else a_encoding.same_string ("utf8")
 		end
 
 feature {NONE} -- Error mapping

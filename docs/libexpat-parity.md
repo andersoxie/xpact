@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 251 named upstream tests in the downloaded
+expected-failure patterns expand to 249 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -78,6 +78,10 @@ The Windows release has green evidence for:
 - Eiffel-owned hash-salt setter contract checks, including null-argument
   rejection, successful repeated pre-parse calls, post-parse rejection, and
   collision-heavy document parsing through the native ABI.
+- Eiffel-owned explicit encoding state for `XML_SetEncoding`, covering
+  pre-parse UTF-8 configuration, mid-parse change rejection, post-parse unset,
+  and unsupported explicit encoding names mapping to
+  `XML_ERROR_UNKNOWN_ENCODING`.
 - unloaded external general entities are skipped in the Windows native bridge
   when no external entity handler is registered, with
   `XML_SkippedEntityHandler` callback delivery.

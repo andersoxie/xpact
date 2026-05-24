@@ -25,6 +25,7 @@ feature -- Bridge registration
 				$parser_create,
 				$parser_reset,
 				$parser_free,
+				$set_encoding,
 				$set_user_data,
 				$set_element_handler,
 				$set_character_data_handler,
@@ -78,6 +79,7 @@ feature {NONE} -- Native calls
 		a_parser_create,
 		a_parser_reset,
 		a_parser_free,
+		a_set_encoding,
 		a_set_user_data,
 		a_set_element_handler,
 		a_set_character_data_handler,
@@ -116,6 +118,7 @@ feature {NONE} -- Native calls
 			parser_create_attached: a_parser_create /= default_pointer
 			parser_reset_attached: a_parser_reset /= default_pointer
 			parser_free_attached: a_parser_free /= default_pointer
+			set_encoding_attached: a_set_encoding /= default_pointer
 			parse_attached: a_parse /= default_pointer
 			get_buffer_attached: a_get_buffer /= default_pointer
 			parse_buffer_attached: a_parse_buffer /= default_pointer
@@ -123,7 +126,7 @@ feature {NONE} -- Native calls
 			get_input_context_attached: a_get_input_context /= default_pointer
 			get_parsing_status_attached: a_get_parsing_status /= default_pointer
 		external
-			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
+			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
 		alias
 			"XPACT_RegisterEiffelRuntimeBridgePointers"
 		end

@@ -24,6 +24,8 @@ feature -- Expat-compatible constants
 
 	Xml_status_error: INTEGER = 0
 
+	Xml_status_ok: INTEGER = 1
+
 	Xml_initialized: INTEGER = 0
 
 	Xml_finished: INTEGER = 2
@@ -60,8 +62,12 @@ feature -- Parser lifecycle callbacks
 		local
 			l_parser: XP_NATIVE_PARSER
 			l_id: INTEGER
+			l_status: INTEGER
 		do
 			create l_parser.make
+			if a_encoding /= default_pointer then
+				l_status := l_parser.set_encoding (a_encoding)
+			end
 			l_id := eif_object_id (l_parser)
 			live_parser_ids.force (True, l_id)
 			Result := integer_to_pointer (l_id)
@@ -77,6 +83,9 @@ feature -- Parser lifecycle callbacks
 		do
 			if attached parser_for (a_parser) as l_parser then
 				Result := l_parser.reset
+				if Result and then a_encoding /= default_pointer then
+					Result := l_parser.set_encoding (a_encoding) = l_parser.Xml_status_ok
+				end
 			end
 		end
 
@@ -93,6 +102,16 @@ feature -- Parser lifecycle callbacks
 			end
 		ensure
 			parser_not_live: not attached parser_for (a_parser)
+		end
+
+	set_encoding (a_parser, a_encoding: POINTER): INTEGER
+			-- Set explicit encoding for `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_encoding (a_encoding)
+			else
+				Result := Xml_status_error
+			end
 		end
 
 feature -- Handler callbacks
