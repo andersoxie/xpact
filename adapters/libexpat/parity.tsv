@@ -71,6 +71,8 @@ green	basic_tests.c	test_recursive_external_parameter_entity	Eiffel external sub
 green	basic_tests.c	test_undefined_ext_entity_in_external_dtd	Eiffel external subset parsing skips unresolved external parameter entities when handlers decline or are cleared, matching the covered upstream devaluer path.
 green	basic_tests.c	test_dtd_stop_processing	Eiffel internal subset parsing skips an undefined parameter entity and stops later DTD declaration processing without failing the document.
 green	basic_tests.c	test_external_bom_consumed	Eiffel input normalization strips a UTF-8 BOM before external DTD subset tokenization, including when the native input is split across non-final/final calls.
+green	basic_tests.c	test_external_entity_values	Eiffel external DTD child parsers now validate XML text declarations, partial UTF-8 tails, unterminated literals, recursive parameter entity context, and successful BOM/ATTLIST value cases through the Windows DLL smoke.
+green	basic_tests.c	test_ext_entity_trailing_*	Eiffel external parsed entity fragments now deliver trailing character data and report XML_ERROR_ASYNC_ENTITY for fragments ending inside an open element.
 green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
@@ -98,12 +100,10 @@ red	basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callback
 red	basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semantics are not fully implemented.
 red	basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
 red	basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
-red	basic_tests.c	test_ext_entity_trailing_*	External entity trailing-token diagnostics are not fully implemented.
 red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 red	basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf8_non_bom	External entity UTF-8 non-BOM edge semantics are not fully implemented.
-red	basic_tests.c	test_external_entity_values	External entity value callback edge semantics are not implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.

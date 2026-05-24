@@ -22,12 +22,10 @@ basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks ar
 basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semantics are not fully implemented.
 basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
 basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
-basic_tests.c	test_ext_entity_trailing_*	External entity trailing-token diagnostics are not fully implemented.
 basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
 basic_tests.c	test_ext_entity_utf8_non_bom	External entity UTF-8 non-BOM edge semantics are not fully implemented.
-basic_tests.c	test_external_entity_values	External entity value callback edge semantics are not implemented.
 basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.

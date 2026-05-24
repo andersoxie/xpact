@@ -258,7 +258,7 @@ feature -- Parsing
 			end
 			if not has_error and element_stack.count /= 0 then
 				note_position (l_input.count + 1)
-				set_error ("unclosed element")
+				set_error ("asynchronous entity")
 			end
 			if not has_error then
 				note_position (l_input.count + 1)
@@ -287,6 +287,41 @@ feature -- Parsing
 			note_position (1)
 			if not has_error then
 				process_internal_subset (l_input)
+			end
+			if not has_error then
+				note_position (l_input.count + 1)
+			end
+			Result := not has_error
+			parsing_external_entity := False
+		ensure
+			result_matches_error: Result = not has_error
+			not_external_after_parse: not parsing_external_entity
+		end
+
+	parse_external_subset_with_context (a_input: READABLE_STRING_8; a_context: detachable READABLE_STRING_8): BOOLEAN
+			-- Parse a complete external DTD subset with active entity `a_context', if valid.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+		local
+			l_input: STRING_8
+			l_has_active_context: BOOLEAN
+		do
+			reset
+			parsing_external_entity := True
+			l_input := normalized_input (a_input)
+			position_input.wipe_out
+			position_input.append (l_input)
+			note_position (1)
+			if attached a_context as l_context and then not l_context.is_empty and then is_valid_name (l_context) then
+				push_entity (l_context)
+				l_has_active_context := True
+			end
+			if not has_error then
+				process_internal_subset (l_input)
+			end
+			if l_has_active_context then
+				pop_entity
 			end
 			if not has_error then
 				note_position (l_input.count + 1)
@@ -1525,6 +1560,7 @@ feature {NONE} -- DTD entity declarations
 			i: INTEGER
 			l_end: INTEGER
 			l_text: STRING_8
+			l_seen_xml_declaration: BOOLEAN
 		do
 			from
 				i := 1
@@ -1552,12 +1588,17 @@ feature {NONE} -- DTD entity declarations
 						i := l_end + 3
 					end
 				elseif has_at (a_subset, i, "<?") then
-					l_end := find_sequence (a_subset, "?>", i + 2)
-					if l_end = 0 then
-						set_error ("unterminated processing instruction")
-						i := a_subset.count + 1
+					if starts_xml_declaration_at (a_subset, i) then
+						i := parse_processing_instruction (a_subset, i)
+						l_seen_xml_declaration := not has_error
 					else
-						i := l_end + 2
+						l_end := find_sequence (a_subset, "?>", i + 2)
+						if l_end = 0 then
+							set_error ("unterminated processing instruction")
+							i := a_subset.count + 1
+						else
+							i := l_end + 2
+						end
 					end
 				elseif a_subset.item (i).code = 37 then
 					i := include_parameter_entity_in_subset (a_subset, i)
@@ -1565,6 +1606,15 @@ feature {NONE} -- DTD entity declarations
 					if is_xml_space (a_subset.item (i)) then
 						emit_default (a_subset.substring (i, i))
 						i := i + 1
+					elseif is_incomplete_utf8_sequence_at (a_subset, i) then
+						set_error ("partial character")
+						i := a_subset.count + 1
+					elseif is_quote (a_subset.item (i)) then
+						set_error ("unterminated literal")
+						i := a_subset.count + 1
+					elseif l_seen_xml_declaration and then a_subset.item (i).code = 36 then
+						set_error ("invalid DTD content")
+						i := a_subset.count + 1
 					else
 						set_error ("unexpected DTD content")
 						i := a_subset.count + 1
@@ -1573,6 +1623,70 @@ feature {NONE} -- DTD entity declarations
 			variant
 				a_subset.count - i + 1
 			end
+		end
+
+	starts_xml_declaration_at (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+			-- Does `a_input' contain an XML declaration PI at `a_start_index'?
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+		local
+			i: INTEGER
+			name_start: INTEGER
+			l_target: STRING_8
+			l_attributes: XP_ATTRIBUTES
+		do
+			if has_at (a_input, a_start_index, "<?") and then a_start_index + 2 <= a_input.count then
+				create l_attributes.make
+				i := a_start_index + 2
+				if l_attributes.is_name_start_character (a_input.item (i)) then
+					name_start := i
+					i := scan_name (a_input, i)
+					create l_target.make_from_string (a_input.substring (name_start, i - 1))
+					Result := same_name_case_insensitive (l_target, "xml")
+				end
+			end
+		end
+
+	is_incomplete_utf8_sequence_at (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+			-- Does a UTF-8 leading byte at `a_start_index' lack enough trailing bytes?
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+		local
+			l_code: INTEGER
+			l_required: INTEGER
+			i: INTEGER
+		do
+			l_code := a_input.item (a_start_index).code
+			if l_code >= 194 and then l_code <= 223 then
+				l_required := 1
+			elseif l_code >= 224 and then l_code <= 239 then
+				l_required := 2
+			elseif l_code >= 240 and then l_code <= 244 then
+				l_required := 3
+			end
+			if l_required > 0 and then a_start_index + l_required > a_input.count then
+				Result := True
+				from
+					i := a_start_index + 1
+				invariant
+					index_in_bounds: i >= a_start_index + 1 and i <= a_input.count + 1
+				until
+					i > a_input.count or not Result
+				loop
+					Result := is_utf8_continuation_byte (a_input.item (i).code)
+					i := i + 1
+				variant
+					a_input.count - i + 1
+				end
+			end
+		end
+
+	is_utf8_continuation_byte (a_code: INTEGER): BOOLEAN
+			-- Is `a_code' a UTF-8 continuation byte?
+		do
+			Result := a_code >= 128 and then a_code <= 191
 		end
 
 	parse_element_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER

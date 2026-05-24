@@ -55,6 +55,8 @@ feature -- Expat-compatible constants
 
 	Xml_error_unclosed_token: INTEGER = 5
 
+	Xml_error_partial_char: INTEGER = 6
+
 	Xml_error_tag_mismatch: INTEGER = 7
 
 	Xml_error_duplicate_attribute: INTEGER = 8
@@ -550,7 +552,7 @@ feature -- Parsing
 					handler.reset_events
 					create context_buffer.make (input_buffer)
 					if is_external_entity_parser and then external_entity_is_parameter then
-						l_ok := parser.parse_external_subset (input_buffer)
+						l_ok := parser.parse_external_subset_with_context (input_buffer, external_entity_context)
 					elseif is_external_entity_parser then
 						l_ok := parser.parse_external_entity (input_buffer)
 					else
@@ -663,6 +665,8 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_publicid
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then
 				Result := Xml_error_unclosed_token
+			elseif a_error.same_string ("partial character") then
+				Result := Xml_error_partial_char
 			elseif a_error.has_substring ("invalid")
 				or else a_error.has_substring ("outside document element")
 				or else a_error.same_string ("unexpected end tag")

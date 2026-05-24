@@ -69,6 +69,16 @@ static const char *g_bom_external_text;
 static int g_bom_split;
 static int g_bom_nested_callback_happened;
 static int g_bom_failed;
+static int g_external_value_ref_count;
+static int g_external_value_failed;
+static const char *g_external_value_text;
+static enum XML_Error g_external_value_expected_error;
+static int g_external_trailing_ref_count;
+static int g_external_trailing_failed;
+static int g_external_trailing_found;
+static const char *g_external_trailing_text;
+static char g_external_trailing_expected_char;
+static enum XML_Error g_external_trailing_expected_error;
 static int g_failing_alloc_count;
 
 struct malformed_doctype_case {
@@ -88,6 +98,18 @@ struct async_entity_case {
 struct default_current_record {
 	int kind;
 	int arg;
+};
+
+struct external_value_case {
+	const char *text;
+	enum XML_Error expected_error;
+};
+
+struct external_trailing_case {
+	const char *label;
+	const char *text;
+	char expected_char;
+	enum XML_Error expected_error;
 };
 
 #define DEFAULT_CURRENT_DEFAULT 1
@@ -871,6 +893,115 @@ external_bom_checker_handler(XML_Parser parser, const XML_Char *context, const X
 	return XML_STATUS_OK;
 }
 
+static int XMLCALL
+external_entity_value_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *outer_text =
+		"<!ELEMENT doc EMPTY>\n"
+		"<!ENTITY % e1 SYSTEM '004-2.ent'>\n"
+		"<!ENTITY % e2 '%e1;'>\n"
+		"%e1;\n";
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	enum XML_Error actual_error;
+	(void)base;
+	(void)publicId;
+	if (systemId == NULL) {
+		return XML_STATUS_OK;
+	}
+	g_external_value_ref_count++;
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_external_value_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (strcmp(systemId, "004-1.ent") == 0) {
+		status = XML_Parse(ext_parser, outer_text, (int)strlen(outer_text), XML_TRUE);
+		if (status != XML_STATUS_OK) {
+			g_external_value_failed = 1;
+			XML_ParserFree(ext_parser);
+			return XML_STATUS_ERROR;
+		}
+	} else if (strcmp(systemId, "004-2.ent") == 0) {
+		status = XML_Parse(ext_parser, g_external_value_text, (int)strlen(g_external_value_text), XML_TRUE);
+		if (g_external_value_expected_error == XML_ERROR_NONE) {
+			if (status != XML_STATUS_OK) {
+				g_external_value_failed = 1;
+				XML_ParserFree(ext_parser);
+				return XML_STATUS_ERROR;
+			}
+		} else {
+			if (status != XML_STATUS_ERROR) {
+				g_external_value_failed = 1;
+				XML_ParserFree(ext_parser);
+				return XML_STATUS_ERROR;
+			}
+			actual_error = XML_GetErrorCode(ext_parser);
+			if (actual_error != g_external_value_expected_error) {
+				g_external_value_failed = 1;
+				XML_ParserFree(ext_parser);
+				return XML_STATUS_ERROR;
+			}
+		}
+	} else {
+		g_external_value_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_OK;
+}
+
+static void XMLCALL
+external_trailing_text_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	if (
+		len == 1
+		&& (
+			s[0] == g_external_trailing_expected_char
+			|| (g_external_trailing_expected_char == '\r' && s[0] == '\n')
+		)
+	) {
+		g_external_trailing_found = 1;
+	}
+}
+
+static int XMLCALL
+external_entity_trailing_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	enum XML_Error actual_error;
+	(void)base;
+	(void)systemId;
+	(void)publicId;
+	if (systemId == NULL) {
+		return XML_STATUS_OK;
+	}
+	g_external_trailing_ref_count++;
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_external_trailing_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	XML_SetCharacterDataHandler(ext_parser, external_trailing_text_handler);
+	status = XML_Parse(ext_parser, g_external_trailing_text, (int)strlen(g_external_trailing_text), XML_TRUE);
+	if (g_external_trailing_expected_error == XML_ERROR_NONE) {
+		if (status != XML_STATUS_OK) {
+			g_external_trailing_failed = 1;
+		}
+	} else {
+		if (status != XML_STATUS_ERROR) {
+			g_external_trailing_failed = 1;
+		} else {
+			actual_error = XML_GetErrorCode(ext_parser);
+			if (actual_error != g_external_trailing_expected_error) {
+				g_external_trailing_failed = 1;
+			}
+		}
+	}
+	XML_ParserFree(ext_parser);
+	return g_external_trailing_failed ? XML_STATUS_ERROR : XML_STATUS_OK;
+}
+
 static void XMLCALL
 user_parameter_xml_decl_handler(void *userData, const XML_Char *version, const XML_Char *encoding, int standalone) {
 	if (
@@ -1007,6 +1138,8 @@ main(void) {
 	const XML_Feature *feature;
 	size_t malformed_index;
 	size_t async_index;
+	size_t external_value_index;
+	size_t external_trailing_index;
 	size_t hash_index;
 	size_t hash_collision_len;
 	int saw_xml_char_feature = 0;
@@ -1113,6 +1246,24 @@ main(void) {
 		"<!DOCTYPE doc SYSTEM '004-1.ent'>\n"
 		"<doc></doc>\n";
 	const char *external_bom_text = "\xEF\xBB\xBF<!ATTLIST doc a1 CDATA 'value'>";
+	const struct external_value_case external_value_cases[] = {
+		{"<!ATTLIST doc a1 CDATA 'value'>", XML_ERROR_NONE},
+		{"<!ATTLIST $doc a1 CDATA 'value'>", XML_ERROR_INVALID_TOKEN},
+		{"'wombat", XML_ERROR_UNCLOSED_TOKEN},
+		{"\xE2\x82", XML_ERROR_PARTIAL_CHAR},
+		{"<?xml version='1.0' encoding='utf-8'?>\n", XML_ERROR_NONE},
+		{"<?xml?>", XML_ERROR_XML_DECL},
+		{"\xEF\xBB\xBF<!ATTLIST doc a1 CDATA 'value'>", XML_ERROR_NONE},
+		{"<?xml version='1.0' encoding='utf-8'?>\n$", XML_ERROR_INVALID_TOKEN},
+		{"<?xml version='1.0' encoding='utf-8'?>\n'wombat", XML_ERROR_UNCLOSED_TOKEN},
+		{"<?xml version='1.0' encoding='utf-8'?>\n\xE2\x82", XML_ERROR_PARTIAL_CHAR},
+		{"%e1;", XML_ERROR_RECURSIVE_ENTITY_REF}
+	};
+	const struct external_trailing_case external_trailing_cases[] = {
+		{"trailing CR fragment", "\r", '\r', XML_ERROR_NONE},
+		{"open element with trailing CR", "<tag>\r", '\r', XML_ERROR_ASYNC_ENTITY},
+		{"open element with trailing right square bracket", "<tag>]", ']', XML_ERROR_ASYNC_ENTITY}
+	};
 	const char *foreign_dtd_decl_chunk = "<?xml version='1.0' encoding='us-ascii'?>\n";
 	const char *foreign_dtd_body_chunk = "<doc>&entity;</doc>";
 	const char *foreign_dtd_with_doctype_input =
@@ -1846,6 +1997,61 @@ main(void) {
 			if (!check(g_bom_nested_callback_happened && !g_bom_failed, "external BOM child callback path matched")) return 1;
 			XML_ParserFree(parser);
 		}
+	}
+
+	for (external_value_index = 0; external_value_index < sizeof(external_value_cases) / sizeof(external_value_cases[0]); external_value_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for external entity value check")) return 1;
+		g_external_value_ref_count = 0;
+		g_external_value_failed = 0;
+		g_external_value_text = external_value_cases[external_value_index].text;
+		g_external_value_expected_error = external_value_cases[external_value_index].expected_error;
+		if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for external entity value")) return 1;
+		XML_SetExternalEntityRefHandler(parser, external_entity_value_handler);
+		status = XML_Parse(parser, invalid_tag_in_dtd_input, (int)strlen(invalid_tag_in_dtd_input), XML_TRUE);
+		if (!check(status == XML_STATUS_OK, "external entity value document accepted")) return 1;
+		if (g_external_value_ref_count < 2 || g_external_value_failed) {
+			fprintf(
+				stderr,
+				"external entity value case %u failed: refs=%d failed=%d expected=%d text=%s\n",
+				(unsigned)external_value_index,
+				g_external_value_ref_count,
+				g_external_value_failed,
+				(int)g_external_value_expected_error,
+				g_external_value_text
+			);
+		}
+		if (!check(g_external_value_ref_count >= 2 && !g_external_value_failed, "external entity value callback path matched")) return 1;
+		XML_ParserFree(parser);
+	}
+
+	for (external_trailing_index = 0; external_trailing_index < sizeof(external_trailing_cases) / sizeof(external_trailing_cases[0]); external_trailing_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for external entity trailing check")) return 1;
+		g_external_trailing_ref_count = 0;
+		g_external_trailing_failed = 0;
+		g_external_trailing_found = 0;
+		g_external_trailing_text = external_trailing_cases[external_trailing_index].text;
+		g_external_trailing_expected_char = external_trailing_cases[external_trailing_index].expected_char;
+		g_external_trailing_expected_error = external_trailing_cases[external_trailing_index].expected_error;
+		if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for external entity trailing")) return 1;
+		XML_SetExternalEntityRefHandler(parser, external_entity_trailing_handler);
+		status = XML_Parse(parser, loaded_external_input, (int)strlen(loaded_external_input), XML_TRUE);
+		if (!check(status == XML_STATUS_OK, "external entity trailing parent document accepted")) return 1;
+		if (g_external_trailing_ref_count != 1 || g_external_trailing_failed || !g_external_trailing_found) {
+			fprintf(
+				stderr,
+				"external entity trailing case %s failed: refs=%d failed=%d found=%d expected=%d text=%s\n",
+				external_trailing_cases[external_trailing_index].label,
+				g_external_trailing_ref_count,
+				g_external_trailing_failed,
+				g_external_trailing_found,
+				(int)g_external_trailing_expected_error,
+				g_external_trailing_text
+			);
+		}
+		if (!check(g_external_trailing_ref_count == 1 && !g_external_trailing_failed && g_external_trailing_found, "external entity trailing callback path matched")) return 1;
+		XML_ParserFree(parser);
 	}
 
 	parser = XML_ParserCreate("UTF-8");
