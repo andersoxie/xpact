@@ -10,6 +10,7 @@ typedef struct FakeParser {
 	int set_native_handle_count;
 	int set_encoding_count;
 	int set_external_entity_context_count;
+	int set_external_entity_parameter_context_count;
 	int set_param_entity_parsing_count;
 	int set_foreign_dtd_count;
 	int user_data_count;
@@ -29,6 +30,7 @@ typedef struct FakeParser {
 	void *native_handle;
 	const XML_Char *last_encoding;
 	const XML_Char *last_external_entity_context;
+	XML_Bool last_external_entity_is_parameter;
 	enum XML_ParamEntityParsing last_param_entity_parsing;
 	XML_Bool last_use_foreign_dtd;
 	int last_len;
@@ -94,6 +96,15 @@ fake_set_external_entity_context(void *context, void *parser, const XML_Char *en
 	(void)parser;
 	fake->set_external_entity_context_count++;
 	fake->last_external_entity_context = entityContext;
+	return XML_TRUE;
+}
+
+static XML_Bool XMLCALL
+fake_set_external_entity_parameter_context(void *context, void *parser, XML_Bool isParameter) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	fake->set_external_entity_parameter_context_count++;
+	fake->last_external_entity_is_parameter = isParameter ? XML_TRUE : XML_FALSE;
 	return XML_TRUE;
 }
 
@@ -302,6 +313,7 @@ main(void) {
 	bridge.set_native_parser_handle = fake_set_native_parser_handle;
 	bridge.set_encoding = fake_set_encoding;
 	bridge.set_external_entity_context = fake_set_external_entity_context;
+	bridge.set_external_entity_parameter_context = fake_set_external_entity_parameter_context;
 	bridge.set_param_entity_parsing = fake_set_param_entity_parsing;
 	bridge.set_foreign_dtd = fake_set_foreign_dtd;
 	bridge.set_user_data = fake_set_user_data;
@@ -395,6 +407,8 @@ main(void) {
 		if (!check(fake_parser.create_count == 2, "bridge create called for external parser")) return 1;
 		if (!check(fake_parser.set_external_entity_context_count == 1, "external entity context forwarded")) return 1;
 		if (!check(strcmp(fake_parser.last_external_entity_context, "entity-context") == 0, "external entity context value forwarded")) return 1;
+		if (!check(fake_parser.set_external_entity_parameter_context_count == 1, "external entity parameter context forwarded")) return 1;
+		if (!check(fake_parser.last_external_entity_is_parameter == XML_FALSE, "external entity parameter context defaults false")) return 1;
 		if (!check(fake_parser.not_standalone_handler_count == 2, "not-standalone handler inherited by external parser")) return 1;
 		XML_ParserFree(child);
 		if (!check(fake_parser.free_count == 1, "external entity parser free delegated")) return 1;

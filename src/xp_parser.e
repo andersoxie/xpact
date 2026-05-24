@@ -271,6 +271,33 @@ feature -- Parsing
 			not_external_after_parse: not parsing_external_entity
 		end
 
+	parse_external_subset (a_input: READABLE_STRING_8): BOOLEAN
+			-- Parse a complete external DTD subset or parameter entity fragment.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+		local
+			l_input: STRING_8
+		do
+			reset
+			parsing_external_entity := True
+			l_input := normalized_input (a_input)
+			position_input.wipe_out
+			position_input.append (l_input)
+			note_position (1)
+			if not has_error then
+				process_internal_subset (l_input)
+			end
+			if not has_error then
+				note_position (l_input.count + 1)
+			end
+			Result := not has_error
+			parsing_external_entity := False
+		ensure
+			result_matches_error: Result = not has_error
+			not_external_after_parse: not parsing_external_entity
+		end
+
 feature {NONE} -- Markup parsing
 
 	parse_markup (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
@@ -1268,13 +1295,16 @@ feature {NONE} -- Character data and references
 			elseif external_entity_resolver = Void then
 				set_error ("external entity resolver missing")
 			elseif external_entity_resolver /= Void and then attached external_entity_resolver as l_resolver then
-				if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
-					note_entity_expansion (l_value.count)
-					if not has_error then
-						process_internal_subset (l_value)
+				check_not_standalone
+				if not has_error then
+					if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
+						note_entity_expansion (l_value.count)
+						if not has_error then
+							process_internal_subset (l_value)
+						end
+					else
+						set_error ("external entity not resolved")
 					end
-				else
-					set_error ("external entity not resolved")
 				end
 			end
 		end
@@ -1291,13 +1321,16 @@ feature {NONE} -- Character data and references
 			elseif external_entity_resolver = Void then
 				set_error ("external entity resolver missing")
 			elseif external_entity_resolver /= Void and then attached external_entity_resolver as l_resolver then
-				if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
-					note_entity_expansion (l_value.count)
-					if not has_error then
-						a_text.append (l_value)
+				check_not_standalone
+				if not has_error then
+					if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
+						note_entity_expansion (l_value.count)
+						if not has_error then
+							a_text.append (l_value)
+						end
+					else
+						set_error ("external entity not resolved")
 					end
-				else
-					set_error ("external entity not resolved")
 				end
 			end
 		end

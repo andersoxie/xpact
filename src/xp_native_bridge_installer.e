@@ -130,6 +130,14 @@ feature -- Parser lifecycle callbacks
 			end
 		end
 
+	set_external_entity_parameter_context (a_parser: POINTER; a_is_parameter: BOOLEAN): BOOLEAN
+			-- Mark whether parser represented by `a_parser' is parsing a DTD/parameter entity.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_external_entity_parameter_context (a_is_parameter)
+			end
+		end
+
 	set_param_entity_parsing (a_parser: POINTER; a_parsing: INTEGER): BOOLEAN
 			-- Set parameter entity parsing policy for `a_parser'.
 		do

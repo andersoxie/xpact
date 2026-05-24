@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 235 named upstream tests in the downloaded
+expected-failure patterns expand to 230 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -112,6 +112,10 @@ The Windows release has green evidence for:
   `XML_UseForeignDTD` cases now pass through the Windows DLL smoke, including
   late-setting rejection, foreign DTD plus internal subset handling, and empty
   foreign DTD undefined-entity rejection.
+- parser-create allocator failure/success edges for `XML_ParserCreate_MM`,
+  external DTD subset child parsing, external parameter entity
+  not-standalone rejection, and invalid tags inside DTD parameter entity
+  children now pass through the Windows DLL smoke.
 
 ## Red Rows
 
@@ -122,7 +126,7 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - UTF-16 and custom/unknown encoding tests;
 - remaining external entity encoding, trailing-token, recursive-parameter, and abort
   semantics;
-- remaining DTD diagnostics for invalid foreign DTD/external DTD/encoding cases and
+- remaining external DTD undefined-entity/encoding diagnostics and
   default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;
 - stop/suspend/resume/abort parser state;

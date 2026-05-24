@@ -110,6 +110,9 @@ feature -- Access
 	external_entity_context: detachable STRING_8
 			-- Native context string supplied to `XML_ExternalEntityParserCreate', if any.
 
+	external_entity_is_parameter: BOOLEAN
+			-- Should this external parser parse DTD subset or parameter entity content?
+
 	param_entity_parsing: INTEGER
 			-- Expat-compatible parameter entity parsing mode.
 
@@ -406,6 +409,18 @@ feature -- Element change
 			accepted_marks_external: Result implies is_external_entity_parser
 		end
 
+	set_external_entity_parameter_context (a_is_parameter: BOOLEAN): BOOLEAN
+			-- Mark whether this external parser receives DTD subset content.
+		do
+			if parsing_status = Xml_initialized then
+				external_entity_is_parameter := a_is_parameter
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+			accepted_sets_value: Result implies external_entity_is_parameter = a_is_parameter
+		end
+
 	set_param_entity_parsing (a_parsing: INTEGER): BOOLEAN
 			-- Set Expat-compatible parameter entity parsing mode before parsing starts.
 		do
@@ -484,6 +499,7 @@ feature -- Element change
 			final_buffer := False
 			is_external_entity_parser := False
 			external_entity_context := Void
+			external_entity_is_parameter := False
 			param_entity_parsing := Xml_param_entity_parsing_never
 			use_foreign_dtd := False
 			create parser.make (handler)
@@ -502,6 +518,7 @@ feature -- Element change
 			initialized: parsing_status = Xml_initialized
 			not_final: not final_buffer
 			not_external_entity_parser: not is_external_entity_parser
+			not_external_parameter_entity_parser: not external_entity_is_parameter
 			param_entity_parsing_reset: param_entity_parsing = Xml_param_entity_parsing_never
 			foreign_dtd_reset: not use_foreign_dtd
 			no_explicit_encoding: explicit_encoding = Void and not has_unsupported_explicit_encoding
@@ -532,7 +549,9 @@ feature -- Parsing
 					parsing_status := Xml_parsing
 					handler.reset_events
 					create context_buffer.make (input_buffer)
-					if is_external_entity_parser then
+					if is_external_entity_parser and then external_entity_is_parameter then
+						l_ok := parser.parse_external_subset (input_buffer)
+					elseif is_external_entity_parser then
 						l_ok := parser.parse_external_entity (input_buffer)
 					else
 						l_ok := parser.parse (input_buffer)

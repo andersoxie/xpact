@@ -887,7 +887,9 @@ feature -- External entity resolution
 					create l_public_id.make (a_public_id)
 					l_public_pointer := l_public_id.item
 				end
+				mark_next_external_entity_is_parameter (native_parser_handle, a_is_parameter)
 				l_status := call_external_entity_ref_callback (external_entity_ref_callback, external_entity_callback_argument, l_context.item, default_pointer, l_system_id.item, l_public_pointer)
+				mark_next_external_entity_is_parameter (native_parser_handle, False)
 				if l_status /= 0 then
 					l_after_external_count := external_entity_parse_count (native_parser_handle)
 					if a_is_parameter and then l_after_external_count > l_before_external_count then
@@ -1221,6 +1223,14 @@ feature {NONE} -- Native callback calls
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"return $a_parser != 0 ? (EIF_INTEGER) ((struct XML_ParserStruct *) $a_parser)->externalChildParseCount : (EIF_INTEGER) 0;"
+		end
+
+	mark_next_external_entity_is_parameter (a_parser: POINTER; a_is_parameter: BOOLEAN)
+			-- Tell the native bridge how the next external child parser should parse.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"if ($a_parser != 0) { ((struct XML_ParserStruct *) $a_parser)->nextExternalEntityIsParameter = $a_is_parameter ? XML_TRUE : XML_FALSE; }"
 		end
 
 	call_element_decl_callback (a_callback, a_user_data, a_name, a_model: POINTER)

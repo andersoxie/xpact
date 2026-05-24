@@ -145,8 +145,11 @@ XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
 	parser->errorCode = XML_ERROR_NONE;
 	parser->parsing = XML_INITIALIZED;
 	parser->finalBuffer = XML_FALSE;
+	parser->paramEntityParsing = XML_PARAM_ENTITY_PARSING_NEVER;
 	parser->useForeignDTD = XML_FALSE;
 	parser->parentParser = NULL;
+	parser->nextExternalEntityIsParameter = XML_FALSE;
+	parser->externalEntityIsParameter = XML_FALSE;
 	parser->externalChildParseCount = 0;
 	if (parser->bridge != NULL && parser->bridge->parser_reset != NULL && parser->eiffelParser != NULL) {
 		XML_Bool result = parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
@@ -702,6 +705,22 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	}
 
 	child->parentParser = parser;
+	child->externalEntityIsParameter = parser->nextExternalEntityIsParameter;
+	parser->nextExternalEntityIsParameter = XML_FALSE;
+	if (
+		child->bridge != NULL
+		&& child->bridge->set_external_entity_parameter_context != NULL
+		&& child->eiffelParser != NULL
+		&& child->bridge->set_external_entity_parameter_context(
+			child->bridge->context,
+			child->eiffelParser,
+			child->externalEntityIsParameter
+		) != XML_TRUE
+	) {
+		XML_ParserFree(child);
+		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
+		return NULL;
+	}
 	child->useParserAsHandlerArg = parser->useParserAsHandlerArg;
 	XML_SetUserData(child, parser->userData);
 	XML_SetElementHandler(child, parser->startElementHandler, parser->endElementHandler);
@@ -723,6 +742,7 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	XML_SetEntityDeclHandler(child, parser->entityDeclHandler);
 	XML_SetUnparsedEntityDeclHandler(child, parser->unparsedEntityDeclHandler);
 	XML_SetExternalEntityRefHandler(child, parser->externalEntityRefHandler);
+	XML_SetParamEntityParsing(child, parser->paramEntityParsing);
 	if (parser->hasExternalEntityRefArg) {
 		XML_SetExternalEntityRefHandlerArg(child, parser->externalEntityRefArg);
 	}
@@ -743,9 +763,17 @@ XML_SetParamEntityParsing(XML_Parser parser, enum XML_ParamEntityParsing parsing
 		&& parser->bridge->set_param_entity_parsing != NULL
 		&& parser->eiffelParser != NULL
 	) {
-		return parser->bridge->set_param_entity_parsing(parser->bridge->context, parser->eiffelParser, parsing);
+		int result = parser->bridge->set_param_entity_parsing(parser->bridge->context, parser->eiffelParser, parsing);
+		if (result) {
+			parser->paramEntityParsing = parsing;
+		}
+		return result;
 	}
-	return parser->parsing == XML_INITIALIZED ? 1 : 0;
+	if (parser->parsing == XML_INITIALIZED) {
+		parser->paramEntityParsing = parsing;
+		return 1;
+	}
+	return 0;
 }
 
 int XMLCALL

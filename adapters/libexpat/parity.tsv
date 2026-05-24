@@ -46,6 +46,8 @@ green	misc_tests.c	test_misc_sync_entity_tolerated	Eiffel parser accepts synchro
 green	misc_tests.c	test_misc_expected_event_ptr_issue_980	Eiffel parser reports XML_GetInputContext and XML_GetCurrentByteCount for character callbacks emitted from internal entity references.
 green	misc_tests.c	test_misc_async_entity_rejected	Eiffel parser rejects internal parsed entities that change the surrounding element depth and maps the native error to XML_ERROR_ASYNC_ENTITY.
 green	misc_tests.c	test_misc_features	XML_GetFeatureList returns the Expat-compatible terminal list with correct XML_Char and XML_LChar size feature values.
+green	misc_tests.c	test_misc_alloc_create_parser	The Windows native smoke verifies XML_ParserCreate_MM returns null when the custom allocator cannot allocate the parser object.
+green	misc_tests.c	test_misc_alloc_create_parser_with_encoding	The Windows native smoke verifies XML_ParserCreate_MM allocator failure/success behavior when an explicit encoding is supplied.
 green	basic_tests.c	test_ext_entity_no_handler	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
 green	basic_tests.c	test_skipped_external_entity	Eiffel native bridge reports XML_SkippedEntityHandler for unloaded external general entities without emitting character data.
 green	basic_tests.c	test_ext_entity_good_cdata	Eiffel-backed XML_ExternalEntityParserCreate creates child parsers that parse external parsed entity fragments, inherit character/CDATA handlers, and emit CDATA text through the Windows DLL smoke.
@@ -61,6 +63,9 @@ green	basic_tests.c	test_foreign_dtd_not_standalone	Eiffel parser invokes XML_No
 green	basic_tests.c	test_foreign_dtd_with_doctype	Eiffel parser combines a configured foreign DTD with an internal doctype subset while preserving internal entity expansion.
 green	basic_tests.c	test_foreign_dtd_without_external_subset	Eiffel parser calls the foreign-DTD external entity handler even when the document doctype has only an internal subset.
 green	basic_tests.c	test_empty_foreign_dtd	Eiffel parser keeps undefined-entity rejection when XML_UseForeignDTD is enabled but the external entity handler does not parse a DTD.
+green	basic_tests.c	test_invalid_foreign_dtd	Eiffel child parsers now parse external DTD subset context explicitly and propagate invalid foreign DTD child failures as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
+green	basic_tests.c	test_ext_entity_not_standalone	Eiffel external parameter entity loading now invokes XML_NotStandaloneHandler in child DTD parsers and propagates rejection through the parent external entity callback.
+green	basic_tests.c	test_invalid_tag_in_dtd	Eiffel external parameter entity child parsers reject element tags inside DTD subset content and propagate the nested child failure through the parent parser.
 green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
@@ -71,7 +76,6 @@ red	acc_tests.c	test_amplification_isolated_external_parser	External-entity pars
 red	alloc_tests.c	test_alloc_*	Upstream allocation-failure injection and allocator exhaustion checks are not implemented in the native bridge.
 red	nsalloc_tests.c	test_nsalloc_*	Namespace allocation and namespace-context exhaustion checks are not implemented.
 red	ns_tests.c	test_*	Namespace parsing, namespace callbacks, namespace triplets, and namespace error parity are not implemented.
-red	misc_tests.c	test_misc_alloc_*	Allocator edge cases in parser creation are not fully implemented.
 red	misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks are not yet audited against the Eiffel-backed native bridge.
 red	misc_tests.c	test_misc_utf16le	UTF-16 input parity is outside the Windows Phase 1 UTF-8 native path.
 red	misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
@@ -90,7 +94,6 @@ red	basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semant
 red	basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
 red	basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
 red	basic_tests.c	test_ext_entity_trailing_*	External entity trailing-token diagnostics are not fully implemented.
-red	basic_tests.c	test_ext_entity_not_standalone	External entity standalone handling is not fully implemented.
 red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 red	basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
@@ -100,8 +103,6 @@ red	basic_tests.c	test_external_bom_consumed	External parsed-entity BOM edge sem
 red	basic_tests.c	test_external_entity_values	External entity value callback edge semantics are not implemented.
 red	basic_tests.c	test_recursive_external_parameter_entity	Recursive external parameter entity handling is not implemented.
 red	basic_tests.c	test_undefined_ext_entity_in_external_dtd	Undefined entity handling inside external DTD subsets is not fully implemented.
-red	basic_tests.c	test_invalid_foreign_dtd	External subset parser diagnostics for invalid foreign DTD content are not fully libexpat-compatible.
-red	basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.

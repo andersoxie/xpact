@@ -5,7 +5,6 @@ acc_tests.c	test_amplification_isolated_external_parser	External-entity parser a
 alloc_tests.c	test_alloc_*	Upstream allocation-failure injection and allocator exhaustion checks are not implemented in the native bridge.
 nsalloc_tests.c	test_nsalloc_*	Namespace allocation and namespace-context exhaustion checks are not implemented.
 ns_tests.c	test_*	Namespace parsing, namespace callbacks, namespace triplets, and namespace error parity are not implemented.
-misc_tests.c	test_misc_alloc_*	Allocator edge cases in parser creation are not fully implemented.
 misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks are not yet audited against the Eiffel-backed native bridge.
 misc_tests.c	test_misc_utf16le	UTF-16 input parity is outside the Windows Phase 1 UTF-8 native path.
 misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
@@ -24,7 +23,6 @@ basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semantics 
 basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
 basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
 basic_tests.c	test_ext_entity_trailing_*	External entity trailing-token diagnostics are not fully implemented.
-basic_tests.c	test_ext_entity_not_standalone	External entity standalone handling is not fully implemented.
 basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
@@ -34,8 +32,6 @@ basic_tests.c	test_external_bom_consumed	External parsed-entity BOM edge semanti
 basic_tests.c	test_external_entity_values	External entity value callback edge semantics are not implemented.
 basic_tests.c	test_recursive_external_parameter_entity	Recursive external parameter entity handling is not implemented.
 basic_tests.c	test_undefined_ext_entity_in_external_dtd	Undefined entity handling inside external DTD subsets is not fully implemented.
-basic_tests.c	test_invalid_foreign_dtd	External subset parser diagnostics for invalid foreign DTD content are not fully libexpat-compatible.
-basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
 basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.

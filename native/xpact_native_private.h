@@ -10,6 +10,7 @@ struct XML_ParserStruct {
 	const struct XPACT_EiffelBridge *bridge;
 	XML_Memory_Handling_Suite memory;
 	XML_Bool hasCustomMemory;
+	enum XML_ParamEntityParsing paramEntityParsing;
 	XML_Char *base;
 	char *buffer;
 	int bufferCapacity;
@@ -40,6 +41,8 @@ struct XML_ParserStruct {
 	XML_SkippedEntityHandler skippedEntityHandler;
 	XML_Bool useForeignDTD;
 	XML_Parser parentParser;
+	XML_Bool nextExternalEntityIsParameter;
+	XML_Bool externalEntityIsParameter;
 	int externalChildParseCount;
 };
 

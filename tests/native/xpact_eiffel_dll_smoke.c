@@ -1,6 +1,7 @@
 #include "xpact.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static XML_Parser g_parser;
@@ -56,9 +57,13 @@ static int g_default_current_record_count;
 static int g_not_standalone_count;
 static int g_foreign_dtd_ref_count;
 static int g_foreign_dtd_failed;
+static enum XML_Error g_expected_foreign_dtd_child_error;
 static const char *g_foreign_dtd_text;
 static char g_foreign_text[256];
 static int g_foreign_text_len;
+static int g_parameter_entity_ref_count;
+static int g_parameter_entity_failed;
+static int g_failing_alloc_count;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -232,6 +237,25 @@ check(int condition, const char *label) {
 		return 0;
 	}
 	return 1;
+}
+
+static void *
+smoke_duff_malloc(size_t size) {
+	if (g_failing_alloc_count <= 0) {
+		return NULL;
+	}
+	g_failing_alloc_count--;
+	return malloc(size);
+}
+
+static void *
+smoke_duff_realloc(void *ptr, size_t size) {
+	return realloc(ptr, size);
+}
+
+static void
+smoke_duff_free(void *ptr) {
+	free(ptr);
 }
 
 static void XMLCALL
@@ -665,12 +689,98 @@ foreign_dtd_external_entity_handler(XML_Parser parser, const XML_Char *context, 
 		return XML_STATUS_ERROR;
 	}
 	status = XML_Parse(ext_parser, g_foreign_dtd_text, (int)strlen(g_foreign_dtd_text), XML_TRUE);
-	XML_ParserFree(ext_parser);
 	if (status != XML_STATUS_OK) {
+		enum XML_Error child_error = XML_GetErrorCode(ext_parser);
+		XML_ParserFree(ext_parser);
+		if (g_expected_foreign_dtd_child_error != XML_ERROR_NONE && child_error == g_expected_foreign_dtd_child_error) {
+			return XML_STATUS_ERROR;
+		}
+		g_foreign_dtd_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	if (g_expected_foreign_dtd_child_error != XML_ERROR_NONE) {
 		g_foreign_dtd_failed = 1;
 		return XML_STATUS_ERROR;
 	}
 	return XML_STATUS_OK;
+}
+
+static int XMLCALL
+external_entity_not_standalone_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *text =
+		"<!ELEMENT doc EMPTY>\n"
+		"<!ENTITY % e1 SYSTEM 'bar'>\n"
+		"%e1;\n";
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_parameter_entity_ref_count++;
+	if (context == NULL || systemId == NULL || strcmp(systemId, "foo") != 0) {
+		g_parameter_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_parameter_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	XML_SetNotStandaloneHandler(ext_parser, reject_not_standalone_handler);
+	status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+	if (status != XML_STATUS_ERROR || XML_GetErrorCode(ext_parser) != XML_ERROR_NOT_STANDALONE) {
+		g_parameter_entity_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_ERROR;
+}
+
+static int XMLCALL
+invalid_tag_in_dtd_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *outer_text =
+		"<!ELEMENT doc EMPTY>\n"
+		"<!ENTITY % e1 SYSTEM '004-2.ent'>\n"
+		"<!ENTITY % e2 '%e1;'>\n"
+		"%e1;\n";
+	const char *inner_text =
+		"<!ELEMENT el EMPTY>\n"
+		"<el/>\n";
+	const char *text;
+	enum XML_Error expected_error;
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_parameter_entity_ref_count++;
+	if (context == NULL || systemId == NULL) {
+		g_parameter_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (strcmp(systemId, "004-1.ent") == 0) {
+		text = outer_text;
+		expected_error = XML_ERROR_EXTERNAL_ENTITY_HANDLING;
+	} else if (strcmp(systemId, "004-2.ent") == 0) {
+		text = inner_text;
+		expected_error = XML_ERROR_SYNTAX;
+	} else {
+		g_parameter_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_parameter_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+	if (status != XML_STATUS_ERROR || XML_GetErrorCode(ext_parser) != expected_error) {
+		g_parameter_entity_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_ERROR;
 }
 
 static void XMLCALL
@@ -804,6 +914,7 @@ main(void) {
 	size_t hash_collision_len;
 	int saw_xml_char_feature = 0;
 	int saw_xml_lchar_feature = 0;
+	XML_Memory_Handling_Suite duff_allocator;
 	const char *default_input = "<?test processing instruction?>\n<doc/>";
 	const char *doctype_input = "<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>";
 	const char *dtd_default_input =
@@ -881,6 +992,12 @@ main(void) {
 		"<?xml version='1.0' encoding='us-ascii'?>\n"
 		"<!DOCTYPE doc SYSTEM 'foo'>\n"
 		"<doc>&entity;</doc>";
+	const char *external_parameter_not_standalone_input =
+		"<!DOCTYPE doc SYSTEM 'foo'>\n"
+		"<doc></doc>";
+	const char *invalid_tag_in_dtd_input =
+		"<!DOCTYPE doc SYSTEM '004-1.ent'>\n"
+		"<doc></doc>\n";
 	const char *foreign_dtd_decl_chunk = "<?xml version='1.0' encoding='us-ascii'?>\n";
 	const char *foreign_dtd_body_chunk = "<doc>&entity;</doc>";
 	const char *foreign_dtd_with_doctype_input =
@@ -948,6 +1065,26 @@ main(void) {
 		feature++;
 	}
 	if (!check(saw_xml_char_feature && saw_xml_lchar_feature, "feature list includes size entries")) return 1;
+
+	duff_allocator.malloc_fcn = smoke_duff_malloc;
+	duff_allocator.realloc_fcn = smoke_duff_realloc;
+	duff_allocator.free_fcn = smoke_duff_free;
+	g_failing_alloc_count = 0;
+	if (!check(XML_ParserCreate_MM(NULL, &duff_allocator, NULL) == NULL, "custom allocator creation failure returns null")) return 1;
+	g_failing_alloc_count = 1;
+	{
+		XML_Parser allocated_parser = XML_ParserCreate_MM(NULL, &duff_allocator, NULL);
+		if (!check(allocated_parser != NULL, "custom allocator parser creation succeeds after one allocation")) return 1;
+		XML_ParserFree(allocated_parser);
+	}
+	g_failing_alloc_count = 0;
+	if (!check(XML_ParserCreate_MM("us-ascii", &duff_allocator, NULL) == NULL, "custom allocator encoded creation failure returns null")) return 1;
+	g_failing_alloc_count = 1;
+	{
+		XML_Parser allocated_parser = XML_ParserCreate_MM("us-ascii", &duff_allocator, NULL);
+		if (!check(allocated_parser != NULL, "custom allocator encoded parser creation succeeds after one allocation")) return 1;
+		XML_ParserFree(allocated_parser);
+	}
 
 	if (!check(parser != NULL, "parser created")) return 1;
 	if (!check(XML_SetEncoding(parser, NULL) == XML_STATUS_OK, "explicit encoding null accepted before parse")) return 1;
@@ -1442,6 +1579,49 @@ main(void) {
 	if (!check(status == XML_STATUS_ERROR, "empty foreign DTD keeps undefined entity rejection")) return 1;
 	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNDEFINED_ENTITY, "empty foreign DTD maps to undefined entity")) return 1;
 	if (!check(g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "empty foreign DTD callback accepted")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for invalid foreign DTD check")) return 1;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "$";
+	g_expected_foreign_dtd_child_error = XML_ERROR_SYNTAX;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for invalid foreign DTD")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "invalid foreign DTD setting accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_decl_chunk, (int)strlen(foreign_dtd_decl_chunk), XML_FALSE);
+	if (!check(status == XML_STATUS_OK, "invalid foreign DTD initial chunk accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_body_chunk, (int)strlen(foreign_dtd_body_chunk), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "invalid foreign DTD child failure propagates")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_EXTERNAL_ENTITY_HANDLING, "invalid foreign DTD maps to external entity handling")) return 1;
+	if (!check(g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "invalid foreign DTD callback observed expected child error")) return 1;
+	g_expected_foreign_dtd_child_error = XML_ERROR_NONE;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for external parameter not-standalone check")) return 1;
+	g_not_standalone_count = 0;
+	g_parameter_entity_ref_count = 0;
+	g_parameter_entity_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for external parameter not-standalone")) return 1;
+	XML_SetExternalEntityRefHandler(parser, external_entity_not_standalone_handler);
+	status = XML_Parse(parser, external_parameter_not_standalone_input, (int)strlen(external_parameter_not_standalone_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "external parameter not-standalone child failure propagates")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_EXTERNAL_ENTITY_HANDLING, "external parameter not-standalone maps to external entity handling")) return 1;
+	if (!check(g_not_standalone_count == 1 && g_parameter_entity_ref_count == 1 && !g_parameter_entity_failed, "external parameter not-standalone callback path matched")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for invalid tag in DTD check")) return 1;
+	g_parameter_entity_ref_count = 0;
+	g_parameter_entity_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for invalid tag in DTD")) return 1;
+	XML_SetExternalEntityRefHandler(parser, invalid_tag_in_dtd_external_entity_handler);
+	status = XML_Parse(parser, invalid_tag_in_dtd_input, (int)strlen(invalid_tag_in_dtd_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "invalid tag in DTD child failure propagates")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_EXTERNAL_ENTITY_HANDLING, "invalid tag in DTD maps to external entity handling")) return 1;
+	if (!check(g_parameter_entity_ref_count == 2 && !g_parameter_entity_failed, "invalid tag in DTD callback path matched")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");
