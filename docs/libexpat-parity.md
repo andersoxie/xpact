@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 270 named upstream tests in the downloaded
+expected-failure patterns expand to 269 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -54,7 +54,9 @@ The Windows release has green evidence for:
 - `XML_SetElementDeclHandler` callbacks with freeable `XML_Content` content
   models for simple and nested sequence/choice/name quantifier declarations;
 - `XML_SetNotationDeclHandler` callbacks for `SYSTEM` notation declarations
-  and `PUBLIC` notation declarations without system identifiers.
+  and `PUBLIC` notation declarations without system identifiers;
+- XML public identifier validation for doctype `PUBLIC` IDs, including
+  `XML_ERROR_PUBLICID` mapping through the native C ABI.
 
 ## Red Rows
 

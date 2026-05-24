@@ -295,6 +295,14 @@ feature {NONE} -- Tests
 			if not l_ok then
 				assert ("bad notation syntax error", l_parser.last_error.same_string ("missing notation system identifier"))
 			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<?xml version='1.0' encoding='utf-8'?>%N<!DOCTYPE doc PUBLIC '{BadName}' 'test'>%N<doc></doc>")
+			assert ("bad public doctype rejected", not l_ok)
+			if not l_ok then
+				assert ("bad public doctype error", l_parser.last_error.same_string ("invalid public identifier"))
+			end
 		end
 
 	test_internal_entity_declarations

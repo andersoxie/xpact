@@ -30,7 +30,6 @@ basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
 basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
 basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
 basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
-basic_tests.c	test_bad_public_doctype	Malformed public doctype diagnostics are not fully audited against libexpat.
 basic_tests.c	test_bad_doctype	Malformed doctype diagnostics are not fully audited against libexpat.
 basic_tests.c	test_bad_doctype_utf8	Malformed UTF-8 doctype diagnostics are not fully audited against libexpat.
 basic_tests.c	test_bad_doctype_plus	Malformed doctype diagnostics are not fully audited against libexpat.

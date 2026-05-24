@@ -666,7 +666,7 @@ feature {NONE} -- Markup parsing
 								i := skip_spaces (a_input, i + 6)
 								if i < l_external_end and then is_quote (a_input.item (i)) then
 									l_public_literal_start := i
-									i := read_quoted_literal (a_input, i, l_external_end, l_public_id)
+									i := read_public_id_literal (a_input, i, l_external_end, l_public_id)
 									l_public_literal_end := i - 1
 									if not has_error then
 										i := skip_spaces (a_input, i)
@@ -1436,7 +1436,7 @@ feature {NONE} -- DTD entity declarations
 					elseif has_keyword_at (a_subset, i, "PUBLIC") then
 						i := skip_spaces (a_subset, i + 6)
 						if i <= l_end - 1 and then is_quote (a_subset.item (i)) then
-							i := read_quoted_literal (a_subset, i, l_end - 1, l_public_id)
+							i := read_public_id_literal (a_subset, i, l_end - 1, l_public_id)
 							l_public := l_public_id
 							if not has_error then
 								i := skip_spaces (a_subset, i)
@@ -1884,7 +1884,7 @@ feature {NONE} -- DTD entity declarations
 			elseif has_keyword_at (a_subset, i, "PUBLIC") then
 				i := skip_spaces (a_subset, i + 6)
 				if i <= a_end_index and then is_quote (a_subset.item (i)) then
-					i := read_quoted_literal (a_subset, i, a_end_index, l_public_id)
+					i := read_public_id_literal (a_subset, i, a_end_index, l_public_id)
 					if not has_error then
 						i := skip_spaces (a_subset, i)
 						if i <= a_end_index and then is_quote (a_subset.item (i)) then
@@ -2503,6 +2503,24 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
+	read_public_id_literal (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
+			-- Read public identifier literal and reject characters outside XML `PubidChar'.
+		require
+			input_attached: a_input /= Void
+			value_attached: a_value /= Void
+			valid_bounds: a_start_index >= 1 and a_start_index <= a_end_index and a_end_index <= a_input.count
+			starts_with_quote: is_quote (a_input.item (a_start_index))
+		do
+			Result := read_quoted_literal (a_input, a_start_index, a_end_index, a_value)
+			if not has_error and then not is_valid_public_id (a_value) then
+				set_error ("invalid public identifier")
+				Result := a_input.count + 1
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_input.count + 1
+		end
+
 	has_at (a_input: READABLE_STRING_8; a_index: INTEGER; a_marker: READABLE_STRING_8): BOOLEAN
 			-- Does `a_marker' appear at `a_index' in `a_input'?
 		require
@@ -2593,6 +2611,61 @@ feature {NONE} -- Character and name validation
 		do
 			create l_attributes.make
 			Result := l_attributes.is_valid_name (a_name)
+		end
+
+	is_valid_public_id (a_text: READABLE_STRING_8): BOOLEAN
+			-- Does `a_text' satisfy XML 1.0 `PubidChar*'?
+		require
+			text_attached: a_text /= Void
+		local
+			i: INTEGER
+		do
+			from
+				Result := True
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_text.count + 1
+			until
+				i > a_text.count or not Result
+			loop
+				Result := is_public_id_character (a_text.item (i))
+				i := i + 1
+			variant
+				a_text.count - i + 1
+			end
+		end
+
+	is_public_id_character (c: CHARACTER_8): BOOLEAN
+			-- Is `c' an XML 1.0 public identifier character?
+		local
+			l_code: INTEGER
+		do
+			l_code := c.code
+			Result := (l_code >= 65 and l_code <= 90)
+				or else (l_code >= 97 and l_code <= 122)
+				or else (l_code >= 48 and l_code <= 57)
+				or else l_code = 32
+				or else l_code = 13
+				or else l_code = 10
+				or else l_code = 45
+				or else l_code = 39
+				or else l_code = 40
+				or else l_code = 41
+				or else l_code = 43
+				or else l_code = 44
+				or else l_code = 46
+				or else l_code = 47
+				or else l_code = 58
+				or else l_code = 61
+				or else l_code = 63
+				or else l_code = 59
+				or else l_code = 33
+				or else l_code = 42
+				or else l_code = 35
+				or else l_code = 64
+				or else l_code = 36
+				or else l_code = 95
+				or else l_code = 37
 		end
 
 	is_xml_character_code (a_code: INTEGER): BOOLEAN

@@ -61,6 +61,8 @@ feature -- Expat-compatible constants
 
 	Xml_error_external_entity_handling: INTEGER = 21
 
+	Xml_error_publicid: INTEGER = 32
+
 	Xml_error_not_started: INTEGER = 44
 
 feature -- Access
@@ -338,6 +340,8 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_unclosed_cdata_section
 			elseif a_error.has_substring ("external entity") then
 				Result := Xml_error_external_entity_handling
+			elseif a_error.same_string ("invalid public identifier") then
+				Result := Xml_error_publicid
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then
 				Result := Xml_error_unclosed_token
 			elseif a_error.has_substring ("invalid") or else a_error.has_substring ("outside document element") then

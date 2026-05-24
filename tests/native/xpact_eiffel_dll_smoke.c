@@ -219,6 +219,10 @@ main(void) {
 		"<!NOTATION img SYSTEM 'image/gif'>\n"
 		"<!ELEMENT doc EMPTY>\n"
 		"]><doc/>";
+	const char *bad_public_doctype_input =
+		"<?xml version='1.0' encoding='utf-8'?>\n"
+		"<!DOCTYPE doc PUBLIC '{BadName}' 'test'>\n"
+		"<doc></doc>";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -309,6 +313,14 @@ main(void) {
 	status = XML_Parse(parser, notation_decl_input, (int)strlen(notation_decl_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for notation declaration check")) return 1;
 	if (!check(g_notation_decl_count == 2 && !g_notation_decl_failed, "notation declaration callbacks delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for bad public doctype check")) return 1;
+	XML_SetDoctypeDeclHandler(parser, start_doctype_handler, end_doctype_handler);
+	status = XML_Parse(parser, bad_public_doctype_input, (int)strlen(bad_public_doctype_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "bad public doctype rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_PUBLICID, "bad public doctype maps to XML_ERROR_PUBLICID")) return 1;
 	XML_ParserFree(parser);
 
 	puts("xpact Eiffel DLL smoke: ok");

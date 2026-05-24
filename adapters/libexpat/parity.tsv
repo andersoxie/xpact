@@ -30,6 +30,7 @@ green	basic_tests.c	test_dtd_elements	Eiffel parser emits XML_SetElementDeclHand
 green	basic_tests.c	test_dtd_elements_nesting	Eiffel parser builds Expat-compatible nested XML_Content arrays for sequence, choice, name, and quantifier content models.
 green	basic_tests.c	test_public_notation_no_sysid	Eiffel parser accepts PUBLIC notation declarations without system IDs and forwards XML_NotationDeclHandler callbacks.
 green	basic_tests.c	test_bad_notation	Eiffel parser rejects SYSTEM notation declarations missing a system literal with XML_ERROR_SYNTAX.
+green	basic_tests.c	test_bad_public_doctype	Eiffel parser validates XML PubidChar in PUBLIC doctype identifiers and maps violations to XML_ERROR_PUBLICID.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -61,7 +62,6 @@ red	basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
 red	basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
 red	basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_bad_public_doctype	Malformed public doctype diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_bad_doctype	Malformed doctype diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_bad_doctype_utf8	Malformed UTF-8 doctype diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_bad_doctype_plus	Malformed doctype diagnostics are not fully audited against libexpat.
