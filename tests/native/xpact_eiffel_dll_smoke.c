@@ -7,6 +7,9 @@ static XML_Parser g_parser;
 static int g_callback_failed;
 static char g_default_text[256];
 static int g_default_len;
+static int g_doctype_start_count;
+static int g_doctype_end_count;
+static int g_doctype_failed;
 
 static int
 check(int condition, const char *label) {
@@ -45,11 +48,36 @@ default_handler(void *userData, const XML_Char *s, int len) {
 	g_default_text[g_default_len] = '\0';
 }
 
+static void XMLCALL
+start_doctype_handler(void *userData, const XML_Char *doctypeName, const XML_Char *sysid, const XML_Char *pubid, int has_internal_subset) {
+	(void)userData;
+	g_doctype_start_count++;
+	if (strcmp(doctypeName, "doc") != 0 || sysid == NULL || strcmp(sysid, "test.dtd") != 0 || pubid == NULL || strcmp(pubid, "pubname") != 0 || !has_internal_subset) {
+		g_doctype_failed = 1;
+	}
+}
+
+static void XMLCALL
+end_doctype_handler(void *userData) {
+	(void)userData;
+	g_doctype_end_count++;
+}
+
 int
 main(void) {
 	enum XML_Status status;
 	XML_Parser parser = XML_ParserCreate("UTF-8");
 	const char *default_input = "<?test processing instruction?>\n<doc/>";
+	const char *doctype_input = "<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>";
+	const char *dtd_default_input =
+		"<!DOCTYPE doc [\n"
+		"<!ENTITY e SYSTEM 'http://example.org/e'>\n"
+		"<!NOTATION n SYSTEM 'http://example.org/n'>\n"
+		"<!ELEMENT doc EMPTY>\n"
+		"<!ATTLIST doc a CDATA #IMPLIED>\n"
+		"<?pi in dtd?>\n"
+		"<!--comment in dtd-->\n"
+		"]><doc/>";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -73,6 +101,31 @@ main(void) {
 	status = XML_Parse(parser, default_input, (int)strlen(default_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for default check")) return 1;
 	if (!check(strcmp(g_default_text, default_input) == 0, "default handler receives raw tokens")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for doctype check")) return 1;
+	g_default_len = 0;
+	g_default_text[0] = '\0';
+	g_doctype_start_count = 0;
+	g_doctype_end_count = 0;
+	g_doctype_failed = 0;
+	XML_SetDefaultHandler(parser, default_handler);
+	XML_SetDoctypeDeclHandler(parser, start_doctype_handler, end_doctype_handler);
+	status = XML_Parse(parser, doctype_input, (int)strlen(doctype_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for doctype check")) return 1;
+	if (!check(g_doctype_start_count == 1 && g_doctype_end_count == 1 && !g_doctype_failed, "doctype callbacks delegated")) return 1;
+	if (!check(strstr(g_default_text, "'pubname'") != NULL && strstr(g_default_text, "'test.dtd'") != NULL, "default handler receives doctype identifiers")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for DTD default check")) return 1;
+	g_default_len = 0;
+	g_default_text[0] = '\0';
+	XML_SetDefaultHandler(parser, default_handler);
+	status = XML_Parse(parser, dtd_default_input, (int)strlen(dtd_default_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for DTD default check")) return 1;
+	if (!check(strcmp(g_default_text, "\n\n\n\n\n\n\n<doc/>") == 0, "default handler receives DTD whitespace")) return 1;
 	XML_ParserFree(parser);
 
 	puts("xpact Eiffel DLL smoke: ok");

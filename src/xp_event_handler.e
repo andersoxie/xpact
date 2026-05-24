@@ -55,6 +55,19 @@ feature -- Events
 		do
 		end
 
+	on_start_doctype_decl (a_name: READABLE_STRING_8; a_system_id, a_public_id: detachable READABLE_STRING_8; a_has_internal_subset: BOOLEAN)
+			-- Doctype declaration started.
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+		do
+		end
+
+	on_end_doctype_decl
+			-- Doctype declaration ended.
+		do
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 			-- Raw default-handler text was parsed.
 		require

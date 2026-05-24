@@ -607,7 +607,14 @@ feature {NONE} -- Markup parsing
 			l_subset: STRING_8
 			l_public_id: STRING_8
 			l_system_id: STRING_8
+			l_event_public_id: detachable READABLE_STRING_8
+			l_event_system_id: detachable READABLE_STRING_8
 			l_has_external_subset: BOOLEAN
+			l_has_internal_subset: BOOLEAN
+			l_public_literal_start: INTEGER
+			l_public_literal_end: INTEGER
+			l_system_literal_start: INTEGER
+			l_system_literal_end: INTEGER
 			l_attributes: XP_ATTRIBUTES
 		do
 			create l_attributes.make
@@ -647,7 +654,9 @@ feature {NONE} -- Markup parsing
 								l_has_external_subset := True
 								i := skip_spaces (a_input, i + 6)
 								if i < l_external_end and then is_quote (a_input.item (i)) then
+									l_system_literal_start := i
 									i := read_quoted_literal (a_input, i, l_external_end, l_system_id)
+									l_system_literal_end := i - 1
 								else
 									set_error ("missing external system identifier")
 								end
@@ -655,11 +664,15 @@ feature {NONE} -- Markup parsing
 								l_has_external_subset := True
 								i := skip_spaces (a_input, i + 6)
 								if i < l_external_end and then is_quote (a_input.item (i)) then
+									l_public_literal_start := i
 									i := read_quoted_literal (a_input, i, l_external_end, l_public_id)
+									l_public_literal_end := i - 1
 									if not has_error then
 										i := skip_spaces (a_input, i)
 										if i < l_external_end and then is_quote (a_input.item (i)) then
+											l_system_literal_start := i
 											i := read_quoted_literal (a_input, i, l_external_end, l_system_id)
+											l_system_literal_end := i - 1
 										else
 											set_error ("missing external system identifier")
 										end
@@ -678,6 +691,24 @@ feature {NONE} -- Markup parsing
 							end
 						end
 						if l_subset_start > 0 then
+							l_has_internal_subset := True
+						end
+						if not has_error then
+							if l_public_literal_start > 0 then
+								emit_default (a_input.substring (l_public_literal_start, l_public_literal_end))
+							end
+							if l_system_literal_start > 0 then
+								emit_default (a_input.substring (l_system_literal_start, l_system_literal_end))
+							end
+							if not l_public_id.is_empty then
+								l_event_public_id := l_public_id
+							end
+							if not l_system_id.is_empty then
+								l_event_system_id := l_system_id
+							end
+							handler.on_start_doctype_decl (doctype_name, l_event_system_id, l_event_public_id, l_has_internal_subset)
+						end
+						if l_subset_start > 0 then
 							l_subset_end := find_subset_end (a_input, l_subset_start + 1, l_end)
 							if l_subset_end = 0 then
 								set_error ("unterminated internal subset")
@@ -692,6 +723,7 @@ feature {NONE} -- Markup parsing
 						if has_error then
 							Result := a_input.count + 1
 						else
+							handler.on_end_doctype_decl
 							Result := l_end + 1
 						end
 					end
@@ -1108,6 +1140,14 @@ feature {NONE} -- DTD entity declarations
 			loop
 				if has_at (a_subset, i, "<!ENTITY") then
 					i := parse_entity_declaration (a_subset, i)
+				elseif has_at (a_subset, i, "<!ELEMENT") or else has_at (a_subset, i, "<!ATTLIST") or else has_at (a_subset, i, "<!NOTATION") then
+					l_end := find_markup_declaration_end (a_subset, i)
+					if l_end = 0 then
+						set_error ("unterminated doctype declaration")
+						i := a_subset.count + 1
+					else
+						i := l_end + 1
+					end
 				elseif has_at (a_subset, i, "<!--") then
 					l_end := find_sequence (a_subset, "-->", i + 4)
 					if l_end = 0 then
@@ -1127,6 +1167,9 @@ feature {NONE} -- DTD entity declarations
 				elseif a_subset.item (i).code = 37 then
 					i := include_parameter_entity_in_subset (a_subset, i)
 				else
+					if is_xml_space (a_subset.item (i)) then
+						emit_default (a_subset.substring (i, i))
+					end
 					i := i + 1
 				end
 			variant

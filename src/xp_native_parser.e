@@ -187,6 +187,15 @@ feature -- Element change
 			expand_set: handler.default_expands_entities = a_expand
 		end
 
+	set_doctype_decl_handlers (a_start, a_end: POINTER)
+			-- Set native doctype declaration callbacks.
+		do
+			handler.set_doctype_decl_handlers (a_start, a_end)
+		ensure
+			start_set: handler.start_doctype_decl_callback = a_start
+			end_set: handler.end_doctype_decl_callback = a_end
+		end
+
 	reset: BOOLEAN
 			-- Reset parser state while preserving callback registrations.
 		do

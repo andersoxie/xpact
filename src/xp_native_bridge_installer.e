@@ -155,6 +155,9 @@ feature -- Handler callbacks
 	set_doctype_decl_handler (a_parser, a_start, a_end: POINTER)
 			-- Record doctype declaration handler slots.
 		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_doctype_decl_handlers (a_start, a_end)
+			end
 		end
 
 	set_external_entity_ref_handler (a_parser, a_handler: POINTER)

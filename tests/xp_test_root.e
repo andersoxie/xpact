@@ -97,6 +97,8 @@ feature {NONE} -- Tests
 			l_handler: XP_COLLECTING_HANDLER
 			l_parser: XP_PARSER
 			l_ok: BOOLEAN
+			l_default_text: STRING_8
+			i: INTEGER
 		do
 			create l_handler.make
 			create l_parser.make (l_handler)
@@ -112,6 +114,32 @@ feature {NONE} -- Tests
 			l_ok := l_parser.parse ("<?work now?><root />")
 			assert ("processing instruction document accepted", l_ok)
 			assert ("processing instruction emitted", l_handler.events.i_th (1).same_string ("pi:work:now"))
+
+			create l_handler.make
+			l_handler.enable_doctype_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>")
+			assert ("doctype document accepted", l_ok)
+			assert ("doctype start emitted", l_handler.events.i_th (1).same_string ("start-doctype:doc:test.dtd:pubname:1"))
+			assert ("doctype end emitted", l_handler.events.i_th (2).same_string ("end-doctype"))
+
+			create l_handler.make
+			l_handler.enable_default_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc [%N<!ENTITY e SYSTEM 'http://example.org/e'>%N<!NOTATION n SYSTEM 'http://example.org/n'>%N<!ELEMENT doc EMPTY>%N<!ATTLIST doc a CDATA #IMPLIED>%N<?pi in dtd?>%N<!--comment in dtd-->%N]><doc/>")
+			assert ("DTD default document accepted", l_ok)
+			create l_default_text.make_empty
+			from
+				i := 1
+			until
+				i > l_handler.events.count
+			loop
+				if l_handler.events.i_th (i).count >= 8 and then l_handler.events.i_th (i).substring (1, 8).same_string ("default:") then
+					l_default_text.append (l_handler.events.i_th (i).substring (9, l_handler.events.i_th (i).count))
+				end
+				i := i + 1
+			end
+			assert ("DTD default whitespace emitted", l_default_text.same_string ("%N%N%N%N%N%N%N<doc/>"))
 		end
 
 	test_predefined_and_numeric_entities
@@ -486,6 +514,12 @@ feature {NONE} -- Tests
 			assert ("native Eiffel parser emits comment event", l_native.handler.comment_count = 1)
 			assert ("native Eiffel parser emits CDATA start event", l_native.handler.start_cdata_section_count = 1)
 			assert ("native Eiffel parser emits CDATA end event", l_native.handler.end_cdata_section_count = 1)
+
+			assert ("native Eiffel parser resets for doctype callbacks", l_native.reset)
+			l_status := l_native.parse ("<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>", True)
+			assert ("native Eiffel parser accepts doctype callback document", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser emits doctype start event", l_native.handler.start_doctype_decl_count = 1)
+			assert ("native Eiffel parser emits doctype end event", l_native.handler.end_doctype_decl_count = 1)
 		end
 
 	test_native_bridge_installer

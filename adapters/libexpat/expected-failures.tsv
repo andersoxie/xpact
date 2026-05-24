@@ -28,8 +28,21 @@ basic_tests.c	test_external*	External entity parser creation and callback loadin
 basic_tests.c	test_*external*	External entity parser creation and callback loading are not implemented.
 basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
 basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
-basic_tests.c	test_*dtd*	DTD declaration callback and DTD content-model parity are not implemented.
-basic_tests.c	test_*doctype*	Doctype declaration callback and public-id parity are not implemented.
+basic_tests.c	test_dtd_attr_handling	Attribute-list declaration callbacks and default-attribute parity are not implemented.
+basic_tests.c	test_dtd_elements	Element declaration callbacks and content-model parity are not implemented.
+basic_tests.c	test_dtd_elements_nesting	Element declaration callbacks and content-model parity are not implemented.
+basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
+basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
+basic_tests.c	test_bad_public_doctype	Malformed public doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_bad_doctype	Malformed doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_bad_doctype_utf8	Malformed UTF-8 doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_bad_doctype_plus	Malformed doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_bad_doctype_star	Malformed doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_bad_doctype_query	Malformed doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_short_doctype	Short doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_short_doctype_2	Short doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_short_doctype_3	Short doctype diagnostics are not fully audited against libexpat.
+basic_tests.c	test_long_doctype	Long doctype limit diagnostics are not fully audited against libexpat.
 basic_tests.c	test_*notation*	Notation declaration callbacks are not implemented.
 basic_tests.c	test_*attlist*	Attribute-list declaration callbacks and default-attribute parity are not implemented.
 basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
@@ -37,9 +50,7 @@ basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_abort*	Abort semantics are not implemented.
 basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
-basic_tests.c	test_dtd_default_handling	DTD default handling is not fully implemented.
 basic_tests.c	test_ns_in_attribute_default_without_namespaces	Namespace/default-attribute interaction is not implemented.
-basic_tests.c	test_default_doctype_handler	Doctype default-handler replay semantics are not fully implemented.
 basic_tests.c	test_hash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.

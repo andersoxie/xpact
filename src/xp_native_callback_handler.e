@@ -11,6 +11,8 @@ inherit
 			on_comment,
 			on_start_cdata_section,
 			on_end_cdata_section,
+			on_start_doctype_decl,
+			on_end_doctype_decl,
 			on_default
 		end
 	PLATFORM
@@ -59,6 +61,12 @@ feature -- Access
 	default_expands_entities: BOOLEAN
 			-- Was the default handler registered through the expanding API?
 
+	start_doctype_decl_callback: POINTER
+			-- `XML_StartDoctypeDeclHandler' callback pointer.
+
+	end_doctype_decl_callback: POINTER
+			-- `XML_EndDoctypeDeclHandler' callback pointer.
+
 	events: ARRAYED_LIST [STRING_8]
 			-- Eiffel-visible event log used by tests and diagnostics.
 
@@ -87,6 +95,12 @@ feature -- Metrics
 
 	default_count: INTEGER
 			-- Number of default-handler events emitted.
+
+	start_doctype_decl_count: INTEGER
+			-- Number of doctype start events emitted.
+
+	end_doctype_decl_count: INTEGER
+			-- Number of doctype end events emitted.
 
 feature -- Element change
 
@@ -152,6 +166,16 @@ feature -- Element change
 			expand_set: default_expands_entities = a_expand
 		end
 
+	set_doctype_decl_handlers (a_start, a_end: POINTER)
+			-- Set native doctype declaration callbacks.
+		do
+			start_doctype_decl_callback := a_start
+			end_doctype_decl_callback := a_end
+		ensure
+			start_set: start_doctype_decl_callback = a_start
+			end_set: end_doctype_decl_callback = a_end
+		end
+
 	reset_events
 			-- Clear observable event state.
 		do
@@ -164,6 +188,8 @@ feature -- Element change
 			start_cdata_section_count := 0
 			end_cdata_section_count := 0
 			default_count := 0
+			start_doctype_decl_count := 0
+			end_doctype_decl_count := 0
 		ensure
 			no_events: events.count = 0
 			no_start_events: start_element_count = 0
@@ -174,6 +200,8 @@ feature -- Element change
 			no_start_cdata_events: start_cdata_section_count = 0
 			no_end_cdata_events: end_cdata_section_count = 0
 			no_default_events: default_count = 0
+			no_start_doctype_events: start_doctype_decl_count = 0
+			no_end_doctype_events: end_doctype_decl_count = 0
 		end
 
 feature -- Events
@@ -307,6 +335,37 @@ feature -- Events
 			end
 		end
 
+	on_start_doctype_decl (a_name: READABLE_STRING_8; a_system_id, a_public_id: detachable READABLE_STRING_8; a_has_internal_subset: BOOLEAN)
+		local
+			l_name: C_STRING
+			l_system_id: detachable C_STRING
+			l_public_id: detachable C_STRING
+			l_system_pointer: POINTER
+			l_public_pointer: POINTER
+		do
+			start_doctype_decl_count := start_doctype_decl_count + 1
+			if start_doctype_decl_callback /= default_pointer then
+				create l_name.make (a_name)
+				if attached a_system_id as l_attached_system_id then
+					create l_system_id.make (l_attached_system_id)
+					l_system_pointer := l_system_id.item
+				end
+				if attached a_public_id as l_attached_public_id then
+					create l_public_id.make (l_attached_public_id)
+					l_public_pointer := l_public_id.item
+				end
+				call_start_doctype_decl_callback (start_doctype_decl_callback, user_data, l_name.item, l_system_pointer, l_public_pointer, a_has_internal_subset)
+			end
+		end
+
+	on_end_doctype_decl
+		do
+			end_doctype_decl_count := end_doctype_decl_count + 1
+			if end_doctype_decl_callback /= default_pointer then
+				call_end_doctype_decl_callback (end_doctype_decl_callback, user_data)
+			end
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 		local
 			l_text: C_STRING
@@ -400,6 +459,27 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_text, (int) $a_length);"
 		end
 
+	call_start_doctype_decl_callback (a_callback, a_user_data, a_name, a_system_id, a_public_id: POINTER; a_has_internal_subset: BOOLEAN)
+			-- Invoke native `XML_StartDoctypeDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			name_attached: a_name /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, const char *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, (const char *) $a_system_id, (const char *) $a_public_id, $a_has_internal_subset ? 1 : 0);"
+		end
+
+	call_end_doctype_decl_callback (a_callback, a_user_data: POINTER)
+			-- Invoke native `XML_EndDoctypeDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *)) $a_callback) ((void *) $a_user_data);"
+		end
+
 invariant
 	events_attached: events /= Void
 	non_negative_start_count: start_element_count >= 0
@@ -410,5 +490,7 @@ invariant
 	non_negative_start_cdata_count: start_cdata_section_count >= 0
 	non_negative_end_cdata_count: end_cdata_section_count >= 0
 	non_negative_default_count: default_count >= 0
+	non_negative_start_doctype_count: start_doctype_decl_count >= 0
+	non_negative_end_doctype_count: end_doctype_decl_count >= 0
 
 end
