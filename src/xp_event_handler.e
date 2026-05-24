@@ -56,6 +56,15 @@ feature -- Events
 		do
 		end
 
+	on_xml_declaration (a_version, a_encoding: READABLE_STRING_8; a_standalone: INTEGER)
+			-- XML declaration was parsed.
+		require
+			version_attached: a_version /= Void
+			encoding_attached: a_encoding /= Void
+			valid_standalone: a_standalone = -1 or a_standalone = 0 or a_standalone = 1
+		do
+		end
+
 	on_comment (a_text: READABLE_STRING_8)
 			-- Comment text was parsed.
 		require

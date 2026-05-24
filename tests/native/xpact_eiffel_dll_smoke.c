@@ -38,6 +38,11 @@ static int g_loaded_external_len;
 static const void *g_expected_external_arg;
 static int g_external_arg_ref_count;
 static int g_external_arg_failed;
+static const void *g_expected_user_parameter_data;
+static int g_user_parameter_comment_count;
+static int g_user_parameter_skip_count;
+static int g_user_parameter_xdecl_count;
+static int g_user_parameter_failed;
 static int g_skipped_entity_count;
 static int g_skipped_entity_failed;
 static int g_empty_text_failed;
@@ -609,6 +614,67 @@ external_arg_checker(XML_Parser parameter, const XML_Char *context, const XML_Ch
 }
 
 static void XMLCALL
+user_parameter_xml_decl_handler(void *userData, const XML_Char *version, const XML_Char *encoding, int standalone) {
+	if (
+		userData != g_expected_user_parameter_data
+		|| version == NULL
+		|| strcmp(version, "1.0") != 0
+		|| encoding == NULL
+		|| strcmp(encoding, "us-ascii") != 0
+		|| standalone != -1
+	) {
+		g_user_parameter_failed = 1;
+	}
+	g_user_parameter_xdecl_count++;
+}
+
+static void XMLCALL
+user_parameter_comment_handler(void *userData, const XML_Char *data) {
+	(void)data;
+	if (userData != g_expected_user_parameter_data || XML_GetUserData((XML_Parser)userData) != (void *)1) {
+		g_user_parameter_failed = 1;
+	}
+	g_user_parameter_comment_count++;
+}
+
+static void XMLCALL
+user_parameter_skip_handler(void *userData, const XML_Char *entityName, int is_parameter_entity) {
+	if (
+		userData != g_expected_user_parameter_data
+		|| entityName == NULL
+		|| strcmp(entityName, "entity") != 0
+		|| is_parameter_entity
+	) {
+		g_user_parameter_failed = 1;
+	}
+	g_user_parameter_skip_count++;
+}
+
+static int XMLCALL
+user_parameter_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *text = "<!-- Subordinate parser -->\n<!ELEMENT doc (#PCDATA)*>";
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)systemId;
+	(void)publicId;
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_user_parameter_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	g_expected_user_parameter_data = ext_parser;
+	status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+	g_expected_user_parameter_data = parser;
+	XML_ParserFree(ext_parser);
+	if (status != XML_STATUS_OK) {
+		g_user_parameter_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	return XML_STATUS_OK;
+}
+
+static void XMLCALL
 skipped_entity_handler(void *userData, const XML_Char *entityName, int is_parameter_entity) {
 	(void)userData;
 	g_skipped_entity_count++;
@@ -739,6 +805,26 @@ main(void) {
 		"  <!ENTITY en SYSTEM 'mem://arg'>\n"
 		"]>\n"
 		"<doc>&en;</doc>";
+	const char *external_ref_parameter_input =
+		"<?xml version='1.0' encoding='us-ascii'?>\n"
+		"<!DOCTYPE doc SYSTEM 'foo'>\n"
+		"<doc>&entity;</doc>";
+	const char *unread_external_subset_input =
+		"<!DOCTYPE doc SYSTEM 'foo'>\n"
+		"<doc>&entity;</doc>";
+	const char *no_external_subset_undefined_input = "<doc>&entity;</doc>";
+	const char *standalone_external_subset_input =
+		"<?xml version='1.0' standalone='yes'?>\n"
+		"<!DOCTYPE doc SYSTEM 'foo'>\n"
+		"<doc>&entity;</doc>";
+	const char *user_parameter_input =
+		"<?xml version='1.0' encoding='us-ascii'?>\n"
+		"<!-- Primary parse -->\n"
+		"<!DOCTYPE doc SYSTEM 'foo'>\n"
+		"<doc>&entity;";
+	const char *user_parameter_epilog =
+		"<!-- Back to primary parser -->\n"
+		"</doc>";
 	const char *skipped_external_input =
 		"<!DOCTYPE doc [\n"
 		"  <!ENTITY en SYSTEM 'http://example.org/dummy.ent'>\n"
@@ -1096,6 +1182,80 @@ main(void) {
 	status = XML_Parse(parser, external_arg_input, (int)strlen(external_arg_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "default external handler arg document accepted")) return 1;
 	if (!check(g_external_arg_ref_count == 1 && !g_external_arg_failed, "null external handler arg falls back to parser")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for explicit external subset handler arg check")) return 1;
+	g_parser = parser;
+	g_expected_external_arg = external_ref_parameter_input;
+	g_external_arg_ref_count = 0;
+	g_external_arg_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for explicit subset arg")) return 1;
+	XML_SetExternalEntityRefHandler(parser, external_arg_checker);
+	XML_SetExternalEntityRefHandlerArg(parser, (void *)external_ref_parameter_input);
+	status = XML_Parse(parser, external_ref_parameter_input, (int)strlen(external_ref_parameter_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "explicit external subset handler arg document accepted")) return 1;
+	if (!check(g_external_arg_ref_count == 1 && !g_external_arg_failed, "explicit external subset handler arg forwarded")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for default external subset handler arg check")) return 1;
+	g_parser = parser;
+	g_expected_external_arg = parser;
+	g_external_arg_ref_count = 0;
+	g_external_arg_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for default subset arg")) return 1;
+	XML_SetExternalEntityRefHandler(parser, external_arg_checker);
+	XML_SetExternalEntityRefHandlerArg(parser, NULL);
+	status = XML_Parse(parser, external_ref_parameter_input, (int)strlen(external_ref_parameter_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "default external subset handler arg document accepted")) return 1;
+	if (!check(g_external_arg_ref_count == 1 && !g_external_arg_failed, "null external subset handler arg falls back to parser")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for unread external subset undefined entity check")) return 1;
+	status = XML_Parse(parser, unread_external_subset_input, (int)strlen(unread_external_subset_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "undefined entity with unread external subset is accepted")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for no external subset undefined entity check")) return 1;
+	status = XML_Parse(parser, no_external_subset_undefined_input, (int)strlen(no_external_subset_undefined_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "undefined entity without external subset is rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNDEFINED_ENTITY, "undefined entity maps to XML_ERROR_UNDEFINED_ENTITY")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for standalone undefined entity check")) return 1;
+	status = XML_Parse(parser, standalone_external_subset_input, (int)strlen(standalone_external_subset_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "standalone undefined external-subset entity is rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNDEFINED_ENTITY, "standalone undefined entity maps to XML_ERROR_UNDEFINED_ENTITY")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for user parameter check")) return 1;
+	g_parser = parser;
+	g_expected_user_parameter_data = parser;
+	g_user_parameter_comment_count = 0;
+	g_user_parameter_skip_count = 0;
+	g_user_parameter_xdecl_count = 0;
+	g_user_parameter_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for user parameter check")) return 1;
+	XML_SetXmlDeclHandler(parser, user_parameter_xml_decl_handler);
+	XML_SetExternalEntityRefHandler(parser, user_parameter_external_entity_handler);
+	XML_SetCommentHandler(parser, user_parameter_comment_handler);
+	XML_SetSkippedEntityHandler(parser, user_parameter_skip_handler);
+	XML_UseParserAsHandlerArg(parser);
+	XML_SetUserData(parser, (void *)1);
+	status = XML_Parse(parser, user_parameter_input, (int)strlen(user_parameter_input), XML_FALSE);
+	if (!check(status == XML_STATUS_OK, "user parameter non-final chunk accepted")) return 1;
+	if (!check(!XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_NEVER), "parameter entity parsing rejected mid-parse")) return 1;
+	status = XML_Parse(parser, user_parameter_epilog, (int)strlen(user_parameter_epilog), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "user parameter final chunk accepted")) return 1;
+	if (!check(!g_user_parameter_failed, "user parameter callbacks receive expected parser data")) return 1;
+	if (!check(g_user_parameter_comment_count == 3, "user parameter comment callbacks delegated")) return 1;
+	if (!check(g_user_parameter_skip_count == 1, "user parameter skipped entity callback delegated")) return 1;
+	if (!check(g_user_parameter_xdecl_count == 1, "user parameter XML declaration callback delegated")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

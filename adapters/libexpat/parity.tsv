@@ -48,6 +48,10 @@ green	misc_tests.c	test_misc_async_entity_rejected	Eiffel parser rejects interna
 green	misc_tests.c	test_misc_features	XML_GetFeatureList returns the Expat-compatible terminal list with correct XML_Char and XML_LChar size feature values.
 green	basic_tests.c	test_ext_entity_no_handler	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
 green	basic_tests.c	test_ext_entity_good_cdata	Eiffel-backed XML_ExternalEntityParserCreate creates child parsers that parse external parsed entity fragments, inherit character/CDATA handlers, and emit CDATA text through the Windows DLL smoke.
+green	basic_tests.c	test_user_parameters	Eiffel parser emits XML declaration, comment, skipped-entity, external-subset, and parser-as-handler-argument callbacks through the Windows DLL smoke.
+green	basic_tests.c	test_ext_entity_ref_parameter	Eiffel-backed external subset callbacks honor explicit XML_SetExternalEntityRefHandlerArg values and Expat's null-argument fallback to the public C XML_Parser pointer.
+green	basic_tests.c	test_xmldecl_*	Eiffel parser handles XML declaration callbacks and malformed/misplaced XML declaration diagnostics, including native XML_ERROR_MISPLACED_XML_PI and XML_ERROR_XML_DECL mapping.
+green	basic_tests.c	test_wfc_undeclared_entity_*	Eiffel parser distinguishes undefined entity errors from externally-declared/skippable entities based on external subset presence and standalone='yes'.
 green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
@@ -77,7 +81,6 @@ red	basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semant
 red	basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
 red	basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
 red	basic_tests.c	test_ext_entity_trailing_*	External entity trailing-token diagnostics are not fully implemented.
-red	basic_tests.c	test_ext_entity_ref_parameter	External DTD handler-argument and parent-parser semantics are not fully implemented.
 red	basic_tests.c	test_ext_entity_not_standalone	External entity standalone handling is not fully implemented.
 red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 red	basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.

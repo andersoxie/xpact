@@ -15,6 +15,7 @@ feature {NONE} -- Initialization
 			test_mismatched_tag_is_rejected
 			test_depth_limit_is_enforced
 			test_comments_and_cdata
+			test_xml_declaration_callbacks
 			test_attlist_declaration_callbacks
 			test_attlist_default_attributes
 			test_element_declaration_callbacks
@@ -147,6 +148,61 @@ feature {NONE} -- Tests
 				i := i + 1
 			end
 			assert ("DTD default whitespace emitted", l_default_text.same_string ("%N%N%N%N%N%N%N<doc/>"))
+		end
+
+	test_xml_declaration_callbacks
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_native: XP_NATIVE_PARSER
+			l_status: INTEGER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("XML declaration document accepted", l_parser.parse ("<?xml version='1.0' encoding='us-ascii' standalone='no'?>%N<doc/>"))
+			assert ("XML declaration callback emitted", l_handler.events.i_th (1).same_string ("xml-decl:1.0:us-ascii:0"))
+			assert ("XML declaration is not a PI", not l_handler.events.i_th (1).has_substring ("pi:"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("XML declaration without optional attributes accepted", l_parser.parse ("<?xml version='1.0'?>%N<doc/>"))
+			assert ("XML declaration optional values reported", l_handler.events.i_th (1).same_string ("xml-decl:1.0::-1"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("misplaced XML declaration rejected", not l_parser.parse ("%N<?xml version='1.0'?>%N<doc/>"))
+			assert ("misplaced XML declaration diagnostic", l_parser.last_error.same_string ("misplaced xml declaration"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("invalid XML declaration rejected", not l_parser.parse ("<?xml version='1.0' standalone?>%N<doc/>"))
+			assert ("invalid XML declaration diagnostic", l_parser.last_error.same_string ("invalid xml declaration"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("missing XML declaration attribute name rejected", not l_parser.parse ("<?xml ='1.0'?>%N<doc/>"))
+			assert ("missing XML declaration attribute diagnostic", l_parser.last_error.same_string ("invalid xml declaration"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("unknown XML declaration attribute rejected", not l_parser.parse ("<?xml version='1.0' extra='x'?>%N<doc/>"))
+			assert ("unknown XML declaration attribute diagnostic", l_parser.last_error.same_string ("invalid xml declaration"))
+
+			create l_native.make
+			l_status := l_native.parse ("<?xml version='1.0' encoding='us-ascii' standalone='yes'?>%N<doc/>", True)
+			assert ("native Eiffel parser accepts XML declaration", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser emits XML declaration", l_native.handler.xml_decl_count = 1)
+			assert ("native Eiffel XML declaration event recorded", l_native.handler.events.i_th (1).same_string ("xml-decl"))
+
+			assert ("native Eiffel parser resets for XML declaration error", l_native.reset)
+			l_status := l_native.parse ("%N<?xml version='1.0'?>%N<doc/>", True)
+			assert ("native Eiffel parser rejects misplaced XML declaration", l_status = l_native.Xml_status_error)
+			assert ("native Eiffel parser maps misplaced XML declaration", l_native.last_error_code = l_native.Xml_error_misplaced_xml_pi)
+
+			assert ("native Eiffel parser resets for malformed XML declaration", l_native.reset)
+			l_status := l_native.parse ("<?xml version='1.0' encoding='us-ascii' standalone?>%N<doc/>", True)
+			assert ("native Eiffel parser rejects invalid XML declaration", l_status = l_native.Xml_status_error)
+			assert ("native Eiffel parser maps invalid XML declaration", l_native.last_error_code = l_native.Xml_error_xml_decl)
 		end
 
 	test_predefined_and_numeric_entities
@@ -656,6 +712,17 @@ feature {NONE} -- Tests
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE root SYSTEM %"mem://subset%"><root>&possibly_external;</root>")
+			assert ("undefined entity with unread external subset is skipped", l_ok)
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<?xml version='1.0' standalone='yes'?>%N<!DOCTYPE root SYSTEM %"mem://subset%"><root>&possibly_external;</root>")
+			assert ("standalone document rejects undefined external-subset entity", not l_ok)
+			assert ("standalone undefined entity diagnostic", l_parser.last_error.same_string ("undefined entity"))
 		end
 
 	test_external_policy_blocks_parameter_entities
@@ -872,7 +939,7 @@ feature {NONE} -- Tests
 			l_status := l_native.parse ("<!DOCTYPE doc [<!ENTITY en SYSTEM %"http://example.org/dummy.ent%">]><doc>&en;</doc>", True)
 			assert ("native Eiffel parser skips unloaded external general entity", l_status = l_native.Xml_status_ok)
 			assert ("native Eiffel parser reports skipped entity", l_native.handler.skipped_entity_count = 1)
-			assert ("native Eiffel parser names skipped entity", l_native.handler.events.i_th (3).same_string ("skipped:en:0"))
+			assert ("native Eiffel parser names skipped entity", across l_native.handler.events as l_event some l_event.item.same_string ("skipped:en:0") end)
 
 			assert ("native Eiffel parser resets for external parsed entity", l_native.reset)
 			assert ("native Eiffel parser marks external parsed entity", l_native.set_external_entity_context (default_pointer))

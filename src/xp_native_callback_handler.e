@@ -8,6 +8,7 @@ inherit
 	XP_EVENT_HANDLER
 		redefine
 			on_processing_instruction,
+			on_xml_declaration,
 			on_comment,
 			on_start_cdata_section,
 			on_end_cdata_section,
@@ -57,6 +58,9 @@ feature -- Access
 
 	processing_instruction_callback: POINTER
 			-- `XML_ProcessingInstructionHandler' callback pointer.
+
+	xml_decl_callback: POINTER
+			-- `XML_XmlDeclHandler' callback pointer.
 
 	comment_callback: POINTER
 			-- `XML_CommentHandler' callback pointer.
@@ -128,6 +132,9 @@ feature -- Metrics
 
 	processing_instruction_count: INTEGER
 			-- Number of processing-instruction events emitted.
+
+	xml_decl_count: INTEGER
+			-- Number of XML declaration events emitted.
 
 	comment_count: INTEGER
 			-- Number of comment events emitted.
@@ -208,6 +215,14 @@ feature -- Element change
 			processing_instruction_callback := a_handler
 		ensure
 			handler_set: processing_instruction_callback = a_handler
+		end
+
+	set_xml_decl_handler (a_handler: POINTER)
+			-- Set native XML declaration callback.
+		do
+			xml_decl_callback := a_handler
+		ensure
+			handler_set: xml_decl_callback = a_handler
 		end
 
 	set_comment_handler (a_handler: POINTER)
@@ -322,6 +337,35 @@ feature -- Element change
 			handle_set: native_parser_handle = a_parser
 		end
 
+	emit_xml_declaration (a_version, a_encoding: READABLE_STRING_8; a_standalone: INTEGER)
+			-- Emit native XML declaration callback, if configured.
+		require
+			version_attached: a_version /= Void
+			encoding_attached: a_encoding /= Void
+			valid_standalone: a_standalone = -1 or a_standalone = 0 or a_standalone = 1
+		local
+			l_event: STRING_8
+			l_version: detachable C_STRING
+			l_encoding: detachable C_STRING
+			l_version_pointer: POINTER
+			l_encoding_pointer: POINTER
+		do
+			xml_decl_count := xml_decl_count + 1
+			create l_event.make_from_string ("xml-decl")
+			events.extend (l_event)
+			if xml_decl_callback /= default_pointer then
+				if not a_version.is_empty then
+					create l_version.make (a_version)
+					l_version_pointer := l_version.item
+				end
+				if not a_encoding.is_empty then
+					create l_encoding.make (a_encoding)
+					l_encoding_pointer := l_encoding.item
+				end
+				call_xml_decl_callback (xml_decl_callback, user_data, l_version_pointer, l_encoding_pointer, a_standalone)
+			end
+		end
+
 	reset_events
 			-- Clear observable event state.
 		do
@@ -330,6 +374,7 @@ feature -- Element change
 			end_element_count := 0
 			character_data_count := 0
 			processing_instruction_count := 0
+			xml_decl_count := 0
 			comment_count := 0
 			start_cdata_section_count := 0
 			end_cdata_section_count := 0
@@ -351,6 +396,7 @@ feature -- Element change
 			no_end_events: end_element_count = 0
 			no_text_events: character_data_count = 0
 			no_pi_events: processing_instruction_count = 0
+			no_xml_decl_events: xml_decl_count = 0
 			no_comment_events: comment_count = 0
 			no_start_cdata_events: start_cdata_section_count = 0
 			no_end_cdata_events: end_cdata_section_count = 0
@@ -486,6 +532,11 @@ feature -- Events
 				create l_data.make (a_data)
 				call_processing_instruction_callback (processing_instruction_callback, user_data, l_target.item, l_data.item)
 			end
+		end
+
+	on_xml_declaration (a_version, a_encoding: READABLE_STRING_8; a_standalone: INTEGER)
+		do
+			emit_xml_declaration (a_version, a_encoding, a_standalone)
 		end
 
 	on_comment (a_text: READABLE_STRING_8)
@@ -1040,6 +1091,16 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *, const char *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_target, (const char *) $a_data);"
 		end
 
+	call_xml_decl_callback (a_callback, a_user_data, a_version, a_encoding: POINTER; a_standalone: INTEGER)
+			-- Invoke native `XML_XmlDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_version, (const char *) $a_encoding, (int) $a_standalone);"
+		end
+
 	call_comment_callback (a_callback, a_user_data, a_text: POINTER)
 			-- Invoke native `XML_CommentHandler'.
 		require
@@ -1182,6 +1243,7 @@ invariant
 	non_negative_end_count: end_element_count >= 0
 	non_negative_text_count: character_data_count >= 0
 	non_negative_pi_count: processing_instruction_count >= 0
+	non_negative_xml_decl_count: xml_decl_count >= 0
 	non_negative_comment_count: comment_count >= 0
 	non_negative_start_cdata_count: start_cdata_section_count >= 0
 	non_negative_end_cdata_count: end_cdata_section_count >= 0

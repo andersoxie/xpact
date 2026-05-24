@@ -24,7 +24,6 @@ basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semantics 
 basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
 basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
 basic_tests.c	test_ext_entity_trailing_*	External entity trailing-token diagnostics are not fully implemented.
-basic_tests.c	test_ext_entity_ref_parameter	External DTD handler-argument and parent-parser semantics are not fully implemented.
 basic_tests.c	test_ext_entity_not_standalone	External entity standalone handling is not fully implemented.
 basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.

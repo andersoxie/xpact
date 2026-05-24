@@ -16,6 +16,7 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetElementHandlerRoutine set_element_handler;
 	XPACT_EiffelSetPointerRoutine set_character_data_handler;
 	XPACT_EiffelSetPointerRoutine set_processing_instruction_handler;
+	XPACT_EiffelSetPointerRoutine set_xml_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_comment_handler;
 	XPACT_EiffelSetElementHandlerRoutine set_cdata_section_handler;
 	XPACT_EiffelSetDefaultHandlerRoutine set_default_handler;
@@ -207,6 +208,19 @@ xp_rt_set_processing_instruction_handler(
 	EIF_REFERENCE installer = xp_installer_reference(state);
 	if (installer != NULL && state->set_processing_instruction_handler != NULL) {
 		state->set_processing_instruction_handler(
+			installer,
+			(EIF_POINTER)parser,
+			xp_callback_pointer((uintptr_t)handler)
+		);
+	}
+}
+
+static void XMLCALL
+xp_rt_set_xml_decl_handler(void *context, void *parser, XML_XmlDeclHandler handler) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer != NULL && state->set_xml_decl_handler != NULL) {
+		state->set_xml_decl_handler(
 			installer,
 			(EIF_POINTER)parser,
 			xp_callback_pointer((uintptr_t)handler)
@@ -573,6 +587,7 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->set_user_data != NULL
 		&& state->set_element_handler != NULL
 		&& state->set_character_data_handler != NULL
+		&& state->set_xml_decl_handler != NULL
 		&& state->parse != NULL
 		&& state->get_buffer != NULL
 		&& state->parse_buffer != NULL
@@ -604,6 +619,7 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_element_handler = xp_rt_set_element_handler;
 	bridge->set_character_data_handler = xp_rt_set_character_data_handler;
 	bridge->set_processing_instruction_handler = xp_rt_set_processing_instruction_handler;
+	bridge->set_xml_decl_handler = xp_rt_set_xml_decl_handler;
 	bridge->set_comment_handler = xp_rt_set_comment_handler;
 	bridge->set_cdata_section_handler = xp_rt_set_cdata_section_handler;
 	bridge->set_default_handler = xp_rt_set_default_handler;
@@ -647,6 +663,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetElementHandlerRoutine set_element_handler,
 	XPACT_EiffelSetPointerRoutine set_character_data_handler,
 	XPACT_EiffelSetPointerRoutine set_processing_instruction_handler,
+	XPACT_EiffelSetPointerRoutine set_xml_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_comment_handler,
 	XPACT_EiffelSetElementHandlerRoutine set_cdata_section_handler,
 	XPACT_EiffelSetDefaultHandlerRoutine set_default_handler,
@@ -686,6 +703,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| set_user_data == NULL
 		|| set_element_handler == NULL
 		|| set_character_data_handler == NULL
+		|| set_xml_decl_handler == NULL
 		|| default_current == NULL
 		|| set_hash_salt == NULL
 		|| set_hash_salt_16_bytes == NULL
@@ -713,6 +731,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_element_handler = set_element_handler;
 	xp_runtime_bridge.set_character_data_handler = set_character_data_handler;
 	xp_runtime_bridge.set_processing_instruction_handler = set_processing_instruction_handler;
+	xp_runtime_bridge.set_xml_decl_handler = set_xml_decl_handler;
 	xp_runtime_bridge.set_comment_handler = set_comment_handler;
 	xp_runtime_bridge.set_cdata_section_handler = set_cdata_section_handler;
 	xp_runtime_bridge.set_default_handler = set_default_handler;
@@ -766,6 +785,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_element_handler,
     EIF_POINTER set_character_data_handler,
     EIF_POINTER set_processing_instruction_handler,
+    EIF_POINTER set_xml_decl_handler,
     EIF_POINTER set_comment_handler,
     EIF_POINTER set_cdata_section_handler,
     EIF_POINTER set_default_handler,
@@ -807,6 +827,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetElementHandlerRoutine)set_element_handler,
 		(XPACT_EiffelSetPointerRoutine)set_character_data_handler,
 		(XPACT_EiffelSetPointerRoutine)set_processing_instruction_handler,
+		(XPACT_EiffelSetPointerRoutine)set_xml_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_comment_handler,
 		(XPACT_EiffelSetElementHandlerRoutine)set_cdata_section_handler,
 		(XPACT_EiffelSetDefaultHandlerRoutine)set_default_handler,

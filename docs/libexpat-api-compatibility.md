@@ -57,18 +57,19 @@ contract-tested manifest of the public names.
 
 ## Implemented Behind The Surface
 
-The Eiffel parser core currently implements the behavior needed by the simple
+The Eiffel parser core currently implements the behavior needed by the covered
 streaming path: parser reset semantics, start/end element callbacks, character
-data, XML 1.0 tokenization, entity expansion, external-entity resolver policy,
-and error reporting.
+data, XML 1.0 tokenization, XML declaration callbacks/diagnostics, DTD
+declaration callbacks, entity expansion, external-entity resolver policy,
+external-subset loading, and error reporting.
 
 ## Tracked Parity Gaps
 
 - Exact byte, line, and column accounting for Expat-compatible position APIs.
 - Namespace processing and namespace callback parity.
-- UTF-16, custom encoding, external entity parser, DTD declaration, notation,
-  default handler, stop/resume, allocation-failure, and upstream accounting
-  parity.
+- UTF-16, custom encoding, remaining external entity edge cases, namespace,
+  default handler edge cases, stop/resume, allocation-failure, and upstream
+  accounting parity.
 
 Linux/WSL `libxpact.so` packaging is future platform work. It is not part of
 the initial Windows-only native release.

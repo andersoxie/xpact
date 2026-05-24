@@ -19,7 +19,26 @@ feature {NONE} -- Initialization
 		require
 			handler_attached: a_handler /= Void
 		do
-			make_with_limits (a_handler, Default_max_input_bytes, Default_max_element_depth, Default_max_attribute_count, Default_max_token_length)
+			handler := a_handler
+			max_input_bytes := Default_max_input_bytes
+			max_element_depth := Default_max_element_depth
+			max_attribute_count := Default_max_attribute_count
+			max_token_length := Default_max_token_length
+			create element_stack.make (32)
+			create entity_stack.make (8)
+			create entity_reference_start_stack.make (8)
+			create entity_reference_count_stack.make (8)
+			create entity_table.make (8)
+			create parameter_entity_table.make (4)
+			create external_entity_table.make (4)
+			create external_parameter_entity_table.make (4)
+			create attribute_decl_table.make (4)
+			create last_error.make_empty
+			create doctype_name.make_empty
+			create position_input.make_empty
+			external_entity_policy := No_external_entities
+			reset
+			is_initialized := True
 		ensure
 			handler_set: handler = a_handler
 			default_input_limit: max_input_bytes = Default_max_input_bytes
@@ -54,6 +73,7 @@ feature {NONE} -- Initialization
 			create position_input.make_empty
 			external_entity_policy := No_external_entities
 			reset
+			is_initialized := True
 		ensure
 			handler_set: handler = a_handler
 			limits_set: max_input_bytes = a_max_input_bytes and max_element_depth = a_max_element_depth and max_attribute_count = a_max_attribute_count and max_token_length = a_max_token_length
@@ -630,11 +650,19 @@ feature {NONE} -- Markup parsing
 					i := scan_name (a_input, i)
 					create l_target.make_from_string (a_input.substring (name_start, i - 1))
 					if same_name_case_insensitive (l_target, "xml") and then a_start_index /= 1 then
-						set_error ("xml declaration must be first")
+						set_error ("misplaced xml declaration")
 						Result := a_input.count + 1
 					else
 						create l_data.make_empty
-						if not same_name_case_insensitive (l_target, "xml") then
+						if same_name_case_insensitive (l_target, "xml") then
+							if i < l_end and then is_xml_space (a_input.item (i)) then
+								i := skip_spaces (a_input, i)
+							end
+							if i <= l_end - 1 then
+								l_data.append (a_input.substring (i, l_end - 1))
+							end
+							parse_xml_declaration_data (l_data)
+						else
 							if i < l_end and then is_xml_space (a_input.item (i)) then
 								i := skip_spaces (a_input, i)
 							end
@@ -652,6 +680,128 @@ feature {NONE} -- Markup parsing
 		ensure
 			progress_or_error: Result > a_start_index or has_error
 			result_in_bounds: Result <= a_input.count + 1
+		end
+
+	parse_xml_declaration_data (a_data: READABLE_STRING_8)
+			-- Parse attributes in an XML declaration and emit the declaration event.
+		require
+			data_attached: a_data /= Void
+		local
+			i: INTEGER
+			name_start: INTEGER
+			value_start: INTEGER
+			l_name: STRING_8
+			l_value: STRING_8
+			l_version: STRING_8
+			l_encoding: STRING_8
+			l_standalone: INTEGER
+			l_quote: CHARACTER_8
+			l_attributes: XP_ATTRIBUTES
+			l_previous_order: INTEGER
+			l_current_order: INTEGER
+			l_needs_space: BOOLEAN
+		do
+			create l_attributes.make
+			create l_version.make_empty
+			create l_encoding.make_empty
+			l_standalone := -1
+			l_needs_space := False
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_data.count + 1
+			until
+				i > a_data.count or has_error
+			loop
+				if l_needs_space then
+					if i <= a_data.count and then not is_xml_space (a_data.item (i)) then
+						set_error ("invalid xml declaration")
+						i := a_data.count + 1
+					else
+						i := skip_spaces (a_data, i)
+					end
+				else
+					i := skip_spaces (a_data, i)
+				end
+				if i <= a_data.count then
+					if not l_attributes.is_name_start_character (a_data.item (i)) then
+						set_error ("invalid xml declaration")
+						i := a_data.count + 1
+					else
+						name_start := i
+						i := scan_name (a_data, i)
+						create l_name.make_from_string (a_data.substring (name_start, i - 1))
+						i := skip_spaces (a_data, i)
+						if i > a_data.count or else a_data.item (i) /= '=' then
+							set_error ("invalid xml declaration")
+							i := a_data.count + 1
+						else
+							i := skip_spaces (a_data, i + 1)
+							if i > a_data.count or else not is_quote (a_data.item (i)) then
+								set_error ("invalid xml declaration")
+								i := a_data.count + 1
+							else
+								l_quote := a_data.item (i)
+								value_start := i + 1
+								i := find_character (a_data, l_quote, value_start)
+								if i = 0 then
+									set_error ("invalid xml declaration")
+									i := a_data.count + 1
+								else
+									create l_value.make_from_string (a_data.substring (value_start, i - 1))
+									if l_attributes.has (l_name) then
+										set_error ("invalid xml declaration")
+									elseif l_name.same_string ("version") then
+										l_current_order := 1
+										if l_previous_order /= 0 or else not l_value.same_string ("1.0") then
+											set_error ("invalid xml declaration")
+										end
+										l_version.wipe_out
+										l_version.append (l_value)
+									elseif l_name.same_string ("encoding") then
+										l_current_order := 2
+										if l_previous_order = 0 or else l_previous_order >= l_current_order or else l_value.is_empty then
+											set_error ("invalid xml declaration")
+										end
+										l_encoding.wipe_out
+										l_encoding.append (l_value)
+									elseif l_name.same_string ("standalone") then
+										l_current_order := 3
+										if l_previous_order = 0 or else l_previous_order >= l_current_order then
+											set_error ("invalid xml declaration")
+										end
+										if l_value.same_string ("yes") then
+											l_standalone := 1
+										elseif l_value.same_string ("no") then
+											l_standalone := 0
+										else
+											set_error ("invalid xml declaration")
+										end
+									else
+										set_error ("invalid xml declaration")
+									end
+									if not has_error then
+										l_attributes.put (l_name, l_value)
+										l_previous_order := l_current_order
+										l_needs_space := True
+									end
+									i := i + 1
+								end
+							end
+						end
+					end
+				end
+			variant
+				a_data.count - i + 1
+			end
+			if not has_error then
+				if l_version.is_empty then
+					set_error ("invalid xml declaration")
+				else
+					xml_standalone := l_standalone
+					handler.on_xml_declaration (l_version, l_encoding, l_standalone)
+				end
+			end
 		end
 
 	parse_doctype (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
@@ -768,6 +918,7 @@ feature {NONE} -- Markup parsing
 							if not l_system_id.is_empty then
 								l_event_system_id := l_system_id
 							end
+							document_has_external_subset := l_has_external_subset
 							handler.on_start_doctype_decl (doctype_name, l_event_system_id, l_event_public_id, l_has_internal_subset)
 						end
 						if l_subset_start > 0 then
@@ -994,6 +1145,11 @@ feature {NONE} -- Character data and references
 				end
 			elseif attached external_entity (a_name) as l_external then
 				include_external_entity_in_content (l_external)
+			elseif document_has_external_subset and then xml_standalone /= 1 then
+				-- A non-validating parser may skip externally declared general entities.
+				if handler.reports_skipped_internal_general_entities then
+					handler.on_skipped_entity (a_name, False)
+				end
 			else
 				set_error ("undefined entity")
 			end
@@ -3254,6 +3410,8 @@ feature {NONE} -- State
 			document_element_count := 0
 			expanded_entity_bytes := 0
 			has_doctype := False
+			document_has_external_subset := False
+			xml_standalone := -1
 			initialize_predefined_entities
 		ensure
 			no_error: not has_error
@@ -3418,6 +3576,12 @@ feature {NONE} -- State
 	has_doctype: BOOLEAN
 			-- Has the document type declaration been parsed?
 
+	document_has_external_subset: BOOLEAN
+			-- Did the parsed doctype declare an external subset?
+
+	xml_standalone: INTEGER
+			-- XML declaration standalone value: 1 yes, 0 no, -1 absent.
+
 	doctype_name: STRING_8
 			-- Declared document element name, if present.
 
@@ -3430,29 +3594,33 @@ feature {NONE} -- State
 	parsed_content_model: detachable XP_CONTENT_MODEL
 			-- Scratch content model produced by recursive DTD parsing.
 
+	is_initialized: BOOLEAN
+			-- Has creation initialized invariant-protected fields?
+
 invariant
-	handler_attached: handler /= Void
-	last_error_attached: last_error /= Void
-	stack_attached: element_stack /= Void
-	entity_stack_attached: entity_stack /= Void
-	entity_reference_start_stack_attached: entity_reference_start_stack /= Void
-	entity_reference_count_stack_attached: entity_reference_count_stack /= Void
-	entity_reference_stacks_aligned: entity_reference_start_stack.count = entity_reference_count_stack.count
-	entity_table_attached: entity_table /= Void
-	parameter_entity_table_attached: parameter_entity_table /= Void
-	external_entity_table_attached: external_entity_table /= Void
-	external_parameter_entity_table_attached: external_parameter_entity_table /= Void
-	attribute_decl_table_attached: attribute_decl_table /= Void
-	doctype_name_attached: doctype_name /= Void
-	valid_external_entity_policy: is_valid_policy (external_entity_policy)
-	input_limit_positive: max_input_bytes > 0
-	depth_limit_positive: max_element_depth > 0
-	attribute_limit_positive: max_attribute_count > 0
-	token_limit_positive: max_token_length > 0
-	stack_within_depth_limit: element_stack.count <= max_element_depth
-	entity_stack_within_limit: entity_stack.count <= Default_max_entity_depth
-	document_element_count_bounded: document_element_count >= 0 and document_element_count <= 1
-	entity_expansion_non_negative: expanded_entity_bytes >= 0
-	error_has_message: has_error implies not last_error.is_empty
+	handler_attached: is_initialized implies handler /= Void
+	last_error_attached: is_initialized implies last_error /= Void
+	stack_attached: is_initialized implies element_stack /= Void
+	entity_stack_attached: is_initialized implies entity_stack /= Void
+	entity_reference_start_stack_attached: is_initialized implies entity_reference_start_stack /= Void
+	entity_reference_count_stack_attached: is_initialized implies entity_reference_count_stack /= Void
+	entity_reference_stacks_aligned: is_initialized implies entity_reference_start_stack.count = entity_reference_count_stack.count
+	entity_table_attached: is_initialized implies entity_table /= Void
+	parameter_entity_table_attached: is_initialized implies parameter_entity_table /= Void
+	external_entity_table_attached: is_initialized implies external_entity_table /= Void
+	external_parameter_entity_table_attached: is_initialized implies external_parameter_entity_table /= Void
+	attribute_decl_table_attached: is_initialized implies attribute_decl_table /= Void
+	doctype_name_attached: is_initialized implies doctype_name /= Void
+	valid_external_entity_policy: is_initialized implies is_valid_policy (external_entity_policy)
+	input_limit_positive: is_initialized implies max_input_bytes > 0
+	depth_limit_positive: is_initialized implies max_element_depth > 0
+	attribute_limit_positive: is_initialized implies max_attribute_count > 0
+	token_limit_positive: is_initialized implies max_token_length > 0
+	stack_within_depth_limit: is_initialized implies element_stack.count <= max_element_depth
+	entity_stack_within_limit: is_initialized implies entity_stack.count <= Default_max_entity_depth
+	document_element_count_bounded: is_initialized implies document_element_count >= 0 and document_element_count <= 1
+	entity_expansion_non_negative: is_initialized implies expanded_entity_bytes >= 0
+	valid_xml_standalone: is_initialized implies (xml_standalone = -1 or xml_standalone = 0 or xml_standalone = 1)
+	error_has_message: is_initialized implies (has_error implies not last_error.is_empty)
 
 end

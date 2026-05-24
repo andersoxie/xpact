@@ -14,6 +14,7 @@ typedef struct FakeParser {
 	int user_data_count;
 	int element_handler_count;
 	int text_handler_count;
+	int xml_decl_handler_count;
 	int hash_salt_count;
 	int hash_salt_16_count;
 	int parse_count;
@@ -21,6 +22,7 @@ typedef struct FakeParser {
 	XML_StartElementHandler start_handler;
 	XML_EndElementHandler end_handler;
 	XML_CharacterDataHandler text_handler;
+	XML_XmlDeclHandler xml_decl_handler;
 	void *native_handle;
 	const XML_Char *last_encoding;
 	const XML_Char *last_external_entity_context;
@@ -130,6 +132,14 @@ fake_set_text_handler(void *context, void *parser, XML_CharacterDataHandler hand
 	fake->text_handler = handler;
 }
 
+static void XMLCALL
+fake_set_xml_decl_handler(void *context, void *parser, XML_XmlDeclHandler handler) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	fake->xml_decl_handler_count++;
+	fake->xml_decl_handler = handler;
+}
+
 static enum XML_Status XMLCALL
 fake_parse(void *context, void *parser, const char *s, int len, int isFinal) {
 	FakeParser *fake = (FakeParser *)context;
@@ -225,6 +235,14 @@ text_callback(void *userData, const XML_Char *s, int len) {
 	(void)len;
 }
 
+static void XMLCALL
+xml_decl_callback(void *userData, const XML_Char *version, const XML_Char *encoding, int standalone) {
+	(void)userData;
+	(void)version;
+	(void)encoding;
+	(void)standalone;
+}
+
 static int
 check(int condition, const char *label) {
 	if (!condition) {
@@ -261,6 +279,7 @@ main(void) {
 	bridge.set_user_data = fake_set_user_data;
 	bridge.set_element_handler = fake_set_element_handler;
 	bridge.set_character_data_handler = fake_set_text_handler;
+	bridge.set_xml_decl_handler = fake_set_xml_decl_handler;
 	bridge.set_hash_salt = fake_set_hash_salt;
 	bridge.set_hash_salt_16_bytes = fake_set_hash_salt_16_bytes;
 	bridge.parse = fake_parse;
@@ -305,6 +324,10 @@ main(void) {
 	XML_SetCharacterDataHandler(parser, text_callback);
 	if (!check(fake_parser.text_handler_count == 1, "text handler forwarded")) return 1;
 	if (!check(fake_parser.text_handler == text_callback, "text callback forwarded")) return 1;
+
+	XML_SetXmlDeclHandler(parser, xml_decl_callback);
+	if (!check(fake_parser.xml_decl_handler_count == 1, "XML declaration handler forwarded")) return 1;
+	if (!check(fake_parser.xml_decl_handler == xml_decl_callback, "XML declaration callback forwarded")) return 1;
 
 	if (!check(XML_SetHashSalt(parser, 0x12345678UL) == XML_TRUE, "hash salt forwarded")) return 1;
 	if (!check(fake_parser.hash_salt_count == 1, "bridge hash salt called")) return 1;

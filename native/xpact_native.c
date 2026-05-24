@@ -27,6 +27,7 @@ struct XML_ParserStruct {
 	XML_EndElementHandler endElementHandler;
 	XML_CharacterDataHandler characterDataHandler;
 	XML_ProcessingInstructionHandler processingInstructionHandler;
+	XML_XmlDeclHandler xmlDeclHandler;
 	XML_CommentHandler commentHandler;
 	XML_StartCdataSectionHandler startCdataSectionHandler;
 	XML_EndCdataSectionHandler endCdataSectionHandler;
@@ -269,6 +270,17 @@ XML_SetProcessingInstructionHandler(XML_Parser parser, XML_ProcessingInstruction
 }
 
 void XMLCALL
+XML_SetXmlDeclHandler(XML_Parser parser, XML_XmlDeclHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->xmlDeclHandler = handler;
+	if (parser->bridge != NULL && parser->bridge->set_xml_decl_handler != NULL && parser->eiffelParser != NULL) {
+		parser->bridge->set_xml_decl_handler(parser->bridge->context, parser->eiffelParser, handler);
+	}
+}
+
+void XMLCALL
 XML_SetCommentHandler(XML_Parser parser, XML_CommentHandler handler) {
 	if (parser == NULL) {
 		return;
@@ -459,7 +471,6 @@ XML_SetSkippedEntityHandler(XML_Parser parser, XML_SkippedEntityHandler handler)
 #define XPACT_UNUSED_HANDLER_SETTER(name, type) \
 	void XMLCALL name(XML_Parser parser, type handler) { (void)parser; (void)handler; }
 
-XPACT_UNUSED_HANDLER_SETTER(XML_SetXmlDeclHandler, XML_XmlDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetStartNamespaceDeclHandler, XML_StartNamespaceDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetEndNamespaceDeclHandler, XML_EndNamespaceDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetNotStandaloneHandler, XML_NotStandaloneHandler)
@@ -703,6 +714,7 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	XML_SetElementHandler(child, parser->startElementHandler, parser->endElementHandler);
 	XML_SetCharacterDataHandler(child, parser->characterDataHandler);
 	XML_SetProcessingInstructionHandler(child, parser->processingInstructionHandler);
+	XML_SetXmlDeclHandler(child, parser->xmlDeclHandler);
 	XML_SetCommentHandler(child, parser->commentHandler);
 	XML_SetCdataSectionHandler(child, parser->startCdataSectionHandler, parser->endCdataSectionHandler);
 	if (parser->defaultHandlerExpands) {

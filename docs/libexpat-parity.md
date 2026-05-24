@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 247 named upstream tests in the downloaded
+expected-failure patterns expand to 246 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -93,6 +93,20 @@ The Windows release has green evidence for:
   parser, covering the upstream `test_ext_entity_good_cdata` shape.
 - external entity reference handler arguments now follow Expat's null-argument
   fallback to the public C `XML_Parser` pointer in the Windows native bridge.
+- XML declaration parsing is owned by `XP_PARSER`, emits
+  `XML_SetXmlDeclHandler` callbacks through the Windows DLL, and maps malformed
+  or misplaced declarations to `XML_ERROR_XML_DECL` and
+  `XML_ERROR_MISPLACED_XML_PI`.
+- the upstream `test_user_parameters` shape now passes through the Windows DLL
+  smoke: parser-as-handler-argument callbacks, XML declaration callbacks,
+  external subset loading, comments, and skipped entities all receive the
+  expected public C parser argument.
+- the upstream `test_ext_entity_ref_parameter` shape now passes through the
+  Windows DLL smoke for both explicit `XML_SetExternalEntityRefHandlerArg`
+  values and the `NULL` fallback to the parser.
+- undeclared general entities are skipped or rejected according to Expat's
+  external-subset and standalone rules for the covered
+  `test_wfc_undeclared_entity_*` cases.
 
 ## Red Rows
 
@@ -101,8 +115,8 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - namespace parsing and namespace callback semantics;
 - allocation-failure injection and allocation accounting tests;
 - UTF-16 and custom/unknown encoding tests;
-- remaining external entity encoding, trailing-token, standalone, abort, and
-  external DTD parent-parser semantics;
+- remaining external entity encoding, trailing-token, standalone, and abort
+  semantics;
 - remaining DTD diagnostics for external DTD/encoding cases and
   default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;

@@ -69,11 +69,15 @@ feature -- Expat-compatible constants
 
 	Xml_error_bad_char_ref: INTEGER = 14
 
+	Xml_error_misplaced_xml_pi: INTEGER = 17
+
+	Xml_error_unknown_encoding: INTEGER = 18
+
 	Xml_error_unclosed_cdata_section: INTEGER = 20
 
 	Xml_error_external_entity_handling: INTEGER = 21
 
-	Xml_error_unknown_encoding: INTEGER = 18
+	Xml_error_xml_decl: INTEGER = 30
 
 	Xml_error_publicid: INTEGER = 32
 
@@ -218,6 +222,14 @@ feature -- Element change
 			handler.set_processing_instruction_handler (a_handler)
 		ensure
 			handler_set: handler.processing_instruction_callback = a_handler
+		end
+
+	set_xml_decl_handler (a_handler: POINTER)
+			-- Set native XML declaration callback.
+		do
+			handler.set_xml_decl_handler (a_handler)
+		ensure
+			handler_set: handler.xml_decl_callback = a_handler
 		end
 
 	set_comment_handler (a_handler: POINTER)
@@ -586,6 +598,10 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_unclosed_cdata_section
 			elseif a_error.has_substring ("external entity") then
 				Result := Xml_error_external_entity_handling
+			elseif a_error.same_string ("misplaced xml declaration") then
+				Result := Xml_error_misplaced_xml_pi
+			elseif a_error.same_string ("invalid xml declaration") then
+				Result := Xml_error_xml_decl
 			elseif a_error.same_string ("invalid public identifier") then
 				Result := Xml_error_publicid
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then

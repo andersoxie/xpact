@@ -172,6 +172,14 @@ feature -- Handler callbacks
 			end
 		end
 
+	set_xml_decl_handler (a_parser, a_handler: POINTER)
+			-- Record XML declaration handler slot.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_xml_decl_handler (a_handler)
+			end
+		end
+
 	set_comment_handler (a_parser, a_handler: POINTER)
 			-- Record comment handler slot.
 		do

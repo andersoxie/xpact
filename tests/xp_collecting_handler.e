@@ -8,6 +8,7 @@ inherit
 	XP_EVENT_HANDLER
 		redefine
 			on_processing_instruction,
+			on_xml_declaration,
 			on_comment,
 			on_start_cdata_section,
 			on_end_cdata_section,
@@ -153,6 +154,19 @@ feature -- Events
 			l_event.append (a_target)
 			l_event.append_character (':')
 			l_event.append (a_data)
+			events.extend (l_event)
+		end
+
+	on_xml_declaration (a_version, a_encoding: READABLE_STRING_8; a_standalone: INTEGER)
+		local
+			l_event: STRING_8
+		do
+			create l_event.make_from_string ("xml-decl:")
+			l_event.append (a_version)
+			l_event.append_character (':')
+			l_event.append (a_encoding)
+			l_event.append_character (':')
+			l_event.append_integer (a_standalone)
 			events.extend (l_event)
 		end
 

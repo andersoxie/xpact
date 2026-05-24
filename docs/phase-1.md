@@ -22,7 +22,7 @@ Implemented now:
 - Start tags, end tags, and empty-element tags.
 - Attribute counting and duplicate-attribute rejection.
 - XML 1.0 document structure checks: one root element, whitespace-only misc text outside the root, optional doctype before the root.
-- XML 1.0 tokenization for comments, processing instructions, XML declaration position, doctype declarations, internal subsets, CDATA sections, character data, attributes, names, and line-end normalization.
+- XML 1.0 tokenization for comments, processing instructions, XML declaration callbacks/diagnostics, doctype declarations, internal subsets, CDATA sections, character data, attributes, names, and line-end normalization.
 - Predefined entities: `lt`, `gt`, `amp`, `apos`, and `quot`.
 - Decimal and hexadecimal character references, emitted as UTF-8 bytes in the current `STRING_8` event surface.
 - Internal general entity declarations and recursive expansion in content and attributes.
