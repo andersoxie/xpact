@@ -1843,6 +1843,7 @@ feature {NONE} -- DTD entity declarations
 							else
 								put_general_entity (l_name, l_value)
 							end
+							handler.on_entity_decl (l_name, l_is_parameter, l_value, Void, Void, Void)
 							Result := l_end + 1
 						else
 							Result := a_subset.count + 1
@@ -1923,6 +1924,10 @@ feature {NONE} -- DTD entity declarations
 					Result := a_subset.count + 1
 				else
 					put_external_entity (a_name, l_public_id, l_system_id, l_notation_name, a_is_parameter, l_is_unparsed)
+					handler.on_entity_decl (a_name, a_is_parameter, Void, optional_string (l_public_id), optional_string (l_system_id), optional_string (l_notation_name))
+					if l_is_unparsed then
+						handler.on_unparsed_entity_decl (a_name, l_system_id, optional_string (l_public_id), optional_string (l_notation_name))
+					end
 					Result := a_end_index + 1
 				end
 			else
@@ -2669,6 +2674,16 @@ feature {NONE} -- Character and name validation
 				or else l_code = 36
 				or else l_code = 95
 				or else l_code = 37
+		end
+
+	optional_string (a_text: READABLE_STRING_8): detachable READABLE_STRING_8
+			-- `a_text' when not empty; otherwise Void.
+		require
+			text_attached: a_text /= Void
+		do
+			if not a_text.is_empty then
+				Result := a_text
+			end
 		end
 
 	is_xml_character_code (a_code: INTEGER): BOOLEAN

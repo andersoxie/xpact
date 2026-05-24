@@ -16,8 +16,11 @@ inherit
 			on_element_decl,
 			on_notation_decl,
 			on_attlist_decl,
+			on_entity_decl,
+			on_unparsed_entity_decl,
 			on_default
 		end
+	XP_EXTERNAL_ENTITY_RESOLVER
 	PLATFORM
 
 create
@@ -81,6 +84,24 @@ feature -- Access
 	attlist_decl_callback: POINTER
 			-- `XML_AttlistDeclHandler' callback pointer.
 
+	entity_decl_callback: POINTER
+			-- `XML_EntityDeclHandler' callback pointer.
+
+	unparsed_entity_decl_callback: POINTER
+			-- `XML_UnparsedEntityDeclHandler' callback pointer.
+
+	external_entity_ref_callback: POINTER
+			-- `XML_ExternalEntityRefHandler' callback pointer.
+
+	external_entity_ref_arg: POINTER
+			-- Optional first argument for `XML_ExternalEntityRefHandler'.
+
+	has_external_entity_ref_arg: BOOLEAN
+			-- Was `external_entity_ref_arg' explicitly set?
+
+	native_parser_handle: POINTER
+			-- Native parser pointer passed to external entity callbacks by default.
+
 	events: ARRAYED_LIST [STRING_8]
 			-- Eiffel-visible event log used by tests and diagnostics.
 
@@ -124,6 +145,15 @@ feature -- Metrics
 
 	attlist_decl_count: INTEGER
 			-- Number of attribute-list declaration events emitted.
+
+	entity_decl_count: INTEGER
+			-- Number of entity declaration events emitted.
+
+	unparsed_entity_decl_count: INTEGER
+			-- Number of unparsed entity declaration events emitted.
+
+	external_entity_ref_count: INTEGER
+			-- Number of external entity references delegated to native callbacks.
 
 	current_specified_attribute_count: INTEGER
 			-- Expat-style count of explicit attribute vector entries for current start event.
@@ -229,6 +259,48 @@ feature -- Element change
 			handler_set: attlist_decl_callback = a_handler
 		end
 
+	set_entity_decl_handler (a_handler: POINTER)
+			-- Set native entity declaration callback.
+		do
+			entity_decl_callback := a_handler
+		ensure
+			handler_set: entity_decl_callback = a_handler
+		end
+
+	set_unparsed_entity_decl_handler (a_handler: POINTER)
+			-- Set native unparsed entity declaration callback.
+		do
+			unparsed_entity_decl_callback := a_handler
+		ensure
+			handler_set: unparsed_entity_decl_callback = a_handler
+		end
+
+	set_external_entity_ref_handler (a_handler: POINTER)
+			-- Set native external entity reference callback.
+		do
+			external_entity_ref_callback := a_handler
+		ensure
+			handler_set: external_entity_ref_callback = a_handler
+		end
+
+	set_external_entity_ref_handler_arg (a_arg: POINTER)
+			-- Set native external entity reference callback argument.
+		do
+			external_entity_ref_arg := a_arg
+			has_external_entity_ref_arg := True
+		ensure
+			arg_set: external_entity_ref_arg = a_arg
+			arg_marked: has_external_entity_ref_arg
+		end
+
+	set_native_parser_handle (a_parser: POINTER)
+			-- Set native parser handle used for callback APIs that expect it.
+		do
+			native_parser_handle := a_parser
+		ensure
+			handle_set: native_parser_handle = a_parser
+		end
+
 	reset_events
 			-- Clear observable event state.
 		do
@@ -246,6 +318,9 @@ feature -- Element change
 			element_decl_count := 0
 			notation_decl_count := 0
 			attlist_decl_count := 0
+			entity_decl_count := 0
+			unparsed_entity_decl_count := 0
+			external_entity_ref_count := 0
 			current_specified_attribute_count := 0
 			current_id_attribute_index := -1
 		ensure
@@ -263,6 +338,9 @@ feature -- Element change
 			no_element_decl_events: element_decl_count = 0
 			no_notation_decl_events: notation_decl_count = 0
 			no_attlist_events: attlist_decl_count = 0
+			no_entity_decl_events: entity_decl_count = 0
+			no_unparsed_entity_decl_events: unparsed_entity_decl_count = 0
+			no_external_entity_refs: external_entity_ref_count = 0
 			no_current_specified_attributes: current_specified_attribute_count = 0
 			no_current_id_attribute: current_id_attribute_index = -1
 		end
@@ -538,6 +616,90 @@ feature -- Events
 			end
 		end
 
+	on_entity_decl (a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN; a_value: detachable READABLE_STRING_8; a_public_id, a_system_id, a_notation_name: detachable READABLE_STRING_8)
+		local
+			l_event: STRING_8
+			l_name: C_STRING
+			l_value: detachable C_STRING
+			l_public_id: detachable C_STRING
+			l_system_id: detachable C_STRING
+			l_notation_name: detachable C_STRING
+			l_value_pointer: POINTER
+			l_public_pointer: POINTER
+			l_system_pointer: POINTER
+			l_notation_pointer: POINTER
+			l_value_length: INTEGER
+		do
+			entity_decl_count := entity_decl_count + 1
+			create l_event.make_from_string ("entity-decl:")
+			l_event.append (a_name)
+			l_event.append_character (':')
+			if a_is_parameter then
+				l_event.append ("1")
+			else
+				l_event.append ("0")
+			end
+			l_event.append_character (':')
+			if attached a_value as l_attached_value then
+				l_event.append (l_attached_value)
+			else
+				l_event.append ("(null)")
+			end
+			events.extend (l_event)
+			if entity_decl_callback /= default_pointer then
+				create l_name.make (a_name)
+				if attached a_value as l_attached_value then
+					create l_value.make (l_attached_value)
+					l_value_pointer := l_value.item
+					l_value_length := l_attached_value.count
+				end
+				if attached a_public_id as l_attached_public_id then
+					create l_public_id.make (l_attached_public_id)
+					l_public_pointer := l_public_id.item
+				end
+				if attached a_system_id as l_attached_system_id then
+					create l_system_id.make (l_attached_system_id)
+					l_system_pointer := l_system_id.item
+				end
+				if attached a_notation_name as l_attached_notation_name then
+					create l_notation_name.make (l_attached_notation_name)
+					l_notation_pointer := l_notation_name.item
+				end
+				call_entity_decl_callback (entity_decl_callback, user_data, l_name.item, a_is_parameter, l_value_pointer, l_value_length, default_pointer, l_system_pointer, l_public_pointer, l_notation_pointer)
+			end
+		end
+
+	on_unparsed_entity_decl (a_name, a_system_id: READABLE_STRING_8; a_public_id, a_notation_name: detachable READABLE_STRING_8)
+		local
+			l_event: STRING_8
+			l_name: C_STRING
+			l_system_id: C_STRING
+			l_public_id: detachable C_STRING
+			l_notation_name: detachable C_STRING
+			l_public_pointer: POINTER
+			l_notation_pointer: POINTER
+		do
+			unparsed_entity_decl_count := unparsed_entity_decl_count + 1
+			create l_event.make_from_string ("unparsed-entity:")
+			l_event.append (a_name)
+			l_event.append_character (':')
+			l_event.append (a_system_id)
+			events.extend (l_event)
+			if unparsed_entity_decl_callback /= default_pointer then
+				create l_name.make (a_name)
+				create l_system_id.make (a_system_id)
+				if attached a_public_id as l_attached_public_id then
+					create l_public_id.make (l_attached_public_id)
+					l_public_pointer := l_public_id.item
+				end
+				if attached a_notation_name as l_attached_notation_name then
+					create l_notation_name.make (l_attached_notation_name)
+					l_notation_pointer := l_notation_name.item
+				end
+				call_unparsed_entity_decl_callback (unparsed_entity_decl_callback, user_data, l_name.item, default_pointer, l_system_id.item, l_public_pointer, l_notation_pointer)
+			end
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 		local
 			l_text: C_STRING
@@ -549,7 +711,43 @@ feature -- Events
 			end
 		end
 
+feature -- External entity resolution
+
+	resolve_external_entity (a_name, a_public_id, a_system_id: READABLE_STRING_8; a_is_parameter: BOOLEAN): detachable STRING_8
+			-- Delegate external entity loading decision to the native callback slot.
+		local
+			l_context: C_STRING
+			l_system_id: C_STRING
+			l_public_id: detachable C_STRING
+			l_public_pointer: POINTER
+			l_status: INTEGER
+		do
+			if external_entity_ref_callback /= default_pointer then
+				external_entity_ref_count := external_entity_ref_count + 1
+				create l_context.make (a_name)
+				create l_system_id.make (a_system_id)
+				if not a_public_id.is_empty then
+					create l_public_id.make (a_public_id)
+					l_public_pointer := l_public_id.item
+				end
+				l_status := call_external_entity_ref_callback (external_entity_ref_callback, external_entity_callback_argument, l_context.item, default_pointer, l_system_id.item, l_public_pointer)
+				if l_status /= 0 then
+					create Result.make_empty
+				end
+			end
+		end
+
 feature {NONE} -- Native callback calls
+
+	external_entity_callback_argument: POINTER
+			-- First argument for `XML_ExternalEntityRefHandler'.
+		do
+			if has_external_entity_ref_arg then
+				Result := external_entity_ref_arg
+			else
+				Result := native_parser_handle
+			end
+		end
 
 	content_model_array (a_model: XP_CONTENT_MODEL; a_name_strings: ARRAYED_LIST [C_STRING]): POINTER
 			-- Newly allocated Expat-shaped content model array for `a_model'.
@@ -839,6 +1037,41 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *, const char *, const char *, const char *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_element_name, (const char *) $a_attribute_name, (const char *) $a_attribute_type, (const char *) $a_default_value, $a_is_required ? 1 : 0);"
 		end
 
+	call_entity_decl_callback (a_callback, a_user_data, a_name: POINTER; a_is_parameter: BOOLEAN; a_value: POINTER; a_value_length: INTEGER; a_base, a_system_id, a_public_id, a_notation_name: POINTER)
+			-- Invoke native `XML_EntityDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			name_attached: a_name /= default_pointer
+			non_negative_value_length: a_value_length >= 0
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, int, const char *, int, const char *, const char *, const char *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, $a_is_parameter ? 1 : 0, (const char *) $a_value, (int) $a_value_length, (const char *) $a_base, (const char *) $a_system_id, (const char *) $a_public_id, (const char *) $a_notation_name);"
+		end
+
+	call_unparsed_entity_decl_callback (a_callback, a_user_data, a_name, a_base, a_system_id, a_public_id, a_notation_name: POINTER)
+			-- Invoke native `XML_UnparsedEntityDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			name_attached: a_name /= default_pointer
+			system_id_attached: a_system_id /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, const char *, const char *, const char *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, (const char *) $a_base, (const char *) $a_system_id, (const char *) $a_public_id, (const char *) $a_notation_name);"
+		end
+
+	call_external_entity_ref_callback (a_callback, a_parser, a_context, a_base, a_system_id, a_public_id: POINTER): INTEGER
+			-- Invoke native `XML_ExternalEntityRefHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			system_id_attached: a_system_id /= default_pointer
+		external
+			"C inline"
+		alias
+			"return (EIF_INTEGER) ((int (*)(void *, const char *, const char *, const char *, const char *)) $a_callback) ((void *) $a_parser, (const char *) $a_context, (const char *) $a_base, (const char *) $a_system_id, (const char *) $a_public_id);"
+		end
+
 invariant
 	events_attached: events /= Void
 	non_negative_start_count: start_element_count >= 0
@@ -854,6 +1087,9 @@ invariant
 	non_negative_element_decl_count: element_decl_count >= 0
 	non_negative_notation_decl_count: notation_decl_count >= 0
 	non_negative_attlist_count: attlist_decl_count >= 0
+	non_negative_entity_decl_count: entity_decl_count >= 0
+	non_negative_unparsed_entity_decl_count: unparsed_entity_decl_count >= 0
+	non_negative_external_entity_ref_count: external_entity_ref_count >= 0
 	non_negative_current_specified_attribute_count: current_specified_attribute_count >= 0
 	current_id_attribute_index_valid: current_id_attribute_index >= -1
 

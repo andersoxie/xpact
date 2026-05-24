@@ -35,6 +35,8 @@ struct XML_ParserStruct {
 	XML_ElementDeclHandler elementDeclHandler;
 	XML_NotationDeclHandler notationDeclHandler;
 	XML_AttlistDeclHandler attlistDeclHandler;
+	XML_EntityDeclHandler entityDeclHandler;
+	XML_UnparsedEntityDeclHandler unparsedEntityDeclHandler;
 	XML_ExternalEntityRefHandler externalEntityRefHandler;
 	void *externalEntityRefArg;
 };
@@ -382,6 +384,28 @@ XML_SetAttlistDeclHandler(XML_Parser parser, XML_AttlistDeclHandler handler) {
 }
 
 void XMLCALL
+XML_SetEntityDeclHandler(XML_Parser parser, XML_EntityDeclHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->entityDeclHandler = handler;
+	if (parser->bridge != NULL && parser->bridge->set_entity_decl_handler != NULL && parser->eiffelParser != NULL) {
+		parser->bridge->set_entity_decl_handler(parser->bridge->context, parser->eiffelParser, handler);
+	}
+}
+
+void XMLCALL
+XML_SetUnparsedEntityDeclHandler(XML_Parser parser, XML_UnparsedEntityDeclHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->unparsedEntityDeclHandler = handler;
+	if (parser->bridge != NULL && parser->bridge->set_unparsed_entity_decl_handler != NULL && parser->eiffelParser != NULL) {
+		parser->bridge->set_unparsed_entity_decl_handler(parser->bridge->context, parser->eiffelParser, handler);
+	}
+}
+
+void XMLCALL
 XML_SetExternalEntityRefHandler(XML_Parser parser, XML_ExternalEntityRefHandler handler) {
 	if (parser == NULL) {
 		return;
@@ -407,8 +431,6 @@ XML_SetExternalEntityRefHandlerArg(XML_Parser parser, void *arg) {
 	void XMLCALL name(XML_Parser parser, type handler) { (void)parser; (void)handler; }
 
 XPACT_UNUSED_HANDLER_SETTER(XML_SetXmlDeclHandler, XML_XmlDeclHandler)
-XPACT_UNUSED_HANDLER_SETTER(XML_SetEntityDeclHandler, XML_EntityDeclHandler)
-XPACT_UNUSED_HANDLER_SETTER(XML_SetUnparsedEntityDeclHandler, XML_UnparsedEntityDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetStartNamespaceDeclHandler, XML_StartNamespaceDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetEndNamespaceDeclHandler, XML_EndNamespaceDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetNotStandaloneHandler, XML_NotStandaloneHandler)

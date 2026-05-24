@@ -18,8 +18,6 @@ feature -- Resolution
 			system_id_attached: a_system_id /= Void
 			system_id_not_empty: not a_system_id.is_empty
 		deferred
-		ensure
-			resolved_not_empty: attached Result implies not Result.is_empty
 		end
 
 end

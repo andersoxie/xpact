@@ -20,6 +20,7 @@ feature {NONE} -- Initialization
 			test_element_declaration_callbacks
 			test_notation_declaration_callbacks
 			test_malformed_doctype_diagnostics
+			test_entity_declaration_callbacks
 			test_predefined_and_numeric_entities
 			test_internal_entity_declarations
 			test_parameter_entity_declarations
@@ -404,6 +405,28 @@ feature {NONE} -- Tests
 				assert ("nested entity reference expanded", l_handler.events.i_th (3).same_string ("text:AT&T"))
 			else
 				io.put_string ("internal entity error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+		end
+
+	test_entity_declaration_callbacks
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			l_handler.enable_entity_decl_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE root [<!ENTITY e1 'v1'><!ENTITY e2 SYSTEM 'v2'><!NOTATION n SYSTEM 'n'><!ENTITY img SYSTEM 'image.gif' NDATA n>]><root/>")
+			assert ("entity declaration document accepted", l_ok)
+			if l_ok then
+				assert ("internal entity declaration event", l_handler.events.i_th (1).same_string ("entity:e1:0:v1:"))
+				assert ("external entity declaration event", l_handler.events.i_th (2).same_string ("entity:e2:0:(null):v2"))
+				assert ("unparsed entity declaration event", l_handler.events.i_th (4).same_string ("unparsed:img:image.gif:n"))
+			else
+				io.put_string ("entity declaration error: ")
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end

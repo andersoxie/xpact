@@ -16,6 +16,8 @@ inherit
 			on_element_decl,
 			on_notation_decl,
 			on_attlist_decl,
+			on_entity_decl,
+			on_unparsed_entity_decl,
 			on_default
 		end
 
@@ -54,6 +56,9 @@ feature -- Access
 
 	record_notation_decl_events: BOOLEAN
 			-- Should notation declaration events be added to `events'?
+
+	record_entity_decl_events: BOOLEAN
+			-- Should entity declaration events be added to `events'?
 
 feature -- Configuration
 
@@ -95,6 +100,14 @@ feature -- Configuration
 			record_notation_decl_events := True
 		ensure
 			notation_decl_events_enabled: record_notation_decl_events
+		end
+
+	enable_entity_decl_events
+			-- Record entity declaration events in `events'.
+		do
+			record_entity_decl_events := True
+		ensure
+			entity_decl_events_enabled: record_entity_decl_events
 		end
 
 feature -- Events
@@ -250,6 +263,50 @@ feature -- Events
 					l_event.append ("1")
 				else
 					l_event.append ("0")
+				end
+				events.extend (l_event)
+			end
+		end
+
+	on_entity_decl (a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN; a_value: detachable READABLE_STRING_8; a_public_id, a_system_id, a_notation_name: detachable READABLE_STRING_8)
+		local
+			l_event: STRING_8
+		do
+			if record_entity_decl_events then
+				create l_event.make_from_string ("entity:")
+				l_event.append (a_name)
+				l_event.append_character (':')
+				if a_is_parameter then
+					l_event.append ("1")
+				else
+					l_event.append ("0")
+				end
+				l_event.append_character (':')
+				if attached a_value as l_value then
+					l_event.append (l_value)
+				else
+					l_event.append ("(null)")
+				end
+				l_event.append_character (':')
+				if attached a_system_id as l_system_id then
+					l_event.append (l_system_id)
+				end
+				events.extend (l_event)
+			end
+		end
+
+	on_unparsed_entity_decl (a_name, a_system_id: READABLE_STRING_8; a_public_id, a_notation_name: detachable READABLE_STRING_8)
+		local
+			l_event: STRING_8
+		do
+			if record_entity_decl_events then
+				create l_event.make_from_string ("unparsed:")
+				l_event.append (a_name)
+				l_event.append_character (':')
+				l_event.append (a_system_id)
+				l_event.append_character (':')
+				if attached a_notation_name as l_notation_name then
+					l_event.append (l_notation_name)
 				end
 				events.extend (l_event)
 			end

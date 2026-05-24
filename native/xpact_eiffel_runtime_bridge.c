@@ -19,6 +19,8 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetPointerRoutine set_element_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_notation_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_attlist_decl_handler;
+	XPACT_EiffelSetPointerRoutine set_entity_decl_handler;
+	XPACT_EiffelSetPointerRoutine set_unparsed_entity_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler;
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg;
 	XPACT_EiffelParseRoutine parse;
@@ -266,6 +268,32 @@ xp_rt_set_attlist_decl_handler(void *context, void *parser, XML_AttlistDeclHandl
 }
 
 static void XMLCALL
+xp_rt_set_entity_decl_handler(void *context, void *parser, XML_EntityDeclHandler handler) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer != NULL && state->set_entity_decl_handler != NULL) {
+		state->set_entity_decl_handler(
+			installer,
+			(EIF_POINTER)parser,
+			xp_callback_pointer((uintptr_t)handler)
+		);
+	}
+}
+
+static void XMLCALL
+xp_rt_set_unparsed_entity_decl_handler(void *context, void *parser, XML_UnparsedEntityDeclHandler handler) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer != NULL && state->set_unparsed_entity_decl_handler != NULL) {
+		state->set_unparsed_entity_decl_handler(
+			installer,
+			(EIF_POINTER)parser,
+			xp_callback_pointer((uintptr_t)handler)
+		);
+	}
+}
+
+static void XMLCALL
 xp_rt_set_external_entity_ref_handler(void *context, void *parser, XML_ExternalEntityRefHandler handler) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
 	EIF_REFERENCE installer = xp_installer_reference(state);
@@ -474,6 +502,8 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_element_decl_handler = xp_rt_set_element_decl_handler;
 	bridge->set_notation_decl_handler = xp_rt_set_notation_decl_handler;
 	bridge->set_attlist_decl_handler = xp_rt_set_attlist_decl_handler;
+	bridge->set_entity_decl_handler = xp_rt_set_entity_decl_handler;
+	bridge->set_unparsed_entity_decl_handler = xp_rt_set_unparsed_entity_decl_handler;
 	bridge->set_external_entity_ref_handler = xp_rt_set_external_entity_ref_handler;
 	bridge->set_external_entity_ref_handler_arg = xp_rt_set_external_entity_ref_handler_arg;
 	bridge->parse = xp_rt_parse;
@@ -507,6 +537,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetPointerRoutine set_element_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_notation_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_attlist_decl_handler,
+	XPACT_EiffelSetPointerRoutine set_entity_decl_handler,
+	XPACT_EiffelSetPointerRoutine set_unparsed_entity_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler,
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg,
 	XPACT_EiffelParseRoutine parse,
@@ -556,6 +588,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_element_decl_handler = set_element_decl_handler;
 	xp_runtime_bridge.set_notation_decl_handler = set_notation_decl_handler;
 	xp_runtime_bridge.set_attlist_decl_handler = set_attlist_decl_handler;
+	xp_runtime_bridge.set_entity_decl_handler = set_entity_decl_handler;
+	xp_runtime_bridge.set_unparsed_entity_decl_handler = set_unparsed_entity_decl_handler;
 	xp_runtime_bridge.set_external_entity_ref_handler = set_external_entity_ref_handler;
 	xp_runtime_bridge.set_external_entity_ref_handler_arg = set_external_entity_ref_handler_arg;
 	xp_runtime_bridge.parse = parse;
@@ -599,6 +633,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_element_decl_handler,
     EIF_POINTER set_notation_decl_handler,
     EIF_POINTER set_attlist_decl_handler,
+    EIF_POINTER set_entity_decl_handler,
+    EIF_POINTER set_unparsed_entity_decl_handler,
     EIF_POINTER set_external_entity_ref_handler,
     EIF_POINTER set_external_entity_ref_handler_arg,
     EIF_POINTER parse,
@@ -630,6 +666,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetPointerRoutine)set_element_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_notation_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_attlist_decl_handler,
+		(XPACT_EiffelSetPointerRoutine)set_entity_decl_handler,
+		(XPACT_EiffelSetPointerRoutine)set_unparsed_entity_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_external_entity_ref_handler,
 		(XPACT_EiffelSetPointerRoutine)set_external_entity_ref_handler_arg,
 		(XPACT_EiffelParseRoutine)parse,

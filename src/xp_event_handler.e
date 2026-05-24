@@ -97,6 +97,24 @@ feature -- Events
 		do
 		end
 
+	on_entity_decl (a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN; a_value: detachable READABLE_STRING_8; a_public_id, a_system_id, a_notation_name: detachable READABLE_STRING_8)
+			-- Entity declaration was parsed.
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+		do
+		end
+
+	on_unparsed_entity_decl (a_name, a_system_id: READABLE_STRING_8; a_public_id, a_notation_name: detachable READABLE_STRING_8)
+			-- Unparsed entity declaration was parsed.
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+			system_id_attached: a_system_id /= Void
+			system_id_not_empty: not a_system_id.is_empty
+		do
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 			-- Raw default-handler text was parsed.
 		require

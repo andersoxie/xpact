@@ -20,6 +20,13 @@ static int g_notation_decl_count;
 static int g_notation_decl_failed;
 static int g_ns_default_attr_start_count;
 static int g_ns_default_attr_failed;
+static int g_entity_decl_count;
+static int g_entity_decl_failed;
+static int g_external_entity_ref_count;
+static int g_general_entity_start_count;
+static int g_general_entity_failed;
+static char g_general_entity_text[256];
+static int g_general_entity_len;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -292,6 +299,61 @@ notation_decl_handler(void *userData, const XML_Char *notationName, const XML_Ch
 	}
 }
 
+static void XMLCALL
+general_entity_decl_handler(void *userData, const XML_Char *entityName, int is_parameter_entity, const XML_Char *value, int value_length, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId, const XML_Char *notationName) {
+	(void)userData;
+	(void)base;
+	(void)publicId;
+	(void)notationName;
+	g_entity_decl_count++;
+	if (g_entity_decl_count == 1) {
+		if (strcmp(entityName, "e1") != 0 || is_parameter_entity || value == NULL || value_length != 2 || strncmp(value, "v1", 2) != 0 || systemId != NULL) {
+			g_entity_decl_failed = 1;
+		}
+	} else if (g_entity_decl_count == 2) {
+		if (strcmp(entityName, "e2") != 0 || is_parameter_entity || value != NULL || value_length != 0 || systemId == NULL || strcmp(systemId, "v2") != 0) {
+			g_entity_decl_failed = 1;
+		}
+	} else {
+		g_entity_decl_failed = 1;
+	}
+}
+
+static int XMLCALL
+general_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	(void)parser;
+	(void)context;
+	(void)base;
+	(void)publicId;
+	g_external_entity_ref_count++;
+	if (systemId == NULL || strcmp(systemId, "v2") != 0) {
+		g_general_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	return XML_STATUS_OK;
+}
+
+static void XMLCALL
+general_entity_start_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
+	(void)userData;
+	g_general_entity_start_count++;
+	if (strcmp(name, "r") != 0 || atts == NULL || atts[0] == NULL || strcmp(atts[0], "a1") != 0 || atts[1] == NULL || strcmp(atts[1], "[v1]") != 0 || atts[2] != NULL) {
+		g_general_entity_failed = 1;
+	}
+}
+
+static void XMLCALL
+general_entity_text_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	if (len < 0 || g_general_entity_len + len >= (int)sizeof(g_general_entity_text)) {
+		g_general_entity_failed = 1;
+		return;
+	}
+	memcpy(g_general_entity_text + g_general_entity_len, s, (size_t)len);
+	g_general_entity_len += len;
+	g_general_entity_text[g_general_entity_len] = '\0';
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -343,6 +405,12 @@ main(void) {
 		"<?xml version='1.0' encoding='utf-8'?>\n"
 		"<!DOCTYPE doc PUBLIC '{BadName}' 'test'>\n"
 		"<doc></doc>";
+	const char *general_entities_input =
+		"<!DOCTYPE r [\n"
+		"<!ENTITY e1 'v1'>\n"
+		"<!ENTITY e2 SYSTEM 'v2'>\n"
+		"]>\n"
+		"<r a1='[&e1;]'>[&e1;][&e2;][&amp;&apos;&gt;&lt;&quot;]</r>";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -444,6 +512,28 @@ main(void) {
 	status = XML_Parse(parser, notation_decl_input, (int)strlen(notation_decl_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for notation declaration check")) return 1;
 	if (!check(g_notation_decl_count == 2 && !g_notation_decl_failed, "notation declaration callbacks delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for general entity support check")) return 1;
+	g_parser = parser;
+	g_entity_decl_count = 0;
+	g_entity_decl_failed = 0;
+	g_external_entity_ref_count = 0;
+	g_general_entity_start_count = 0;
+	g_general_entity_failed = 0;
+	g_general_entity_len = 0;
+	g_general_entity_text[0] = '\0';
+	XML_SetEntityDeclHandler(parser, general_entity_decl_handler);
+	XML_SetExternalEntityRefHandler(parser, general_external_entity_handler);
+	XML_SetStartElementHandler(parser, general_entity_start_handler);
+	XML_SetCharacterDataHandler(parser, general_entity_text_handler);
+	status = XML_Parse(parser, general_entities_input, (int)strlen(general_entities_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "general entity support document accepted")) return 1;
+	if (!check(g_entity_decl_count == 2 && !g_entity_decl_failed, "entity declaration callbacks delegated")) return 1;
+	if (!check(g_external_entity_ref_count == 1, "external general entity callback delegated")) return 1;
+	if (!check(g_general_entity_start_count == 1 && !g_general_entity_failed, "general entity start callback delegated")) return 1;
+	if (!check(strcmp(g_general_entity_text, "[v1][][&'><\"]") == 0, "general entity character data delegated")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

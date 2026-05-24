@@ -65,6 +65,7 @@ feature -- Parser lifecycle callbacks
 			l_id := eif_object_id (l_parser)
 			live_parser_ids.force (True, l_id)
 			Result := integer_to_pointer (l_id)
+			l_parser.set_native_parser_handle (Result)
 		ensure
 			handle_returned: Result /= default_pointer
 			one_more_parser: active_parser_count = old active_parser_count + 1
@@ -184,14 +185,36 @@ feature -- Handler callbacks
 			end
 		end
 
+	set_entity_decl_handler (a_parser, a_handler: POINTER)
+			-- Record entity declaration handler slot.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_entity_decl_handler (a_handler)
+			end
+		end
+
+	set_unparsed_entity_decl_handler (a_parser, a_handler: POINTER)
+			-- Record unparsed entity declaration handler slot.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_unparsed_entity_decl_handler (a_handler)
+			end
+		end
+
 	set_external_entity_ref_handler (a_parser, a_handler: POINTER)
 			-- Record external entity reference handler slot.
 		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_external_entity_ref_handler (a_handler)
+			end
 		end
 
 	set_external_entity_ref_handler_arg (a_parser, a_arg: POINTER)
 			-- Record external entity reference handler argument.
 		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_external_entity_ref_handler_arg (a_arg)
+			end
 		end
 
 feature -- Parse callbacks

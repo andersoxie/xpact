@@ -13,6 +13,7 @@ feature {NONE} -- Initialization
 		do
 			create handler.make
 			create parser.make (handler)
+			parser.set_external_entity_resolver (handler)
 			create input_buffer.make_empty
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
@@ -238,10 +239,53 @@ feature -- Element change
 			handler_set: handler.attlist_decl_callback = a_handler
 		end
 
+	set_entity_decl_handler (a_handler: POINTER)
+			-- Set native entity declaration callback.
+		do
+			handler.set_entity_decl_handler (a_handler)
+		ensure
+			handler_set: handler.entity_decl_callback = a_handler
+		end
+
+	set_unparsed_entity_decl_handler (a_handler: POINTER)
+			-- Set native unparsed entity declaration callback.
+		do
+			handler.set_unparsed_entity_decl_handler (a_handler)
+		ensure
+			handler_set: handler.unparsed_entity_decl_callback = a_handler
+		end
+
+	set_external_entity_ref_handler (a_handler: POINTER)
+			-- Set native external entity reference callback.
+		do
+			handler.set_external_entity_ref_handler (a_handler)
+			configure_external_entity_policy
+		ensure
+			handler_set: handler.external_entity_ref_callback = a_handler
+		end
+
+	set_external_entity_ref_handler_arg (a_arg: POINTER)
+			-- Set native external entity reference callback argument.
+		do
+			handler.set_external_entity_ref_handler_arg (a_arg)
+		ensure
+			arg_set: handler.external_entity_ref_arg = a_arg
+		end
+
+	set_native_parser_handle (a_parser: POINTER)
+			-- Set native parser handle used by native callbacks.
+		do
+			handler.set_native_parser_handle (a_parser)
+		ensure
+			handle_set: handler.native_parser_handle = a_parser
+		end
+
 	reset: BOOLEAN
 			-- Reset parser state while preserving callback registrations.
 		do
 			create parser.make (handler)
+			parser.set_external_entity_resolver (handler)
+			configure_external_entity_policy
 			input_buffer.wipe_out
 			context_buffer := Void
 			handler.reset_events
@@ -316,6 +360,16 @@ feature -- Parsing
 		end
 
 feature {NONE} -- Error mapping
+
+	configure_external_entity_policy
+			-- Keep Eiffel resolver policy aligned with native external entity callbacks.
+		do
+			if handler.external_entity_ref_callback /= default_pointer then
+				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
+			else
+				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.No_external_entities)
+			end
+		end
 
 	error_code_for (a_error: READABLE_STRING_8): INTEGER
 			-- Expat-compatible error code for Eiffel parser error `a_error'.
