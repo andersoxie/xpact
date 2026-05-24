@@ -39,6 +39,12 @@ feature -- Expat-compatible constants
 
 	Xml_finished: INTEGER = 2
 
+	Xml_param_entity_parsing_never: INTEGER = 0
+
+	Xml_param_entity_parsing_unless_standalone: INTEGER = 1
+
+	Xml_param_entity_parsing_always: INTEGER = 2
+
 	Xml_error_none: INTEGER = 0
 
 	Xml_error_syntax: INTEGER = 2
@@ -89,6 +95,15 @@ feature -- Access
 
 	final_buffer: BOOLEAN
 			-- Was the last parse call final?
+
+	is_external_entity_parser: BOOLEAN
+			-- Should input be parsed as an external parsed entity fragment?
+
+	external_entity_context: detachable STRING_8
+			-- Native context string supplied to `XML_ExternalEntityParserCreate', if any.
+
+	param_entity_parsing: INTEGER
+			-- Expat-compatible parameter entity parsing mode.
 
 	explicit_encoding: detachable STRING_8
 			-- Native `XML_SetEncoding' value, if any.
@@ -344,6 +359,46 @@ feature -- Element change
 			rejected_only_while_parsing: Result = Xml_status_error implies parsing_status = Xml_parsing
 		end
 
+	set_external_entity_context (a_context: POINTER): BOOLEAN
+			-- Mark this parser as an external parsed entity parser.
+		local
+			l_context: C_STRING
+		do
+			if parsing_status = Xml_initialized then
+				is_external_entity_parser := True
+				if a_context = default_pointer then
+					external_entity_context := Void
+				else
+					create l_context.make_by_pointer (a_context)
+					external_entity_context := l_context.string.twin
+				end
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+			accepted_marks_external: Result implies is_external_entity_parser
+		end
+
+	set_param_entity_parsing (a_parsing: INTEGER): BOOLEAN
+			-- Set Expat-compatible parameter entity parsing mode before parsing starts.
+		do
+			if
+				parsing_status = Xml_initialized
+				and then (
+					a_parsing = Xml_param_entity_parsing_never
+					or else a_parsing = Xml_param_entity_parsing_unless_standalone
+					or else a_parsing = Xml_param_entity_parsing_always
+				)
+			then
+				param_entity_parsing := a_parsing
+				configure_external_entity_policy
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+			accepted_sets_mode: Result implies param_entity_parsing = a_parsing
+		end
+
 	set_hash_salt (a_hash_salt: INTEGER_64): BOOLEAN
 			-- Set legacy Expat hash salt before parsing starts.
 		do
@@ -390,6 +445,9 @@ feature -- Element change
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
 			final_buffer := False
+			is_external_entity_parser := False
+			external_entity_context := Void
+			param_entity_parsing := Xml_param_entity_parsing_never
 			explicit_encoding := Void
 			has_unsupported_explicit_encoding := False
 			hash_salt := 0
@@ -402,6 +460,8 @@ feature -- Element change
 			no_error: last_error_code = Xml_error_none
 			initialized: parsing_status = Xml_initialized
 			not_final: not final_buffer
+			not_external_entity_parser: not is_external_entity_parser
+			param_entity_parsing_reset: param_entity_parsing = Xml_param_entity_parsing_never
 			no_explicit_encoding: explicit_encoding = Void and not has_unsupported_explicit_encoding
 			no_hash_salt: not has_hash_salt and not has_hash_salt_16_bytes
 		end
@@ -430,7 +490,11 @@ feature -- Parsing
 					parsing_status := Xml_parsing
 					handler.reset_events
 					create context_buffer.make (input_buffer)
-					l_ok := parser.parse (input_buffer)
+					if is_external_entity_parser then
+						l_ok := parser.parse_external_entity (input_buffer)
+					else
+						l_ok := parser.parse (input_buffer)
+					end
 					parsing_status := Xml_finished
 					if l_ok then
 						last_error_code := Xml_error_none
@@ -490,7 +554,11 @@ feature {NONE} -- Error mapping
 	configure_external_entity_policy
 			-- Keep Eiffel resolver policy aligned with native external entity callbacks.
 		do
-			parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
+			if param_entity_parsing = Xml_param_entity_parsing_never then
+				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
+			else
+				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.All_external_entities)
+			end
 		end
 
 	error_code_for (a_error: READABLE_STRING_8): INTEGER

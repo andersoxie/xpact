@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 249 named upstream tests in the downloaded
+expected-failure patterns expand to 247 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -85,6 +85,14 @@ The Windows release has green evidence for:
 - unloaded external general entities are skipped in the Windows native bridge
   when no external entity handler is registered, with
   `XML_SkippedEntityHandler` callback delivery.
+- `XML_ExternalEntityParserCreate` accepts a null context, creates
+  Eiffel-backed child parsers, and frees those child parsers through the native
+  ABI.
+- loaded external parsed entity fragments are parsed by Eiffel child parsers
+  that inherit element, character-data, and CDATA callbacks from the parent
+  parser, covering the upstream `test_ext_entity_good_cdata` shape.
+- external entity reference handler arguments now follow Expat's null-argument
+  fallback to the public C `XML_Parser` pointer in the Windows native bridge.
 
 ## Red Rows
 
@@ -93,7 +101,8 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - namespace parsing and namespace callback semantics;
 - allocation-failure injection and allocation accounting tests;
 - UTF-16 and custom/unknown encoding tests;
-- external entity parser creation/loading through the Expat C callback model;
+- remaining external entity encoding, trailing-token, standalone, abort, and
+  external DTD parent-parser semantics;
 - remaining DTD diagnostics for external DTD/encoding cases and
   default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;

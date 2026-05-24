@@ -779,6 +779,7 @@ feature {NONE} -- Tests
 			l_hash_entropy: C_STRING
 			l_utf8_encoding: C_STRING
 			l_bad_encoding: C_STRING
+			l_external_context: C_STRING
 		do
 			create l_attributes.make
 			l_attributes.put ("first", "1")
@@ -872,6 +873,31 @@ feature {NONE} -- Tests
 			assert ("native Eiffel parser skips unloaded external general entity", l_status = l_native.Xml_status_ok)
 			assert ("native Eiffel parser reports skipped entity", l_native.handler.skipped_entity_count = 1)
 			assert ("native Eiffel parser names skipped entity", l_native.handler.events.i_th (3).same_string ("skipped:en:0"))
+
+			assert ("native Eiffel parser resets for external parsed entity", l_native.reset)
+			assert ("native Eiffel parser marks external parsed entity", l_native.set_external_entity_context (default_pointer))
+			l_status := l_native.parse ("external <![CDATA[cdata]]><leaf/> tail", True)
+			assert ("native Eiffel parser accepts external parsed entity fragment", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel external fragment emits text", l_native.handler.character_data_count = 3)
+			assert ("native Eiffel external fragment emits CDATA start", l_native.handler.start_cdata_section_count = 1)
+			assert ("native Eiffel external fragment emits CDATA end", l_native.handler.end_cdata_section_count = 1)
+			assert ("native Eiffel external fragment emits element", l_native.handler.start_element_count = 1 and then l_native.handler.end_element_count = 1)
+			assert ("native Eiffel external fragment first text", l_native.handler.events.i_th (1).same_string ("text:external "))
+			assert ("native Eiffel external fragment CDATA text", l_native.handler.events.i_th (3).same_string ("text:cdata"))
+			assert ("native Eiffel external fragment trailing text", l_native.handler.events.i_th (7).same_string ("text: tail"))
+
+			assert ("native Eiffel parser resets for external DTD subset", l_native.reset)
+			create l_external_context.make ("external-subset")
+			assert ("native Eiffel parser records external entity context", l_native.set_external_entity_context (l_external_context.item))
+			l_status := l_native.parse ("<!-- external subset -->%N<!ELEMENT doc (#PCDATA)*>", True)
+			assert ("native Eiffel parser accepts external DTD subset fragment", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel external DTD subset emits comment", l_native.handler.comment_count = 1)
+			assert ("native Eiffel external DTD subset emits element declaration", l_native.handler.element_decl_count = 1)
+			assert ("native Eiffel external context stored", attached l_native.external_entity_context as l_context and then l_context.same_string ("external-subset"))
+			assert ("native Eiffel parser resets after external fragments", l_native.reset and then not l_native.is_external_entity_parser)
+			assert ("native Eiffel parser rejects invalid parameter entity mode", not l_native.set_param_entity_parsing (99))
+			assert ("native Eiffel parser accepts parameter entity parsing", l_native.set_param_entity_parsing (l_native.Xml_param_entity_parsing_always))
+			assert ("native Eiffel parser broadens external entity policy", l_native.parser.external_entity_policy = {XP_EXTERNAL_ENTITY_POLICY}.All_external_entities)
 		end
 
 	test_native_bridge_installer
@@ -889,6 +915,7 @@ feature {NONE} -- Tests
 			l_hash_entropy: C_STRING
 			l_utf8_encoding: C_STRING
 			l_bad_encoding: C_STRING
+			l_external_context: C_STRING
 		do
 			create l_installer.make
 			l_handle := l_installer.parser_create (default_pointer, default_pointer, default_pointer)
@@ -915,6 +942,30 @@ feature {NONE} -- Tests
 			assert ("native bridge installer rejects bad explicit encoding during parse", l_status = l_installer.Xml_status_error)
 			assert ("native bridge installer maps bad explicit encoding", l_installer.get_error_code (l_handle) = 18)
 			assert ("native bridge installer resets after bad explicit encoding", l_installer.parser_reset (l_handle, default_pointer))
+
+			create l_external_context.make ("external-subset")
+			assert ("native bridge installer marks external parsed entity", l_installer.set_external_entity_context (l_handle, default_pointer))
+			create l_input.make ("external <![CDATA[cdata]]><leaf/> tail")
+			l_status := l_installer.parse (l_handle, l_input.item, l_input.count, True)
+			assert ("native bridge installer accepts external parsed entity fragment", l_status = l_installer.Xml_status_ok)
+			if attached l_installer.parser_for (l_handle) as l_external_parser then
+				assert ("native bridge installer external fragment emits text", l_external_parser.handler.character_data_count = 3)
+				assert ("native bridge installer external fragment emits CDATA", l_external_parser.handler.start_cdata_section_count = 1 and then l_external_parser.handler.end_cdata_section_count = 1)
+				assert ("native bridge installer external fragment emits element", l_external_parser.handler.start_element_count = 1 and then l_external_parser.handler.end_element_count = 1)
+			end
+			assert ("native bridge installer resets before external DTD subset", l_installer.parser_reset (l_handle, default_pointer))
+			assert ("native bridge installer records external context", l_installer.set_external_entity_context (l_handle, l_external_context.item))
+			create l_input.make ("<!-- external subset -->%N<!ELEMENT doc (#PCDATA)*>")
+			l_status := l_installer.parse (l_handle, l_input.item, l_input.count, True)
+			assert ("native bridge installer accepts external DTD subset", l_status = l_installer.Xml_status_ok)
+			if attached l_installer.parser_for (l_handle) as l_subset_parser then
+				assert ("native bridge installer stores external context", attached l_subset_parser.external_entity_context as l_context and then l_context.same_string ("external-subset"))
+				assert ("native bridge installer external DTD subset emits comment", l_subset_parser.handler.comment_count = 1)
+				assert ("native bridge installer external DTD subset emits element decl", l_subset_parser.handler.element_decl_count = 1)
+			end
+			assert ("native bridge installer resets after external DTD subset", l_installer.parser_reset (l_handle, default_pointer))
+			assert ("native bridge installer rejects invalid parameter entity mode", not l_installer.set_param_entity_parsing (l_handle, 99))
+			assert ("native bridge installer accepts parameter entity parsing", l_installer.set_param_entity_parsing (l_handle, 2))
 
 			create l_hash_entropy.make ("0123456789abcdef")
 			assert ("native bridge installer sets hash salt", l_installer.set_hash_salt (l_handle, 305419896))

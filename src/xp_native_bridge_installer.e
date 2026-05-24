@@ -104,6 +104,14 @@ feature -- Parser lifecycle callbacks
 			parser_not_live: not attached parser_for (a_parser)
 		end
 
+	set_native_parser_handle (a_parser, a_native_parser: POINTER)
+			-- Set the public C parser pointer used as native callback argument.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_native_parser_handle (a_native_parser)
+			end
+		end
+
 	set_encoding (a_parser, a_encoding: POINTER): INTEGER
 			-- Set explicit encoding for `a_parser'.
 		do
@@ -111,6 +119,22 @@ feature -- Parser lifecycle callbacks
 				Result := l_parser.set_encoding (a_encoding)
 			else
 				Result := Xml_status_error
+			end
+		end
+
+	set_external_entity_context (a_parser, a_context: POINTER): BOOLEAN
+			-- Mark parser represented by `a_parser' as an external parsed entity parser.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_external_entity_context (a_context)
+			end
+		end
+
+	set_param_entity_parsing (a_parser: POINTER; a_parsing: INTEGER): BOOLEAN
+			-- Set parameter entity parsing policy for `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_param_entity_parsing (a_parsing)
 			end
 		end
 

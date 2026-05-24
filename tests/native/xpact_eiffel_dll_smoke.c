@@ -27,6 +27,17 @@ static int g_general_entity_start_count;
 static int g_general_entity_failed;
 static char g_general_entity_text[256];
 static int g_general_entity_len;
+static int g_loaded_external_ref_count;
+static int g_loaded_external_failed;
+static int g_loaded_external_start_count;
+static int g_loaded_external_end_count;
+static int g_loaded_external_start_cdata_count;
+static int g_loaded_external_end_cdata_count;
+static char g_loaded_external_text[256];
+static int g_loaded_external_len;
+static const void *g_expected_external_arg;
+static int g_external_arg_ref_count;
+static int g_external_arg_failed;
 static int g_skipped_entity_count;
 static int g_skipped_entity_failed;
 static int g_empty_text_failed;
@@ -485,6 +496,119 @@ general_entity_text_handler(void *userData, const XML_Char *s, int len) {
 }
 
 static void XMLCALL
+loaded_external_start_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
+	(void)userData;
+	(void)atts;
+	g_loaded_external_start_count++;
+	if (g_loaded_external_start_count == 1) {
+		if (strcmp(name, "doc") != 0) {
+			g_loaded_external_failed = 1;
+		}
+	} else if (g_loaded_external_start_count == 2) {
+		if (strcmp(name, "leaf") != 0) {
+			g_loaded_external_failed = 1;
+		}
+	} else {
+		g_loaded_external_failed = 1;
+	}
+}
+
+static void XMLCALL
+loaded_external_end_handler(void *userData, const XML_Char *name) {
+	(void)userData;
+	g_loaded_external_end_count++;
+	if (g_loaded_external_end_count == 1) {
+		if (strcmp(name, "leaf") != 0) {
+			g_loaded_external_failed = 1;
+		}
+	} else if (g_loaded_external_end_count == 2) {
+		if (strcmp(name, "doc") != 0) {
+			g_loaded_external_failed = 1;
+		}
+	} else {
+		g_loaded_external_failed = 1;
+	}
+}
+
+static void XMLCALL
+loaded_external_text_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	if (len < 0 || g_loaded_external_len + len >= (int)sizeof(g_loaded_external_text)) {
+		g_loaded_external_failed = 1;
+		return;
+	}
+	memcpy(g_loaded_external_text + g_loaded_external_len, s, (size_t)len);
+	g_loaded_external_len += len;
+	g_loaded_external_text[g_loaded_external_len] = '\0';
+}
+
+static void XMLCALL
+loaded_external_start_cdata_handler(void *userData) {
+	(void)userData;
+	g_loaded_external_start_cdata_count++;
+}
+
+static void XMLCALL
+loaded_external_end_cdata_handler(void *userData) {
+	(void)userData;
+	g_loaded_external_end_cdata_count++;
+}
+
+static int XMLCALL
+loading_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *text = "<?xml version='1.0' encoding='utf-8'?>external <![CDATA[cdata]]><leaf/> tail";
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_loaded_external_ref_count++;
+	if (parser != g_parser || context == NULL || systemId == NULL || strcmp(systemId, "mem://entity") != 0) {
+		g_loaded_external_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, "utf-8");
+	if (ext_parser == NULL) {
+		g_loaded_external_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		g_loaded_external_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_OK;
+}
+
+static int XMLCALL
+external_arg_checker(XML_Parser parameter, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)systemId;
+	(void)publicId;
+	g_external_arg_ref_count++;
+	if ((const void *)parameter != g_expected_external_arg) {
+		g_external_arg_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(g_parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_external_arg_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, "<!ELEMENT doc (#PCDATA)*>", 25, XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		g_external_arg_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_OK;
+}
+
+static void XMLCALL
 skipped_entity_handler(void *userData, const XML_Char *entityName, int is_parameter_entity) {
 	(void)userData;
 	g_skipped_entity_count++;
@@ -605,6 +729,16 @@ main(void) {
 		"<!ENTITY e2 SYSTEM 'v2'>\n"
 		"]>\n"
 		"<r a1='[&e1;]'>[&e1;][&e2;][&amp;&apos;&gt;&lt;&quot;]</r>";
+	const char *loaded_external_input =
+		"<!DOCTYPE doc [\n"
+		"  <!ENTITY en SYSTEM 'mem://entity'>\n"
+		"]>\n"
+		"<doc>&en;</doc>";
+	const char *external_arg_input =
+		"<!DOCTYPE doc [\n"
+		"  <!ENTITY en SYSTEM 'mem://arg'>\n"
+		"]>\n"
+		"<doc>&en;</doc>";
 	const char *skipped_external_input =
 		"<!DOCTYPE doc [\n"
 		"  <!ENTITY en SYSTEM 'http://example.org/dummy.ent'>\n"
@@ -901,6 +1035,67 @@ main(void) {
 	if (!check(g_external_entity_ref_count == 1, "external general entity callback delegated")) return 1;
 	if (!check(g_general_entity_start_count == 1 && !g_general_entity_failed, "general entity start callback delegated")) return 1;
 	if (!check(strcmp(g_general_entity_text, "[v1][][&'><\"]") == 0, "general entity character data delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for null-context external parser check")) return 1;
+	{
+		XML_Parser ext_parser = XML_ExternalEntityParserCreate(parser, NULL, NULL);
+		if (!check(ext_parser != NULL, "external entity parser accepts null context")) return 1;
+		XML_ParserFree(ext_parser);
+	}
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for loaded external entity check")) return 1;
+	g_parser = parser;
+	g_loaded_external_ref_count = 0;
+	g_loaded_external_failed = 0;
+	g_loaded_external_start_count = 0;
+	g_loaded_external_end_count = 0;
+	g_loaded_external_start_cdata_count = 0;
+	g_loaded_external_end_cdata_count = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted")) return 1;
+	XML_SetElementHandler(parser, loaded_external_start_handler, loaded_external_end_handler);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	XML_SetCdataSectionHandler(parser, loaded_external_start_cdata_handler, loaded_external_end_cdata_handler);
+	XML_SetExternalEntityRefHandler(parser, loading_external_entity_handler);
+	status = XML_Parse(parser, loaded_external_input, (int)strlen(loaded_external_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "loaded external entity document accepted")) return 1;
+	if (!check(g_loaded_external_ref_count == 1 && !g_loaded_external_failed, "external entity parser loaded through callback")) return 1;
+	if (!check(g_loaded_external_start_count == 2 && g_loaded_external_end_count == 2, "external entity parser inherited element handlers")) return 1;
+	if (!check(g_loaded_external_start_cdata_count == 1 && g_loaded_external_end_cdata_count == 1, "external entity parser inherited CDATA handlers")) return 1;
+	if (!check(strcmp(g_loaded_external_text, "external cdata tail") == 0, "external entity parser inherited character handler")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for explicit external handler arg check")) return 1;
+	g_parser = parser;
+	g_expected_external_arg = external_arg_input;
+	g_external_arg_ref_count = 0;
+	g_external_arg_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for explicit arg")) return 1;
+	XML_SetExternalEntityRefHandler(parser, external_arg_checker);
+	XML_SetExternalEntityRefHandlerArg(parser, (void *)external_arg_input);
+	status = XML_Parse(parser, external_arg_input, (int)strlen(external_arg_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "explicit external handler arg document accepted")) return 1;
+	if (!check(g_external_arg_ref_count == 1 && !g_external_arg_failed, "explicit external handler arg forwarded")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for default external handler arg check")) return 1;
+	g_parser = parser;
+	g_expected_external_arg = parser;
+	g_external_arg_ref_count = 0;
+	g_external_arg_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for default arg")) return 1;
+	XML_SetExternalEntityRefHandler(parser, external_arg_checker);
+	XML_SetExternalEntityRefHandlerArg(parser, NULL);
+	status = XML_Parse(parser, external_arg_input, (int)strlen(external_arg_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "default external handler arg document accepted")) return 1;
+	if (!check(g_external_arg_ref_count == 1 && !g_external_arg_failed, "null external handler arg falls back to parser")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

@@ -12,6 +12,7 @@
 
 struct XML_ParserStruct {
 	void *userData;
+	XML_Bool useParserAsHandlerArg;
 	void *eiffelParser;
 	const XPACT_EiffelBridge *bridge;
 	XML_Memory_Handling_Suite memory;
@@ -30,6 +31,7 @@ struct XML_ParserStruct {
 	XML_StartCdataSectionHandler startCdataSectionHandler;
 	XML_EndCdataSectionHandler endCdataSectionHandler;
 	XML_DefaultHandler defaultHandler;
+	XML_Bool defaultHandlerExpands;
 	XML_StartDoctypeDeclHandler startDoctypeDeclHandler;
 	XML_EndDoctypeDeclHandler endDoctypeDeclHandler;
 	XML_ElementDeclHandler elementDeclHandler;
@@ -39,6 +41,7 @@ struct XML_ParserStruct {
 	XML_UnparsedEntityDeclHandler unparsedEntityDeclHandler;
 	XML_ExternalEntityRefHandler externalEntityRefHandler;
 	void *externalEntityRefArg;
+	XML_Bool hasExternalEntityRefArg;
 	XML_SkippedEntityHandler skippedEntityHandler;
 };
 
@@ -159,6 +162,9 @@ XML_ParserCreate_MM(
 			xp_free(parser, parser);
 			return NULL;
 		}
+		if (parser->bridge->set_native_parser_handle != NULL) {
+			parser->bridge->set_native_parser_handle(parser->bridge->context, parser->eiffelParser, parser);
+		}
 	} else {
 		parser->errorCode = XML_ERROR_NOT_STARTED;
 	}
@@ -174,7 +180,11 @@ XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
 	parser->parsing = XML_INITIALIZED;
 	parser->finalBuffer = XML_FALSE;
 	if (parser->bridge != NULL && parser->bridge->parser_reset != NULL && parser->eiffelParser != NULL) {
-		return parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
+		XML_Bool result = parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
+		if (result == XML_TRUE && parser->bridge->set_native_parser_handle != NULL) {
+			parser->bridge->set_native_parser_handle(parser->bridge->context, parser->eiffelParser, parser);
+		}
+		return result;
 	}
 	parser->errorCode = XML_ERROR_NOT_STARTED;
 	return XML_FALSE;
@@ -200,7 +210,11 @@ XML_SetUserData(XML_Parser parser, void *userData) {
 	}
 	parser->userData = userData;
 	if (parser->bridge != NULL && parser->bridge->set_user_data != NULL && parser->eiffelParser != NULL) {
-		parser->bridge->set_user_data(parser->bridge->context, parser->eiffelParser, userData);
+		parser->bridge->set_user_data(
+			parser->bridge->context,
+			parser->eiffelParser,
+			parser->useParserAsHandlerArg ? parser : userData
+		);
 	}
 }
 
@@ -303,6 +317,7 @@ XML_SetDefaultHandler(XML_Parser parser, XML_DefaultHandler handler) {
 		return;
 	}
 	parser->defaultHandler = handler;
+	parser->defaultHandlerExpands = XML_FALSE;
 	if (parser->bridge != NULL && parser->bridge->set_default_handler != NULL && parser->eiffelParser != NULL) {
 		parser->bridge->set_default_handler(parser->bridge->context, parser->eiffelParser, handler, XML_FALSE);
 	}
@@ -314,6 +329,7 @@ XML_SetDefaultHandlerExpand(XML_Parser parser, XML_DefaultHandler handler) {
 		return;
 	}
 	parser->defaultHandler = handler;
+	parser->defaultHandlerExpands = XML_TRUE;
 	if (parser->bridge != NULL && parser->bridge->set_default_handler != NULL && parser->eiffelParser != NULL) {
 		parser->bridge->set_default_handler(parser->bridge->context, parser->eiffelParser, handler, XML_TRUE);
 	}
@@ -423,6 +439,7 @@ XML_SetExternalEntityRefHandlerArg(XML_Parser parser, void *arg) {
 		return;
 	}
 	parser->externalEntityRefArg = arg;
+	parser->hasExternalEntityRefArg = arg != NULL ? XML_TRUE : XML_FALSE;
 	if (parser->bridge != NULL && parser->bridge->set_external_entity_ref_handler_arg != NULL && parser->eiffelParser != NULL) {
 		parser->bridge->set_external_entity_ref_handler_arg(parser->bridge->context, parser->eiffelParser, arg);
 	}
@@ -501,7 +518,13 @@ XML_SetEncoding(XML_Parser parser, const XML_Char *encoding) {
 
 void XMLCALL
 XML_UseParserAsHandlerArg(XML_Parser parser) {
-	XML_SetUserData(parser, parser);
+	if (parser == NULL) {
+		return;
+	}
+	parser->useParserAsHandlerArg = XML_TRUE;
+	if (parser->bridge != NULL && parser->bridge->set_user_data != NULL && parser->eiffelParser != NULL) {
+		parser->bridge->set_user_data(parser->bridge->context, parser->eiffelParser, parser);
+	}
 }
 
 enum XML_Error XMLCALL
@@ -651,17 +674,72 @@ XML_GetParsingStatus(XML_Parser parser, XML_ParsingStatus *status) {
 
 XML_Parser XMLCALL
 XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const XML_Char *encoding) {
-	(void)context;
-	(void)encoding;
-	xp_set_error(parser, XML_ERROR_NOT_STARTED);
-	return NULL;
+	XML_Parser child;
+	if (parser == NULL) {
+		return NULL;
+	}
+	if (parser->bridge == NULL || parser->eiffelParser == NULL) {
+		xp_set_error(parser, XML_ERROR_NOT_STARTED);
+		return NULL;
+	}
+	child = XML_ParserCreate_MM(encoding, parser->hasCustomMemory ? &parser->memory : NULL, NULL);
+	if (child == NULL) {
+		xp_set_error(parser, XML_ERROR_NO_MEMORY);
+		return NULL;
+	}
+	if (
+		child->bridge != NULL
+		&& child->bridge->set_external_entity_context != NULL
+		&& child->eiffelParser != NULL
+		&& child->bridge->set_external_entity_context(child->bridge->context, child->eiffelParser, context) != XML_TRUE
+	) {
+		XML_ParserFree(child);
+		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
+		return NULL;
+	}
+
+	child->useParserAsHandlerArg = parser->useParserAsHandlerArg;
+	XML_SetUserData(child, parser->userData);
+	XML_SetElementHandler(child, parser->startElementHandler, parser->endElementHandler);
+	XML_SetCharacterDataHandler(child, parser->characterDataHandler);
+	XML_SetProcessingInstructionHandler(child, parser->processingInstructionHandler);
+	XML_SetCommentHandler(child, parser->commentHandler);
+	XML_SetCdataSectionHandler(child, parser->startCdataSectionHandler, parser->endCdataSectionHandler);
+	if (parser->defaultHandlerExpands) {
+		XML_SetDefaultHandlerExpand(child, parser->defaultHandler);
+	} else {
+		XML_SetDefaultHandler(child, parser->defaultHandler);
+	}
+	XML_SetDoctypeDeclHandler(child, parser->startDoctypeDeclHandler, parser->endDoctypeDeclHandler);
+	XML_SetElementDeclHandler(child, parser->elementDeclHandler);
+	XML_SetNotationDeclHandler(child, parser->notationDeclHandler);
+	XML_SetAttlistDeclHandler(child, parser->attlistDeclHandler);
+	XML_SetEntityDeclHandler(child, parser->entityDeclHandler);
+	XML_SetUnparsedEntityDeclHandler(child, parser->unparsedEntityDeclHandler);
+	XML_SetExternalEntityRefHandler(child, parser->externalEntityRefHandler);
+	if (parser->hasExternalEntityRefArg) {
+		XML_SetExternalEntityRefHandlerArg(child, parser->externalEntityRefArg);
+	}
+	XML_SetSkippedEntityHandler(child, parser->skippedEntityHandler);
+	if (parser->base != NULL) {
+		(void)XML_SetBase(child, parser->base);
+	}
+	return child;
 }
 
 int XMLCALL
 XML_SetParamEntityParsing(XML_Parser parser, enum XML_ParamEntityParsing parsing) {
-	(void)parser;
-	(void)parsing;
-	return 0;
+	if (parser == NULL) {
+		return 0;
+	}
+	if (
+		parser->bridge != NULL
+		&& parser->bridge->set_param_entity_parsing != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->set_param_entity_parsing(parser->bridge->context, parser->eiffelParser, parsing);
+	}
+	return parser->parsing == XML_INITIALIZED ? 1 : 0;
 }
 
 int XMLCALL

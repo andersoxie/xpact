@@ -300,10 +300,10 @@ feature -- Element change
 			-- Set native external entity reference callback argument.
 		do
 			external_entity_ref_arg := a_arg
-			has_external_entity_ref_arg := True
+			has_external_entity_ref_arg := a_arg /= default_pointer
 		ensure
 			arg_set: external_entity_ref_arg = a_arg
-			arg_marked: has_external_entity_ref_arg
+			arg_marker_matches: has_external_entity_ref_arg = (a_arg /= default_pointer)
 		end
 
 	set_skipped_entity_handler (a_handler: POINTER)

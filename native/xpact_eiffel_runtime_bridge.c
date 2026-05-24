@@ -8,7 +8,10 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelParserCreateRoutine parser_create;
 	XPACT_EiffelParserResetRoutine parser_reset;
 	XPACT_EiffelParserFreeRoutine parser_free;
+	XPACT_EiffelSetPointerRoutine set_native_parser_handle;
 	XPACT_EiffelSetEncodingRoutine set_encoding;
+	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context;
+	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing;
 	XPACT_EiffelSetPointerRoutine set_user_data;
 	XPACT_EiffelSetElementHandlerRoutine set_element_handler;
 	XPACT_EiffelSetPointerRoutine set_character_data_handler;
@@ -110,6 +113,15 @@ xp_rt_parser_free(void *context, void *parser) {
 	}
 }
 
+static void XMLCALL
+xp_rt_set_native_parser_handle(void *context, void *parser, void *nativeParser) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer != NULL && state->set_native_parser_handle != NULL) {
+		state->set_native_parser_handle(installer, (EIF_POINTER)parser, (EIF_POINTER)nativeParser);
+	}
+}
+
 static enum XML_Status XMLCALL
 xp_rt_set_encoding(void *context, void *parser, const XML_Char *encoding) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
@@ -118,6 +130,30 @@ xp_rt_set_encoding(void *context, void *parser, const XML_Char *encoding) {
 		return XML_STATUS_ERROR;
 	}
 	return (enum XML_Status)state->set_encoding(installer, (EIF_POINTER)parser, (EIF_POINTER)encoding);
+}
+
+static XML_Bool XMLCALL
+xp_rt_set_external_entity_context(void *context, void *parser, const XML_Char *entityContext) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->set_external_entity_context == NULL) {
+		return XML_FALSE;
+	}
+	return state->set_external_entity_context(installer, (EIF_POINTER)parser, (EIF_POINTER)entityContext)
+		? XML_TRUE
+		: XML_FALSE;
+}
+
+static XML_Bool XMLCALL
+xp_rt_set_param_entity_parsing(void *context, void *parser, enum XML_ParamEntityParsing parsing) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->set_param_entity_parsing == NULL) {
+		return XML_FALSE;
+	}
+	return state->set_param_entity_parsing(installer, (EIF_POINTER)parser, (EIF_INTEGER)parsing)
+		? XML_TRUE
+		: XML_FALSE;
 }
 
 static void XMLCALL
@@ -530,7 +566,10 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->parser_create != NULL
 		&& state->parser_reset != NULL
 		&& state->parser_free != NULL
+		&& state->set_native_parser_handle != NULL
 		&& state->set_encoding != NULL
+		&& state->set_external_entity_context != NULL
+		&& state->set_param_entity_parsing != NULL
 		&& state->set_user_data != NULL
 		&& state->set_element_handler != NULL
 		&& state->set_character_data_handler != NULL
@@ -557,7 +596,10 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->parser_create = xp_rt_parser_create;
 	bridge->parser_reset = xp_rt_parser_reset;
 	bridge->parser_free = xp_rt_parser_free;
+	bridge->set_native_parser_handle = xp_rt_set_native_parser_handle;
 	bridge->set_encoding = xp_rt_set_encoding;
+	bridge->set_external_entity_context = xp_rt_set_external_entity_context;
+	bridge->set_param_entity_parsing = xp_rt_set_param_entity_parsing;
 	bridge->set_user_data = xp_rt_set_user_data;
 	bridge->set_element_handler = xp_rt_set_element_handler;
 	bridge->set_character_data_handler = xp_rt_set_character_data_handler;
@@ -597,7 +639,10 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelParserCreateRoutine parser_create,
 	XPACT_EiffelParserResetRoutine parser_reset,
 	XPACT_EiffelParserFreeRoutine parser_free,
+	XPACT_EiffelSetPointerRoutine set_native_parser_handle,
 	XPACT_EiffelSetEncodingRoutine set_encoding,
+	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context,
+	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing,
 	XPACT_EiffelSetPointerRoutine set_user_data,
 	XPACT_EiffelSetElementHandlerRoutine set_element_handler,
 	XPACT_EiffelSetPointerRoutine set_character_data_handler,
@@ -634,7 +679,10 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| parser_create == NULL
 		|| parser_reset == NULL
 		|| parser_free == NULL
+		|| set_native_parser_handle == NULL
 		|| set_encoding == NULL
+		|| set_external_entity_context == NULL
+		|| set_param_entity_parsing == NULL
 		|| set_user_data == NULL
 		|| set_element_handler == NULL
 		|| set_character_data_handler == NULL
@@ -657,7 +705,10 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.parser_create = parser_create;
 	xp_runtime_bridge.parser_reset = parser_reset;
 	xp_runtime_bridge.parser_free = parser_free;
+	xp_runtime_bridge.set_native_parser_handle = set_native_parser_handle;
 	xp_runtime_bridge.set_encoding = set_encoding;
+	xp_runtime_bridge.set_external_entity_context = set_external_entity_context;
+	xp_runtime_bridge.set_param_entity_parsing = set_param_entity_parsing;
 	xp_runtime_bridge.set_user_data = set_user_data;
 	xp_runtime_bridge.set_element_handler = set_element_handler;
 	xp_runtime_bridge.set_character_data_handler = set_character_data_handler;
@@ -707,7 +758,10 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER parser_create,
     EIF_POINTER parser_reset,
     EIF_POINTER parser_free,
+    EIF_POINTER set_native_parser_handle,
     EIF_POINTER set_encoding,
+    EIF_POINTER set_external_entity_context,
+    EIF_POINTER set_param_entity_parsing,
     EIF_POINTER set_user_data,
     EIF_POINTER set_element_handler,
     EIF_POINTER set_character_data_handler,
@@ -745,7 +799,10 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelParserCreateRoutine)parser_create,
 		(XPACT_EiffelParserResetRoutine)parser_reset,
 		(XPACT_EiffelParserFreeRoutine)parser_free,
+		(XPACT_EiffelSetPointerRoutine)set_native_parser_handle,
 		(XPACT_EiffelSetEncodingRoutine)set_encoding,
+		(XPACT_EiffelSetPointerBooleanRoutine)set_external_entity_context,
+		(XPACT_EiffelSetIntegerBooleanRoutine)set_param_entity_parsing,
 		(XPACT_EiffelSetPointerRoutine)set_user_data,
 		(XPACT_EiffelSetElementHandlerRoutine)set_element_handler,
 		(XPACT_EiffelSetPointerRoutine)set_character_data_handler,

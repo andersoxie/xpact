@@ -100,6 +100,9 @@ feature -- Access
 	external_entity_resolver: detachable XP_EXTERNAL_ENTITY_RESOLVER
 			-- Application-provided external entity resolver.
 
+	parsing_external_entity: BOOLEAN
+			-- Is the active parse for an external parsed entity fragment?
+
 feature -- Configuration
 
 	set_external_entity_policy (a_policy: INTEGER)
@@ -174,6 +177,62 @@ feature -- Parsing
 			result_matches_error: Result = not has_error
 			success_is_balanced: Result implies element_stack.count = 0
 			success_has_root: Result implies document_element_count = 1
+		end
+
+	parse_external_entity (a_input: READABLE_STRING_8): BOOLEAN
+			-- Parse a complete external parsed entity fragment `a_input'.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+		local
+			i: INTEGER
+			l_input: STRING_8
+		do
+			reset
+			parsing_external_entity := True
+			l_input := normalized_input (a_input)
+			position_input.wipe_out
+			position_input.append (l_input)
+			note_position (1)
+			if not has_error then
+				if looks_like_external_subset (l_input) then
+					process_internal_subset (l_input)
+				else
+					from
+						i := 1
+					invariant
+						index_in_bounds: i >= 1 and i <= l_input.count + 1
+						depth_within_limit: element_stack.count <= max_element_depth
+					until
+						i > l_input.count or has_error
+					loop
+						note_position (i)
+						if l_input.item (i) = '<' then
+							i := parse_markup (l_input, i)
+						else
+							i := parse_character_data (l_input, i)
+						end
+						if not has_error then
+							note_position (i)
+						end
+					variant
+						l_input.count - i + 1
+					end
+				end
+			end
+			if not has_error and element_stack.count /= 0 then
+				note_position (l_input.count + 1)
+				set_error ("unclosed element")
+			end
+			if not has_error then
+				note_position (l_input.count + 1)
+			end
+			Result := not has_error
+			parsing_external_entity := False
+		ensure
+			result_matches_error: Result = not has_error
+			success_is_balanced: Result implies element_stack.count = 0
+			not_external_after_parse: not parsing_external_entity
 		end
 
 feature {NONE} -- Markup parsing
@@ -501,7 +560,7 @@ feature {NONE} -- Markup parsing
 			l_end: INTEGER
 			l_text: STRING_8
 		do
-			if element_stack.count = 0 then
+			if element_stack.count = 0 and then not parsing_external_entity then
 				set_error ("CDATA outside document element")
 				Result := a_input.count + 1
 			else
@@ -764,7 +823,7 @@ feature {NONE} -- Character data and references
 					set_error ("CDATA close marker in character data")
 					i := a_input.count + 1
 				elseif c = '&' then
-					if element_stack.count = 0 then
+					if element_stack.count = 0 and then not parsing_external_entity then
 						set_error ("entity reference outside document element")
 						i := a_input.count + 1
 					else
@@ -781,7 +840,7 @@ feature {NONE} -- Character data and references
 				a_input.count - i + 1
 			end
 			if not has_error then
-				if element_stack.count = 0 then
+				if element_stack.count = 0 and then not parsing_external_entity then
 					if not is_all_xml_space (l_text) then
 						set_error ("character data outside document element")
 						Result := a_input.count + 1
@@ -1150,6 +1209,58 @@ feature {NONE} -- Character data and references
 
 feature {NONE} -- DTD entity declarations
 
+	looks_like_external_subset (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does `a_input' start with DTD-subset content rather than parsed XML content?
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			l_end: INTEGER
+			l_done: BOOLEAN
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_input.count + 1
+			until
+				i > a_input.count or Result or l_done
+			loop
+				if is_xml_space (a_input.item (i)) then
+					i := i + 1
+				elseif has_at (a_input, i, "<!--") then
+					l_end := find_sequence (a_input, "-->", i + 4)
+					if l_end = 0 then
+						l_done := True
+						i := a_input.count + 1
+					else
+						i := l_end + 3
+					end
+				elseif has_at (a_input, i, "<?") then
+					l_end := find_sequence (a_input, "?>", i + 2)
+					if l_end = 0 then
+						l_done := True
+						i := a_input.count + 1
+					else
+						i := l_end + 2
+					end
+				elseif
+					has_at (a_input, i, "<!ENTITY")
+					or else has_at (a_input, i, "<!ATTLIST")
+					or else has_at (a_input, i, "<!ELEMENT")
+					or else has_at (a_input, i, "<!NOTATION")
+					or else a_input.item (i).code = 37
+				then
+					Result := True
+					i := a_input.count + 1
+				else
+					l_done := True
+					i := a_input.count + 1
+				end
+			variant
+				a_input.count - i + 1
+			end
+		end
+
 	process_internal_subset (a_subset: READABLE_STRING_8)
 			-- Process entity declarations and parameter entity references in an internal subset.
 		require
@@ -1157,6 +1268,7 @@ feature {NONE} -- DTD entity declarations
 		local
 			i: INTEGER
 			l_end: INTEGER
+			l_text: STRING_8
 		do
 			from
 				i := 1
@@ -1179,6 +1291,8 @@ feature {NONE} -- DTD entity declarations
 						set_error ("unterminated comment")
 						i := a_subset.count + 1
 					else
+						create l_text.make_from_string (a_subset.substring (i + 4, l_end - 1))
+						handler.on_comment (l_text)
 						i := l_end + 3
 					end
 				elseif has_at (a_subset, i, "<?") then
@@ -2148,9 +2262,9 @@ feature {NONE} -- Event dispatch
 		do
 			if element_stack.count >= max_element_depth then
 				set_error ("maximum element depth exceeded")
-			elseif element_stack.count = 0 and then document_element_count > 0 then
+			elseif element_stack.count = 0 and then document_element_count > 0 and then not parsing_external_entity then
 				set_error ("multiple document elements")
-			elseif element_stack.count = 0 and then not doctype_name.is_empty and then not doctype_name.same_string (a_name) then
+			elseif element_stack.count = 0 and then not doctype_name.is_empty and then not doctype_name.same_string (a_name) and then not parsing_external_entity then
 				set_error ("document element does not match doctype")
 			else
 				if element_stack.count = 0 then
