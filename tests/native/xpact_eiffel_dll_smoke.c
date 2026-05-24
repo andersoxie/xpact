@@ -34,6 +34,7 @@ static int g_sync_entity_start_count;
 static int g_sync_entity_failed;
 static char g_sync_entity_text[256];
 static int g_sync_entity_len;
+static int g_entity_context_failed;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -401,6 +402,24 @@ sync_entity_text_handler(void *userData, const XML_Char *s, int len) {
 	g_sync_entity_text[g_sync_entity_len] = '\0';
 }
 
+static void XMLCALL
+entity_context_text_handler(void *userData, const XML_Char *s, int len) {
+	int offset = -1;
+	int size = -1;
+	int byte_count;
+	const char *context;
+	(void)userData;
+	if (len != 2 || strncmp(s, "10", 2) != 0) {
+		g_entity_context_failed = 1;
+		return;
+	}
+	byte_count = XML_GetCurrentByteCount(g_parser);
+	context = XML_GetInputContext(g_parser, &offset, &size);
+	if (context == NULL || offset < 0 || size <= offset || byte_count != 11 || strncmp(context + offset, "&draft.day;", (size_t)byte_count) != 0) {
+		g_entity_context_failed = 1;
+	}
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -471,6 +490,11 @@ main(void) {
 		"   <!ENTITY d '<t5>&b;</t5>'>\n"
 		"]>\n"
 		"<t0>&a;&b;&c;&d;</t0>\n";
+	const char *entity_context_input =
+		"<!DOCTYPE day [\n"
+		"  <!ENTITY draft.day '10'>\n"
+		"]>\n"
+		"<day>&draft.day;</day>\n";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -622,6 +646,17 @@ main(void) {
 	if (!check(status == XML_STATUS_OK, "synchronous nested internal entities are accepted")) return 1;
 	if (!check(g_sync_entity_start_count == 7 && !g_sync_entity_failed, "synchronous entity markup is emitted")) return 1;
 	if (!check(strcmp(g_sync_entity_text, "twothreefourthreetwo") == 0, "synchronous entity character data is emitted")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for entity context check")) return 1;
+	g_parser = parser;
+	g_entity_context_failed = 0;
+	XML_SetUserData(parser, parser);
+	XML_SetCharacterDataHandler(parser, entity_context_text_handler);
+	status = XML_Parse(parser, entity_context_input, (int)strlen(entity_context_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "entity context document accepted")) return 1;
+	if (!check(!g_entity_context_failed, "entity text callback reports original entity reference context")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

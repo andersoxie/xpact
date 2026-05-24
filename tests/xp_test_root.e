@@ -703,6 +703,9 @@ feature {NONE} -- Tests
 			l_handler: XP_POSITION_COLLECTING_HANDLER
 			l_parser: XP_PARSER
 			l_input: STRING_8
+			l_reference_input: STRING_8
+			l_reference_index: INTEGER
+			l_expected_event: STRING_8
 		do
 			create l_handler.make
 			create l_parser.make (l_handler)
@@ -720,6 +723,17 @@ feature {NONE} -- Tests
 			l_handler.set_parser (l_parser)
 			assert ("byte handler document parses", l_parser.parse ("<e>Hello</e>"))
 			assert ("text byte info inside handler", l_handler.events.i_th (2).same_string ("text:Hello:1:3:3:5"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_handler.set_parser (l_parser)
+			l_reference_input := "<!DOCTYPE day [%N  <!ENTITY draft.day '10'>%N]>%N<day>&draft.day;</day>%N"
+			l_reference_index := l_reference_input.substring_index ("&draft.day;", 1) - 1
+			create l_expected_event.make_from_string ("text:10:4:5:")
+			l_expected_event.append_integer (l_reference_index)
+			l_expected_event.append (":11")
+			assert ("entity reference context document parses", l_parser.parse (l_reference_input))
+			assert ("entity reference text byte info inside handler", l_handler.events.i_th (2).same_string (l_expected_event))
 		end
 
 	test_native_eiffel_bridge_parser

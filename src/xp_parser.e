@@ -42,6 +42,8 @@ feature {NONE} -- Initialization
 			max_token_length := a_max_token_length
 			create element_stack.make (32)
 			create entity_stack.make (8)
+			create entity_reference_start_stack.make (8)
+			create entity_reference_count_stack.make (8)
 			create entity_table.make (8)
 			create parameter_entity_table.make (4)
 			create external_entity_table.make (4)
@@ -789,7 +791,11 @@ feature {NONE} -- Character data and references
 					end
 				else
 					emit_default (l_text)
-					note_token_position (a_start_index, l_text.count)
+					if entity_reference_count_stack.count > 0 then
+						note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+					else
+						note_token_position (a_start_index, l_text.count)
+					end
 					emit_text (l_text)
 					Result := i
 				end
@@ -835,7 +841,9 @@ feature {NONE} -- Character data and references
 						emit_text (a_text)
 						a_text.wipe_out
 					end
+					push_entity_reference_position (a_start_index, l_end - a_start_index + 1)
 					include_general_entity_in_content (l_name)
+					pop_entity_reference_position
 					if has_error then
 						Result := a_input.count + 1
 					else
@@ -3040,6 +3048,46 @@ feature {NONE} -- Entity tables
 			end
 		end
 
+	push_entity_reference_position (a_start_index, a_byte_count: INTEGER)
+			-- Remember source range for callbacks emitted while expanding an entity reference.
+		require
+			valid_start: a_start_index >= 1
+			positive_count: a_byte_count > 0
+		local
+			l_start: INTEGER
+			l_count: INTEGER
+		do
+			if entity_reference_start_stack.count > 0 then
+				l_start := entity_reference_start_stack.i_th (entity_reference_start_stack.count)
+				l_count := entity_reference_count_stack.i_th (entity_reference_count_stack.count)
+			else
+				l_start := a_start_index
+				l_count := a_byte_count
+			end
+			entity_reference_start_stack.extend (l_start)
+			entity_reference_count_stack.extend (l_count)
+		ensure
+			one_more_start: entity_reference_start_stack.count = old entity_reference_start_stack.count + 1
+			one_more_count: entity_reference_count_stack.count = old entity_reference_count_stack.count + 1
+			stacks_aligned: entity_reference_start_stack.count = entity_reference_count_stack.count
+		end
+
+	pop_entity_reference_position
+			-- Forget innermost entity reference source range.
+		require
+			start_stack_not_empty: entity_reference_start_stack.count > 0
+			count_stack_not_empty: entity_reference_count_stack.count > 0
+		do
+			entity_reference_start_stack.finish
+			entity_reference_start_stack.remove
+			entity_reference_count_stack.finish
+			entity_reference_count_stack.remove
+		ensure
+			one_less_start: entity_reference_start_stack.count = old entity_reference_start_stack.count - 1
+			one_less_count: entity_reference_count_stack.count = old entity_reference_count_stack.count - 1
+			stacks_aligned: entity_reference_start_stack.count = entity_reference_count_stack.count
+		end
+
 feature {NONE} -- State
 
 	reset
@@ -3056,6 +3104,8 @@ feature {NONE} -- State
 			doctype_name.wipe_out
 			element_stack.wipe_out
 			entity_stack.wipe_out
+			entity_reference_start_stack.wipe_out
+			entity_reference_count_stack.wipe_out
 			entity_table.wipe_out
 			parameter_entity_table.wipe_out
 			external_entity_table.wipe_out
@@ -3198,6 +3248,12 @@ feature {NONE} -- State
 	entity_stack: ARRAYED_LIST [STRING_8]
 			-- Active entity names for recursion detection.
 
+	entity_reference_start_stack: ARRAYED_LIST [INTEGER]
+			-- Original document start indexes for active entity references.
+
+	entity_reference_count_stack: ARRAYED_LIST [INTEGER]
+			-- Original document byte counts for active entity references.
+
 	entity_table: HASH_TABLE [STRING_8, STRING_8]
 			-- Internal and predefined general entities.
 
@@ -3239,6 +3295,9 @@ invariant
 	last_error_attached: last_error /= Void
 	stack_attached: element_stack /= Void
 	entity_stack_attached: entity_stack /= Void
+	entity_reference_start_stack_attached: entity_reference_start_stack /= Void
+	entity_reference_count_stack_attached: entity_reference_count_stack /= Void
+	entity_reference_stacks_aligned: entity_reference_start_stack.count = entity_reference_count_stack.count
 	entity_table_attached: entity_table /= Void
 	parameter_entity_table_attached: parameter_entity_table /= Void
 	external_entity_table_attached: external_entity_table /= Void

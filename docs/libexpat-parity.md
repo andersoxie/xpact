@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 256 named upstream tests in the downloaded
+expected-failure patterns expand to 255 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -67,6 +67,9 @@ The Windows release has green evidence for:
   for the native general-entity support path.
 - synchronous internal entity replacement text that contributes nested markup
   in content, including the upstream `test_misc_sync_entity_tolerated` shape.
+- callback-time `XML_GetInputContext` and `XML_GetCurrentByteCount` values for
+  character data emitted from internal entity references, covering upstream
+  `test_misc_expected_event_ptr_issue_980`.
 - unloaded external general entities are skipped in the Windows native bridge
   when no external entity handler is registered, with
   `XML_SkippedEntityHandler` callback delivery.
