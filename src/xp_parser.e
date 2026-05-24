@@ -46,6 +46,7 @@ feature {NONE} -- Initialization
 			create parameter_entity_table.make (4)
 			create external_entity_table.make (4)
 			create external_parameter_entity_table.make (4)
+			create attribute_decl_table.make (4)
 			create last_error.make_empty
 			create doctype_name.make_empty
 			create position_input.make_empty
@@ -1257,6 +1258,7 @@ feature {NONE} -- DTD entity declarations
 									set_error ("missing attlist default declaration")
 								end
 								if not has_error then
+									record_attribute_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
 									handler.on_attlist_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
 									i := skip_spaces (a_subset, i)
 								end
@@ -1411,6 +1413,97 @@ feature {NONE} -- DTD entity declarations
 			end
 		ensure
 			result_in_bounds: Result <= a_subset.count + 1
+		end
+
+	record_attribute_decl (a_element_name, a_attribute_name, a_attribute_type: READABLE_STRING_8; a_default_value: detachable READABLE_STRING_8; a_is_required: BOOLEAN)
+			-- Retain first binding for an attribute declaration.
+		require
+			valid_element_name: is_valid_name (a_element_name)
+			valid_attribute_name: is_valid_name (a_attribute_name)
+			attribute_type_attached: a_attribute_type /= Void
+			attribute_type_not_empty: not a_attribute_type.is_empty
+		local
+			l_element_name: STRING_8
+			l_decls: ARRAYED_LIST [XP_ATTRIBUTE_DECL]
+			l_decl: XP_ATTRIBUTE_DECL
+		do
+			create l_element_name.make_from_string (a_element_name)
+			if attached attribute_decl_table.item (l_element_name) as l_existing_decls then
+				l_decls := l_existing_decls
+			else
+				create l_decls.make (4)
+				attribute_decl_table.put (l_decls, l_element_name)
+			end
+			if not has_attribute_decl (l_decls, a_attribute_name) then
+				create l_decl.make (a_attribute_name, a_attribute_type, a_default_value, a_is_required)
+				l_decls.extend (l_decl)
+			end
+		end
+
+	has_attribute_decl (a_decls: ARRAYED_LIST [XP_ATTRIBUTE_DECL]; a_attribute_name: READABLE_STRING_8): BOOLEAN
+			-- Does `a_decls' already bind `a_attribute_name'?
+		require
+			decls_attached: a_decls /= Void
+			valid_attribute_name: is_valid_name (a_attribute_name)
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_decls.count + 1
+			until
+				i > a_decls.count or Result
+			loop
+				if a_decls.i_th (i).name.same_string (a_attribute_name) then
+					Result := True
+					i := a_decls.count + 1
+				else
+					i := i + 1
+				end
+			variant
+				a_decls.count - i + 1
+			end
+		end
+
+	apply_default_attributes (a_element_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
+			-- Add DTD default attributes for `a_element_name' when absent.
+		require
+			valid_element_name: is_valid_name (a_element_name)
+			attributes_attached: a_attributes /= Void
+		local
+			l_element_name: STRING_8
+			i: INTEGER
+			l_decl: XP_ATTRIBUTE_DECL
+		do
+			create l_element_name.make_from_string (a_element_name)
+			if attached attribute_decl_table.item (l_element_name) as l_decls then
+				from
+					i := 1
+				invariant
+					index_in_bounds: i >= 1 and i <= l_decls.count + 1
+				until
+					i > l_decls.count or has_error
+				loop
+					l_decl := l_decls.i_th (i)
+					if l_decl.is_id and then a_attributes.has (l_decl.name) then
+						a_attributes.mark_id_attribute (l_decl.name)
+					end
+					if attached l_decl.default_value as l_default_value and then not a_attributes.has (l_decl.name) then
+						if a_attributes.count >= max_attribute_count then
+							set_error ("attribute count exceeds limit")
+						else
+							a_attributes.put_default (l_decl.name, l_default_value)
+							if l_decl.is_id then
+								a_attributes.mark_id_attribute (l_decl.name)
+							end
+						end
+					end
+					i := i + 1
+				variant
+					l_decls.count - i + 1
+				end
+			end
 		end
 
 	parse_entity_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
@@ -1739,9 +1832,12 @@ feature {NONE} -- Event dispatch
 				if element_stack.count = 0 then
 					document_element_count := document_element_count + 1
 				end
-				create l_name.make_from_string (a_name)
-				element_stack.extend (l_name)
-				handler.on_start_element (a_name, a_attributes)
+				apply_default_attributes (a_name, a_attributes)
+				if not has_error then
+					create l_name.make_from_string (a_name)
+					element_stack.extend (l_name)
+					handler.on_start_element (a_name, a_attributes)
+				end
 			end
 		ensure
 			pushed_or_error: (not has_error) implies element_stack.count = old element_stack.count + 1
@@ -2583,6 +2679,7 @@ feature {NONE} -- State
 			parameter_entity_table.wipe_out
 			external_entity_table.wipe_out
 			external_parameter_entity_table.wipe_out
+			attribute_decl_table.wipe_out
 			document_element_count := 0
 			expanded_entity_bytes := 0
 			has_doctype := False
@@ -2732,6 +2829,9 @@ feature {NONE} -- State
 	external_parameter_entity_table: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
 			-- External parameter entities.
 
+	attribute_decl_table: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
+			-- Attribute declarations keyed by element name.
+
 	document_element_count: INTEGER
 			-- Number of root-level document elements seen.
 
@@ -2759,6 +2859,7 @@ invariant
 	parameter_entity_table_attached: parameter_entity_table /= Void
 	external_entity_table_attached: external_entity_table /= Void
 	external_parameter_entity_table_attached: external_parameter_entity_table /= Void
+	attribute_decl_table_attached: attribute_decl_table /= Void
 	doctype_name_attached: doctype_name /= Void
 	valid_external_entity_policy: is_valid_policy (external_entity_policy)
 	input_limit_positive: max_input_bytes > 0

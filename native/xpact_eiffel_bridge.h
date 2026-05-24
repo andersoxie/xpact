@@ -86,6 +86,8 @@ typedef struct XPACT_EiffelBridge {
 	XML_Size (XMLCALL *get_current_column_number) (void *context, void *parser);
 	XML_Index (XMLCALL *get_current_byte_index) (void *context, void *parser);
 	int (XMLCALL *get_current_byte_count) (void *context, void *parser);
+	int (XMLCALL *get_specified_attribute_count) (void *context, void *parser);
+	int (XMLCALL *get_id_attribute_index) (void *context, void *parser);
 	const char *(XMLCALL *get_input_context) (void *context, void *parser, int *offset, int *size);
 	void (XMLCALL *get_parsing_status) (void *context, void *parser, XML_ParsingStatus *status);
 } XPACT_EiffelBridge;

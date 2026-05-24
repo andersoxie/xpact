@@ -463,13 +463,27 @@ XML_GetBase(XML_Parser parser) {
 
 int XMLCALL
 XML_GetSpecifiedAttributeCount(XML_Parser parser) {
-	(void)parser;
+	if (
+		parser != NULL
+		&& parser->bridge != NULL
+		&& parser->bridge->get_specified_attribute_count != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->get_specified_attribute_count(parser->bridge->context, parser->eiffelParser);
+	}
 	return 0;
 }
 
 int XMLCALL
 XML_GetIdAttributeIndex(XML_Parser parser) {
-	(void)parser;
+	if (
+		parser != NULL
+		&& parser->bridge != NULL
+		&& parser->bridge->get_id_attribute_index != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->get_id_attribute_index(parser->bridge->context, parser->eiffelParser);
+	}
 	return -1;
 }
 

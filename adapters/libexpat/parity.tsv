@@ -22,6 +22,10 @@ green	basic_tests.c	test_cdata_default	Eiffel parser forwards raw CDATA section 
 green	basic_tests.c	test_default_doctype_handler	Eiffel parser forwards doctype start/end callbacks and public/system literals to the native default handler.
 green	basic_tests.c	test_dtd_default_handling	Eiffel internal-subset scanning preserves default-handler whitespace while suppressing handled DTD declarations.
 green	basic_tests.c	test_dtd_attr_handling	Eiffel parser tokenizes ATTLIST declarations and forwards XML_AttlistDeclHandler callbacks for enumeration, NOTATION, CDATA, and default values.
+green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl	Eiffel parser merges multiple ATTLIST declarations with first declaration winning and delivers default attributes through the native start-element callback.
+green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_2	Eiffel parser applies ATTLIST defaults per element across multiple declarations.
+green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_3	Eiffel parser preserves first-binding ATTLIST defaults when later declarations add another attribute and duplicate an existing one.
+green	basic_tests.c	test_duplicate_id_attribute_multiple_attlistdecl	Eiffel parser reports explicit attribute counts and ID attribute indexes while applying default attributes through the native ABI.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -66,7 +70,6 @@ red	basic_tests.c	test_short_doctype_2	Short doctype diagnostics are not fully a
 red	basic_tests.c	test_short_doctype_3	Short doctype diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_long_doctype	Long doctype limit diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_*notation*	Notation declaration callbacks are not implemented.
-red	basic_tests.c	test_*attlist*	Attribute-list declaration callbacks and default-attribute parity are not implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.

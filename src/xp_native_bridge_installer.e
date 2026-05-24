@@ -268,6 +268,28 @@ feature -- Status callbacks
 			end
 		end
 
+	get_specified_attribute_count (a_parser: POINTER): INTEGER
+			-- Current explicit attribute vector count reported through the native ABI.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.specified_attribute_count
+			end
+		ensure
+			non_negative: Result >= 0
+		end
+
+	get_id_attribute_index (a_parser: POINTER): INTEGER
+			-- Current ID attribute vector index reported through the native ABI.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.id_attribute_index
+			else
+				Result := -1
+			end
+		ensure
+			valid_index: Result >= -1
+		end
+
 	get_input_context (a_parser, a_offset, a_size: POINTER): POINTER
 			-- Current input context buffer reported through the native ABI.
 		do

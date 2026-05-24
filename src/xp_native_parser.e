@@ -126,6 +126,22 @@ feature -- Access
 			byte_count_non_negative: Result >= 0
 		end
 
+	specified_attribute_count: INTEGER
+			-- Expat-style count of explicit attribute vector entries for current start event.
+		do
+			Result := handler.current_specified_attribute_count
+		ensure
+			non_negative: Result >= 0
+		end
+
+	id_attribute_index: INTEGER
+			-- Expat-style ID attribute name index for current start event, or -1.
+		do
+			Result := handler.current_id_attribute_index
+		ensure
+			valid_index: Result >= -1
+		end
+
 feature -- Element change
 
 	set_user_data (a_user_data: POINTER)

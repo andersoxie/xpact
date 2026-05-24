@@ -12,6 +12,8 @@ static int g_doctype_end_count;
 static int g_doctype_failed;
 static int g_attlist_count;
 static int g_attlist_failed;
+static int g_default_attr_start_count;
+static int g_default_attr_failed;
 
 static int
 check(int condition, const char *label) {
@@ -82,6 +84,35 @@ attlist_handler(void *userData, const XML_Char *elname, const XML_Char *attname,
 	}
 }
 
+static void XMLCALL
+default_attr_start_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
+	(void)userData;
+	g_default_attr_start_count++;
+	if (strcmp(name, "doc") == 0) {
+		if (XML_GetSpecifiedAttributeCount(g_parser) != 2 || XML_GetIdAttributeIndex(g_parser) != 0) {
+			g_default_attr_failed = 1;
+			return;
+		}
+		if (atts == NULL || atts[0] == NULL || strcmp(atts[0], "id") != 0 || strcmp(atts[1], "doc_identity") != 0) {
+			g_default_attr_failed = 1;
+			return;
+		}
+		if (atts[2] == NULL || strcmp(atts[2], "a") != 0 || strcmp(atts[3], "expected_doc") != 0 || atts[4] == NULL || strcmp(atts[4], "b") != 0 || strcmp(atts[5], "second_expected_doc") != 0 || atts[6] != NULL) {
+			g_default_attr_failed = 1;
+		}
+	} else if (strcmp(name, "tag") == 0) {
+		if (XML_GetSpecifiedAttributeCount(g_parser) != 0 || XML_GetIdAttributeIndex(g_parser) != -1) {
+			g_default_attr_failed = 1;
+			return;
+		}
+		if (atts == NULL || atts[0] == NULL || strcmp(atts[0], "a") != 0 || strcmp(atts[1], "expected_tag") != 0 || atts[2] != NULL) {
+			g_default_attr_failed = 1;
+		}
+	} else {
+		g_default_attr_failed = 1;
+	}
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -104,6 +135,13 @@ main(void) {
 		"<!ATTLIST doc a ( one | two | three ) #REQUIRED>\n"
 		"<!ATTLIST doc b NOTATION (foo) 'bar'>\n"
 		"]><doc a='two'/>";
+	const char *default_attr_input =
+		"<!DOCTYPE doc [\n"
+		"<!ATTLIST doc a CDATA 'expected_doc'>\n"
+		"<!ATTLIST tag a CDATA 'expected_tag'>\n"
+		"<!ATTLIST doc b CDATA 'second_expected_doc' a CDATA 'ignored_doc'>\n"
+		"<!ATTLIST doc id ID #REQUIRED>\n"
+		"]><doc id='doc_identity'><tag></tag></doc>";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -162,6 +200,17 @@ main(void) {
 	status = XML_Parse(parser, attlist_input, (int)strlen(attlist_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for attlist check")) return 1;
 	if (!check(g_attlist_count == 2 && !g_attlist_failed, "attlist declaration callbacks delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for default attribute check")) return 1;
+	g_parser = parser;
+	g_default_attr_start_count = 0;
+	g_default_attr_failed = 0;
+	XML_SetStartElementHandler(parser, default_attr_start_handler);
+	status = XML_Parse(parser, default_attr_input, (int)strlen(default_attr_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for default attribute check")) return 1;
+	if (!check(g_default_attr_start_count == 2 && !g_default_attr_failed, "default attributes delegated")) return 1;
 	XML_ParserFree(parser);
 
 	puts("xpact Eiffel DLL smoke: ok");

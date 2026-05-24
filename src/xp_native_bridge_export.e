@@ -44,6 +44,8 @@ feature -- Bridge registration
 				$get_current_column_number,
 				$get_current_byte_index,
 				$get_current_byte_count,
+				$get_specified_attribute_count,
+				$get_id_attribute_index,
 				$get_input_context,
 				$get_parsing_status
 			)
@@ -87,6 +89,8 @@ feature {NONE} -- Native calls
 		a_get_current_column_number,
 		a_get_current_byte_index,
 		a_get_current_byte_count,
+		a_get_specified_attribute_count,
+		a_get_id_attribute_index,
 		a_get_input_context,
 		a_get_parsing_status: POINTER
 	): BOOLEAN
@@ -103,7 +107,7 @@ feature {NONE} -- Native calls
 			get_input_context_attached: a_get_input_context /= default_pointer
 			get_parsing_status_attached: a_get_parsing_status /= default_pointer
 		external
-			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
+			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
 		alias
 			"XPACT_RegisterEiffelRuntimeBridgePointers"
 		end

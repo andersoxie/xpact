@@ -16,6 +16,7 @@ feature {NONE} -- Initialization
 			test_depth_limit_is_enforced
 			test_comments_and_cdata
 			test_attlist_declaration_callbacks
+			test_attlist_default_attributes
 			test_predefined_and_numeric_entities
 			test_internal_entity_declarations
 			test_parameter_entity_declarations
@@ -193,6 +194,39 @@ feature {NONE} -- Tests
 				assert ("attlist notation callback", l_handler.events.i_th (1).same_string ("attlist:doc:a:NOTATION(foo):bar:0"))
 			else
 				io.put_string ("attlist notation error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+		end
+
+	test_attlist_default_attributes
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<!ATTLIST doc a CDATA 'expected'><!ATTLIST doc a CDATA 'ignored'>]><doc/>")
+			assert ("attlist default document accepted", l_ok)
+			if l_ok then
+				assert ("attlist default added", l_handler.last_attribute_value.same_string ("expected"))
+				assert ("attlist default counted", l_handler.events.i_th (1).same_string ("start:doc:1"))
+			else
+				io.put_string ("attlist default error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<!ATTLIST doc a CDATA 'default'>]><doc a='explicit'/>")
+			assert ("explicit attribute with default accepted", l_ok)
+			if l_ok then
+				assert ("explicit attribute wins", l_handler.last_attribute_value.same_string ("explicit"))
+				assert ("default not duplicated", l_handler.events.i_th (1).same_string ("start:doc:1"))
+			else
+				io.put_string ("attlist explicit error: ")
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end

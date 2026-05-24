@@ -26,8 +26,10 @@ feature {NONE} -- Initialization
 	make
 		do
 			create events.make (16)
+			current_id_attribute_index := -1
 		ensure
 			no_events: events.count = 0
+			no_current_id_attribute: current_id_attribute_index = -1
 		end
 
 feature -- Access
@@ -108,6 +110,12 @@ feature -- Metrics
 
 	attlist_decl_count: INTEGER
 			-- Number of attribute-list declaration events emitted.
+
+	current_specified_attribute_count: INTEGER
+			-- Expat-style count of explicit attribute vector entries for current start event.
+
+	current_id_attribute_index: INTEGER
+			-- Expat-style ID attribute name index for current start event, or -1.
 
 feature -- Element change
 
@@ -206,6 +214,8 @@ feature -- Element change
 			start_doctype_decl_count := 0
 			end_doctype_decl_count := 0
 			attlist_decl_count := 0
+			current_specified_attribute_count := 0
+			current_id_attribute_index := -1
 		ensure
 			no_events: events.count = 0
 			no_start_events: start_element_count = 0
@@ -219,6 +229,8 @@ feature -- Element change
 			no_start_doctype_events: start_doctype_decl_count = 0
 			no_end_doctype_events: end_doctype_decl_count = 0
 			no_attlist_events: attlist_decl_count = 0
+			no_current_specified_attributes: current_specified_attribute_count = 0
+			no_current_id_attribute: current_id_attribute_index = -1
 		end
 
 feature -- Events
@@ -234,6 +246,8 @@ feature -- Events
 			l_attribute_value: C_STRING
 		do
 			start_element_count := start_element_count + 1
+			current_specified_attribute_count := a_attributes.specified_attribute_count * 2
+			current_id_attribute_index := a_attributes.id_attribute_index
 			create l_event.make_from_string ("start:")
 			l_event.append (a_name)
 			l_event.append_character (':')
@@ -562,5 +576,7 @@ invariant
 	non_negative_start_doctype_count: start_doctype_decl_count >= 0
 	non_negative_end_doctype_count: end_doctype_decl_count >= 0
 	non_negative_attlist_count: attlist_decl_count >= 0
+	non_negative_current_specified_attribute_count: current_specified_attribute_count >= 0
+	current_id_attribute_index_valid: current_id_attribute_index >= -1
 
 end

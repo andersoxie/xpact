@@ -103,6 +103,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelIntegerQueryRoutine get_current_column_number,
 	 XPACT_EiffelIntegerQueryRoutine get_current_byte_index,
 	 XPACT_EiffelIntegerQueryRoutine get_current_byte_count,
+	 XPACT_EiffelIntegerQueryRoutine get_specified_attribute_count,
+	 XPACT_EiffelIntegerQueryRoutine get_id_attribute_index,
 	 XPACT_EiffelInputContextRoutine get_input_context,
 	 XPACT_EiffelParsingStatusRoutine get_parsing_status
 );
@@ -132,6 +134,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER get_current_column_number,
 	 EIF_POINTER get_current_byte_index,
 	 EIF_POINTER get_current_byte_count,
+	 EIF_POINTER get_specified_attribute_count,
+	 EIF_POINTER get_id_attribute_index,
 	 EIF_POINTER get_input_context,
 	 EIF_POINTER get_parsing_status
 );
