@@ -14,6 +14,7 @@ inherit
 			on_start_doctype_decl,
 			on_end_doctype_decl,
 			on_element_decl,
+			on_notation_decl,
 			on_attlist_decl,
 			on_default
 		end
@@ -74,6 +75,9 @@ feature -- Access
 	element_decl_callback: POINTER
 			-- `XML_ElementDeclHandler' callback pointer.
 
+	notation_decl_callback: POINTER
+			-- `XML_NotationDeclHandler' callback pointer.
+
 	attlist_decl_callback: POINTER
 			-- `XML_AttlistDeclHandler' callback pointer.
 
@@ -114,6 +118,9 @@ feature -- Metrics
 
 	element_decl_count: INTEGER
 			-- Number of element declaration events emitted.
+
+	notation_decl_count: INTEGER
+			-- Number of notation declaration events emitted.
 
 	attlist_decl_count: INTEGER
 			-- Number of attribute-list declaration events emitted.
@@ -206,6 +213,14 @@ feature -- Element change
 			handler_set: element_decl_callback = a_handler
 		end
 
+	set_notation_decl_handler (a_handler: POINTER)
+			-- Set native notation declaration callback.
+		do
+			notation_decl_callback := a_handler
+		ensure
+			handler_set: notation_decl_callback = a_handler
+		end
+
 	set_attlist_decl_handler (a_handler: POINTER)
 			-- Set native attribute-list declaration callback.
 		do
@@ -229,6 +244,7 @@ feature -- Element change
 			start_doctype_decl_count := 0
 			end_doctype_decl_count := 0
 			element_decl_count := 0
+			notation_decl_count := 0
 			attlist_decl_count := 0
 			current_specified_attribute_count := 0
 			current_id_attribute_index := -1
@@ -245,6 +261,7 @@ feature -- Element change
 			no_start_doctype_events: start_doctype_decl_count = 0
 			no_end_doctype_events: end_doctype_decl_count = 0
 			no_element_decl_events: element_decl_count = 0
+			no_notation_decl_events: notation_decl_count = 0
 			no_attlist_events: attlist_decl_count = 0
 			no_current_specified_attributes: current_specified_attribute_count = 0
 			no_current_id_attribute: current_id_attribute_index = -1
@@ -438,6 +455,47 @@ feature -- Events
 				if l_model /= default_pointer then
 					call_element_decl_callback (element_decl_callback, user_data, l_name.item, l_model)
 				end
+			end
+		end
+
+	on_notation_decl (a_name: READABLE_STRING_8; a_base, a_system_id, a_public_id: detachable READABLE_STRING_8)
+		local
+			l_event: STRING_8
+			l_name: C_STRING
+			l_base: detachable C_STRING
+			l_system_id: detachable C_STRING
+			l_public_id: detachable C_STRING
+			l_base_pointer: POINTER
+			l_system_pointer: POINTER
+			l_public_pointer: POINTER
+		do
+			notation_decl_count := notation_decl_count + 1
+			create l_event.make_from_string ("notation:")
+			l_event.append (a_name)
+			l_event.append_character (':')
+			if attached a_system_id as l_attached_system_id then
+				l_event.append (l_attached_system_id)
+			end
+			l_event.append_character (':')
+			if attached a_public_id as l_attached_public_id then
+				l_event.append (l_attached_public_id)
+			end
+			events.extend (l_event)
+			if notation_decl_callback /= default_pointer then
+				create l_name.make (a_name)
+				if attached a_base as l_attached_base then
+					create l_base.make (l_attached_base)
+					l_base_pointer := l_base.item
+				end
+				if attached a_system_id as l_attached_system_id then
+					create l_system_id.make (l_attached_system_id)
+					l_system_pointer := l_system_id.item
+				end
+				if attached a_public_id as l_attached_public_id then
+					create l_public_id.make (l_attached_public_id)
+					l_public_pointer := l_public_id.item
+				end
+				call_notation_decl_callback (notation_decl_callback, user_data, l_name.item, l_base_pointer, l_system_pointer, l_public_pointer)
 			end
 		end
 
@@ -757,6 +815,17 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *, const char *, void *)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, (void *) $a_model);"
 		end
 
+	call_notation_decl_callback (a_callback, a_user_data, a_name, a_base, a_system_id, a_public_id: POINTER)
+			-- Invoke native `XML_NotationDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			name_attached: a_name /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, const char *, const char *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, (const char *) $a_base, (const char *) $a_system_id, (const char *) $a_public_id);"
+		end
+
 	call_attlist_decl_callback (a_callback, a_user_data, a_element_name, a_attribute_name, a_attribute_type, a_default_value: POINTER; a_is_required: BOOLEAN)
 			-- Invoke native `XML_AttlistDeclHandler'.
 		require
@@ -783,6 +852,7 @@ invariant
 	non_negative_start_doctype_count: start_doctype_decl_count >= 0
 	non_negative_end_doctype_count: end_doctype_decl_count >= 0
 	non_negative_element_decl_count: element_decl_count >= 0
+	non_negative_notation_decl_count: notation_decl_count >= 0
 	non_negative_attlist_count: attlist_decl_count >= 0
 	non_negative_current_specified_attribute_count: current_specified_attribute_count >= 0
 	current_id_attribute_index_valid: current_id_attribute_index >= -1

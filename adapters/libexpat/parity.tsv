@@ -28,6 +28,8 @@ green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_3	Eiffel
 green	basic_tests.c	test_duplicate_id_attribute_multiple_attlistdecl	Eiffel parser reports explicit attribute counts and ID attribute indexes while applying default attributes through the native ABI.
 green	basic_tests.c	test_dtd_elements	Eiffel parser emits XML_SetElementDeclHandler callbacks and freeable XML_Content models for DTD element declarations.
 green	basic_tests.c	test_dtd_elements_nesting	Eiffel parser builds Expat-compatible nested XML_Content arrays for sequence, choice, name, and quantifier content models.
+green	basic_tests.c	test_public_notation_no_sysid	Eiffel parser accepts PUBLIC notation declarations without system IDs and forwards XML_NotationDeclHandler callbacks.
+green	basic_tests.c	test_bad_notation	Eiffel parser rejects SYSTEM notation declarations missing a system literal with XML_ERROR_SYNTAX.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -69,7 +71,6 @@ red	basic_tests.c	test_short_doctype	Short doctype diagnostics are not fully aud
 red	basic_tests.c	test_short_doctype_2	Short doctype diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_short_doctype_3	Short doctype diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_long_doctype	Long doctype limit diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_*notation*	Notation declaration callbacks are not implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.

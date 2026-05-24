@@ -14,6 +14,7 @@ inherit
 			on_start_doctype_decl,
 			on_end_doctype_decl,
 			on_element_decl,
+			on_notation_decl,
 			on_attlist_decl,
 			on_default
 		end
@@ -51,6 +52,9 @@ feature -- Access
 	record_element_decl_events: BOOLEAN
 			-- Should element declaration events be added to `events'?
 
+	record_notation_decl_events: BOOLEAN
+			-- Should notation declaration events be added to `events'?
+
 feature -- Configuration
 
 	enable_doctype_events
@@ -83,6 +87,14 @@ feature -- Configuration
 			record_element_decl_events := True
 		ensure
 			element_decl_events_enabled: record_element_decl_events
+		end
+
+	enable_notation_decl_events
+			-- Record notation declaration events in `events'.
+		do
+			record_notation_decl_events := True
+		ensure
+			notation_decl_events_enabled: record_notation_decl_events
 		end
 
 feature -- Events
@@ -195,6 +207,25 @@ feature -- Events
 				l_event.append_integer (a_model.quantifier)
 				l_event.append_character (':')
 				l_event.append_integer (a_model.children.count)
+				events.extend (l_event)
+			end
+		end
+
+	on_notation_decl (a_name: READABLE_STRING_8; a_base, a_system_id, a_public_id: detachable READABLE_STRING_8)
+		local
+			l_event: STRING_8
+		do
+			if record_notation_decl_events then
+				create l_event.make_from_string ("notation:")
+				l_event.append (a_name)
+				l_event.append_character (':')
+				if attached a_system_id as l_system_id then
+					l_event.append (l_system_id)
+				end
+				l_event.append_character (':')
+				if attached a_public_id as l_public_id then
+					l_event.append (l_public_id)
+				end
 				events.extend (l_event)
 			end
 		end

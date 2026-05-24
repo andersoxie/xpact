@@ -16,6 +16,8 @@ static int g_default_attr_start_count;
 static int g_default_attr_failed;
 static int g_element_decl_count;
 static int g_element_decl_failed;
+static int g_notation_decl_count;
+static int g_notation_decl_failed;
 
 static int
 check(int condition, const char *label) {
@@ -161,6 +163,23 @@ element_decl_handler(void *userData, const XML_Char *name, XML_Content *model) {
 	XML_FreeContentModel(g_parser, model);
 }
 
+static void XMLCALL
+notation_decl_handler(void *userData, const XML_Char *notationName, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	(void)userData;
+	g_notation_decl_count++;
+	if (g_notation_decl_count == 1) {
+		if (strcmp(notationName, "note") != 0 || base != NULL || systemId != NULL || publicId == NULL || strcmp(publicId, "pub") != 0) {
+			g_notation_decl_failed = 1;
+		}
+	} else if (g_notation_decl_count == 2) {
+		if (strcmp(notationName, "img") != 0 || base != NULL || systemId == NULL || strcmp(systemId, "image/gif") != 0 || publicId != NULL) {
+			g_notation_decl_failed = 1;
+		}
+	} else {
+		g_notation_decl_failed = 1;
+	}
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -194,6 +213,12 @@ main(void) {
 		"<!DOCTYPE foo [\n"
 		"<!ELEMENT junk ((bar|foo|xyz+), zebra*)>\n"
 		"]><foo/>";
+	const char *notation_decl_input =
+		"<!DOCTYPE doc [\n"
+		"<!NOTATION note PUBLIC 'pub'>\n"
+		"<!NOTATION img SYSTEM 'image/gif'>\n"
+		"<!ELEMENT doc EMPTY>\n"
+		"]><doc/>";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -274,6 +299,16 @@ main(void) {
 	status = XML_Parse(parser, element_decl_input, (int)strlen(element_decl_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for element declaration check")) return 1;
 	if (!check(g_element_decl_count == 1 && !g_element_decl_failed, "element declaration content model delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for notation declaration check")) return 1;
+	g_notation_decl_count = 0;
+	g_notation_decl_failed = 0;
+	XML_SetNotationDeclHandler(parser, notation_decl_handler);
+	status = XML_Parse(parser, notation_decl_input, (int)strlen(notation_decl_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for notation declaration check")) return 1;
+	if (!check(g_notation_decl_count == 2 && !g_notation_decl_failed, "notation declaration callbacks delegated")) return 1;
 	XML_ParserFree(parser);
 
 	puts("xpact Eiffel DLL smoke: ok");

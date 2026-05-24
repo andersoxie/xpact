@@ -220,6 +220,14 @@ feature -- Element change
 			handler_set: handler.element_decl_callback = a_handler
 		end
 
+	set_notation_decl_handler (a_handler: POINTER)
+			-- Set native notation declaration callback.
+		do
+			handler.set_notation_decl_handler (a_handler)
+		ensure
+			handler_set: handler.notation_decl_callback = a_handler
+		end
+
 	set_attlist_decl_handler (a_handler: POINTER)
 			-- Set native attribute-list declaration callback.
 		do

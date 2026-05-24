@@ -70,6 +70,11 @@ typedef struct XPACT_EiffelBridge {
 		void *parser,
 		XML_ElementDeclHandler handler
 	);
+	void (XMLCALL *set_notation_decl_handler) (
+		void *context,
+		void *parser,
+		XML_NotationDeclHandler handler
+	);
 	void (XMLCALL *set_attlist_decl_handler) (
 		void *context,
 		void *parser,

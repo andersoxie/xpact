@@ -40,7 +40,6 @@ basic_tests.c	test_short_doctype	Short doctype diagnostics are not fully audited
 basic_tests.c	test_short_doctype_2	Short doctype diagnostics are not fully audited against libexpat.
 basic_tests.c	test_short_doctype_3	Short doctype diagnostics are not fully audited against libexpat.
 basic_tests.c	test_long_doctype	Long doctype limit diagnostics are not fully audited against libexpat.
-basic_tests.c	test_*notation*	Notation declaration callbacks are not implemented.
 basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.

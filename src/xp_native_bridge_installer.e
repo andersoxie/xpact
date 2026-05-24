@@ -168,6 +168,14 @@ feature -- Handler callbacks
 			end
 		end
 
+	set_notation_decl_handler (a_parser, a_handler: POINTER)
+			-- Record notation declaration handler slot.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_notation_decl_handler (a_handler)
+			end
+		end
+
 	set_attlist_decl_handler (a_parser, a_handler: POINTER)
 			-- Record attribute-list declaration handler slot.
 		do

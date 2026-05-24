@@ -1146,13 +1146,7 @@ feature {NONE} -- DTD entity declarations
 				elseif has_at (a_subset, i, "<!ELEMENT") then
 					i := parse_element_declaration (a_subset, i)
 				elseif has_at (a_subset, i, "<!NOTATION") then
-					l_end := find_markup_declaration_end (a_subset, i)
-					if l_end = 0 then
-						set_error ("unterminated doctype declaration")
-						i := a_subset.count + 1
-					else
-						i := l_end + 1
-					end
+					i := parse_notation_declaration (a_subset, i)
 				elseif has_at (a_subset, i, "<!--") then
 					l_end := find_sequence (a_subset, "-->", i + 4)
 					if l_end = 0 then
@@ -1396,6 +1390,84 @@ feature {NONE} -- DTD entity declarations
 			end
 		ensure
 			result_in_bounds: Result >= a_start_index and Result <= a_end_index + 1
+		end
+
+	parse_notation_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Parse a notation declaration and emit it.
+		require
+			subset_attached: a_subset /= Void
+			starts_notation: has_at (a_subset, a_start_index, "<!NOTATION")
+		local
+			i: INTEGER
+			l_end: INTEGER
+			name_start: INTEGER
+			l_name: STRING_8
+			l_public_id: STRING_8
+			l_system_id: STRING_8
+			l_public: detachable STRING_8
+			l_system: detachable STRING_8
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_attributes.make
+			l_end := find_markup_declaration_end (a_subset, a_start_index)
+			if l_end = 0 then
+				set_error ("unterminated notation declaration")
+				Result := a_subset.count + 1
+			else
+				i := skip_spaces (a_subset, a_start_index + 10)
+				if i >= l_end or else not l_attributes.is_name_start_character (a_subset.item (i)) then
+					set_error ("invalid notation declaration name")
+					Result := a_subset.count + 1
+				else
+					name_start := i
+					i := scan_name (a_subset, i)
+					create l_name.make_from_string (a_subset.substring (name_start, i - 1))
+					create l_public_id.make_empty
+					create l_system_id.make_empty
+					i := skip_spaces (a_subset, i)
+					if has_keyword_at (a_subset, i, "SYSTEM") then
+						i := skip_spaces (a_subset, i + 6)
+						if i <= l_end - 1 and then is_quote (a_subset.item (i)) then
+							i := read_quoted_literal (a_subset, i, l_end - 1, l_system_id)
+							l_system := l_system_id
+						else
+							set_error ("missing notation system identifier")
+						end
+					elseif has_keyword_at (a_subset, i, "PUBLIC") then
+						i := skip_spaces (a_subset, i + 6)
+						if i <= l_end - 1 and then is_quote (a_subset.item (i)) then
+							i := read_quoted_literal (a_subset, i, l_end - 1, l_public_id)
+							l_public := l_public_id
+							if not has_error then
+								i := skip_spaces (a_subset, i)
+								if i <= l_end - 1 and then is_quote (a_subset.item (i)) then
+									i := read_quoted_literal (a_subset, i, l_end - 1, l_system_id)
+									l_system := l_system_id
+								end
+							end
+						else
+							set_error ("missing notation public identifier")
+						end
+					else
+						set_error ("invalid notation declaration")
+					end
+					if not has_error then
+						i := skip_spaces (a_subset, i)
+						if i = l_end then
+							handler.on_notation_decl (l_name, Void, l_system, l_public)
+							Result := l_end + 1
+						else
+							set_error ("unexpected notation declaration content")
+							Result := a_subset.count + 1
+						end
+					else
+						Result := a_subset.count + 1
+					end
+				end
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_subset.count + 1
 		end
 
 	parse_attlist_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
