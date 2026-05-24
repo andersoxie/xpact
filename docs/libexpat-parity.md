@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 269 named upstream tests in the downloaded
+expected-failure patterns expand to 259 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -51,12 +51,18 @@ The Windows release has green evidence for:
 - ATTLIST default-attribute merging, first-declaration-wins behavior,
   explicit-attribute counts, and ID attribute indexes for the covered native
   callback path;
+- namespace-like default attributes such as `xmlns:e` are kept as ordinary
+  attributes when namespace mode is not enabled;
 - `XML_SetElementDeclHandler` callbacks with freeable `XML_Content` content
   models for simple and nested sequence/choice/name quantifier declarations;
 - `XML_SetNotationDeclHandler` callbacks for `SYSTEM` notation declarations
   and `PUBLIC` notation declarations without system identifiers;
 - XML public identifier validation for doctype `PUBLIC` IDs, including
-  `XML_ERROR_PUBLICID` mapping through the native C ABI.
+  `XML_ERROR_PUBLICID` mapping through the native C ABI;
+- malformed doctype diagnostics for invalid names, malformed UTF-8 byte
+  sequences, prefix-conv internal-subset syntax, missing `PUBLIC`/`SYSTEM`
+  literals, extra external identifier content, and document-level end tags
+  after short doctypes.
 
 ## Red Rows
 
@@ -66,7 +72,8 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - allocation-failure injection and allocation accounting tests;
 - UTF-16 and custom/unknown encoding tests;
 - external entity parser creation/loading through the Expat C callback model;
-- remaining DTD diagnostics and default-handler edge cases;
+- remaining DTD diagnostics for external DTD/encoding cases and
+  default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;
 - stop/suspend/resume/abort parser state;
 - Expat hash/reparse-deferral/accounting semantics.

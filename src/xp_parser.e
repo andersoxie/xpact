@@ -1168,8 +1168,11 @@ feature {NONE} -- DTD entity declarations
 				else
 					if is_xml_space (a_subset.item (i)) then
 						emit_default (a_subset.substring (i, i))
+						i := i + 1
+					else
+						set_error ("unexpected DTD content")
+						i := a_subset.count + 1
 					end
-					i := i + 1
 				end
 			variant
 				a_subset.count - i + 1

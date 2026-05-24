@@ -18,6 +18,101 @@ static int g_element_decl_count;
 static int g_element_decl_failed;
 static int g_notation_decl_count;
 static int g_notation_decl_failed;
+static int g_ns_default_attr_start_count;
+static int g_ns_default_attr_failed;
+
+struct malformed_doctype_case {
+	const char *label;
+	const char *input;
+	enum XML_Error expected;
+	int use_unknown_encoding_handler;
+};
+
+static int XMLCALL
+smoke_prefix_converter(void *data, const char *s) {
+	(void)data;
+	if (s[0] == (char)-1) {
+		return -1;
+	}
+	return (s[1] + (s[0] & 0x7f)) & 0x01ff;
+}
+
+static int XMLCALL
+smoke_unknown_encoding_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
+	int i;
+	(void)encodingHandlerData;
+	if (name == NULL || strcmp(name, "prefix-conv") != 0 || info == NULL) {
+		return XML_STATUS_ERROR;
+	}
+	for (i = 0; i < 128; i++) {
+		info->map[i] = i;
+	}
+	for (; i < 256; i++) {
+		info->map[i] = -2;
+	}
+	info->data = NULL;
+	info->convert = smoke_prefix_converter;
+	info->release = NULL;
+	return XML_STATUS_OK;
+}
+
+static const struct malformed_doctype_case g_malformed_doctype_cases[] = {
+	{
+		"bad doctype prefix encoding",
+		"<?xml version='1.0' encoding='prefix-conv'?>\n"
+		"<!DOCTYPE doc [ \x80" "\x44 ]><doc/>",
+		XML_ERROR_SYNTAX,
+		1
+	},
+	{
+		"bad doctype plus",
+		"<!DOCTYPE 1+ [ <!ENTITY foo 'bar'> ]>\n<1+>&foo;</1+>",
+		XML_ERROR_INVALID_TOKEN,
+		0
+	},
+	{
+		"bad doctype star",
+		"<!DOCTYPE 1* [ <!ENTITY foo 'bar'> ]>\n<1*>&foo;</1*>",
+		XML_ERROR_INVALID_TOKEN,
+		0
+	},
+	{
+		"bad doctype query",
+		"<!DOCTYPE 1? [ <!ENTITY foo 'bar'> ]>\n<1?>&foo;</1?>",
+		XML_ERROR_INVALID_TOKEN,
+		0
+	},
+	{
+		"bad doctype utf8",
+		"<!DOCTYPE \xDB\x25" "doc><doc/>",
+		XML_ERROR_INVALID_TOKEN,
+		0
+	},
+	{
+		"short doctype",
+		"<!DOCTYPE doc></doc>",
+		XML_ERROR_INVALID_TOKEN,
+		0
+	},
+	{
+		"short doctype missing public id",
+		"<!DOCTYPE doc PUBLIC></doc>",
+		XML_ERROR_SYNTAX,
+		0
+	},
+	{
+		"short doctype missing system id",
+		"<!DOCTYPE doc SYSTEM></doc>",
+		XML_ERROR_SYNTAX,
+		0
+	},
+	{
+		"long doctype",
+		"<!DOCTYPE doc PUBLIC 'foo' 'bar' 'baz'></doc>",
+		XML_ERROR_SYNTAX,
+		0
+	}
+};
 
 static int
 check(int condition, const char *label) {
@@ -118,6 +213,23 @@ default_attr_start_handler(void *userData, const XML_Char *name, const XML_Char 
 }
 
 static void XMLCALL
+ns_default_attr_start_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
+	(void)userData;
+	g_ns_default_attr_start_count++;
+	if (strcmp(name, "e:element") != 0) {
+		g_ns_default_attr_failed = 1;
+		return;
+	}
+	if (XML_GetSpecifiedAttributeCount(g_parser) != 0 || XML_GetIdAttributeIndex(g_parser) != -1) {
+		g_ns_default_attr_failed = 1;
+		return;
+	}
+	if (atts == NULL || atts[0] == NULL || strcmp(atts[0], "xmlns:e") != 0 || atts[1] == NULL || strcmp(atts[1], "http://example.org/") != 0 || atts[2] != NULL) {
+		g_ns_default_attr_failed = 1;
+	}
+}
+
+static void XMLCALL
 element_decl_handler(void *userData, const XML_Char *name, XML_Content *model) {
 	(void)userData;
 	g_element_decl_count++;
@@ -183,7 +295,9 @@ notation_decl_handler(void *userData, const XML_Char *notationName, const XML_Ch
 int
 main(void) {
 	enum XML_Status status;
+	enum XML_Error actual_error;
 	XML_Parser parser = XML_ParserCreate("UTF-8");
+	size_t malformed_index;
 	const char *default_input = "<?test processing instruction?>\n<doc/>";
 	const char *doctype_input = "<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>";
 	const char *dtd_default_input =
@@ -209,6 +323,12 @@ main(void) {
 		"<!ATTLIST doc b CDATA 'second_expected_doc' a CDATA 'ignored_doc'>\n"
 		"<!ATTLIST doc id ID #REQUIRED>\n"
 		"]><doc id='doc_identity'><tag></tag></doc>";
+	const char *ns_default_attr_input =
+		"<!DOCTYPE e:element [\n"
+		"  <!ATTLIST e:element\n"
+		"    xmlns:e CDATA 'http://example.org/'>\n"
+		"      ]>\n"
+		"<e:element/>";
 	const char *element_decl_input =
 		"<!DOCTYPE foo [\n"
 		"<!ELEMENT junk ((bar|foo|xyz+), zebra*)>\n"
@@ -295,6 +415,17 @@ main(void) {
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for namespace-like default attribute check")) return 1;
+	g_parser = parser;
+	g_ns_default_attr_start_count = 0;
+	g_ns_default_attr_failed = 0;
+	XML_SetStartElementHandler(parser, ns_default_attr_start_handler);
+	status = XML_Parse(parser, ns_default_attr_input, (int)strlen(ns_default_attr_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "namespace-like default attribute accepted without namespace mode")) return 1;
+	if (!check(g_ns_default_attr_start_count == 1 && !g_ns_default_attr_failed, "namespace-like default attribute delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created for element declaration check")) return 1;
 	g_parser = parser;
 	g_element_decl_count = 0;
@@ -322,6 +453,36 @@ main(void) {
 	if (!check(status == XML_STATUS_ERROR, "bad public doctype rejected")) return 1;
 	if (!check(XML_GetErrorCode(parser) == XML_ERROR_PUBLICID, "bad public doctype maps to XML_ERROR_PUBLICID")) return 1;
 	XML_ParserFree(parser);
+
+	for (malformed_index = 0; malformed_index < sizeof(g_malformed_doctype_cases) / sizeof(g_malformed_doctype_cases[0]); malformed_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for malformed doctype check")) return 1;
+		if (g_malformed_doctype_cases[malformed_index].use_unknown_encoding_handler) {
+			XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+		}
+		status = XML_Parse(
+			parser,
+			g_malformed_doctype_cases[malformed_index].input,
+			(int)strlen(g_malformed_doctype_cases[malformed_index].input),
+			XML_TRUE
+		);
+		if (status != XML_STATUS_ERROR) {
+			fprintf(stderr, "FAIL: %s rejected\n", g_malformed_doctype_cases[malformed_index].label);
+			return 1;
+		}
+		actual_error = XML_GetErrorCode(parser);
+		if (actual_error != g_malformed_doctype_cases[malformed_index].expected) {
+			fprintf(
+				stderr,
+				"FAIL: %s mapped to %d, expected %d\n",
+				g_malformed_doctype_cases[malformed_index].label,
+				(int)actual_error,
+				(int)g_malformed_doctype_cases[malformed_index].expected
+			);
+			return 1;
+		}
+		XML_ParserFree(parser);
+	}
 
 	puts("xpact Eiffel DLL smoke: ok");
 	return 0;

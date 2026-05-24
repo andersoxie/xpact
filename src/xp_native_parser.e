@@ -344,7 +344,10 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_publicid
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then
 				Result := Xml_error_unclosed_token
-			elseif a_error.has_substring ("invalid") or else a_error.has_substring ("outside document element") then
+			elseif a_error.has_substring ("invalid")
+				or else a_error.has_substring ("outside document element")
+				or else a_error.same_string ("unexpected end tag")
+			then
 				Result := Xml_error_invalid_token
 			else
 				Result := Xml_error_syntax

@@ -19,6 +19,7 @@ feature {NONE} -- Initialization
 			test_attlist_default_attributes
 			test_element_declaration_callbacks
 			test_notation_declaration_callbacks
+			test_malformed_doctype_diagnostics
 			test_predefined_and_numeric_entities
 			test_internal_entity_declarations
 			test_parameter_entity_declarations
@@ -232,6 +233,18 @@ feature {NONE} -- Tests
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE e:element [%N  <!ATTLIST e:element%N    xmlns:e CDATA 'http://example.org/'>%N      ]>%N<e:element/>")
+			assert ("namespace-like default attribute without namespaces accepted", l_ok)
+			if l_ok then
+				assert ("namespace-like default attribute counted", l_handler.events.i_th (1).same_string ("start:e:element:1"))
+			else
+				io.put_string ("namespace-like default attribute error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
 		end
 
 	test_element_declaration_callbacks
@@ -302,6 +315,77 @@ feature {NONE} -- Tests
 			assert ("bad public doctype rejected", not l_ok)
 			if not l_ok then
 				assert ("bad public doctype error", l_parser.last_error.same_string ("invalid public identifier"))
+			end
+		end
+
+	test_malformed_doctype_diagnostics
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE 1+ [ <!ENTITY foo 'bar'> ]>%N<1+>&foo;</1+>")
+			assert ("doctype plus rejected", not l_ok)
+			if not l_ok then
+				assert ("doctype plus invalid token", l_parser.last_error.same_string ("invalid doctype name"))
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE 1* [ <!ENTITY foo 'bar'> ]>%N<1*>&foo;</1*>")
+			assert ("doctype star rejected", not l_ok)
+			if not l_ok then
+				assert ("doctype star invalid token", l_parser.last_error.same_string ("invalid doctype name"))
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE 1? [ <!ENTITY foo 'bar'> ]>%N<1?>&foo;</1?>")
+			assert ("doctype query rejected", not l_ok)
+			if not l_ok then
+				assert ("doctype query invalid token", l_parser.last_error.same_string ("invalid doctype name"))
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc></doc>")
+			assert ("short doctype rejected", not l_ok)
+			if not l_ok then
+				assert ("short doctype unexpected end tag", l_parser.last_error.same_string ("unexpected end tag"))
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc PUBLIC></doc>")
+			assert ("doctype missing public id rejected", not l_ok)
+			if not l_ok then
+				assert ("doctype missing public id syntax", l_parser.last_error.same_string ("missing external public identifier"))
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc SYSTEM></doc>")
+			assert ("doctype missing system id rejected", not l_ok)
+			if not l_ok then
+				assert ("doctype missing system id syntax", l_parser.last_error.same_string ("missing external system identifier"))
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc PUBLIC 'foo' 'bar' 'baz'></doc>")
+			assert ("long doctype rejected", not l_ok)
+			if not l_ok then
+				assert ("long doctype syntax", l_parser.last_error.same_string ("unexpected doctype declaration content"))
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE doc [ raw ]><doc/>")
+			assert ("raw dtd content rejected", not l_ok)
+			if not l_ok then
+				assert ("raw dtd content syntax", l_parser.last_error.same_string ("unexpected DTD content"))
 			end
 		end
 
@@ -661,6 +745,11 @@ feature {NONE} -- Tests
 			assert ("native Eiffel parser accepts doctype callback document", l_status = l_native.Xml_status_ok)
 			assert ("native Eiffel parser emits doctype start event", l_native.handler.start_doctype_decl_count = 1)
 			assert ("native Eiffel parser emits doctype end event", l_native.handler.end_doctype_decl_count = 1)
+
+			assert ("native Eiffel parser resets for short doctype diagnostic", l_native.reset)
+			l_status := l_native.parse ("<!DOCTYPE doc></doc>", True)
+			assert ("native Eiffel parser rejects document-level end tag", l_status = l_native.Xml_status_error)
+			assert ("native Eiffel parser maps document-level end tag", l_native.last_error_code = l_native.Xml_error_invalid_token)
 		end
 
 	test_native_bridge_installer

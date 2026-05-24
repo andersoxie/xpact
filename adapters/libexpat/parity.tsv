@@ -26,11 +26,21 @@ green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl	Eiffel p
 green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_2	Eiffel parser applies ATTLIST defaults per element across multiple declarations.
 green	basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_3	Eiffel parser preserves first-binding ATTLIST defaults when later declarations add another attribute and duplicate an existing one.
 green	basic_tests.c	test_duplicate_id_attribute_multiple_attlistdecl	Eiffel parser reports explicit attribute counts and ID attribute indexes while applying default attributes through the native ABI.
+green	basic_tests.c	test_ns_in_attribute_default_without_namespaces	Eiffel parser treats xmlns-prefixed default attributes as ordinary names when namespace mode is not enabled.
 green	basic_tests.c	test_dtd_elements	Eiffel parser emits XML_SetElementDeclHandler callbacks and freeable XML_Content models for DTD element declarations.
 green	basic_tests.c	test_dtd_elements_nesting	Eiffel parser builds Expat-compatible nested XML_Content arrays for sequence, choice, name, and quantifier content models.
 green	basic_tests.c	test_public_notation_no_sysid	Eiffel parser accepts PUBLIC notation declarations without system IDs and forwards XML_NotationDeclHandler callbacks.
 green	basic_tests.c	test_bad_notation	Eiffel parser rejects SYSTEM notation declarations missing a system literal with XML_ERROR_SYNTAX.
 green	basic_tests.c	test_bad_public_doctype	Eiffel parser validates XML PubidChar in PUBLIC doctype identifiers and maps violations to XML_ERROR_PUBLICID.
+green	basic_tests.c	test_bad_doctype	Eiffel parser rejects non-declaration content in internal subsets with XML_ERROR_SYNTAX, covering the upstream prefix-conv malformed doctype case.
+green	basic_tests.c	test_bad_doctype_utf8	Eiffel parser rejects the upstream malformed UTF-8 doctype byte sequence with XML_ERROR_INVALID_TOKEN.
+green	basic_tests.c	test_bad_doctype_plus	Eiffel parser rejects invalid doctype names before '+' with XML_ERROR_INVALID_TOKEN.
+green	basic_tests.c	test_bad_doctype_star	Eiffel parser rejects invalid doctype names before '*' with XML_ERROR_INVALID_TOKEN.
+green	basic_tests.c	test_bad_doctype_query	Eiffel parser rejects invalid doctype names before '?' with XML_ERROR_INVALID_TOKEN.
+green	basic_tests.c	test_short_doctype	Eiffel parser maps a document-level end tag after a short doctype to XML_ERROR_INVALID_TOKEN.
+green	basic_tests.c	test_short_doctype_2	Eiffel parser rejects PUBLIC doctypes missing a public identifier with XML_ERROR_SYNTAX.
+green	basic_tests.c	test_short_doctype_3	Eiffel parser rejects SYSTEM doctypes missing a system identifier with XML_ERROR_SYNTAX.
+green	basic_tests.c	test_long_doctype	Eiffel parser rejects doctypes with extra external identifier content with XML_ERROR_SYNTAX.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -62,21 +72,11 @@ red	basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
 red	basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
 red	basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_bad_doctype	Malformed doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_bad_doctype_utf8	Malformed UTF-8 doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_bad_doctype_plus	Malformed doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_bad_doctype_star	Malformed doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_bad_doctype_query	Malformed doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_short_doctype	Short doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_short_doctype_2	Short doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_short_doctype_3	Short doctype diagnostics are not fully audited against libexpat.
-red	basic_tests.c	test_long_doctype	Long doctype limit diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_abort*	Abort semantics are not implemented.
 red	basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
-red	basic_tests.c	test_ns_in_attribute_default_without_namespaces	Namespace/default-attribute interaction is not implemented.
 red	basic_tests.c	test_hash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 red	basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 red	basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.
