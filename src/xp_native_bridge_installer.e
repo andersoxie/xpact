@@ -217,6 +217,14 @@ feature -- Handler callbacks
 			end
 		end
 
+	set_skipped_entity_handler (a_parser, a_handler: POINTER)
+			-- Record skipped entity handler slot.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_skipped_entity_handler (a_handler)
+			end
+		end
+
 feature -- Parse callbacks
 
 	parse (a_parser, a_bytes: POINTER; a_length: INTEGER; a_is_final: BOOLEAN): INTEGER

@@ -14,6 +14,7 @@ feature {NONE} -- Initialization
 			create handler.make
 			create parser.make (handler)
 			parser.set_external_entity_resolver (handler)
+			configure_external_entity_policy
 			create input_buffer.make_empty
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
@@ -272,6 +273,14 @@ feature -- Element change
 			arg_set: handler.external_entity_ref_arg = a_arg
 		end
 
+	set_skipped_entity_handler (a_handler: POINTER)
+			-- Set native skipped entity callback.
+		do
+			handler.set_skipped_entity_handler (a_handler)
+		ensure
+			handler_set: handler.skipped_entity_callback = a_handler
+		end
+
 	set_native_parser_handle (a_parser: POINTER)
 			-- Set native parser handle used by native callbacks.
 		do
@@ -364,11 +373,7 @@ feature {NONE} -- Error mapping
 	configure_external_entity_policy
 			-- Keep Eiffel resolver policy aligned with native external entity callbacks.
 		do
-			if handler.external_entity_ref_callback /= default_pointer then
-				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
-			else
-				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.No_external_entities)
-			end
+			parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
 		end
 
 	error_code_for (a_error: READABLE_STRING_8): INTEGER

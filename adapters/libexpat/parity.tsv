@@ -42,6 +42,8 @@ green	basic_tests.c	test_short_doctype_2	Eiffel parser rejects PUBLIC doctypes m
 green	basic_tests.c	test_short_doctype_3	Eiffel parser rejects SYSTEM doctypes missing a system identifier with XML_ERROR_SYNTAX.
 green	basic_tests.c	test_long_doctype	Eiffel parser rejects doctypes with extra external identifier content with XML_ERROR_SYNTAX.
 green	misc_tests.c	test_misc_general_entities_support	Eiffel parser emits XML_EntityDeclHandler callbacks and delegates external general entity references through the native callback path.
+green	misc_tests.c	test_misc_sync_entity_tolerated	Eiffel parser accepts synchronous internal entity replacement text that opens/closes nested elements and exposes the behavior through the Windows native smoke.
+green	basic_tests.c	test_ext_entity_no_handler	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -58,14 +60,23 @@ red	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	Exter
 red	misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state is not implemented.
 red	misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 red	misc_tests.c	test_misc_expected_event_ptr_issue_980	Internal event pointer semantics are not implemented.
-red	misc_tests.c	test_misc_sync_entity_tolerated	Entity timing semantics are not fully matched to libexpat.
 red	misc_tests.c	test_misc_async_entity_rejected	Entity timing semantics are not fully matched to libexpat.
 red	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 red	basic_tests.c	test_*utf16*	UTF-16 input and handler parity are outside the Windows Phase 1 UTF-8 native path.
 red	basic_tests.c	test_*encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
 red	basic_tests.c	test_bad_encoding	Encoding error parity is outside the Windows Phase 1 UTF-8 native path.
 red	basic_tests.c	test_explicit_encoding	Encoding-switch parity is not implemented.
-red	basic_tests.c	test_ext_entity*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_set_*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_bad_encoding*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_invalid*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_trailing_*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_good_cdata	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_ref_parameter	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_not_standalone	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_value_abort	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_latin1_*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_utf16_*	External entity parser creation and callback loading are not implemented.
+red	basic_tests.c	test_ext_entity_utf8_non_bom	External entity parser creation and callback loading are not implemented.
 red	basic_tests.c	test_external*	External entity parser creation and callback loading are not implemented.
 red	basic_tests.c	test_*external*	External entity parser creation and callback loading are not implemented.
 red	basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.

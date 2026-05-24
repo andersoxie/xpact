@@ -18,6 +18,7 @@ inherit
 			on_attlist_decl,
 			on_entity_decl,
 			on_unparsed_entity_decl,
+			on_skipped_entity,
 			on_default
 		end
 	XP_EXTERNAL_ENTITY_RESOLVER
@@ -93,6 +94,9 @@ feature -- Access
 	external_entity_ref_callback: POINTER
 			-- `XML_ExternalEntityRefHandler' callback pointer.
 
+	skipped_entity_callback: POINTER
+			-- `XML_SkippedEntityHandler' callback pointer.
+
 	external_entity_ref_arg: POINTER
 			-- Optional first argument for `XML_ExternalEntityRefHandler'.
 
@@ -154,6 +158,9 @@ feature -- Metrics
 
 	external_entity_ref_count: INTEGER
 			-- Number of external entity references delegated to native callbacks.
+
+	skipped_entity_count: INTEGER
+			-- Number of skipped entity references reported.
 
 	current_specified_attribute_count: INTEGER
 			-- Expat-style count of explicit attribute vector entries for current start event.
@@ -293,6 +300,14 @@ feature -- Element change
 			arg_marked: has_external_entity_ref_arg
 		end
 
+	set_skipped_entity_handler (a_handler: POINTER)
+			-- Set native skipped entity callback.
+		do
+			skipped_entity_callback := a_handler
+		ensure
+			handler_set: skipped_entity_callback = a_handler
+		end
+
 	set_native_parser_handle (a_parser: POINTER)
 			-- Set native parser handle used for callback APIs that expect it.
 		do
@@ -321,6 +336,7 @@ feature -- Element change
 			entity_decl_count := 0
 			unparsed_entity_decl_count := 0
 			external_entity_ref_count := 0
+			skipped_entity_count := 0
 			current_specified_attribute_count := 0
 			current_id_attribute_index := -1
 		ensure
@@ -341,6 +357,7 @@ feature -- Element change
 			no_entity_decl_events: entity_decl_count = 0
 			no_unparsed_entity_decl_events: unparsed_entity_decl_count = 0
 			no_external_entity_refs: external_entity_ref_count = 0
+			no_skipped_entities: skipped_entity_count = 0
 			no_current_specified_attributes: current_specified_attribute_count = 0
 			no_current_id_attribute: current_id_attribute_index = -1
 		end
@@ -700,6 +717,27 @@ feature -- Events
 			end
 		end
 
+	on_skipped_entity (a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN)
+		local
+			l_event: STRING_8
+			l_name: C_STRING
+		do
+			skipped_entity_count := skipped_entity_count + 1
+			create l_event.make_from_string ("skipped:")
+			l_event.append (a_name)
+			l_event.append_character (':')
+			if a_is_parameter then
+				l_event.append_character ('1')
+			else
+				l_event.append_character ('0')
+			end
+			events.extend (l_event)
+			if skipped_entity_callback /= default_pointer then
+				create l_name.make (a_name)
+				call_skipped_entity_callback (skipped_entity_callback, user_data, l_name.item, a_is_parameter)
+			end
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 		local
 			l_text: C_STRING
@@ -734,6 +772,9 @@ feature -- External entity resolution
 				if l_status /= 0 then
 					create Result.make_empty
 				end
+			elseif not a_is_parameter then
+				on_skipped_entity (a_name, False)
+				create Result.make_empty
 			end
 		end
 
@@ -980,6 +1021,17 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_text, (int) $a_length);"
 		end
 
+	call_skipped_entity_callback (a_callback, a_user_data, a_name: POINTER; a_is_parameter: BOOLEAN)
+			-- Invoke native `XML_SkippedEntityHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			name_attached: a_name /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, $a_is_parameter ? 1 : 0);"
+		end
+
 	call_start_doctype_decl_callback (a_callback, a_user_data, a_name, a_system_id, a_public_id: POINTER; a_has_internal_subset: BOOLEAN)
 			-- Invoke native `XML_StartDoctypeDeclHandler'.
 		require
@@ -1090,6 +1142,7 @@ invariant
 	non_negative_entity_decl_count: entity_decl_count >= 0
 	non_negative_unparsed_entity_decl_count: unparsed_entity_decl_count >= 0
 	non_negative_external_entity_ref_count: external_entity_ref_count >= 0
+	non_negative_skipped_entity_count: skipped_entity_count >= 0
 	non_negative_current_specified_attribute_count: current_specified_attribute_count >= 0
 	current_id_attribute_index_valid: current_id_attribute_index >= -1
 

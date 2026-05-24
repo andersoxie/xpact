@@ -451,6 +451,20 @@ feature {NONE} -- Tests
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse ("<!DOCTYPE t0 [%N   <!ENTITY a '<t1></t1>'>%N   <!ENTITY b '<t2>two</t2>'>%N   <!ENTITY c '<t3>three<t4>four</t4>three</t3>'>%N   <!ENTITY d '<t5>&b;</t5>'>%N]>%N<t0>&a;&b;&c;&d;</t0>%N")
+			assert ("synchronous nested entity markup accepted", l_ok)
+			if l_ok then
+				assert ("sync entity root start", l_handler.events.i_th (1).same_string ("start:t0:0"))
+				assert ("sync entity nested t4 text", l_handler.events.i_th (10).same_string ("text:four"))
+				assert ("sync entity final end", l_handler.events.i_th (l_handler.events.count).same_string ("end:t0"))
+			else
+				io.put_string ("sync entity error: ")
+				io.put_string (l_parser.last_error)
+				io.put_new_line
+			end
 		end
 
 	test_parameter_entity_declarations
@@ -773,6 +787,12 @@ feature {NONE} -- Tests
 			l_status := l_native.parse ("<!DOCTYPE doc></doc>", True)
 			assert ("native Eiffel parser rejects document-level end tag", l_status = l_native.Xml_status_error)
 			assert ("native Eiffel parser maps document-level end tag", l_native.last_error_code = l_native.Xml_error_invalid_token)
+
+			assert ("native Eiffel parser resets for unloaded external general entity", l_native.reset)
+			l_status := l_native.parse ("<!DOCTYPE doc [<!ENTITY en SYSTEM %"http://example.org/dummy.ent%">]><doc>&en;</doc>", True)
+			assert ("native Eiffel parser skips unloaded external general entity", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser reports skipped entity", l_native.handler.skipped_entity_count = 1)
+			assert ("native Eiffel parser names skipped entity", l_native.handler.events.i_th (3).same_string ("skipped:en:0"))
 		end
 
 	test_native_bridge_installer

@@ -23,6 +23,7 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetPointerRoutine set_unparsed_entity_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler;
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg;
+	XPACT_EiffelSetPointerRoutine set_skipped_entity_handler;
 	XPACT_EiffelParseRoutine parse;
 	XPACT_EiffelGetBufferRoutine get_buffer;
 	XPACT_EiffelParseBufferRoutine parse_buffer;
@@ -315,6 +316,19 @@ xp_rt_set_external_entity_ref_handler_arg(void *context, void *parser, void *arg
 	}
 }
 
+static void XMLCALL
+xp_rt_set_skipped_entity_handler(void *context, void *parser, XML_SkippedEntityHandler handler) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+	EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer != NULL && state->set_skipped_entity_handler != NULL) {
+		state->set_skipped_entity_handler(
+			installer,
+			(EIF_POINTER)parser,
+			xp_callback_pointer((uintptr_t)handler)
+		);
+	}
+}
+
 static enum XML_Status XMLCALL
 xp_rt_parse(void *context, void *parser, const char *s, int len, int isFinal) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
@@ -506,6 +520,7 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_unparsed_entity_decl_handler = xp_rt_set_unparsed_entity_decl_handler;
 	bridge->set_external_entity_ref_handler = xp_rt_set_external_entity_ref_handler;
 	bridge->set_external_entity_ref_handler_arg = xp_rt_set_external_entity_ref_handler_arg;
+	bridge->set_skipped_entity_handler = xp_rt_set_skipped_entity_handler;
 	bridge->parse = xp_rt_parse;
 	bridge->get_buffer = xp_rt_get_buffer;
 	bridge->parse_buffer = xp_rt_parse_buffer;
@@ -541,6 +556,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetPointerRoutine set_unparsed_entity_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler,
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg,
+	XPACT_EiffelSetPointerRoutine set_skipped_entity_handler,
 	XPACT_EiffelParseRoutine parse,
 	XPACT_EiffelGetBufferRoutine get_buffer,
 	XPACT_EiffelParseBufferRoutine parse_buffer,
@@ -592,6 +608,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_unparsed_entity_decl_handler = set_unparsed_entity_decl_handler;
 	xp_runtime_bridge.set_external_entity_ref_handler = set_external_entity_ref_handler;
 	xp_runtime_bridge.set_external_entity_ref_handler_arg = set_external_entity_ref_handler_arg;
+	xp_runtime_bridge.set_skipped_entity_handler = set_skipped_entity_handler;
 	xp_runtime_bridge.parse = parse;
 	xp_runtime_bridge.get_buffer = get_buffer;
 	xp_runtime_bridge.parse_buffer = parse_buffer;
@@ -637,6 +654,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_unparsed_entity_decl_handler,
     EIF_POINTER set_external_entity_ref_handler,
     EIF_POINTER set_external_entity_ref_handler_arg,
+    EIF_POINTER set_skipped_entity_handler,
     EIF_POINTER parse,
     EIF_POINTER get_buffer,
     EIF_POINTER parse_buffer,
@@ -670,6 +688,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetPointerRoutine)set_unparsed_entity_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_external_entity_ref_handler,
 		(XPACT_EiffelSetPointerRoutine)set_external_entity_ref_handler_arg,
+		(XPACT_EiffelSetPointerRoutine)set_skipped_entity_handler,
 		(XPACT_EiffelParseRoutine)parse,
 		(XPACT_EiffelGetBufferRoutine)get_buffer,
 		(XPACT_EiffelParseBufferRoutine)parse_buffer,

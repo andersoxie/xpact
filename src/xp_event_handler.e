@@ -115,6 +115,14 @@ feature -- Events
 		do
 		end
 
+	on_skipped_entity (a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN)
+			-- Entity reference `a_name' was skipped.
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+		do
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 			-- Raw default-handler text was parsed.
 		require

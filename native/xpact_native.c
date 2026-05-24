@@ -39,6 +39,7 @@ struct XML_ParserStruct {
 	XML_UnparsedEntityDeclHandler unparsedEntityDeclHandler;
 	XML_ExternalEntityRefHandler externalEntityRefHandler;
 	void *externalEntityRefArg;
+	XML_SkippedEntityHandler skippedEntityHandler;
 };
 
 static const XPACT_EiffelBridge *xp_bridge;
@@ -427,6 +428,17 @@ XML_SetExternalEntityRefHandlerArg(XML_Parser parser, void *arg) {
 	}
 }
 
+void XMLCALL
+XML_SetSkippedEntityHandler(XML_Parser parser, XML_SkippedEntityHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->skippedEntityHandler = handler;
+	if (parser->bridge != NULL && parser->bridge->set_skipped_entity_handler != NULL && parser->eiffelParser != NULL) {
+		parser->bridge->set_skipped_entity_handler(parser->bridge->context, parser->eiffelParser, handler);
+	}
+}
+
 #define XPACT_UNUSED_HANDLER_SETTER(name, type) \
 	void XMLCALL name(XML_Parser parser, type handler) { (void)parser; (void)handler; }
 
@@ -434,7 +446,6 @@ XPACT_UNUSED_HANDLER_SETTER(XML_SetXmlDeclHandler, XML_XmlDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetStartNamespaceDeclHandler, XML_StartNamespaceDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetEndNamespaceDeclHandler, XML_EndNamespaceDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetNotStandaloneHandler, XML_NotStandaloneHandler)
-XPACT_UNUSED_HANDLER_SETTER(XML_SetSkippedEntityHandler, XML_SkippedEntityHandler)
 
 void XMLCALL
 XML_SetNamespaceDeclHandler(

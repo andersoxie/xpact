@@ -27,6 +27,13 @@ static int g_general_entity_start_count;
 static int g_general_entity_failed;
 static char g_general_entity_text[256];
 static int g_general_entity_len;
+static int g_skipped_entity_count;
+static int g_skipped_entity_failed;
+static int g_empty_text_failed;
+static int g_sync_entity_start_count;
+static int g_sync_entity_failed;
+static char g_sync_entity_text[256];
+static int g_sync_entity_len;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -354,6 +361,46 @@ general_entity_text_handler(void *userData, const XML_Char *s, int len) {
 	g_general_entity_text[g_general_entity_len] = '\0';
 }
 
+static void XMLCALL
+skipped_entity_handler(void *userData, const XML_Char *entityName, int is_parameter_entity) {
+	(void)userData;
+	g_skipped_entity_count++;
+	if (entityName == NULL || strcmp(entityName, "en") != 0 || is_parameter_entity) {
+		g_skipped_entity_failed = 1;
+	}
+}
+
+static void XMLCALL
+empty_text_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	(void)s;
+	if (len != 0) {
+		g_empty_text_failed = 1;
+	}
+}
+
+static void XMLCALL
+sync_entity_start_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
+	(void)userData;
+	(void)atts;
+	g_sync_entity_start_count++;
+	if (name == NULL || name[0] == '\0') {
+		g_sync_entity_failed = 1;
+	}
+}
+
+static void XMLCALL
+sync_entity_text_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	if (len < 0 || g_sync_entity_len + len >= (int)sizeof(g_sync_entity_text)) {
+		g_sync_entity_failed = 1;
+		return;
+	}
+	memcpy(g_sync_entity_text + g_sync_entity_len, s, (size_t)len);
+	g_sync_entity_len += len;
+	g_sync_entity_text[g_sync_entity_len] = '\0';
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -411,6 +458,19 @@ main(void) {
 		"<!ENTITY e2 SYSTEM 'v2'>\n"
 		"]>\n"
 		"<r a1='[&e1;]'>[&e1;][&e2;][&amp;&apos;&gt;&lt;&quot;]</r>";
+	const char *skipped_external_input =
+		"<!DOCTYPE doc [\n"
+		"  <!ENTITY en SYSTEM 'http://example.org/dummy.ent'>\n"
+		"]>\n"
+		"<doc>&en;</doc>";
+	const char *sync_entity_input =
+		"<!DOCTYPE t0 [\n"
+		"   <!ENTITY a '<t1></t1>'>\n"
+		"   <!ENTITY b '<t2>two</t2>'>\n"
+		"   <!ENTITY c '<t3>three<t4>four</t4>three</t3>'>\n"
+		"   <!ENTITY d '<t5>&b;</t5>'>\n"
+		"]>\n"
+		"<t0>&a;&b;&c;&d;</t0>\n";
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -534,6 +594,34 @@ main(void) {
 	if (!check(g_external_entity_ref_count == 1, "external general entity callback delegated")) return 1;
 	if (!check(g_general_entity_start_count == 1 && !g_general_entity_failed, "general entity start callback delegated")) return 1;
 	if (!check(strcmp(g_general_entity_text, "[v1][][&'><\"]") == 0, "general entity character data delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for skipped external entity check")) return 1;
+	g_skipped_entity_count = 0;
+	g_skipped_entity_failed = 0;
+	g_empty_text_failed = 0;
+	XML_SetDefaultHandler(parser, default_handler);
+	XML_SetSkippedEntityHandler(parser, skipped_entity_handler);
+	XML_SetCharacterDataHandler(parser, empty_text_handler);
+	status = XML_Parse(parser, skipped_external_input, (int)strlen(skipped_external_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "external entity without handler is skipped")) return 1;
+	if (!check(g_skipped_entity_count == 1 && !g_skipped_entity_failed, "skipped external entity callback delegated")) return 1;
+	if (!check(!g_empty_text_failed, "skipped external entity produces no character data")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for synchronous entity check")) return 1;
+	g_sync_entity_start_count = 0;
+	g_sync_entity_failed = 0;
+	g_sync_entity_len = 0;
+	g_sync_entity_text[0] = '\0';
+	XML_SetStartElementHandler(parser, sync_entity_start_handler);
+	XML_SetCharacterDataHandler(parser, sync_entity_text_handler);
+	status = XML_Parse(parser, sync_entity_input, (int)strlen(sync_entity_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "synchronous nested internal entities are accepted")) return 1;
+	if (!check(g_sync_entity_start_count == 7 && !g_sync_entity_failed, "synchronous entity markup is emitted")) return 1;
+	if (!check(strcmp(g_sync_entity_text, "twothreefourthreetwo") == 0, "synchronous entity character data is emitted")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");
