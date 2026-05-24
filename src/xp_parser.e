@@ -2209,6 +2209,7 @@ feature {NONE} -- DTD entity declarations
 			l_is_parameter: BOOLEAN
 			l_quote: CHARACTER_8
 			l_attributes: XP_ATTRIBUTES
+			l_existing_parameter: BOOLEAN
 		do
 			create l_attributes.make
 			l_end := find_markup_declaration_end (a_subset, a_start_index)
@@ -2232,7 +2233,14 @@ feature {NONE} -- DTD entity declarations
 					if i <= a_subset.count and then is_quote (a_subset.item (i)) then
 						l_quote := a_subset.item (i)
 						create l_value.make_empty
-						i := parse_entity_literal (a_subset, i + 1, l_quote, l_value)
+						l_existing_parameter := l_is_parameter and then is_parameter_entity_declared (l_name)
+						if l_is_parameter and then not l_existing_parameter then
+							push_entity (l_name)
+							i := parse_entity_literal (a_subset, i + 1, l_quote, l_value)
+							pop_entity
+						else
+							i := parse_entity_literal (a_subset, i + 1, l_quote, l_value)
+						end
 						if not has_error then
 							if l_is_parameter then
 								put_parameter_entity (l_name, l_value)
@@ -2435,6 +2443,9 @@ feature {NONE} -- DTD entity declarations
 				if not is_valid_name (l_name) then
 					set_error ("invalid parameter entity name")
 					Result := a_input.count + 1
+				elseif is_entity_active (l_name) then
+					set_error ("recursive entity reference")
+					Result := a_input.count + 1
 				elseif attached parameter_entity_value (l_name) as l_value then
 					a_text.append (l_value)
 					Result := l_end + 1
@@ -2495,7 +2506,7 @@ feature {NONE} -- DTD entity declarations
 						Result := l_end + 1
 					end
 				else
-					set_error ("undefined parameter entity")
+					handler.on_skipped_entity (l_name, True)
 					Result := a_subset.count + 1
 				end
 			end
@@ -2587,8 +2598,17 @@ feature {NONE} -- Scanning
 			c: CHARACTER_8
 		do
 			create Result.make (a_input.count)
-			from
+			if
+				a_input.count >= 3
+				and then a_input.item (1).code = 239
+				and then a_input.item (2).code = 187
+				and then a_input.item (3).code = 191
+			then
+				i := 4
+			else
 				i := 1
+			end
+			from
 			invariant
 				index_in_bounds: i >= 1 and i <= a_input.count + 1
 			until
@@ -3311,6 +3331,17 @@ feature {NONE} -- Entity tables
 				create l_entity.make (a_name, a_public_id, a_system_id, a_notation_name, False, a_is_unparsed)
 				external_entity_table.put (l_entity, l_name)
 			end
+		end
+
+	is_parameter_entity_declared (a_name: READABLE_STRING_8): BOOLEAN
+			-- Is a parameter entity with `a_name' already bound?
+		require
+			valid_name: is_valid_name (a_name)
+		local
+			l_name: STRING_8
+		do
+			create l_name.make_from_string (a_name)
+			Result := parameter_entity_table.has (l_name) or else external_parameter_entity_table.has (l_name)
 		end
 
 	entity_value (a_name: READABLE_STRING_8): detachable STRING_8

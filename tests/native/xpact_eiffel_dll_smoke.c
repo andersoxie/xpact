@@ -63,6 +63,12 @@ static char g_foreign_text[256];
 static int g_foreign_text_len;
 static int g_parameter_entity_ref_count;
 static int g_parameter_entity_failed;
+static int g_parameter_skip_count;
+static int g_parameter_skip_failed;
+static const char *g_bom_external_text;
+static int g_bom_split;
+static int g_bom_nested_callback_happened;
+static int g_bom_failed;
 static int g_failing_alloc_count;
 
 struct malformed_doctype_case {
@@ -783,6 +789,88 @@ invalid_tag_in_dtd_external_entity_handler(XML_Parser parser, const XML_Char *co
 	return XML_STATUS_ERROR;
 }
 
+static int XMLCALL
+external_entity_devaluer_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *text =
+		"<!ELEMENT doc EMPTY>\n"
+		"<!ENTITY % e1 SYSTEM 'bar'>\n"
+		"%e1;\n";
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	int clear_handler = XML_GetUserData(parser) != NULL;
+	(void)base;
+	(void)publicId;
+	g_parameter_entity_ref_count++;
+	if (systemId == NULL || strcmp(systemId, "bar") == 0) {
+		return XML_STATUS_OK;
+	}
+	if (strcmp(systemId, "foo") != 0) {
+		g_parameter_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_parameter_entity_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (clear_handler) {
+		XML_SetExternalEntityRefHandler(ext_parser, NULL);
+	}
+	status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		g_parameter_entity_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_OK;
+}
+
+static int XMLCALL
+external_bom_checker_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *outer_text =
+		"<!ELEMENT doc EMPTY>\n"
+		"<!ENTITY % e1 SYSTEM '004-2.ent'>\n"
+		"<!ENTITY % e2 '%e1;'>\n";
+	const char *text;
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_parameter_entity_ref_count++;
+	if (context == NULL || systemId == NULL) {
+		g_bom_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_bom_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (strcmp(systemId, "004-1.ent") == 0) {
+		text = outer_text;
+		status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+	} else if (strcmp(systemId, "004-2.ent") == 0) {
+		g_bom_nested_callback_happened = 1;
+		status = XML_Parse(ext_parser, g_bom_external_text, g_bom_split, XML_FALSE);
+		if (status == XML_STATUS_OK) {
+			text = g_bom_external_text + g_bom_split;
+			status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+		}
+	} else {
+		g_bom_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	if (status != XML_STATUS_OK) {
+		g_bom_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_OK;
+}
+
 static void XMLCALL
 user_parameter_xml_decl_handler(void *userData, const XML_Char *version, const XML_Char *encoding, int standalone) {
 	if (
@@ -850,6 +938,15 @@ skipped_entity_handler(void *userData, const XML_Char *entityName, int is_parame
 	g_skipped_entity_count++;
 	if (entityName == NULL || strcmp(entityName, "en") != 0 || is_parameter_entity) {
 		g_skipped_entity_failed = 1;
+	}
+}
+
+static void XMLCALL
+parameter_skipped_entity_handler(void *userData, const XML_Char *entityName, int is_parameter_entity) {
+	(void)userData;
+	g_parameter_skip_count++;
+	if (entityName == NULL || strcmp(entityName, "foo") != 0 || !is_parameter_entity) {
+		g_parameter_skip_failed = 1;
 	}
 }
 
@@ -998,6 +1095,24 @@ main(void) {
 	const char *invalid_tag_in_dtd_input =
 		"<!DOCTYPE doc SYSTEM '004-1.ent'>\n"
 		"<doc></doc>\n";
+	const char *recursive_external_parameter_input =
+		"<?xml version='1.0'?>\n"
+		"<!DOCTYPE root SYSTEM 'http://example.org/dtd.ent' [\n"
+		"<!ELEMENT root (#PCDATA|a)* >\n"
+		"]>\n"
+		"<root></root>";
+	const char *undefined_external_parameter_input =
+		"<!DOCTYPE doc SYSTEM 'foo'>\n"
+		"<doc></doc>\n";
+	const char *dtd_stop_processing_input =
+		"<!DOCTYPE doc [\n"
+		"%foo;\n"
+		"<!ENTITY bar 'bas'>\n"
+		"]><doc/>";
+	const char *external_bom_input =
+		"<!DOCTYPE doc SYSTEM '004-1.ent'>\n"
+		"<doc></doc>\n";
+	const char *external_bom_text = "\xEF\xBB\xBF<!ATTLIST doc a1 CDATA 'value'>";
 	const char *foreign_dtd_decl_chunk = "<?xml version='1.0' encoding='us-ascii'?>\n";
 	const char *foreign_dtd_body_chunk = "<doc>&entity;</doc>";
 	const char *foreign_dtd_with_doctype_input =
@@ -1623,6 +1738,115 @@ main(void) {
 	if (!check(XML_GetErrorCode(parser) == XML_ERROR_EXTERNAL_ENTITY_HANDLING, "invalid tag in DTD maps to external entity handling")) return 1;
 	if (!check(g_parameter_entity_ref_count == 2 && !g_parameter_entity_failed, "invalid tag in DTD callback path matched")) return 1;
 	XML_ParserFree(parser);
+
+	{
+		const char *recursive_cases[] = {
+			"<!ENTITY % p1 '%p1;'>",
+			"<!ENTITY % p1 '%p1;'><!ENTITY % p1 'first declaration wins'>",
+			NULL
+		};
+		const char *accepted_cases[] = {
+			"<!ENTITY % p1 'first declaration wins'><!ENTITY % p1 '%p1;'>",
+			"<!ENTITY % p1 '&#37;p1;'>",
+			NULL
+		};
+		int case_index;
+		for (case_index = 0; recursive_cases[case_index] != NULL; case_index++) {
+			XML_Parser parent_parser = XML_ParserCreate("UTF-8");
+			XML_Parser ext_parser;
+			if (!check(parent_parser != NULL, "parent parser created for direct recursive parameter check")) return 1;
+			ext_parser = XML_ExternalEntityParserCreate(parent_parser, NULL, NULL);
+			if (!check(ext_parser != NULL, "external parser created for direct recursive parameter check")) return 1;
+			status = XML_Parse(ext_parser, recursive_cases[case_index], (int)strlen(recursive_cases[case_index]), XML_TRUE);
+			if (!check(status == XML_STATUS_ERROR, "direct recursive parameter entity rejected")) return 1;
+			if (!check(XML_GetErrorCode(ext_parser) == XML_ERROR_RECURSIVE_ENTITY_REF, "direct recursive parameter entity maps error")) return 1;
+			XML_ParserFree(ext_parser);
+			XML_ParserFree(parent_parser);
+		}
+		for (case_index = 0; accepted_cases[case_index] != NULL; case_index++) {
+			XML_Parser parent_parser = XML_ParserCreate("UTF-8");
+			XML_Parser ext_parser;
+			if (!check(parent_parser != NULL, "parent parser created for accepted parameter check")) return 1;
+			ext_parser = XML_ExternalEntityParserCreate(parent_parser, NULL, NULL);
+			if (!check(ext_parser != NULL, "external parser created for accepted parameter check")) return 1;
+			status = XML_Parse(ext_parser, accepted_cases[case_index], (int)strlen(accepted_cases[case_index]), XML_TRUE);
+			if (!check(status == XML_STATUS_OK, "non-recursive parameter entity declaration accepted")) return 1;
+			XML_ParserFree(ext_parser);
+			XML_ParserFree(parent_parser);
+		}
+	}
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for recursive external parameter entity check")) return 1;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "<!ENTITY % pe2 '&#37;pe2;'>\n%pe2;";
+	g_expected_foreign_dtd_child_error = XML_ERROR_RECURSIVE_ENTITY_REF;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for recursive external parameter")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	status = XML_Parse(parser, recursive_external_parameter_input, (int)strlen(recursive_external_parameter_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "recursive external parameter child failure propagates")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_EXTERNAL_ENTITY_HANDLING, "recursive external parameter maps to external entity handling")) return 1;
+	if (!check(g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "recursive external parameter callback observed expected child error")) return 1;
+	g_expected_foreign_dtd_child_error = XML_ERROR_NONE;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for undefined external parameter check")) return 1;
+	g_parameter_entity_ref_count = 0;
+	g_parameter_entity_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for undefined external parameter")) return 1;
+	XML_SetExternalEntityRefHandler(parser, external_entity_devaluer_handler);
+	status = XML_Parse(parser, undefined_external_parameter_input, (int)strlen(undefined_external_parameter_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "undefined external parameter with nested handler accepted")) return 1;
+	if (!check(g_parameter_entity_ref_count == 2 && !g_parameter_entity_failed, "undefined external parameter nested callback path matched")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for undefined external parameter without nested handler check")) return 1;
+	g_parameter_entity_ref_count = 0;
+	g_parameter_entity_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for skipped nested parameter")) return 1;
+	XML_SetExternalEntityRefHandler(parser, external_entity_devaluer_handler);
+	XML_SetUserData(parser, parser);
+	status = XML_Parse(parser, undefined_external_parameter_input, (int)strlen(undefined_external_parameter_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "undefined external parameter without nested handler accepted")) return 1;
+	if (!check(g_parameter_entity_ref_count == 1 && !g_parameter_entity_failed, "undefined external parameter skipped nested callback path matched")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for DTD stop-processing parameter check")) return 1;
+	g_entity_decl_count = 0;
+	g_entity_decl_failed = 0;
+	g_parameter_skip_count = 0;
+	g_parameter_skip_failed = 0;
+	XML_SetEntityDeclHandler(parser, general_entity_decl_handler);
+	XML_SetSkippedEntityHandler(parser, parameter_skipped_entity_handler);
+	status = XML_Parse(parser, dtd_stop_processing_input, (int)strlen(dtd_stop_processing_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "undefined parameter entity stops DTD processing without failing")) return 1;
+	if (!check(g_entity_decl_count == 0 && !g_entity_decl_failed, "DTD processing stopped before later entity declaration")) return 1;
+	if (!check(g_parameter_skip_count == 1 && !g_parameter_skip_failed, "undefined parameter entity skip callback delegated")) return 1;
+	XML_ParserFree(parser);
+
+	{
+		int split;
+		int external_bom_len = (int)strlen(external_bom_text);
+		for (split = 0; split <= external_bom_len; split++) {
+			parser = XML_ParserCreate("UTF-8");
+			if (!check(parser != NULL, "parser created for external BOM check")) return 1;
+			g_parameter_entity_ref_count = 0;
+			g_bom_external_text = external_bom_text;
+			g_bom_split = split;
+			g_bom_nested_callback_happened = 0;
+			g_bom_failed = 0;
+			if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for external BOM")) return 1;
+			XML_SetExternalEntityRefHandler(parser, external_bom_checker_handler);
+			status = XML_Parse(parser, external_bom_input, (int)strlen(external_bom_input), XML_TRUE);
+			if (!check(status == XML_STATUS_OK, "external BOM DTD parameter entity accepted")) return 1;
+			if (!check(g_bom_nested_callback_happened && !g_bom_failed, "external BOM child callback path matched")) return 1;
+			XML_ParserFree(parser);
+		}
+	}
 
 	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created for user parameter check")) return 1;

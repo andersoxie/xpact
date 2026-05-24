@@ -898,8 +898,8 @@ feature -- External entity resolution
 						create Result.make_empty
 					end
 				end
-			elseif not a_is_parameter then
-				on_skipped_entity (a_name, False)
+			else
+				on_skipped_entity (a_name, a_is_parameter)
 				create Result.make_empty
 			end
 		end

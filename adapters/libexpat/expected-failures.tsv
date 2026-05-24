@@ -27,15 +27,12 @@ basic_tests.c	test_ext_entity_value_abort	External entity callback abort semanti
 basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
 basic_tests.c	test_ext_entity_utf8_non_bom	External entity UTF-8 non-BOM edge semantics are not fully implemented.
-basic_tests.c	test_recursive_external_parameter_entity_2	Recursive external parameter entity handling is not implemented.
-basic_tests.c	test_external_bom_consumed	External parsed-entity BOM edge semantics are not fully implemented.
 basic_tests.c	test_external_entity_values	External entity value callback edge semantics are not implemented.
-basic_tests.c	test_recursive_external_parameter_entity	Recursive external parameter entity handling is not implemented.
-basic_tests.c	test_undefined_ext_entity_in_external_dtd	Undefined entity handling inside external DTD subsets is not fully implemented.
-basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
-basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
+basic_tests.c	test_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.
+basic_tests.c	test_repeated_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.
+basic_tests.c	test_stop_parser_between_cdata_calls	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_abort*	Abort semantics are not implemented.
 basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
 basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.

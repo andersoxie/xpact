@@ -66,6 +66,11 @@ green	basic_tests.c	test_empty_foreign_dtd	Eiffel parser keeps undefined-entity 
 green	basic_tests.c	test_invalid_foreign_dtd	Eiffel child parsers now parse external DTD subset context explicitly and propagate invalid foreign DTD child failures as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
 green	basic_tests.c	test_ext_entity_not_standalone	Eiffel external parameter entity loading now invokes XML_NotStandaloneHandler in child DTD parsers and propagates rejection through the parent external entity callback.
 green	basic_tests.c	test_invalid_tag_in_dtd	Eiffel external parameter entity child parsers reject element tags inside DTD subset content and propagate the nested child failure through the parent parser.
+green	basic_tests.c	test_recursive_external_parameter_entity_2	Eiffel external DTD subset parsing detects recursive parameter entity replacement text while preserving first-declaration-wins duplicates.
+green	basic_tests.c	test_recursive_external_parameter_entity	Eiffel external subset child parsers propagate recursive external parameter entity failures through the parent external entity callback.
+green	basic_tests.c	test_undefined_ext_entity_in_external_dtd	Eiffel external subset parsing skips unresolved external parameter entities when handlers decline or are cleared, matching the covered upstream devaluer path.
+green	basic_tests.c	test_dtd_stop_processing	Eiffel internal subset parsing skips an undefined parameter entity and stops later DTD declaration processing without failing the document.
+green	basic_tests.c	test_external_bom_consumed	Eiffel input normalization strips a UTF-8 BOM before external DTD subset tokenization, including when the native input is split across non-final/final calls.
 green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
@@ -98,15 +103,12 @@ red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort sem
 red	basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf8_non_bom	External entity UTF-8 non-BOM edge semantics are not fully implemented.
-red	basic_tests.c	test_recursive_external_parameter_entity_2	Recursive external parameter entity handling is not implemented.
-red	basic_tests.c	test_external_bom_consumed	External parsed-entity BOM edge semantics are not fully implemented.
 red	basic_tests.c	test_external_entity_values	External entity value callback edge semantics are not implemented.
-red	basic_tests.c	test_recursive_external_parameter_entity	Recursive external parameter entity handling is not implemented.
-red	basic_tests.c	test_undefined_ext_entity_in_external_dtd	Undefined entity handling inside external DTD subsets is not fully implemented.
-red	basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
+red	basic_tests.c	test_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.
+red	basic_tests.c	test_repeated_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.
+red	basic_tests.c	test_stop_parser_between_cdata_calls	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_abort*	Abort semantics are not implemented.
 red	basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
 red	basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
