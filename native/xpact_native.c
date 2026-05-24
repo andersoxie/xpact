@@ -22,6 +22,9 @@ struct XML_ParserStruct {
 	enum XML_Error errorCode;
 	enum XML_Parsing parsing;
 	XML_Bool finalBuffer;
+	unsigned long hashSalt;
+	uint8_t hashSalt16[16];
+	XML_Bool hasHashSalt16;
 	XML_StartElementHandler startElementHandler;
 	XML_EndElementHandler endElementHandler;
 	XML_CharacterDataHandler characterDataHandler;
@@ -657,15 +660,21 @@ XML_SetParamEntityParsing(XML_Parser parser, enum XML_ParamEntityParsing parsing
 
 int XMLCALL
 XML_SetHashSalt(XML_Parser parser, unsigned long hash_salt) {
-	(void)parser;
-	(void)hash_salt;
+	if (parser == NULL || parser->parsing != XML_INITIALIZED) {
+		return 0;
+	}
+	parser->hashSalt = hash_salt;
+	parser->hasHashSalt16 = XML_FALSE;
 	return 1;
 }
 
 XML_Bool XMLCALL
 XML_SetHashSalt16Bytes(XML_Parser parser, const uint8_t entropy[16]) {
-	(void)parser;
-	(void)entropy;
+	if (parser == NULL || entropy == NULL || parser->parsing != XML_INITIALIZED) {
+		return XML_FALSE;
+	}
+	memcpy(parser->hashSalt16, entropy, sizeof(parser->hashSalt16));
+	parser->hasHashSalt16 = XML_TRUE;
 	return XML_TRUE;
 }
 

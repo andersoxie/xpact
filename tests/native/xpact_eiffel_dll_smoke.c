@@ -550,6 +550,8 @@ main(void) {
 	const XML_Feature *feature;
 	size_t malformed_index;
 	size_t async_index;
+	size_t hash_index;
+	size_t hash_collision_len;
 	int saw_xml_char_feature = 0;
 	int saw_xml_lchar_feature = 0;
 	const char *default_input = "<?test processing instruction?>\n<doc/>";
@@ -621,12 +623,25 @@ main(void) {
 		"  <!ENTITY draft.day '10'>\n"
 		"]>\n"
 		"<day>&draft.day;</day>\n";
+	const char *hash_collision_input =
+		"<doc>\n"
+		"<a1/><a2/><a3/><a4/><a5/><a6/><a7/><a8/>\n"
+		"<b1></b1><b2 attr='foo'>This is a foo</b2><b3></b3><b4></b4>\n"
+		"<b5></b5><b6></b6><b7></b7><b8></b8>\n"
+		"<c1/><c2/><c3/><c4/><c5/><c6/><c7/><c8/>\n"
+		"<d1/><d2/><d3/><d4/><d5/><d6/><d7/>\n"
+		"<d8>This triggers the table growth and collides with b2</d8>\n"
+		"</doc>\n";
 	const char *default_current_input = "<doc>hell]</doc>";
 	const char *default_current_entity_input =
 		"<!DOCTYPE doc [\n"
 		"<!ENTITY entity '&#37;'>\n"
 		"]>\n"
 		"<doc>&entity;</doc>";
+	const uint8_t hash_entropy[16] = {
+		'0', '1', '2', '3', '4', '5', '6', '7',
+		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+	};
 	feature = XML_GetFeatureList();
 	if (!check(feature != NULL, "feature list returned")) return 1;
 	while (feature->feature != XML_FEATURE_END) {
@@ -641,6 +656,34 @@ main(void) {
 	}
 	if (!check(saw_xml_char_feature && saw_xml_lchar_feature, "feature list includes size entries")) return 1;
 
+	if (!check(parser != NULL, "parser created")) return 1;
+	if (!check(XML_SetHashSalt16Bytes(NULL, hash_entropy) == XML_FALSE, "hash salt rejects null parser")) return 1;
+	if (!check(XML_SetHashSalt16Bytes(parser, NULL) == XML_FALSE, "hash salt rejects null entropy")) return 1;
+	if (!check(XML_SetHashSalt16Bytes(parser, hash_entropy) == XML_TRUE, "hash salt accepts entropy before parse")) return 1;
+	if (!check(XML_SetHashSalt16Bytes(parser, hash_entropy) == XML_TRUE, "hash salt accepts repeated entropy before parse")) return 1;
+	if (!check(XML_SetHashSalt(parser, 0x12345678UL) == 1, "legacy hash salt accepts value before parse")) return 1;
+	status = XML_Parse(parser, "", 0, XML_FALSE);
+	if (!check(status == XML_STATUS_OK, "empty non-final parse starts parser")) return 1;
+	if (!check(XML_SetHashSalt16Bytes(parser, hash_entropy) == XML_FALSE, "hash salt rejects change after parse starts")) return 1;
+	if (!check(XML_SetHashSalt(parser, 0x87654321UL) == 0, "legacy hash salt rejects change after parse starts")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for hash collision check")) return 1;
+	if (!check(XML_SetHashSalt(parser, (unsigned long)0xff99fc90UL) == 1, "legacy hash salt accepts collision salt before parse")) return 1;
+	hash_collision_len = strlen(hash_collision_input);
+	for (hash_index = 0; hash_index < hash_collision_len; hash_index++) {
+		status = XML_Parse(
+			parser,
+			hash_collision_input + hash_index,
+			1,
+			(hash_index + 1 == hash_collision_len) ? XML_TRUE : XML_FALSE
+		);
+		if (!check(status == XML_STATUS_OK, "hash collision single-byte parse accepted")) return 1;
+	}
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;

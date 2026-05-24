@@ -40,7 +40,6 @@ basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_abort*	Abort semantics are not implemented.
 basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
-basic_tests.c	test_hash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.
 basic_tests.c	test_reparse*	Reparse deferral behavior is not implemented.

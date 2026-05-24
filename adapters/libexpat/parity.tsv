@@ -47,6 +47,7 @@ green	misc_tests.c	test_misc_expected_event_ptr_issue_980	Eiffel parser reports 
 green	misc_tests.c	test_misc_async_entity_rejected	Eiffel parser rejects internal parsed entities that change the surrounding element depth and maps the native error to XML_ERROR_ASYNC_ENTITY.
 green	misc_tests.c	test_misc_features	XML_GetFeatureList returns the Expat-compatible terminal list with correct XML_Char and XML_LChar size feature values.
 green	basic_tests.c	test_ext_entity_no_handler	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
+green	basic_tests.c	test_hash*	Native hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -88,7 +89,6 @@ red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemen
 red	basic_tests.c	test_*stop*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_abort*	Abort semantics are not implemented.
 red	basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
-red	basic_tests.c	test_hash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 red	basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 red	basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.
 red	basic_tests.c	test_reparse*	Reparse deferral behavior is not implemented.
