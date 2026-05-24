@@ -73,6 +73,9 @@ green	basic_tests.c	test_dtd_stop_processing	Eiffel internal subset parsing skip
 green	basic_tests.c	test_external_bom_consumed	Eiffel input normalization strips a UTF-8 BOM before external DTD subset tokenization, including when the native input is split across non-final/final calls.
 green	basic_tests.c	test_external_entity_values	Eiffel external DTD child parsers now validate XML text declarations, partial UTF-8 tails, unterminated literals, recursive parameter entity context, and successful BOM/ATTLIST value cases through the Windows DLL smoke.
 green	basic_tests.c	test_ext_entity_trailing_*	Eiffel external parsed entity fragments now deliver trailing character data and report XML_ERROR_ASYNC_ENTITY for fragments ending inside an open element.
+green	basic_tests.c	test_ext_entity_invalid_parse	Eiffel external parsed entity fragments now report XML_ERROR_UNCLOSED_TOKEN for bare markup starts and XML_ERROR_PARTIAL_CHAR for incomplete UTF-8 tails.
+green	basic_tests.c	test_ext_entity_set_*	Eiffel external parsed entity children now accept text declarations with encoding-only form when XML_SetEncoding supplies UTF-8, including BOM-prefixed input.
+green	basic_tests.c	test_ext_entity_bad_encoding*	Eiffel-backed external entity child parsers now report XML_ERROR_UNKNOWN_ENCODING for unsupported explicit encodings on general and parameter entity children.
 green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
@@ -97,9 +100,7 @@ red	basic_tests.c	test_unrecognised_encoding_internal_entity	Unknown/custom enco
 red	basic_tests.c	test_missing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
 red	basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
 red	basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
-red	basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semantics are not fully implemented.
-red	basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
-red	basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
+red	basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 red	basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.

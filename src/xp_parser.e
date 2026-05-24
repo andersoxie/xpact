@@ -378,7 +378,13 @@ feature {NONE} -- Markup parsing
 		do
 			create l_attributes.make
 			i := a_start_index + 1
-			if i > a_input.count or else not l_attributes.is_name_start_character (a_input.item (i)) then
+			if i > a_input.count then
+				set_error ("unterminated start tag")
+				Result := a_input.count + 1
+			elseif is_incomplete_utf8_sequence_at (a_input, i) then
+				set_error ("partial character")
+				Result := a_input.count + 1
+			elseif not l_attributes.is_name_start_character (a_input.item (i)) then
 				set_error ("invalid start tag name")
 				Result := a_input.count + 1
 			else
@@ -572,6 +578,9 @@ feature {NONE} -- Markup parsing
 					i := a_input.count + 1
 				elseif c = '&' then
 					i := append_reference_in_literal (a_input, i, a_value)
+				elseif is_incomplete_utf8_sequence_at (a_input, i) then
+					set_error ("partial character")
+					i := a_input.count + 1
 				elseif not is_xml_character_code (c.code) then
 					set_error ("invalid XML character")
 					i := a_input.count + 1
@@ -841,14 +850,18 @@ feature {NONE} -- Markup parsing
 										l_version.append (l_value)
 									elseif l_name.same_string ("encoding") then
 										l_current_order := 2
-										if l_previous_order = 0 or else l_previous_order >= l_current_order or else l_value.is_empty then
+										if
+											(not parsing_external_entity and then l_previous_order = 0)
+											or else l_previous_order >= l_current_order
+											or else l_value.is_empty
+										then
 											set_error ("invalid xml declaration")
 										end
 										l_encoding.wipe_out
 										l_encoding.append (l_value)
 									elseif l_name.same_string ("standalone") then
 										l_current_order := 3
-										if l_previous_order = 0 or else l_previous_order >= l_current_order then
+										if parsing_external_entity or else l_previous_order = 0 or else l_previous_order >= l_current_order then
 											set_error ("invalid xml declaration")
 										end
 										if l_value.same_string ("yes") then
@@ -876,7 +889,7 @@ feature {NONE} -- Markup parsing
 				a_data.count - i + 1
 			end
 			if not has_error then
-				if l_version.is_empty then
+				if l_version.is_empty and then not (parsing_external_entity and then not l_encoding.is_empty) then
 					set_error ("invalid xml declaration")
 				else
 					xml_standalone := l_standalone
@@ -1066,6 +1079,9 @@ feature {NONE} -- Character data and references
 					else
 						i := append_reference_in_content (a_input, i, l_text)
 					end
+				elseif is_incomplete_utf8_sequence_at (a_input, i) then
+					set_error ("partial character")
+					i := a_input.count + 1
 				elseif not is_xml_character_code (c.code) then
 					set_error ("invalid XML character")
 					i := a_input.count + 1

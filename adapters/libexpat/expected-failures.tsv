@@ -19,9 +19,7 @@ basic_tests.c	test_unrecognised_encoding_internal_entity	Unknown/custom encoding
 basic_tests.c	test_missing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
 basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
 basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
-basic_tests.c	test_ext_entity_set_*	External entity encoding/BOM edge semantics are not fully implemented.
-basic_tests.c	test_ext_entity_bad_encoding*	External entity encoding diagnostics are not fully implemented.
-basic_tests.c	test_ext_entity_invalid*	External entity invalid-token diagnostics are not fully implemented.
+basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.

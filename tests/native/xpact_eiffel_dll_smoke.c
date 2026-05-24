@@ -79,6 +79,17 @@ static int g_external_trailing_found;
 static const char *g_external_trailing_text;
 static char g_external_trailing_expected_char;
 static enum XML_Error g_external_trailing_expected_error;
+static int g_external_invalid_ref_count;
+static int g_external_invalid_failed;
+static const char *g_external_invalid_text;
+static enum XML_Error g_external_invalid_expected_error;
+static enum XML_Error g_external_invalid_actual_error;
+static int g_external_encoding_ref_count;
+static int g_external_encoding_failed;
+static const char *g_external_encoding_text;
+static const char *g_external_encoding_name;
+static enum XML_Error g_external_encoding_expected_error;
+static enum XML_Error g_external_encoding_actual_error;
 static int g_failing_alloc_count;
 
 struct malformed_doctype_case {
@@ -109,6 +120,21 @@ struct external_trailing_case {
 	const char *label;
 	const char *text;
 	char expected_char;
+	enum XML_Error expected_error;
+};
+
+struct external_invalid_case {
+	const char *label;
+	const char *text;
+	enum XML_Error expected_error;
+};
+
+struct external_encoding_case {
+	const char *label;
+	const char *parent_text;
+	const char *text;
+	const char *encoding;
+	const char *expected_text;
 	enum XML_Error expected_error;
 };
 
@@ -1002,6 +1028,82 @@ external_entity_trailing_handler(XML_Parser parser, const XML_Char *context, con
 	return g_external_trailing_failed ? XML_STATUS_ERROR : XML_STATUS_OK;
 }
 
+static int XMLCALL
+external_entity_invalid_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	enum XML_Error actual_error;
+	(void)base;
+	(void)publicId;
+	if (systemId == NULL) {
+		return XML_STATUS_OK;
+	}
+	g_external_invalid_ref_count++;
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_external_invalid_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, g_external_invalid_text, (int)strlen(g_external_invalid_text), XML_TRUE);
+	if (status != XML_STATUS_ERROR) {
+		g_external_invalid_failed = 1;
+	} else {
+		actual_error = XML_GetErrorCode(ext_parser);
+		g_external_invalid_actual_error = actual_error;
+		if (actual_error != g_external_invalid_expected_error) {
+			g_external_invalid_failed = 1;
+		}
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_ERROR;
+}
+
+static int XMLCALL
+external_entity_encoding_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	enum XML_Error actual_error;
+	(void)base;
+	(void)systemId;
+	(void)publicId;
+	if (systemId == NULL) {
+		return XML_STATUS_OK;
+	}
+	g_external_encoding_ref_count++;
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_external_encoding_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (g_external_encoding_name != NULL && XML_SetEncoding(ext_parser, g_external_encoding_name) != XML_STATUS_OK) {
+		g_external_encoding_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, g_external_encoding_text, (int)strlen(g_external_encoding_text), XML_TRUE);
+	if (g_external_encoding_expected_error == XML_ERROR_NONE) {
+		if (status != XML_STATUS_OK) {
+			g_external_encoding_failed = 1;
+			g_external_encoding_actual_error = XML_GetErrorCode(ext_parser);
+			XML_ParserFree(ext_parser);
+			return XML_STATUS_ERROR;
+		}
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_OK;
+	}
+	if (status != XML_STATUS_ERROR) {
+		g_external_encoding_failed = 1;
+	} else {
+		actual_error = XML_GetErrorCode(ext_parser);
+		g_external_encoding_actual_error = actual_error;
+		if (actual_error != g_external_encoding_expected_error) {
+			g_external_encoding_failed = 1;
+		}
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_ERROR;
+}
+
 static void XMLCALL
 user_parameter_xml_decl_handler(void *userData, const XML_Char *version, const XML_Char *encoding, int standalone) {
 	if (
@@ -1140,6 +1242,8 @@ main(void) {
 	size_t async_index;
 	size_t external_value_index;
 	size_t external_trailing_index;
+	size_t external_invalid_index;
+	size_t external_encoding_index;
 	size_t hash_index;
 	size_t hash_collision_len;
 	int saw_xml_char_feature = 0;
@@ -1263,6 +1367,45 @@ main(void) {
 		{"trailing CR fragment", "\r", '\r', XML_ERROR_NONE},
 		{"open element with trailing CR", "<tag>\r", '\r', XML_ERROR_ASYNC_ENTITY},
 		{"open element with trailing right square bracket", "<tag>]", ']', XML_ERROR_ASYNC_ENTITY}
+	};
+	const struct external_invalid_case external_invalid_cases[] = {
+		{"bare external markup open", "<", XML_ERROR_UNCLOSED_TOKEN},
+		{"partial UTF-8 start tag name", "<\xE2\x82", XML_ERROR_PARTIAL_CHAR},
+		{"partial UTF-8 character data", "<tag>\xE2\x82", XML_ERROR_PARTIAL_CHAR}
+	};
+	const struct external_encoding_case external_encoding_cases[] = {
+		{
+			"explicit UTF-8 overrides external text declaration",
+			loaded_external_input,
+			"<?xml encoding='iso-8859-3'?>\xC3\xA9",
+			"utf-8",
+			"\xC3\xA9",
+			XML_ERROR_NONE
+		},
+		{
+			"explicit UTF-8 with BOM overrides external text declaration",
+			loaded_external_input,
+			"\xEF\xBB\xBF<?xml encoding='iso-8859-3'?>\xC3\xA9",
+			"utf-8",
+			"\xC3\xA9",
+			XML_ERROR_NONE
+		},
+		{
+			"unsupported explicit encoding on external general entity",
+			loaded_external_input,
+			"<?xml encoding='iso-8859-3'?>u",
+			"unknown",
+			NULL,
+			XML_ERROR_UNKNOWN_ENCODING
+		},
+		{
+			"unsupported explicit encoding on external DTD subset",
+			not_standalone_external_subset_input,
+			"<!ELEMENT doc (#PCDATA)*>",
+			"unknown-encoding",
+			NULL,
+			XML_ERROR_UNKNOWN_ENCODING
+		}
 	};
 	const char *foreign_dtd_decl_chunk = "<?xml version='1.0' encoding='us-ascii'?>\n";
 	const char *foreign_dtd_body_chunk = "<doc>&entity;</doc>";
@@ -2051,6 +2194,119 @@ main(void) {
 			);
 		}
 		if (!check(g_external_trailing_ref_count == 1 && !g_external_trailing_failed && g_external_trailing_found, "external entity trailing callback path matched")) return 1;
+		XML_ParserFree(parser);
+	}
+
+	for (external_invalid_index = 0; external_invalid_index < sizeof(external_invalid_cases) / sizeof(external_invalid_cases[0]); external_invalid_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for invalid external entity check")) return 1;
+		g_external_invalid_ref_count = 0;
+		g_external_invalid_failed = 0;
+		g_external_invalid_text = external_invalid_cases[external_invalid_index].text;
+		g_external_invalid_expected_error = external_invalid_cases[external_invalid_index].expected_error;
+		g_external_invalid_actual_error = XML_ERROR_NONE;
+		if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for invalid external entity")) return 1;
+		XML_SetExternalEntityRefHandler(parser, external_entity_invalid_handler);
+		status = XML_Parse(parser, loaded_external_input, (int)strlen(loaded_external_input), XML_TRUE);
+		if (status != XML_STATUS_ERROR || XML_GetErrorCode(parser) != XML_ERROR_EXTERNAL_ENTITY_HANDLING) {
+			fprintf(
+				stderr,
+				"invalid external entity case %s parent status=%d error=%d\n",
+				external_invalid_cases[external_invalid_index].label,
+				(int)status,
+				(int)XML_GetErrorCode(parser)
+			);
+			return 1;
+		}
+		if (g_external_invalid_ref_count != 1 || g_external_invalid_failed) {
+			fprintf(
+				stderr,
+				"invalid external entity case %s failed: refs=%d failed=%d actual=%d expected=%d text=%s\n",
+				external_invalid_cases[external_invalid_index].label,
+				g_external_invalid_ref_count,
+				g_external_invalid_failed,
+				(int)g_external_invalid_actual_error,
+				(int)g_external_invalid_expected_error,
+				g_external_invalid_text
+			);
+		}
+		if (!check(g_external_invalid_ref_count == 1 && !g_external_invalid_failed, "invalid external entity child error matched")) return 1;
+		XML_ParserFree(parser);
+	}
+
+	for (external_encoding_index = 0; external_encoding_index < sizeof(external_encoding_cases) / sizeof(external_encoding_cases[0]); external_encoding_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for external entity encoding check")) return 1;
+		g_external_encoding_ref_count = 0;
+		g_external_encoding_failed = 0;
+		g_external_encoding_text = external_encoding_cases[external_encoding_index].text;
+		g_external_encoding_name = external_encoding_cases[external_encoding_index].encoding;
+		g_external_encoding_expected_error = external_encoding_cases[external_encoding_index].expected_error;
+		g_external_encoding_actual_error = XML_ERROR_NONE;
+		g_loaded_external_len = 0;
+		g_loaded_external_text[0] = '\0';
+		if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for external entity encoding")) return 1;
+		XML_SetExternalEntityRefHandler(parser, external_entity_encoding_handler);
+		XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+		status = XML_Parse(
+			parser,
+			external_encoding_cases[external_encoding_index].parent_text,
+			(int)strlen(external_encoding_cases[external_encoding_index].parent_text),
+			XML_TRUE
+		);
+		if (external_encoding_cases[external_encoding_index].expected_error == XML_ERROR_NONE) {
+			if (status != XML_STATUS_OK) {
+				fprintf(
+					stderr,
+					"external entity encoding case %s parent status=%d error=%d child=%d\n",
+					external_encoding_cases[external_encoding_index].label,
+					(int)status,
+					(int)XML_GetErrorCode(parser),
+					(int)g_external_encoding_actual_error
+				);
+				return 1;
+			}
+			if (
+				g_external_encoding_ref_count != 1
+				|| g_external_encoding_failed
+				|| strcmp(g_loaded_external_text, external_encoding_cases[external_encoding_index].expected_text) != 0
+			) {
+				fprintf(
+					stderr,
+					"external entity encoding case %s failed: refs=%d failed=%d text=%s\n",
+					external_encoding_cases[external_encoding_index].label,
+					g_external_encoding_ref_count,
+					g_external_encoding_failed,
+					g_loaded_external_text
+				);
+			}
+			if (!check(g_external_encoding_ref_count == 1 && !g_external_encoding_failed, "external entity encoding success child matched")) return 1;
+			if (!check(strcmp(g_loaded_external_text, external_encoding_cases[external_encoding_index].expected_text) == 0, "external entity encoding emitted expected text")) return 1;
+		} else {
+			if (status != XML_STATUS_ERROR || XML_GetErrorCode(parser) != XML_ERROR_EXTERNAL_ENTITY_HANDLING) {
+				fprintf(
+					stderr,
+					"external entity encoding case %s parent status=%d error=%d child=%d\n",
+					external_encoding_cases[external_encoding_index].label,
+					(int)status,
+					(int)XML_GetErrorCode(parser),
+					(int)g_external_encoding_actual_error
+				);
+				return 1;
+			}
+			if (g_external_encoding_ref_count != 1 || g_external_encoding_failed) {
+				fprintf(
+					stderr,
+					"external entity encoding case %s failed: refs=%d failed=%d actual=%d expected=%d\n",
+					external_encoding_cases[external_encoding_index].label,
+					g_external_encoding_ref_count,
+					g_external_encoding_failed,
+					(int)g_external_encoding_actual_error,
+					(int)g_external_encoding_expected_error
+				);
+			}
+			if (!check(g_external_encoding_ref_count == 1 && !g_external_encoding_failed, "external entity encoding error child matched")) return 1;
+		}
 		XML_ParserFree(parser);
 	}
 
