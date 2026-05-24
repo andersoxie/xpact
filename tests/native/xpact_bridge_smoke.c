@@ -10,6 +10,8 @@ typedef struct FakeParser {
 	int user_data_count;
 	int element_handler_count;
 	int text_handler_count;
+	int hash_salt_count;
+	int hash_salt_16_count;
 	int parse_count;
 	void *user_data;
 	XML_StartElementHandler start_handler;
@@ -17,6 +19,8 @@ typedef struct FakeParser {
 	XML_CharacterDataHandler text_handler;
 	int last_len;
 	int last_is_final;
+	unsigned long last_hash_salt;
+	uint8_t last_hash_salt_16[16];
 	char last_input[32];
 } FakeParser;
 
@@ -132,6 +136,24 @@ fake_byte_count(void *context, void *parser) {
 	return 7;
 }
 
+static XML_Bool XMLCALL
+fake_set_hash_salt(void *context, void *parser, unsigned long hash_salt) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	fake->hash_salt_count++;
+	fake->last_hash_salt = hash_salt;
+	return XML_TRUE;
+}
+
+static XML_Bool XMLCALL
+fake_set_hash_salt_16_bytes(void *context, void *parser, const uint8_t entropy[16]) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	fake->hash_salt_16_count++;
+	memcpy(fake->last_hash_salt_16, entropy, sizeof(fake->last_hash_salt_16));
+	return XML_TRUE;
+}
+
 static void XMLCALL
 fake_parsing_status(void *context, void *parser, XML_ParsingStatus *status) {
 	(void)context;
@@ -176,6 +198,10 @@ main(void) {
 	enum XML_Status status;
 	XML_ParsingStatus parsing_status;
 	XPACT_EiffelBridge bridge;
+	const uint8_t entropy[16] = {
+		'0', '1', '2', '3', '4', '5', '6', '7',
+		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+	};
 
 	memset(&fake_parser, 0, sizeof(fake_parser));
 	memset(&bridge, 0, sizeof(bridge));
@@ -188,6 +214,8 @@ main(void) {
 	bridge.set_user_data = fake_set_user_data;
 	bridge.set_element_handler = fake_set_element_handler;
 	bridge.set_character_data_handler = fake_set_text_handler;
+	bridge.set_hash_salt = fake_set_hash_salt;
+	bridge.set_hash_salt_16_bytes = fake_set_hash_salt_16_bytes;
 	bridge.parse = fake_parse;
 	bridge.get_error_code = fake_error_code;
 	bridge.get_current_line_number = fake_line;
@@ -213,6 +241,13 @@ main(void) {
 	XML_SetCharacterDataHandler(parser, text_callback);
 	if (!check(fake_parser.text_handler_count == 1, "text handler forwarded")) return 1;
 	if (!check(fake_parser.text_handler == text_callback, "text callback forwarded")) return 1;
+
+	if (!check(XML_SetHashSalt(parser, 0x12345678UL) == XML_TRUE, "hash salt forwarded")) return 1;
+	if (!check(fake_parser.hash_salt_count == 1, "bridge hash salt called")) return 1;
+	if (!check(fake_parser.last_hash_salt == 0x12345678UL, "hash salt value forwarded")) return 1;
+	if (!check(XML_SetHashSalt16Bytes(parser, entropy) == XML_TRUE, "hash salt 16 forwarded")) return 1;
+	if (!check(fake_parser.hash_salt_16_count == 1, "bridge hash salt 16 called")) return 1;
+	if (!check(memcmp(fake_parser.last_hash_salt_16, entropy, sizeof(entropy)) == 0, "hash salt 16 bytes forwarded")) return 1;
 
 	status = XML_Parse(parser, "<root/>", 7, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse forwarded to bridge")) return 1;

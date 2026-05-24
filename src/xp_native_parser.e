@@ -16,11 +16,13 @@ feature {NONE} -- Initialization
 			parser.set_external_entity_resolver (handler)
 			configure_external_entity_policy
 			create input_buffer.make_empty
+			create hash_salt_16_bytes.make_empty
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
 		ensure
 			handler_attached: handler /= Void
 			parser_attached: parser /= Void
+			hash_salt_16_bytes_attached: hash_salt_16_bytes /= Void
 			no_error: last_error_code = Xml_error_none
 			initialized: parsing_status = Xml_initialized
 		end
@@ -85,6 +87,18 @@ feature -- Access
 
 	final_buffer: BOOLEAN
 			-- Was the last parse call final?
+
+	hash_salt: INTEGER_64
+			-- Last legacy Expat hash salt accepted before parsing started.
+
+	has_hash_salt: BOOLEAN
+			-- Has `hash_salt' been explicitly configured?
+
+	hash_salt_16_bytes: STRING_8
+			-- Last 16-byte Expat hash entropy accepted before parsing started.
+
+	has_hash_salt_16_bytes: BOOLEAN
+			-- Has `hash_salt_16_bytes' been explicitly configured?
 
 	input_buffer: STRING_8
 			-- Native chunks accumulated until the final parse call.
@@ -297,6 +311,40 @@ feature -- Element change
 			handle_set: handler.native_parser_handle = a_parser
 		end
 
+	set_hash_salt (a_hash_salt: INTEGER_64): BOOLEAN
+			-- Set legacy Expat hash salt before parsing starts.
+		do
+			if parsing_status = Xml_initialized then
+				hash_salt := a_hash_salt
+				has_hash_salt := True
+				has_hash_salt_16_bytes := False
+				hash_salt_16_bytes.wipe_out
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+			accepted_records_salt: Result implies has_hash_salt and then hash_salt = a_hash_salt
+			accepted_clears_16_byte_salt: Result implies not has_hash_salt_16_bytes
+		end
+
+	set_hash_salt_16_bytes (a_entropy: POINTER): BOOLEAN
+			-- Copy 16 bytes of Expat hash entropy before parsing starts.
+		local
+			l_entropy: C_STRING
+		do
+			if a_entropy /= default_pointer and then parsing_status = Xml_initialized then
+				create l_entropy.make_by_pointer_and_count (a_entropy, 16)
+				hash_salt_16_bytes := l_entropy.substring_8 (1, 16)
+				has_hash_salt_16_bytes := True
+				has_hash_salt := False
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+			accepted_records_entropy: Result implies has_hash_salt_16_bytes and then hash_salt_16_bytes.count = 16
+			accepted_clears_legacy_salt: Result implies not has_hash_salt
+		end
+
 	reset: BOOLEAN
 			-- Reset parser state while preserving callback registrations.
 		do
@@ -309,12 +357,17 @@ feature -- Element change
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
 			final_buffer := False
+			hash_salt := 0
+			has_hash_salt := False
+			hash_salt_16_bytes.wipe_out
+			has_hash_salt_16_bytes := False
 			Result := True
 		ensure
 			reset_succeeded: Result
 			no_error: last_error_code = Xml_error_none
 			initialized: parsing_status = Xml_initialized
 			not_final: not final_buffer
+			no_hash_salt: not has_hash_salt and not has_hash_salt_16_bytes
 		end
 
 feature -- Parsing

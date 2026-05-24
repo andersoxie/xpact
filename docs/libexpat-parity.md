@@ -75,9 +75,9 @@ The Windows release has green evidence for:
   `test_misc_async_entity_rejected`.
 - `XML_GetFeatureList` size feature entries for `XML_Char` and `XML_LChar`,
   covering upstream `test_misc_features`.
-- hash-salt setter contract checks, including null-argument rejection,
-  successful repeated pre-parse calls, post-parse rejection, and collision-heavy
-  document parsing through the native ABI.
+- Eiffel-owned hash-salt setter contract checks, including null-argument
+  rejection, successful repeated pre-parse calls, post-parse rejection, and
+  collision-heavy document parsing through the native ABI.
 - unloaded external general entities are skipped in the Windows native bridge
   when no external entity handler is registered, with
   `XML_SkippedEntityHandler` callback delivery.

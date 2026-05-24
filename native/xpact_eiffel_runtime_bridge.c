@@ -25,6 +25,8 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg;
 	XPACT_EiffelSetPointerRoutine set_skipped_entity_handler;
 	XPACT_EiffelParserCommandRoutine default_current;
+	XPACT_EiffelSetHashSaltRoutine set_hash_salt;
+	XPACT_EiffelSetPointerBooleanRoutine set_hash_salt_16_bytes;
 	XPACT_EiffelParseRoutine parse;
 	XPACT_EiffelGetBufferRoutine get_buffer;
 	XPACT_EiffelParseBufferRoutine parse_buffer;
@@ -333,7 +335,7 @@ xp_rt_set_skipped_entity_handler(void *context, void *parser, XML_SkippedEntityH
 static void XMLCALL
 xp_rt_default_current(void *context, void *parser) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
-    EIF_REFERENCE installer = xp_installer_reference(state);
+	EIF_REFERENCE installer = xp_installer_reference(state);
 	if (installer != NULL && state->default_current != NULL) {
 		state->default_current(installer, (EIF_POINTER)parser);
 	}
@@ -486,6 +488,31 @@ xp_rt_get_parsing_status(void *context, void *parser, XML_ParsingStatus *status)
 	}
 }
 
+static XML_Bool XMLCALL
+xp_rt_set_hash_salt(void *context, void *parser, unsigned long hash_salt) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+	EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->set_hash_salt == NULL) {
+		return XML_FALSE;
+	}
+	return state->set_hash_salt(installer, (EIF_POINTER)parser, (EIF_INTEGER_64)hash_salt)
+		? XML_TRUE
+		: XML_FALSE;
+}
+
+static XML_Bool XMLCALL
+xp_rt_set_hash_salt_16_bytes(void *context, void *parser, const uint8_t entropy[16]) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer;
+	installer = xp_installer_reference(state);
+	if (installer == NULL || state->set_hash_salt_16_bytes == NULL || entropy == NULL) {
+		return XML_FALSE;
+	}
+	return state->set_hash_salt_16_bytes(installer, (EIF_POINTER)parser, (EIF_POINTER)entropy)
+		? XML_TRUE
+		: XML_FALSE;
+}
+
 static XML_Bool
 xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 	return state->installer != NULL
@@ -503,6 +530,8 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->get_id_attribute_index != NULL
 		&& state->get_input_context != NULL
 		&& state->default_current != NULL
+		&& state->set_hash_salt != NULL
+		&& state->set_hash_salt_16_bytes != NULL
 		&& state->get_parsing_status != NULL;
 }
 
@@ -533,6 +562,8 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_external_entity_ref_handler_arg = xp_rt_set_external_entity_ref_handler_arg;
 	bridge->set_skipped_entity_handler = xp_rt_set_skipped_entity_handler;
 	bridge->default_current = xp_rt_default_current;
+	bridge->set_hash_salt = xp_rt_set_hash_salt;
+	bridge->set_hash_salt_16_bytes = xp_rt_set_hash_salt_16_bytes;
 	bridge->parse = xp_rt_parse;
 	bridge->get_buffer = xp_rt_get_buffer;
 	bridge->parse_buffer = xp_rt_parse_buffer;
@@ -570,6 +601,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg,
 	XPACT_EiffelSetPointerRoutine set_skipped_entity_handler,
 	XPACT_EiffelParserCommandRoutine default_current,
+	XPACT_EiffelSetHashSaltRoutine set_hash_salt,
+	XPACT_EiffelSetPointerBooleanRoutine set_hash_salt_16_bytes,
 	XPACT_EiffelParseRoutine parse,
 	XPACT_EiffelGetBufferRoutine get_buffer,
 	XPACT_EiffelParseBufferRoutine parse_buffer,
@@ -591,6 +624,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| set_element_handler == NULL
 		|| set_character_data_handler == NULL
 		|| default_current == NULL
+		|| set_hash_salt == NULL
+		|| set_hash_salt_16_bytes == NULL
 		|| parse == NULL
 		|| get_buffer == NULL
 		|| parse_buffer == NULL
@@ -624,6 +659,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_external_entity_ref_handler_arg = set_external_entity_ref_handler_arg;
 	xp_runtime_bridge.set_skipped_entity_handler = set_skipped_entity_handler;
 	xp_runtime_bridge.default_current = default_current;
+	xp_runtime_bridge.set_hash_salt = set_hash_salt;
+	xp_runtime_bridge.set_hash_salt_16_bytes = set_hash_salt_16_bytes;
 	xp_runtime_bridge.parse = parse;
 	xp_runtime_bridge.get_buffer = get_buffer;
 	xp_runtime_bridge.parse_buffer = parse_buffer;
@@ -671,6 +708,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_external_entity_ref_handler_arg,
     EIF_POINTER set_skipped_entity_handler,
     EIF_POINTER default_current,
+    EIF_POINTER set_hash_salt,
+    EIF_POINTER set_hash_salt_16_bytes,
     EIF_POINTER parse,
     EIF_POINTER get_buffer,
     EIF_POINTER parse_buffer,
@@ -706,6 +745,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetPointerRoutine)set_external_entity_ref_handler_arg,
 		(XPACT_EiffelSetPointerRoutine)set_skipped_entity_handler,
 		(XPACT_EiffelParserCommandRoutine)default_current,
+		(XPACT_EiffelSetHashSaltRoutine)set_hash_salt,
+		(XPACT_EiffelSetPointerBooleanRoutine)set_hash_salt_16_bytes,
 		(XPACT_EiffelParseRoutine)parse,
 		(XPACT_EiffelGetBufferRoutine)get_buffer,
 		(XPACT_EiffelParseBufferRoutine)parse_buffer,

@@ -776,6 +776,7 @@ feature {NONE} -- Tests
 			l_attributes: XP_ATTRIBUTES
 			l_native: XP_NATIVE_PARSER
 			l_status: INTEGER
+			l_hash_entropy: C_STRING
 		do
 			create l_attributes.make
 			l_attributes.put ("first", "1")
@@ -786,6 +787,17 @@ feature {NONE} -- Tests
 			assert ("attribute insertion value second", l_attributes.i_th_value (2).same_string ("2"))
 
 			create l_native.make
+			create l_hash_entropy.make ("0123456789abcdef")
+			assert ("native Eiffel parser accepts hash salt before parse", l_native.set_hash_salt (305419896))
+			assert ("native Eiffel parser records hash salt", l_native.has_hash_salt and then l_native.hash_salt = 305419896)
+			assert ("native Eiffel parser accepts 16-byte hash salt before parse", l_native.set_hash_salt_16_bytes (l_hash_entropy.item))
+			assert ("native Eiffel parser records 16-byte hash salt", l_native.has_hash_salt_16_bytes and then l_native.hash_salt_16_bytes.same_string ("0123456789abcdef"))
+			assert ("native Eiffel parser clears legacy salt after 16-byte salt", not l_native.has_hash_salt)
+			l_status := l_native.parse ("", False)
+			assert ("native Eiffel parser accepts empty non-final parse", l_status = l_native.Xml_status_ok)
+			assert ("native Eiffel parser rejects late hash salt", not l_native.set_hash_salt (1))
+			assert ("native Eiffel parser rejects late 16-byte hash salt", not l_native.set_hash_salt_16_bytes (l_hash_entropy.item))
+			assert ("native Eiffel parser reset clears hash salt", l_native.reset and then not l_native.has_hash_salt and then not l_native.has_hash_salt_16_bytes)
 			l_status := l_native.parse ("<root><child a=%"1%">text</child></root>", True)
 			assert ("native Eiffel parser accepts document", l_status = l_native.Xml_status_ok)
 			assert ("native Eiffel parser reports no error", l_native.last_error_code = l_native.Xml_error_none)
@@ -856,6 +868,7 @@ feature {NONE} -- Tests
 			l_error_input: C_STRING
 			l_chunk_start: C_STRING
 			l_chunk_end: C_STRING
+			l_hash_entropy: C_STRING
 		do
 			create l_installer.make
 			l_handle := l_installer.parser_create (default_pointer, default_pointer, default_pointer)
@@ -863,12 +876,20 @@ feature {NONE} -- Tests
 			assert ("native bridge installer tracks parser", l_installer.active_parser_count = 1)
 			assert ("native bridge installer resolves handle", attached l_installer.parser_for (l_handle))
 
+			create l_hash_entropy.make ("0123456789abcdef")
+			assert ("native bridge installer sets hash salt", l_installer.set_hash_salt (l_handle, 305419896))
+			assert ("native bridge installer sets 16-byte hash salt", l_installer.set_hash_salt_16_bytes (l_handle, l_hash_entropy.item))
+			if attached l_installer.parser_for (l_handle) as l_hash_parser then
+				assert ("native bridge installer stores 16-byte hash salt", l_hash_parser.has_hash_salt_16_bytes and then l_hash_parser.hash_salt_16_bytes.same_string ("0123456789abcdef"))
+			end
+
 			create l_input.make ("<root><child>text</child></root>")
 			l_installer.set_user_data (l_handle, l_input.item)
 			l_installer.set_element_handler (l_handle, default_pointer, default_pointer)
 			l_installer.set_character_data_handler (l_handle, default_pointer)
 			l_status := l_installer.parse (l_handle, l_input.item, l_input.count, True)
 			assert ("native bridge installer parse succeeds", l_status = 1)
+			assert ("native bridge installer rejects late hash salt", not l_installer.set_hash_salt (l_handle, 1))
 			assert ("native bridge installer reports no error", l_installer.get_error_code (l_handle) = 0)
 			if attached l_installer.parser_for (l_handle) as l_native then
 				assert ("native bridge installer forwards user data", l_native.handler.user_data = l_input.item)

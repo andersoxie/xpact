@@ -42,6 +42,8 @@ feature -- Bridge registration
 				$set_external_entity_ref_handler_arg,
 				$set_skipped_entity_handler,
 				$default_current,
+				$set_hash_salt,
+				$set_hash_salt_16_bytes,
 				$parse,
 				$get_buffer,
 				$parse_buffer,
@@ -93,6 +95,8 @@ feature {NONE} -- Native calls
 		a_set_external_entity_ref_handler_arg,
 		a_set_skipped_entity_handler,
 		a_default_current,
+		a_set_hash_salt,
+		a_set_hash_salt_16_bytes,
 		a_parse,
 		a_get_buffer,
 		a_parse_buffer,
@@ -119,7 +123,7 @@ feature {NONE} -- Native calls
 			get_input_context_attached: a_get_input_context /= default_pointer
 			get_parsing_status_attached: a_get_parsing_status /= default_pointer
 		external
-			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
+			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
 		alias
 			"XPACT_RegisterEiffelRuntimeBridgePointers"
 		end

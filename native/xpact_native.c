@@ -22,9 +22,6 @@ struct XML_ParserStruct {
 	enum XML_Error errorCode;
 	enum XML_Parsing parsing;
 	XML_Bool finalBuffer;
-	unsigned long hashSalt;
-	uint8_t hashSalt16[16];
-	XML_Bool hasHashSalt16;
 	XML_StartElementHandler startElementHandler;
 	XML_EndElementHandler endElementHandler;
 	XML_CharacterDataHandler characterDataHandler;
@@ -660,22 +657,32 @@ XML_SetParamEntityParsing(XML_Parser parser, enum XML_ParamEntityParsing parsing
 
 int XMLCALL
 XML_SetHashSalt(XML_Parser parser, unsigned long hash_salt) {
-	if (parser == NULL || parser->parsing != XML_INITIALIZED) {
+	if (parser == NULL) {
 		return 0;
 	}
-	parser->hashSalt = hash_salt;
-	parser->hasHashSalt16 = XML_FALSE;
-	return 1;
+	if (
+		parser->bridge != NULL
+		&& parser->bridge->set_hash_salt != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->set_hash_salt(parser->bridge->context, parser->eiffelParser, hash_salt);
+	}
+	return parser->parsing == XML_INITIALIZED ? 1 : 0;
 }
 
 XML_Bool XMLCALL
 XML_SetHashSalt16Bytes(XML_Parser parser, const uint8_t entropy[16]) {
-	if (parser == NULL || entropy == NULL || parser->parsing != XML_INITIALIZED) {
+	if (parser == NULL || entropy == NULL) {
 		return XML_FALSE;
 	}
-	memcpy(parser->hashSalt16, entropy, sizeof(parser->hashSalt16));
-	parser->hasHashSalt16 = XML_TRUE;
-	return XML_TRUE;
+	if (
+		parser->bridge != NULL
+		&& parser->bridge->set_hash_salt_16_bytes != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->set_hash_salt_16_bytes(parser->bridge->context, parser->eiffelParser, entropy);
+	}
+	return parser->parsing == XML_INITIALIZED ? XML_TRUE : XML_FALSE;
 }
 
 enum XML_Error XMLCALL

@@ -11,7 +11,7 @@
 #define XPACT_NATIVE_API
 #endif
 
-#define XPACT_EIFFEL_BRIDGE_ABI_VERSION 4u
+#define XPACT_EIFFEL_BRIDGE_ABI_VERSION 5u
 
 /*
  * Private bridge between the libexpat-compatible C ABI and the Eiffel parser.
@@ -102,6 +102,12 @@ typedef struct XPACT_EiffelBridge {
 		XML_SkippedEntityHandler handler
 	);
 	void (XMLCALL *default_current) (void *context, void *parser);
+	XML_Bool (XMLCALL *set_hash_salt) (void *context, void *parser, unsigned long hash_salt);
+	XML_Bool (XMLCALL *set_hash_salt_16_bytes) (
+		void *context,
+		void *parser,
+		const uint8_t entropy[16]
+	);
 
 	enum XML_Status (XMLCALL *parse) (void *context, void *parser, const char *s, int len, int isFinal);
 	void *(XMLCALL *get_buffer) (void *context, void *parser, int len);

@@ -233,6 +233,22 @@ feature -- Handler callbacks
 			end
 		end
 
+	set_hash_salt (a_parser: POINTER; a_hash_salt: INTEGER_64): BOOLEAN
+			-- Set legacy Expat hash salt for `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_hash_salt (a_hash_salt)
+			end
+		end
+
+	set_hash_salt_16_bytes (a_parser, a_entropy: POINTER): BOOLEAN
+			-- Set 16-byte Expat hash entropy for `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_hash_salt_16_bytes (a_entropy)
+			end
+		end
+
 feature -- Parse callbacks
 
 	parse (a_parser, a_bytes: POINTER; a_length: INTEGER; a_is_final: BOOLEAN): INTEGER
