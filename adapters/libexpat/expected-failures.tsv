@@ -6,7 +6,6 @@ alloc_tests.c	test_alloc_*	Upstream allocation-failure injection and allocator e
 nsalloc_tests.c	test_nsalloc_*	Namespace allocation and namespace-context exhaustion checks are not implemented.
 ns_tests.c	test_*	Namespace parsing, namespace callbacks, namespace triplets, and namespace error parity are not implemented.
 misc_tests.c	test_misc_alloc_*	Allocator edge cases in parser creation are not fully implemented.
-misc_tests.c	test_misc_features	The feature list is intentionally minimal and does not claim full upstream feature parity.
 misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks are not yet audited against the Eiffel-backed native bridge.
 misc_tests.c	test_misc_utf16le	UTF-16 input parity is outside the Windows Phase 1 UTF-8 native path.
 misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.

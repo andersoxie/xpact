@@ -11,6 +11,9 @@ inherit
 			on_comment,
 			on_start_cdata_section,
 			on_end_cdata_section,
+			wants_automatic_character_data_default,
+			expands_internal_general_entity_references,
+			reports_skipped_internal_general_entities,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
 			on_element_decl,
@@ -69,6 +72,9 @@ feature -- Access
 
 	default_expands_entities: BOOLEAN
 			-- Was the default handler registered through the expanding API?
+
+	current_default_text: detachable STRING_8
+			-- Current callback text replayable through `XML_DefaultCurrent'.
 
 	start_doctype_decl_callback: POINTER
 			-- `XML_StartDoctypeDeclHandler' callback pointer.
@@ -364,6 +370,24 @@ feature -- Element change
 
 feature -- Events
 
+	wants_automatic_character_data_default: BOOLEAN
+			-- Should character data also be emitted through `on_default' automatically?
+		do
+			Result := character_data_callback = default_pointer
+		end
+
+	expands_internal_general_entity_references: BOOLEAN
+			-- Should internal general entity references be expanded in content?
+		do
+			Result := default_callback = default_pointer or else default_expands_entities
+		end
+
+	reports_skipped_internal_general_entities: BOOLEAN
+			-- Should skipped internal general entities be reported through `on_skipped_entity'?
+		do
+			Result := skipped_entity_callback /= default_pointer
+		end
+
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 		local
 			l_event: STRING_8
@@ -438,7 +462,9 @@ feature -- Events
 				events.extend (l_event)
 				if character_data_callback /= default_pointer then
 					create l_text.make (a_text)
+					remember_default_text (a_text)
 					call_character_data_callback (character_data_callback, user_data, l_text.item, a_text.count)
+					forget_default_text
 				end
 			end
 		end
@@ -749,6 +775,14 @@ feature -- Events
 			end
 		end
 
+	default_current
+			-- Replay the current callback text through the default handler.
+		do
+			if attached current_default_text as l_text then
+				on_default (l_text)
+			end
+		end
+
 feature -- External entity resolution
 
 	resolve_external_entity (a_name, a_public_id, a_system_id: READABLE_STRING_8; a_is_parameter: BOOLEAN): detachable STRING_8
@@ -779,6 +813,24 @@ feature -- External entity resolution
 		end
 
 feature {NONE} -- Native callback calls
+
+	remember_default_text (a_text: READABLE_STRING_8)
+			-- Store callback text for `XML_DefaultCurrent'.
+		require
+			text_attached: a_text /= Void
+		do
+			create current_default_text.make_from_string (a_text)
+		ensure
+			text_available: attached current_default_text as l_text and then l_text.same_string (a_text)
+		end
+
+	forget_default_text
+			-- Clear callback text after returning from the client callback.
+		do
+			current_default_text := Void
+		ensure
+			no_current_text: current_default_text = Void
+		end
 
 	external_entity_callback_argument: POINTER
 			-- First argument for `XML_ExternalEntityRefHandler'.

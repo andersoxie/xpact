@@ -35,6 +35,8 @@ static int g_sync_entity_failed;
 static char g_sync_entity_text[256];
 static int g_sync_entity_len;
 static int g_entity_context_failed;
+static int g_default_current_failed;
+static int g_default_current_record_count;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -49,6 +51,18 @@ struct async_entity_case {
 	XML_Size expected_line;
 	XML_Size expected_column;
 };
+
+struct default_current_record {
+	int kind;
+	int arg;
+};
+
+#define DEFAULT_CURRENT_DEFAULT 1
+#define DEFAULT_CURRENT_CDATA 2
+#define DEFAULT_CURRENT_CDATA_NODEFAULT 3
+#define DEFAULT_CURRENT_SKIP 4
+
+static struct default_current_record g_default_current_records[64];
 
 static int XMLCALL
 smoke_prefix_converter(void *data, const char *s) {
@@ -224,6 +238,54 @@ default_handler(void *userData, const XML_Char *s, int len) {
 	memcpy(g_default_text + g_default_len, s, (size_t)len);
 	g_default_len += len;
 	g_default_text[g_default_len] = '\0';
+}
+
+static void
+record_default_current(int kind, int arg) {
+	if (g_default_current_record_count >= (int)(sizeof(g_default_current_records) / sizeof(g_default_current_records[0]))) {
+		g_default_current_failed = 1;
+		return;
+	}
+	g_default_current_records[g_default_current_record_count].kind = kind;
+	g_default_current_records[g_default_current_record_count].arg = arg;
+	g_default_current_record_count++;
+}
+
+static int
+check_default_current_record(int index, int kind, int arg) {
+	return index >= 0
+		&& index < g_default_current_record_count
+		&& g_default_current_records[index].kind == kind
+		&& g_default_current_records[index].arg == arg;
+}
+
+static void XMLCALL
+default_current_default_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	(void)s;
+	record_default_current(DEFAULT_CURRENT_DEFAULT, len);
+}
+
+static void XMLCALL
+default_current_cdata_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	(void)s;
+	record_default_current(DEFAULT_CURRENT_CDATA, len);
+	XML_DefaultCurrent(g_parser);
+}
+
+static void XMLCALL
+default_current_cdata_nodefault_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	(void)s;
+	record_default_current(DEFAULT_CURRENT_CDATA_NODEFAULT, len);
+}
+
+static void XMLCALL
+default_current_skip_handler(void *userData, const XML_Char *entityName, int is_parameter_entity) {
+	(void)userData;
+	(void)entityName;
+	record_default_current(DEFAULT_CURRENT_SKIP, is_parameter_entity);
 }
 
 static void XMLCALL
@@ -485,8 +547,11 @@ main(void) {
 	enum XML_Status status;
 	enum XML_Error actual_error;
 	XML_Parser parser = XML_ParserCreate("UTF-8");
+	const XML_Feature *feature;
 	size_t malformed_index;
 	size_t async_index;
+	int saw_xml_char_feature = 0;
+	int saw_xml_lchar_feature = 0;
 	const char *default_input = "<?test processing instruction?>\n<doc/>";
 	const char *doctype_input = "<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>";
 	const char *dtd_default_input =
@@ -556,6 +621,26 @@ main(void) {
 		"  <!ENTITY draft.day '10'>\n"
 		"]>\n"
 		"<day>&draft.day;</day>\n";
+	const char *default_current_input = "<doc>hell]</doc>";
+	const char *default_current_entity_input =
+		"<!DOCTYPE doc [\n"
+		"<!ENTITY entity '&#37;'>\n"
+		"]>\n"
+		"<doc>&entity;</doc>";
+	feature = XML_GetFeatureList();
+	if (!check(feature != NULL, "feature list returned")) return 1;
+	while (feature->feature != XML_FEATURE_END) {
+		if (feature->feature == XML_FEATURE_SIZEOF_XML_CHAR) {
+			if (!check(feature->value == sizeof(XML_Char), "sizeof XML_Char feature value")) return 1;
+			saw_xml_char_feature = 1;
+		} else if (feature->feature == XML_FEATURE_SIZEOF_XML_LCHAR) {
+			if (!check(feature->value == sizeof(XML_LChar), "sizeof XML_LChar feature value")) return 1;
+			saw_xml_lchar_feature = 1;
+		}
+		feature++;
+	}
+	if (!check(saw_xml_char_feature && saw_xml_lchar_feature, "feature list includes size entries")) return 1;
+
 	if (!check(parser != NULL, "parser created")) return 1;
 	status = XML_Parse(parser, "<root><child>text</child></root>", 32, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser")) return 1;
@@ -579,6 +664,80 @@ main(void) {
 	status = XML_Parse(parser, default_input, (int)strlen(default_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for default check")) return 1;
 	if (!check(strcmp(g_default_text, default_input) == 0, "default handler receives raw tokens")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for default current check")) return 1;
+	g_parser = parser;
+	g_default_current_failed = 0;
+	g_default_current_record_count = 0;
+	XML_SetDefaultHandler(parser, default_current_default_handler);
+	XML_SetCharacterDataHandler(parser, default_current_cdata_handler);
+	status = XML_Parse(parser, default_current_input, (int)strlen(default_current_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "default current document accepted")) return 1;
+	if (!check(!g_default_current_failed && g_default_current_record_count == 4, "default current records expected calls")) return 1;
+	if (!check(check_default_current_record(0, DEFAULT_CURRENT_DEFAULT, 5), "default current start tag defaulted")) return 1;
+	if (!check(check_default_current_record(1, DEFAULT_CURRENT_CDATA, 5), "default current cdata handled")) return 1;
+	if (!check(check_default_current_record(2, DEFAULT_CURRENT_DEFAULT, 5), "default current cdata replayed")) return 1;
+	if (!check(check_default_current_record(3, DEFAULT_CURRENT_DEFAULT, 6), "default current end tag defaulted")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for no default current check")) return 1;
+	g_parser = parser;
+	g_default_current_failed = 0;
+	g_default_current_record_count = 0;
+	XML_SetDefaultHandler(parser, default_current_default_handler);
+	XML_SetCharacterDataHandler(parser, default_current_cdata_nodefault_handler);
+	status = XML_Parse(parser, default_current_input, (int)strlen(default_current_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "no default current document accepted")) return 1;
+	if (!check(!g_default_current_failed && g_default_current_record_count == 3, "no default current records expected calls")) return 1;
+	if (!check(check_default_current_record(0, DEFAULT_CURRENT_DEFAULT, 5), "no default current start tag defaulted")) return 1;
+	if (!check(check_default_current_record(1, DEFAULT_CURRENT_CDATA_NODEFAULT, 5), "no default current cdata handled")) return 1;
+	if (!check(check_default_current_record(2, DEFAULT_CURRENT_DEFAULT, 6), "no default current end tag defaulted")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for default-suppressed entity check")) return 1;
+	g_default_len = 0;
+	g_default_text[0] = '\0';
+	g_empty_text_failed = 0;
+	XML_SetDefaultHandler(parser, default_handler);
+	XML_SetCharacterDataHandler(parser, empty_text_handler);
+	status = XML_Parse(parser, default_current_entity_input, (int)strlen(default_current_entity_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "default-suppressed internal entity document accepted")) return 1;
+	if (!check(strstr(g_default_text, "&entity;") != NULL, "default handler receives suppressed internal entity reference")) return 1;
+	if (!check(!g_empty_text_failed, "suppressed internal entity produces no character data")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for skipped internal entity check")) return 1;
+	g_default_current_failed = 0;
+	g_default_current_record_count = 0;
+	g_empty_text_failed = 0;
+	XML_SetDefaultHandler(parser, default_handler);
+	XML_SetSkippedEntityHandler(parser, default_current_skip_handler);
+	XML_SetCharacterDataHandler(parser, empty_text_handler);
+	status = XML_Parse(parser, default_current_entity_input, (int)strlen(default_current_entity_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "skipped internal entity document accepted")) return 1;
+	if (!check(!g_default_current_failed && g_default_current_record_count > 0, "skipped internal entity recorded callbacks")) return 1;
+	if (!check(check_default_current_record(g_default_current_record_count - 3, DEFAULT_CURRENT_SKIP, 0) || check_default_current_record(g_default_current_record_count - 2, DEFAULT_CURRENT_SKIP, 0) || check_default_current_record(g_default_current_record_count - 1, DEFAULT_CURRENT_SKIP, 0), "skipped internal entity callback delegated")) return 1;
+	if (!check(!g_empty_text_failed, "skipped internal entity produces no character data")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for default-current entity expansion check")) return 1;
+	g_parser = parser;
+	g_default_current_failed = 0;
+	g_default_current_record_count = 0;
+	XML_SetDefaultHandlerExpand(parser, default_current_default_handler);
+	XML_SetCharacterDataHandler(parser, default_current_cdata_handler);
+	status = XML_Parse(parser, default_current_entity_input, (int)strlen(default_current_entity_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "default-current expanded internal entity document accepted")) return 1;
+	if (!check(!g_default_current_failed, "default-current expanded entity records did not overflow")) return 1;
+	if (!check(g_default_current_record_count >= 2, "default-current expanded entity recorded callbacks")) return 1;
+	if (!check(check_default_current_record(g_default_current_record_count - 3, DEFAULT_CURRENT_CDATA, 1) || check_default_current_record(g_default_current_record_count - 2, DEFAULT_CURRENT_CDATA, 1), "default-current expanded entity cdata handled")) return 1;
+	if (!check(check_default_current_record(g_default_current_record_count - 2, DEFAULT_CURRENT_DEFAULT, 1) || check_default_current_record(g_default_current_record_count - 1, DEFAULT_CURRENT_DEFAULT, 1), "default-current expanded entity cdata replayed")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

@@ -467,7 +467,14 @@ XML_SetUnknownEncodingHandler(XML_Parser parser, XML_UnknownEncodingHandler hand
 
 void XMLCALL
 XML_DefaultCurrent(XML_Parser parser) {
-	(void)parser;
+	if (
+		parser != NULL
+		&& parser->bridge != NULL
+		&& parser->bridge->default_current != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		parser->bridge->default_current(parser->bridge->context, parser->eiffelParser);
+	}
 }
 
 void XMLCALL

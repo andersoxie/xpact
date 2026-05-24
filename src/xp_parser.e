@@ -790,7 +790,9 @@ feature {NONE} -- Character data and references
 						Result := i
 					end
 				else
-					emit_default (l_text)
+					if handler.wants_automatic_character_data_default then
+						emit_default (l_text)
+					end
 					if entity_reference_count_stack.count > 0 then
 						note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
 					else
@@ -841,12 +843,21 @@ feature {NONE} -- Character data and references
 						emit_text (a_text)
 						a_text.wipe_out
 					end
-					push_entity_reference_position (a_start_index, l_end - a_start_index + 1)
-					include_general_entity_in_content (l_name)
-					pop_entity_reference_position
-					if has_error then
-						Result := a_input.count + 1
+					if handler.expands_internal_general_entity_references then
+						push_entity_reference_position (a_start_index, l_end - a_start_index + 1)
+						include_general_entity_in_content (l_name)
+						pop_entity_reference_position
+						if has_error then
+							Result := a_input.count + 1
+						else
+							Result := l_end + 1
+						end
 					else
+						if handler.reports_skipped_internal_general_entities then
+							handler.on_skipped_entity (l_name, False)
+						else
+							emit_default (a_input.substring (a_start_index, l_end))
+						end
 						Result := l_end + 1
 					end
 				end

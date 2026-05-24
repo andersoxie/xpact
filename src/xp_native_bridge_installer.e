@@ -225,6 +225,14 @@ feature -- Handler callbacks
 			end
 		end
 
+	default_current (a_parser: POINTER)
+			-- Replay current callback text through the default handler.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.default_current
+			end
+		end
+
 feature -- Parse callbacks
 
 	parse (a_parser, a_bytes: POINTER; a_length: INTEGER; a_is_final: BOOLEAN): INTEGER

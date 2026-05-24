@@ -6,6 +6,24 @@ deferred class
 
 feature -- Events
 
+	wants_automatic_character_data_default: BOOLEAN
+			-- Should character data also be emitted through `on_default' automatically?
+		do
+			Result := True
+		end
+
+	expands_internal_general_entity_references: BOOLEAN
+			-- Should internal general entity references be expanded in content?
+		do
+			Result := True
+		end
+
+	reports_skipped_internal_general_entities: BOOLEAN
+			-- Should skipped internal general entities be reported through `on_skipped_entity'?
+		do
+			Result := False
+		end
+
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 			-- A start element was parsed.
 		require

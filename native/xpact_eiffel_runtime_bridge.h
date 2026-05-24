@@ -30,6 +30,7 @@ typedef EIF_BOOLEAN (*XPACT_EiffelParserResetRoutine) (
 	 EIF_POINTER encoding
 );
 typedef void (*XPACT_EiffelParserFreeRoutine) (EIF_REFERENCE installer, EIF_POINTER parser);
+typedef void (*XPACT_EiffelParserCommandRoutine) (EIF_REFERENCE installer, EIF_POINTER parser);
 typedef void (*XPACT_EiffelSetPointerRoutine) (
 	 EIF_REFERENCE installer,
 	 EIF_POINTER parser,
@@ -100,6 +101,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler,
 	 XPACT_EiffelSetPointerRoutine set_external_entity_ref_handler_arg,
 	 XPACT_EiffelSetPointerRoutine set_skipped_entity_handler,
+	 XPACT_EiffelParserCommandRoutine default_current,
 	 XPACT_EiffelParseRoutine parse,
 	 XPACT_EiffelGetBufferRoutine get_buffer,
 	 XPACT_EiffelParseBufferRoutine parse_buffer,
@@ -136,6 +138,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER set_external_entity_ref_handler,
 	 EIF_POINTER set_external_entity_ref_handler_arg,
 	 EIF_POINTER set_skipped_entity_handler,
+	 EIF_POINTER default_current,
 	 EIF_POINTER parse,
 	 EIF_POINTER get_buffer,
 	 EIF_POINTER parse_buffer,

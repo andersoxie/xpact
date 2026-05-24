@@ -283,6 +283,12 @@ feature -- Element change
 			handler_set: handler.skipped_entity_callback = a_handler
 		end
 
+	default_current
+			-- Replay current callback text through the default handler.
+		do
+			handler.default_current
+		end
+
 	set_native_parser_handle (a_parser: POINTER)
 			-- Set native parser handle used by native callbacks.
 		do

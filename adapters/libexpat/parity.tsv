@@ -45,6 +45,7 @@ green	misc_tests.c	test_misc_general_entities_support	Eiffel parser emits XML_En
 green	misc_tests.c	test_misc_sync_entity_tolerated	Eiffel parser accepts synchronous internal entity replacement text that opens/closes nested elements and exposes the behavior through the Windows native smoke.
 green	misc_tests.c	test_misc_expected_event_ptr_issue_980	Eiffel parser reports XML_GetInputContext and XML_GetCurrentByteCount for character callbacks emitted from internal entity references.
 green	misc_tests.c	test_misc_async_entity_rejected	Eiffel parser rejects internal parsed entities that change the surrounding element depth and maps the native error to XML_ERROR_ASYNC_ENTITY.
+green	misc_tests.c	test_misc_features	XML_GetFeatureList returns the Expat-compatible terminal list with correct XML_Char and XML_LChar size feature values.
 green	basic_tests.c	test_ext_entity_no_handler	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
@@ -53,7 +54,6 @@ red	alloc_tests.c	test_alloc_*	Upstream allocation-failure injection and allocat
 red	nsalloc_tests.c	test_nsalloc_*	Namespace allocation and namespace-context exhaustion checks are not implemented.
 red	ns_tests.c	test_*	Namespace parsing, namespace callbacks, namespace triplets, and namespace error parity are not implemented.
 red	misc_tests.c	test_misc_alloc_*	Allocator edge cases in parser creation are not fully implemented.
-red	misc_tests.c	test_misc_features	The feature list is intentionally minimal and does not claim full upstream feature parity.
 red	misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks are not yet audited against the Eiffel-backed native bridge.
 red	misc_tests.c	test_misc_utf16le	UTF-16 input parity is outside the Windows Phase 1 UTF-8 native path.
 red	misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
