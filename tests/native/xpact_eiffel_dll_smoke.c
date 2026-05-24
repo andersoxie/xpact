@@ -53,6 +53,12 @@ static int g_sync_entity_len;
 static int g_entity_context_failed;
 static int g_default_current_failed;
 static int g_default_current_record_count;
+static int g_not_standalone_count;
+static int g_foreign_dtd_ref_count;
+static int g_foreign_dtd_failed;
+static const char *g_foreign_dtd_text;
+static char g_foreign_text[256];
+static int g_foreign_text_len;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -613,6 +619,60 @@ external_arg_checker(XML_Parser parameter, const XML_Char *context, const XML_Ch
 	return XML_STATUS_OK;
 }
 
+static int XMLCALL
+reject_not_standalone_handler(void *userData) {
+	(void)userData;
+	g_not_standalone_count++;
+	return XML_STATUS_ERROR;
+}
+
+static int XMLCALL
+accept_not_standalone_handler(void *userData) {
+	(void)userData;
+	g_not_standalone_count++;
+	return XML_STATUS_OK;
+}
+
+static void XMLCALL
+foreign_text_handler(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	if (len < 0 || g_foreign_text_len + len >= (int)sizeof(g_foreign_text)) {
+		g_foreign_dtd_failed = 1;
+		return;
+	}
+	memcpy(g_foreign_text + g_foreign_text_len, s, (size_t)len);
+	g_foreign_text_len += len;
+	g_foreign_text[g_foreign_text_len] = '\0';
+}
+
+static int XMLCALL
+foreign_dtd_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_foreign_dtd_ref_count++;
+	if (context == NULL || systemId == NULL) {
+		g_foreign_dtd_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (g_foreign_dtd_text == NULL) {
+		return XML_STATUS_OK;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_foreign_dtd_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, g_foreign_dtd_text, (int)strlen(g_foreign_dtd_text), XML_TRUE);
+	XML_ParserFree(ext_parser);
+	if (status != XML_STATUS_OK) {
+		g_foreign_dtd_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	return XML_STATUS_OK;
+}
+
 static void XMLCALL
 user_parameter_xml_decl_handler(void *userData, const XML_Char *version, const XML_Char *encoding, int standalone) {
 	if (
@@ -817,6 +877,19 @@ main(void) {
 		"<?xml version='1.0' standalone='yes'?>\n"
 		"<!DOCTYPE doc SYSTEM 'foo'>\n"
 		"<doc>&entity;</doc>";
+	const char *not_standalone_external_subset_input =
+		"<?xml version='1.0' encoding='us-ascii'?>\n"
+		"<!DOCTYPE doc SYSTEM 'foo'>\n"
+		"<doc>&entity;</doc>";
+	const char *foreign_dtd_decl_chunk = "<?xml version='1.0' encoding='us-ascii'?>\n";
+	const char *foreign_dtd_body_chunk = "<doc>&entity;</doc>";
+	const char *foreign_dtd_with_doctype_input =
+		"<?xml version='1.0' encoding='us-ascii'?>\n"
+		"<!DOCTYPE doc [<!ENTITY entity 'hello world'>]>\n"
+		"<doc>&entity;</doc>";
+	const char *foreign_dtd_without_external_subset_input =
+		"<!DOCTYPE doc [<!ENTITY foo 'bar'>]>\n"
+		"<doc>&foo;</doc>";
 	const char *user_parameter_input =
 		"<?xml version='1.0' encoding='us-ascii'?>\n"
 		"<!-- Primary parse -->\n"
@@ -1230,6 +1303,145 @@ main(void) {
 	status = XML_Parse(parser, standalone_external_subset_input, (int)strlen(standalone_external_subset_input), XML_TRUE);
 	if (!check(status == XML_STATUS_ERROR, "standalone undefined external-subset entity is rejected")) return 1;
 	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNDEFINED_ENTITY, "standalone undefined entity maps to XML_ERROR_UNDEFINED_ENTITY")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for not-standalone reject check")) return 1;
+	g_not_standalone_count = 0;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "<!ELEMENT doc (#PCDATA)*>";
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for not-standalone reject")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	XML_SetNotStandaloneHandler(parser, reject_not_standalone_handler);
+	status = XML_Parse(parser, not_standalone_external_subset_input, (int)strlen(not_standalone_external_subset_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "not-standalone handler can reject external subset")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_NOT_STANDALONE, "not-standalone rejection maps to XML_ERROR_NOT_STANDALONE")) return 1;
+	if (!check(g_not_standalone_count == 1, "not-standalone reject callback called once")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for not-standalone accept check")) return 1;
+	g_not_standalone_count = 0;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "<!ELEMENT doc (#PCDATA)*>";
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for not-standalone accept")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	XML_SetNotStandaloneHandler(parser, accept_not_standalone_handler);
+	status = XML_Parse(parser, not_standalone_external_subset_input, (int)strlen(not_standalone_external_subset_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "not-standalone handler can accept external subset")) return 1;
+	if (!check(g_not_standalone_count == 1 && g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "not-standalone accept loads external subset")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for not-standalone accept without external handler check")) return 1;
+	g_not_standalone_count = 0;
+	XML_SetNotStandaloneHandler(parser, accept_not_standalone_handler);
+	status = XML_Parse(parser, not_standalone_external_subset_input, (int)strlen(not_standalone_external_subset_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "not-standalone accept works without loading external subset")) return 1;
+	if (!check(g_not_standalone_count == 1, "not-standalone accept without external handler called once")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for unless-standalone external subset check")) return 1;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "<!ENTITY entity 'bar'>";
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE), "unless-standalone parameter parsing accepted")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	status = XML_Parse(parser, standalone_external_subset_input, (int)strlen(standalone_external_subset_input), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "standalone document skips unless-standalone external subset load")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNDEFINED_ENTITY, "unless-standalone skip maps to undefined entity")) return 1;
+	if (!check(g_foreign_dtd_ref_count == 0 && !g_foreign_dtd_failed, "unless-standalone skipped external callback")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for foreign DTD split check")) return 1;
+	g_not_standalone_count = 0;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "<!ELEMENT doc (#PCDATA)*>";
+	if (!check(XML_SetHashSalt(parser, 0x12345678UL), "foreign DTD hash salt accepted before parse")) return 1;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for foreign DTD")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	XML_SetNotStandaloneHandler(parser, accept_not_standalone_handler);
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "foreign DTD setting accepted before parse")) return 1;
+	status = XML_Parse(parser, foreign_dtd_decl_chunk, (int)strlen(foreign_dtd_decl_chunk), XML_FALSE);
+	if (!check(status == XML_STATUS_OK, "foreign DTD initial chunk accepted")) return 1;
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_CANT_CHANGE_FEATURE_ONCE_PARSING, "late foreign DTD setting rejected")) return 1;
+	if (!check(!XML_SetHashSalt(parser, 0x23456789UL), "late hash salt change rejected during parse")) return 1;
+	status = XML_Parse(parser, foreign_dtd_body_chunk, (int)strlen(foreign_dtd_body_chunk), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "foreign DTD split document accepted")) return 1;
+	if (!check(g_not_standalone_count == 1 && g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "foreign DTD callback path loaded")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for rejecting foreign DTD not-standalone check")) return 1;
+	g_not_standalone_count = 0;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "<!ELEMENT doc (#PCDATA)*>";
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for rejecting foreign DTD")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	XML_SetNotStandaloneHandler(parser, reject_not_standalone_handler);
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "rejecting foreign DTD setting accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_decl_chunk, (int)strlen(foreign_dtd_decl_chunk), XML_FALSE);
+	if (!check(status == XML_STATUS_OK, "rejecting foreign DTD initial chunk accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_body_chunk, (int)strlen(foreign_dtd_body_chunk), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "foreign DTD not-standalone handler can reject")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_NOT_STANDALONE, "foreign DTD rejection maps to XML_ERROR_NOT_STANDALONE")) return 1;
+	if (!check(g_not_standalone_count == 1 && g_foreign_dtd_ref_count == 0, "foreign DTD rejection happens before loading")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for foreign DTD with doctype check")) return 1;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_text_len = 0;
+	g_foreign_text[0] = '\0';
+	g_foreign_dtd_text = "<!ELEMENT doc (#PCDATA)*>";
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for foreign DTD with doctype")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	XML_SetCharacterDataHandler(parser, foreign_text_handler);
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "foreign DTD with doctype setting accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_with_doctype_input, (int)strlen(foreign_dtd_with_doctype_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "foreign DTD with doctype accepted")) return 1;
+	if (!check(g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "foreign DTD with doctype loaded once")) return 1;
+	if (!check(strcmp(g_foreign_text, "hello world") == 0, "foreign DTD with doctype preserved internal entity")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for foreign DTD without external subset check")) return 1;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_text_len = 0;
+	g_foreign_text[0] = '\0';
+	g_foreign_dtd_text = NULL;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for empty foreign callback")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	XML_SetCharacterDataHandler(parser, foreign_text_handler);
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "foreign DTD without external subset setting accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_without_external_subset_input, (int)strlen(foreign_dtd_without_external_subset_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "foreign DTD without external subset accepted")) return 1;
+	if (!check(g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "foreign DTD without external subset callback accepted")) return 1;
+	if (!check(strcmp(g_foreign_text, "bar") == 0, "foreign DTD without external subset preserved internal entity")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for empty foreign DTD check")) return 1;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = NULL;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for empty foreign DTD")) return 1;
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "empty foreign DTD setting accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_decl_chunk, (int)strlen(foreign_dtd_decl_chunk), XML_FALSE);
+	if (!check(status == XML_STATUS_OK, "empty foreign DTD initial chunk accepted")) return 1;
+	status = XML_Parse(parser, foreign_dtd_body_chunk, (int)strlen(foreign_dtd_body_chunk), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "empty foreign DTD keeps undefined entity rejection")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNDEFINED_ENTITY, "empty foreign DTD maps to undefined entity")) return 1;
+	if (!check(g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "empty foreign DTD callback accepted")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

@@ -11,10 +11,12 @@ typedef struct FakeParser {
 	int set_encoding_count;
 	int set_external_entity_context_count;
 	int set_param_entity_parsing_count;
+	int set_foreign_dtd_count;
 	int user_data_count;
 	int element_handler_count;
 	int text_handler_count;
 	int xml_decl_handler_count;
+	int not_standalone_handler_count;
 	int hash_salt_count;
 	int hash_salt_16_count;
 	int parse_count;
@@ -23,10 +25,12 @@ typedef struct FakeParser {
 	XML_EndElementHandler end_handler;
 	XML_CharacterDataHandler text_handler;
 	XML_XmlDeclHandler xml_decl_handler;
+	XML_NotStandaloneHandler not_standalone_handler;
 	void *native_handle;
 	const XML_Char *last_encoding;
 	const XML_Char *last_external_entity_context;
 	enum XML_ParamEntityParsing last_param_entity_parsing;
+	XML_Bool last_use_foreign_dtd;
 	int last_len;
 	int last_is_final;
 	unsigned long last_hash_salt;
@@ -102,6 +106,15 @@ fake_set_param_entity_parsing(void *context, void *parser, enum XML_ParamEntityP
 	return XML_TRUE;
 }
 
+static XML_Bool XMLCALL
+fake_set_foreign_dtd(void *context, void *parser, XML_Bool useDTD) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	fake->set_foreign_dtd_count++;
+	fake->last_use_foreign_dtd = useDTD ? XML_TRUE : XML_FALSE;
+	return XML_TRUE;
+}
+
 static void XMLCALL
 fake_set_user_data(void *context, void *parser, void *userData) {
 	FakeParser *fake = (FakeParser *)context;
@@ -138,6 +151,14 @@ fake_set_xml_decl_handler(void *context, void *parser, XML_XmlDeclHandler handle
 	(void)parser;
 	fake->xml_decl_handler_count++;
 	fake->xml_decl_handler = handler;
+}
+
+static void XMLCALL
+fake_set_not_standalone_handler(void *context, void *parser, XML_NotStandaloneHandler handler) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	fake->not_standalone_handler_count++;
+	fake->not_standalone_handler = handler;
 }
 
 static enum XML_Status XMLCALL
@@ -243,6 +264,12 @@ xml_decl_callback(void *userData, const XML_Char *version, const XML_Char *encod
 	(void)standalone;
 }
 
+static int XMLCALL
+not_standalone_callback(void *userData) {
+	(void)userData;
+	return XML_STATUS_OK;
+}
+
 static int
 check(int condition, const char *label) {
 	if (!condition) {
@@ -276,10 +303,12 @@ main(void) {
 	bridge.set_encoding = fake_set_encoding;
 	bridge.set_external_entity_context = fake_set_external_entity_context;
 	bridge.set_param_entity_parsing = fake_set_param_entity_parsing;
+	bridge.set_foreign_dtd = fake_set_foreign_dtd;
 	bridge.set_user_data = fake_set_user_data;
 	bridge.set_element_handler = fake_set_element_handler;
 	bridge.set_character_data_handler = fake_set_text_handler;
 	bridge.set_xml_decl_handler = fake_set_xml_decl_handler;
+	bridge.set_not_standalone_handler = fake_set_not_standalone_handler;
 	bridge.set_hash_salt = fake_set_hash_salt;
 	bridge.set_hash_salt_16_bytes = fake_set_hash_salt_16_bytes;
 	bridge.parse = fake_parse;
@@ -305,6 +334,10 @@ main(void) {
 	if (!check(fake_parser.set_param_entity_parsing_count == 1, "bridge param entity parsing called")) return 1;
 	if (!check(fake_parser.last_param_entity_parsing == XML_PARAM_ENTITY_PARSING_ALWAYS, "param entity parsing value forwarded")) return 1;
 
+	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "foreign DTD setting forwarded")) return 1;
+	if (!check(fake_parser.set_foreign_dtd_count == 1, "bridge foreign DTD called")) return 1;
+	if (!check(fake_parser.last_use_foreign_dtd == XML_TRUE, "foreign DTD value forwarded")) return 1;
+
 	XML_SetUserData(parser, &marker);
 	if (!check(fake_parser.user_data_count == 1, "user data forwarded")) return 1;
 	if (!check(fake_parser.user_data == &marker, "user data pointer forwarded")) return 1;
@@ -328,6 +361,10 @@ main(void) {
 	XML_SetXmlDeclHandler(parser, xml_decl_callback);
 	if (!check(fake_parser.xml_decl_handler_count == 1, "XML declaration handler forwarded")) return 1;
 	if (!check(fake_parser.xml_decl_handler == xml_decl_callback, "XML declaration callback forwarded")) return 1;
+
+	XML_SetNotStandaloneHandler(parser, not_standalone_callback);
+	if (!check(fake_parser.not_standalone_handler_count == 1, "not-standalone handler forwarded")) return 1;
+	if (!check(fake_parser.not_standalone_handler == not_standalone_callback, "not-standalone callback forwarded")) return 1;
 
 	if (!check(XML_SetHashSalt(parser, 0x12345678UL) == XML_TRUE, "hash salt forwarded")) return 1;
 	if (!check(fake_parser.hash_salt_count == 1, "bridge hash salt called")) return 1;
@@ -358,6 +395,7 @@ main(void) {
 		if (!check(fake_parser.create_count == 2, "bridge create called for external parser")) return 1;
 		if (!check(fake_parser.set_external_entity_context_count == 1, "external entity context forwarded")) return 1;
 		if (!check(strcmp(fake_parser.last_external_entity_context, "entity-context") == 0, "external entity context value forwarded")) return 1;
+		if (!check(fake_parser.not_standalone_handler_count == 2, "not-standalone handler inherited by external parser")) return 1;
 		XML_ParserFree(child);
 		if (!check(fake_parser.free_count == 1, "external entity parser free delegated")) return 1;
 	}

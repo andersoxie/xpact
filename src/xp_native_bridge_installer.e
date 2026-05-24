@@ -138,6 +138,14 @@ feature -- Parser lifecycle callbacks
 			end
 		end
 
+	set_foreign_dtd (a_parser: POINTER; a_use_dtd: BOOLEAN): BOOLEAN
+			-- Set foreign-DTD loading for `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_foreign_dtd (a_use_dtd)
+			end
+		end
+
 feature -- Handler callbacks
 
 	set_user_data (a_parser, a_user_data: POINTER)
@@ -209,6 +217,14 @@ feature -- Handler callbacks
 		do
 			if attached parser_for (a_parser) as l_parser then
 				l_parser.set_doctype_decl_handlers (a_start, a_end)
+			end
+		end
+
+	set_not_standalone_handler (a_parser, a_handler: POINTER)
+			-- Record not-standalone handler slot.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				l_parser.set_not_standalone_handler (a_handler)
 			end
 		end
 

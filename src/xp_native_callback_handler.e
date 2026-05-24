@@ -17,6 +17,7 @@ inherit
 			reports_skipped_internal_general_entities,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
+			on_not_standalone,
 			on_element_decl,
 			on_notation_decl,
 			on_attlist_decl,
@@ -86,6 +87,9 @@ feature -- Access
 	end_doctype_decl_callback: POINTER
 			-- `XML_EndDoctypeDeclHandler' callback pointer.
 
+	not_standalone_callback: POINTER
+			-- `XML_NotStandaloneHandler' callback pointer.
+
 	element_decl_callback: POINTER
 			-- `XML_ElementDeclHandler' callback pointer.
 
@@ -153,6 +157,9 @@ feature -- Metrics
 
 	end_doctype_decl_count: INTEGER
 			-- Number of doctype end events emitted.
+
+	not_standalone_count: INTEGER
+			-- Number of not-standalone checks emitted.
 
 	element_decl_count: INTEGER
 			-- Number of element declaration events emitted.
@@ -261,6 +268,14 @@ feature -- Element change
 		ensure
 			start_set: start_doctype_decl_callback = a_start
 			end_set: end_doctype_decl_callback = a_end
+		end
+
+	set_not_standalone_handler (a_handler: POINTER)
+			-- Set native not-standalone callback.
+		do
+			not_standalone_callback := a_handler
+		ensure
+			handler_set: not_standalone_callback = a_handler
 		end
 
 	set_element_decl_handler (a_handler: POINTER)
@@ -381,6 +396,7 @@ feature -- Element change
 			default_count := 0
 			start_doctype_decl_count := 0
 			end_doctype_decl_count := 0
+			not_standalone_count := 0
 			element_decl_count := 0
 			notation_decl_count := 0
 			attlist_decl_count := 0
@@ -403,6 +419,7 @@ feature -- Element change
 			no_default_events: default_count = 0
 			no_start_doctype_events: start_doctype_decl_count = 0
 			no_end_doctype_events: end_doctype_decl_count = 0
+			no_not_standalone_events: not_standalone_count = 0
 			no_element_decl_events: element_decl_count = 0
 			no_notation_decl_events: notation_decl_count = 0
 			no_attlist_events: attlist_decl_count = 0
@@ -600,6 +617,20 @@ feature -- Events
 			end_doctype_decl_count := end_doctype_decl_count + 1
 			if end_doctype_decl_callback /= default_pointer then
 				call_end_doctype_decl_callback (end_doctype_decl_callback, user_data)
+			end
+		end
+
+	on_not_standalone: BOOLEAN
+		local
+			l_status: INTEGER
+		do
+			not_standalone_count := not_standalone_count + 1
+			events.extend ("not-standalone")
+			if not_standalone_callback = default_pointer then
+				Result := True
+			else
+				l_status := call_not_standalone_callback (not_standalone_callback, user_data)
+				Result := l_status /= 0
 			end
 		end
 
@@ -843,10 +874,13 @@ feature -- External entity resolution
 			l_system_id: C_STRING
 			l_public_id: detachable C_STRING
 			l_public_pointer: POINTER
+			l_before_external_count: INTEGER
+			l_after_external_count: INTEGER
 			l_status: INTEGER
 		do
 			if external_entity_ref_callback /= default_pointer then
 				external_entity_ref_count := external_entity_ref_count + 1
+				l_before_external_count := external_entity_parse_count (native_parser_handle)
 				create l_context.make (a_name)
 				create l_system_id.make (a_system_id)
 				if not a_public_id.is_empty then
@@ -855,7 +889,12 @@ feature -- External entity resolution
 				end
 				l_status := call_external_entity_ref_callback (external_entity_ref_callback, external_entity_callback_argument, l_context.item, default_pointer, l_system_id.item, l_public_pointer)
 				if l_status /= 0 then
-					create Result.make_empty
+					l_after_external_count := external_entity_parse_count (native_parser_handle)
+					if a_is_parameter and then l_after_external_count > l_before_external_count then
+						create Result.make_from_string ("%N")
+					else
+						create Result.make_empty
+					end
 				end
 			elseif not a_is_parameter then
 				on_skipped_entity (a_name, False)
@@ -1166,6 +1205,24 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *)) $a_callback) ((void *) $a_user_data);"
 		end
 
+	call_not_standalone_callback (a_callback, a_user_data: POINTER): INTEGER
+			-- Invoke native `XML_NotStandaloneHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+		external
+			"C inline"
+		alias
+			"return (EIF_INTEGER) ((int (*)(void *)) $a_callback) ((void *) $a_user_data);"
+		end
+
+	external_entity_parse_count (a_parser: POINTER): INTEGER
+			-- Number of successful external child parser parses observed by native parser `a_parser'.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 ? (EIF_INTEGER) ((struct XML_ParserStruct *) $a_parser)->externalChildParseCount : (EIF_INTEGER) 0;"
+		end
+
 	call_element_decl_callback (a_callback, a_user_data, a_name, a_model: POINTER)
 			-- Invoke native `XML_ElementDeclHandler'.
 		require
@@ -1250,6 +1307,7 @@ invariant
 	non_negative_default_count: default_count >= 0
 	non_negative_start_doctype_count: start_doctype_decl_count >= 0
 	non_negative_end_doctype_count: end_doctype_decl_count >= 0
+	non_negative_not_standalone_count: not_standalone_count >= 0
 	non_negative_element_decl_count: element_decl_count >= 0
 	non_negative_notation_decl_count: notation_decl_count >= 0
 	non_negative_attlist_count: attlist_decl_count >= 0

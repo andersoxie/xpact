@@ -143,6 +143,22 @@ feature -- Configuration
 			resolver_set: external_entity_resolver = a_resolver
 		end
 
+	set_parameter_entities_unless_standalone (a_enabled: BOOLEAN)
+			-- Honor standalone='yes' for XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE.
+		do
+			parameter_entities_unless_standalone := a_enabled
+		ensure
+			value_set: parameter_entities_unless_standalone = a_enabled
+		end
+
+	set_use_foreign_dtd (a_enabled: BOOLEAN)
+			-- Load a foreign DTD when no external subset is declared.
+		do
+			use_foreign_dtd := a_enabled
+		ensure
+			value_set: use_foreign_dtd = a_enabled
+		end
+
 feature -- Parsing
 
 	parse (a_input: READABLE_STRING_8): BOOLEAN
@@ -311,6 +327,9 @@ feature {NONE} -- Markup parsing
 					Result := a_input.count + 1
 				else
 					create l_name.make_from_string (a_input.substring (name_start, i - 1))
+					if element_stack.count = 0 and then document_element_count = 0 and then not parsing_external_entity then
+						include_foreign_dtd_if_needed (l_name)
+					end
 					i := skip_spaces (a_input, i)
 					from
 					invariant
@@ -855,7 +874,7 @@ feature {NONE} -- Markup parsing
 						doctype_name.append (a_input.substring (name_start, i - 1))
 						has_doctype := True
 						l_subset_start := find_unquoted_character (a_input, '[', i, l_end)
-						if l_subset_start > 0 then
+						if not has_error and then l_subset_start > 0 then
 							l_external_end := l_subset_start
 						else
 							l_external_end := l_end
@@ -919,9 +938,14 @@ feature {NONE} -- Markup parsing
 								l_event_system_id := l_system_id
 							end
 							document_has_external_subset := l_has_external_subset
-							handler.on_start_doctype_decl (doctype_name, l_event_system_id, l_event_public_id, l_has_internal_subset)
+							if l_has_external_subset then
+								check_not_standalone
+							end
+							if not has_error then
+								handler.on_start_doctype_decl (doctype_name, l_event_system_id, l_event_public_id, l_has_internal_subset)
+							end
 						end
-						if l_subset_start > 0 then
+						if not has_error and then l_subset_start > 0 then
 							l_subset_end := find_subset_end (a_input, l_subset_start + 1, l_end)
 							if l_subset_end = 0 then
 								set_error ("unterminated internal subset")
@@ -1239,7 +1263,7 @@ feature {NONE} -- Character data and references
 			entity_attached: a_entity /= Void
 			parameter_entity: a_entity.is_parameter
 		do
-			if not allows_parameter_entities (external_entity_policy) then
+			if not parameter_entity_loading_allowed then
 				set_error ("external entity not loaded")
 			elseif external_entity_resolver = Void then
 				set_error ("external entity resolver missing")
@@ -1262,7 +1286,7 @@ feature {NONE} -- Character data and references
 			parameter_entity: a_entity.is_parameter
 			text_attached: a_text /= Void
 		do
-			if not allows_parameter_entities (external_entity_policy) then
+			if not parameter_entity_loading_allowed then
 				set_error ("external entity not loaded")
 			elseif external_entity_resolver = Void then
 				set_error ("external entity resolver missing")
@@ -1285,7 +1309,7 @@ feature {NONE} -- Character data and references
 			system_id_attached: a_system_id /= Void
 			system_id_not_empty: not a_system_id.is_empty
 		do
-			if allows_parameter_entities (external_entity_policy) then
+			if parameter_entity_loading_allowed then
 				if external_entity_resolver = Void then
 					set_error ("external entity resolver missing")
 				elseif attached external_entity_resolver as l_resolver then
@@ -1299,6 +1323,49 @@ feature {NONE} -- Character data and references
 					end
 				end
 			end
+		end
+
+	include_foreign_dtd_if_needed (a_root_name: READABLE_STRING_8)
+			-- Resolve and process configured foreign DTD before the root element.
+		require
+			root_name_attached: a_root_name /= Void
+			root_name_not_empty: not a_root_name.is_empty
+		do
+			if use_foreign_dtd and then not foreign_dtd_loaded and then not document_has_external_subset then
+				foreign_dtd_loaded := True
+				check_not_standalone
+				if not has_error and then parameter_entity_loading_allowed and then attached external_entity_resolver as l_resolver then
+					if attached l_resolver.resolve_external_entity (a_root_name, "", "foreign.dtd", True) as l_value then
+						note_entity_expansion (l_value.count)
+						if not has_error then
+							if not l_value.is_empty then
+								document_has_external_subset := True
+							end
+							process_internal_subset (l_value)
+						end
+					else
+						set_error ("external entity not resolved")
+					end
+				end
+			end
+		end
+
+	check_not_standalone
+			-- Ask the handler whether a non-standalone external subset is acceptable.
+		do
+			if not has_error and then xml_standalone /= 1 and then not not_standalone_checked then
+				not_standalone_checked := True
+				if not handler.on_not_standalone then
+					set_error ("not standalone")
+				end
+			end
+		end
+
+	parameter_entity_loading_allowed: BOOLEAN
+			-- May external parameter entities and DTD subsets be loaded now?
+		do
+			Result := allows_parameter_entities (external_entity_policy)
+				and then not (parameter_entities_unless_standalone and then xml_standalone = 1)
 		end
 
 	parse_entity_content (a_content: READABLE_STRING_8)
@@ -3412,6 +3479,8 @@ feature {NONE} -- State
 			has_doctype := False
 			document_has_external_subset := False
 			xml_standalone := -1
+			foreign_dtd_loaded := False
+			not_standalone_checked := False
 			initialize_predefined_entities
 		ensure
 			no_error: not has_error
@@ -3581,6 +3650,18 @@ feature {NONE} -- State
 
 	xml_standalone: INTEGER
 			-- XML declaration standalone value: 1 yes, 0 no, -1 absent.
+
+	parameter_entities_unless_standalone: BOOLEAN
+			-- Should external parameter entities be skipped when standalone='yes'?
+
+	use_foreign_dtd: BOOLEAN
+			-- Should a foreign DTD be loaded before the root element?
+
+	foreign_dtd_loaded: BOOLEAN
+			-- Has the configured foreign DTD already been requested?
+
+	not_standalone_checked: BOOLEAN
+			-- Has the not-standalone handler already been consulted?
 
 	doctype_name: STRING_8
 			-- Declared document element name, if present.

@@ -51,6 +51,11 @@ typedef EIF_BOOLEAN (*XPACT_EiffelSetIntegerBooleanRoutine) (
 	 EIF_POINTER parser,
 	 EIF_INTEGER value
 );
+typedef EIF_BOOLEAN (*XPACT_EiffelSetBooleanRoutine) (
+	 EIF_REFERENCE installer,
+	 EIF_POINTER parser,
+	 EIF_BOOLEAN value
+);
 typedef void (*XPACT_EiffelSetPointerRoutine) (
 	 EIF_REFERENCE installer,
 	 EIF_POINTER parser,
@@ -109,6 +114,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelSetEncodingRoutine set_encoding,
 	 XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context,
 	 XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing,
+	 XPACT_EiffelSetBooleanRoutine set_foreign_dtd,
 	 XPACT_EiffelSetPointerRoutine set_user_data,
 	 XPACT_EiffelSetElementHandlerRoutine set_element_handler,
 	 XPACT_EiffelSetPointerRoutine set_character_data_handler,
@@ -118,6 +124,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelSetElementHandlerRoutine set_cdata_section_handler,
 	 XPACT_EiffelSetDefaultHandlerRoutine set_default_handler,
 	 XPACT_EiffelSetElementHandlerRoutine set_doctype_decl_handler,
+	 XPACT_EiffelSetPointerRoutine set_not_standalone_handler,
 	 XPACT_EiffelSetPointerRoutine set_element_decl_handler,
 	 XPACT_EiffelSetPointerRoutine set_notation_decl_handler,
 	 XPACT_EiffelSetPointerRoutine set_attlist_decl_handler,
@@ -153,6 +160,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER set_encoding,
 	 EIF_POINTER set_external_entity_context,
 	 EIF_POINTER set_param_entity_parsing,
+	 EIF_POINTER set_foreign_dtd,
 	 EIF_POINTER set_user_data,
 	 EIF_POINTER set_element_handler,
 	 EIF_POINTER set_character_data_handler,
@@ -162,6 +170,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER set_cdata_section_handler,
 	 EIF_POINTER set_default_handler,
 	 EIF_POINTER set_doctype_decl_handler,
+	 EIF_POINTER set_not_standalone_handler,
 	 EIF_POINTER set_element_decl_handler,
 	 EIF_POINTER set_notation_decl_handler,
 	 EIF_POINTER set_attlist_decl_handler,

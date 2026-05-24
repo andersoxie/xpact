@@ -6,45 +6,10 @@
 
 #include "../include/xpact.h"
 #include "xpact_eiffel_bridge.h"
+#include "xpact_native_private.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-struct XML_ParserStruct {
-	void *userData;
-	XML_Bool useParserAsHandlerArg;
-	void *eiffelParser;
-	const XPACT_EiffelBridge *bridge;
-	XML_Memory_Handling_Suite memory;
-	XML_Bool hasCustomMemory;
-	XML_Char *base;
-	char *buffer;
-	int bufferCapacity;
-	enum XML_Error errorCode;
-	enum XML_Parsing parsing;
-	XML_Bool finalBuffer;
-	XML_StartElementHandler startElementHandler;
-	XML_EndElementHandler endElementHandler;
-	XML_CharacterDataHandler characterDataHandler;
-	XML_ProcessingInstructionHandler processingInstructionHandler;
-	XML_XmlDeclHandler xmlDeclHandler;
-	XML_CommentHandler commentHandler;
-	XML_StartCdataSectionHandler startCdataSectionHandler;
-	XML_EndCdataSectionHandler endCdataSectionHandler;
-	XML_DefaultHandler defaultHandler;
-	XML_Bool defaultHandlerExpands;
-	XML_StartDoctypeDeclHandler startDoctypeDeclHandler;
-	XML_EndDoctypeDeclHandler endDoctypeDeclHandler;
-	XML_ElementDeclHandler elementDeclHandler;
-	XML_NotationDeclHandler notationDeclHandler;
-	XML_AttlistDeclHandler attlistDeclHandler;
-	XML_EntityDeclHandler entityDeclHandler;
-	XML_UnparsedEntityDeclHandler unparsedEntityDeclHandler;
-	XML_ExternalEntityRefHandler externalEntityRefHandler;
-	void *externalEntityRefArg;
-	XML_Bool hasExternalEntityRefArg;
-	XML_SkippedEntityHandler skippedEntityHandler;
-};
 
 static const XPACT_EiffelBridge *xp_bridge;
 
@@ -180,6 +145,9 @@ XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
 	parser->errorCode = XML_ERROR_NONE;
 	parser->parsing = XML_INITIALIZED;
 	parser->finalBuffer = XML_FALSE;
+	parser->useForeignDTD = XML_FALSE;
+	parser->parentParser = NULL;
+	parser->externalChildParseCount = 0;
 	if (parser->bridge != NULL && parser->bridge->parser_reset != NULL && parser->eiffelParser != NULL) {
 		XML_Bool result = parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
 		if (result == XML_TRUE && parser->bridge->set_native_parser_handle != NULL) {
@@ -473,7 +441,16 @@ XML_SetSkippedEntityHandler(XML_Parser parser, XML_SkippedEntityHandler handler)
 
 XPACT_UNUSED_HANDLER_SETTER(XML_SetStartNamespaceDeclHandler, XML_StartNamespaceDeclHandler)
 XPACT_UNUSED_HANDLER_SETTER(XML_SetEndNamespaceDeclHandler, XML_EndNamespaceDeclHandler)
-XPACT_UNUSED_HANDLER_SETTER(XML_SetNotStandaloneHandler, XML_NotStandaloneHandler)
+void XMLCALL
+XML_SetNotStandaloneHandler(XML_Parser parser, XML_NotStandaloneHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->notStandaloneHandler = handler;
+	if (parser->bridge != NULL && parser->bridge->set_not_standalone_handler != NULL && parser->eiffelParser != NULL) {
+		parser->bridge->set_not_standalone_handler(parser->bridge->context, parser->eiffelParser, handler);
+	}
+}
 
 void XMLCALL
 XML_SetNamespaceDeclHandler(
@@ -540,9 +517,21 @@ XML_UseParserAsHandlerArg(XML_Parser parser) {
 
 enum XML_Error XMLCALL
 XML_UseForeignDTD(XML_Parser parser, XML_Bool useDTD) {
-	(void)useDTD;
-	xp_set_error(parser, XML_ERROR_NOT_STARTED);
-	return XML_ERROR_NOT_STARTED;
+	if (parser == NULL) {
+		return XML_ERROR_INVALID_ARGUMENT;
+	}
+	if (
+		parser->bridge != NULL
+		&& parser->bridge->set_foreign_dtd != NULL
+		&& parser->eiffelParser != NULL
+		&& parser->bridge->set_foreign_dtd(parser->bridge->context, parser->eiffelParser, useDTD)
+	) {
+		parser->useForeignDTD = useDTD ? XML_TRUE : XML_FALSE;
+		parser->errorCode = XML_ERROR_NONE;
+		return XML_ERROR_NONE;
+	}
+	parser->errorCode = XML_ERROR_CANT_CHANGE_FEATURE_ONCE_PARSING;
+	return XML_ERROR_CANT_CHANGE_FEATURE_ONCE_PARSING;
 }
 
 enum XML_Status XMLCALL
@@ -613,6 +602,9 @@ XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 	}
 	parser->parsing = XML_PARSING;
 	status = parser->bridge->parse(parser->bridge->context, parser->eiffelParser, s, len, isFinal);
+	if (parser->parentParser != NULL && status == XML_STATUS_OK && isFinal && len > 0) {
+		parser->parentParser->externalChildParseCount++;
+	}
 	parser->parsing = (status == XML_STATUS_SUSPENDED) ? XML_SUSPENDED : XML_FINISHED;
 	parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
 	return status;
@@ -709,6 +701,7 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 		return NULL;
 	}
 
+	child->parentParser = parser;
 	child->useParserAsHandlerArg = parser->useParserAsHandlerArg;
 	XML_SetUserData(child, parser->userData);
 	XML_SetElementHandler(child, parser->startElementHandler, parser->endElementHandler);
@@ -723,6 +716,7 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 		XML_SetDefaultHandler(child, parser->defaultHandler);
 	}
 	XML_SetDoctypeDeclHandler(child, parser->startDoctypeDeclHandler, parser->endDoctypeDeclHandler);
+	XML_SetNotStandaloneHandler(child, parser->notStandaloneHandler);
 	XML_SetElementDeclHandler(child, parser->elementDeclHandler);
 	XML_SetNotationDeclHandler(child, parser->notationDeclHandler);
 	XML_SetAttlistDeclHandler(child, parser->attlistDeclHandler);

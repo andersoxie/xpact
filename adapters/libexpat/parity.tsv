@@ -47,11 +47,20 @@ green	misc_tests.c	test_misc_expected_event_ptr_issue_980	Eiffel parser reports 
 green	misc_tests.c	test_misc_async_entity_rejected	Eiffel parser rejects internal parsed entities that change the surrounding element depth and maps the native error to XML_ERROR_ASYNC_ENTITY.
 green	misc_tests.c	test_misc_features	XML_GetFeatureList returns the Expat-compatible terminal list with correct XML_Char and XML_LChar size feature values.
 green	basic_tests.c	test_ext_entity_no_handler	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
+green	basic_tests.c	test_skipped_external_entity	Eiffel native bridge reports XML_SkippedEntityHandler for unloaded external general entities without emitting character data.
 green	basic_tests.c	test_ext_entity_good_cdata	Eiffel-backed XML_ExternalEntityParserCreate creates child parsers that parse external parsed entity fragments, inherit character/CDATA handlers, and emit CDATA text through the Windows DLL smoke.
 green	basic_tests.c	test_user_parameters	Eiffel parser emits XML declaration, comment, skipped-entity, external-subset, and parser-as-handler-argument callbacks through the Windows DLL smoke.
 green	basic_tests.c	test_ext_entity_ref_parameter	Eiffel-backed external subset callbacks honor explicit XML_SetExternalEntityRefHandlerArg values and Expat's null-argument fallback to the public C XML_Parser pointer.
 green	basic_tests.c	test_xmldecl_*	Eiffel parser handles XML declaration callbacks and malformed/misplaced XML declaration diagnostics, including native XML_ERROR_MISPLACED_XML_PI and XML_ERROR_XML_DECL mapping.
 green	basic_tests.c	test_wfc_undeclared_entity_*	Eiffel parser distinguishes undefined entity errors from externally-declared/skippable entities based on external subset presence and standalone='yes'.
+green	basic_tests.c	test_entity_with_external_subset_unless_standalone	Eiffel parser honors XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE by skipping external subset loading for standalone='yes' and preserving XML_ERROR_UNDEFINED_ENTITY.
+green	basic_tests.c	test_not_standalone_handler_reject	Eiffel parser invokes XML_NotStandaloneHandler for non-standalone external subset usage and maps handler rejection to XML_ERROR_NOT_STANDALONE through the Windows DLL smoke.
+green	basic_tests.c	test_not_standalone_handler_accept	Eiffel parser continues after an accepting XML_NotStandaloneHandler, both with and without external subset loading.
+green	basic_tests.c	test_set_foreign_dtd	Eiffel parser supports XML_UseForeignDTD before parsing, rejects late changes, and treats a loaded foreign DTD as an external subset for undefined-entity handling.
+green	basic_tests.c	test_foreign_dtd_not_standalone	Eiffel parser invokes XML_NotStandaloneHandler before loading a configured foreign DTD and maps rejection to XML_ERROR_NOT_STANDALONE.
+green	basic_tests.c	test_foreign_dtd_with_doctype	Eiffel parser combines a configured foreign DTD with an internal doctype subset while preserving internal entity expansion.
+green	basic_tests.c	test_foreign_dtd_without_external_subset	Eiffel parser calls the foreign-DTD external entity handler even when the document doctype has only an internal subset.
+green	basic_tests.c	test_empty_foreign_dtd	Eiffel parser keeps undefined-entity rejection when XML_UseForeignDTD is enabled but the external entity handler does not parse a DTD.
 green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
@@ -86,10 +95,12 @@ red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort sem
 red	basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
 red	basic_tests.c	test_ext_entity_utf8_non_bom	External entity UTF-8 non-BOM edge semantics are not fully implemented.
-red	basic_tests.c	test_external*	External DTD and external entity edge semantics are not fully implemented.
-red	basic_tests.c	test_*external*	External DTD and external entity edge semantics are not fully implemented.
-red	basic_tests.c	test_*foreign_dtd*	Foreign DTD support is not implemented.
-red	basic_tests.c	test_set_foreign_dtd	Foreign DTD support is not implemented.
+red	basic_tests.c	test_recursive_external_parameter_entity_2	Recursive external parameter entity handling is not implemented.
+red	basic_tests.c	test_external_bom_consumed	External parsed-entity BOM edge semantics are not fully implemented.
+red	basic_tests.c	test_external_entity_values	External entity value callback edge semantics are not implemented.
+red	basic_tests.c	test_recursive_external_parameter_entity	Recursive external parameter entity handling is not implemented.
+red	basic_tests.c	test_undefined_ext_entity_in_external_dtd	Undefined entity handling inside external DTD subsets is not fully implemented.
+red	basic_tests.c	test_invalid_foreign_dtd	External subset parser diagnostics for invalid foreign DTD content are not fully libexpat-compatible.
 red	basic_tests.c	test_invalid_tag_in_dtd	DTD invalid-tag diagnostics are not fully audited against libexpat.
 red	basic_tests.c	test_dtd_stop_processing	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.

@@ -10,10 +10,11 @@
 		<capability>
 			<concurrency support="none"/>
 		</capability>
+		<external_include location="..\..\..\..\include\"/>
+		<external_include location="..\..\..\..\native\"/>
 		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<cluster name="src" location="..\src\"/>
 		<cluster name="tests" location=".\"/>
 	</target>
 </system>
-

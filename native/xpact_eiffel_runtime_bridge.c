@@ -12,6 +12,7 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetEncodingRoutine set_encoding;
 	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context;
 	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing;
+	XPACT_EiffelSetBooleanRoutine set_foreign_dtd;
 	XPACT_EiffelSetPointerRoutine set_user_data;
 	XPACT_EiffelSetElementHandlerRoutine set_element_handler;
 	XPACT_EiffelSetPointerRoutine set_character_data_handler;
@@ -21,6 +22,7 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetElementHandlerRoutine set_cdata_section_handler;
 	XPACT_EiffelSetDefaultHandlerRoutine set_default_handler;
 	XPACT_EiffelSetElementHandlerRoutine set_doctype_decl_handler;
+	XPACT_EiffelSetPointerRoutine set_not_standalone_handler;
 	XPACT_EiffelSetPointerRoutine set_element_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_notation_decl_handler;
 	XPACT_EiffelSetPointerRoutine set_attlist_decl_handler;
@@ -157,6 +159,18 @@ xp_rt_set_param_entity_parsing(void *context, void *parser, enum XML_ParamEntity
 		: XML_FALSE;
 }
 
+static XML_Bool XMLCALL
+xp_rt_set_foreign_dtd(void *context, void *parser, XML_Bool useDTD) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->set_foreign_dtd == NULL) {
+		return XML_FALSE;
+	}
+	return state->set_foreign_dtd(installer, (EIF_POINTER)parser, (EIF_BOOLEAN)(useDTD != XML_FALSE))
+		? XML_TRUE
+		: XML_FALSE;
+}
+
 static void XMLCALL
 xp_rt_set_user_data(void *context, void *parser, void *userData) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
@@ -289,6 +303,19 @@ xp_rt_set_doctype_decl_handler(
 			(EIF_POINTER)parser,
 			xp_callback_pointer((uintptr_t)start),
 			xp_callback_pointer((uintptr_t)end)
+		);
+	}
+}
+
+static void XMLCALL
+xp_rt_set_not_standalone_handler(void *context, void *parser, XML_NotStandaloneHandler handler) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer != NULL && state->set_not_standalone_handler != NULL) {
+		state->set_not_standalone_handler(
+			installer,
+			(EIF_POINTER)parser,
+			xp_callback_pointer((uintptr_t)handler)
 		);
 	}
 }
@@ -584,10 +611,12 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->set_encoding != NULL
 		&& state->set_external_entity_context != NULL
 		&& state->set_param_entity_parsing != NULL
+		&& state->set_foreign_dtd != NULL
 		&& state->set_user_data != NULL
 		&& state->set_element_handler != NULL
 		&& state->set_character_data_handler != NULL
 		&& state->set_xml_decl_handler != NULL
+		&& state->set_not_standalone_handler != NULL
 		&& state->parse != NULL
 		&& state->get_buffer != NULL
 		&& state->parse_buffer != NULL
@@ -615,6 +644,7 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_encoding = xp_rt_set_encoding;
 	bridge->set_external_entity_context = xp_rt_set_external_entity_context;
 	bridge->set_param_entity_parsing = xp_rt_set_param_entity_parsing;
+	bridge->set_foreign_dtd = xp_rt_set_foreign_dtd;
 	bridge->set_user_data = xp_rt_set_user_data;
 	bridge->set_element_handler = xp_rt_set_element_handler;
 	bridge->set_character_data_handler = xp_rt_set_character_data_handler;
@@ -624,6 +654,7 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_cdata_section_handler = xp_rt_set_cdata_section_handler;
 	bridge->set_default_handler = xp_rt_set_default_handler;
 	bridge->set_doctype_decl_handler = xp_rt_set_doctype_decl_handler;
+	bridge->set_not_standalone_handler = xp_rt_set_not_standalone_handler;
 	bridge->set_element_decl_handler = xp_rt_set_element_decl_handler;
 	bridge->set_notation_decl_handler = xp_rt_set_notation_decl_handler;
 	bridge->set_attlist_decl_handler = xp_rt_set_attlist_decl_handler;
@@ -659,6 +690,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetEncodingRoutine set_encoding,
 	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context,
 	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing,
+	XPACT_EiffelSetBooleanRoutine set_foreign_dtd,
 	XPACT_EiffelSetPointerRoutine set_user_data,
 	XPACT_EiffelSetElementHandlerRoutine set_element_handler,
 	XPACT_EiffelSetPointerRoutine set_character_data_handler,
@@ -668,6 +700,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetElementHandlerRoutine set_cdata_section_handler,
 	XPACT_EiffelSetDefaultHandlerRoutine set_default_handler,
 	XPACT_EiffelSetElementHandlerRoutine set_doctype_decl_handler,
+	XPACT_EiffelSetPointerRoutine set_not_standalone_handler,
 	XPACT_EiffelSetPointerRoutine set_element_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_notation_decl_handler,
 	XPACT_EiffelSetPointerRoutine set_attlist_decl_handler,
@@ -700,10 +733,12 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| set_encoding == NULL
 		|| set_external_entity_context == NULL
 		|| set_param_entity_parsing == NULL
+		|| set_foreign_dtd == NULL
 		|| set_user_data == NULL
 		|| set_element_handler == NULL
 		|| set_character_data_handler == NULL
 		|| set_xml_decl_handler == NULL
+		|| set_not_standalone_handler == NULL
 		|| default_current == NULL
 		|| set_hash_salt == NULL
 		|| set_hash_salt_16_bytes == NULL
@@ -727,6 +762,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_encoding = set_encoding;
 	xp_runtime_bridge.set_external_entity_context = set_external_entity_context;
 	xp_runtime_bridge.set_param_entity_parsing = set_param_entity_parsing;
+	xp_runtime_bridge.set_foreign_dtd = set_foreign_dtd;
 	xp_runtime_bridge.set_user_data = set_user_data;
 	xp_runtime_bridge.set_element_handler = set_element_handler;
 	xp_runtime_bridge.set_character_data_handler = set_character_data_handler;
@@ -736,6 +772,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_cdata_section_handler = set_cdata_section_handler;
 	xp_runtime_bridge.set_default_handler = set_default_handler;
 	xp_runtime_bridge.set_doctype_decl_handler = set_doctype_decl_handler;
+	xp_runtime_bridge.set_not_standalone_handler = set_not_standalone_handler;
 	xp_runtime_bridge.set_element_decl_handler = set_element_decl_handler;
 	xp_runtime_bridge.set_notation_decl_handler = set_notation_decl_handler;
 	xp_runtime_bridge.set_attlist_decl_handler = set_attlist_decl_handler;
@@ -781,6 +818,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_encoding,
     EIF_POINTER set_external_entity_context,
     EIF_POINTER set_param_entity_parsing,
+    EIF_POINTER set_foreign_dtd,
     EIF_POINTER set_user_data,
     EIF_POINTER set_element_handler,
     EIF_POINTER set_character_data_handler,
@@ -790,6 +828,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_cdata_section_handler,
     EIF_POINTER set_default_handler,
     EIF_POINTER set_doctype_decl_handler,
+    EIF_POINTER set_not_standalone_handler,
     EIF_POINTER set_element_decl_handler,
     EIF_POINTER set_notation_decl_handler,
     EIF_POINTER set_attlist_decl_handler,
@@ -823,6 +862,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetEncodingRoutine)set_encoding,
 		(XPACT_EiffelSetPointerBooleanRoutine)set_external_entity_context,
 		(XPACT_EiffelSetIntegerBooleanRoutine)set_param_entity_parsing,
+		(XPACT_EiffelSetBooleanRoutine)set_foreign_dtd,
 		(XPACT_EiffelSetPointerRoutine)set_user_data,
 		(XPACT_EiffelSetElementHandlerRoutine)set_element_handler,
 		(XPACT_EiffelSetPointerRoutine)set_character_data_handler,
@@ -832,6 +872,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetElementHandlerRoutine)set_cdata_section_handler,
 		(XPACT_EiffelSetDefaultHandlerRoutine)set_default_handler,
 		(XPACT_EiffelSetElementHandlerRoutine)set_doctype_decl_handler,
+		(XPACT_EiffelSetPointerRoutine)set_not_standalone_handler,
 		(XPACT_EiffelSetPointerRoutine)set_element_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_notation_decl_handler,
 		(XPACT_EiffelSetPointerRoutine)set_attlist_decl_handler,

@@ -77,6 +77,10 @@ feature -- Expat-compatible constants
 
 	Xml_error_external_entity_handling: INTEGER = 21
 
+	Xml_error_not_standalone: INTEGER = 22
+
+	Xml_error_cant_change_feature_once_parsing: INTEGER = 26
+
 	Xml_error_xml_decl: INTEGER = 30
 
 	Xml_error_publicid: INTEGER = 32
@@ -108,6 +112,9 @@ feature -- Access
 
 	param_entity_parsing: INTEGER
 			-- Expat-compatible parameter entity parsing mode.
+
+	use_foreign_dtd: BOOLEAN
+			-- Should a foreign DTD be loaded when no external subset is declared?
 
 	explicit_encoding: detachable STRING_8
 			-- Native `XML_SetEncoding' value, if any.
@@ -267,6 +274,14 @@ feature -- Element change
 			end_set: handler.end_doctype_decl_callback = a_end
 		end
 
+	set_not_standalone_handler (a_handler: POINTER)
+			-- Set native not-standalone callback.
+		do
+			handler.set_not_standalone_handler (a_handler)
+		ensure
+			handler_set: handler.not_standalone_callback = a_handler
+		end
+
 	set_element_decl_handler (a_handler: POINTER)
 			-- Set native element declaration callback.
 		do
@@ -411,6 +426,19 @@ feature -- Element change
 			accepted_sets_mode: Result implies param_entity_parsing = a_parsing
 		end
 
+	set_foreign_dtd (a_use_dtd: BOOLEAN): BOOLEAN
+			-- Set Expat-compatible foreign DTD loading before parsing starts.
+		do
+			if parsing_status = Xml_initialized then
+				use_foreign_dtd := a_use_dtd
+				parser.set_use_foreign_dtd (a_use_dtd)
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+			accepted_sets_value: Result implies use_foreign_dtd = a_use_dtd
+		end
+
 	set_hash_salt (a_hash_salt: INTEGER_64): BOOLEAN
 			-- Set legacy Expat hash salt before parsing starts.
 		do
@@ -448,9 +476,6 @@ feature -- Element change
 	reset: BOOLEAN
 			-- Reset parser state while preserving callback registrations.
 		do
-			create parser.make (handler)
-			parser.set_external_entity_resolver (handler)
-			configure_external_entity_policy
 			input_buffer.wipe_out
 			context_buffer := Void
 			handler.reset_events
@@ -460,6 +485,10 @@ feature -- Element change
 			is_external_entity_parser := False
 			external_entity_context := Void
 			param_entity_parsing := Xml_param_entity_parsing_never
+			use_foreign_dtd := False
+			create parser.make (handler)
+			parser.set_external_entity_resolver (handler)
+			configure_external_entity_policy
 			explicit_encoding := Void
 			has_unsupported_explicit_encoding := False
 			hash_salt := 0
@@ -474,6 +503,7 @@ feature -- Element change
 			not_final: not final_buffer
 			not_external_entity_parser: not is_external_entity_parser
 			param_entity_parsing_reset: param_entity_parsing = Xml_param_entity_parsing_never
+			foreign_dtd_reset: not use_foreign_dtd
 			no_explicit_encoding: explicit_encoding = Void and not has_unsupported_explicit_encoding
 			no_hash_salt: not has_hash_salt and not has_hash_salt_16_bytes
 		end
@@ -568,9 +598,15 @@ feature {NONE} -- Error mapping
 		do
 			if param_entity_parsing = Xml_param_entity_parsing_never then
 				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
+				parser.set_parameter_entities_unless_standalone (False)
+			elseif param_entity_parsing = Xml_param_entity_parsing_unless_standalone then
+				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.All_external_entities)
+				parser.set_parameter_entities_unless_standalone (True)
 			else
 				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.All_external_entities)
+				parser.set_parameter_entities_unless_standalone (False)
 			end
+			parser.set_use_foreign_dtd (use_foreign_dtd)
 		end
 
 	error_code_for (a_error: READABLE_STRING_8): INTEGER
@@ -598,6 +634,8 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_unclosed_cdata_section
 			elseif a_error.has_substring ("external entity") then
 				Result := Xml_error_external_entity_handling
+			elseif a_error.same_string ("not standalone") then
+				Result := Xml_error_not_standalone
 			elseif a_error.same_string ("misplaced xml declaration") then
 				Result := Xml_error_misplaced_xml_pi
 			elseif a_error.same_string ("invalid xml declaration") then

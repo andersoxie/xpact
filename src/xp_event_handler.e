@@ -95,6 +95,12 @@ feature -- Events
 		do
 		end
 
+	on_not_standalone: BOOLEAN
+			-- Should parsing continue when an external subset makes the document not standalone?
+		do
+			Result := True
+		end
+
 	on_element_decl (a_name: READABLE_STRING_8; a_model: XP_CONTENT_MODEL)
 			-- Element declaration was parsed.
 		require
