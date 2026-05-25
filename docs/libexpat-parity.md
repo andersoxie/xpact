@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 197 named upstream tests in the downloaded
+expected-failure patterns expand to 184 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -143,6 +143,14 @@ The Windows release has green evidence for:
   BMP and surrogate-pair character data, CDATA, malformed surrogate rejection,
   incorrect `encoding='utf-16'` declarations in UTF-8 input, and decoded
   non-ASCII attribute names.
+- explicit ISO-8859-1 and UTF-16 external parsed entity child inputs now pass
+  through the Eiffel native decoder, including UTF-16-looking BOM bytes under
+  Latin-1, explicit endian overrides, invalid no-signal UTF-16-looking bytes,
+  and the not-quite UTF-8 BOM character-data case.
+- DTD conditional `IGNORE` sections and UTF-16 DTD diagnostics now pass through
+  the Eiffel subset parser for the covered upstream UTF-16 cases: conditional
+  ignore default text, parameter entity declaration callbacks, invalid ATTLIST
+  default keywords, and invalid internal-subset content.
 
 ## Red Rows
 
@@ -150,8 +158,8 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 
 - namespace parsing and namespace callback semantics;
 - allocation-failure injection and allocation accounting tests;
-- remaining UTF-16 DTD edge cases and custom/unknown encoding tests;
-- remaining external entity Latin-1/UTF-16/UTF-8 non-BOM and abort semantics;
+- remaining UTF-16 public external parameter entity and malformed CDATA edge cases;
+- remaining external entity abort/suspend semantics;
 - remaining external DTD encoding diagnostics and default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;
 - stop/suspend/resume/abort parser state;

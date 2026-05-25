@@ -1555,6 +1555,8 @@ feature {NONE} -- DTD entity declarations
 					or else has_at (a_input, i, "<!ATTLIST")
 					or else has_at (a_input, i, "<!ELEMENT")
 					or else has_at (a_input, i, "<!NOTATION")
+					or else has_at (a_input, i, "<![IGNORE[")
+					or else has_at (a_input, i, "<![INCLUDE[")
 					or else a_input.item (i).code = 37
 				then
 					Result := True
@@ -1593,6 +1595,8 @@ feature {NONE} -- DTD entity declarations
 					i := parse_element_declaration (a_subset, i)
 				elseif has_at (a_subset, i, "<!NOTATION") then
 					i := parse_notation_declaration (a_subset, i)
+				elseif has_at (a_subset, i, "<![IGNORE[") or else has_at (a_subset, i, "<![INCLUDE[") then
+					i := parse_conditional_section (a_subset, i)
 				elseif has_at (a_subset, i, "<!--") then
 					l_end := find_sequence (a_subset, "-->", i + 4)
 					if l_end = 0 then
@@ -1639,6 +1643,40 @@ feature {NONE} -- DTD entity declarations
 			variant
 				a_subset.count - i + 1
 			end
+		end
+
+	parse_conditional_section (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Parse a DTD conditional section.
+		require
+			subset_attached: a_subset /= Void
+			starts_conditional_section: has_at (a_subset, a_start_index, "<![IGNORE[") or else has_at (a_subset, a_start_index, "<![INCLUDE[")
+		local
+			l_content_start: INTEGER
+			l_end: INTEGER
+			l_inner: STRING_8
+		do
+			l_end := find_sequence (a_subset, "]]>", a_start_index + 3)
+			if l_end = 0 then
+				set_error ("unterminated conditional section")
+				Result := a_subset.count + 1
+			elseif has_at (a_subset, a_start_index, "<![IGNORE[") then
+				emit_default (a_subset.substring (a_start_index, l_end + 2))
+				Result := l_end + 3
+			else
+				l_content_start := a_start_index + 11
+				if l_content_start <= l_end - 1 then
+					create l_inner.make_from_string (a_subset.substring (l_content_start, l_end - 1))
+					process_internal_subset (l_inner)
+				end
+				if has_error then
+					Result := a_subset.count + 1
+				else
+					Result := l_end + 3
+				end
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_subset.count + 1
 		end
 
 	starts_xml_declaration_at (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN

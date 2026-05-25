@@ -1160,7 +1160,7 @@ feature {NONE} -- Tests
 			l_notes := file_text ("adapters\libexpat\README.md")
 			assert ("libexpat adapter docs present", l_notes.has_substring ("R_2_8_1") and l_notes.has_substring ("ctest"))
 			l_expected := file_text ("adapters\libexpat\expected-failures.tsv")
-			assert ("expected-failure list has specific rows", l_expected.has_substring ("acc_tests.c%Ttest_accounting_precision") and l_expected.has_substring ("basic_tests.c%Ttest_*utf16*"))
+			assert ("expected-failure list has specific rows", l_expected.has_substring ("acc_tests.c%Ttest_accounting_precision") and l_expected.has_substring ("basic_tests.c%Ttest_bad_cdata_utf16"))
 			assert ("expected-failure list has no suite-wide wildcard", not l_expected.has_substring ("*%T*%T"))
 			l_parity := file_text ("adapters\libexpat\parity.tsv")
 			assert ("parity list has green rows", l_parity.has_substring ("green%Tlocal%TWindows DLL XML_Parse smoke"))

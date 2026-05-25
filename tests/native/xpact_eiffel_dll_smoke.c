@@ -90,6 +90,11 @@ static const char *g_external_encoding_text;
 static const char *g_external_encoding_name;
 static enum XML_Error g_external_encoding_expected_error;
 static enum XML_Error g_external_encoding_actual_error;
+static int g_external_encoding_len;
+static const char *g_conditional_external_text;
+static int g_conditional_external_len;
+static int g_utf16_pe_entity_count;
+static int g_utf16_pe_failed;
 static int g_failing_alloc_count;
 
 struct malformed_doctype_case {
@@ -133,6 +138,7 @@ struct external_encoding_case {
 	const char *label;
 	const char *parent_text;
 	const char *text;
+	int text_len;
 	const char *encoding;
 	const char *expected_text;
 	enum XML_Error expected_error;
@@ -640,6 +646,26 @@ loaded_external_text_handler(void *userData, const XML_Char *s, int len) {
 }
 
 static void XMLCALL
+utf16_parameter_entity_decl_handler(void *userData, const XML_Char *entityName, int is_parameter_entity, const XML_Char *value, int value_length, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId, const XML_Char *notationName) {
+	(void)userData;
+	(void)base;
+	(void)systemId;
+	(void)publicId;
+	(void)notationName;
+	g_utf16_pe_entity_count++;
+	if (
+		entityName == NULL
+		|| strcmp(entityName, "\xE0\xB8\x84\xE0\xB8\x88") != 0
+		|| !is_parameter_entity
+		|| value == NULL
+		|| value_length != 24
+		|| strncmp(value, "<!ELEMENT doc (#PCDATA)>", 24) != 0
+	) {
+		g_utf16_pe_failed = 1;
+	}
+}
+
+static void XMLCALL
 utf16_attribute_start_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
 	(void)userData;
 	(void)name;
@@ -653,6 +679,28 @@ utf16_attribute_start_handler(void *userData, const XML_Char *name, const XML_Ch
 	}
 	strcpy(g_loaded_external_text, atts[1]);
 	g_loaded_external_len = (int)strlen(g_loaded_external_text);
+}
+
+static int XMLCALL
+conditional_ignore_external_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)systemId;
+	(void)publicId;
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_loaded_external_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, g_conditional_external_text, g_conditional_external_len, XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		g_loaded_external_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_OK;
 }
 
 static void XMLCALL
@@ -1104,7 +1152,12 @@ external_entity_encoding_handler(XML_Parser parser, const XML_Char *context, con
 		XML_ParserFree(ext_parser);
 		return XML_STATUS_ERROR;
 	}
-	status = XML_Parse(ext_parser, g_external_encoding_text, (int)strlen(g_external_encoding_text), XML_TRUE);
+	status = XML_Parse(
+		ext_parser,
+		g_external_encoding_text,
+		g_external_encoding_len > 0 ? g_external_encoding_len : (int)strlen(g_external_encoding_text),
+		XML_TRUE
+	);
 	if (g_external_encoding_expected_error == XML_ERROR_NONE) {
 		if (status != XML_STATUS_OK) {
 			g_external_encoding_failed = 1;
@@ -1375,6 +1428,12 @@ main(void) {
 		"<!DOCTYPE doc SYSTEM '004-1.ent'>\n"
 		"<doc></doc>\n";
 	const char *external_bom_text = "\xEF\xBB\xBF<!ATTLIST doc a1 CDATA 'value'>";
+	const char external_latin1_le_bom[] = "\xFF\xFE\x4C\x20";
+	const char external_latin1_be_bom[] = "\xFE\xFF\x20\x4C";
+	const char external_utf16_be_mismatch[] = "<\0e\0/\0>\0";
+	const char external_utf16_le_mismatch[] = "\0<\0e\0/\0>";
+	const char external_utf16_unknown[] = "a\0b\0c\0";
+	const char external_utf8_non_bom[] = "\xEF\xBB\x80";
 	const struct external_value_case external_value_cases[] = {
 		{"<!ATTLIST doc a1 CDATA 'value'>", XML_ERROR_NONE},
 		{"<!ATTLIST $doc a1 CDATA 'value'>", XML_ERROR_INVALID_TOKEN},
@@ -1403,6 +1462,7 @@ main(void) {
 			"explicit UTF-8 overrides external text declaration",
 			loaded_external_input,
 			"<?xml encoding='iso-8859-3'?>\xC3\xA9",
+			0,
 			"utf-8",
 			"\xC3\xA9",
 			XML_ERROR_NONE
@@ -1411,14 +1471,52 @@ main(void) {
 			"explicit UTF-8 with BOM overrides external text declaration",
 			loaded_external_input,
 			"\xEF\xBB\xBF<?xml encoding='iso-8859-3'?>\xC3\xA9",
+			0,
 			"utf-8",
 			"\xC3\xA9",
+			XML_ERROR_NONE
+		},
+		{
+			"explicit Latin-1 keeps little-endian UTF-16-looking BOM as data",
+			loaded_external_input,
+			external_latin1_le_bom,
+			(int)sizeof(external_latin1_le_bom) - 1,
+			"iso-8859-1",
+			"\xC3\xBF\xC3\xBEL ",
+			XML_ERROR_NONE
+		},
+		{
+			"explicit Latin-1 keeps big-endian UTF-16-looking BOM as data",
+			loaded_external_input,
+			external_latin1_be_bom,
+			(int)sizeof(external_latin1_be_bom) - 1,
+			"iso-8859-1",
+			"\xC3\xBE\xC3\xBF L",
+			XML_ERROR_NONE
+		},
+		{
+			"explicit UTF-16BE decodes little-endian-looking bytes as character data",
+			loaded_external_input,
+			external_utf16_be_mismatch,
+			(int)sizeof(external_utf16_be_mismatch) - 1,
+			"utf-16be",
+			"\xE3\xB0\x80\xE6\x94\x80\xE2\xBC\x80\xE3\xB8\x80",
+			XML_ERROR_NONE
+		},
+		{
+			"explicit UTF-16LE decodes big-endian-looking bytes as character data",
+			loaded_external_input,
+			external_utf16_le_mismatch,
+			(int)sizeof(external_utf16_le_mismatch) - 1,
+			"utf-16le",
+			"\xE3\xB0\x80\xE6\x94\x80\xE2\xBC\x80\xE3\xB8\x80",
 			XML_ERROR_NONE
 		},
 		{
 			"unsupported explicit encoding on external general entity",
 			loaded_external_input,
 			"<?xml encoding='iso-8859-3'?>u",
+			0,
 			"unknown",
 			NULL,
 			XML_ERROR_UNKNOWN_ENCODING
@@ -1427,9 +1525,28 @@ main(void) {
 			"unsupported explicit encoding on external DTD subset",
 			not_standalone_external_subset_input,
 			"<!ELEMENT doc (#PCDATA)*>",
+			0,
 			"unknown-encoding",
 			NULL,
 			XML_ERROR_UNKNOWN_ENCODING
+		},
+		{
+			"UTF-16-looking external entity without explicit encoding is rejected",
+			loaded_external_input,
+			external_utf16_unknown,
+			(int)sizeof(external_utf16_unknown) - 1,
+			NULL,
+			NULL,
+			XML_ERROR_INVALID_TOKEN
+		},
+		{
+			"not-quite UTF-8 BOM external entity is character data",
+			loaded_external_input,
+			external_utf8_non_bom,
+			(int)sizeof(external_utf8_non_bom) - 1,
+			NULL,
+			"\xEF\xBB\x80",
+			XML_ERROR_NONE
 		}
 	};
 	const char *foreign_dtd_decl_chunk = "<?xml version='1.0' encoding='us-ascii'?>\n";
@@ -1482,6 +1599,39 @@ main(void) {
 		"<?xml version='1.0' encoding='utf-16'?><doc>hi</doc>";
 	const char utf16_attribute_input[] =
 		"<\000d\000 \000\x04\x0e\x08\x0e=\000'\000a\000'\000/\000>\000";
+	const char utf16_pe_input[] =
+		"\000<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000o\000c\000 \000[\000\n"
+		"\000<\000!\000E\000N\000T\000I\000T\000Y\000 \000%\000 \x0e\x04\x0e\x08\000 "
+		"\000'\000<\000!\000E\000L\000E\000M\000E\000N\000T\000 "
+		"\000d\000o\000c\000 \000(\000#\000P\000C\000D\000A\000T\000A\000)\000>\000'\000>\000\n"
+		"\000%\x0e\x04\x0e\x08\000;\000\n"
+		"\000]\000>\000\n"
+		"\000<\000d\000o\000c\000>\000<\000/\000d\000o\000c\000>";
+	const char utf16_bad_attr_desc_keyword_input[] =
+		"\000<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000 \000[\000\n"
+		"\000<\000!\000A\000T\000T\000L\000I\000S\000T\000 \000d\000 \000a\000 \000C\000D\000A\000T\000A\000 "
+		"\000#\x0e\x04\x0e\x08\000>\000\n"
+		"\000]\000>\000<\000d\000/\000>";
+	const char utf16_bad_doctype_input[] =
+		"\000<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000o\000c\000 \000[\000 "
+		"\x06\xf2"
+		"\000 \000]\000>\000<\000d\000o\000c\000/\000>";
+	const char conditional_ignore_parent_le[] =
+		"<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000 "
+		"\000S\000Y\000S\000T\000E\000M\000 \000'\000s\000'\000>\000\n\000"
+		"<\000d\000>\000<\000e\000>\000&\000e\000n\000;\000<\000/\000e\000>\000<\000/\000d\000>\000";
+	const char conditional_ignore_external_le[] =
+		"<\000!\000[\000I\000G\000N\000O\000R\000E\000[\000"
+		"<\000!\000E\000L\000E\000M\000E\000N\000T\000 \000e\000 \000"
+		"(\000#\000P\000C\000D\000A\000T\000A\000)\000*\000>\000]\000]\000>\000";
+	const char conditional_ignore_parent_be[] =
+		"\000<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000 "
+		"\000S\000Y\000S\000T\000E\000M\000 \000'\000s\000'\000>\000\n"
+		"\000<\000d\000>\000<\000e\000>\000&\000e\000n\000;\000<\000/\000e\000>\000<\000/\000d\000>";
+	const char conditional_ignore_external_be[] =
+		"\000<\000!\000[\000I\000G\000N\000O\000R\000E\000["
+		"\000<\000!\000E\000L\000E\000M\000E\000N\000T\000 \000e\000 "
+		"\000(\000#\000P\000C\000D\000A\000T\000A\000)\000*\000>\000]\000]\000>";
 	const struct utf16_case utf16_cases[] = {
 		{"UTF-16BE BOM document", utf16_be_bom_input, (int)sizeof(utf16_be_bom_input) - 1, "hi", XML_ERROR_NONE},
 		{"UTF-16LE BOM document", utf16_le_bom_input, (int)sizeof(utf16_le_bom_input) - 1, "hi", XML_ERROR_NONE},
@@ -2295,6 +2445,7 @@ main(void) {
 		g_external_encoding_ref_count = 0;
 		g_external_encoding_failed = 0;
 		g_external_encoding_text = external_encoding_cases[external_encoding_index].text;
+		g_external_encoding_len = external_encoding_cases[external_encoding_index].text_len;
 		g_external_encoding_name = external_encoding_cases[external_encoding_index].encoding;
 		g_external_encoding_expected_error = external_encoding_cases[external_encoding_index].expected_error;
 		g_external_encoding_actual_error = XML_ERROR_NONE;
@@ -2471,6 +2622,65 @@ main(void) {
 	status = XML_Parse(parser, utf16_attribute_input, (int)sizeof(utf16_attribute_input) - 1, XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "UTF-16 non-ASCII attribute name accepted")) return 1;
 	if (!check(!g_loaded_external_failed && strcmp(g_loaded_external_text, "a") == 0, "UTF-16 attribute value delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16 parameter entity check")) return 1;
+	g_utf16_pe_entity_count = 0;
+	g_utf16_pe_failed = 0;
+	XML_SetEntityDeclHandler(parser, utf16_parameter_entity_decl_handler);
+	status = XML_Parse(parser, utf16_pe_input, (int)sizeof(utf16_pe_input) - 1, XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		fprintf(stderr, "UTF-16 parameter entity parse error=%d line=%lu column=%lu byte=%ld\n", (int)XML_GetErrorCode(parser), (unsigned long)XML_GetCurrentLineNumber(parser), (unsigned long)XML_GetCurrentColumnNumber(parser), (long)XML_GetCurrentByteIndex(parser));
+	}
+	if (!check(status == XML_STATUS_OK, "UTF-16 parameter entity declaration accepted")) return 1;
+	if (!check(g_utf16_pe_entity_count == 1 && !g_utf16_pe_failed, "UTF-16 parameter entity declaration delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16 bad attribute keyword check")) return 1;
+	status = XML_Parse(parser, utf16_bad_attr_desc_keyword_input, (int)sizeof(utf16_bad_attr_desc_keyword_input) - 1, XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "UTF-16 invalid attlist default keyword rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_SYNTAX, "UTF-16 invalid attlist keyword maps syntax")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16 bad doctype check")) return 1;
+	status = XML_Parse(parser, utf16_bad_doctype_input, (int)sizeof(utf16_bad_doctype_input) - 1, XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "UTF-16 invalid doctype subset content rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_SYNTAX, "UTF-16 invalid doctype maps syntax")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16LE ignore section check")) return 1;
+	g_loaded_external_failed = 0;
+	g_default_len = 0;
+	g_default_text[0] = '\0';
+	g_conditional_external_text = conditional_ignore_external_le;
+	g_conditional_external_len = (int)sizeof(conditional_ignore_external_le) - 1;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for UTF-16LE ignore section")) return 1;
+	XML_SetExternalEntityRefHandler(parser, conditional_ignore_external_handler);
+	XML_SetDefaultHandler(parser, default_handler);
+	status = XML_Parse(parser, conditional_ignore_parent_le, (int)sizeof(conditional_ignore_parent_le) - 1, XML_TRUE);
+	if (!check(status == XML_STATUS_OK && !g_loaded_external_failed, "UTF-16LE conditional ignore section accepted")) return 1;
+	if (!check(strstr(g_default_text, "<![IGNORE[<!ELEMENT e (#PCDATA)*>]]>") != NULL, "UTF-16LE conditional ignore section emitted default text")) return 1;
+	if (!check(strstr(g_default_text, "&en;") != NULL, "UTF-16LE ignored entity reference emitted default text")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16BE ignore section check")) return 1;
+	g_loaded_external_failed = 0;
+	g_default_len = 0;
+	g_default_text[0] = '\0';
+	g_conditional_external_text = conditional_ignore_external_be;
+	g_conditional_external_len = (int)sizeof(conditional_ignore_external_be) - 1;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for UTF-16BE ignore section")) return 1;
+	XML_SetExternalEntityRefHandler(parser, conditional_ignore_external_handler);
+	XML_SetDefaultHandler(parser, default_handler);
+	status = XML_Parse(parser, conditional_ignore_parent_be, (int)sizeof(conditional_ignore_parent_be) - 1, XML_TRUE);
+	if (!check(status == XML_STATUS_OK && !g_loaded_external_failed, "UTF-16BE conditional ignore section accepted")) return 1;
+	if (!check(strstr(g_default_text, "<![IGNORE[<!ELEMENT e (#PCDATA)*>]]>") != NULL, "UTF-16BE conditional ignore section emitted default text")) return 1;
+	if (!check(strstr(g_default_text, "&en;") != NULL, "UTF-16BE ignored entity reference emitted default text")) return 1;
 	XML_ParserFree(parser);
 
 	for (async_index = 0; async_index < sizeof(g_async_entity_cases) / sizeof(g_async_entity_cases[0]); async_index++) {

@@ -76,6 +76,9 @@ green	basic_tests.c	test_ext_entity_trailing_*	Eiffel external parsed entity fra
 green	basic_tests.c	test_ext_entity_invalid_parse	Eiffel external parsed entity fragments now report XML_ERROR_UNCLOSED_TOKEN for bare markup starts and XML_ERROR_PARTIAL_CHAR for incomplete UTF-8 tails.
 green	basic_tests.c	test_ext_entity_set_*	Eiffel external parsed entity children now accept text declarations with encoding-only form when XML_SetEncoding supplies UTF-8, including BOM-prefixed input.
 green	basic_tests.c	test_ext_entity_bad_encoding*	Eiffel-backed external entity child parsers now report XML_ERROR_UNKNOWN_ENCODING for unsupported explicit encodings on general and parameter entity children.
+green	basic_tests.c	test_ext_entity_latin1_*	Eiffel native input decoding now honors explicit ISO-8859-1 on external entity child parsers, including UTF-16-looking BOM bytes as character data.
+green	basic_tests.c	test_ext_entity_utf16_*	Eiffel native input decoding now covers external entity child parser UTF-16 endian overrides and rejects UTF-16-looking bytes without an explicit UTF-16 signal.
+green	basic_tests.c	test_ext_entity_utf8_non_bom	Eiffel external parsed entity fragments now treat the not-quite UTF-8 BOM byte sequence as ordinary UTF-8 character data.
 green	basic_tests.c	test_bom_utf16_*	Eiffel native parser input decoding now accepts UTF-16 BOM-prefixed documents and feeds the existing UTF-8 tokenizer.
 green	basic_tests.c	test_nobom_utf16_le	Eiffel native parser input decoding now recognizes little-endian UTF-16 documents without a BOM from the initial token shape.
 green	basic_tests.c	test_utf16	Eiffel native parser input decoding converts UTF-16 character data, including non-ASCII BMP content, to the existing UTF-8 handler path.
@@ -89,6 +92,10 @@ green	basic_tests.c	test_utf16*_pi	Eiffel native parser input decoding feeds UTF
 green	basic_tests.c	test_utf16*_comment	Eiffel native parser input decoding feeds UTF-16 comments through the existing comment callback path.
 green	basic_tests.c	test_utf16*_attr*	Eiffel UTF-8 name scanning now accepts continuation bytes, allowing decoded UTF-16 non-ASCII attribute names and values through the normal attribute path.
 green	basic_tests.c	test_entity_in_utf16_*_attr	Eiffel native parser input decoding feeds UTF-16 attribute character references through the existing attribute-value normalization path.
+green	basic_tests.c	test_ignore_section_utf16*	Eiffel DTD subset parsing now recognizes UTF-16 conditional IGNORE sections and forwards their skipped markup through the default handler.
+green	basic_tests.c	test_utf16_pe	Eiffel DTD subset parsing now accepts UTF-16 parameter entity names and reports their declarations through XML_EntityDeclHandler.
+green	basic_tests.c	test_bad_attr_desc_keyword_utf16	Eiffel DTD subset parsing now rejects UTF-16 invalid ATTLIST default keywords with XML_ERROR_SYNTAX.
+green	basic_tests.c	test_bad_doctype_utf16	Eiffel DTD subset parsing now rejects UTF-16 invalid internal-subset content with XML_ERROR_SYNTAX.
 green	misc_tests.c	test_misc_utf16le	Parser creation with explicit UTF-16LE now decodes native input before Eiffel tokenization.
 green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
@@ -107,10 +114,6 @@ red	misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser sta
 red	misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 red	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 red	basic_tests.c	test_bad_cdata_utf16	UTF-16 malformed CDATA edge diagnostics are not fully audited.
-red	basic_tests.c	test_ignore_section_utf16*	DTD conditional ignore sections are not implemented.
-red	basic_tests.c	test_utf16_pe	UTF-16 parameter-entity declaration callbacks are not fully audited.
-red	basic_tests.c	test_bad_attr_desc_keyword_utf16	UTF-16 DTD invalid-keyword diagnostics are not fully audited.
-red	basic_tests.c	test_bad_doctype_utf16	UTF-16 DTD invalid-name diagnostics are not fully audited.
 red	basic_tests.c	test_entity_public_utf16_*	UTF-16 public external parameter entity callbacks are not fully audited.
 red	basic_tests.c	test_unknown_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
 red	basic_tests.c	test_unknown_ascii_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
@@ -120,9 +123,6 @@ red	basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding ca
 red	basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
 red	basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
-red	basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
-red	basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
-red	basic_tests.c	test_ext_entity_utf8_non_bom	External entity UTF-8 non-BOM edge semantics are not fully implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 red	basic_tests.c	test_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.

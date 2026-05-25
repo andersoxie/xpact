@@ -12,10 +12,6 @@ misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state i
 misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 basic_tests.c	test_bad_cdata_utf16	UTF-16 malformed CDATA edge diagnostics are not fully audited.
-basic_tests.c	test_ignore_section_utf16*	DTD conditional ignore sections are not implemented.
-basic_tests.c	test_utf16_pe	UTF-16 parameter-entity declaration callbacks are not fully audited.
-basic_tests.c	test_bad_attr_desc_keyword_utf16	UTF-16 DTD invalid-keyword diagnostics are not fully audited.
-basic_tests.c	test_bad_doctype_utf16	UTF-16 DTD invalid-name diagnostics are not fully audited.
 basic_tests.c	test_entity_public_utf16_*	UTF-16 public external parameter entity callbacks are not fully audited.
 basic_tests.c	test_unknown_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
 basic_tests.c	test_unknown_ascii_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
@@ -25,9 +21,6 @@ basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding callba
 basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
 basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
-basic_tests.c	test_ext_entity_latin1_*	External entity Latin-1 decoding is not implemented.
-basic_tests.c	test_ext_entity_utf16_*	External entity UTF-16 decoding is not implemented.
-basic_tests.c	test_ext_entity_utf8_non_bom	External entity UTF-8 non-BOM edge semantics are not fully implemented.
 basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
 basic_tests.c	test_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.

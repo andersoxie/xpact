@@ -618,6 +618,12 @@ feature {NONE} -- Encoding
 				or else a_encoding.same_string ("utf-8")
 				or else a_encoding.same_string ("UTF8")
 				or else a_encoding.same_string ("utf8")
+				or else a_encoding.same_string ("US-ASCII")
+				or else a_encoding.same_string ("us-ascii")
+				or else a_encoding.same_string ("ASCII")
+				or else a_encoding.same_string ("ascii")
+				or else a_encoding.same_string ("ISO-8859-1")
+				or else a_encoding.same_string ("iso-8859-1")
 				or else a_encoding.same_string ("UTF-16")
 				or else a_encoding.same_string ("utf-16")
 				or else a_encoding.same_string ("UTF-16LE")
@@ -631,7 +637,11 @@ feature {NONE} -- Encoding
 		require
 			input_attached: a_input /= Void
 		do
-			if explicit_encoding_is_utf16be then
+			if explicit_encoding_is_latin1 then
+				Result := decoded_latin1_input (a_input)
+			elseif explicit_encoding_is_ascii then
+				Result := decoded_ascii_input (a_input)
+			elseif explicit_encoding_is_utf16be then
 				Result := decoded_utf16_input (a_input, False)
 			elseif explicit_encoding_is_utf16le then
 				Result := decoded_utf16_input (a_input, True)
@@ -644,6 +654,56 @@ feature {NONE} -- Encoding
 			elseif has_utf16_declaration_in_utf8_input (a_input) then
 				last_error_code := Xml_error_incorrect_encoding
 			else
+				create Result.make_from_string (a_input)
+			end
+		end
+
+	decoded_latin1_input (a_input: READABLE_STRING_8): STRING_8
+			-- Decode ISO-8859-1 bytes to UTF-8.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+		do
+			create Result.make (a_input.count)
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_input.count + 1
+			until
+				i > a_input.count
+			loop
+				append_utf8_codepoint (Result, a_input.item (i).code)
+				i := i + 1
+			variant
+				a_input.count - i + 1
+			end
+		end
+
+	decoded_ascii_input (a_input: READABLE_STRING_8): detachable STRING_8
+			-- Validate US-ASCII input and pass it through as UTF-8.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			l_invalid: BOOLEAN
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_input.count + 1
+			until
+				i > a_input.count or l_invalid
+			loop
+				if a_input.item (i).code > 127 then
+					l_invalid := True
+					last_error_code := Xml_error_invalid_token
+				end
+				i := i + 1
+			variant
+				a_input.count - i + 1
+			end
+			if not l_invalid then
 				create Result.make_from_string (a_input)
 			end
 		end
@@ -748,6 +808,7 @@ feature {NONE} -- Encoding
 			Result :=
 				(a_input.count >= 2 and then a_input.item (1).code = 255 and then a_input.item (2).code = 254)
 				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3) = '?' and then a_input.item (4).code = 0)
+				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3) = '!' and then a_input.item (4).code = 0)
 				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3).is_alpha and then a_input.item (4).code = 0)
 		end
 
@@ -759,6 +820,7 @@ feature {NONE} -- Encoding
 			Result :=
 				(a_input.count >= 2 and then a_input.item (1).code = 254 and then a_input.item (2).code = 255)
 				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4) = '?')
+				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4) = '!')
 				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4).is_alpha)
 		end
 
@@ -778,6 +840,23 @@ feature {NONE} -- Encoding
 			-- Did the caller explicitly select UTF-16 with auto endian detection?
 		do
 			Result := attached explicit_encoding as l_encoding and then (l_encoding.same_string ("UTF-16") or else l_encoding.same_string ("utf-16"))
+		end
+
+	explicit_encoding_is_latin1: BOOLEAN
+			-- Did the caller explicitly select ISO-8859-1?
+		do
+			Result := attached explicit_encoding as l_encoding and then (l_encoding.same_string ("ISO-8859-1") or else l_encoding.same_string ("iso-8859-1"))
+		end
+
+	explicit_encoding_is_ascii: BOOLEAN
+			-- Did the caller explicitly select US-ASCII?
+		do
+			Result := attached explicit_encoding as l_encoding and then (
+				l_encoding.same_string ("US-ASCII")
+				or else l_encoding.same_string ("us-ascii")
+				or else l_encoding.same_string ("ASCII")
+				or else l_encoding.same_string ("ascii")
+			)
 		end
 
 	explicit_encoding_is_utf16le: BOOLEAN
