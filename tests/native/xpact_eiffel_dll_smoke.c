@@ -99,6 +99,10 @@ static const char *g_conditional_external_text;
 static int g_conditional_external_len;
 static int g_utf16_pe_entity_count;
 static int g_utf16_pe_failed;
+static const char *g_utf16_public_external_text;
+static int g_utf16_public_external_len;
+static int g_utf16_public_ref_count;
+static int g_utf16_public_failed;
 static int g_failing_alloc_count;
 
 struct malformed_doctype_case {
@@ -153,6 +157,13 @@ struct utf16_case {
 	const char *text;
 	int length;
 	const char *expected_text;
+	enum XML_Error expected_error;
+};
+
+struct utf16_bad_cdata_case {
+	const char *label;
+	const char *text;
+	int length;
 	enum XML_Error expected_error;
 };
 
@@ -683,6 +694,38 @@ utf16_attribute_start_handler(void *userData, const XML_Char *name, const XML_Ch
 	}
 	strcpy(g_loaded_external_text, atts[1]);
 	g_loaded_external_len = (int)strlen(g_loaded_external_text);
+}
+
+static int XMLCALL
+utf16_public_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	g_utf16_public_ref_count++;
+	if (
+		parser != g_parser
+		|| context == NULL
+		|| systemId == NULL
+		|| strcmp(systemId, "bar.ent") != 0
+		|| publicId == NULL
+		|| strcmp(publicId, "foo") != 0
+	) {
+		g_utf16_public_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_utf16_public_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, g_utf16_public_external_text, g_utf16_public_external_len, XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		g_utf16_public_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_OK;
 }
 
 static int XMLCALL
@@ -1401,6 +1444,7 @@ main(void) {
 	size_t external_invalid_index;
 	size_t external_encoding_index;
 	size_t utf16_index;
+	size_t utf16_bad_cdata_index;
 	size_t hash_index;
 	size_t hash_collision_len;
 	int saw_xml_char_feature = 0;
@@ -1686,6 +1730,28 @@ main(void) {
 		"\000%\x0e\x04\x0e\x08\000;\000\n"
 		"\000]\000>\000\n"
 		"\000<\000d\000o\000c\000>\000<\000/\000d\000o\000c\000>";
+	const char utf16_public_parent_be[] =
+		"\000<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000 \000[\000\n"
+		"\000<\000!\000E\000N\000T\000I\000T\000Y\000 \000%\000 \000e\000 "
+		"\000P\000U\000B\000L\000I\000C\000 \000'\000f\000o\000o\000'\000 "
+		"\000'\000b\000a\000r\000.\000e\000n\000t\000'\000>\000\n"
+		"\000%\000e\000;\000\n"
+		"\000]\000>\000\n"
+		"\000<\000d\000>\000&\000j\000;\000<\000/\000d\000>";
+	const char utf16_public_external_be[] =
+		"\000<\000!\000E\000N\000T\000I\000T\000Y\000 \000j\000 "
+		"\000'\000b\000a\000z\000'\000>";
+	const char utf16_public_parent_le[] =
+		"<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000 \000[\000\n\000"
+		"<\000!\000E\000N\000T\000I\000T\000Y\000 \000%\000 \000e\000 \000"
+		"P\000U\000B\000L\000I\000C\000 \000'\000f\000o\000o\000'\000 \000"
+		"'\000b\000a\000r\000.\000e\000n\000t\000'\000>\000\n\000"
+		"%\000e\000;\000\n\000"
+		"]\000>\000\n\000"
+		"<\000d\000>\000&\000j\000;\000<\000/\000d\000>\000";
+	const char utf16_public_external_le[] =
+		"<\000!\000E\000N\000T\000I\000T\000Y\000 \000j\000 \000"
+		"'\000b\000a\000z\000'\000>\000";
 	const char utf16_bad_attr_desc_keyword_input[] =
 		"\000<\000!\000D\000O\000C\000T\000Y\000P\000E\000 \000d\000 \000[\000\n"
 		"\000<\000!\000A\000T\000T\000L\000I\000S\000T\000 \000d\000 \000a\000 \000C\000D\000A\000T\000A\000 "
@@ -1720,6 +1786,36 @@ main(void) {
 		{"UTF-16BE bad surrogate", utf16_be_bad_surrogate_input, (int)sizeof(utf16_be_bad_surrogate_input) - 1, NULL, XML_ERROR_INVALID_TOKEN},
 		{"UTF-16BE CDATA", utf16_cdata_input, (int)sizeof(utf16_cdata_input) - 1, "hello", XML_ERROR_NONE},
 		{"UTF-16 declared in UTF-8 bytes", utf16_declared_in_utf8_input, (int)sizeof(utf16_declared_in_utf8_input) - 1, NULL, XML_ERROR_INCORRECT_ENCODING}
+	};
+	const char utf16_bad_cdata_prolog[] =
+		"\000<\000?\000x\000m\000l\000 \000v\000e\000r\000s\000i\000o\000n\000=\000'\0001\000.\0000\000'"
+		"\000 \000e\000n\000c\000o\000d\000i\000n\000g\000=\000'\000u\000t\000f\000-\0001\0006\000'"
+		"\000?\000>\000\n\000<\000a\000>";
+	const struct utf16_bad_cdata_case utf16_bad_cdata_cases[] = {
+		{"case 1", "\000", 1, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 2", "\000<", 2, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 3", "\000<\000", 3, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 4", "\000<\000!", 4, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 5", "\000<\000!\000", 5, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 6", "\000<\000!\000[", 6, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 7", "\000<\000!\000[\000", 7, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 8", "\000<\000!\000[\000C", 8, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 9", "\000<\000!\000[\000C\000", 9, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 10", "\000<\000!\000[\000C\000D", 10, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 11", "\000<\000!\000[\000C\000D\000", 11, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 12", "\000<\000!\000[\000C\000D\000A", 12, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 13", "\000<\000!\000[\000C\000D\000A\000", 13, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 14", "\000<\000!\000[\000C\000D\000A\000T", 14, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 15", "\000<\000!\000[\000C\000D\000A\000T\000", 15, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 16", "\000<\000!\000[\000C\000D\000A\000T\000A", 16, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 17", "\000<\000!\000[\000C\000D\000A\000T\000A\000", 17, XML_ERROR_UNCLOSED_TOKEN},
+		{"case 18", "\000<\000!\000[\000C\000D\000A\000T\000A\000[", 18, XML_ERROR_UNCLOSED_CDATA_SECTION},
+		{"case 19", "\000<\000!\000[\000C\000D\000A\000T\000A\000[\000", 19, XML_ERROR_UNCLOSED_CDATA_SECTION},
+		{"case 20", "\000<\000!\000[\000C\000D\000A\000T\000A\000[\000Z", 20, XML_ERROR_UNCLOSED_CDATA_SECTION},
+		{"case 21", "\000<\000!\000[\000C\000D\000A\000T\000A\000[\000Z\xd8", 21, XML_ERROR_UNCLOSED_CDATA_SECTION},
+		{"case 22", "\000<\000!\000[\000C\000D\000A\000T\000A\000[\000Z\xd8\x34", 22, XML_ERROR_PARTIAL_CHAR},
+		{"case 23", "\000<\000!\000[\000C\000D\000A\000T\000A\000[\000Z\xd8\x34\xdd", 23, XML_ERROR_PARTIAL_CHAR},
+		{"case 24", "\000<\000!\000[\000C\000D\000A\000T\000A\000[\000Z\xd8\x34\xdd\x5e", 24, XML_ERROR_UNCLOSED_CDATA_SECTION}
 	};
 	const char *entity_context_input =
 		"<!DOCTYPE day [\n"
@@ -2747,6 +2843,38 @@ main(void) {
 		XML_ParserFree(parser);
 	}
 
+	for (utf16_bad_cdata_index = 0; utf16_bad_cdata_index < sizeof(utf16_bad_cdata_cases) / sizeof(utf16_bad_cdata_cases[0]); utf16_bad_cdata_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for bad UTF-16 CDATA check")) return 1;
+		status = XML_Parse(parser, utf16_bad_cdata_prolog, (int)sizeof(utf16_bad_cdata_prolog) - 1, XML_FALSE);
+		if (status != XML_STATUS_OK) {
+			fprintf(
+				stderr,
+				"UTF-16 bad CDATA prolog failed before %s: error=%d\n",
+				utf16_bad_cdata_cases[utf16_bad_cdata_index].label,
+				(int)XML_GetErrorCode(parser)
+			);
+			return 1;
+		}
+		status = XML_Parse(
+			parser,
+			utf16_bad_cdata_cases[utf16_bad_cdata_index].text,
+			utf16_bad_cdata_cases[utf16_bad_cdata_index].length,
+			XML_TRUE
+		);
+		if (status != XML_STATUS_ERROR || XML_GetErrorCode(parser) != utf16_bad_cdata_cases[utf16_bad_cdata_index].expected_error) {
+			fprintf(
+				stderr,
+				"UTF-16 bad CDATA %s error=%d expected=%d\n",
+				utf16_bad_cdata_cases[utf16_bad_cdata_index].label,
+				(int)XML_GetErrorCode(parser),
+				(int)utf16_bad_cdata_cases[utf16_bad_cdata_index].expected_error
+			);
+			return 1;
+		}
+		XML_ParserFree(parser);
+	}
+
 	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created for UTF-16 attribute check")) return 1;
 	g_loaded_external_failed = 0;
@@ -2769,6 +2897,42 @@ main(void) {
 	}
 	if (!check(status == XML_STATUS_OK, "UTF-16 parameter entity declaration accepted")) return 1;
 	if (!check(g_utf16_pe_entity_count == 1 && !g_utf16_pe_failed, "UTF-16 parameter entity declaration delegated")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16BE public external parameter entity check")) return 1;
+	g_parser = parser;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	g_utf16_public_ref_count = 0;
+	g_utf16_public_failed = 0;
+	g_utf16_public_external_text = utf16_public_external_be;
+	g_utf16_public_external_len = (int)sizeof(utf16_public_external_be) - 1;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for UTF-16BE public entity")) return 1;
+	XML_SetExternalEntityRefHandler(parser, utf16_public_external_entity_handler);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = XML_Parse(parser, utf16_public_parent_be, (int)sizeof(utf16_public_parent_be) - 1, XML_TRUE);
+	if (!check(status == XML_STATUS_OK && !g_utf16_public_failed, "UTF-16BE public external parameter entity accepted")) return 1;
+	if (!check(g_utf16_public_ref_count == 1, "UTF-16BE public external parameter entity callback delegated")) return 1;
+	if (!check(strcmp(g_loaded_external_text, "baz") == 0, "UTF-16BE public external parameter entity declaration merged")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16LE public external parameter entity check")) return 1;
+	g_parser = parser;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	g_utf16_public_ref_count = 0;
+	g_utf16_public_failed = 0;
+	g_utf16_public_external_text = utf16_public_external_le;
+	g_utf16_public_external_len = (int)sizeof(utf16_public_external_le) - 1;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for UTF-16LE public entity")) return 1;
+	XML_SetExternalEntityRefHandler(parser, utf16_public_external_entity_handler);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = XML_Parse(parser, utf16_public_parent_le, (int)sizeof(utf16_public_parent_le) - 1, XML_TRUE);
+	if (!check(status == XML_STATUS_OK && !g_utf16_public_failed, "UTF-16LE public external parameter entity accepted")) return 1;
+	if (!check(g_utf16_public_ref_count == 1, "UTF-16LE public external parameter entity callback delegated")) return 1;
+	if (!check(strcmp(g_loaded_external_text, "baz") == 0, "UTF-16LE public external parameter entity declaration merged")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

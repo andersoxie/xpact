@@ -438,6 +438,17 @@ feature -- Element change
 			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
 		end
 
+	merge_external_entity_context_from (a_child: XP_NATIVE_PARSER): BOOLEAN
+			-- Merge DTD entity declarations parsed by external entity child `a_child'.
+		require
+			child_attached: a_child /= Void
+		do
+			parser.merge_entity_context_from (a_child.parser)
+			Result := True
+		ensure
+			merged: Result
+		end
+
 	set_param_entity_parsing (a_parsing: INTEGER): BOOLEAN
 			-- Set Expat-compatible parameter entity parsing mode before parsing starts.
 		do
@@ -730,9 +741,17 @@ feature {NONE} -- Encoding
 			l_unit: INTEGER
 			l_low: INTEGER
 			l_code: INTEGER
+			l_prefix: detachable STRING_8
 		do
 			if a_input.count \\ 2 /= 0 then
-				last_error_code := Xml_error_partial_char
+				l_prefix := decoded_utf16_prefix_before_partial_byte (a_input, a_little_endian)
+				if attached l_prefix as l_decoded_prefix and then has_open_cdata_section (l_decoded_prefix) then
+					last_error_code := Xml_error_unclosed_cdata_section
+				elseif l_prefix /= Void and then is_partial_utf16_ascii_byte (a_input.item (a_input.count).code, a_little_endian) then
+					last_error_code := Xml_error_unclosed_token
+				else
+					last_error_code := Xml_error_partial_char
+				end
 			else
 				create Result.make (a_input.count)
 				from
@@ -770,6 +789,92 @@ feature {NONE} -- Encoding
 				variant
 					a_input.count - i + 1
 				end
+			end
+		end
+
+	decoded_utf16_prefix_before_partial_byte (a_input: READABLE_STRING_8; a_little_endian: BOOLEAN): detachable STRING_8
+			-- Decode complete UTF-16 units before a final dangling byte, if they are valid.
+		require
+			input_attached: a_input /= Void
+			odd_byte_count: a_input.count \\ 2 /= 0
+		local
+			i: INTEGER
+			l_limit: INTEGER
+			l_unit: INTEGER
+			l_low: INTEGER
+			l_code: INTEGER
+		do
+			l_limit := a_input.count - 1
+			create Result.make (l_limit)
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= l_limit + 1
+			until
+				i > l_limit or Result = Void
+			loop
+				l_unit := utf16_unit_at (a_input, i, a_little_endian)
+				if i = 1 and then l_unit = 65279 then
+					i := i + 2
+				elseif l_unit >= 55296 and then l_unit <= 56319 then
+					if i + 3 > l_limit then
+						Result := Void
+					else
+						l_low := utf16_unit_at (a_input, i + 2, a_little_endian)
+						if l_low < 56320 or else l_low > 57343 then
+							Result := Void
+						else
+							l_code := 65536 + ((l_unit - 55296) * 1024) + (l_low - 56320)
+							append_utf8_codepoint (Result, l_code)
+							i := i + 4
+						end
+					end
+				elseif l_unit >= 56320 and then l_unit <= 57343 then
+					Result := Void
+				else
+					append_utf8_codepoint (Result, l_unit)
+					i := i + 2
+				end
+			variant
+				l_limit - i + 1
+			end
+		end
+
+	has_open_cdata_section (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does `a_input' end inside a CDATA section?
+		require
+			input_attached: a_input /= Void
+		local
+			l_index: INTEGER
+			l_last_open: INTEGER
+			l_last_close: INTEGER
+		do
+			from
+				l_index := a_input.substring_index ("<![CDATA[", 1)
+			until
+				l_index = 0
+			loop
+				l_last_open := l_index
+				l_index := a_input.substring_index ("<![CDATA[", l_index + 1)
+			end
+			from
+				l_index := a_input.substring_index ("]]>", 1)
+			until
+				l_index = 0
+			loop
+				l_last_close := l_index
+				l_index := a_input.substring_index ("]]>", l_index + 1)
+			end
+			Result := l_last_open > 0 and then l_last_open > l_last_close
+		end
+
+	is_partial_utf16_ascii_byte (a_byte: INTEGER; a_little_endian: BOOLEAN): BOOLEAN
+			-- Is `a_byte' the first byte of an incomplete ASCII-range UTF-16 unit?
+		do
+			if a_little_endian then
+				Result := a_byte > 0 and then a_byte <= 127
+			else
+				Result := a_byte = 0
 			end
 		end
 

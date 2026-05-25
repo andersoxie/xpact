@@ -158,6 +158,17 @@ feature -- Configuration
 			external_general_entities_imported: attached inherited_external_entity_table
 		end
 
+	merge_entity_context_from (a_child: XP_PARSER)
+			-- Merge DTD entity declarations parsed by external entity child `a_child'.
+		require
+			child_attached: a_child /= Void
+		do
+			copy_string_table_into (a_child.general_entity_context_table, entity_table)
+			copy_string_table_into (a_child.parameter_entity_context_table, parameter_entity_table)
+			copy_external_entity_table_into (a_child.external_general_entity_context_table, external_entity_table)
+			copy_external_entity_table_into (a_child.external_parameter_entity_context_table, external_parameter_entity_table)
+		end
+
 	set_parameter_entities_unless_standalone (a_enabled: BOOLEAN)
 			-- Honor standalone='yes' for XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE.
 		do
@@ -401,6 +412,9 @@ feature {NONE} -- Markup parsing
 				Result := parse_processing_instruction (a_input, a_start_index)
 			elseif has_at (a_input, a_start_index, "<!DOCTYPE") then
 				Result := parse_doctype (a_input, a_start_index)
+			elseif is_incomplete_marker_at_end (a_input, a_start_index, "<![CDATA[") or else is_incomplete_marker_at_end (a_input, a_start_index, "<!DOCTYPE") then
+				set_error ("unterminated declaration")
+				Result := a_input.count + 1
 			elseif has_at (a_input, a_start_index, "<!") then
 				set_error ("unsupported declaration")
 				Result := a_input.count + 1
@@ -3185,6 +3199,35 @@ feature {NONE} -- Scanning
 					i := i + 1
 				variant
 					a_marker.count - i + 1
+				end
+			end
+		end
+
+	is_incomplete_marker_at_end (a_input: READABLE_STRING_8; a_index: INTEGER; a_marker: READABLE_STRING_8): BOOLEAN
+			-- Does input ending at `a_input.count' contain a proper prefix of `a_marker' at `a_index'?
+		require
+			input_attached: a_input /= Void
+			marker_attached: a_marker /= Void
+			marker_not_empty: a_marker.count > 0
+			valid_index: a_index >= 1 and a_index <= a_input.count + 1
+		local
+			i: INTEGER
+			l_remaining: INTEGER
+		do
+			l_remaining := a_input.count - a_index + 1
+			if l_remaining > 0 and then l_remaining < a_marker.count then
+				from
+					Result := True
+					i := 1
+				invariant
+					prefix_index_in_bounds: i >= 1 and i <= l_remaining + 1
+				until
+					i > l_remaining or not Result
+				loop
+					Result := a_input.item (a_index + i - 1) = a_marker.item (i)
+					i := i + 1
+				variant
+					l_remaining - i + 1
 				end
 			end
 		end

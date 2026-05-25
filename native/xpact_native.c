@@ -64,6 +64,28 @@ static XML_Bool xp_has_valid_bridge(const XPACT_EiffelBridge *bridge) {
 		&& bridge->size >= sizeof(XPACT_EiffelBridge);
 }
 
+static enum XML_Status xp_finish_external_child_parse(XML_Parser parser, enum XML_Status status, int len, int isFinal) {
+	if (parser != NULL && parser->parentParser != NULL && status == XML_STATUS_OK && isFinal && len > 0) {
+		if (
+			parser->externalEntityIsParameter
+			&& parser->bridge != NULL
+			&& parser->bridge->merge_external_entity_context != NULL
+			&& parser->eiffelParser != NULL
+			&& parser->parentParser->eiffelParser != NULL
+			&& parser->bridge->merge_external_entity_context(
+				parser->bridge->context,
+				parser->parentParser->eiffelParser,
+				parser->eiffelParser
+			) != XML_TRUE
+		) {
+			xp_set_error(parser, XML_ERROR_EXTERNAL_ENTITY_HANDLING);
+			return XML_STATUS_ERROR;
+		}
+		parser->parentParser->externalChildParseCount++;
+	}
+	return status;
+}
+
 XML_Bool XMLCALL
 XPACT_SetEiffelBridge(const XPACT_EiffelBridge *bridge) {
 	if (!xp_has_valid_bridge(bridge)) {
@@ -605,9 +627,7 @@ XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 	}
 	parser->parsing = XML_PARSING;
 	status = parser->bridge->parse(parser->bridge->context, parser->eiffelParser, s, len, isFinal);
-	if (parser->parentParser != NULL && status == XML_STATUS_OK && isFinal && len > 0) {
-		parser->parentParser->externalChildParseCount++;
-	}
+	status = xp_finish_external_child_parse(parser, status, len, isFinal);
 	parser->parsing = (status == XML_STATUS_SUSPENDED) ? XML_SUSPENDED : XML_FINISHED;
 	parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
 	return status;
@@ -637,12 +657,14 @@ XML_GetBuffer(XML_Parser parser, int len) {
 
 enum XML_Status XMLCALL
 XML_ParseBuffer(XML_Parser parser, int len, int isFinal) {
+	enum XML_Status status;
 	if (parser == NULL || len < 0) {
 		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
 		return XML_STATUS_ERROR;
 	}
 	if (parser->bridge != NULL && parser->bridge->parse_buffer != NULL && parser->eiffelParser != NULL) {
-		return parser->bridge->parse_buffer(parser->bridge->context, parser->eiffelParser, len, isFinal);
+		status = parser->bridge->parse_buffer(parser->bridge->context, parser->eiffelParser, len, isFinal);
+		return xp_finish_external_child_parse(parser, status, len, isFinal);
 	}
 	return XML_Parse(parser, parser->buffer, len, isFinal);
 }

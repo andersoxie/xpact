@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 182 named upstream tests in the downloaded
+expected-failure patterns expand to 179 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -151,12 +151,18 @@ The Windows release has green evidence for:
   the Eiffel subset parser for the covered upstream UTF-16 cases: conditional
   ignore default text, parameter entity declaration callbacks, invalid ATTLIST
   default keywords, and invalid internal-subset content.
+- malformed UTF-16 CDATA prefixes now map to the same
+  `XML_ERROR_UNCLOSED_TOKEN`, `XML_ERROR_UNCLOSED_CDATA_SECTION`, and
+  `XML_ERROR_PARTIAL_CHAR` diagnostics as upstream Expat's bad CDATA matrix.
 - the upstream `test_misc_no_infinite_loop_issue_1161` external-DTD regression
   now passes through the Windows DLL smoke by propagating the nested external
   parameter entity failure to the parent as `XML_ERROR_EXTERNAL_ENTITY_HANDLING`.
 - the upstream `test_renter_loop_finite_content` external parsed-entity
   regression now passes through the Windows DLL smoke; child parsers import the
   parent DTD entity context before expanding nested internal entities.
+- the upstream `test_entity_public_utf16_*` cases now pass through the Windows
+  DLL smoke; UTF-16BE/LE external parameter entity child parsers merge parsed
+  general entity declarations back into the parent DTD context.
 
 ## Red Rows
 
@@ -164,7 +170,6 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 
 - namespace parsing and namespace callback semantics;
 - allocation-failure injection and allocation accounting tests;
-- remaining UTF-16 public external parameter entity and malformed CDATA edge cases;
 - remaining external entity abort/suspend semantics;
 - remaining external DTD encoding diagnostics and default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;

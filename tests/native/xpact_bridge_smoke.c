@@ -1,4 +1,5 @@
 #include "native/xpact_eiffel_bridge.h"
+#include "native/xpact_native_private.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -12,6 +13,7 @@ typedef struct FakeParser {
 	int set_external_entity_context_count;
 	int set_external_entity_parameter_context_count;
 	int inherit_external_entity_context_count;
+	int merge_external_entity_context_count;
 	int set_param_entity_parsing_count;
 	int set_foreign_dtd_count;
 	int user_data_count;
@@ -115,6 +117,15 @@ fake_inherit_external_entity_context(void *context, void *parser, void *parentPa
 	(void)parser;
 	(void)parentParser;
 	fake->inherit_external_entity_context_count++;
+	return XML_TRUE;
+}
+
+static XML_Bool XMLCALL
+fake_merge_external_entity_context(void *context, void *parser, void *childParser) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	(void)childParser;
+	fake->merge_external_entity_context_count++;
 	return XML_TRUE;
 }
 
@@ -325,6 +336,7 @@ main(void) {
 	bridge.set_external_entity_context = fake_set_external_entity_context;
 	bridge.set_external_entity_parameter_context = fake_set_external_entity_parameter_context;
 	bridge.inherit_external_entity_context = fake_inherit_external_entity_context;
+	bridge.merge_external_entity_context = fake_merge_external_entity_context;
 	bridge.set_param_entity_parsing = fake_set_param_entity_parsing;
 	bridge.set_foreign_dtd = fake_set_foreign_dtd;
 	bridge.set_user_data = fake_set_user_data;
@@ -426,12 +438,25 @@ main(void) {
 		if (!check(fake_parser.free_count == 1, "external entity parser free delegated")) return 1;
 	}
 
+	{
+		XML_Parser child;
+		parser->nextExternalEntityIsParameter = XML_TRUE;
+		child = XML_ExternalEntityParserCreate(parser, "parameter-context", "utf-8");
+		if (!check(child != NULL, "parameter external entity parser created through bridge")) return 1;
+		if (!check(fake_parser.last_external_entity_is_parameter == XML_TRUE, "external entity parameter context marks parameter child")) return 1;
+		status = XML_Parse(child, "<!ENTITY local 'value'>", (int)strlen("<!ENTITY local 'value'>"), XML_TRUE);
+		if (!check(status == XML_STATUS_OK, "parameter external child parse forwarded")) return 1;
+		if (!check(fake_parser.merge_external_entity_context_count == 1, "parameter external entity declarations merged to parent")) return 1;
+		XML_ParserFree(child);
+		if (!check(fake_parser.free_count == 2, "parameter external entity parser free delegated")) return 1;
+	}
+
 	if (!check(XML_ParserReset(parser, NULL) == XML_TRUE, "reset delegated")) return 1;
 	if (!check(fake_parser.reset_count == 1, "bridge reset called")) return 1;
-	if (!check(fake_parser.set_native_handle_count == 3, "native parser handle forwarded after reset")) return 1;
+	if (!check(fake_parser.set_native_handle_count == 4, "native parser handle forwarded after reset")) return 1;
 
 	XML_ParserFree(parser);
-	if (!check(fake_parser.free_count == 2, "bridge free called")) return 1;
+	if (!check(fake_parser.free_count == 3, "bridge free called")) return 1;
 	XPACT_ClearEiffelBridge();
 
 	puts("xpact bridge ABI smoke: ok");

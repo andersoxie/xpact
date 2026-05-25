@@ -146,6 +146,14 @@ feature -- Parser lifecycle callbacks
 			end
 		end
 
+	merge_external_entity_context (a_parser, a_child: POINTER): BOOLEAN
+			-- Merge DTD entity declarations from child parser `a_child' into parent `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser and then attached parser_for (a_child) as l_child then
+				Result := l_parser.merge_external_entity_context_from (l_child)
+			end
+		end
+
 	set_param_entity_parsing (a_parser: POINTER; a_parsing: INTEGER): BOOLEAN
 			-- Set parameter entity parsing policy for `a_parser'.
 		do
