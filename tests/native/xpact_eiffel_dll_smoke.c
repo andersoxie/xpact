@@ -138,6 +138,14 @@ struct external_encoding_case {
 	enum XML_Error expected_error;
 };
 
+struct utf16_case {
+	const char *label;
+	const char *text;
+	int length;
+	const char *expected_text;
+	enum XML_Error expected_error;
+};
+
 #define DEFAULT_CURRENT_DEFAULT 1
 #define DEFAULT_CURRENT_CDATA 2
 #define DEFAULT_CURRENT_CDATA_NODEFAULT 3
@@ -629,6 +637,22 @@ loaded_external_text_handler(void *userData, const XML_Char *s, int len) {
 	memcpy(g_loaded_external_text + g_loaded_external_len, s, (size_t)len);
 	g_loaded_external_len += len;
 	g_loaded_external_text[g_loaded_external_len] = '\0';
+}
+
+static void XMLCALL
+utf16_attribute_start_handler(void *userData, const XML_Char *name, const XML_Char **atts) {
+	(void)userData;
+	(void)name;
+	if (atts == NULL || atts[0] == NULL || atts[1] == NULL) {
+		g_loaded_external_failed = 1;
+		return;
+	}
+	if ((int)strlen(atts[1]) >= (int)sizeof(g_loaded_external_text)) {
+		g_loaded_external_failed = 1;
+		return;
+	}
+	strcpy(g_loaded_external_text, atts[1]);
+	g_loaded_external_len = (int)strlen(g_loaded_external_text);
 }
 
 static void XMLCALL
@@ -1244,6 +1268,7 @@ main(void) {
 	size_t external_trailing_index;
 	size_t external_invalid_index;
 	size_t external_encoding_index;
+	size_t utf16_index;
 	size_t hash_index;
 	size_t hash_collision_len;
 	int saw_xml_char_feature = 0;
@@ -1437,6 +1462,36 @@ main(void) {
 		"   <!ENTITY d '<t5>&b;</t5>'>\n"
 		"]>\n"
 		"<t0>&a;&b;&c;&d;</t0>\n";
+	const char utf16_be_bom_input[] =
+		"\xFE\xFF"
+		"\000<\000d\000o\000c\000>\000h\000i\000<\000/\000d\000o\000c\000>";
+	const char utf16_le_bom_input[] =
+		"\xFF\xFE"
+		"<\000d\000o\000c\000>\000h\000i\000<\000/\000d\000o\000c\000>\000";
+	const char utf16_le_nobom_input[] =
+		"<\000d\000o\000c\000>\000h\000i\000<\000/\000d\000o\000c\000>\000";
+	const char utf16_be_fullwidth_input[] =
+		"\000<\000d\000o\000c\000>\xff\x21\000<\000/\000d\000o\000c\000>";
+	const char utf16_be_surrogate_input[] =
+		"\000<\000d\000o\000c\000>\xd8\x34\xdd\x5e\000<\000/\000d\000o\000c\000>";
+	const char utf16_be_bad_surrogate_input[] =
+		"\000<\000d\000o\000c\000>\xdc\x00\xd8\x00\000<\000/\000d\000o\000c\000>";
+	const char utf16_cdata_input[] =
+		"\000<\000d\000o\000c\000>\000<\000!\000[\000C\000D\000A\000T\000A\000[\000h\000e\000l\000l\000o\000]\000]\000>\000<\000/\000d\000o\000c\000>";
+	const char utf16_declared_in_utf8_input[] =
+		"<?xml version='1.0' encoding='utf-16'?><doc>hi</doc>";
+	const char utf16_attribute_input[] =
+		"<\000d\000 \000\x04\x0e\x08\x0e=\000'\000a\000'\000/\000>\000";
+	const struct utf16_case utf16_cases[] = {
+		{"UTF-16BE BOM document", utf16_be_bom_input, (int)sizeof(utf16_be_bom_input) - 1, "hi", XML_ERROR_NONE},
+		{"UTF-16LE BOM document", utf16_le_bom_input, (int)sizeof(utf16_le_bom_input) - 1, "hi", XML_ERROR_NONE},
+		{"UTF-16LE no-BOM document", utf16_le_nobom_input, (int)sizeof(utf16_le_nobom_input) - 1, "hi", XML_ERROR_NONE},
+		{"UTF-16BE fullwidth character data", utf16_be_fullwidth_input, (int)sizeof(utf16_be_fullwidth_input) - 1, "\xEF\xBC\xA1", XML_ERROR_NONE},
+		{"UTF-16BE surrogate character data", utf16_be_surrogate_input, (int)sizeof(utf16_be_surrogate_input) - 1, "\xF0\x9D\x85\x9E", XML_ERROR_NONE},
+		{"UTF-16BE bad surrogate", utf16_be_bad_surrogate_input, (int)sizeof(utf16_be_bad_surrogate_input) - 1, NULL, XML_ERROR_INVALID_TOKEN},
+		{"UTF-16BE CDATA", utf16_cdata_input, (int)sizeof(utf16_cdata_input) - 1, "hello", XML_ERROR_NONE},
+		{"UTF-16 declared in UTF-8 bytes", utf16_declared_in_utf8_input, (int)sizeof(utf16_declared_in_utf8_input) - 1, NULL, XML_ERROR_INCORRECT_ENCODING}
+	};
 	const char *entity_context_input =
 		"<!DOCTYPE day [\n"
 		"  <!ENTITY draft.day '10'>\n"
@@ -2362,6 +2417,60 @@ main(void) {
 	if (!check(status == XML_STATUS_OK, "synchronous nested internal entities are accepted")) return 1;
 	if (!check(g_sync_entity_start_count == 7 && !g_sync_entity_failed, "synchronous entity markup is emitted")) return 1;
 	if (!check(strcmp(g_sync_entity_text, "twothreefourthreetwo") == 0, "synchronous entity character data is emitted")) return 1;
+	XML_ParserFree(parser);
+
+	for (utf16_index = 0; utf16_index < sizeof(utf16_cases) / sizeof(utf16_cases[0]); utf16_index++) {
+		parser = XML_ParserCreate("UTF-8");
+		if (!check(parser != NULL, "parser created for UTF-16 check")) return 1;
+		g_loaded_external_len = 0;
+		g_loaded_external_text[0] = '\0';
+		XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+		status = XML_Parse(parser, utf16_cases[utf16_index].text, utf16_cases[utf16_index].length, XML_TRUE);
+		if (utf16_cases[utf16_index].expected_error == XML_ERROR_NONE) {
+			if (status != XML_STATUS_OK) {
+				fprintf(
+					stderr,
+					"UTF-16 case %s failed: status=%d error=%d\n",
+					utf16_cases[utf16_index].label,
+					(int)status,
+					(int)XML_GetErrorCode(parser)
+				);
+				return 1;
+			}
+			if (strcmp(g_loaded_external_text, utf16_cases[utf16_index].expected_text) != 0) {
+				fprintf(
+					stderr,
+					"UTF-16 case %s emitted %s expected %s\n",
+					utf16_cases[utf16_index].label,
+					g_loaded_external_text,
+					utf16_cases[utf16_index].expected_text
+				);
+				return 1;
+			}
+		} else {
+			if (status != XML_STATUS_ERROR || XML_GetErrorCode(parser) != utf16_cases[utf16_index].expected_error) {
+				fprintf(
+					stderr,
+					"UTF-16 case %s error=%d expected=%d\n",
+					utf16_cases[utf16_index].label,
+					(int)XML_GetErrorCode(parser),
+					(int)utf16_cases[utf16_index].expected_error
+				);
+				return 1;
+			}
+		}
+		XML_ParserFree(parser);
+	}
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for UTF-16 attribute check")) return 1;
+	g_loaded_external_failed = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	XML_SetStartElementHandler(parser, utf16_attribute_start_handler);
+	status = XML_Parse(parser, utf16_attribute_input, (int)sizeof(utf16_attribute_input) - 1, XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "UTF-16 non-ASCII attribute name accepted")) return 1;
+	if (!check(!g_loaded_external_failed && strcmp(g_loaded_external_text, "a") == 0, "UTF-16 attribute value delegated")) return 1;
 	XML_ParserFree(parser);
 
 	for (async_index = 0; async_index < sizeof(g_async_entity_cases) / sizeof(g_async_entity_cases[0]); async_index++) {

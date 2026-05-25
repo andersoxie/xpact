@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 217 named upstream tests in the downloaded
+expected-failure patterns expand to 197 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -137,6 +137,12 @@ The Windows release has green evidence for:
   use encoding-only form when `XML_SetEncoding` supplies UTF-8, BOM-prefixed
   external input is consumed, and unsupported explicit child encodings map to
   `XML_ERROR_UNKNOWN_ENCODING`.
+- UTF-16 byte input is decoded in the Eiffel native parser boundary before the
+  existing UTF-8 tokenizer runs. The Windows DLL smoke covers UTF-16BE/LE BOM
+  detection, no-BOM UTF-16LE detection, explicit `UTF-16LE` parser creation,
+  BMP and surrogate-pair character data, CDATA, malformed surrogate rejection,
+  incorrect `encoding='utf-16'` declarations in UTF-8 input, and decoded
+  non-ASCII attribute names.
 
 ## Red Rows
 
@@ -144,7 +150,7 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 
 - namespace parsing and namespace callback semantics;
 - allocation-failure injection and allocation accounting tests;
-- UTF-16 and custom/unknown encoding tests;
+- remaining UTF-16 DTD edge cases and custom/unknown encoding tests;
 - remaining external entity Latin-1/UTF-16/UTF-8 non-BOM and abort semantics;
 - remaining external DTD encoding diagnostics and default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;

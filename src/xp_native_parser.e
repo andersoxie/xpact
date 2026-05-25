@@ -75,6 +75,8 @@ feature -- Expat-compatible constants
 
 	Xml_error_unknown_encoding: INTEGER = 18
 
+	Xml_error_incorrect_encoding: INTEGER = 19
+
 	Xml_error_unclosed_cdata_section: INTEGER = 20
 
 	Xml_error_external_entity_handling: INTEGER = 21
@@ -535,6 +537,7 @@ feature -- Parsing
 			input_attached: a_input /= Void
 		local
 			l_ok: BOOLEAN
+			l_input: detachable STRING_8
 		do
 			final_buffer := a_is_final
 			if has_unsupported_explicit_encoding then
@@ -551,21 +554,26 @@ feature -- Parsing
 					parsing_status := Xml_parsing
 					handler.reset_events
 					create context_buffer.make (input_buffer)
-					if is_external_entity_parser and then external_entity_is_parameter then
-						l_ok := parser.parse_external_subset_with_context (input_buffer, external_entity_context)
-					elseif is_external_entity_parser then
-						l_ok := parser.parse_external_entity (input_buffer)
+					l_input := decoded_input (input_buffer)
+					if l_input = Void then
+						Result := Xml_status_error
 					else
-						l_ok := parser.parse (input_buffer)
+						if is_external_entity_parser and then external_entity_is_parameter then
+							l_ok := parser.parse_external_subset_with_context (l_input, external_entity_context)
+						elseif is_external_entity_parser then
+							l_ok := parser.parse_external_entity (l_input)
+						else
+							l_ok := parser.parse (l_input)
+						end
+						if l_ok then
+							last_error_code := Xml_error_none
+							Result := Xml_status_ok
+						else
+							last_error_code := error_code_for (parser.last_error)
+							Result := Xml_status_error
+						end
 					end
 					parsing_status := Xml_finished
-					if l_ok then
-						last_error_code := Xml_error_none
-						Result := Xml_status_ok
-					else
-						last_error_code := error_code_for (parser.last_error)
-						Result := Xml_status_error
-					end
 					input_buffer.wipe_out
 				end
 			end
@@ -610,6 +618,178 @@ feature {NONE} -- Encoding
 				or else a_encoding.same_string ("utf-8")
 				or else a_encoding.same_string ("UTF8")
 				or else a_encoding.same_string ("utf8")
+				or else a_encoding.same_string ("UTF-16")
+				or else a_encoding.same_string ("utf-16")
+				or else a_encoding.same_string ("UTF-16LE")
+				or else a_encoding.same_string ("utf-16le")
+				or else a_encoding.same_string ("UTF-16BE")
+				or else a_encoding.same_string ("utf-16be")
+		end
+
+	decoded_input (a_input: READABLE_STRING_8): detachable STRING_8
+			-- Native input decoded to the parser's UTF-8 byte stream.
+		require
+			input_attached: a_input /= Void
+		do
+			if explicit_encoding_is_utf16be then
+				Result := decoded_utf16_input (a_input, False)
+			elseif explicit_encoding_is_utf16le then
+				Result := decoded_utf16_input (a_input, True)
+			elseif has_utf16le_signature (a_input) then
+				Result := decoded_utf16_input (a_input, True)
+			elseif has_utf16be_signature (a_input) then
+				Result := decoded_utf16_input (a_input, False)
+			elseif explicit_encoding_is_utf16 then
+				last_error_code := Xml_error_incorrect_encoding
+			elseif has_utf16_declaration_in_utf8_input (a_input) then
+				last_error_code := Xml_error_incorrect_encoding
+			else
+				create Result.make_from_string (a_input)
+			end
+		end
+
+	decoded_utf16_input (a_input: READABLE_STRING_8; a_little_endian: BOOLEAN): detachable STRING_8
+			-- Decode UTF-16 bytes to UTF-8, validating surrogate structure.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			l_unit: INTEGER
+			l_low: INTEGER
+			l_code: INTEGER
+		do
+			if a_input.count \\ 2 /= 0 then
+				last_error_code := Xml_error_partial_char
+			else
+				create Result.make (a_input.count)
+				from
+					i := 1
+				invariant
+					index_in_bounds: i >= 1 and i <= a_input.count + 1
+				until
+					i > a_input.count or Result = Void
+				loop
+					l_unit := utf16_unit_at (a_input, i, a_little_endian)
+					if i = 1 and then l_unit = 65279 then
+						i := i + 2
+					elseif l_unit >= 55296 and then l_unit <= 56319 then
+						if i + 3 > a_input.count then
+							last_error_code := Xml_error_partial_char
+							Result := Void
+						else
+							l_low := utf16_unit_at (a_input, i + 2, a_little_endian)
+							if l_low < 56320 or else l_low > 57343 then
+								last_error_code := Xml_error_invalid_token
+								Result := Void
+							else
+								l_code := 65536 + ((l_unit - 55296) * 1024) + (l_low - 56320)
+								append_utf8_codepoint (Result, l_code)
+								i := i + 4
+							end
+						end
+					elseif l_unit >= 56320 and then l_unit <= 57343 then
+						last_error_code := Xml_error_invalid_token
+						Result := Void
+					else
+						append_utf8_codepoint (Result, l_unit)
+						i := i + 2
+					end
+				variant
+					a_input.count - i + 1
+				end
+			end
+		end
+
+	utf16_unit_at (a_input: READABLE_STRING_8; a_index: INTEGER; a_little_endian: BOOLEAN): INTEGER
+			-- UTF-16 code unit at byte index `a_index'.
+		require
+			input_attached: a_input /= Void
+			valid_index: a_index >= 1 and a_index + 1 <= a_input.count
+		local
+			l_first: INTEGER
+			l_second: INTEGER
+		do
+			l_first := a_input.item (a_index).code
+			l_second := a_input.item (a_index + 1).code
+			if a_little_endian then
+				Result := l_first + (l_second * 256)
+			else
+				Result := (l_first * 256) + l_second
+			end
+		end
+
+	append_utf8_codepoint (a_output: STRING_8; a_code: INTEGER)
+			-- Append Unicode code point `a_code' as UTF-8 bytes.
+		require
+			output_attached: a_output /= Void
+		do
+			if a_code <= 127 then
+				a_output.append_character (a_code.to_character_8)
+			elseif a_code <= 2047 then
+				a_output.append_character ((192 + (a_code // 64)).to_character_8)
+				a_output.append_character ((128 + (a_code \\ 64)).to_character_8)
+			elseif a_code <= 65535 then
+				a_output.append_character ((224 + (a_code // 4096)).to_character_8)
+				a_output.append_character ((128 + ((a_code // 64) \\ 64)).to_character_8)
+				a_output.append_character ((128 + (a_code \\ 64)).to_character_8)
+			else
+				a_output.append_character ((240 + (a_code // 262144)).to_character_8)
+				a_output.append_character ((128 + ((a_code // 4096) \\ 64)).to_character_8)
+				a_output.append_character ((128 + ((a_code // 64) \\ 64)).to_character_8)
+				a_output.append_character ((128 + (a_code \\ 64)).to_character_8)
+			end
+		end
+
+	has_utf16le_signature (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does input declare little-endian UTF-16 by BOM or initial token shape?
+		require
+			input_attached: a_input /= Void
+		do
+			Result :=
+				(a_input.count >= 2 and then a_input.item (1).code = 255 and then a_input.item (2).code = 254)
+				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3) = '?' and then a_input.item (4).code = 0)
+				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3).is_alpha and then a_input.item (4).code = 0)
+		end
+
+	has_utf16be_signature (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does input declare big-endian UTF-16 by BOM or initial token shape?
+		require
+			input_attached: a_input /= Void
+		do
+			Result :=
+				(a_input.count >= 2 and then a_input.item (1).code = 254 and then a_input.item (2).code = 255)
+				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4) = '?')
+				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4).is_alpha)
+		end
+
+	has_utf16_declaration_in_utf8_input (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does an otherwise UTF-8 byte stream claim UTF-16 in its XML declaration?
+		require
+			input_attached: a_input /= Void
+		do
+			Result :=
+				a_input.has_substring ("encoding='utf-16'")
+				or else a_input.has_substring ("encoding=%"utf-16%"")
+				or else a_input.has_substring ("encoding='UTF-16'")
+				or else a_input.has_substring ("encoding=%"UTF-16%"")
+		end
+
+	explicit_encoding_is_utf16: BOOLEAN
+			-- Did the caller explicitly select UTF-16 with auto endian detection?
+		do
+			Result := attached explicit_encoding as l_encoding and then (l_encoding.same_string ("UTF-16") or else l_encoding.same_string ("utf-16"))
+		end
+
+	explicit_encoding_is_utf16le: BOOLEAN
+			-- Did the caller explicitly select UTF-16LE?
+		do
+			Result := attached explicit_encoding as l_encoding and then (l_encoding.same_string ("UTF-16LE") or else l_encoding.same_string ("utf-16le"))
+		end
+
+	explicit_encoding_is_utf16be: BOOLEAN
+			-- Did the caller explicitly select UTF-16BE?
+		do
+			Result := attached explicit_encoding as l_encoding and then (l_encoding.same_string ("UTF-16BE") or else l_encoding.same_string ("utf-16be"))
 		end
 
 feature {NONE} -- Error mapping
@@ -663,6 +843,8 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_xml_decl
 			elseif a_error.same_string ("invalid public identifier") then
 				Result := Xml_error_publicid
+			elseif a_error.same_string ("incorrect encoding") then
+				Result := Xml_error_incorrect_encoding
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then
 				Result := Xml_error_unclosed_token
 			elseif a_error.same_string ("partial character") then

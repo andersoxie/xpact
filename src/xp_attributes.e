@@ -198,7 +198,7 @@ feature -- Validation
 			l_code: INTEGER
 		do
 			l_code := c.code
-			Result := is_name_start_character (c) or c.is_digit or c = '-' or c = '.' or l_code = 183
+			Result := is_name_start_character (c) or c.is_digit or c = '-' or c = '.' or l_code = 183 or else (l_code >= 128 and l_code <= 191)
 		end
 
 feature {NONE} -- Implementation
