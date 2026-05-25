@@ -101,6 +101,8 @@ green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
 green	basic_tests.c	test_explicit_encoding	Eiffel-owned explicit encoding state accepts UTF-8 before parse, rejects mid-parse changes, and allows reset after parsing finishes.
+green	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Eiffel external DTD child parsers now propagate nested external parameter entity child failures through the parent as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
+green	misc_tests.c	test_renter_loop_finite_content	Eiffel external parsed entity children now import parent DTD entity context, so nested internal entity expansion inside loaded external entity content is finite and matches upstream.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -111,8 +113,6 @@ red	misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak check
 red	misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
 red	misc_tests.c	test_misc_resume*	Stop/resume parser state is not implemented.
 red	misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state is not implemented.
-red	misc_tests.c	test_renter_loop_finite_content	Reparse/loop-progress parity is not yet audited against upstream issue tests.
-red	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Reparse/loop-progress parity is not yet audited against upstream issue tests.
 red	basic_tests.c	test_bad_cdata_utf16	UTF-16 malformed CDATA edge diagnostics are not fully audited.
 red	basic_tests.c	test_entity_public_utf16_*	UTF-16 public external parameter entity callbacks are not fully audited.
 red	basic_tests.c	test_unknown_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.

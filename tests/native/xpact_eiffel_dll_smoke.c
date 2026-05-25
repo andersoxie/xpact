@@ -91,6 +91,10 @@ static const char *g_external_encoding_name;
 static enum XML_Error g_external_encoding_expected_error;
 static enum XML_Error g_external_encoding_actual_error;
 static int g_external_encoding_len;
+static int g_issue_1161_ref_count;
+static int g_issue_1161_failed;
+static int g_renter_ref_count;
+static int g_renter_failed;
 static const char *g_conditional_external_text;
 static int g_conditional_external_len;
 static int g_utf16_pe_entity_count;
@@ -1179,6 +1183,81 @@ external_entity_encoding_handler(XML_Parser parser, const XML_Char *context, con
 	}
 	XML_ParserFree(ext_parser);
 	return XML_STATUS_ERROR;
+}
+
+static int XMLCALL
+issue_1161_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *secondary_text = "<!ENTITY % p SYSTEM 'tertiary.txt'><!ENTITY g '%p;'>";
+	const char *tertiary_text = "<?xml version='1.0'?><a";
+	const char *text;
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_issue_1161_ref_count++;
+	if (systemId == NULL || context == NULL) {
+		g_issue_1161_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (strcmp(systemId, "secondary.txt") == 0) {
+		text = secondary_text;
+	} else if (strcmp(systemId, "tertiary.txt") == 0) {
+		text = tertiary_text;
+	} else {
+		g_issue_1161_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_issue_1161_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, text, (int)strlen(text), XML_TRUE);
+	if (strcmp(systemId, "secondary.txt") == 0) {
+		if (status != XML_STATUS_ERROR || XML_GetErrorCode(ext_parser) != XML_ERROR_EXTERNAL_ENTITY_HANDLING) {
+			g_issue_1161_failed = 1;
+		}
+	} else if (status != XML_STATUS_ERROR) {
+		g_issue_1161_failed = 1;
+	}
+	XML_ParserFree(ext_parser);
+	return XML_STATUS_ERROR;
+}
+
+static int XMLCALL
+renter_null_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	(void)parser;
+	(void)context;
+	(void)base;
+	(void)systemId;
+	(void)publicId;
+	return XML_STATUS_OK;
+}
+
+static int XMLCALL
+renter_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	const char *external_text = "&e4;\n";
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_renter_ref_count++;
+	if (systemId == NULL || strcmp(systemId, "012.ent") != 0 || context == NULL) {
+		g_renter_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_renter_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	XML_SetExternalEntityRefHandler(ext_parser, renter_null_external_entity_handler);
+	status = XML_Parse(ext_parser, external_text, (int)strlen(external_text), XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		g_renter_failed = 1;
+	}
+	XML_ParserFree(ext_parser);
+	return status;
 }
 
 static void XMLCALL
@@ -2515,6 +2594,61 @@ main(void) {
 		}
 		XML_ParserFree(parser);
 	}
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for renter-loop external entity check")) return 1;
+	g_renter_ref_count = 0;
+	g_renter_failed = 0;
+	g_loaded_external_failed = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	XML_SetExternalEntityRefHandler(parser, renter_external_entity_handler);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = XML_Parse(
+		parser,
+		"<!DOCTYPE doc [\n"
+		"<!ENTITY e1 '&e2;'>\n"
+		"<!ENTITY e2 '&e3;'>\n"
+		"<!ENTITY e3 SYSTEM '012.ent'>\n"
+		"<!ENTITY e4 '&e5;'>\n"
+		"<!ENTITY e5 '(e5)'>\n"
+		"<!ELEMENT doc (#PCDATA)>\n"
+		"]>\n"
+		"<doc>&e1;</doc>\n",
+		(int)strlen(
+			"<!DOCTYPE doc [\n"
+			"<!ENTITY e1 '&e2;'>\n"
+			"<!ENTITY e2 '&e3;'>\n"
+			"<!ENTITY e3 SYSTEM '012.ent'>\n"
+			"<!ENTITY e4 '&e5;'>\n"
+			"<!ENTITY e5 '(e5)'>\n"
+			"<!ELEMENT doc (#PCDATA)>\n"
+			"]>\n"
+			"<doc>&e1;</doc>\n"
+		),
+		XML_TRUE
+	);
+	if (status != XML_STATUS_OK) {
+		fprintf(stderr, "renter-loop parent status=%d error=%d refs=%d failed=%d text=%s\n", (int)status, (int)XML_GetErrorCode(parser), g_renter_ref_count, g_renter_failed, g_loaded_external_text);
+		return 1;
+	}
+	if (!check(g_renter_ref_count == 1 && !g_renter_failed && !g_loaded_external_failed, "renter-loop external entity path completed once")) return 1;
+	if (!check(strcmp(g_loaded_external_text, "(e5)\n") == 0, "renter-loop external entity produced finite text")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for issue 1161 external DTD check")) return 1;
+	g_issue_1161_ref_count = 0;
+	g_issue_1161_failed = 0;
+	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for issue 1161")) return 1;
+	XML_SetExternalEntityRefHandler(parser, issue_1161_external_entity_handler);
+	status = XML_Parse(parser, "<!DOCTYPE d SYSTEM 'secondary.txt'>", (int)strlen("<!DOCTYPE d SYSTEM 'secondary.txt'>"), XML_TRUE);
+	if (status != XML_STATUS_ERROR || XML_GetErrorCode(parser) != XML_ERROR_EXTERNAL_ENTITY_HANDLING) {
+		fprintf(stderr, "issue 1161 parent status=%d error=%d refs=%d failed=%d\n", (int)status, (int)XML_GetErrorCode(parser), g_issue_1161_ref_count, g_issue_1161_failed);
+		return 1;
+	}
+	if (!check(g_issue_1161_ref_count == 2 && !g_issue_1161_failed, "issue 1161 external DTD chain reports child error once")) return 1;
+	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created for user parameter check")) return 1;

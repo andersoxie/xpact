@@ -12,6 +12,7 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetEncodingRoutine set_encoding;
 	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context;
 	XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_context;
+	XPACT_EiffelInheritParserContextRoutine inherit_external_entity_context;
 	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing;
 	XPACT_EiffelSetBooleanRoutine set_foreign_dtd;
 	XPACT_EiffelSetPointerRoutine set_user_data;
@@ -159,6 +160,20 @@ xp_rt_set_external_entity_parameter_context(void *context, void *parser, XML_Boo
 		installer,
 		(EIF_POINTER)parser,
 		(EIF_BOOLEAN)(isParameter != XML_FALSE)
+	) ? XML_TRUE : XML_FALSE;
+}
+
+static XML_Bool XMLCALL
+xp_rt_inherit_external_entity_context(void *context, void *parser, void *parentParser) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->inherit_external_entity_context == NULL) {
+		return XML_FALSE;
+	}
+	return state->inherit_external_entity_context(
+		installer,
+		(EIF_POINTER)parser,
+		(EIF_POINTER)parentParser
 	) ? XML_TRUE : XML_FALSE;
 }
 
@@ -626,6 +641,7 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->set_encoding != NULL
 		&& state->set_external_entity_context != NULL
 		&& state->set_external_entity_parameter_context != NULL
+		&& state->inherit_external_entity_context != NULL
 		&& state->set_param_entity_parsing != NULL
 		&& state->set_foreign_dtd != NULL
 		&& state->set_user_data != NULL
@@ -660,6 +676,7 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_encoding = xp_rt_set_encoding;
 	bridge->set_external_entity_context = xp_rt_set_external_entity_context;
 	bridge->set_external_entity_parameter_context = xp_rt_set_external_entity_parameter_context;
+	bridge->inherit_external_entity_context = xp_rt_inherit_external_entity_context;
 	bridge->set_param_entity_parsing = xp_rt_set_param_entity_parsing;
 	bridge->set_foreign_dtd = xp_rt_set_foreign_dtd;
 	bridge->set_user_data = xp_rt_set_user_data;
@@ -707,6 +724,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetEncodingRoutine set_encoding,
 	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context,
 	XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_context,
+	XPACT_EiffelInheritParserContextRoutine inherit_external_entity_context,
 	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing,
 	XPACT_EiffelSetBooleanRoutine set_foreign_dtd,
 	XPACT_EiffelSetPointerRoutine set_user_data,
@@ -751,6 +769,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| set_encoding == NULL
 		|| set_external_entity_context == NULL
 		|| set_external_entity_parameter_context == NULL
+		|| inherit_external_entity_context == NULL
 		|| set_param_entity_parsing == NULL
 		|| set_foreign_dtd == NULL
 		|| set_user_data == NULL
@@ -781,6 +800,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_encoding = set_encoding;
 	xp_runtime_bridge.set_external_entity_context = set_external_entity_context;
 	xp_runtime_bridge.set_external_entity_parameter_context = set_external_entity_parameter_context;
+	xp_runtime_bridge.inherit_external_entity_context = inherit_external_entity_context;
 	xp_runtime_bridge.set_param_entity_parsing = set_param_entity_parsing;
 	xp_runtime_bridge.set_foreign_dtd = set_foreign_dtd;
 	xp_runtime_bridge.set_user_data = set_user_data;
@@ -838,6 +858,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_encoding,
     EIF_POINTER set_external_entity_context,
     EIF_POINTER set_external_entity_parameter_context,
+    EIF_POINTER inherit_external_entity_context,
     EIF_POINTER set_param_entity_parsing,
     EIF_POINTER set_foreign_dtd,
     EIF_POINTER set_user_data,
@@ -883,6 +904,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetEncodingRoutine)set_encoding,
 		(XPACT_EiffelSetPointerBooleanRoutine)set_external_entity_context,
 		(XPACT_EiffelSetBooleanRoutine)set_external_entity_parameter_context,
+		(XPACT_EiffelInheritParserContextRoutine)inherit_external_entity_context,
 		(XPACT_EiffelSetIntegerBooleanRoutine)set_param_entity_parsing,
 		(XPACT_EiffelSetBooleanRoutine)set_foreign_dtd,
 		(XPACT_EiffelSetPointerRoutine)set_user_data,

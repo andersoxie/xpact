@@ -56,6 +56,11 @@ typedef EIF_BOOLEAN (*XPACT_EiffelSetBooleanRoutine) (
 	 EIF_POINTER parser,
 	 EIF_BOOLEAN value
 );
+typedef EIF_BOOLEAN (*XPACT_EiffelInheritParserContextRoutine) (
+	 EIF_REFERENCE installer,
+	 EIF_POINTER parser,
+	 EIF_POINTER parent_parser
+);
 typedef void (*XPACT_EiffelSetPointerRoutine) (
 	 EIF_REFERENCE installer,
 	 EIF_POINTER parser,
@@ -114,6 +119,7 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelSetEncodingRoutine set_encoding,
 	 XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context,
 	 XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_context,
+	 XPACT_EiffelInheritParserContextRoutine inherit_external_entity_context,
 	 XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing,
 	 XPACT_EiffelSetBooleanRoutine set_foreign_dtd,
 	 XPACT_EiffelSetPointerRoutine set_user_data,
@@ -161,6 +167,7 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER set_encoding,
 	 EIF_POINTER set_external_entity_context,
 	 EIF_POINTER set_external_entity_parameter_context,
+	 EIF_POINTER inherit_external_entity_context,
 	 EIF_POINTER set_param_entity_parsing,
 	 EIF_POINTER set_foreign_dtd,
 	 EIF_POINTER set_user_data,

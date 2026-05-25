@@ -143,6 +143,21 @@ feature -- Configuration
 			resolver_set: external_entity_resolver = a_resolver
 		end
 
+	import_entity_context (a_parent: XP_PARSER)
+			-- Import DTD entity declarations from `a_parent' for an external entity child parser.
+		require
+			parent_attached: a_parent /= Void
+		do
+			inherited_entity_table := cloned_string_table (a_parent.general_entity_context_table)
+			inherited_parameter_entity_table := cloned_string_table (a_parent.parameter_entity_context_table)
+			inherited_external_entity_table := cloned_external_entity_table (a_parent.external_general_entity_context_table)
+			inherited_external_parameter_entity_table := cloned_external_entity_table (a_parent.external_parameter_entity_context_table)
+			install_inherited_entity_context
+		ensure
+			internal_general_entities_imported: attached inherited_entity_table
+			external_general_entities_imported: attached inherited_external_entity_table
+		end
+
 	set_parameter_entities_unless_standalone (a_enabled: BOOLEAN)
 			-- Honor standalone='yes' for XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE.
 		do
@@ -157,6 +172,40 @@ feature -- Configuration
 			use_foreign_dtd := a_enabled
 		ensure
 			value_set: use_foreign_dtd = a_enabled
+		end
+
+feature {XP_PARSER} -- Entity context import
+
+	general_entity_context_table: HASH_TABLE [STRING_8, STRING_8]
+			-- Current internal general entity table for child parser import.
+		do
+			Result := entity_table
+		ensure
+			result_attached: Result /= Void
+		end
+
+	parameter_entity_context_table: HASH_TABLE [STRING_8, STRING_8]
+			-- Current internal parameter entity table for child parser import.
+		do
+			Result := parameter_entity_table
+		ensure
+			result_attached: Result /= Void
+		end
+
+	external_general_entity_context_table: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
+			-- Current external general entity table for child parser import.
+		do
+			Result := external_entity_table
+		ensure
+			result_attached: Result /= Void
+		end
+
+	external_parameter_entity_context_table: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
+			-- Current external parameter entity table for child parser import.
+		do
+			Result := external_parameter_entity_table
+		ensure
+			result_attached: Result /= Void
 		end
 
 feature -- Parsing
@@ -3444,6 +3493,91 @@ feature {NONE} -- Entity tables
 			put_general_entity ("quot", "%"")
 		end
 
+	install_inherited_entity_context
+			-- Install inherited DTD entity bindings into the current parse state.
+		do
+			if attached inherited_entity_table as l_entities then
+				copy_string_table_into (l_entities, entity_table)
+			end
+			if attached inherited_parameter_entity_table as l_entities then
+				copy_string_table_into (l_entities, parameter_entity_table)
+			end
+			if attached inherited_external_entity_table as l_entities then
+				copy_external_entity_table_into (l_entities, external_entity_table)
+			end
+			if attached inherited_external_parameter_entity_table as l_entities then
+				copy_external_entity_table_into (l_entities, external_parameter_entity_table)
+			end
+		end
+
+	cloned_string_table (a_source: HASH_TABLE [STRING_8, STRING_8]): HASH_TABLE [STRING_8, STRING_8]
+			-- Deep string copy of `a_source'.
+		require
+			source_attached: a_source /= Void
+		do
+			create Result.make (a_source.count + 1)
+			copy_string_table_into (a_source, Result)
+		ensure
+			result_attached: Result /= Void
+			count_preserved: Result.count = a_source.count
+		end
+
+	copy_string_table_into (a_source, a_target: HASH_TABLE [STRING_8, STRING_8])
+			-- Copy string bindings from `a_source' into `a_target' without replacing existing bindings.
+		require
+			source_attached: a_source /= Void
+			target_attached: a_target /= Void
+		local
+			l_key: STRING_8
+			l_value: STRING_8
+		do
+			from
+				a_source.start
+			until
+				a_source.after
+			loop
+				create l_key.make_from_string (a_source.key_for_iteration)
+				if not a_target.has (l_key) then
+					create l_value.make_from_string (a_source.item_for_iteration)
+					a_target.put (l_value, l_key)
+				end
+				a_source.forth
+			end
+		end
+
+	cloned_external_entity_table (a_source: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]): HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
+			-- Copy of external entity metadata table `a_source'.
+		require
+			source_attached: a_source /= Void
+		do
+			create Result.make (a_source.count + 1)
+			copy_external_entity_table_into (a_source, Result)
+		ensure
+			result_attached: Result /= Void
+			count_preserved: Result.count = a_source.count
+		end
+
+	copy_external_entity_table_into (a_source, a_target: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8])
+			-- Copy external entity bindings from `a_source' into `a_target' without replacing existing bindings.
+		require
+			source_attached: a_source /= Void
+			target_attached: a_target /= Void
+		local
+			l_key: STRING_8
+		do
+			from
+				a_source.start
+			until
+				a_source.after
+			loop
+				create l_key.make_from_string (a_source.key_for_iteration)
+				if not a_target.has (l_key) then
+					a_target.put (a_source.item_for_iteration, l_key)
+				end
+				a_source.forth
+			end
+		end
+
 	put_general_entity (a_name, a_value: READABLE_STRING_8)
 			-- Record general entity if not already bound.
 		require
@@ -3714,6 +3848,7 @@ feature {NONE} -- State
 			foreign_dtd_loaded := False
 			not_standalone_checked := False
 			initialize_predefined_entities
+			install_inherited_entity_context
 		ensure
 			no_error: not has_error
 			no_message: last_error.is_empty
@@ -3867,6 +4002,18 @@ feature {NONE} -- State
 
 	attribute_decl_table: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
 			-- Attribute declarations keyed by element name.
+
+	inherited_entity_table: detachable HASH_TABLE [STRING_8, STRING_8]
+			-- Parent general entity bindings for external entity child parsers.
+
+	inherited_parameter_entity_table: detachable HASH_TABLE [STRING_8, STRING_8]
+			-- Parent parameter entity bindings for external entity child parsers.
+
+	inherited_external_entity_table: detachable HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
+			-- Parent external general entity bindings for external entity child parsers.
+
+	inherited_external_parameter_entity_table: detachable HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
+			-- Parent external parameter entity bindings for external entity child parsers.
 
 	document_element_count: INTEGER
 			-- Number of root-level document elements seen.

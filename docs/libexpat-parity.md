@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 184 named upstream tests in the downloaded
+expected-failure patterns expand to 182 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -151,6 +151,12 @@ The Windows release has green evidence for:
   the Eiffel subset parser for the covered upstream UTF-16 cases: conditional
   ignore default text, parameter entity declaration callbacks, invalid ATTLIST
   default keywords, and invalid internal-subset content.
+- the upstream `test_misc_no_infinite_loop_issue_1161` external-DTD regression
+  now passes through the Windows DLL smoke by propagating the nested external
+  parameter entity failure to the parent as `XML_ERROR_EXTERNAL_ENTITY_HANDLING`.
+- the upstream `test_renter_loop_finite_content` external parsed-entity
+  regression now passes through the Windows DLL smoke; child parsers import the
+  parent DTD entity context before expanding nested internal entities.
 
 ## Red Rows
 

@@ -38,10 +38,12 @@ from arbitrary fixture names.
 After xpact has a native library exporting the declarations in `include\xpact.h`:
 
 ```powershell
+.\scripts\build_native_eiffel.ps1
 .\scripts\run_libexpat_adapter.ps1 `
   -ExpatSourceDir C:\src\libexpat `
   -Mode NativeSuite `
-  -XpactLibrary build\native\xpact.lib
+  -XpactLibrary build\native-eiffel\xpact.lib `
+  -SkipNativeBuild
 ```
 
 The adapter puts `adapters\libexpat\include` first on the include path so

@@ -11,6 +11,7 @@ typedef struct FakeParser {
 	int set_encoding_count;
 	int set_external_entity_context_count;
 	int set_external_entity_parameter_context_count;
+	int inherit_external_entity_context_count;
 	int set_param_entity_parsing_count;
 	int set_foreign_dtd_count;
 	int user_data_count;
@@ -105,6 +106,15 @@ fake_set_external_entity_parameter_context(void *context, void *parser, XML_Bool
 	(void)parser;
 	fake->set_external_entity_parameter_context_count++;
 	fake->last_external_entity_is_parameter = isParameter ? XML_TRUE : XML_FALSE;
+	return XML_TRUE;
+}
+
+static XML_Bool XMLCALL
+fake_inherit_external_entity_context(void *context, void *parser, void *parentParser) {
+	FakeParser *fake = (FakeParser *)context;
+	(void)parser;
+	(void)parentParser;
+	fake->inherit_external_entity_context_count++;
 	return XML_TRUE;
 }
 
@@ -314,6 +324,7 @@ main(void) {
 	bridge.set_encoding = fake_set_encoding;
 	bridge.set_external_entity_context = fake_set_external_entity_context;
 	bridge.set_external_entity_parameter_context = fake_set_external_entity_parameter_context;
+	bridge.inherit_external_entity_context = fake_inherit_external_entity_context;
 	bridge.set_param_entity_parsing = fake_set_param_entity_parsing;
 	bridge.set_foreign_dtd = fake_set_foreign_dtd;
 	bridge.set_user_data = fake_set_user_data;
@@ -409,6 +420,7 @@ main(void) {
 		if (!check(strcmp(fake_parser.last_external_entity_context, "entity-context") == 0, "external entity context value forwarded")) return 1;
 		if (!check(fake_parser.set_external_entity_parameter_context_count == 1, "external entity parameter context forwarded")) return 1;
 		if (!check(fake_parser.last_external_entity_is_parameter == XML_FALSE, "external entity parameter context defaults false")) return 1;
+		if (!check(fake_parser.inherit_external_entity_context_count == 1, "external entity inherited parent context")) return 1;
 		if (!check(fake_parser.not_standalone_handler_count == 2, "not-standalone handler inherited by external parser")) return 1;
 		XML_ParserFree(child);
 		if (!check(fake_parser.free_count == 1, "external entity parser free delegated")) return 1;

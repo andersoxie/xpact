@@ -138,6 +138,14 @@ feature -- Parser lifecycle callbacks
 			end
 		end
 
+	inherit_external_entity_context (a_parser, a_parent: POINTER): BOOLEAN
+			-- Import parent DTD entity declarations into child parser `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser and then attached parser_for (a_parent) as l_parent then
+				Result := l_parser.inherit_external_entity_context (l_parent)
+			end
+		end
+
 	set_param_entity_parsing (a_parser: POINTER; a_parsing: INTEGER): BOOLEAN
 			-- Set parameter entity parsing policy for `a_parser'.
 		do

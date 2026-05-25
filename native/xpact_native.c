@@ -721,6 +721,20 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
 		return NULL;
 	}
+	if (
+		child->bridge != NULL
+		&& child->bridge->inherit_external_entity_context != NULL
+		&& child->eiffelParser != NULL
+		&& child->bridge->inherit_external_entity_context(
+			child->bridge->context,
+			child->eiffelParser,
+			parser->eiffelParser
+		) != XML_TRUE
+	) {
+		XML_ParserFree(child);
+		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
+		return NULL;
+	}
 	child->useParserAsHandlerArg = parser->useParserAsHandlerArg;
 	XML_SetUserData(child, parser->userData);
 	XML_SetElementHandler(child, parser->startElementHandler, parser->endElementHandler);

@@ -425,6 +425,19 @@ feature -- Element change
 			accepted_sets_value: Result implies external_entity_is_parameter = a_is_parameter
 		end
 
+	inherit_external_entity_context (a_parent: XP_NATIVE_PARSER): BOOLEAN
+			-- Import parent DTD entity declarations for an external entity child parser.
+		require
+			parent_attached: a_parent /= Void
+		do
+			if parsing_status = Xml_initialized then
+				parser.import_entity_context (a_parent.parser)
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+		end
+
 	set_param_entity_parsing (a_parsing: INTEGER): BOOLEAN
 			-- Set Expat-compatible parameter entity parsing mode before parsing starts.
 		do
