@@ -61,6 +61,7 @@ struct XML_ParserStruct {
 	XML_Bool stopResumable;
 	int activeCallbackKind;
 	int stopCallbackKind;
+	XML_Bool reparseDeferralEnabled;
 };
 
 #define XPACT_CALLBACK_NONE 0

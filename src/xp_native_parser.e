@@ -181,6 +181,15 @@ feature -- Access
 	input_buffer: STRING_8
 			-- Native chunks accumulated until the final parse call.
 
+	delivered_callback_count: INTEGER
+			-- Number of native callbacks already delivered from `input_buffer'.
+
+	deferred_reparse_start_index: INTEGER
+			-- Start index of the token currently delayed by reparse deferral.
+
+	deferred_reparse_end_index: INTEGER
+			-- End index of the delayed token once it has become complete.
+
 	native_parser_handle: POINTER
 			-- Public native parser handle used for native-only API callback state.
 
@@ -593,6 +602,9 @@ feature -- Element change
 			-- Reset parser state while preserving callback registrations.
 		do
 			input_buffer.wipe_out
+			delivered_callback_count := 0
+			deferred_reparse_start_index := 0
+			deferred_reparse_end_index := 0
 			context_buffer := Void
 			handler.reset_events
 			last_error_code := Xml_error_none
@@ -628,6 +640,8 @@ feature -- Element change
 			foreign_dtd_reset: not use_foreign_dtd
 			no_explicit_encoding: explicit_encoding = Void and not has_unsupported_explicit_encoding
 			no_hash_salt: not has_hash_salt and not has_hash_salt_16_bytes
+			no_delivered_callbacks: delivered_callback_count = 0
+			no_deferred_reparse: deferred_reparse_start_index = 0 and deferred_reparse_end_index = 0
 		end
 
 feature -- Parsing
@@ -639,6 +653,8 @@ feature -- Parsing
 		local
 			l_ok: BOOLEAN
 			l_input: detachable STRING_8
+			l_parse_input: STRING_8
+			l_defer_callbacks: BOOLEAN
 		do
 			final_buffer := a_is_final
 			if has_unsupported_explicit_encoding and then explicit_encoding_overrides_declaration and then not native_unknown_encoding_handler_available then
@@ -651,8 +667,9 @@ feature -- Parsing
 					last_error_code := Xml_error_amplification_limit_breach
 					parsing_status := Xml_finished
 					input_buffer.wipe_out
+					delivered_callback_count := 0
 					Result := Xml_status_error
-				elseif not a_is_final then
+				elseif not a_is_final and then has_partial_encoding_signature_prefix (input_buffer) then
 					last_error_code := Xml_error_none
 					parsing_status := Xml_parsing
 					Result := Xml_status_ok
@@ -667,15 +684,44 @@ feature -- Parsing
 					if l_input = Void then
 						Result := Xml_status_error
 					else
-						if is_external_entity_parser and then external_entity_is_parameter then
-							l_ok := parser.parse_external_subset_with_context (l_input, external_entity_context)
-						elseif is_external_entity_parser then
-							l_ok := parser.parse_external_entity (l_input)
+						l_defer_callbacks := should_defer_reparse_callbacks (l_input, a_is_final)
+						if l_defer_callbacks and then deferred_reparse_start_index > 1 then
+							l_parse_input := l_input.substring (1, deferred_reparse_start_index - 1)
+						elseif l_defer_callbacks then
+							create l_parse_input.make_empty
 						else
-							l_ok := parser.parse (l_input)
+							l_parse_input := l_input
+						end
+						if l_defer_callbacks then
+							handler.prepare_callback_replay (delivered_callback_count)
+						else
+							handler.prepare_callback_replay (delivered_callback_count)
+						end
+						if is_external_entity_parser and then external_entity_is_parameter then
+							if a_is_final then
+								l_ok := parser.parse_external_subset_with_context (l_parse_input, external_entity_context)
+							else
+								l_ok := parser.parse_external_subset_prefix (l_parse_input)
+							end
+						elseif is_external_entity_parser then
+							if a_is_final then
+								l_ok := parser.parse_external_entity (l_parse_input)
+							else
+								l_ok := parser.parse_prefix (l_parse_input)
+							end
+						else
+							if a_is_final then
+								l_ok := parser.parse (l_parse_input)
+							else
+								l_ok := parser.parse_prefix (l_parse_input)
+							end
 						end
 						if l_ok then
-							Result := raw_cr_epilog_stop_status (l_input)
+							if a_is_final then
+								Result := raw_cr_epilog_stop_status (l_parse_input)
+							else
+								Result := Xml_status_ok
+							end
 							if Result = Xml_status_ok then
 								last_error_code := Xml_error_none
 							end
@@ -689,9 +735,17 @@ feature -- Parsing
 					end
 					if Result = Xml_status_suspended then
 						parsing_status := Xml_suspended
+						delivered_callback_count := handler.last_suspending_callback_index
+					elseif Result = Xml_status_ok and not a_is_final then
+						parsing_status := Xml_parsing
+						delivered_callback_count := handler.callback_sequence_count
 					else
+						handler.finish_successful_parse_callbacks
 						parsing_status := Xml_finished
 						input_buffer.wipe_out
+						delivered_callback_count := 0
+						deferred_reparse_start_index := 0
+						deferred_reparse_end_index := 0
 					end
 				end
 			end
@@ -725,6 +779,58 @@ feature -- Parsing
 		end
 
 feature {NONE} -- Encoding
+
+	has_partial_encoding_signature_prefix (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does `a_input' end inside an initial encoding signature that needs more bytes?
+		require
+			input_attached: a_input /= Void
+		do
+			Result :=
+				(a_input.count = 1 and then (a_input.item (1).code = 239 or else a_input.item (1).code = 254 or else a_input.item (1).code = 255))
+				or else (a_input.count = 2 and then a_input.item (1).code = 239 and then a_input.item (2).code = 187)
+		end
+
+	should_defer_reparse_callbacks (a_input: READABLE_STRING_8; a_is_final: BOOLEAN): BOOLEAN
+			-- Should callbacks newly discovered by reparsing `a_input' remain hidden for now?
+		require
+			input_attached: a_input /= Void
+		local
+			l_start: INTEGER
+			l_end: INTEGER
+			l_token_length: INTEGER
+			l_bytes_after_token: INTEGER
+		do
+			if a_is_final or else not native_reparse_deferral_enabled (native_parser_handle) then
+				deferred_reparse_start_index := 0
+				deferred_reparse_end_index := 0
+			else
+				if deferred_reparse_start_index = 0 then
+					l_start := parser.incomplete_markup_prefix_start (a_input)
+					if l_start > 0 then
+						deferred_reparse_start_index := l_start
+						deferred_reparse_end_index := 0
+					end
+				end
+				if deferred_reparse_start_index > 0 then
+					l_end := parser.markup_prefix_end (a_input, deferred_reparse_start_index)
+					if l_end = 0 then
+						Result := True
+					else
+						if deferred_reparse_end_index = 0 then
+							deferred_reparse_end_index := l_end
+						end
+						l_token_length := deferred_reparse_end_index - deferred_reparse_start_index + 1
+						l_bytes_after_token := a_input.count - deferred_reparse_end_index
+						if l_bytes_after_token < l_token_length then
+							Result := True
+						else
+							deferred_reparse_start_index := 0
+							deferred_reparse_end_index := 0
+						end
+					end
+				end
+			end
+		end
 
 	is_supported_explicit_encoding (a_encoding: READABLE_STRING_8): BOOLEAN
 			-- Is `a_encoding' supported by the current native parser path?
@@ -1485,6 +1591,14 @@ feature {NONE} -- Native helpers
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->returnNsTriplet ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	native_reparse_deferral_enabled (a_parser: POINTER): BOOLEAN
+			-- Is Expat-compatible reparse deferral enabled on native parser `a_parser'?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->reparseDeferralEnabled ? EIF_TRUE : EIF_FALSE;"
 		end
 
 	native_amplification_limit_breached (a_parser: POINTER; a_byte_count: INTEGER; a_amplification: REAL_32): BOOLEAN

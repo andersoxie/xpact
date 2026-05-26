@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 102 named upstream tests in the downloaded
+expected-failure patterns expand to 89 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint. Of those, 86 are C allocator
 failure-injection rows that are intentionally skipped for the Eiffel release
 scope because Eiffel parser storage is not a caller-managed allocation
@@ -192,12 +192,20 @@ The Windows release has green evidence for:
 - default-handler epilog aborts and `XML_DefaultCurrent` replay now pass the
   upstream rows, including raw carriage-return epilog stops and DTD/internal
   entity default-token chunking.
-- `XML_ResumeParser` now re-enters the Eiffel parse path for character-data
-  suspension rows that need a retained syntax error or a second resumable stop;
-  the native callback-kind guard preserves the already-green end-element
-  suspension resume behavior.
+- `XML_ResumeParser` now re-enters the Eiffel parse path with callback replay
+  suppression. This covers retained syntax errors, repeated resumable stops,
+  subordinate external-parameter suspension rejection, internal/parameter
+  entity resume, and nested entity comment/character-data suspension rows.
+- non-final prefix parsing now emits complete Eiffel-tokenized callbacks before
+  `isFinal` when the prefix contains complete markup, while preserving final
+  replay suppression. This covers the upstream issue-629 internal-entity
+  suspension regression and external XML-declaration suspension/error rows.
+- upstream SipHash self/spec rows pass through the adapter build; they are
+  upstream internal self-tests rather than Eiffel parser behavior.
 - `XML_SetReparseDeferralEnabled` now rejects null parser handles like
-  libexpat; streaming reparse timing remains a separate red behavior row.
+  libexpat. Eiffel-owned non-final parsing also applies reparse deferral to
+  incomplete large tokens, inherited external parameter-entity child parsers,
+  and on-the-fly deferral disabling.
 
 ## Red Rows
 
@@ -207,10 +215,7 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
   release scope because they exercise libexpat's manual allocation contract
   rather than Eiffel-owned parser storage;
 - byte-precision accounting queries;
-- remaining subordinate parser suspension fault handling;
-- true resume continuation through suspended entity, nested-entity, and
-  parameter-entity parsing;
-- Expat siphash/reparse-deferral/accounting semantics.
+- exact Expat large-buffer scan-count and allocation heuristic behavior.
 
 ## Native Suite
 

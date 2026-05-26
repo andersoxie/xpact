@@ -133,6 +133,15 @@ feature -- Access
 	events: ARRAYED_LIST [STRING_8]
 			-- Eiffel-visible event log used by tests and diagnostics.
 
+	callback_sequence_count: INTEGER
+			-- Number of native callbacks encountered in the current parse replay.
+
+	callbacks_to_suppress: INTEGER
+			-- Number of previously delivered callbacks to suppress during resume replay.
+
+	last_suspending_callback_index: INTEGER
+			-- Callback sequence index that most recently requested resumable suspension.
+
 feature -- Metrics
 
 	start_element_count: INTEGER
@@ -411,15 +420,18 @@ feature -- Element change
 			create l_event.make_from_string ("xml-decl")
 			events.extend (l_event)
 			if xml_decl_callback /= default_pointer then
-				if not a_version.is_empty then
-					create l_version.make (a_version)
-					l_version_pointer := l_version.item
+				if not suppress_next_callback then
+					if not a_version.is_empty then
+						create l_version.make (a_version)
+						l_version_pointer := l_version.item
+					end
+					if not a_encoding.is_empty then
+						create l_encoding.make (a_encoding)
+						l_encoding_pointer := l_encoding.item
+					end
+					call_xml_decl_callback (xml_decl_callback, user_data, l_version_pointer, l_encoding_pointer, a_standalone)
+					record_callback_stop_if_requested
 				end
-				if not a_encoding.is_empty then
-					create l_encoding.make (a_encoding)
-					l_encoding_pointer := l_encoding.item
-				end
-				call_xml_decl_callback (xml_decl_callback, user_data, l_version_pointer, l_encoding_pointer, a_standalone)
 			end
 		end
 
@@ -509,6 +521,48 @@ feature -- Events
 			Result := native_stop_is_resumable (native_parser_handle)
 		end
 
+	prepare_fresh_parse_callbacks
+			-- Start a non-replay callback pass.
+		do
+			prepare_callback_replay (0)
+			last_suspending_callback_index := 0
+		ensure
+			no_callbacks_seen: callback_sequence_count = 0
+			no_suppression: callbacks_to_suppress = 0
+			no_suspend_point: last_suspending_callback_index = 0
+		end
+
+	prepare_resume_replay_callbacks
+			-- Start replaying the input up to the most recent suspend point.
+		do
+			prepare_callback_replay (last_suspending_callback_index)
+		ensure
+			no_callbacks_seen: callback_sequence_count = 0
+			suppression_set: callbacks_to_suppress = last_suspending_callback_index
+		end
+
+	prepare_callback_replay (a_suppressed_callbacks: INTEGER)
+			-- Start a replay pass suppressing callbacks already delivered to the native caller.
+		require
+			non_negative_suppression: a_suppressed_callbacks >= 0
+		do
+			callback_sequence_count := 0
+			callbacks_to_suppress := a_suppressed_callbacks
+		ensure
+			no_callbacks_seen: callback_sequence_count = 0
+			suppression_set: callbacks_to_suppress = a_suppressed_callbacks
+		end
+
+	finish_successful_parse_callbacks
+			-- Clear replay state after a parse reaches a terminal non-suspended state.
+		do
+			callbacks_to_suppress := 0
+			last_suspending_callback_index := 0
+		ensure
+			no_suppression: callbacks_to_suppress = 0
+			no_suspend_point: last_suspending_callback_index = 0
+		end
+
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 		local
 			l_event: STRING_8
@@ -528,31 +582,34 @@ feature -- Events
 			l_event.append_integer (a_attributes.count)
 			events.extend (l_event)
 			if start_element_callback /= default_pointer then
-				create l_name.make (a_name)
-				create l_attribute_strings.make (a_attributes.count * 2)
-				create l_attributes.make ((a_attributes.count * 2 + 1) * Pointer_bytes)
-				from
-					i := 1
-					j := 0
-				invariant
-					index_in_bounds: i >= 1 and i <= a_attributes.count + 1
-					pointer_index_valid: j = (i - 1) * 2
-				until
-					i > a_attributes.count
-				loop
-					create l_attribute_name.make (a_attributes.i_th_name (i))
-					create l_attribute_value.make (a_attributes.i_th_value (i))
-					l_attribute_strings.extend (l_attribute_name)
-					l_attribute_strings.extend (l_attribute_value)
-					l_attributes.put_pointer (l_attribute_name.item, j * Pointer_bytes)
-					l_attributes.put_pointer (l_attribute_value.item, (j + 1) * Pointer_bytes)
-					i := i + 1
-					j := j + 2
-				variant
-					a_attributes.count - i + 1
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					create l_attribute_strings.make (a_attributes.count * 2)
+					create l_attributes.make ((a_attributes.count * 2 + 1) * Pointer_bytes)
+					from
+						i := 1
+						j := 0
+					invariant
+						index_in_bounds: i >= 1 and i <= a_attributes.count + 1
+						pointer_index_valid: j = (i - 1) * 2
+					until
+						i > a_attributes.count
+					loop
+						create l_attribute_name.make (a_attributes.i_th_name (i))
+						create l_attribute_value.make (a_attributes.i_th_value (i))
+						l_attribute_strings.extend (l_attribute_name)
+						l_attribute_strings.extend (l_attribute_value)
+						l_attributes.put_pointer (l_attribute_name.item, j * Pointer_bytes)
+						l_attributes.put_pointer (l_attribute_value.item, (j + 1) * Pointer_bytes)
+						i := i + 1
+						j := j + 2
+					variant
+						a_attributes.count - i + 1
+					end
+					l_attributes.put_pointer (default_pointer, j * Pointer_bytes)
+					call_start_element_callback (start_element_callback, user_data, l_name.item, l_attributes.item)
+					record_callback_stop_if_requested
 				end
-				l_attributes.put_pointer (default_pointer, j * Pointer_bytes)
-				call_start_element_callback (start_element_callback, user_data, l_name.item, l_attributes.item)
 			end
 		end
 
@@ -566,8 +623,11 @@ feature -- Events
 			l_event.append (a_name)
 			events.extend (l_event)
 			if end_element_callback /= default_pointer then
-				create l_name.make (a_name)
-				call_end_element_callback (end_element_callback, user_data, l_name.item)
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					call_end_element_callback (end_element_callback, user_data, l_name.item)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -582,12 +642,15 @@ feature -- Events
 				l_event.append (a_text)
 				events.extend (l_event)
 				if character_data_callback /= default_pointer then
-					create l_text.make (a_text)
-					remember_default_text (a_text)
-					set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
-					call_character_data_callback (character_data_callback, user_data, l_text.item, a_text.count)
-					set_native_active_callback_kind (native_parser_handle, Native_callback_none)
-					forget_default_text
+					if not suppress_next_callback then
+						create l_text.make (a_text)
+						remember_default_text (a_text)
+						set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
+						call_character_data_callback (character_data_callback, user_data, l_text.item, a_text.count)
+						set_native_active_callback_kind (native_parser_handle, Native_callback_none)
+						record_callback_stop_if_requested
+						forget_default_text
+					end
 				end
 			end
 		end
@@ -605,9 +668,12 @@ feature -- Events
 			l_event.append (a_data)
 			events.extend (l_event)
 			if processing_instruction_callback /= default_pointer then
-				create l_target.make (a_target)
-				create l_data.make (a_data)
-				call_processing_instruction_callback (processing_instruction_callback, user_data, l_target.item, l_data.item)
+				if not suppress_next_callback then
+					create l_target.make (a_target)
+					create l_data.make (a_data)
+					call_processing_instruction_callback (processing_instruction_callback, user_data, l_target.item, l_data.item)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -626,8 +692,11 @@ feature -- Events
 			l_event.append (a_text)
 			events.extend (l_event)
 			if comment_callback /= default_pointer then
-				create l_text.make (a_text)
-				call_comment_callback (comment_callback, user_data, l_text.item)
+				if not suppress_next_callback then
+					create l_text.make (a_text)
+					call_comment_callback (comment_callback, user_data, l_text.item)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -636,7 +705,10 @@ feature -- Events
 			start_cdata_section_count := start_cdata_section_count + 1
 			events.extend ("start-cdata")
 			if start_cdata_section_callback /= default_pointer then
-				call_cdata_section_callback (start_cdata_section_callback, user_data)
+				if not suppress_next_callback then
+					call_cdata_section_callback (start_cdata_section_callback, user_data)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -645,7 +717,10 @@ feature -- Events
 			end_cdata_section_count := end_cdata_section_count + 1
 			events.extend ("end-cdata")
 			if end_cdata_section_callback /= default_pointer then
-				call_cdata_section_callback (end_cdata_section_callback, user_data)
+				if not suppress_next_callback then
+					call_cdata_section_callback (end_cdata_section_callback, user_data)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -659,16 +734,19 @@ feature -- Events
 		do
 			start_doctype_decl_count := start_doctype_decl_count + 1
 			if start_doctype_decl_callback /= default_pointer then
-				create l_name.make (a_name)
-				if attached a_system_id as l_attached_system_id then
-					create l_system_id.make (l_attached_system_id)
-					l_system_pointer := l_system_id.item
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					if attached a_system_id as l_attached_system_id then
+						create l_system_id.make (l_attached_system_id)
+						l_system_pointer := l_system_id.item
+					end
+					if attached a_public_id as l_attached_public_id then
+						create l_public_id.make (l_attached_public_id)
+						l_public_pointer := l_public_id.item
+					end
+					call_start_doctype_decl_callback (start_doctype_decl_callback, user_data, l_name.item, l_system_pointer, l_public_pointer, a_has_internal_subset)
+					record_callback_stop_if_requested
 				end
-				if attached a_public_id as l_attached_public_id then
-					create l_public_id.make (l_attached_public_id)
-					l_public_pointer := l_public_id.item
-				end
-				call_start_doctype_decl_callback (start_doctype_decl_callback, user_data, l_name.item, l_system_pointer, l_public_pointer, a_has_internal_subset)
 			end
 		end
 
@@ -676,7 +754,10 @@ feature -- Events
 		do
 			end_doctype_decl_count := end_doctype_decl_count + 1
 			if end_doctype_decl_callback /= default_pointer then
-				call_end_doctype_decl_callback (end_doctype_decl_callback, user_data)
+				if not suppress_next_callback then
+					call_end_doctype_decl_callback (end_doctype_decl_callback, user_data)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -689,8 +770,13 @@ feature -- Events
 			if not_standalone_callback = default_pointer then
 				Result := True
 			else
-				l_status := call_not_standalone_callback (not_standalone_callback, user_data)
-				Result := l_status /= 0
+				if suppress_next_callback then
+					Result := True
+				else
+					l_status := call_not_standalone_callback (not_standalone_callback, user_data)
+					Result := l_status /= 0
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -712,11 +798,14 @@ feature -- Events
 			l_event.append_integer (a_model.children.count)
 			events.extend (l_event)
 			if element_decl_callback /= default_pointer then
-				create l_name.make (a_name)
-				create l_model_names.make (a_model.node_count)
-				l_model := content_model_array (a_model, l_model_names)
-				if l_model /= default_pointer then
-					call_element_decl_callback (element_decl_callback, user_data, l_name.item, l_model)
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					create l_model_names.make (a_model.node_count)
+					l_model := content_model_array (a_model, l_model_names)
+					if l_model /= default_pointer then
+						call_element_decl_callback (element_decl_callback, user_data, l_name.item, l_model)
+						record_callback_stop_if_requested
+					end
 				end
 			end
 		end
@@ -745,20 +834,23 @@ feature -- Events
 			end
 			events.extend (l_event)
 			if notation_decl_callback /= default_pointer then
-				create l_name.make (a_name)
-				if attached a_base as l_attached_base then
-					create l_base.make (l_attached_base)
-					l_base_pointer := l_base.item
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					if attached a_base as l_attached_base then
+						create l_base.make (l_attached_base)
+						l_base_pointer := l_base.item
+					end
+					if attached a_system_id as l_attached_system_id then
+						create l_system_id.make (l_attached_system_id)
+						l_system_pointer := l_system_id.item
+					end
+					if attached a_public_id as l_attached_public_id then
+						create l_public_id.make (l_attached_public_id)
+						l_public_pointer := l_public_id.item
+					end
+					call_notation_decl_callback (notation_decl_callback, user_data, l_name.item, l_base_pointer, l_system_pointer, l_public_pointer)
+					record_callback_stop_if_requested
 				end
-				if attached a_system_id as l_attached_system_id then
-					create l_system_id.make (l_attached_system_id)
-					l_system_pointer := l_system_id.item
-				end
-				if attached a_public_id as l_attached_public_id then
-					create l_public_id.make (l_attached_public_id)
-					l_public_pointer := l_public_id.item
-				end
-				call_notation_decl_callback (notation_decl_callback, user_data, l_name.item, l_base_pointer, l_system_pointer, l_public_pointer)
 			end
 		end
 
@@ -790,14 +882,17 @@ feature -- Events
 			end
 			events.extend (l_event)
 			if attlist_decl_callback /= default_pointer then
-				create l_element_name.make (a_element_name)
-				create l_attribute_name.make (a_attribute_name)
-				create l_attribute_type.make (a_attribute_type)
-				if attached a_default_value as l_attached_default_value then
-					create l_default_value.make (l_attached_default_value)
-					l_default_pointer := l_default_value.item
+				if not suppress_next_callback then
+					create l_element_name.make (a_element_name)
+					create l_attribute_name.make (a_attribute_name)
+					create l_attribute_type.make (a_attribute_type)
+					if attached a_default_value as l_attached_default_value then
+						create l_default_value.make (l_attached_default_value)
+						l_default_pointer := l_default_value.item
+					end
+					call_attlist_decl_callback (attlist_decl_callback, user_data, l_element_name.item, l_attribute_name.item, l_attribute_type.item, l_default_pointer, a_is_required)
+					record_callback_stop_if_requested
 				end
-				call_attlist_decl_callback (attlist_decl_callback, user_data, l_element_name.item, l_attribute_name.item, l_attribute_type.item, l_default_pointer, a_is_required)
 			end
 		end
 
@@ -832,25 +927,28 @@ feature -- Events
 			end
 			events.extend (l_event)
 			if entity_decl_callback /= default_pointer then
-				create l_name.make (a_name)
-				if attached a_value as l_attached_value then
-					create l_value.make (l_attached_value)
-					l_value_pointer := l_value.item
-					l_value_length := l_attached_value.count
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					if attached a_value as l_attached_value then
+						create l_value.make (l_attached_value)
+						l_value_pointer := l_value.item
+						l_value_length := l_attached_value.count
+					end
+					if attached a_public_id as l_attached_public_id then
+						create l_public_id.make (l_attached_public_id)
+						l_public_pointer := l_public_id.item
+					end
+					if attached a_system_id as l_attached_system_id then
+						create l_system_id.make (l_attached_system_id)
+						l_system_pointer := l_system_id.item
+					end
+					if attached a_notation_name as l_attached_notation_name then
+						create l_notation_name.make (l_attached_notation_name)
+						l_notation_pointer := l_notation_name.item
+					end
+					call_entity_decl_callback (entity_decl_callback, user_data, l_name.item, a_is_parameter, l_value_pointer, l_value_length, default_pointer, l_system_pointer, l_public_pointer, l_notation_pointer)
+					record_callback_stop_if_requested
 				end
-				if attached a_public_id as l_attached_public_id then
-					create l_public_id.make (l_attached_public_id)
-					l_public_pointer := l_public_id.item
-				end
-				if attached a_system_id as l_attached_system_id then
-					create l_system_id.make (l_attached_system_id)
-					l_system_pointer := l_system_id.item
-				end
-				if attached a_notation_name as l_attached_notation_name then
-					create l_notation_name.make (l_attached_notation_name)
-					l_notation_pointer := l_notation_name.item
-				end
-				call_entity_decl_callback (entity_decl_callback, user_data, l_name.item, a_is_parameter, l_value_pointer, l_value_length, default_pointer, l_system_pointer, l_public_pointer, l_notation_pointer)
 			end
 		end
 
@@ -871,17 +969,20 @@ feature -- Events
 			l_event.append (a_system_id)
 			events.extend (l_event)
 			if unparsed_entity_decl_callback /= default_pointer then
-				create l_name.make (a_name)
-				create l_system_id.make (a_system_id)
-				if attached a_public_id as l_attached_public_id then
-					create l_public_id.make (l_attached_public_id)
-					l_public_pointer := l_public_id.item
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					create l_system_id.make (a_system_id)
+					if attached a_public_id as l_attached_public_id then
+						create l_public_id.make (l_attached_public_id)
+						l_public_pointer := l_public_id.item
+					end
+					if attached a_notation_name as l_attached_notation_name then
+						create l_notation_name.make (l_attached_notation_name)
+						l_notation_pointer := l_notation_name.item
+					end
+					call_unparsed_entity_decl_callback (unparsed_entity_decl_callback, user_data, l_name.item, default_pointer, l_system_id.item, l_public_pointer, l_notation_pointer)
+					record_callback_stop_if_requested
 				end
-				if attached a_notation_name as l_attached_notation_name then
-					create l_notation_name.make (l_attached_notation_name)
-					l_notation_pointer := l_notation_name.item
-				end
-				call_unparsed_entity_decl_callback (unparsed_entity_decl_callback, user_data, l_name.item, default_pointer, l_system_id.item, l_public_pointer, l_notation_pointer)
 			end
 		end
 
@@ -901,8 +1002,11 @@ feature -- Events
 			end
 			events.extend (l_event)
 			if skipped_entity_callback /= default_pointer then
-				create l_name.make (a_name)
-				call_skipped_entity_callback (skipped_entity_callback, user_data, l_name.item, a_is_parameter)
+				if not suppress_next_callback then
+					create l_name.make (a_name)
+					call_skipped_entity_callback (skipped_entity_callback, user_data, l_name.item, a_is_parameter)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -919,12 +1023,15 @@ feature -- Events
 				l_callback := native_start_namespace_decl_callback (native_parser_handle)
 			end
 			if l_callback /= default_pointer then
-				if attached a_prefix as l_attached_prefix then
-					create l_prefix.make (l_attached_prefix)
-					l_prefix_pointer := l_prefix.item
+				if not suppress_next_callback then
+					if attached a_prefix as l_attached_prefix then
+						create l_prefix.make (l_attached_prefix)
+						l_prefix_pointer := l_prefix.item
+					end
+					create l_uri.make (a_uri)
+					call_start_namespace_decl_callback (l_callback, user_data, l_prefix_pointer, l_uri.item)
+					record_callback_stop_if_requested
 				end
-				create l_uri.make (a_uri)
-				call_start_namespace_decl_callback (l_callback, user_data, l_prefix_pointer, l_uri.item)
 			end
 		end
 
@@ -940,11 +1047,14 @@ feature -- Events
 				l_callback := native_end_namespace_decl_callback (native_parser_handle)
 			end
 			if l_callback /= default_pointer then
-				if attached a_prefix as l_attached_prefix then
-					create l_prefix.make (l_attached_prefix)
-					l_prefix_pointer := l_prefix.item
+				if not suppress_next_callback then
+					if attached a_prefix as l_attached_prefix then
+						create l_prefix.make (l_attached_prefix)
+						l_prefix_pointer := l_prefix.item
+					end
+					call_end_namespace_decl_callback (l_callback, user_data, l_prefix_pointer)
+					record_callback_stop_if_requested
 				end
-				call_end_namespace_decl_callback (l_callback, user_data, l_prefix_pointer)
 			end
 		end
 
@@ -954,8 +1064,11 @@ feature -- Events
 		do
 			if default_callback /= default_pointer and then not a_text.is_empty then
 				default_count := default_count + 1
-				create l_text.make (a_text)
-				call_default_callback (default_callback, user_data, l_text.item, a_text.count)
+				if not suppress_next_callback then
+					create l_text.make (a_text)
+					call_default_callback (default_callback, user_data, l_text.item, a_text.count)
+					record_callback_stop_if_requested
+				end
 			end
 		end
 
@@ -982,23 +1095,28 @@ feature -- External entity resolution
 		do
 			if external_entity_ref_callback /= default_pointer then
 				external_entity_ref_count := external_entity_ref_count + 1
-				l_before_external_count := external_entity_parse_count (native_parser_handle)
-				create l_context.make (a_name)
-				create l_system_id.make (a_system_id)
-				if not a_public_id.is_empty then
-					create l_public_id.make (a_public_id)
-					l_public_pointer := l_public_id.item
-				end
-				mark_next_external_entity_is_parameter (native_parser_handle, a_is_parameter)
-				l_status := call_external_entity_ref_callback (external_entity_ref_callback, external_entity_callback_argument, l_context.item, default_pointer, l_system_id.item, l_public_pointer)
-				mark_next_external_entity_is_parameter (native_parser_handle, False)
-				if l_status /= 0 then
-					l_after_external_count := external_entity_parse_count (native_parser_handle)
-					if a_is_parameter and then l_after_external_count > l_before_external_count then
-						create Result.make_from_string ("%N")
-					else
-						create Result.make_empty
+				if not suppress_next_callback then
+					l_before_external_count := external_entity_parse_count (native_parser_handle)
+					create l_context.make (a_name)
+					create l_system_id.make (a_system_id)
+					if not a_public_id.is_empty then
+						create l_public_id.make (a_public_id)
+						l_public_pointer := l_public_id.item
 					end
+					mark_next_external_entity_is_parameter (native_parser_handle, a_is_parameter)
+					l_status := call_external_entity_ref_callback (external_entity_ref_callback, external_entity_callback_argument, l_context.item, default_pointer, l_system_id.item, l_public_pointer)
+					mark_next_external_entity_is_parameter (native_parser_handle, False)
+					record_callback_stop_if_requested
+					if l_status /= 0 then
+						l_after_external_count := external_entity_parse_count (native_parser_handle)
+						if a_is_parameter and then l_after_external_count > l_before_external_count then
+							create Result.make_from_string ("%N")
+						else
+							create Result.make_empty
+						end
+					end
+				else
+					create Result.make_empty
 				end
 			else
 				on_skipped_entity (a_name, a_is_parameter)
@@ -1007,6 +1125,25 @@ feature -- External entity resolution
 		end
 
 feature {NONE} -- Native callback calls
+
+	suppress_next_callback: BOOLEAN
+			-- Should the next native callback be skipped during resume replay?
+		do
+			callback_sequence_count := callback_sequence_count + 1
+			Result := callback_sequence_count <= callbacks_to_suppress
+		ensure
+			one_more_callback_seen: callback_sequence_count = old callback_sequence_count + 1
+		end
+
+	record_callback_stop_if_requested
+			-- Remember callback position if the application suspended parsing.
+		do
+			if stop_requested and then stop_is_resumable then
+				last_suspending_callback_index := callback_sequence_count
+			end
+		ensure
+			recorded_when_resumable_stop: (stop_requested and then stop_is_resumable) implies last_suspending_callback_index = callback_sequence_count
+		end
 
 	remember_default_text (a_text: READABLE_STRING_8)
 			-- Store callback text for `XML_DefaultCurrent'.

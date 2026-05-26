@@ -146,6 +146,7 @@ XML_ParserCreate_MM(
 	parser->errorCode = XML_ERROR_NONE;
 	parser->parsing = XML_INITIALIZED;
 	parser->bridge = xp_bridge;
+	parser->reparseDeferralEnabled = XML_TRUE;
 	if (namespaceSeparator != NULL) {
 		parser->hasNamespaceSeparator = XML_TRUE;
 		parser->namespaceSeparator = *namespaceSeparator;
@@ -762,6 +763,10 @@ XML_StopParser(XML_Parser parser, XML_Bool resumable) {
 		xp_set_error(parser, XML_ERROR_SUSPENDED);
 		return XML_STATUS_ERROR;
 	}
+	if (resumable && parser->externalEntityIsParameter) {
+		xp_set_error(parser, XML_ERROR_SUSPEND_PE);
+		return XML_STATUS_ERROR;
+	}
 	parser->stopRequested = XML_TRUE;
 	parser->stopResumable = resumable ? XML_TRUE : XML_FALSE;
 	parser->stopCallbackKind = parser->activeCallbackKind;
@@ -794,11 +799,7 @@ XML_ResumeParser(XML_Parser parser) {
 	}
 	stopCallbackKind = parser->stopCallbackKind;
 	xp_clear_stop_state(parser);
-	if (stopCallbackKind != XPACT_CALLBACK_CHARACTER_DATA) {
-		parser->parsing = XML_FINISHED;
-		parser->errorCode = XML_ERROR_NONE;
-		return XML_STATUS_OK;
-	}
+	(void)stopCallbackKind;
 	parser->parsing = XML_PARSING;
 	parser->errorCode = XML_ERROR_NONE;
 	status = parser->bridge->parse(
@@ -868,6 +869,7 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	child->billionLaughsMaximumAmplification = parser->billionLaughsMaximumAmplification;
 	child->hasBillionLaughsActivationThreshold = parser->hasBillionLaughsActivationThreshold;
 	child->billionLaughsActivationThresholdBytes = parser->billionLaughsActivationThresholdBytes;
+	child->reparseDeferralEnabled = parser->reparseDeferralEnabled;
 	child->externalEntityIsParameter = parser->nextExternalEntityIsParameter;
 	parser->nextExternalEntityIsParameter = XML_FALSE;
 	if (
@@ -1217,9 +1219,12 @@ XML_SetAllocTrackerActivationThreshold(XML_Parser parser, unsigned long long act
 
 XML_Bool XMLCALL
 XML_SetReparseDeferralEnabled(XML_Parser parser, XML_Bool enabled) {
-	(void)enabled;
 	if (parser == NULL) {
 		return XML_FALSE;
 	}
+	if (enabled != XML_FALSE && enabled != XML_TRUE) {
+		return XML_FALSE;
+	}
+	parser->reparseDeferralEnabled = enabled;
 	return XML_TRUE;
 }

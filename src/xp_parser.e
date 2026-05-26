@@ -312,6 +312,49 @@ feature -- Parsing
 			success_has_root: Result implies document_element_count = 1
 		end
 
+	parse_prefix (a_input: READABLE_STRING_8): BOOLEAN
+			-- Parse complete tokens available in a non-final XML document prefix.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+		local
+			i: INTEGER
+			l_input: STRING_8
+		do
+			reset
+			l_input := normalized_input (a_input)
+			position_input.wipe_out
+			position_input.append (l_input)
+			note_position (1)
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= l_input.count + 1
+				depth_within_limit: element_stack.count <= max_element_depth
+			until
+				i > l_input.count or has_error or is_suspended
+			loop
+				note_position (i)
+				if l_input.item (i) = '<' then
+					if is_incomplete_markup_prefix (l_input, i) then
+						i := l_input.count + 1
+					else
+						i := parse_markup (l_input, i)
+					end
+				else
+					i := parse_character_data_prefix (l_input, i)
+				end
+				if not has_error then
+					note_position (i)
+				end
+			variant
+				l_input.count - i + 1
+			end
+			Result := not has_error and not is_suspended
+		ensure
+			result_matches_state: Result = (not has_error and not is_suspended)
+		end
+
 	parse_external_entity (a_input: READABLE_STRING_8): BOOLEAN
 			-- Parse a complete external parsed entity fragment `a_input'.
 		require
@@ -393,6 +436,97 @@ feature -- Parsing
 		ensure
 			result_matches_state: Result = (not has_error and not is_suspended)
 			not_external_after_parse: not parsing_external_entity
+		end
+
+	parse_external_subset_prefix (a_input: READABLE_STRING_8): BOOLEAN
+			-- Parse complete DTD declarations available in a non-final external subset prefix.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+		local
+			l_input: STRING_8
+		do
+			reset
+			parsing_external_entity := True
+			l_input := normalized_input (a_input)
+			position_input.wipe_out
+			position_input.append (l_input)
+			note_position (1)
+			process_internal_subset_prefix (l_input)
+			if not has_error and not is_suspended then
+				note_position (l_input.count + 1)
+			end
+			Result := not has_error and not is_suspended
+			parsing_external_entity := False
+		ensure
+			result_matches_state: Result = (not has_error and not is_suspended)
+			not_external_after_parse: not parsing_external_entity
+		end
+
+	incomplete_markup_prefix_start (a_input: READABLE_STRING_8): INTEGER
+			-- Start index of the first markup token incomplete at the end of `a_input', or zero.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			l_end: INTEGER
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_input.count + 1
+				result_in_bounds: Result >= 0 and Result <= a_input.count
+			until
+				i > a_input.count or Result /= 0
+			loop
+				if a_input.item (i) = '<' then
+					l_end := markup_prefix_end (a_input, i)
+					if l_end = 0 then
+						Result := i
+					else
+						i := l_end + 1
+					end
+				else
+					i := i + 1
+				end
+			variant
+				a_input.count - i + 1
+			end
+		ensure
+			not_found_or_valid: Result = 0 or else (Result >= 1 and Result <= a_input.count and then a_input.item (Result) = '<')
+		end
+
+	markup_prefix_end (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- End index of markup at `a_start_index', or zero if incomplete.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			starts_markup: a_input.item (a_start_index) = '<'
+		local
+			l_end: INTEGER
+		do
+			if has_at (a_input, a_start_index, "<!--") then
+				l_end := find_sequence (a_input, "-->", a_start_index + 4)
+				if l_end > 0 then
+					Result := l_end + 2
+				end
+			elseif has_at (a_input, a_start_index, "<![CDATA[") then
+				l_end := find_sequence (a_input, "]]>", a_start_index + 9)
+				if l_end > 0 then
+					Result := l_end + 2
+				end
+			elseif has_at (a_input, a_start_index, "<!DOCTYPE") then
+				Result := find_doctype_end (a_input, a_start_index)
+			elseif has_at (a_input, a_start_index, "<?") then
+				l_end := find_sequence (a_input, "?>", a_start_index + 2)
+				if l_end > 0 then
+					Result := l_end + 1
+				end
+			else
+				Result := find_markup_declaration_end (a_input, a_start_index)
+			end
+		ensure
+			result_in_bounds: Result >= 0 and Result <= a_input.count
 		end
 
 	parse_external_subset_with_context (a_input: READABLE_STRING_8; a_context: detachable READABLE_STRING_8): BOOLEAN
@@ -1246,6 +1380,83 @@ feature {NONE} -- Character data and references
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
+	parse_character_data_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Parse character data in a non-final prefix, stopping before incomplete references.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			not_markup: a_input.item (a_start_index) /= '<'
+		local
+			i: INTEGER
+			c: CHARACTER_8
+			l_text: STRING_8
+			l_done: BOOLEAN
+		do
+			create l_text.make_empty
+			from
+				i := a_start_index
+			invariant
+				index_in_bounds: i >= a_start_index and i <= a_input.count + 1
+			until
+				i > a_input.count or l_done or has_error or is_suspended or else a_input.item (i) = '<'
+			loop
+				note_position (i)
+				c := a_input.item (i)
+				if has_at (a_input, i, "]]>") then
+					set_error ("CDATA close marker in character data")
+					i := a_input.count + 1
+				elseif c = '&' then
+					if find_character (a_input, ';', i + 1) = 0 then
+						l_done := True
+						i := a_input.count + 1
+					elseif element_stack.count = 0 and then not parsing_external_entity then
+						set_error ("entity reference outside document element")
+						i := a_input.count + 1
+					else
+						i := append_reference_in_content (a_input, i, l_text)
+					end
+				elseif is_incomplete_utf8_sequence_at (a_input, i) then
+					l_done := True
+					i := a_input.count + 1
+				elseif not is_xml_character_code (c.code) then
+					set_error ("invalid XML character")
+					i := a_input.count + 1
+				else
+					l_text.append_character (c)
+					i := i + 1
+				end
+			variant
+				a_input.count - i + 1
+			end
+			if not has_error and not is_suspended then
+				if element_stack.count = 0 and then not parsing_external_entity then
+					if not is_all_xml_space (l_text) then
+						set_error ("character data outside document element")
+						Result := a_input.count + 1
+					else
+						emit_default (l_text)
+						Result := i
+					end
+				else
+					if handler.wants_automatic_character_data_default then
+						emit_default (l_text)
+					end
+					if entity_reference_count_stack.count > 0 then
+						note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+					else
+						note_token_position (a_start_index, l_text.count)
+					end
+					emit_text (l_text)
+					Result := i
+				end
+			else
+				Result := a_input.count + 1
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_input.count + 1
+		end
+
 	append_reference_in_content (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
 			-- Expand a reference in element content.
 		require
@@ -1776,6 +1987,19 @@ feature {NONE} -- DTD entity declarations
 				end
 			variant
 				a_subset.count - i + 1
+			end
+		end
+
+	process_internal_subset_prefix (a_subset: READABLE_STRING_8)
+			-- Process the complete declaration prefix of a non-final DTD subset.
+		require
+			subset_attached: a_subset /= Void
+		local
+			l_end: INTEGER
+		do
+			l_end := complete_dtd_prefix_end (a_subset)
+			if l_end > 0 then
+				process_internal_subset (a_subset.substring (1, l_end))
 			end
 		end
 
@@ -3623,6 +3847,94 @@ feature {NONE} -- Scanning
 			variant
 				a_input.count - i + 1
 			end
+		end
+
+	is_incomplete_markup_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+			-- Does markup at `a_start_index' lack its closing delimiter in this non-final prefix?
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			starts_markup: a_input.item (a_start_index) = '<'
+		local
+			l_end: INTEGER
+		do
+			if has_at (a_input, a_start_index, "<!--") then
+				l_end := find_sequence (a_input, "-->", a_start_index + 4)
+			elseif has_at (a_input, a_start_index, "<![CDATA[") then
+				l_end := find_sequence (a_input, "]]>", a_start_index + 9)
+			elseif has_at (a_input, a_start_index, "<!DOCTYPE") then
+				l_end := find_doctype_end (a_input, a_start_index)
+			elseif has_at (a_input, a_start_index, "<?") then
+				l_end := find_sequence (a_input, "?>", a_start_index + 2)
+			else
+				l_end := find_markup_declaration_end (a_input, a_start_index)
+			end
+			Result := l_end = 0
+		end
+
+	complete_dtd_prefix_end (a_subset: READABLE_STRING_8): INTEGER
+			-- Last index that belongs to a complete DTD token prefix.
+		require
+			subset_attached: a_subset /= Void
+		local
+			i: INTEGER
+			l_end: INTEGER
+			l_done: BOOLEAN
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_subset.count + 1
+				result_in_bounds: Result >= 0 and Result <= a_subset.count
+			until
+				i > a_subset.count or l_done
+			loop
+				if is_xml_space (a_subset.item (i)) then
+					Result := i
+					i := i + 1
+				elseif has_at (a_subset, i, "<!--") then
+					l_end := find_sequence (a_subset, "-->", i + 4)
+					if l_end = 0 then
+						l_done := True
+					else
+						Result := l_end + 2
+						i := l_end + 3
+					end
+				elseif has_at (a_subset, i, "<?") then
+					l_end := find_sequence (a_subset, "?>", i + 2)
+					if l_end = 0 then
+						l_done := True
+					else
+						Result := l_end + 1
+						i := l_end + 2
+					end
+				elseif has_at (a_subset, i, "<!") then
+					l_end := find_markup_declaration_end (a_subset, i)
+					if l_end = 0 then
+						l_done := True
+					else
+						Result := l_end
+						i := l_end + 1
+					end
+				elseif a_subset.item (i).code = 37 then
+					l_end := find_character (a_subset, ';', i + 1)
+					if l_end = 0 then
+						l_done := True
+					else
+						Result := l_end
+						i := l_end + 1
+					end
+				elseif a_subset.item (i) = '<' then
+					l_done := True
+				else
+					Result := a_subset.count
+					i := a_subset.count + 1
+				end
+			variant
+				a_subset.count - i + 1
+			end
+		ensure
+			result_in_bounds: Result >= 0 and Result <= a_subset.count
 		end
 
 	find_doctype_end (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
