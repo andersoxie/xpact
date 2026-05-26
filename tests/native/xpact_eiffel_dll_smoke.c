@@ -2441,7 +2441,7 @@ main(void) {
 	XML_SetDefaultHandler(parser, default_handler);
 	status = XML_Parse(parser, dtd_default_input, (int)strlen(dtd_default_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for DTD default check")) return 1;
-	if (!check(strcmp(g_default_text, "\n\n\n\n\n\n\n<doc/>") == 0, "default handler receives DTD whitespace")) return 1;
+	if (!check(strcmp(g_default_text, dtd_default_input) == 0, "default handler receives DTD default tokens")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");

@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 110 named upstream tests in the downloaded
+expected-failure patterns expand to 105 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -180,6 +180,15 @@ The Windows release has green evidence for:
   defaulted namespace attributes from DTD ATTLIST declarations, reserved prefix
   and namespace URI diagnostics, unbound-prefix diagnostics, long prefixes, and
   namespace-aware DOCTYPE/root-name matching.
+- billion-laughs attack-protection setters now enforce public ABI contracts
+  for null parsers, child parsers, NaN, and lower-bound amplification values;
+  Eiffel native parse state also rejects covered external-entity input when the
+  configured amplification threshold is reached.
+- the upstream misc attribute lifetime/leak regression row passes through the
+  Eiffel-backed native bridge adapter.
+- default-handler epilog aborts and `XML_DefaultCurrent` replay now pass the
+  upstream rows, including raw carriage-return epilog stops and DTD/internal
+  entity default-token chunking.
 
 ## Red Rows
 
@@ -187,13 +196,10 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 
 - C allocator hook failure-injection tests, which exercise libexpat's manual
   allocation contract rather than Eiffel-owned parser storage;
-- allocation accounting tests;
+- byte-precision accounting queries;
 - remaining subordinate parser suspension fault handling;
-- remaining external DTD encoding diagnostics and default-handler edge cases;
-- DTD default-handler replay and default-current edge cases;
 - true resume continuation through suspended entity and parameter-entity
   parsing;
-- default-handler CR epilog abort parity;
 - Expat siphash/reparse-deferral/accounting semantics.
 
 ## Native Suite

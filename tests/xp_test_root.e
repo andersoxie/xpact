@@ -147,7 +147,7 @@ feature {NONE} -- Tests
 				end
 				i := i + 1
 			end
-			assert ("DTD default whitespace emitted", l_default_text.same_string ("%N%N%N%N%N%N%N<doc/>"))
+			assert ("DTD default tokens emitted", l_default_text.same_string ("<!DOCTYPE doc [%N<!ENTITY e SYSTEM 'http://example.org/e'>%N<!NOTATION n SYSTEM 'http://example.org/n'>%N<!ELEMENT doc EMPTY>%N<!ATTLIST doc a CDATA #IMPLIED>%N<?pi in dtd?>%N<!--comment in dtd-->%N]><doc/>"))
 		end
 
 	test_xml_declaration_callbacks
@@ -1160,7 +1160,7 @@ feature {NONE} -- Tests
 			l_notes := file_text ("adapters\libexpat\README.md")
 			assert ("libexpat adapter docs present", l_notes.has_substring ("R_2_8_1") and l_notes.has_substring ("ctest"))
 			l_expected := file_text ("adapters\libexpat\expected-failures.tsv")
-			assert ("expected-failure list has specific rows", l_expected.has_substring ("test_accounting_precision") and l_expected.has_substring ("test_ext_entity_invalid_suspended_parse") and l_expected.has_substring ("test_abort_epilog"))
+			assert ("expected-failure list has specific rows", l_expected.has_substring ("test_accounting_precision") and l_expected.has_substring ("test_ext_entity_invalid_suspended_parse") and l_expected.has_substring ("test_subordinate_suspend"))
 			assert ("expected-failure list has no suite-wide wildcard", not l_expected.has_substring ("*%T*%T"))
 			assert ("expected-failure list narrowed stop rows", not l_expected.has_substring ("test_abort*") and not l_expected.has_substring ("test_*suspend*") and not l_expected.has_substring ("test_*resume*"))
 			l_parity := file_text ("adapters\libexpat\parity.tsv")

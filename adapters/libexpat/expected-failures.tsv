@@ -1,10 +1,7 @@
 source	name	reason
 acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
-acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
-acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
 alloc_tests.c	test_alloc_*	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
 nsalloc_tests.c	test_nsalloc_*	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
-misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks are not yet audited against the Eiffel-backed native bridge.
 basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 basic_tests.c	test_subordinate_suspend	Subordinate parser suspension fault handling is not implemented.
 basic_tests.c	test_resume_invalid_parse	True resume continuation is not implemented.
@@ -15,8 +12,6 @@ basic_tests.c	test_resume_entity_with_syntax_error	True resume continuation thro
 basic_tests.c	test_suspend_resume_parameter_entity	True resume continuation through parameter entity parsing is not implemented.
 basic_tests.c	test_nested_entity_suspend	True resume continuation through nested entity expansion is not implemented.
 basic_tests.c	test_nested_entity_suspend_2	True resume continuation through nested entity expansion is not implemented.
-basic_tests.c	test_abort_epilog	Default-handler CR epilog abort parity is not implemented.
-basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
 basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.
 basic_tests.c	test_reparse*	Reparse deferral behavior is not implemented.

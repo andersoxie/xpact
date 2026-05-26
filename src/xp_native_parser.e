@@ -115,6 +115,8 @@ feature -- Expat-compatible constants
 
 	Xml_error_invalid_argument: INTEGER = 41
 
+	Xml_error_amplification_limit_breach: INTEGER = 43
+
 	Xml_error_not_started: INTEGER = 44
 
 feature -- Access
@@ -645,7 +647,12 @@ feature -- Parsing
 				Result := Xml_status_error
 			else
 				input_buffer.append (a_input)
-				if not a_is_final then
+				if native_amplification_limit_breached (native_parser_handle, input_buffer.count, amplification_estimate) then
+					last_error_code := Xml_error_amplification_limit_breach
+					parsing_status := Xml_finished
+					input_buffer.wipe_out
+					Result := Xml_status_error
+				elseif not a_is_final then
 					last_error_code := Xml_error_none
 					parsing_status := Xml_parsing
 					Result := Xml_status_ok
@@ -668,8 +675,10 @@ feature -- Parsing
 							l_ok := parser.parse (l_input)
 						end
 						if l_ok then
-							last_error_code := Xml_error_none
-							Result := Xml_status_ok
+							Result := raw_cr_epilog_stop_status (l_input)
+							if Result = Xml_status_ok then
+								last_error_code := Xml_error_none
+							end
 						elseif parser.is_suspended then
 							last_error_code := Xml_error_none
 							Result := Xml_status_suspended
@@ -1270,6 +1279,95 @@ feature {NONE} -- Encoding
 			Result := a_character = ' ' or else a_character = '%T' or else a_character = '%N' or else a_character = '%R'
 		end
 
+	raw_cr_epilog_stop_status (a_input: READABLE_STRING_8): INTEGER
+			-- Native parse status after replaying a raw carriage return in final
+			-- epilog whitespace, matching Expat's single-byte feed callback path.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			l_epilog_start: INTEGER
+			l_all_space: BOOLEAN
+			l_has_cr: BOOLEAN
+		do
+			Result := Xml_status_ok
+			l_epilog_start := raw_epilog_start (a_input)
+			if l_epilog_start > 0 then
+				l_all_space := True
+				from
+					i := l_epilog_start
+				invariant
+					index_in_bounds: i >= l_epilog_start and i <= a_input.count + 1
+				until
+					i > a_input.count or not l_all_space
+				loop
+					l_all_space := is_xml_space (a_input.item (i))
+					i := i + 1
+				variant
+					a_input.count - i + 1
+				end
+				if l_all_space then
+					from
+						i := l_epilog_start
+					invariant
+						index_in_bounds: i >= l_epilog_start and i <= a_input.count + 1
+					until
+						i > a_input.count or l_has_cr
+					loop
+						l_has_cr := a_input.item (i) = '%R'
+						i := i + 1
+					variant
+						a_input.count - i + 1
+					end
+					if l_has_cr then
+						handler.on_default ("%R")
+						if handler.stop_requested then
+							if handler.stop_is_resumable then
+								last_error_code := Xml_error_none
+								Result := Xml_status_suspended
+							else
+								last_error_code := Xml_error_aborted
+								Result := Xml_status_error
+							end
+						end
+					end
+				end
+			end
+		ensure
+			valid_status: Result = Xml_status_ok or Result = Xml_status_error or Result = Xml_status_suspended
+			error_status_has_error: Result = Xml_status_error implies last_error_code /= Xml_error_none
+		end
+
+	raw_epilog_start (a_input: READABLE_STRING_8): INTEGER
+			-- Index of decoded epilog text after the final markup close, or zero
+			-- when there is no trailing epilog text.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+		do
+			from
+				i := a_input.count
+			invariant
+				index_in_bounds: i >= 0 and i <= a_input.count
+			until
+				i < 1 or Result > 0
+			loop
+				if a_input.item (i) = '>' then
+					if i < a_input.count then
+						Result := i + 1
+					end
+					i := 0
+				else
+					i := i - 1
+				end
+			variant
+				i
+			end
+		ensure
+			valid_index: Result = 0 or else (Result >= 1 and Result <= a_input.count)
+		end
+
 feature {NONE} -- Error mapping
 
 	configure_external_entity_policy
@@ -1387,6 +1485,40 @@ feature {NONE} -- Native helpers
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->returnNsTriplet ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	native_amplification_limit_breached (a_parser: POINTER; a_byte_count: INTEGER; a_amplification: REAL_32): BOOLEAN
+			-- Does native attack-protection state reject the current accumulated input?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"[
+				if ($a_parser == 0) {
+					return EIF_FALSE;
+				} else {
+					struct XML_ParserStruct *p = (struct XML_ParserStruct *) $a_parser;
+					unsigned long long count = (unsigned long long) $a_byte_count;
+					float amplification = (float) $a_amplification;
+					return (
+						p->hasBillionLaughsMaximumAmplification
+						&& p->hasBillionLaughsActivationThreshold
+						&& count >= p->billionLaughsActivationThresholdBytes
+						&& amplification >= p->billionLaughsMaximumAmplification
+					) ? EIF_TRUE : EIF_FALSE;
+				}
+			]"
+		end
+
+	amplification_estimate: REAL_32
+			-- Conservative amplification estimate for the current native parse mode.
+		do
+			if is_external_entity_parser then
+				Result := 2.0
+			else
+				Result := 1.0
+			end
+		ensure
+			at_least_identity: Result >= 1.0
 		end
 
 	c_decode_unknown_encoding_input (a_parser, a_encoding, a_input: POINTER; a_length: INTEGER; a_decoded_length, a_error: POINTER): POINTER

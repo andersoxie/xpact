@@ -46,6 +46,10 @@ struct XML_ParserStruct {
 	XML_Bool hasNamespaceSeparator;
 	XML_Char namespaceSeparator;
 	XML_Bool returnNsTriplet;
+	XML_Bool hasBillionLaughsMaximumAmplification;
+	float billionLaughsMaximumAmplification;
+	XML_Bool hasBillionLaughsActivationThreshold;
+	unsigned long long billionLaughsActivationThresholdBytes;
 	XML_UnknownEncodingHandler unknownEncodingHandler;
 	void *unknownEncodingHandlerData;
 	XML_Bool useForeignDTD;

@@ -185,6 +185,8 @@ XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
 	parser->externalEntityIsParameter = XML_FALSE;
 	parser->externalChildParseCount = 0;
 	parser->returnNsTriplet = XML_FALSE;
+	parser->hasBillionLaughsMaximumAmplification = XML_FALSE;
+	parser->hasBillionLaughsActivationThreshold = XML_FALSE;
 	xp_clear_stop_state(parser);
 	if (parser->bridge != NULL && parser->bridge->parser_reset != NULL && parser->eiffelParser != NULL) {
 		XML_Bool result = parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
@@ -831,6 +833,10 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	}
 
 	child->parentParser = parser;
+	child->hasBillionLaughsMaximumAmplification = parser->hasBillionLaughsMaximumAmplification;
+	child->billionLaughsMaximumAmplification = parser->billionLaughsMaximumAmplification;
+	child->hasBillionLaughsActivationThreshold = parser->hasBillionLaughsActivationThreshold;
+	child->billionLaughsActivationThresholdBytes = parser->billionLaughsActivationThresholdBytes;
 	child->externalEntityIsParameter = parser->nextExternalEntityIsParameter;
 	parser->nextExternalEntityIsParameter = XML_FALSE;
 	if (
@@ -1138,8 +1144,16 @@ XML_SetBillionLaughsAttackProtectionMaximumAmplification(
 	XML_Parser parser,
 	float maximumAmplificationFactor
 ) {
-	(void)parser;
-	(void)maximumAmplificationFactor;
+	if (
+		parser == NULL
+		|| parser->parentParser != NULL
+		|| maximumAmplificationFactor != maximumAmplificationFactor
+		|| maximumAmplificationFactor < 1.0f
+	) {
+		return XML_FALSE;
+	}
+	parser->hasBillionLaughsMaximumAmplification = XML_TRUE;
+	parser->billionLaughsMaximumAmplification = maximumAmplificationFactor;
 	return XML_TRUE;
 }
 
@@ -1148,8 +1162,11 @@ XML_SetBillionLaughsAttackProtectionActivationThreshold(
 	XML_Parser parser,
 	unsigned long long activationThresholdBytes
 ) {
-	(void)parser;
-	(void)activationThresholdBytes;
+	if (parser == NULL || parser->parentParser != NULL) {
+		return XML_FALSE;
+	}
+	parser->hasBillionLaughsActivationThreshold = XML_TRUE;
+	parser->billionLaughsActivationThresholdBytes = activationThresholdBytes;
 	return XML_TRUE;
 }
 

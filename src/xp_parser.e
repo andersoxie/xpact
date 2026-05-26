@@ -1038,10 +1038,7 @@ feature {NONE} -- Markup parsing
 			l_event_system_id: detachable READABLE_STRING_8
 			l_has_external_subset: BOOLEAN
 			l_has_internal_subset: BOOLEAN
-			l_public_literal_start: INTEGER
-			l_public_literal_end: INTEGER
-			l_system_literal_start: INTEGER
-			l_system_literal_end: INTEGER
+			l_name_end: INTEGER
 			l_attributes: XP_ATTRIBUTES
 		do
 			create l_attributes.make
@@ -1066,8 +1063,9 @@ feature {NONE} -- Markup parsing
 					else
 						name_start := i
 						i := scan_name (a_input, i)
+						l_name_end := i - 1
 						doctype_name.wipe_out
-						doctype_name.append (a_input.substring (name_start, i - 1))
+						doctype_name.append (a_input.substring (name_start, l_name_end))
 						if namespace_mode and then not is_valid_qualified_name (doctype_name) then
 							if has_multiple_colons (doctype_name) then
 								set_error ("namespace syntax")
@@ -1089,9 +1087,7 @@ feature {NONE} -- Markup parsing
 								l_has_external_subset := True
 								i := skip_spaces (a_input, i + 6)
 								if i < l_external_end and then is_quote (a_input.item (i)) then
-									l_system_literal_start := i
 									i := read_quoted_literal (a_input, i, l_external_end, l_system_id)
-									l_system_literal_end := i - 1
 								else
 									set_error ("missing external system identifier")
 								end
@@ -1099,15 +1095,11 @@ feature {NONE} -- Markup parsing
 								l_has_external_subset := True
 								i := skip_spaces (a_input, i + 6)
 								if i < l_external_end and then is_quote (a_input.item (i)) then
-									l_public_literal_start := i
 									i := read_public_id_literal (a_input, i, l_external_end, l_public_id)
-									l_public_literal_end := i - 1
 									if not has_error then
 										i := skip_spaces (a_input, i)
 										if i < l_external_end and then is_quote (a_input.item (i)) then
-											l_system_literal_start := i
 											i := read_quoted_literal (a_input, i, l_external_end, l_system_id)
-											l_system_literal_end := i - 1
 										else
 											set_error ("missing external system identifier")
 										end
@@ -1129,12 +1121,9 @@ feature {NONE} -- Markup parsing
 							l_has_internal_subset := True
 						end
 						if not has_error then
-							if l_public_literal_start > 0 then
-								emit_default (a_input.substring (l_public_literal_start, l_public_literal_end))
-							end
-							if l_system_literal_start > 0 then
-								emit_default (a_input.substring (l_system_literal_start, l_system_literal_end))
-							end
+							emit_doctype_default_open (a_input, a_start_index, name_start, l_name_end, l_subset_start, l_end)
+						end
+						if not has_error and not is_suspended then
 							if not l_public_id.is_empty then
 								l_event_public_id := l_public_id
 							end
@@ -1161,6 +1150,9 @@ feature {NONE} -- Markup parsing
 						end
 						if not has_error and not is_suspended and l_has_external_subset then
 							include_external_subset (l_public_id, l_system_id)
+						end
+						if not has_error and not is_suspended then
+							emit_doctype_default_close (l_has_internal_subset)
 						end
 						if has_error then
 							Result := a_input.count + 1
@@ -1740,9 +1732,12 @@ feature {NONE} -- DTD entity declarations
 						set_error ("unterminated comment")
 						i := a_subset.count + 1
 					else
+						emit_default (a_subset.substring (i, l_end + 2))
 						create l_text.make_from_string (a_subset.substring (i + 4, l_end - 1))
-						handler.on_comment (l_text)
-						check_handler_stop
+						if not has_error and not is_suspended then
+							handler.on_comment (l_text)
+							check_handler_stop
+						end
 						i := l_end + 3
 					end
 				elseif has_at (a_subset, i, "<?") then
@@ -1755,6 +1750,7 @@ feature {NONE} -- DTD entity declarations
 							set_error ("unterminated processing instruction")
 							i := a_subset.count + 1
 						else
+							emit_default (a_subset.substring (i, l_end + 1))
 							i := l_end + 2
 						end
 					end
@@ -1930,8 +1926,11 @@ feature {NONE} -- DTD entity declarations
 							set_error ("unexpected element declaration content")
 							Result := a_subset.count + 1
 						elseif attached l_model as l_attached_model then
-							handler.on_element_decl (l_name, l_attached_model)
-							check_handler_stop
+							emit_default (a_subset.substring (a_start_index, l_end))
+							if not has_error and not is_suspended then
+								handler.on_element_decl (l_name, l_attached_model)
+								check_handler_stop
+							end
 							Result := l_end + 1
 						else
 							set_error ("invalid element content model")
@@ -2160,8 +2159,11 @@ feature {NONE} -- DTD entity declarations
 					if not has_error then
 						i := skip_spaces (a_subset, i)
 						if i = l_end then
-							handler.on_notation_decl (l_name, Void, l_system, l_public)
-							check_handler_stop
+							emit_default (a_subset.substring (a_start_index, l_end))
+							if not has_error and not is_suspended then
+								handler.on_notation_decl (l_name, Void, l_system, l_public)
+								check_handler_stop
+							end
 							Result := l_end + 1
 						else
 							set_error ("unexpected notation declaration content")
@@ -2268,6 +2270,7 @@ feature {NONE} -- DTD entity declarations
 					if has_error then
 						Result := a_subset.count + 1
 					else
+						emit_default (a_subset.substring (a_start_index, l_end))
 						Result := l_end + 1
 					end
 				end
@@ -2519,6 +2522,9 @@ feature {NONE} -- DTD entity declarations
 			l_quote: CHARACTER_8
 			l_attributes: XP_ATTRIBUTES
 			l_existing_parameter: BOOLEAN
+			l_name_end: INTEGER
+			l_literal_start: INTEGER
+			l_literal_end: INTEGER
 		do
 			create l_attributes.make
 			l_end := find_markup_declaration_end (a_subset, a_start_index)
@@ -2537,10 +2543,12 @@ feature {NONE} -- DTD entity declarations
 				else
 					name_start := i
 					i := scan_name (a_subset, i)
-					create l_name.make_from_string (a_subset.substring (name_start, i - 1))
+					l_name_end := i - 1
+					create l_name.make_from_string (a_subset.substring (name_start, l_name_end))
 					i := skip_spaces (a_subset, i)
 					if i <= a_subset.count and then is_quote (a_subset.item (i)) then
 						l_quote := a_subset.item (i)
+						l_literal_start := i
 						create l_value.make_empty
 						l_existing_parameter := l_is_parameter and then is_parameter_entity_declared (l_name)
 						if l_is_parameter and then not l_existing_parameter then
@@ -2550,20 +2558,27 @@ feature {NONE} -- DTD entity declarations
 						else
 							i := parse_entity_literal (a_subset, i + 1, l_quote, l_value)
 						end
+						l_literal_end := i
 						if not has_error then
 							if l_is_parameter then
 								put_parameter_entity (l_name, l_value)
 							else
 								put_general_entity (l_name, l_value)
 							end
-							handler.on_entity_decl (l_name, l_is_parameter, l_value, Void, Void, Void)
-							check_handler_stop
+							emit_internal_entity_declaration_default (a_subset, a_start_index, name_start, l_name_end, l_literal_start, l_literal_end, l_end)
+							if not has_error and not is_suspended then
+								handler.on_entity_decl (l_name, l_is_parameter, l_value, Void, Void, Void)
+								check_handler_stop
+							end
 							Result := l_end + 1
 						else
 							Result := a_subset.count + 1
 						end
 					else
 						Result := parse_external_entity_declaration (a_subset, i, l_end, l_name, l_is_parameter)
+						if not has_error and not is_suspended then
+							emit_default (a_subset.substring (a_start_index, Result - 1))
+						end
 					end
 				end
 			end
@@ -2941,6 +2956,83 @@ feature {NONE} -- Event dispatch
 			if not a_text.is_empty then
 				handler.on_default (a_text)
 				check_handler_stop
+			end
+		end
+
+	emit_default_range (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER)
+			-- Emit raw default-handler text for `a_input [a_start_index..a_end_index]'.
+		require
+			input_attached: a_input /= Void
+			start_valid: a_start_index >= 1
+			end_valid: a_end_index <= a_input.count
+		do
+			if a_start_index <= a_end_index then
+				emit_default (a_input.substring (a_start_index, a_end_index))
+			end
+		end
+
+	emit_doctype_default_open (a_input: READABLE_STRING_8; a_start_index, a_name_start, a_name_end, a_subset_start, a_doctype_end: INTEGER)
+			-- Emit Expat-shaped default-handler chunks before a doctype subset.
+		require
+			input_attached: a_input /= Void
+			starts_doctype: has_at (a_input, a_start_index, "<!DOCTYPE")
+			valid_name: a_name_start >= a_start_index + 9 and a_name_end >= a_name_start and a_name_end <= a_input.count
+			valid_end: a_doctype_end <= a_input.count
+		do
+			emit_default_range (a_input, a_start_index, a_start_index + 8)
+			if not has_error and not is_suspended then
+				emit_default_range (a_input, a_start_index + 9, a_name_start - 1)
+			end
+			if not has_error and not is_suspended then
+				emit_default_range (a_input, a_name_start, a_name_end)
+			end
+			if not has_error and not is_suspended then
+				if a_subset_start > 0 then
+					emit_default_range (a_input, a_name_end + 1, a_subset_start - 1)
+					if not has_error and not is_suspended then
+						emit_default_range (a_input, a_subset_start, a_subset_start)
+					end
+				else
+					emit_default_range (a_input, a_name_end + 1, a_doctype_end - 1)
+				end
+			end
+		end
+
+	emit_doctype_default_close (a_has_internal_subset: BOOLEAN)
+			-- Emit Expat-shaped default-handler chunks at the end of a doctype.
+		do
+			if a_has_internal_subset then
+				emit_default ("]")
+			end
+			if not has_error and not is_suspended then
+				emit_default (">")
+			end
+		end
+
+	emit_internal_entity_declaration_default (a_subset: READABLE_STRING_8; a_start_index, a_name_start, a_name_end, a_literal_start, a_literal_end, a_declaration_end: INTEGER)
+			-- Emit Expat-shaped default-handler chunks for an internal ENTITY declaration.
+		require
+			subset_attached: a_subset /= Void
+			starts_entity: has_at (a_subset, a_start_index, "<!ENTITY")
+			valid_name: a_name_start >= a_start_index + 8 and a_name_end >= a_name_start
+			valid_literal: a_literal_start > a_name_end and a_literal_end >= a_literal_start
+			valid_end: a_declaration_end <= a_subset.count
+		do
+			emit_default_range (a_subset, a_start_index, a_start_index + 7)
+			if not has_error and not is_suspended then
+				emit_default_range (a_subset, a_start_index + 8, a_name_start - 1)
+			end
+			if not has_error and not is_suspended then
+				emit_default_range (a_subset, a_name_start, a_name_end)
+			end
+			if not has_error and not is_suspended then
+				emit_default_range (a_subset, a_name_end + 1, a_literal_start - 1)
+			end
+			if not has_error and not is_suspended then
+				emit_default_range (a_subset, a_literal_start, a_literal_end)
+			end
+			if not has_error and not is_suspended then
+				emit_default_range (a_subset, a_literal_end + 1, a_declaration_end)
 			end
 		end
 
