@@ -103,6 +103,12 @@ green	misc_tests.c	test_misc_create_external_entity_parser_with_null_context	The
 green	basic_tests.c	test_hash*	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
 green	basic_tests.c	test_bad_encoding	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
 green	basic_tests.c	test_explicit_encoding	Eiffel-owned explicit encoding state accepts UTF-8 before parse, rejects mid-parse changes, and allows reset after parsing finishes.
+green	basic_tests.c	test_unknown_encoding*	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+green	basic_tests.c	test_unknown_ascii_encoding*	Unknown-encoding ASCII-like maps now pass ASCII input and reject top-bit bytes with XML_ERROR_INVALID_TOKEN before Eiffel tokenization.
+green	basic_tests.c	test_unrecognised_encoding_internal_entity	Unknown-encoding handler rejection now maps to XML_ERROR_UNKNOWN_ENCODING.
+green	basic_tests.c	test_missing_encoding_conversion_fn	Unknown-encoding maps that require conversion but omit convert() now fail with XML_ERROR_UNKNOWN_ENCODING.
+green	basic_tests.c	test_failing_encoding_conversion_fn	Unknown-encoding convert() failures now map to XML_ERROR_INVALID_TOKEN.
+green	basic_tests.c	test_invalid_unknown_encoding	Invalid unknown-encoding maps are validated before tokenization and map to XML_ERROR_UNKNOWN_ENCODING.
 green	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Eiffel external DTD child parsers now propagate nested external parameter entity child failures through the parent as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
 green	misc_tests.c	test_renter_loop_finite_content	Eiffel external parsed entity children now import parent DTD entity context, so nested internal entity expansion inside loaded external entity content is finite and matches upstream.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
@@ -115,12 +121,6 @@ red	misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak check
 red	misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
 red	misc_tests.c	test_misc_resume*	Stop/resume parser state is not implemented.
 red	misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state is not implemented.
-red	basic_tests.c	test_unknown_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
-red	basic_tests.c	test_unknown_ascii_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
-red	basic_tests.c	test_unrecognised_encoding_internal_entity	Unknown/custom encoding callbacks are stubbed in the native ABI.
-red	basic_tests.c	test_missing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
-red	basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
-red	basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
 red	basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.

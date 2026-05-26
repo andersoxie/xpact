@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 179 named upstream tests in the downloaded
+expected-failure patterns expand to 159 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -82,6 +82,12 @@ The Windows release has green evidence for:
   pre-parse UTF-8 configuration, mid-parse change rejection, post-parse unset,
   and unsupported explicit encoding names mapping to
   `XML_ERROR_UNKNOWN_ENCODING`.
+- unknown/custom encoding declarations now pass through the public
+  `XML_SetUnknownEncodingHandler` contract at the native boundary: Eiffel uses
+  the handler map to decode into UTF-8 before tokenization, validates invalid
+  map entries, runs converter callbacks, preserves primary and external-child
+  handler user data, and maps handler/converter failures to the expected
+  `XML_ERROR_UNKNOWN_ENCODING` or `XML_ERROR_INVALID_TOKEN` diagnostics.
 - unloaded external general entities are skipped in the Windows native bridge
   when no external entity handler is registered, with
   `XML_SkippedEntityHandler` callback delivery.

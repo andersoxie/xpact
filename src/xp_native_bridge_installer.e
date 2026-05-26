@@ -66,12 +66,11 @@ feature -- Parser lifecycle callbacks
 		do
 			create l_parser.make
 			if a_encoding /= default_pointer then
-				l_status := l_parser.set_encoding (a_encoding)
+				l_status := l_parser.set_initial_encoding (a_encoding)
 			end
 			l_id := eif_object_id (l_parser)
 			live_parser_ids.force (True, l_id)
 			Result := integer_to_pointer (l_id)
-			l_parser.set_native_parser_handle (Result)
 		ensure
 			handle_returned: Result /= default_pointer
 			one_more_parser: active_parser_count = old active_parser_count + 1
@@ -84,7 +83,7 @@ feature -- Parser lifecycle callbacks
 			if attached parser_for (a_parser) as l_parser then
 				Result := l_parser.reset
 				if Result and then a_encoding /= default_pointer then
-					Result := l_parser.set_encoding (a_encoding) = l_parser.Xml_status_ok
+					Result := l_parser.set_initial_encoding (a_encoding) = l_parser.Xml_status_ok
 				end
 			end
 		end

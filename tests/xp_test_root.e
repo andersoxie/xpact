@@ -1160,12 +1160,12 @@ feature {NONE} -- Tests
 			l_notes := file_text ("adapters\libexpat\README.md")
 			assert ("libexpat adapter docs present", l_notes.has_substring ("R_2_8_1") and l_notes.has_substring ("ctest"))
 			l_expected := file_text ("adapters\libexpat\expected-failures.tsv")
-			assert ("expected-failure list has specific rows", l_expected.has_substring ("acc_tests.c%Ttest_accounting_precision") and l_expected.has_substring ("basic_tests.c%Ttest_bad_cdata_utf16"))
+			assert ("expected-failure list has specific rows", l_expected.has_substring ("acc_tests.c%Ttest_accounting_precision") and l_expected.has_substring ("basic_tests.c%Ttest_ext_entity_invalid_suspended_parse"))
 			assert ("expected-failure list has no suite-wide wildcard", not l_expected.has_substring ("*%T*%T"))
 			l_parity := file_text ("adapters\libexpat\parity.tsv")
 			assert ("parity list has green rows", l_parity.has_substring ("green%Tlocal%TWindows DLL XML_Parse smoke"))
 			assert ("parity list has red rows", l_parity.has_substring ("red%Tns_tests.c%Ttest_*"))
-			assert ("parity list records blocked native suite", l_parity.has_substring ("blocked%Tupstream-native-suite"))
+			assert ("parity list has no blocked native suite row", not l_parity.has_substring ("blocked%Tupstream-native-suite"))
 			assert ("libexpat parity docs present", file_text ("docs\libexpat-parity.md").has_substring ("suite-wide expected failure"))
 		end
 

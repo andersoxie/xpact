@@ -9,12 +9,6 @@ misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks ar
 misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
 misc_tests.c	test_misc_resume*	Stop/resume parser state is not implemented.
 misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state is not implemented.
-basic_tests.c	test_unknown_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
-basic_tests.c	test_unknown_ascii_encoding*	Unknown/custom encoding callbacks are stubbed in the native ABI.
-basic_tests.c	test_unrecognised_encoding_internal_entity	Unknown/custom encoding callbacks are stubbed in the native ABI.
-basic_tests.c	test_missing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
-basic_tests.c	test_failing_encoding_conversion_fn	Unknown/custom encoding callbacks are stubbed in the native ABI.
-basic_tests.c	test_invalid_unknown_encoding	Unknown/custom encoding callbacks are stubbed in the native ABI.
 basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
 basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.

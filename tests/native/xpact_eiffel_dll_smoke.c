@@ -59,6 +59,7 @@ static int g_foreign_dtd_ref_count;
 static int g_foreign_dtd_failed;
 static enum XML_Error g_expected_foreign_dtd_child_error;
 static const char *g_foreign_dtd_text;
+static const char *g_foreign_dtd_encoding;
 static char g_foreign_text[256];
 static int g_foreign_text_len;
 static int g_parameter_entity_ref_count;
@@ -104,6 +105,11 @@ static int g_utf16_public_external_len;
 static int g_utf16_public_ref_count;
 static int g_utf16_public_failed;
 static int g_failing_alloc_count;
+static void *g_expected_unknown_encoding_data;
+static int g_unknown_encoding_failed;
+static const char *g_unknown_external_text;
+static int g_unknown_external_ref_count;
+static int g_unknown_external_failed;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -184,21 +190,143 @@ smoke_prefix_converter(void *data, const char *s) {
 }
 
 static int XMLCALL
-smoke_unknown_encoding_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
+smoke_failing_converter(void *data, const char *s) {
+	(void)data;
+	(void)s;
+	return -1;
+}
+
+static void
+smoke_init_identity_encoding(XML_Encoding *info) {
 	int i;
-	(void)encodingHandlerData;
-	if (name == NULL || strcmp(name, "prefix-conv") != 0 || info == NULL) {
-		return XML_STATUS_ERROR;
+	for (i = 0; i < 256; i++) {
+		info->map[i] = i;
 	}
+	info->data = NULL;
+	info->convert = NULL;
+	info->release = NULL;
+}
+
+static void
+smoke_init_ascii_encoding(XML_Encoding *info) {
+	int i;
 	for (i = 0; i < 128; i++) {
 		info->map[i] = i;
 	}
 	for (; i < 256; i++) {
-		info->map[i] = -2;
+		info->map[i] = -1;
 	}
 	info->data = NULL;
-	info->convert = smoke_prefix_converter;
+	info->convert = NULL;
 	info->release = NULL;
+}
+
+static int XMLCALL
+smoke_unknown_encoding_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
+	int i;
+	(void)encodingHandlerData;
+	if (name == NULL || info == NULL) {
+		return XML_STATUS_ERROR;
+	}
+	if (strcmp(name, "prefix-conv") == 0) {
+		smoke_init_ascii_encoding(info);
+		for (i = 128; i < 256; i++) {
+			info->map[i] = -2;
+		}
+		info->convert = smoke_prefix_converter;
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "failing-conv") == 0) {
+		smoke_init_ascii_encoding(info);
+		for (i = 128; i < 256; i++) {
+			info->map[i] = -2;
+		}
+		info->convert = smoke_failing_converter;
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "no-conv") == 0) {
+		smoke_init_ascii_encoding(info);
+		for (i = 128; i < 256; i++) {
+			info->map[i] = -2;
+		}
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "ascii-like") == 0) {
+		smoke_init_ascii_encoding(info);
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "invalid-9") == 0) {
+		smoke_init_ascii_encoding(info);
+		info->map[9] = 5;
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "invalid-len") == 0) {
+		smoke_init_ascii_encoding(info);
+		info->map[0x81] = -5;
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "invalid-a") == 0) {
+		smoke_init_ascii_encoding(info);
+		info->map[0x82] = 'a';
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "invalid-surrogate") == 0) {
+		smoke_init_ascii_encoding(info);
+		info->map[0x83] = 0xd801;
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "invalid-high") == 0) {
+		smoke_init_ascii_encoding(info);
+		info->map[0x84] = 0x110000;
+		return XML_STATUS_OK;
+	}
+	if (strcmp(name, "unsupported-encoding") == 0 || strcmp(name, "x-unk") == 0) {
+		smoke_init_identity_encoding(info);
+		return XML_STATUS_OK;
+	}
+	return XML_STATUS_ERROR;
+}
+
+static int XMLCALL
+smoke_unrecognised_encoding_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
+	(void)encodingHandlerData;
+	(void)name;
+	(void)info;
+	return XML_STATUS_ERROR;
+}
+
+static int XMLCALL
+smoke_unknown_user_data_handler(void *encodingHandlerData, const XML_Char *name, XML_Encoding *info) {
+	if (encodingHandlerData != g_expected_unknown_encoding_data) {
+		g_unknown_encoding_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	return smoke_unknown_encoding_handler(encodingHandlerData, name, info);
+}
+
+static int XMLCALL
+unknown_external_entity_handler(XML_Parser parser, const XML_Char *context, const XML_Char *base, const XML_Char *systemId, const XML_Char *publicId) {
+	XML_Parser ext_parser;
+	enum XML_Status status;
+	(void)base;
+	(void)publicId;
+	g_unknown_external_ref_count++;
+	if (context == NULL || systemId == NULL || g_unknown_external_text == NULL) {
+		g_unknown_external_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (ext_parser == NULL) {
+		g_unknown_external_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(ext_parser, g_unknown_external_text, (int)strlen(g_unknown_external_text), XML_TRUE);
+	if (status != XML_STATUS_OK) {
+		g_unknown_external_failed = 1;
+		XML_ParserFree(ext_parser);
+		return XML_STATUS_ERROR;
+	}
+	XML_ParserFree(ext_parser);
 	return XML_STATUS_OK;
 }
 
@@ -320,6 +448,11 @@ check(int condition, const char *label) {
 		return 0;
 	}
 	return 1;
+}
+
+static enum XML_Status
+smoke_parse_string(XML_Parser parser, const char *text, XML_Bool isFinal) {
+	return XML_Parse(parser, text, (int)strlen(text), isFinal);
 }
 
 static void *
@@ -859,6 +992,11 @@ foreign_dtd_external_entity_handler(XML_Parser parser, const XML_Char *context, 
 	ext_parser = XML_ExternalEntityParserCreate(parser, context, NULL);
 	if (ext_parser == NULL) {
 		g_foreign_dtd_failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	if (g_foreign_dtd_encoding != NULL && XML_SetEncoding(ext_parser, g_foreign_dtd_encoding) != XML_STATUS_OK) {
+		g_foreign_dtd_failed = 1;
+		XML_ParserFree(ext_parser);
 		return XML_STATUS_ERROR;
 	}
 	status = XML_Parse(ext_parser, g_foreign_dtd_text, (int)strlen(g_foreign_dtd_text), XML_TRUE);
@@ -1449,6 +1587,7 @@ main(void) {
 	size_t hash_collision_len;
 	int saw_xml_char_feature = 0;
 	int saw_xml_lchar_feature = 0;
+	int unknown_user_marker = 0x1234;
 	XML_Memory_Handling_Suite duff_allocator;
 	const char *default_input = "<?test processing instruction?>\n<doc/>";
 	const char *doctype_input = "<!DOCTYPE doc PUBLIC 'pubname' 'test.dtd' [<!ENTITY foo 'bar'>]><doc>&foo;</doc>";
@@ -1893,6 +2032,232 @@ main(void) {
 	if (!check(status == XML_STATUS_ERROR, "unknown explicit encoding rejected during parse")) return 1;
 	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "unknown explicit encoding maps error")) return 1;
 	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown encoding internal entity")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(
+		parser,
+		"<?xml version='1.0' encoding='unsupported-encoding'?>\n"
+		"<!DOCTYPE test [<!ENTITY foo 'bar'>]>\n"
+		"<test a='&foo;'/>",
+		XML_TRUE
+	);
+	if (!check(status == XML_STATUS_OK, "unknown encoding internal entity accepted")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unrecognised unknown encoding")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unrecognised_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='unrecognised'?><doc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "unrecognised unknown encoding rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "unrecognised unknown encoding maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for prefix unknown encoding")) return 1;
+	g_loaded_external_failed = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = smoke_parse_string(
+		parser,
+		"<?xml version='1.0' encoding='prefix-conv'?>\n"
+		"<\x80" "d\x80" "o\x80" "c>Hello, world</\x80" "d\x80" "o\x80" "c>",
+		XML_TRUE
+	);
+	if (!check(status == XML_STATUS_OK, "prefix unknown encoding document accepted")) return 1;
+	if (!check(!g_loaded_external_failed && strcmp(g_loaded_external_text, "Hello, world") == 0, "prefix unknown encoding produced text")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for missing unknown conversion")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='no-conv'?><doc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "missing unknown conversion rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "missing unknown conversion maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for failing unknown conversion")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='failing-conv'?><doc>\x80" "x</doc>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "failing unknown conversion rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN, "failing unknown conversion maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown encoding bad name")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='prefix-conv'?><\xff" "d/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "unknown encoding bad name rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN, "unknown encoding bad name maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown encoding bad name 2")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='prefix-conv'?><d\xff" "oc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "unknown encoding bad name 2 rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN, "unknown encoding bad name 2 maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown encoding long name")) return 1;
+	g_loaded_external_failed = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = smoke_parse_string(
+		parser,
+		"<?xml version='1.0' encoding='prefix-conv'?>"
+		"<abcdefghabcdefghabcdefghijkl\x80" "m\x80" "n\x80" "o\x80" "p>Hi</abcdefghabcdefghabcdefghijkl\x80" "m\x80" "n\x80" "o\x80" "p>",
+		XML_TRUE
+	);
+	if (!check(status == XML_STATUS_OK, "unknown encoding long name accepted")) return 1;
+	if (!check(!g_loaded_external_failed && strcmp(g_loaded_external_text, "Hi") == 0, "unknown encoding long name produced text")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown encoding long ASCII name")) return 1;
+	g_loaded_external_failed = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = smoke_parse_string(
+		parser,
+		"<?xml version='1.0' encoding='prefix-conv'?>"
+		"<abcdefghabcdefghabcdefghijklmnop>Hi</abcdefghabcdefghabcdefghijklmnop>",
+		XML_TRUE
+	);
+	if (!check(status == XML_STATUS_OK, "unknown encoding long ASCII name accepted")) return 1;
+	if (!check(!g_loaded_external_failed && strcmp(g_loaded_external_text, "Hi") == 0, "unknown encoding long ASCII name produced text")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown ASCII encoding")) return 1;
+	g_loaded_external_failed = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='ascii-like'?><doc>Hello, world</doc>", XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "unknown ASCII encoding accepted")) return 1;
+	if (!check(!g_loaded_external_failed && strcmp(g_loaded_external_text, "Hello, world") == 0, "unknown ASCII encoding produced text")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown ASCII invalid byte")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='ascii-like'?><doc>\x80</doc>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "unknown ASCII invalid byte rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN, "unknown ASCII invalid byte maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for invalid unknown encoding map")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='invalid-9'?><doc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "invalid unknown encoding map rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "invalid unknown encoding map maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for invalid unknown encoding length")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='invalid-len'?><doc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "invalid unknown encoding length rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "invalid unknown encoding length maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for invalid unknown encoding topbit")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='invalid-a'?><doc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "invalid unknown encoding topbit rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "invalid unknown encoding topbit maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for invalid unknown encoding high value")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='invalid-high'?><doc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "invalid unknown encoding high value rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING, "invalid unknown encoding high value maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for invalid unknown encoding surrogate")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='invalid-surrogate'?><doc>\x83</doc>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "invalid unknown encoding surrogate rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN, "invalid unknown encoding surrogate maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown encoding invalid attribute")) return 1;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='prefix-conv'?><doc attr='\xff" "0'/>", XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "unknown encoding invalid attribute rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN, "unknown encoding invalid attribute maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for primary unknown encoding user data")) return 1;
+	g_expected_unknown_encoding_data = &unknown_user_marker;
+	g_unknown_encoding_failed = 0;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_user_data_handler, &unknown_user_marker);
+	status = smoke_parse_string(parser, "<?xml version='1.0' encoding='x-unk'?><doc/>", XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "primary unknown encoding user data accepted")) return 1;
+	if (!check(!g_unknown_encoding_failed, "primary unknown encoding user data forwarded")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for secondary unknown encoding user data")) return 1;
+	g_expected_unknown_encoding_data = &unknown_user_marker;
+	g_unknown_encoding_failed = 0;
+	g_unknown_external_ref_count = 0;
+	g_unknown_external_failed = 0;
+	g_unknown_external_text = "<?xml version='1.0' encoding='x-unk'?><e>data</e>";
+	g_loaded_external_failed = 0;
+	g_loaded_external_len = 0;
+	g_loaded_external_text[0] = '\0';
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_user_data_handler, &unknown_user_marker);
+	XML_SetExternalEntityRefHandler(parser, unknown_external_entity_handler);
+	XML_SetCharacterDataHandler(parser, loaded_external_text_handler);
+	status = smoke_parse_string(parser, "<!DOCTYPE doc [<!ENTITY ext SYSTEM 'mem://x'>]><doc>&ext;</doc>", XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "secondary unknown encoding user data accepted")) return 1;
+	if (!check(!g_unknown_encoding_failed && !g_unknown_external_failed && g_unknown_external_ref_count == 1, "secondary unknown encoding user data forwarded")) return 1;
+	if (!check(!g_loaded_external_failed && strcmp(g_loaded_external_text, "data") == 0, "secondary unknown encoding external text produced")) return 1;
+	XML_ParserFree(parser);
+	g_unknown_external_text = NULL;
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unknown encoding bad ignore")) return 1;
+	g_foreign_dtd_ref_count = 0;
+	g_foreign_dtd_failed = 0;
+	g_foreign_dtd_text = "<![IGNORE[<!ELEMENT \xff" "G (#PCDATA)*>]]>";
+	g_foreign_dtd_encoding = "prefix-conv";
+	g_expected_foreign_dtd_child_error = XML_ERROR_INVALID_TOKEN;
+	XML_SetUnknownEncodingHandler(parser, smoke_unknown_encoding_handler, NULL);
+	XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS);
+	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
+	status = smoke_parse_string(
+		parser,
+		"<?xml version='1.0' encoding='prefix-conv'?>\n"
+		"<!DOCTYPE doc SYSTEM 'foo'><doc><e>&entity;</e></doc>",
+		XML_TRUE
+	);
+	if (!check(status == XML_STATUS_ERROR, "unknown encoding bad ignore rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_EXTERNAL_ENTITY_HANDLING, "unknown encoding bad ignore maps parent error")) return 1;
+	if (!check(g_foreign_dtd_ref_count == 1 && !g_foreign_dtd_failed, "unknown encoding bad ignore observed child error")) return 1;
+	XML_ParserFree(parser);
+	g_expected_foreign_dtd_child_error = XML_ERROR_NONE;
+	g_foreign_dtd_text = NULL;
+	g_foreign_dtd_encoding = NULL;
 
 	parser = XML_ParserCreate("UTF-8");
 	if (!check(parser != NULL, "parser created")) return 1;

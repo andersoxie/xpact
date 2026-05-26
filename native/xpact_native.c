@@ -490,9 +490,11 @@ XML_SetNamespaceDeclHandler(
 
 void XMLCALL
 XML_SetUnknownEncodingHandler(XML_Parser parser, XML_UnknownEncodingHandler handler, void *encodingHandlerData) {
-	(void)parser;
-	(void)handler;
-	(void)encodingHandlerData;
+	if (parser == NULL) {
+		return;
+	}
+	parser->unknownEncodingHandler = handler;
+	parser->unknownEncodingHandlerData = encodingHandlerData;
 }
 
 void XMLCALL
@@ -778,6 +780,7 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	XML_SetEntityDeclHandler(child, parser->entityDeclHandler);
 	XML_SetUnparsedEntityDeclHandler(child, parser->unparsedEntityDeclHandler);
 	XML_SetExternalEntityRefHandler(child, parser->externalEntityRefHandler);
+	XML_SetUnknownEncodingHandler(child, parser->unknownEncodingHandler, parser->unknownEncodingHandlerData);
 	XML_SetParamEntityParsing(child, parser->paramEntityParsing);
 	if (parser->hasExternalEntityRefArg) {
 		XML_SetExternalEntityRefHandlerArg(child, parser->externalEntityRefArg);

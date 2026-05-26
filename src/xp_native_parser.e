@@ -129,6 +129,9 @@ feature -- Access
 	has_unsupported_explicit_encoding: BOOLEAN
 			-- Should the next parse fail because `explicit_encoding' is unsupported?
 
+	explicit_encoding_overrides_declaration: BOOLEAN
+			-- Did `explicit_encoding' come from `XML_SetEncoding' rather than parser creation/reset?
+
 	hash_salt: INTEGER_64
 			-- Last legacy Expat hash salt accepted before parsing started.
 
@@ -143,6 +146,9 @@ feature -- Access
 
 	input_buffer: STRING_8
 			-- Native chunks accumulated until the final parse call.
+
+	native_parser_handle: POINTER
+			-- Public native parser handle used for native-only API callback state.
 
 	context_buffer: detachable C_STRING
 			-- C-visible copy of the current final input while parsing.
@@ -363,13 +369,33 @@ feature -- Element change
 	set_native_parser_handle (a_parser: POINTER)
 			-- Set native parser handle used by native callbacks.
 		do
+			native_parser_handle := a_parser
 			handler.set_native_parser_handle (a_parser)
 		ensure
+			native_handle_set: native_parser_handle = a_parser
 			handle_set: handler.native_parser_handle = a_parser
 		end
 
 	set_encoding (a_encoding: POINTER): INTEGER
 			-- Set explicit native input encoding.
+		do
+			Result := set_encoding_with_precedence (a_encoding, True)
+		ensure
+			valid_status: Result = Xml_status_ok or Result = Xml_status_error
+			rejected_only_while_parsing: Result = Xml_status_error implies parsing_status = Xml_parsing
+		end
+
+	set_initial_encoding (a_encoding: POINTER): INTEGER
+			-- Set parser-creation protocol encoding.
+		do
+			Result := set_encoding_with_precedence (a_encoding, False)
+		ensure
+			valid_status: Result = Xml_status_ok or Result = Xml_status_error
+			rejected_only_while_parsing: Result = Xml_status_error implies parsing_status = Xml_parsing
+		end
+
+	set_encoding_with_precedence (a_encoding: POINTER; a_overrides_declaration: BOOLEAN): INTEGER
+			-- Set native input encoding and whether it overrides XML declarations.
 		local
 			l_encoding: C_STRING
 			l_name: STRING_8
@@ -380,11 +406,13 @@ feature -- Element change
 				if a_encoding = default_pointer then
 					explicit_encoding := Void
 					has_unsupported_explicit_encoding := False
+					explicit_encoding_overrides_declaration := False
 				else
 					create l_encoding.make_by_pointer (a_encoding)
 					l_name := l_encoding.string
 					explicit_encoding := l_name.twin
 					has_unsupported_explicit_encoding := not is_supported_explicit_encoding (l_name)
+					explicit_encoding_overrides_declaration := a_overrides_declaration
 				end
 				Result := Xml_status_ok
 			end
@@ -535,6 +563,7 @@ feature -- Element change
 			configure_external_entity_policy
 			explicit_encoding := Void
 			has_unsupported_explicit_encoding := False
+			explicit_encoding_overrides_declaration := False
 			hash_salt := 0
 			has_hash_salt := False
 			hash_salt_16_bytes.wipe_out
@@ -564,7 +593,7 @@ feature -- Parsing
 			l_input: detachable STRING_8
 		do
 			final_buffer := a_is_final
-			if has_unsupported_explicit_encoding then
+			if has_unsupported_explicit_encoding and then explicit_encoding_overrides_declaration and then not native_unknown_encoding_handler_available then
 				last_error_code := Xml_error_unknown_encoding
 				parsing_status := Xml_finished
 				Result := Xml_status_error
@@ -660,26 +689,164 @@ feature {NONE} -- Encoding
 			-- Native input decoded to the parser's UTF-8 byte stream.
 		require
 			input_attached: a_input /= Void
+		local
+			l_declared_encoding: detachable STRING_8
 		do
-			if explicit_encoding_is_latin1 then
-				Result := decoded_latin1_input (a_input)
-			elseif explicit_encoding_is_ascii then
-				Result := decoded_ascii_input (a_input)
-			elseif explicit_encoding_is_utf16be then
-				Result := decoded_utf16_input (a_input, False)
-			elseif explicit_encoding_is_utf16le then
-				Result := decoded_utf16_input (a_input, True)
+			if explicit_encoding_overrides_declaration and then attached explicit_encoding as l_explicit_encoding then
+				Result := decoded_input_with_encoding (a_input, l_explicit_encoding)
 			elseif has_utf16le_signature (a_input) then
 				Result := decoded_utf16_input (a_input, True)
 			elseif has_utf16be_signature (a_input) then
 				Result := decoded_utf16_input (a_input, False)
-			elseif explicit_encoding_is_utf16 then
-				last_error_code := Xml_error_incorrect_encoding
-			elseif has_utf16_declaration_in_utf8_input (a_input) then
-				last_error_code := Xml_error_incorrect_encoding
 			else
-				create Result.make_from_string (a_input)
+				l_declared_encoding := declared_xml_encoding (a_input)
+				if explicit_encoding_is_utf16 or else attached l_declared_encoding as l_encoding and then is_utf16_encoding_name (l_encoding) then
+					last_error_code := Xml_error_incorrect_encoding
+				elseif attached l_declared_encoding as l_encoding then
+					if is_latin1_encoding_name (l_encoding) then
+						Result := decoded_latin1_input (a_input)
+					elseif is_ascii_encoding_name (l_encoding) then
+						Result := decoded_ascii_input (a_input)
+					elseif is_utf8_encoding_name (l_encoding) then
+						create Result.make_from_string (a_input)
+					elseif native_unknown_encoding_handler_available then
+						Result := decoded_unknown_encoding_input (a_input, l_encoding)
+					else
+						last_error_code := Xml_error_unknown_encoding
+					end
+				elseif has_utf16_declaration_in_utf8_input (a_input) then
+					last_error_code := Xml_error_incorrect_encoding
+				elseif attached explicit_encoding as l_initial_encoding then
+					Result := decoded_input_with_encoding (a_input, l_initial_encoding)
+				else
+					create Result.make_from_string (a_input)
+				end
 			end
+		end
+
+	decoded_input_with_encoding (a_input, a_encoding: READABLE_STRING_8): detachable STRING_8
+			-- Decode `a_input' using `a_encoding' as a native encoding choice.
+		require
+			input_attached: a_input /= Void
+			encoding_attached: a_encoding /= Void
+		do
+			if is_latin1_encoding_name (a_encoding) then
+				Result := decoded_latin1_input (a_input)
+			elseif is_ascii_encoding_name (a_encoding) then
+				Result := decoded_ascii_input (a_input)
+			elseif a_encoding.same_string ("UTF-16BE") or else a_encoding.same_string ("utf-16be") then
+				Result := decoded_utf16_input (a_input, False)
+			elseif a_encoding.same_string ("UTF-16LE") or else a_encoding.same_string ("utf-16le") then
+				Result := decoded_utf16_input (a_input, True)
+			elseif a_encoding.same_string ("UTF-16") or else a_encoding.same_string ("utf-16") then
+				if has_utf16le_signature (a_input) then
+					Result := decoded_utf16_input (a_input, True)
+				elseif has_utf16be_signature (a_input) then
+					Result := decoded_utf16_input (a_input, False)
+				else
+					last_error_code := Xml_error_incorrect_encoding
+				end
+			elseif is_utf8_encoding_name (a_encoding) then
+				create Result.make_from_string (a_input)
+			elseif native_unknown_encoding_handler_available then
+				Result := decoded_unknown_encoding_input (a_input, a_encoding)
+			else
+				last_error_code := Xml_error_unknown_encoding
+			end
+		end
+
+	declared_xml_encoding (a_input: READABLE_STRING_8): detachable STRING_8
+			-- Encoding declared in an ASCII XML/text declaration, if present.
+		require
+			input_attached: a_input /= Void
+		local
+			l_end: INTEGER
+			l_pos: INTEGER
+			l_index: INTEGER
+			l_quote: CHARACTER_8
+			l_start: INTEGER
+		do
+			if a_input.count >= 5 and then a_input.substring (1, 5).same_string ("<?xml") then
+				l_end := a_input.substring_index ("?>", 1)
+				if l_end = 0 then
+					l_end := a_input.count
+				end
+				l_pos := a_input.substring_index ("encoding", 1)
+				if l_pos > 0 and then l_pos < l_end then
+					l_index := l_pos + 8
+					from
+					until
+						l_index > l_end or else not is_xml_space (a_input.item (l_index))
+					loop
+						l_index := l_index + 1
+					end
+					if l_index <= l_end and then a_input.item (l_index) = '=' then
+						l_index := l_index + 1
+						from
+						until
+							l_index > l_end or else not is_xml_space (a_input.item (l_index))
+						loop
+							l_index := l_index + 1
+						end
+						if l_index <= l_end and then (a_input.item (l_index) = '%'' or else a_input.item (l_index) = '%"') then
+							l_quote := a_input.item (l_index)
+							l_start := l_index + 1
+							l_index := l_start
+							from
+							until
+								l_index > l_end or else a_input.item (l_index) = l_quote
+							loop
+								l_index := l_index + 1
+							end
+							if l_index <= l_end then
+								create Result.make_from_string (a_input.substring (l_start, l_index - 1))
+							end
+						end
+					end
+				end
+			end
+		end
+
+	decoded_unknown_encoding_input (a_input, a_encoding: READABLE_STRING_8): detachable STRING_8
+			-- Decode native input through the registered Expat unknown-encoding handler.
+		require
+			input_attached: a_input /= Void
+			encoding_attached: a_encoding /= Void
+		local
+			l_input: C_STRING
+			l_encoding: C_STRING
+			l_length: MANAGED_POINTER
+			l_error: MANAGED_POINTER
+			l_decoded: POINTER
+			l_decoded_length: INTEGER
+			l_decoded_string: C_STRING
+		do
+			create l_input.make (a_input)
+			create l_encoding.make (a_encoding)
+			create l_length.make (4)
+			create l_error.make (4)
+			l_decoded := c_decode_unknown_encoding_input (
+				native_parser_handle,
+				l_encoding.item,
+				l_input.item,
+				a_input.count,
+				l_length.item,
+				l_error.item
+			)
+			if l_decoded = default_pointer then
+				last_error_code := integer_at (l_error.item)
+			else
+				l_decoded_length := integer_at (l_length.item)
+				create l_decoded_string.make_by_pointer_and_count (l_decoded, l_decoded_length)
+				Result := l_decoded_string.substring_8 (1, l_decoded_length)
+				c_free_unknown_encoding_input (l_decoded)
+			end
+		end
+
+	native_unknown_encoding_handler_available: BOOLEAN
+			-- Is a public native parser handle present with an unknown-encoding handler?
+		do
+			Result := native_parser_handle /= default_pointer and then has_native_unknown_encoding_handler (native_parser_handle)
 		end
 
 	decoded_latin1_input (a_input: READABLE_STRING_8): STRING_8
@@ -960,6 +1127,58 @@ feature {NONE} -- Encoding
 			Result := attached explicit_encoding as l_encoding and then (l_encoding.same_string ("UTF-16") or else l_encoding.same_string ("utf-16"))
 		end
 
+	explicit_encoding_is_utf8: BOOLEAN
+			-- Did the caller explicitly select UTF-8?
+		do
+			Result := attached explicit_encoding as l_encoding and then is_utf8_encoding_name (l_encoding)
+		end
+
+	is_utf8_encoding_name (a_encoding: READABLE_STRING_8): BOOLEAN
+			-- Is `a_encoding' a UTF-8 spelling?
+		require
+			encoding_attached: a_encoding /= Void
+		do
+			Result :=
+				a_encoding.same_string ("UTF-8")
+				or else a_encoding.same_string ("utf-8")
+				or else a_encoding.same_string ("UTF8")
+				or else a_encoding.same_string ("utf8")
+		end
+
+	is_ascii_encoding_name (a_encoding: READABLE_STRING_8): BOOLEAN
+			-- Is `a_encoding' an ASCII spelling?
+		require
+			encoding_attached: a_encoding /= Void
+		do
+			Result :=
+				a_encoding.same_string ("US-ASCII")
+				or else a_encoding.same_string ("us-ascii")
+				or else a_encoding.same_string ("ASCII")
+				or else a_encoding.same_string ("ascii")
+		end
+
+	is_latin1_encoding_name (a_encoding: READABLE_STRING_8): BOOLEAN
+			-- Is `a_encoding' an ISO-8859-1 spelling?
+		require
+			encoding_attached: a_encoding /= Void
+		do
+			Result := a_encoding.same_string ("ISO-8859-1") or else a_encoding.same_string ("iso-8859-1")
+		end
+
+	is_utf16_encoding_name (a_encoding: READABLE_STRING_8): BOOLEAN
+			-- Is `a_encoding' a UTF-16 spelling?
+		require
+			encoding_attached: a_encoding /= Void
+		do
+			Result :=
+				a_encoding.same_string ("UTF-16")
+				or else a_encoding.same_string ("utf-16")
+				or else a_encoding.same_string ("UTF-16LE")
+				or else a_encoding.same_string ("utf-16le")
+				or else a_encoding.same_string ("UTF-16BE")
+				or else a_encoding.same_string ("utf-16be")
+		end
+
 	explicit_encoding_is_latin1: BOOLEAN
 			-- Did the caller explicitly select ISO-8859-1?
 		do
@@ -987,6 +1206,12 @@ feature {NONE} -- Encoding
 			-- Did the caller explicitly select UTF-16BE?
 		do
 			Result := attached explicit_encoding as l_encoding and then (l_encoding.same_string ("UTF-16BE") or else l_encoding.same_string ("utf-16be"))
+		end
+
+	is_xml_space (a_character: CHARACTER_8): BOOLEAN
+			-- Is `a_character' XML whitespace?
+		do
+			Result := a_character = ' ' or else a_character = '%T' or else a_character = '%N' or else a_character = '%R'
 		end
 
 feature {NONE} -- Error mapping
@@ -1068,6 +1293,47 @@ feature {NONE} -- Native helpers
 			"C inline"
 		alias
 			"*((int *) $a_target) = (int) $a_value;"
+		end
+
+	integer_at (a_source: POINTER): INTEGER
+			-- C `int' value at `a_source'.
+		require
+			source_attached: a_source /= default_pointer
+		external
+			"C inline"
+		alias
+			"return (EIF_INTEGER) *((int *) $a_source);"
+		end
+
+	has_native_unknown_encoding_handler (a_parser: POINTER): BOOLEAN
+			-- Does native parser `a_parser' have an unknown-encoding handler?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return xp_has_unknown_encoding_handler((XML_Parser) $a_parser) ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	c_decode_unknown_encoding_input (a_parser, a_encoding, a_input: POINTER; a_length: INTEGER; a_decoded_length, a_error: POINTER): POINTER
+			-- Decode `a_input' through native parser's unknown-encoding handler.
+		require
+			encoding_attached: a_encoding /= default_pointer
+			input_attached: a_input /= default_pointer
+			decoded_length_attached: a_decoded_length /= default_pointer
+			error_attached: a_error /= default_pointer
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return (EIF_POINTER) xp_decode_unknown_encoding_input((XML_Parser) $a_parser, (const XML_Char *) $a_encoding, (const char *) $a_input, (int) $a_length, (int *) $a_decoded_length, (enum XML_Error *) $a_error);"
+		end
+
+	c_free_unknown_encoding_input (a_input: POINTER)
+			-- Free buffer returned by `c_decode_unknown_encoding_input'.
+		require
+			input_attached: a_input /= default_pointer
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"xp_free_unknown_encoding_input((char *) $a_input);"
 		end
 
 invariant
