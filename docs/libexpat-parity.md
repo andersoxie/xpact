@@ -6,7 +6,7 @@ libexpat adapter. The broad `*/*` row has been replaced by:
 - `adapters/libexpat/expected-failures.tsv`: explicit red expected-failure
   patterns tied to upstream Expat 2.8.1 source files and `START_TEST(...)`
   names.
-- `adapters/libexpat/parity.tsv`: green, red, and blocked parity rows for the
+- `adapters/libexpat/parity.tsv`: green and red parity rows for the
   Windows-only native release scope.
 
 The adapter expands those rows against an upstream Expat 2.8.1 checkout:
@@ -176,10 +176,9 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - stop/suspend/resume/abort parser state;
 - Expat siphash/reparse-deferral/accounting semantics.
 
-## Blocked Row
+## Native Suite
 
-The upstream native C suite was not executed in this Windows verification
-environment because `cmake` was not on `PATH`. The adapter still generates the
-manifest, expected-failure expansion, and parity expansion. Running the native
-suite is a toolchain verification step, while the Windows Phase 1 release scope
-is now explicit about the green and red parity rows it claims.
+The upstream native C suite now configures, builds, links, and launches against
+the Windows Eiffel-backed `xpact.dll` through `adapters/libexpat`. It currently
+fails inside the remaining expected-failure surface, and the run log is written
+to `libexpat-native-suite.log` beside the manifest expansion.

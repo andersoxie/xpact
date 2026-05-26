@@ -61,6 +61,25 @@ function Invoke-CheckedCommand {
 	}
 }
 
+function Resolve-BuildTool {
+	param(
+		[string] $Name,
+		[string[]] $FallbackPaths
+	)
+	$Command = Get-Command $Name -ErrorAction SilentlyContinue
+	if ($null -ne $Command) {
+		return $Command
+	}
+	foreach ($Path in $FallbackPaths) {
+		if (Test-Path -LiteralPath $Path -PathType Leaf) {
+			return [pscustomobject]@{
+				Source = (Resolve-Path -LiteralPath $Path).Path
+			}
+		}
+	}
+	return $null
+}
+
 function Read-ExpectedFailures {
 	param([string] $Path)
 	$ResolvedPath = if ([System.IO.Path]::IsPathRooted($Path)) { $Path } else { Join-Path $RepoRoot $Path }
@@ -287,7 +306,11 @@ function Invoke-CorpusRun {
 function Resolve-XpactLibrary {
 	param([string] $LibraryPath)
 	if (-not [string]::IsNullOrWhiteSpace($LibraryPath)) {
-		return $LibraryPath
+		$ResolvedPath = if ([System.IO.Path]::IsPathRooted($LibraryPath)) { $LibraryPath } else { Join-Path $RepoRoot $LibraryPath }
+		if (Test-Path -LiteralPath $ResolvedPath -PathType Leaf) {
+			return (Resolve-Path -LiteralPath $ResolvedPath).Path
+		}
+		return $ResolvedPath
 	}
 	$WindowsImportLibrary = Join-Path $RepoRoot "build\native\xpact.lib"
 	$SharedObject = Join-Path $RepoRoot "build\native\libxpact.so"
@@ -315,7 +338,7 @@ function Invoke-CMakeAdapter {
 		Write-Host "Skipping CMake adapter: $Message"
 		return
 	}
-	$CMake = Get-Command cmake -ErrorAction SilentlyContinue
+	$CMake = Resolve-BuildTool "cmake" @("C:\Program Files\CMake\bin\cmake.exe")
 	if ($null -eq $CMake) {
 		if ($RequireBuildTools) {
 			throw "Cannot run native C suite: cmake is not on PATH."
@@ -333,7 +356,7 @@ function Invoke-CMakeAdapter {
 		"-DEXPAT_SOURCE_DIR=$ExpatRoot",
 		"-DXPACT_LIBRARY=$LibraryPath",
 		"-DXPACT_INCLUDE_DIR=$IncludeDir"
-	)
+	) | Out-Host
 	Write-Host "Configured C adapter build: $BuildDir"
 	$BuildDir
 }
@@ -350,20 +373,29 @@ function Invoke-NativeSuite {
 	}
 	$ResolvedLibrary = Resolve-XpactLibrary $LibraryPath
 	$BuildDir = Invoke-CMakeAdapter $ExpatRoot $OutputRoot $ResolvedLibrary -RequireBuildTools
-	$CMake = Get-Command cmake -ErrorAction Stop
+	$CMake = Resolve-BuildTool "cmake" @("C:\Program Files\CMake\bin\cmake.exe")
+	if ($null -eq $CMake) {
+		throw "Cannot run native C suite: cmake is not on PATH."
+	}
 	Invoke-CheckedCommand $CMake.Source @("--build", $BuildDir)
 
-	$CTest = Get-Command ctest -ErrorAction Stop
+	$CTest = Resolve-BuildTool "ctest" @("C:\Program Files\CMake\bin\ctest.exe")
+	if ($null -eq $CTest) {
+		throw "Cannot run native C suite: ctest is not on PATH."
+	}
 	$LogPath = Join-Path $OutputRoot "libexpat-native-suite.log"
 	$RuntimeDir = Split-Path -Parent $ResolvedLibrary
 	$OldPath = $env:Path
+	$OldErrorActionPreference = $ErrorActionPreference
 	try {
 		$env:Path = "$RuntimeDir;$OldPath"
-		$Output = & $CTest.Source --test-dir $BuildDir --output-on-failure 2>&1
+		$ErrorActionPreference = "Continue"
+		$Output = & $CTest.Source --test-dir $BuildDir -C Debug --output-on-failure 2>&1
 		$ExitCode = $LASTEXITCODE
 		($Output | Out-String).Trim() | Set-Content -LiteralPath $LogPath -Encoding UTF8
 	} finally {
 		$env:Path = $OldPath
+		$ErrorActionPreference = $OldErrorActionPreference
 	}
 
 	if ($ExitCode -eq 0) {

@@ -135,4 +135,3 @@ red	basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-c
 red	basic_tests.c	test_reparse*	Reparse deferral behavior is not implemented.
 red	basic_tests.c	test_bypass_heuristic_when_close_to_bufsize	Reparse deferral/buffer heuristic behavior is not implemented.
 red	basic_tests.c	test_varying_buffer_fills	Reparse deferral/buffer heuristic behavior is not implemented.
-blocked	upstream-native-suite	upstream-libexpat-runtests	The current Windows verification environment has no cmake on PATH; the adapter still produces the manifest and expected-failure expansion.

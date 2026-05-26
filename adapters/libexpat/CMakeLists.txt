@@ -57,7 +57,10 @@ set_target_properties(xpact_expat PROPERTIES
 	INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/include;${XPACT_INCLUDE_DIR}"
 )
 
-add_executable(xpact_libexpat_runtests ${EXPAT_TEST_SOURCE_PATHS})
+add_executable(xpact_libexpat_runtests
+	${EXPAT_TEST_SOURCE_PATHS}
+	"${CMAKE_CURRENT_LIST_DIR}/xpact_test_shims.c"
+)
 target_include_directories(xpact_libexpat_runtests
 	BEFORE PRIVATE
 		"${CMAKE_CURRENT_LIST_DIR}/include"
