@@ -102,6 +102,9 @@ feature -- Access
 	has_error: BOOLEAN
 			-- Did the last parse fail?
 
+	is_suspended: BOOLEAN
+			-- Did a resumable callback stop request suspend the active parse?
+
 	current_line_number: INTEGER
 			-- Current 1-based XML line number.
 
@@ -242,7 +245,7 @@ feature -- Parsing
 					index_in_bounds: i >= 1 and i <= l_input.count + 1
 					depth_within_limit: element_stack.count <= max_element_depth
 				until
-					i > l_input.count or has_error
+					i > l_input.count or has_error or is_suspended
 				loop
 					note_position (i)
 					if l_input.item (i) = '<' then
@@ -257,20 +260,20 @@ feature -- Parsing
 					l_input.count - i + 1
 				end
 			end
-			if not has_error and element_stack.count /= 0 then
+			if not has_error and not is_suspended and element_stack.count /= 0 then
 				note_position (l_input.count + 1)
 				set_error ("unclosed element")
 			end
-			if not has_error and document_element_count = 0 then
+			if not has_error and not is_suspended and document_element_count = 0 then
 				note_position (l_input.count + 1)
 				set_error ("missing document element")
 			end
-			if not has_error then
+			if not has_error and not is_suspended then
 				note_position (l_input.count + 1)
 			end
-			Result := not has_error
+			Result := not has_error and not is_suspended
 		ensure
-			result_matches_error: Result = not has_error
+			result_matches_state: Result = (not has_error and not is_suspended)
 			success_is_balanced: Result implies element_stack.count = 0
 			success_has_root: Result implies document_element_count = 1
 		end
@@ -300,7 +303,7 @@ feature -- Parsing
 						index_in_bounds: i >= 1 and i <= l_input.count + 1
 						depth_within_limit: element_stack.count <= max_element_depth
 					until
-						i > l_input.count or has_error
+						i > l_input.count or has_error or is_suspended
 					loop
 						note_position (i)
 						if l_input.item (i) = '<' then
@@ -316,17 +319,17 @@ feature -- Parsing
 					end
 				end
 			end
-			if not has_error and element_stack.count /= 0 then
+			if not has_error and not is_suspended and element_stack.count /= 0 then
 				note_position (l_input.count + 1)
 				set_error ("asynchronous entity")
 			end
-			if not has_error then
+			if not has_error and not is_suspended then
 				note_position (l_input.count + 1)
 			end
-			Result := not has_error
+			Result := not has_error and not is_suspended
 			parsing_external_entity := False
 		ensure
-			result_matches_error: Result = not has_error
+			result_matches_state: Result = (not has_error and not is_suspended)
 			success_is_balanced: Result implies element_stack.count = 0
 			not_external_after_parse: not parsing_external_entity
 		end
@@ -348,13 +351,13 @@ feature -- Parsing
 			if not has_error then
 				process_internal_subset (l_input)
 			end
-			if not has_error then
+			if not has_error and not is_suspended then
 				note_position (l_input.count + 1)
 			end
-			Result := not has_error
+			Result := not has_error and not is_suspended
 			parsing_external_entity := False
 		ensure
-			result_matches_error: Result = not has_error
+			result_matches_state: Result = (not has_error and not is_suspended)
 			not_external_after_parse: not parsing_external_entity
 		end
 
@@ -383,13 +386,13 @@ feature -- Parsing
 			if l_has_active_context then
 				pop_entity
 			end
-			if not has_error then
+			if not has_error and not is_suspended then
 				note_position (l_input.count + 1)
 			end
-			Result := not has_error
+			Result := not has_error and not is_suspended
 			parsing_external_entity := False
 		ensure
-			result_matches_error: Result = not has_error
+			result_matches_state: Result = (not has_error and not is_suspended)
 			not_external_after_parse: not parsing_external_entity
 		end
 
@@ -467,7 +470,7 @@ feature {NONE} -- Markup parsing
 						index_in_bounds: i >= 1 and i <= a_input.count + 1
 						attributes_within_limit: l_attributes.count <= max_attribute_count
 					until
-						has_error or i > a_input.count or else a_input.item (i) = '>' or else a_input.item (i) = '/'
+						has_error or is_suspended or i > a_input.count or else a_input.item (i) = '>' or else a_input.item (i) = '/'
 					loop
 						if l_attributes.count >= max_attribute_count then
 							set_error ("attribute count exceeds limit")
@@ -481,7 +484,7 @@ feature {NONE} -- Markup parsing
 					variant
 						a_input.count - i + 1
 					end
-					if not has_error then
+					if not has_error and not is_suspended then
 						if i > a_input.count then
 							set_error ("unterminated start tag")
 							Result := a_input.count + 1
@@ -499,11 +502,11 @@ feature {NONE} -- Markup parsing
 					else
 						Result := a_input.count + 1
 					end
-					if not has_error then
+					if not has_error and not is_suspended then
 						emit_default (a_input.substring (a_start_index, Result - 1))
 						note_position (a_start_index)
 						open_element (l_name, l_attributes)
-						if l_empty_element and not has_error then
+						if l_empty_element and not has_error and not is_suspended then
 							note_position (Result)
 							close_element (l_name)
 						end
@@ -716,6 +719,7 @@ feature {NONE} -- Markup parsing
 					emit_default (a_input.substring (a_start_index, l_end + 2))
 					note_token_position (a_start_index, l_end + 3 - a_start_index)
 					handler.on_comment (l_text)
+					check_handler_stop
 					Result := l_end + 3
 				end
 			end
@@ -748,7 +752,8 @@ feature {NONE} -- Markup parsing
 					emit_default (a_input.substring (a_start_index, l_end + 2))
 					note_position (a_start_index)
 					handler.on_start_cdata_section
-					if l_end > a_start_index + 9 then
+					check_handler_stop
+					if not is_suspended and then l_end > a_start_index + 9 then
 						create l_text.make_from_string (a_input.substring (a_start_index + 9, l_end - 1))
 						validate_xml_text (l_text)
 						if not has_error then
@@ -756,9 +761,10 @@ feature {NONE} -- Markup parsing
 							emit_text (l_text)
 						end
 					end
-					if not has_error then
+					if not has_error and not is_suspended then
 						note_position (l_end + 3)
 						handler.on_end_cdata_section
+						check_handler_stop
 					end
 					if has_error then
 						Result := a_input.count + 1
@@ -825,6 +831,7 @@ feature {NONE} -- Markup parsing
 							emit_default (a_input.substring (a_start_index, l_end + 1))
 							note_token_position (a_start_index, l_end + 2 - a_start_index)
 							handler.on_processing_instruction (l_target, l_data)
+							check_handler_stop
 						end
 						Result := l_end + 2
 					end
@@ -957,6 +964,7 @@ feature {NONE} -- Markup parsing
 				else
 					xml_standalone := l_standalone
 					handler.on_xml_declaration (l_version, l_encoding, l_standalone)
+					check_handler_stop
 				end
 			end
 		end
@@ -1081,9 +1089,10 @@ feature {NONE} -- Markup parsing
 							end
 							if not has_error then
 								handler.on_start_doctype_decl (doctype_name, l_event_system_id, l_event_public_id, l_has_internal_subset)
+								check_handler_stop
 							end
 						end
-						if not has_error and then l_subset_start > 0 then
+						if not has_error and not is_suspended and then l_subset_start > 0 then
 							l_subset_end := find_subset_end (a_input, l_subset_start + 1, l_end)
 							if l_subset_end = 0 then
 								set_error ("unterminated internal subset")
@@ -1092,13 +1101,16 @@ feature {NONE} -- Markup parsing
 								process_internal_subset (l_subset)
 							end
 						end
-						if not has_error and l_has_external_subset then
+						if not has_error and not is_suspended and l_has_external_subset then
 							include_external_subset (l_public_id, l_system_id)
 						end
 						if has_error then
 							Result := a_input.count + 1
 						else
-							handler.on_end_doctype_decl
+							if not is_suspended then
+								handler.on_end_doctype_decl
+								check_handler_stop
+							end
 							Result := l_end + 1
 						end
 					end
@@ -1128,7 +1140,7 @@ feature {NONE} -- Character data and references
 			invariant
 				index_in_bounds: i >= a_start_index and i <= a_input.count + 1
 			until
-				i > a_input.count or has_error or else a_input.item (i) = '<'
+				i > a_input.count or has_error or is_suspended or else a_input.item (i) = '<'
 			loop
 				note_position (i)
 				c := a_input.item (i)
@@ -1155,7 +1167,7 @@ feature {NONE} -- Character data and references
 			variant
 				a_input.count - i + 1
 			end
-			if not has_error then
+			if not has_error and not is_suspended then
 				if element_stack.count = 0 and then not parsing_external_entity then
 					if not is_all_xml_space (l_text) then
 						set_error ("character data outside document element")
@@ -1230,6 +1242,7 @@ feature {NONE} -- Character data and references
 					else
 						if handler.reports_skipped_internal_general_entities then
 							handler.on_skipped_entity (l_name, False)
+							check_handler_stop
 						else
 							emit_default (a_input.substring (a_start_index, l_end))
 						end
@@ -1314,6 +1327,7 @@ feature {NONE} -- Character data and references
 				-- A non-validating parser may skip externally declared general entities.
 				if handler.reports_skipped_internal_general_entities then
 					handler.on_skipped_entity (a_name, False)
+					check_handler_stop
 				end
 			else
 				set_error ("undefined entity")
@@ -1504,6 +1518,8 @@ feature {NONE} -- Character data and references
 				not_standalone_checked := True
 				if not handler.on_not_standalone then
 					set_error ("not standalone")
+				else
+					check_handler_stop
 				end
 			end
 		end
@@ -1527,7 +1543,7 @@ feature {NONE} -- Character data and references
 			invariant
 				index_in_bounds: i >= 1 and i <= a_content.count + 1
 			until
-				i > a_content.count or has_error
+				i > a_content.count or has_error or is_suspended
 			loop
 				if a_content.item (i) = '<' then
 					i := parse_markup (a_content, i)
@@ -1553,7 +1569,7 @@ feature {NONE} -- Character data and references
 			invariant
 				index_in_bounds: i >= 1 and i <= a_content.count + 1
 			until
-				i > a_content.count or has_error
+				i > a_content.count or has_error or is_suspended
 			loop
 				c := a_content.item (i)
 				if c = '&' then
@@ -1648,7 +1664,7 @@ feature {NONE} -- DTD entity declarations
 			invariant
 				index_in_bounds: i >= 1 and i <= a_subset.count + 1
 			until
-				i > a_subset.count or has_error
+				i > a_subset.count or has_error or is_suspended
 			loop
 				if has_at (a_subset, i, "<!ENTITY") then
 					i := parse_entity_declaration (a_subset, i)
@@ -1668,6 +1684,7 @@ feature {NONE} -- DTD entity declarations
 					else
 						create l_text.make_from_string (a_subset.substring (i + 4, l_end - 1))
 						handler.on_comment (l_text)
+						check_handler_stop
 						i := l_end + 3
 					end
 				elseif has_at (a_subset, i, "<?") then
@@ -1856,6 +1873,7 @@ feature {NONE} -- DTD entity declarations
 							Result := a_subset.count + 1
 						elseif attached l_model as l_attached_model then
 							handler.on_element_decl (l_name, l_attached_model)
+							check_handler_stop
 							Result := l_end + 1
 						else
 							set_error ("invalid element content model")
@@ -2085,6 +2103,7 @@ feature {NONE} -- DTD entity declarations
 						i := skip_spaces (a_subset, i)
 						if i = l_end then
 							handler.on_notation_decl (l_name, Void, l_system, l_public)
+							check_handler_stop
 							Result := l_end + 1
 						else
 							set_error ("unexpected notation declaration content")
@@ -2137,7 +2156,7 @@ feature {NONE} -- DTD entity declarations
 						index_in_bounds: i >= 1 and i <= l_end
 						element_name_attached: l_element_name /= Void
 					until
-						has_error or i >= l_end
+						has_error or is_suspended or i >= l_end
 					loop
 						if not l_attributes.is_name_start_character (a_subset.item (i)) then
 							set_error ("invalid attlist attribute name")
@@ -2180,6 +2199,7 @@ feature {NONE} -- DTD entity declarations
 								if not has_error then
 									record_attribute_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
 									handler.on_attlist_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
+									check_handler_stop
 									i := skip_spaces (a_subset, i)
 								end
 							end
@@ -2479,6 +2499,7 @@ feature {NONE} -- DTD entity declarations
 								put_general_entity (l_name, l_value)
 							end
 							handler.on_entity_decl (l_name, l_is_parameter, l_value, Void, Void, Void)
+							check_handler_stop
 							Result := l_end + 1
 						else
 							Result := a_subset.count + 1
@@ -2560,8 +2581,10 @@ feature {NONE} -- DTD entity declarations
 				else
 					put_external_entity (a_name, l_public_id, l_system_id, l_notation_name, a_is_parameter, l_is_unparsed)
 					handler.on_entity_decl (a_name, a_is_parameter, Void, optional_string (l_public_id), optional_string (l_system_id), optional_string (l_notation_name))
+					check_handler_stop
 					if l_is_unparsed then
 						handler.on_unparsed_entity_decl (a_name, l_system_id, optional_string (l_public_id), optional_string (l_notation_name))
+						check_handler_stop
 					end
 					Result := a_end_index + 1
 				end
@@ -2738,6 +2761,7 @@ feature {NONE} -- DTD entity declarations
 					end
 				else
 					handler.on_skipped_entity (l_name, True)
+					check_handler_stop
 					Result := a_subset.count + 1
 				end
 			end
@@ -2773,6 +2797,7 @@ feature {NONE} -- Event dispatch
 					create l_name.make_from_string (a_name)
 					element_stack.extend (l_name)
 					handler.on_start_element (a_name, a_attributes)
+					check_handler_stop
 				end
 			end
 		ensure
@@ -2792,6 +2817,7 @@ feature {NONE} -- Event dispatch
 			else
 				element_stack.remove
 				handler.on_end_element (a_name)
+				check_handler_stop
 			end
 		ensure
 			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
@@ -2805,6 +2831,7 @@ feature {NONE} -- Event dispatch
 		do
 			if a_text.count > 0 then
 				handler.on_character_data (a_text)
+				check_handler_stop
 			end
 		end
 
@@ -2815,6 +2842,7 @@ feature {NONE} -- Event dispatch
 		do
 			if not a_text.is_empty then
 				handler.on_default (a_text)
+				check_handler_stop
 			end
 		end
 
@@ -3883,6 +3911,7 @@ feature {NONE} -- State
 			external_entity_table.wipe_out
 			external_parameter_entity_table.wipe_out
 			attribute_decl_table.wipe_out
+			is_suspended := False
 			document_element_count := 0
 			expanded_entity_bytes := 0
 			has_doctype := False
@@ -3897,6 +3926,18 @@ feature {NONE} -- State
 			no_message: last_error.is_empty
 			no_open_elements: element_stack.count = 0
 			one_predefined_entity: attached entity_value ("lt") as l_value and then l_value.same_string ("<")
+		end
+
+	check_handler_stop
+			-- Honor a stop request raised from an application callback.
+		do
+			if not has_error and not is_suspended and then handler.stop_requested then
+				if handler.stop_is_resumable then
+					is_suspended := True
+				else
+					set_error ("parsing aborted")
+				end
+			end
 		end
 
 	note_position (a_index: INTEGER)

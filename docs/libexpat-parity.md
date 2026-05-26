@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 159 named upstream tests in the downloaded
+expected-failure patterns expand to 143 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -169,6 +169,12 @@ The Windows release has green evidence for:
 - the upstream `test_entity_public_utf16_*` cases now pass through the Windows
   DLL smoke; UTF-16BE/LE external parameter entity child parsers merge parsed
   general entity declarations back into the parent DTD context.
+- callback stop/abort state now reaches the Eiffel parser loop from the native
+  ABI. The covered upstream stop rows include character-data abort/suspend,
+  repeated stop calls, CDATA abort/suspend, XML declaration suspension, XML
+  declaration abort inside external entity child parsers, line-feed epilog
+  abort/suspend, empty-element abort/suspend, and the misc stop/resume
+  no-crash and unstarted-stop rejection cases.
 
 ## Red Rows
 
@@ -176,10 +182,12 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 
 - namespace parsing and namespace callback semantics;
 - allocation-failure injection and allocation accounting tests;
-- remaining external entity abort/suspend semantics;
+- remaining subordinate parser suspension fault handling;
 - remaining external DTD encoding diagnostics and default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;
-- stop/suspend/resume/abort parser state;
+- true resume continuation through suspended entity and parameter-entity
+  parsing;
+- default-handler CR epilog abort parity;
 - Expat siphash/reparse-deferral/accounting semantics.
 
 ## Native Suite

@@ -33,11 +33,15 @@ feature -- Expat-compatible constants
 
 	Xml_status_ok: INTEGER = 1
 
+	Xml_status_suspended: INTEGER = 2
+
 	Xml_initialized: INTEGER = 0
 
 	Xml_parsing: INTEGER = 1
 
 	Xml_finished: INTEGER = 2
+
+	Xml_suspended: INTEGER = 3
 
 	Xml_param_entity_parsing_never: INTEGER = 0
 
@@ -88,6 +92,16 @@ feature -- Expat-compatible constants
 	Xml_error_xml_decl: INTEGER = 30
 
 	Xml_error_publicid: INTEGER = 32
+
+	Xml_error_suspended: INTEGER = 33
+
+	Xml_error_not_suspended: INTEGER = 34
+
+	Xml_error_aborted: INTEGER = 35
+
+	Xml_error_finished: INTEGER = 36
+
+	Xml_error_suspend_pe: INTEGER = 37
 
 	Xml_error_not_started: INTEGER = 44
 
@@ -621,19 +635,26 @@ feature -- Parsing
 						if l_ok then
 							last_error_code := Xml_error_none
 							Result := Xml_status_ok
+						elseif parser.is_suspended then
+							last_error_code := Xml_error_none
+							Result := Xml_status_suspended
 						else
 							last_error_code := error_code_for (parser.last_error)
 							Result := Xml_status_error
 						end
 					end
-					parsing_status := Xml_finished
-					input_buffer.wipe_out
+					if Result = Xml_status_suspended then
+						parsing_status := Xml_suspended
+					else
+						parsing_status := Xml_finished
+						input_buffer.wipe_out
+					end
 				end
 			end
 		ensure
-			valid_status: Result = Xml_status_ok or Result = Xml_status_error
+			valid_status: Result = Xml_status_ok or Result = Xml_status_error or Result = Xml_status_suspended
 			success_has_no_error: Result = Xml_status_ok implies last_error_code = Xml_error_none
-			final_finished: a_is_final implies parsing_status = Xml_finished
+			final_finished_or_suspended: a_is_final implies (parsing_status = Xml_finished or parsing_status = Xml_suspended)
 			success_non_final_parsing: Result = Xml_status_ok and not a_is_final implies parsing_status = Xml_parsing
 			final_recorded: final_buffer = a_is_final
 		end
@@ -1267,6 +1288,8 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_publicid
 			elseif a_error.same_string ("incorrect encoding") then
 				Result := Xml_error_incorrect_encoding
+			elseif a_error.same_string ("parsing aborted") then
+				Result := Xml_error_aborted
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then
 				Result := Xml_error_unclosed_token
 			elseif a_error.same_string ("partial character") then

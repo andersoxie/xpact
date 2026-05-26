@@ -110,6 +110,7 @@ static int g_unknown_encoding_failed;
 static const char *g_unknown_external_text;
 static int g_unknown_external_ref_count;
 static int g_unknown_external_failed;
+static int g_abort_callback_count;
 
 struct malformed_doctype_case {
 	const char *label;
@@ -285,6 +286,37 @@ smoke_unknown_encoding_handler(void *encodingHandlerData, const XML_Char *name, 
 		return XML_STATUS_OK;
 	}
 	return XML_STATUS_ERROR;
+}
+
+static void XMLCALL
+aborting_character_handler(void *userData, const XML_Char *s, int len) {
+	(void)s;
+	(void)len;
+	g_abort_callback_count++;
+	XML_StopParser((XML_Parser)userData, XML_FALSE);
+}
+
+static void XMLCALL
+aborting_xml_decl_handler(void *userData, const XML_Char *version, const XML_Char *encoding, int standalone) {
+	(void)version;
+	(void)encoding;
+	(void)standalone;
+	g_abort_callback_count++;
+	XML_StopParser((XML_Parser)userData, XML_FALSE);
+}
+
+static void XMLCALL
+selective_aborting_default_handler(void *userData, const XML_Char *s, int len) {
+	int i;
+	XML_Parser parser = (XML_Parser)userData;
+	for (i = 0; i < len; i++) {
+		if (s[i] == '\n') {
+			g_abort_callback_count++;
+			XML_StopParser(parser, XML_FALSE);
+			XML_SetDefaultHandler(parser, NULL);
+			return;
+		}
+	}
 }
 
 static int XMLCALL
@@ -3397,6 +3429,45 @@ main(void) {
 	status = XML_Parse(parser, bad_public_doctype_input, (int)strlen(bad_public_doctype_input), XML_TRUE);
 	if (!check(status == XML_STATUS_ERROR, "bad public doctype rejected")) return 1;
 	if (!check(XML_GetErrorCode(parser) == XML_ERROR_PUBLICID, "bad public doctype maps to XML_ERROR_PUBLICID")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for unstarted stop")) return 1;
+	if (!check(XML_StopParser(parser, XML_TRUE) == XML_STATUS_ERROR, "unstarted resumable stop rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_NOT_STARTED, "unstarted resumable stop maps error")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for character abort")) return 1;
+	g_abort_callback_count = 0;
+	XML_SetUserData(parser, parser);
+	XML_SetCharacterDataHandler(parser, aborting_character_handler);
+	status = XML_Parse(parser, "<doc>abort me</doc>", (int)strlen("<doc>abort me</doc>"), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "character callback abort returns error")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_ABORTED, "character callback abort maps error")) return 1;
+	if (!check(g_abort_callback_count == 1, "character callback abort called once")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for XML declaration abort")) return 1;
+	g_abort_callback_count = 0;
+	XML_SetUserData(parser, parser);
+	XML_SetXmlDeclHandler(parser, aborting_xml_decl_handler);
+	status = XML_Parse(parser, "<?xml version='1.0'?><doc/>", (int)strlen("<?xml version='1.0'?><doc/>"), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "XML declaration callback abort returns error")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_ABORTED, "XML declaration callback abort maps error")) return 1;
+	if (!check(g_abort_callback_count == 1, "XML declaration callback abort called once")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "parser created for default epilog abort")) return 1;
+	g_abort_callback_count = 0;
+	XML_SetUserData(parser, parser);
+	XML_SetDefaultHandler(parser, selective_aborting_default_handler);
+	status = XML_Parse(parser, "<doc></doc>\n", (int)strlen("<doc></doc>\n"), XML_TRUE);
+	if (!check(status == XML_STATUS_ERROR, "default epilog abort returns error")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_ABORTED, "default epilog abort maps error")) return 1;
+	if (!check(g_abort_callback_count == 1, "default epilog abort called once")) return 1;
 	XML_ParserFree(parser);
 
 	for (malformed_index = 0; malformed_index < sizeof(g_malformed_doctype_cases) / sizeof(g_malformed_doctype_cases[0]); malformed_index++) {

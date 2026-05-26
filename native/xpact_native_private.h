@@ -48,6 +48,8 @@ struct XML_ParserStruct {
 	XML_Bool nextExternalEntityIsParameter;
 	XML_Bool externalEntityIsParameter;
 	int externalChildParseCount;
+	XML_Bool stopRequested;
+	XML_Bool stopResumable;
 };
 
 static XML_Bool

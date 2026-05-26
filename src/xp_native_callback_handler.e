@@ -15,6 +15,8 @@ inherit
 			wants_automatic_character_data_default,
 			expands_internal_general_entity_references,
 			reports_skipped_internal_general_entities,
+			stop_requested,
+			stop_is_resumable,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
 			on_not_standalone,
@@ -449,6 +451,18 @@ feature -- Events
 			-- Should skipped internal general entities be reported through `on_skipped_entity'?
 		do
 			Result := skipped_entity_callback /= default_pointer
+		end
+
+	stop_requested: BOOLEAN
+			-- Did a native callback call `XML_StopParser' on the active parser?
+		do
+			Result := native_stop_requested (native_parser_handle)
+		end
+
+	stop_is_resumable: BOOLEAN
+			-- Is the native stop request resumable?
+		do
+			Result := native_stop_is_resumable (native_parser_handle)
 		end
 
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
@@ -1231,6 +1245,22 @@ feature {NONE} -- Native callback calls
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"if ($a_parser != 0) { ((struct XML_ParserStruct *) $a_parser)->nextExternalEntityIsParameter = $a_is_parameter ? XML_TRUE : XML_FALSE; }"
+		end
+
+	native_stop_requested (a_parser: POINTER): BOOLEAN
+			-- Has native parser `a_parser' received `XML_StopParser' during callback dispatch?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->stopRequested ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	native_stop_is_resumable (a_parser: POINTER): BOOLEAN
+			-- Was native parser `a_parser' stopped with the resumable flag?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->stopResumable ? EIF_TRUE : EIF_FALSE;"
 		end
 
 	call_element_decl_callback (a_callback, a_user_data, a_name, a_model: POINTER)

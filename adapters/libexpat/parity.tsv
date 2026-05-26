@@ -111,6 +111,21 @@ green	basic_tests.c	test_failing_encoding_conversion_fn	Unknown-encoding convert
 green	basic_tests.c	test_invalid_unknown_encoding	Invalid unknown-encoding maps are validated before tokenization and map to XML_ERROR_UNKNOWN_ENCODING.
 green	misc_tests.c	test_misc_no_infinite_loop_issue_1161	Eiffel external DTD child parsers now propagate nested external parameter entity child failures through the parent as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
 green	misc_tests.c	test_renter_loop_finite_content	Eiffel external parsed entity children now import parent DTD entity context, so nested internal entity expansion inside loaded external entity content is finite and matches upstream.
+green	basic_tests.c	test_stop_parser_between_char_data_calls	Eiffel callback dispatch now observes XML_StopParser abort requests and maps character-data aborts to XML_ERROR_ABORTED.
+green	basic_tests.c	test_suspend_parser_between_char_data_calls	Eiffel callback dispatch now observes resumable XML_StopParser requests and rejects direct parsing while suspended with XML_ERROR_SUSPENDED.
+green	basic_tests.c	test_repeated_stop_parser_between_char_data_calls	The native Eiffel-backed stop state now handles repeated abort/suspend calls made from the same character-data callback.
+green	basic_tests.c	test_stop_parser_between_cdata_calls	Eiffel CDATA character callbacks now honor non-resumable stop requests and report XML_ERROR_ABORTED.
+green	basic_tests.c	test_suspend_parser_between_cdata_calls	Eiffel CDATA character callbacks now honor resumable stop requests and report XML_STATUS_SUSPENDED.
+green	basic_tests.c	test_ext_entity_value_abort	External entity child parsers now propagate XML declaration callback aborts as XML_ERROR_ABORTED without failing the accepting parent callback.
+green	basic_tests.c	test_subordinate_xdecl_suspend	External entity child parser XML declaration callbacks now surface resumable suspension status through the native ABI.
+green	basic_tests.c	test_suspend_xdecl	XML declaration callbacks can suspend the parser and subsequent direct parse calls fail with XML_ERROR_SUSPENDED.
+green	basic_tests.c	test_abort_epilog_2	Default-handler epilog callbacks can abort on normalized line-feed epilog text and map to XML_ERROR_ABORTED.
+green	basic_tests.c	test_suspend_epilog	Default-handler epilog callbacks can suspend the parser and return XML_STATUS_SUSPENDED.
+green	basic_tests.c	test_suspend_in_sole_empty_tag	End-element callbacks on an empty document element can suspend and resume without native state corruption.
+green	basic_tests.c	test_empty_element_abort	Start-element callbacks on an empty document element can abort through XML_StopParser.
+green	misc_tests.c	test_misc_stop*	Eiffel-backed stop state now passes the upstream misc stop-during-end-handler and unstarted-stop rejection checks.
+green	misc_tests.c	test_misc_resumeparser_not_crashing	XML_ResumeParser on the current native state no longer crashes after a pre-parse buffer/stop sequence.
+green	misc_tests.c	test_misc_char_handler_stop_without_leak	Character-data stop requests during internal entity expansion are observed without native handler lifetime regressions.
 red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
 red	acc_tests.c	test_billion_laughs_attack_protection_api	The attack-protection setters are link-compatible but do not yet enforce libexpat accounting semantics.
 red	acc_tests.c	test_amplification_isolated_external_parser	External-entity parser accounting is not implemented.
@@ -118,17 +133,17 @@ red	alloc_tests.c	test_alloc_*	Upstream allocation-failure injection and allocat
 red	nsalloc_tests.c	test_nsalloc_*	Namespace allocation and namespace-context exhaustion checks are not implemented.
 red	ns_tests.c	test_*	Namespace parsing, namespace callbacks, namespace triplets, and namespace error parity are not implemented.
 red	misc_tests.c	test_misc_attribute_leak	Upstream attribute lifetime/leak checks are not yet audited against the Eiffel-backed native bridge.
-red	misc_tests.c	test_misc_stop*	Stop/resume parser state is not implemented.
-red	misc_tests.c	test_misc_resume*	Stop/resume parser state is not implemented.
-red	misc_tests.c	test_misc_char_handler_stop_without_leak	Stop/resume parser state is not implemented.
 red	basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
-red	basic_tests.c	test_ext_entity_value_abort	External entity callback abort semantics are not implemented.
-red	basic_tests.c	test_*suspend*	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_*resume*	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_repeated_stop_parser_between_char_data_calls	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_stop_parser_between_cdata_calls	Stop/suspend/resume parser state is not implemented.
-red	basic_tests.c	test_abort*	Abort semantics are not implemented.
+red	basic_tests.c	test_subordinate_suspend	Subordinate parser suspension fault handling is not implemented.
+red	basic_tests.c	test_resume_invalid_parse	True resume continuation is not implemented.
+red	basic_tests.c	test_resume_resuspended	True resume continuation and resuspension are not implemented.
+red	basic_tests.c	test_suspend_resume_internal_entity	True resume continuation through internal entity expansion is not implemented.
+red	basic_tests.c	test_suspend_resume_internal_entity_issue_629	True resume continuation through internal entity expansion is not implemented.
+red	basic_tests.c	test_resume_entity_with_syntax_error	True resume continuation through entity syntax errors is not implemented.
+red	basic_tests.c	test_suspend_resume_parameter_entity	True resume continuation through parameter entity parsing is not implemented.
+red	basic_tests.c	test_nested_entity_suspend	True resume continuation through nested entity expansion is not implemented.
+red	basic_tests.c	test_nested_entity_suspend_2	True resume continuation through nested entity expansion is not implemented.
+red	basic_tests.c	test_abort_epilog	Default-handler CR epilog abort parity is not implemented.
 red	basic_tests.c	test_default_current	Default-current replay chunking semantics are not fully implemented.
 red	basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
 red	basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.

@@ -58,6 +58,13 @@ static void xp_set_error(XML_Parser parser, enum XML_Error code) {
 	}
 }
 
+static void xp_clear_stop_state(XML_Parser parser) {
+	if (parser != NULL) {
+		parser->stopRequested = XML_FALSE;
+		parser->stopResumable = XML_FALSE;
+	}
+}
+
 static XML_Bool xp_has_valid_bridge(const XPACT_EiffelBridge *bridge) {
 	return bridge != NULL
 		&& bridge->abi_version == XPACT_EIFFEL_BRIDGE_ABI_VERSION
@@ -173,6 +180,7 @@ XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
 	parser->nextExternalEntityIsParameter = XML_FALSE;
 	parser->externalEntityIsParameter = XML_FALSE;
 	parser->externalChildParseCount = 0;
+	xp_clear_stop_state(parser);
 	if (parser->bridge != NULL && parser->bridge->parser_reset != NULL && parser->eiffelParser != NULL) {
 		XML_Bool result = parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
 		if (result == XML_TRUE && parser->bridge->set_native_parser_handle != NULL) {
@@ -621,12 +629,18 @@ XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
 		return XML_STATUS_ERROR;
 	}
+	if (parser->parsing == XML_SUSPENDED) {
+		xp_set_error(parser, XML_ERROR_SUSPENDED);
+		return XML_STATUS_ERROR;
+	}
 	if (parser->bridge == NULL || parser->bridge->parse == NULL || parser->eiffelParser == NULL) {
 		parser->errorCode = XML_ERROR_NOT_STARTED;
 		parser->parsing = XML_FINISHED;
 		parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
 		return XML_STATUS_ERROR;
 	}
+	parser->errorCode = XML_ERROR_NONE;
+	xp_clear_stop_state(parser);
 	parser->parsing = XML_PARSING;
 	status = parser->bridge->parse(parser->bridge->context, parser->eiffelParser, s, len, isFinal);
 	status = xp_finish_external_child_parse(parser, status, len, isFinal);
@@ -664,24 +678,80 @@ XML_ParseBuffer(XML_Parser parser, int len, int isFinal) {
 		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
 		return XML_STATUS_ERROR;
 	}
+	if (parser->parsing == XML_SUSPENDED) {
+		xp_set_error(parser, XML_ERROR_SUSPENDED);
+		return XML_STATUS_ERROR;
+	}
 	if (parser->bridge != NULL && parser->bridge->parse_buffer != NULL && parser->eiffelParser != NULL) {
+		parser->errorCode = XML_ERROR_NONE;
+		xp_clear_stop_state(parser);
+		parser->parsing = XML_PARSING;
 		status = parser->bridge->parse_buffer(parser->bridge->context, parser->eiffelParser, len, isFinal);
-		return xp_finish_external_child_parse(parser, status, len, isFinal);
+		status = xp_finish_external_child_parse(parser, status, len, isFinal);
+		parser->parsing = (status == XML_STATUS_SUSPENDED) ? XML_SUSPENDED : XML_FINISHED;
+		parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
+		return status;
 	}
 	return XML_Parse(parser, parser->buffer, len, isFinal);
 }
 
 enum XML_Status XMLCALL
 XML_StopParser(XML_Parser parser, XML_Bool resumable) {
-	(void)resumable;
-	xp_set_error(parser, XML_ERROR_NOT_STARTED);
-	return XML_STATUS_ERROR;
+	if (parser == NULL) {
+		return XML_STATUS_ERROR;
+	}
+	if (parser->parsing == XML_INITIALIZED) {
+		xp_set_error(parser, XML_ERROR_NOT_STARTED);
+		return XML_STATUS_ERROR;
+	}
+	if (parser->parsing == XML_FINISHED) {
+		xp_set_error(parser, XML_ERROR_FINISHED);
+		return XML_STATUS_ERROR;
+	}
+	if (parser->parsing == XML_SUSPENDED) {
+		if (resumable) {
+			xp_set_error(parser, XML_ERROR_SUSPENDED);
+			return XML_STATUS_ERROR;
+		}
+		parser->stopRequested = XML_TRUE;
+		parser->stopResumable = XML_FALSE;
+		parser->parsing = XML_FINISHED;
+		xp_set_error(parser, XML_ERROR_ABORTED);
+		return XML_STATUS_OK;
+	}
+	if (parser->stopRequested && !parser->stopResumable) {
+		xp_set_error(parser, XML_ERROR_FINISHED);
+		return XML_STATUS_ERROR;
+	}
+	if (parser->stopRequested && parser->stopResumable && resumable) {
+		xp_set_error(parser, XML_ERROR_SUSPENDED);
+		return XML_STATUS_ERROR;
+	}
+	parser->stopRequested = XML_TRUE;
+	parser->stopResumable = resumable ? XML_TRUE : XML_FALSE;
+	if (resumable) {
+		parser->parsing = XML_SUSPENDED;
+		xp_set_error(parser, XML_ERROR_NONE);
+	} else {
+		parser->parsing = XML_FINISHED;
+		xp_set_error(parser, XML_ERROR_ABORTED);
+	}
+	return XML_STATUS_OK;
 }
 
 enum XML_Status XMLCALL
 XML_ResumeParser(XML_Parser parser) {
-	xp_set_error(parser, XML_ERROR_NOT_STARTED);
-	return XML_STATUS_ERROR;
+	if (parser == NULL) {
+		return XML_STATUS_ERROR;
+	}
+	if (parser->parsing != XML_SUSPENDED) {
+		xp_set_error(parser, XML_ERROR_NOT_SUSPENDED);
+		return XML_STATUS_ERROR;
+	}
+	xp_clear_stop_state(parser);
+	parser->parsing = XML_FINISHED;
+	parser->errorCode = XML_ERROR_NONE;
+	return XML_STATUS_OK;
 }
 
 void XMLCALL
@@ -847,6 +917,9 @@ XML_SetHashSalt16Bytes(XML_Parser parser, const uint8_t entropy[16]) {
 
 enum XML_Error XMLCALL
 XML_GetErrorCode(XML_Parser parser) {
+	if (parser != NULL && parser->errorCode != XML_ERROR_NONE) {
+		return parser->errorCode;
+	}
 	if (
 		parser != NULL
 		&& parser->bridge != NULL

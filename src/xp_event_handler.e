@@ -24,6 +24,18 @@ feature -- Events
 			Result := False
 		end
 
+	stop_requested: BOOLEAN
+			-- Did the application request parsing to stop from inside a callback?
+		do
+			Result := False
+		end
+
+	stop_is_resumable: BOOLEAN
+			-- Is the current stop request resumable?
+		do
+			Result := False
+		end
+
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 			-- A start element was parsed.
 		require
