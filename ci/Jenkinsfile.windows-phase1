@@ -1,0 +1,162 @@
+pipeline {
+  agent { label 'windows-eiffel' }
+
+  options {
+    timestamps()
+    ansiColor('xterm')
+    buildDiscarder(logRotator(numToKeepStr: '30'))
+  }
+
+  parameters {
+    string(name: 'EXPAT_SOURCE_DIR',
+           defaultValue: 'C:\\src\\libexpat-R_2_8_1\\expat',
+           description: 'Path to the upstream Expat source tree.')
+    booleanParam(name: 'RUN_BENCHMARKS',
+                 defaultValue: false,
+                 description: 'Run same-machine benchmark publication.')
+    booleanParam(name: 'RUN_PUBLIC_APP',
+                 defaultValue: false,
+                 description: 'Run the experimental CPython replacement lane.')
+    string(name: 'CPYTHON_SOURCE_DIR',
+           defaultValue: 'C:\\src\\cpython',
+           description: 'Path to a CPython checkout for public-app replacement testing.')
+  }
+
+  environment {
+    XPACT_WORKSPACE = "${WORKSPACE}"
+    XPACT_LIBRARY = "${WORKSPACE}\\build\\native-eiffel\\xpact.lib"
+    ADAPTER_OUTPUT = "${WORKSPACE}\\build\\libexpat-adapter-current"
+  }
+
+  stages {
+    stage('Tool Versions') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          ec -version
+          cl
+          cmake --version
+        '''
+      }
+    }
+
+    stage('Eiffel Tests') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          ec -batch -config tests\\xpact_tests.ecf -target xpact_tests
+          .\\EIFGENs\\xpact_tests\\W_code\\xpact_tests.exe
+        '''
+      }
+    }
+
+    stage('Build Eiffel-Backed DLL') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\build_native_eiffel.ps1
+        '''
+      }
+    }
+
+    stage('Native ABI Smoke') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_native_abi_tests.ps1 -Target Windows
+        '''
+      }
+    }
+
+    stage('libexpat Manifest') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_libexpat_adapter.ps1 `
+            -Mode Manifest `
+            -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+            -OutputDir "${env:ADAPTER_OUTPUT}" `
+            -XpactLibrary "${env:XPACT_LIBRARY}" `
+            -SkipNativeBuild
+        '''
+      }
+    }
+
+    stage('libexpat Native Suite') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_libexpat_adapter.ps1 `
+            -Mode NativeSuite `
+            -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+            -OutputDir "${env:ADAPTER_OUTPUT}" `
+            -XpactLibrary "${env:XPACT_LIBRARY}" `
+            -SkipNativeBuild
+        '''
+      }
+    }
+
+    stage('Package Windows Release') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\package_windows_release.ps1
+        '''
+      }
+    }
+
+    stage('Benchmarks') {
+      when { expression { return params.RUN_BENCHMARKS } }
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_benchmarks.ps1
+        '''
+      }
+    }
+
+    stage('CPython Baseline') {
+      when { expression { return params.RUN_PUBLIC_APP } }
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          Set-Location "${env:CPYTHON_SOURCE_DIR}"
+          .\\PCbuild\\build.bat -p x64 -c Release
+          .\\PCbuild\\amd64\\python.exe -m test `
+            test_pyexpat `
+            test_xml_etree `
+            test_xml_dom_minidom `
+            test_xml_sax `
+            test_xmlrpc
+        '''
+      }
+    }
+
+    stage('CPython xpact Replacement') {
+      when { expression { return params.RUN_PUBLIC_APP } }
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          Write-Host "Apply the maintained CPython pyexpat-to-xpact patch here."
+          Write-Host "The patch should link pyexpat against ${env:XPACT_LIBRARY}"
+          Write-Host "and copy build\\native-eiffel\\xpact.dll beside the test interpreter."
+          throw "CPython xpact replacement patch is not installed yet."
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: '''
+        build/native-eiffel/xpact.dll,
+        build/native-eiffel/xpact.lib,
+        build/libexpat-adapter-current/*.tsv,
+        build/libexpat-adapter-current/*.log,
+        docs/benchmarks.md,
+        dist/*.zip
+      ''', allowEmptyArchive: true
+    }
+  }
+}
+

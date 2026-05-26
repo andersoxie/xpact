@@ -1,0 +1,66 @@
+system_chart XPACT_VERIFICATION
+
+indexing
+  description: "BON view of verification and release artifacts."
+  status: "Design documentation for CI and release checks."
+
+cluster_chart verification
+  class XP_TEST_ROOT
+  class XP_COLLECTING_HANDLER
+  class XP_POSITION_COLLECTING_HANDLER
+  class XP_NATIVE_RUNTIME_SMOKE
+  external tests/native/xpact_abi_smoke.c
+  external tests/native/xpact_bridge_smoke.c
+  external tests/native/xpact_eiffel_dll_smoke.c
+  external scripts/build_native_eiffel.ps1
+  external scripts/run_native_abi_tests.ps1
+  external scripts/run_libexpat_adapter.ps1
+  external scripts/run_benchmarks.ps1
+  external scripts/package_windows_release.ps1
+  external adapters/libexpat/parity.tsv
+  external adapters/libexpat/expected-failures.tsv
+
+class_chart XP_TEST_ROOT
+  responsibility
+    "Run Eiffel regression tests."
+    "Assert public documentation and adapter manifests remain present."
+    "Protect the explicit expected-failure policy."
+
+class_chart XP_NATIVE_RUNTIME_SMOKE
+  responsibility
+    "Verify C ABI calls can enter the Eiffel runtime bridge."
+
+artifact_chart tests/native/xpact_abi_smoke.c
+  responsibility
+    "Verify a public C caller can compile and link against include/xpact.h."
+
+artifact_chart tests/native/xpact_bridge_smoke.c
+  responsibility
+    "Verify native bridge forwarding independent of the Eiffel runtime."
+
+artifact_chart tests/native/xpact_eiffel_dll_smoke.c
+  responsibility
+    "Verify an external C caller can link against the Eiffel-backed Windows DLL."
+
+artifact_chart adapters/libexpat
+  responsibility
+    "Build upstream Expat tests against xpact's C ABI."
+    "Expand expected-failure and parity rows against the upstream manifest."
+
+artifact_chart docs/benchmarks.md
+  responsibility
+    "Publish same-machine benchmark rows, including slower paths."
+
+relations
+  XP_TEST_ROOT client XP_PARSER
+  XP_TEST_ROOT client XP_COLLECTING_HANDLER
+  XP_TEST_ROOT client XP_POSITION_COLLECTING_HANDLER
+  XP_NATIVE_RUNTIME_SMOKE client XP_NATIVE_BRIDGE_INSTALLER
+  scripts/build_native_eiffel.ps1 client XP_NATIVE_LIBRARY_ROOT
+  scripts/run_native_abi_tests.ps1 client tests/native/xpact_abi_smoke.c
+  scripts/run_native_abi_tests.ps1 client tests/native/xpact_bridge_smoke.c
+  scripts/run_libexpat_adapter.ps1 client adapters/libexpat/parity.tsv
+  scripts/run_libexpat_adapter.ps1 client adapters/libexpat/expected-failures.tsv
+  scripts/package_windows_release.ps1 client docs/benchmarks.md
+  scripts/package_windows_release.ps1 client docs/libexpat-parity.md
+

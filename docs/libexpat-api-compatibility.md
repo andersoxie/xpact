@@ -65,11 +65,15 @@ external-subset loading, and error reporting.
 
 ## Tracked Parity Gaps
 
-- Exact byte, line, and column accounting for Expat-compatible position APIs.
-- Namespace processing and namespace callback parity.
-- UTF-16, custom encoding, remaining external entity edge cases, namespace,
-  default handler edge cases, stop/resume, allocation-failure, and upstream
-  accounting parity.
+- Exact Expat large-buffer scan-count and reparse-buffer heuristic behavior.
+- C allocator hook failure-injection semantics. These rows are intentionally
+  skipped for the current Eiffel release scope, but a final drop-in claim needs
+  a product decision: either emulate the behavior at the C ABI boundary or
+  document it as unsupported.
+- Stronger native-suite reporting that maps actual failures back to upstream
+  `START_TEST(...)` names.
+- Public-application replacement verification, documented in
+  `docs/drop-in-verification.md`.
 
 Linux/WSL `libxpact.so` packaging is future platform work. It is not part of
 the initial Windows-only native release.

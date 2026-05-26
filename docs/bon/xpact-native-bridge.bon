@@ -1,0 +1,90 @@
+system_chart XPACT_NATIVE_BRIDGE
+
+indexing
+  description: "BON view of the Windows Eiffel-backed libexpat ABI bridge."
+  status: "Design documentation; regenerate graphical BON view in EiffelStudio from tests/xpact_native_library.ecf."
+
+cluster_chart native_bridge
+  class XP_NATIVE_LIBRARY_ROOT
+  class XP_NATIVE_BRIDGE_EXPORT
+  class XP_NATIVE_BRIDGE_INSTALLER
+  class XP_NATIVE_PARSER
+  class XP_NATIVE_CALLBACK_HANDLER
+  external native/xpact_native.c
+  external native/xpact_eiffel_runtime_bridge.c
+  external native/xpact_eiffel_dllmain.c
+  external include/xpact.h
+  external native/xpact_eiffel_bridge.h
+
+class_chart XP_NATIVE_LIBRARY_ROOT
+  responsibility
+    "Native-library startup root."
+    "Create and retain the Eiffel bridge installer."
+    "Install the runtime bridge during DLL initialization."
+  command
+    make
+
+class_chart XP_NATIVE_BRIDGE_EXPORT
+  responsibility
+    "Pass Eiffel feature pointers to the C runtime bridge."
+  command
+    register_eiffel_runtime_bridge
+
+class_chart XP_NATIVE_BRIDGE_INSTALLER
+  responsibility
+    "Own native parser handles as Eiffel object ids."
+    "Forward C bridge calls to XP_NATIVE_PARSER instances."
+  command
+    create_parser
+    create_parser_ns
+    parser_reset
+    parser_free
+    parse
+    get_buffer
+    parse_buffer
+    set_handler_slots
+    set_external_entity_parameter_context
+
+class_chart XP_NATIVE_PARSER
+  responsibility
+    "Hold Expat-compatible parser state."
+    "Adapt XML_Parse/XML_ParseBuffer calls to XP_PARSER."
+    "Map errors, accounting, positions, reparse deferral, and external entity child parsers."
+  query
+    last_error_code
+    current_line_number
+    current_column_number
+    current_byte_index
+    accounting_direct_count
+    accounting_indirect_count
+  command
+    parse
+    reset
+    set_native_parser_handle
+    set_external_entity_context
+    set_external_entity_parameter_literal_context
+
+class_chart XP_NATIVE_CALLBACK_HANDLER
+  responsibility
+    "Translate Eiffel parser events into C callback slots."
+    "Implement XML_DefaultCurrent and stop/resume callback bookkeeping."
+    "Act as external entity resolver for the native parser path."
+  command
+    on_start_element
+    on_end_element
+    on_character_data
+    on_default
+    resolve_external_entity
+
+relations
+  XP_NATIVE_LIBRARY_ROOT client XP_NATIVE_BRIDGE_EXPORT
+  XP_NATIVE_LIBRARY_ROOT client XP_NATIVE_BRIDGE_INSTALLER
+  XP_NATIVE_BRIDGE_EXPORT client native/xpact_eiffel_runtime_bridge.c
+  native/xpact_native.c client native/xpact_eiffel_bridge.h
+  native/xpact_native.c client XP_NATIVE_BRIDGE_INSTALLER
+  XP_NATIVE_BRIDGE_INSTALLER client XP_NATIVE_PARSER
+  XP_NATIVE_PARSER client XP_PARSER
+  XP_NATIVE_PARSER client XP_NATIVE_CALLBACK_HANDLER
+  XP_NATIVE_CALLBACK_HANDLER inherit XP_EVENT_HANDLER
+  XP_NATIVE_CALLBACK_HANDLER inherit XP_EXTERNAL_ENTITY_RESOLVER
+

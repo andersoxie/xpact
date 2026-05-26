@@ -1,0 +1,102 @@
+system_chart XPACT_PARSER_CORE
+
+indexing
+  description: "BON view of the Eiffel-owned XML parser core."
+  status: "Design documentation; regenerate graphical BON view in EiffelStudio from xpact.ecf."
+
+cluster_chart parser_core
+  class XP_PARSER
+  class XP_EVENT_HANDLER
+  class XP_NULL_EVENT_HANDLER
+  class XP_ATTRIBUTES
+  class XP_ATTRIBUTE_DECL
+  class XP_CONTENT_MODEL
+  class XP_EXTERNAL_ENTITY
+  class XP_EXTERNAL_ENTITY_POLICY
+  class XP_EXTERNAL_ENTITY_RESOLVER
+  class XP_LIMITS
+
+class_chart XP_PARSER
+  responsibility
+    "Parse XML 1.0 input under Eiffel contracts."
+    "Emit events through XP_EVENT_HANDLER."
+    "Own entity tables, DTD declarations, positions, and accounting."
+    "Enforce resource limits for input, depth, attributes, names, tokens, and expansion."
+  query
+    last_error
+    current_line_number
+    current_column_number
+    current_byte_index
+    accounting_direct_byte_count
+    accounting_indirect_byte_count
+  command
+    parse
+    parse_prefix
+    parse_external_entity
+    parse_external_subset_with_context
+    set_external_entity_resolver
+    set_external_entity_policy
+  constraint
+    "No external I/O is performed by the parser itself."
+    "Replacement text is parsed under the same recursion and expansion limits."
+
+class_chart XP_EVENT_HANDLER
+  responsibility
+    "Deferred event sink for parser callbacks."
+  query
+    wants_default_events
+    wants_automatic_character_data_default
+    expands_internal_general_entity_references
+    reports_skipped_internal_general_entities
+    stop_requested
+    stop_is_resumable
+  command
+    on_start_element
+    on_end_element
+    on_character_data
+    on_processing_instruction
+    on_xml_declaration
+    on_comment
+    on_start_doctype_decl
+    on_end_doctype_decl
+    on_element_decl
+    on_attlist_decl
+    on_entity_decl
+    on_default
+
+class_chart XP_ATTRIBUTES
+  responsibility
+    "Store Expat-shaped attribute vectors and duplicate checks."
+  query
+    count
+    specified_attribute_count
+    id_attribute_index
+    has
+    i_th_name
+    i_th_value
+  command
+    put
+    put_default
+    mark_id_attribute
+
+class_chart XP_EXTERNAL_ENTITY_RESOLVER
+  responsibility
+    "Application-supplied capability for external entity content."
+  query
+    last_resolution_is_external_child_parse
+    last_resolution_replacement_byte_count
+  command
+    resolve_external_entity
+    set_next_resolution_is_parameter_literal
+
+relations
+  XP_PARSER client XP_EVENT_HANDLER
+  XP_PARSER client XP_ATTRIBUTES
+  XP_PARSER client XP_ATTRIBUTE_DECL
+  XP_PARSER client XP_CONTENT_MODEL
+  XP_PARSER client XP_EXTERNAL_ENTITY
+  XP_PARSER client XP_EXTERNAL_ENTITY_POLICY
+  XP_PARSER client XP_EXTERNAL_ENTITY_RESOLVER
+  XP_PARSER client XP_LIMITS
+  XP_NULL_EVENT_HANDLER inherit XP_EVENT_HANDLER
+

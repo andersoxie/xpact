@@ -85,6 +85,10 @@ Beyond this Windows-only Phase 1 scope:
 
 - Linux/WSL `libxpact.so` packaging and benchmark parity remain future platform work.
 - Remaining red libexpat parity gaps are tracked in `adapters/libexpat/parity.tsv`.
+- Drop-in replacement verification in public applications is tracked in
+  `docs/drop-in-verification.md`.
+- Design reading guidance and BON views are tracked in
+  `docs/article-reading-guide.md`, `docs/design-overview.md`, and `docs/bon/`.
 
 ## External Entity Policy
 
