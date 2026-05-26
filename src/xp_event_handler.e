@@ -12,6 +12,12 @@ feature -- Events
 			Result := True
 		end
 
+	wants_default_events: BOOLEAN
+			-- Should raw default-handler text be materialized and emitted?
+		do
+			Result := True
+		end
+
 	expands_internal_general_entity_references: BOOLEAN
 			-- Should internal general entity references be expanded in content?
 		do

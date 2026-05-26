@@ -31,6 +31,7 @@ feature {NONE} -- Initialization
 			create entity_reference_count_stack.make (8)
 			create entity_table.make (8)
 			create parameter_entity_table.make (4)
+			create parameter_entity_accounting_table.make (4)
 			create external_entity_table.make (4)
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
@@ -69,6 +70,7 @@ feature {NONE} -- Initialization
 			create entity_reference_count_stack.make (8)
 			create entity_table.make (8)
 			create parameter_entity_table.make (4)
+			create parameter_entity_accounting_table.make (4)
 			create external_entity_table.make (4)
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
@@ -122,6 +124,14 @@ feature -- Access
 
 	current_byte_count: INTEGER
 			-- Current token byte count, or zero at parse end and errors.
+
+	accounting_indirect_byte_count: INTEGER
+			-- Bytes accounted as indirect entity replacement output in the most recent parse.
+		do
+			Result := expanded_entity_bytes
+		ensure
+			non_negative: Result >= 0
+		end
 
 	external_entity_policy: INTEGER
 			-- Current external entity loading policy.
@@ -187,6 +197,7 @@ feature -- Configuration
 		do
 			inherited_entity_table := cloned_string_table (a_parent.general_entity_context_table)
 			inherited_parameter_entity_table := cloned_string_table (a_parent.parameter_entity_context_table)
+			inherited_parameter_entity_accounting_table := cloned_integer_table (a_parent.parameter_entity_accounting_context_table)
 			inherited_external_entity_table := cloned_external_entity_table (a_parent.external_general_entity_context_table)
 			inherited_external_parameter_entity_table := cloned_external_entity_table (a_parent.external_parameter_entity_context_table)
 			install_inherited_entity_context
@@ -202,6 +213,7 @@ feature -- Configuration
 		do
 			copy_string_table_into (a_child.general_entity_context_table, entity_table)
 			copy_string_table_into (a_child.parameter_entity_context_table, parameter_entity_table)
+			copy_integer_table_into (a_child.parameter_entity_accounting_context_table, parameter_entity_accounting_table)
 			copy_external_entity_table_into (a_child.external_general_entity_context_table, external_entity_table)
 			copy_external_entity_table_into (a_child.external_parameter_entity_context_table, external_parameter_entity_table)
 		end
@@ -236,6 +248,14 @@ feature {XP_PARSER} -- Entity context import
 			-- Current internal parameter entity table for child parser import.
 		do
 			Result := parameter_entity_table
+		ensure
+			result_attached: Result /= Void
+		end
+
+	parameter_entity_accounting_context_table: HASH_TABLE [INTEGER, STRING_8]
+			-- Logical parameter entity replacement byte counts for child parser import.
+		do
+			Result := parameter_entity_accounting_table
 		ensure
 			result_attached: Result /= Void
 		end
@@ -564,6 +584,79 @@ feature -- Parsing
 			not_external_after_parse: not parsing_external_entity
 		end
 
+	parse_external_parameter_literal_with_context (a_input: READABLE_STRING_8; a_context: detachable READABLE_STRING_8): BOOLEAN
+			-- Parse an external parameter entity used inside an entity literal.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+		local
+			i: INTEGER
+			l_content_start: INTEGER
+			l_input: STRING_8
+			l_has_active_context: BOOLEAN
+		do
+			reset
+			parsing_external_entity := True
+			l_input := normalized_input (a_input)
+			position_input.wipe_out
+			position_input.append (l_input)
+			note_position (1)
+			if attached a_context as l_context and then not l_context.is_empty and then is_valid_name (l_context) then
+				push_entity (l_context)
+				l_has_active_context := True
+			end
+			if not has_error then
+				if looks_like_external_subset (l_input) then
+					process_internal_subset (l_input)
+				else
+					l_content_start := external_parameter_literal_content_start (l_input)
+					if l_content_start <= l_input.count and then is_quote (l_input.item (l_content_start)) then
+						note_position (l_content_start)
+						set_error ("unterminated literal")
+					elseif l_content_start <= l_input.count and then l_input.item (l_content_start) = '$' then
+						note_position (l_content_start)
+						set_error ("invalid token")
+					else
+						from
+							i := 1
+						invariant
+							index_in_bounds: i >= 1 and i <= l_input.count + 1
+							depth_within_limit: element_stack.count <= max_element_depth
+						until
+							i > l_input.count or has_error or is_suspended
+						loop
+							note_position (i)
+							if l_input.item (i) = '<' then
+								i := parse_markup (l_input, i)
+							else
+								i := parse_character_data (l_input, i)
+							end
+							if not has_error then
+								note_position (i)
+							end
+						variant
+							l_input.count - i + 1
+						end
+					end
+				end
+			end
+			if l_has_active_context then
+				pop_entity
+			end
+			if not has_error and not is_suspended and element_stack.count /= 0 then
+				note_position (l_input.count + 1)
+				set_error ("asynchronous entity")
+			end
+			if not has_error and not is_suspended then
+				note_position (l_input.count + 1)
+			end
+			Result := not has_error and not is_suspended
+			parsing_external_entity := False
+		ensure
+			result_matches_state: Result = (not has_error and not is_suspended)
+			not_external_after_parse: not parsing_external_entity
+		end
+
 feature {NONE} -- Markup parsing
 
 	parse_markup (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
@@ -677,7 +770,7 @@ feature {NONE} -- Markup parsing
 						Result := a_input.count + 1
 					end
 					if not has_error and not is_suspended then
-						emit_default (a_input.substring (a_start_index, Result - 1))
+						emit_default_range (a_input, a_start_index, Result - 1)
 						note_position (a_start_index)
 						open_element (l_name, l_attributes)
 						if l_empty_element and not has_error and not is_suspended then
@@ -1687,7 +1780,9 @@ feature {NONE} -- Character data and references
 				check_not_standalone
 				if not has_error then
 					if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
-						note_entity_expansion (l_value.count)
+						if not l_resolver.last_resolution_is_external_child_parse then
+							note_entity_expansion (l_value.count)
+						end
 						if not has_error then
 							process_internal_subset (l_value)
 						end
@@ -1712,12 +1807,19 @@ feature {NONE} -- Character data and references
 			elseif external_entity_resolver /= Void and then attached external_entity_resolver as l_resolver then
 				check_not_standalone
 				if not has_error then
+					l_resolver.set_next_resolution_is_parameter_literal (True)
 					if attached l_resolver.resolve_external_entity (a_entity.name, a_entity.public_id, a_entity.system_id, True) as l_value then
-						note_entity_expansion (l_value.count)
+						l_resolver.set_next_resolution_is_parameter_literal (False)
+						if not l_resolver.last_resolution_is_external_child_parse then
+							note_entity_expansion (l_value.count)
+						elseif l_resolver.last_resolution_replacement_byte_count > l_value.count then
+							current_entity_literal_accounting_adjustment := current_entity_literal_accounting_adjustment + l_resolver.last_resolution_replacement_byte_count - l_value.count
+						end
 						if not has_error then
 							a_text.append (l_value)
 						end
 					else
+						l_resolver.set_next_resolution_is_parameter_literal (False)
 						set_error ("external entity not resolved")
 					end
 				end
@@ -1736,7 +1838,9 @@ feature {NONE} -- Character data and references
 					set_error ("external entity resolver missing")
 				elseif attached external_entity_resolver as l_resolver then
 					if attached l_resolver.resolve_external_entity (doctype_name, a_public_id, a_system_id, True) as l_value then
-						note_entity_expansion (l_value.count)
+						if not l_resolver.last_resolution_is_external_child_parse then
+							note_entity_expansion (l_value.count)
+						end
 						if not has_error then
 							process_internal_subset (l_value)
 						end
@@ -1758,7 +1862,9 @@ feature {NONE} -- Character data and references
 				check_not_standalone
 				if not has_error and then parameter_entity_loading_allowed and then attached external_entity_resolver as l_resolver then
 					if attached l_resolver.resolve_external_entity (a_root_name, "", "foreign.dtd", True) as l_value then
-						note_entity_expansion (l_value.count)
+						if not l_resolver.last_resolution_is_external_child_parse then
+							note_entity_expansion (l_value.count)
+						end
 						if not has_error then
 							if not l_value.is_empty then
 								document_has_external_subset := True
@@ -1897,6 +2003,7 @@ feature {NONE} -- DTD entity declarations
 					or else has_at (a_input, i, "<!NOTATION")
 					or else has_at (a_input, i, "<![IGNORE[")
 					or else has_at (a_input, i, "<![INCLUDE[")
+					or else has_at (a_input, i, "<![%%")
 					or else a_input.item (i).code = 37
 				then
 					Result := True
@@ -1935,7 +2042,7 @@ feature {NONE} -- DTD entity declarations
 					i := parse_element_declaration (a_subset, i)
 				elseif has_at (a_subset, i, "<!NOTATION") then
 					i := parse_notation_declaration (a_subset, i)
-				elseif has_at (a_subset, i, "<![IGNORE[") or else has_at (a_subset, i, "<![INCLUDE[") then
+				elseif has_at (a_subset, i, "<![") then
 					i := parse_conditional_section (a_subset, i)
 				elseif has_at (a_subset, i, "<!--") then
 					l_end := find_sequence (a_subset, "-->", i + 4)
@@ -1996,8 +2103,27 @@ feature {NONE} -- DTD entity declarations
 			subset_attached: a_subset /= Void
 		local
 			l_end: INTEGER
+			l_percent: INTEGER
+			l_markup_start: INTEGER
 		do
 			l_end := complete_dtd_prefix_end (a_subset)
+			l_percent := find_character (a_subset, '%%', 1)
+			if l_percent > 0 and then l_percent <= l_end then
+				from
+					l_markup_start := l_percent
+				until
+					l_markup_start <= 1 or else a_subset.item (l_markup_start) = '<'
+				loop
+					l_markup_start := l_markup_start - 1
+				variant
+					l_markup_start - 1
+				end
+				if l_markup_start > 1 and then a_subset.item (l_markup_start) = '<' then
+					l_end := l_markup_start - 1
+				else
+					l_end := l_percent - 1
+				end
+			end
 			if l_end > 0 then
 				process_internal_subset (a_subset.substring (1, l_end))
 			end
@@ -2007,29 +2133,62 @@ feature {NONE} -- DTD entity declarations
 			-- Parse a DTD conditional section.
 		require
 			subset_attached: a_subset /= Void
-			starts_conditional_section: has_at (a_subset, a_start_index, "<![IGNORE[") or else has_at (a_subset, a_start_index, "<![INCLUDE[")
+			starts_conditional_section: has_at (a_subset, a_start_index, "<![")
 		local
+			i: INTEGER
 			l_content_start: INTEGER
 			l_end: INTEGER
 			l_inner: STRING_8
+			l_status: STRING_8
 		do
 			l_end := find_sequence (a_subset, "]]>", a_start_index + 3)
 			if l_end = 0 then
 				set_error ("unterminated conditional section")
 				Result := a_subset.count + 1
-			elseif has_at (a_subset, a_start_index, "<![IGNORE[") then
-				emit_default (a_subset.substring (a_start_index, l_end + 2))
-				Result := l_end + 3
 			else
-				l_content_start := a_start_index + 11
-				if l_content_start <= l_end - 1 then
-					create l_inner.make_from_string (a_subset.substring (l_content_start, l_end - 1))
-					process_internal_subset (l_inner)
+				create l_status.make_empty
+				from
+					i := a_start_index + 3
+				invariant
+					index_in_bounds: i >= a_start_index + 3 and i <= a_subset.count + 1
+				until
+					i > l_end - 1 or has_error or else a_subset.item (i) = '['
+				loop
+					if a_subset.item (i).code = 37 then
+						i := append_parameter_reference_in_entity_value (a_subset, i, l_status)
+					else
+						l_status.append_character (a_subset.item (i))
+						i := i + 1
+					end
+				variant
+					a_subset.count - i + 1
 				end
 				if has_error then
 					Result := a_subset.count + 1
+				elseif i > l_end - 1 or else a_subset.item (i) /= '[' then
+					set_error ("invalid conditional section")
+					Result := a_subset.count + 1
 				else
-					Result := l_end + 3
+					l_status.left_adjust
+					l_status.right_adjust
+					if l_status.same_string ("IGNORE") then
+						emit_default (a_subset.substring (a_start_index, l_end + 2))
+						Result := l_end + 3
+					elseif l_status.same_string ("INCLUDE") then
+						l_content_start := i + 1
+						if l_content_start <= l_end - 1 then
+							create l_inner.make_from_string (a_subset.substring (l_content_start, l_end - 1))
+							process_internal_subset (l_inner)
+						end
+						if has_error then
+							Result := a_subset.count + 1
+						else
+							Result := l_end + 3
+						end
+					else
+						set_error ("invalid conditional section")
+						Result := a_subset.count + 1
+					end
 				end
 			end
 		ensure
@@ -2058,6 +2217,28 @@ feature {NONE} -- DTD entity declarations
 					Result := same_name_case_insensitive (l_target, "xml")
 				end
 			end
+		end
+
+	external_parameter_literal_content_start (a_input: READABLE_STRING_8): INTEGER
+			-- First significant content byte after an optional text declaration.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			l_end: INTEGER
+		do
+			i := skip_spaces (a_input, 1)
+			if i <= a_input.count and then starts_xml_declaration_at (a_input, i) then
+				l_end := find_sequence (a_input, "?>", i + 2)
+				if l_end > 0 then
+					i := skip_spaces (a_input, l_end + 2)
+				else
+					i := a_input.count + 1
+				end
+			end
+			Result := i
+		ensure
+			result_in_bounds: Result >= 1 and Result <= a_input.count + 1
 		end
 
 	is_incomplete_utf8_sequence_at (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
@@ -2749,6 +2930,7 @@ feature {NONE} -- DTD entity declarations
 			l_name_end: INTEGER
 			l_literal_start: INTEGER
 			l_literal_end: INTEGER
+			l_accounting_count: INTEGER
 		do
 			create l_attributes.make
 			l_end := find_markup_declaration_end (a_subset, a_start_index)
@@ -2774,6 +2956,7 @@ feature {NONE} -- DTD entity declarations
 						l_quote := a_subset.item (i)
 						l_literal_start := i
 						create l_value.make_empty
+						current_entity_literal_accounting_adjustment := 0
 						l_existing_parameter := l_is_parameter and then is_parameter_entity_declared (l_name)
 						if l_is_parameter and then not l_existing_parameter then
 							push_entity (l_name)
@@ -2783,9 +2966,11 @@ feature {NONE} -- DTD entity declarations
 							i := parse_entity_literal (a_subset, i + 1, l_quote, l_value)
 						end
 						l_literal_end := i
+						l_accounting_count := l_value.count + current_entity_literal_accounting_adjustment
+						current_entity_literal_accounting_adjustment := 0
 						if not has_error then
 							if l_is_parameter then
-								put_parameter_entity (l_name, l_value)
+								put_parameter_entity (l_name, l_value, l_accounting_count)
 							else
 								put_general_entity (l_name, l_value)
 							end
@@ -2998,6 +3183,8 @@ feature {NONE} -- DTD entity declarations
 					set_error ("recursive entity reference")
 					Result := a_input.count + 1
 				elseif attached parameter_entity_value (l_name) as l_value then
+					note_entity_expansion (parameter_entity_accounting_value (l_name))
+					current_entity_literal_accounting_adjustment := current_entity_literal_accounting_adjustment + parameter_entity_accounting_value (l_name) - l_value.count
 					a_text.append (l_value)
 					Result := l_end + 1
 				elseif attached external_parameter_entity (l_name) as l_external then
@@ -3039,9 +3226,12 @@ feature {NONE} -- DTD entity declarations
 					set_error ("recursive entity reference")
 					Result := a_subset.count + 1
 				elseif attached parameter_entity_value (l_name) as l_value then
-					push_entity (l_name)
-					process_internal_subset (l_value)
-					pop_entity
+					note_entity_expansion (parameter_entity_accounting_value (l_name))
+					if not has_error then
+						push_entity (l_name)
+						process_internal_subset (l_value)
+						pop_entity
+					end
 					if has_error then
 						Result := a_subset.count + 1
 					else
@@ -3177,7 +3367,7 @@ feature {NONE} -- Event dispatch
 		require
 			text_attached: a_text /= Void
 		do
-			if not a_text.is_empty then
+			if handler.wants_default_events and then not a_text.is_empty then
 				handler.on_default (a_text)
 				check_handler_stop
 			end
@@ -3190,7 +3380,7 @@ feature {NONE} -- Event dispatch
 			start_valid: a_start_index >= 1
 			end_valid: a_end_index <= a_input.count
 		do
-			if a_start_index <= a_end_index then
+			if handler.wants_default_events and then a_start_index <= a_end_index then
 				emit_default (a_input.substring (a_start_index, a_end_index))
 			end
 		end
@@ -3908,6 +4098,14 @@ feature {NONE} -- Scanning
 						Result := l_end + 1
 						i := l_end + 2
 					end
+				elseif has_at (a_subset, i, "<![") then
+					l_end := find_sequence (a_subset, "]]>", i + 3)
+					if l_end = 0 then
+						l_done := True
+					else
+						Result := l_end + 2
+						i := l_end + 3
+					end
 				elseif has_at (a_subset, i, "<!") then
 					l_end := find_markup_declaration_end (a_subset, i)
 					if l_end = 0 then
@@ -4465,6 +4663,9 @@ feature {NONE} -- Entity tables
 			if attached inherited_parameter_entity_table as l_entities then
 				copy_string_table_into (l_entities, parameter_entity_table)
 			end
+			if attached inherited_parameter_entity_accounting_table as l_counts then
+				copy_integer_table_into (l_counts, parameter_entity_accounting_table)
+			end
 			if attached inherited_external_entity_table as l_entities then
 				copy_external_entity_table_into (l_entities, external_entity_table)
 			end
@@ -4503,6 +4704,39 @@ feature {NONE} -- Entity tables
 				if not a_target.has (l_key) then
 					create l_value.make_from_string (a_source.item_for_iteration)
 					a_target.put (l_value, l_key)
+				end
+				a_source.forth
+			end
+		end
+
+	cloned_integer_table (a_source: HASH_TABLE [INTEGER, STRING_8]): HASH_TABLE [INTEGER, STRING_8]
+			-- Copy of integer bindings in `a_source'.
+		require
+			source_attached: a_source /= Void
+		do
+			create Result.make (a_source.count + 1)
+			copy_integer_table_into (a_source, Result)
+		ensure
+			result_attached: Result /= Void
+			count_preserved: Result.count = a_source.count
+		end
+
+	copy_integer_table_into (a_source, a_target: HASH_TABLE [INTEGER, STRING_8])
+			-- Copy integer bindings from `a_source' into `a_target' without replacing existing bindings.
+		require
+			source_attached: a_source /= Void
+			target_attached: a_target /= Void
+		local
+			l_key: STRING_8
+		do
+			from
+				a_source.start
+			until
+				a_source.after
+			loop
+				create l_key.make_from_string (a_source.key_for_iteration)
+				if not a_target.has (l_key) then
+					a_target.put (a_source.item_for_iteration, l_key)
 				end
 				a_source.forth
 			end
@@ -4557,11 +4791,12 @@ feature {NONE} -- Entity tables
 			end
 		end
 
-	put_parameter_entity (a_name, a_value: READABLE_STRING_8)
+	put_parameter_entity (a_name, a_value: READABLE_STRING_8; a_accounting_count: INTEGER)
 			-- Record parameter entity if not already bound.
 		require
 			valid_name: is_valid_name (a_name)
 			value_attached: a_value /= Void
+			accounting_count_non_negative: a_accounting_count >= 0
 		local
 			l_name: STRING_8
 			l_value: STRING_8
@@ -4570,6 +4805,7 @@ feature {NONE} -- Entity tables
 			if not parameter_entity_table.has (l_name) then
 				create l_value.make_from_string (a_value)
 				parameter_entity_table.put (l_value, l_name)
+				parameter_entity_accounting_table.put (a_accounting_count, l_name)
 			end
 		end
 
@@ -4631,6 +4867,23 @@ feature {NONE} -- Entity tables
 			Result := parameter_entity_table.item (l_name)
 		end
 
+	parameter_entity_accounting_value (a_name: READABLE_STRING_8): INTEGER
+			-- Logical replacement byte count for parameter entity `a_name'.
+		require
+			valid_name: is_valid_name (a_name)
+		local
+			l_name: STRING_8
+		do
+			create l_name.make_from_string (a_name)
+			if parameter_entity_accounting_table.has (l_name) then
+				Result := parameter_entity_accounting_table.item (l_name)
+			elseif attached parameter_entity_table.item (l_name) as l_value then
+				Result := l_value.count
+			end
+		ensure
+			non_negative: Result >= 0
+		end
+
 	external_entity (a_name: READABLE_STRING_8): detachable XP_EXTERNAL_ENTITY
 			-- External general entity metadata for `a_name', if declared.
 		require
@@ -4668,6 +4921,7 @@ feature {NONE} -- Entity tables
 			text_attached: a_text /= Void
 		do
 			if attached entity_value (a_name) as l_value then
+				note_entity_expansion (l_value.count)
 				a_text.append (l_value)
 			end
 		end
@@ -4800,12 +5054,14 @@ feature {NONE} -- State
 			entity_reference_count_stack.wipe_out
 			entity_table.wipe_out
 			parameter_entity_table.wipe_out
+			parameter_entity_accounting_table.wipe_out
 			external_entity_table.wipe_out
 			external_parameter_entity_table.wipe_out
 			attribute_decl_table.wipe_out
 			is_suspended := False
 			document_element_count := 0
 			expanded_entity_bytes := 0
+			current_entity_literal_accounting_adjustment := 0
 			has_doctype := False
 			document_has_external_subset := False
 			xml_standalone := -1
@@ -4971,6 +5227,9 @@ feature {NONE} -- State
 	parameter_entity_table: HASH_TABLE [STRING_8, STRING_8]
 			-- Internal parameter entities.
 
+	parameter_entity_accounting_table: HASH_TABLE [INTEGER, STRING_8]
+			-- Logical replacement byte counts for internal parameter entities.
+
 	external_entity_table: HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
 			-- External general entities.
 
@@ -4992,6 +5251,9 @@ feature {NONE} -- State
 	inherited_parameter_entity_table: detachable HASH_TABLE [STRING_8, STRING_8]
 			-- Parent parameter entity bindings for external entity child parsers.
 
+	inherited_parameter_entity_accounting_table: detachable HASH_TABLE [INTEGER, STRING_8]
+			-- Parent parameter entity accounting bindings for external entity child parsers.
+
 	inherited_external_entity_table: detachable HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
 			-- Parent external general entity bindings for external entity child parsers.
 
@@ -5003,6 +5265,9 @@ feature {NONE} -- State
 
 	expanded_entity_bytes: INTEGER
 			-- Total entity replacement bytes processed in current parse.
+
+	current_entity_literal_accounting_adjustment: INTEGER
+			-- Difference between stored and logical replacement bytes in current entity literal.
 
 	has_doctype: BOOLEAN
 			-- Has the document type declaration been parsed?
@@ -5050,6 +5315,7 @@ invariant
 	entity_reference_stacks_aligned: is_initialized implies entity_reference_start_stack.count = entity_reference_count_stack.count
 	entity_table_attached: is_initialized implies entity_table /= Void
 	parameter_entity_table_attached: is_initialized implies parameter_entity_table /= Void
+	parameter_entity_accounting_table_attached: is_initialized implies parameter_entity_accounting_table /= Void
 	external_entity_table_attached: is_initialized implies external_entity_table /= Void
 	external_parameter_entity_table_attached: is_initialized implies external_parameter_entity_table /= Void
 	attribute_decl_table_attached: is_initialized implies attribute_decl_table /= Void

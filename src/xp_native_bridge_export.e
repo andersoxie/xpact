@@ -29,8 +29,10 @@ feature -- Bridge registration
 				$set_encoding,
 				$set_external_entity_context,
 				$set_external_entity_parameter_context,
+				$set_external_entity_parameter_literal_context,
 				$inherit_external_entity_context,
 				$merge_external_entity_context,
+				$merge_accounting,
 				$set_param_entity_parsing,
 				$set_foreign_dtd,
 				$set_user_data,
@@ -65,6 +67,8 @@ feature -- Bridge registration
 				$get_specified_attribute_count,
 				$get_id_attribute_index,
 				$get_input_context,
+				$get_accounting_direct_count,
+				$get_accounting_indirect_count,
 				$get_parsing_status
 			)
 			installed := Result
@@ -92,8 +96,10 @@ feature {NONE} -- Native calls
 		a_set_encoding,
 		a_set_external_entity_context,
 		a_set_external_entity_parameter_context,
+		a_set_external_entity_parameter_literal_context,
 		a_inherit_external_entity_context,
 		a_merge_external_entity_context,
+		a_merge_accounting,
 		a_set_param_entity_parsing,
 		a_set_foreign_dtd,
 		a_set_user_data,
@@ -128,6 +134,8 @@ feature {NONE} -- Native calls
 		a_get_specified_attribute_count,
 		a_get_id_attribute_index,
 		a_get_input_context,
+		a_get_accounting_direct_count,
+		a_get_accounting_indirect_count,
 		a_get_parsing_status: POINTER
 	): BOOLEAN
 			-- Register Eiffel runtime bridge through pointer-based C wrapper.
@@ -140,8 +148,10 @@ feature {NONE} -- Native calls
 			set_encoding_attached: a_set_encoding /= default_pointer
 			set_external_entity_context_attached: a_set_external_entity_context /= default_pointer
 			set_external_entity_parameter_context_attached: a_set_external_entity_parameter_context /= default_pointer
+			set_external_entity_parameter_literal_context_attached: a_set_external_entity_parameter_literal_context /= default_pointer
 			inherit_external_entity_context_attached: a_inherit_external_entity_context /= default_pointer
 			merge_external_entity_context_attached: a_merge_external_entity_context /= default_pointer
+			merge_accounting_attached: a_merge_accounting /= default_pointer
 			set_param_entity_parsing_attached: a_set_param_entity_parsing /= default_pointer
 			set_foreign_dtd_attached: a_set_foreign_dtd /= default_pointer
 			set_xml_decl_handler_attached: a_set_xml_decl_handler /= default_pointer
@@ -151,9 +161,11 @@ feature {NONE} -- Native calls
 			parse_buffer_attached: a_parse_buffer /= default_pointer
 			get_error_code_attached: a_get_error_code /= default_pointer
 			get_input_context_attached: a_get_input_context /= default_pointer
+			get_accounting_direct_count_attached: a_get_accounting_direct_count /= default_pointer
+			get_accounting_indirect_count_attached: a_get_accounting_indirect_count /= default_pointer
 			get_parsing_status_attached: a_get_parsing_status /= default_pointer
 		external
-			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
+			"C signature (EIF_OBJECT, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER, EIF_POINTER): EIF_BOOLEAN use %"xpact_eiffel_runtime_bridge.h%""
 		alias
 			"XPACT_RegisterEiffelRuntimeBridgePointers"
 		end

@@ -4,8 +4,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#undef XML_Parse
+
 XML_Bool g_reparseDeferralEnabledDefault = XML_TRUE;
 unsigned int g_bytesScanned = 0;
+
+extern unsigned long long XMLCALL
+XPACT_TestingAccountingGetCountBytesDirect(XML_Parser parser);
+
+extern unsigned long long XMLCALL
+XPACT_TestingAccountingGetCountBytesIndirect(XML_Parser parser);
+
+enum XML_Status XMLCALL
+xpact_adapter_XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
+	if (len > 0) {
+		g_bytesScanned += (unsigned int)len;
+	}
+	return XML_Parse(parser, s, len, isFinal);
+}
 
 void
 _INTERNAL_trim_to_complete_utf8_characters(const char *from, const char **fromLimRef) {
@@ -40,14 +56,12 @@ _INTERNAL_trim_to_complete_utf8_characters(const char *from, const char **fromLi
 
 unsigned long long
 testingAccountingGetCountBytesDirect(XML_Parser parser) {
-	(void)parser;
-	return 0;
+	return XPACT_TestingAccountingGetCountBytesDirect(parser);
 }
 
 unsigned long long
 testingAccountingGetCountBytesIndirect(XML_Parser parser) {
-	(void)parser;
-	return 0;
+	return XPACT_TestingAccountingGetCountBytesIndirect(parser);
 }
 
 const char *

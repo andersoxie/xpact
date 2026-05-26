@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 89 named upstream tests in the downloaded
+expected-failure patterns expand to 88 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint. Of those, 86 are C allocator
 failure-injection rows that are intentionally skipped for the Eiffel release
 scope because Eiffel parser storage is not a caller-managed allocation
@@ -206,6 +206,11 @@ The Windows release has green evidence for:
   libexpat. Eiffel-owned non-final parsing also applies reparse deferral to
   incomplete large tokens, inherited external parameter-entity child parsers,
   and on-the-fly deferral disabling.
+- upstream accounting precision now passes through the native adapter:
+  direct input bytes, external child parser bytes, predefined/internal entity
+  expansion, conditional-section parameter entities, BOM-prefixed external
+  DTD fragments, and text-declaration external parameter values are reflected
+  by the Windows Eiffel-backed accounting hooks.
 
 ## Red Rows
 
@@ -214,7 +219,6 @@ The red rows are specific remaining parity gaps, not a suite-wide failure:
 - C allocator hook failure-injection tests, which are skipped for the Eiffel
   release scope because they exercise libexpat's manual allocation contract
   rather than Eiffel-owned parser storage;
-- byte-precision accounting queries;
 - exact Expat large-buffer scan-count and allocation heuristic behavior.
 
 ## Native Suite

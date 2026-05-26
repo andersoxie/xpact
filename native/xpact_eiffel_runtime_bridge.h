@@ -61,6 +61,7 @@ typedef EIF_BOOLEAN (*XPACT_EiffelInheritParserContextRoutine) (
 	 EIF_POINTER parser,
 	 EIF_POINTER parent_parser
 );
+typedef EIF_INTEGER_64 (*XPACT_EiffelInteger64QueryRoutine) (EIF_REFERENCE installer, EIF_POINTER parser);
 typedef void (*XPACT_EiffelSetPointerRoutine) (
 	 EIF_REFERENCE installer,
 	 EIF_POINTER parser,
@@ -119,8 +120,10 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelSetEncodingRoutine set_encoding,
 	 XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context,
 	 XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_context,
+	 XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_literal_context,
 	 XPACT_EiffelInheritParserContextRoutine inherit_external_entity_context,
 	 XPACT_EiffelInheritParserContextRoutine merge_external_entity_context,
+	 XPACT_EiffelInheritParserContextRoutine merge_accounting,
 	 XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing,
 	 XPACT_EiffelSetBooleanRoutine set_foreign_dtd,
 	 XPACT_EiffelSetPointerRoutine set_user_data,
@@ -155,6 +158,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	 XPACT_EiffelIntegerQueryRoutine get_specified_attribute_count,
 	 XPACT_EiffelIntegerQueryRoutine get_id_attribute_index,
 	 XPACT_EiffelInputContextRoutine get_input_context,
+	 XPACT_EiffelInteger64QueryRoutine get_accounting_direct_count,
+	 XPACT_EiffelInteger64QueryRoutine get_accounting_indirect_count,
 	 XPACT_EiffelParsingStatusRoutine get_parsing_status
 );
 
@@ -168,8 +173,10 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER set_encoding,
 	 EIF_POINTER set_external_entity_context,
 	 EIF_POINTER set_external_entity_parameter_context,
+	 EIF_POINTER set_external_entity_parameter_literal_context,
 	 EIF_POINTER inherit_external_entity_context,
 	 EIF_POINTER merge_external_entity_context,
+	 EIF_POINTER merge_accounting,
 	 EIF_POINTER set_param_entity_parsing,
 	 EIF_POINTER set_foreign_dtd,
 	 EIF_POINTER set_user_data,
@@ -204,6 +211,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 	 EIF_POINTER get_specified_attribute_count,
 	 EIF_POINTER get_id_attribute_index,
 	 EIF_POINTER get_input_context,
+	 EIF_POINTER get_accounting_direct_count,
+	 EIF_POINTER get_accounting_indirect_count,
 	 EIF_POINTER get_parsing_status
 );
 

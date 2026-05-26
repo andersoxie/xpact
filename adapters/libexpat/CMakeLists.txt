@@ -70,9 +70,11 @@ target_include_directories(xpact_libexpat_runtests
 )
 target_compile_definitions(xpact_libexpat_runtests PRIVATE
 	XML_TESTING
+	XML_STATIC
 	XML_DTD=1
 	XML_GE=1
 	XML_CONTEXT_BYTES=1024
+	XML_Parse=xpact_adapter_XML_Parse
 )
 target_link_libraries(xpact_libexpat_runtests PRIVATE xpact_expat)
 

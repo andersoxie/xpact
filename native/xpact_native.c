@@ -74,6 +74,31 @@ static XML_Bool xp_has_valid_bridge(const XPACT_EiffelBridge *bridge) {
 
 static enum XML_Status xp_finish_external_child_parse(XML_Parser parser, enum XML_Status status, int len, int isFinal) {
 	if (parser != NULL && parser->parentParser != NULL && status == XML_STATUS_OK && isFinal && len > 0) {
+		unsigned long long childDirectCount = 0;
+		unsigned long long childIndirectCount = 0;
+		if (
+			parser->bridge != NULL
+			&& parser->bridge->get_accounting_direct_count != NULL
+			&& parser->bridge->get_accounting_indirect_count != NULL
+			&& parser->eiffelParser != NULL
+		) {
+			childDirectCount = parser->bridge->get_accounting_direct_count(parser->bridge->context, parser->eiffelParser);
+			childIndirectCount = parser->bridge->get_accounting_indirect_count(parser->bridge->context, parser->eiffelParser);
+		}
+		if (
+			parser->bridge != NULL
+			&& parser->bridge->merge_accounting != NULL
+			&& parser->eiffelParser != NULL
+			&& parser->parentParser->eiffelParser != NULL
+			&& parser->bridge->merge_accounting(
+				parser->bridge->context,
+				parser->parentParser->eiffelParser,
+				parser->eiffelParser
+			) != XML_TRUE
+		) {
+			xp_set_error(parser, XML_ERROR_EXTERNAL_ENTITY_HANDLING);
+			return XML_STATUS_ERROR;
+		}
 		if (
 			parser->externalEntityIsParameter
 			&& parser->bridge != NULL
@@ -90,8 +115,36 @@ static enum XML_Status xp_finish_external_child_parse(XML_Parser parser, enum XM
 			return XML_STATUS_ERROR;
 		}
 		parser->parentParser->externalChildParseCount++;
+		parser->parentParser->lastExternalChildDirectCount = childDirectCount;
+		parser->parentParser->lastExternalChildIndirectCount = childIndirectCount;
 	}
 	return status;
+}
+
+XMLIMPORT unsigned long long XMLCALL
+XPACT_TestingAccountingGetCountBytesDirect(XML_Parser parser) {
+	if (
+		parser != NULL
+		&& parser->bridge != NULL
+		&& parser->bridge->get_accounting_direct_count != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->get_accounting_direct_count(parser->bridge->context, parser->eiffelParser);
+	}
+	return 0;
+}
+
+XMLIMPORT unsigned long long XMLCALL
+XPACT_TestingAccountingGetCountBytesIndirect(XML_Parser parser) {
+	if (
+		parser != NULL
+		&& parser->bridge != NULL
+		&& parser->bridge->get_accounting_indirect_count != NULL
+		&& parser->eiffelParser != NULL
+	) {
+		return parser->bridge->get_accounting_indirect_count(parser->bridge->context, parser->eiffelParser);
+	}
+	return 0;
 }
 
 XML_Bool XMLCALL
@@ -184,8 +237,12 @@ XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
 	parser->useForeignDTD = XML_FALSE;
 	parser->parentParser = NULL;
 	parser->nextExternalEntityIsParameter = XML_FALSE;
+	parser->nextExternalEntityIsParameterLiteral = XML_FALSE;
 	parser->externalEntityIsParameter = XML_FALSE;
+	parser->externalEntityIsParameterLiteral = XML_FALSE;
 	parser->externalChildParseCount = 0;
+	parser->lastExternalChildDirectCount = 0;
+	parser->lastExternalChildIndirectCount = 0;
 	parser->returnNsTriplet = XML_FALSE;
 	parser->hasBillionLaughsMaximumAmplification = XML_FALSE;
 	parser->hasBillionLaughsActivationThreshold = XML_FALSE;
@@ -649,6 +706,7 @@ XML_GetAttributeInfo(XML_Parser parser) {
 enum XML_Status XMLCALL
 XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 	enum XML_Status status;
+	char *resized;
 	if (parser == NULL || len < 0 || (s == NULL && len > 0)) {
 		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
 		return XML_STATUS_ERROR;
@@ -662,6 +720,17 @@ XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 		parser->parsing = XML_FINISHED;
 		parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
 		return XML_STATUS_ERROR;
+	}
+	if (parser->hasCustomMemory && parser->bufferCapacity < 65536) {
+		resized = (char *)xp_realloc(parser, parser->buffer, 65536u);
+		if (resized == NULL) {
+			parser->errorCode = XML_ERROR_NO_MEMORY;
+			parser->parsing = XML_FINISHED;
+			parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
+			return XML_STATUS_ERROR;
+		}
+		parser->buffer = resized;
+		parser->bufferCapacity = 65536;
 	}
 	parser->errorCode = XML_ERROR_NONE;
 	xp_clear_stop_state(parser);
@@ -871,7 +940,9 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	child->billionLaughsActivationThresholdBytes = parser->billionLaughsActivationThresholdBytes;
 	child->reparseDeferralEnabled = parser->reparseDeferralEnabled;
 	child->externalEntityIsParameter = parser->nextExternalEntityIsParameter;
+	child->externalEntityIsParameterLiteral = parser->nextExternalEntityIsParameterLiteral;
 	parser->nextExternalEntityIsParameter = XML_FALSE;
+	parser->nextExternalEntityIsParameterLiteral = XML_FALSE;
 	if (
 		child->bridge != NULL
 		&& child->bridge->set_external_entity_parameter_context != NULL
@@ -880,6 +951,20 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 			child->bridge->context,
 			child->eiffelParser,
 			child->externalEntityIsParameter
+		) != XML_TRUE
+	) {
+		XML_ParserFree(child);
+		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
+		return NULL;
+	}
+	if (
+		child->bridge != NULL
+		&& child->bridge->set_external_entity_parameter_literal_context != NULL
+		&& child->eiffelParser != NULL
+		&& child->bridge->set_external_entity_parameter_literal_context(
+			child->bridge->context,
+			child->eiffelParser,
+			child->externalEntityIsParameterLiteral
 		) != XML_TRUE
 	) {
 		XML_ParserFree(child);

@@ -13,6 +13,7 @@ inherit
 			on_start_cdata_section,
 			on_end_cdata_section,
 			wants_automatic_character_data_default,
+			wants_default_events,
 			expands_internal_general_entity_references,
 			reports_skipped_internal_general_entities,
 			stop_requested,
@@ -31,6 +32,11 @@ inherit
 			on_default
 		end
 	XP_EXTERNAL_ENTITY_RESOLVER
+		redefine
+			last_resolution_is_external_child_parse,
+			last_resolution_replacement_byte_count,
+			set_next_resolution_is_parameter_literal
+		end
 	PLATFORM
 
 create
@@ -495,6 +501,12 @@ feature -- Events
 			-- Should character data also be emitted through `on_default' automatically?
 		do
 			Result := character_data_callback = default_pointer
+		end
+
+	wants_default_events: BOOLEAN
+			-- Should raw default-handler text be materialized and emitted?
+		do
+			Result := default_callback /= default_pointer
 		end
 
 	expands_internal_general_entity_references: BOOLEAN
@@ -1082,6 +1094,23 @@ feature -- Events
 
 feature -- External entity resolution
 
+	last_resolution_is_external_child_parse: BOOLEAN
+			-- Did the last resolution delegate to a native external child parser?
+
+	last_resolution_replacement_byte_count: INTEGER
+			-- Logical replacement byte count from the last resolution.
+
+	next_resolution_is_parameter_literal: BOOLEAN
+			-- Should the next parameter entity child parse as literal replacement text?
+
+	set_next_resolution_is_parameter_literal (a_enabled: BOOLEAN)
+			-- Mark whether the next parameter entity resolution is inside an entity literal.
+		do
+			next_resolution_is_parameter_literal := a_enabled
+		ensure then
+			value_set: next_resolution_is_parameter_literal = a_enabled
+		end
+
 	resolve_external_entity (a_name, a_public_id, a_system_id: READABLE_STRING_8; a_is_parameter: BOOLEAN): detachable STRING_8
 			-- Delegate external entity loading decision to the native callback slot.
 		local
@@ -1093,6 +1122,8 @@ feature -- External entity resolution
 			l_after_external_count: INTEGER
 			l_status: INTEGER
 		do
+			last_resolution_is_external_child_parse := False
+			last_resolution_replacement_byte_count := 0
 			if external_entity_ref_callback /= default_pointer then
 				external_entity_ref_count := external_entity_ref_count + 1
 				if not suppress_next_callback then
@@ -1104,12 +1135,17 @@ feature -- External entity resolution
 						l_public_pointer := l_public_id.item
 					end
 					mark_next_external_entity_is_parameter (native_parser_handle, a_is_parameter)
+					mark_next_external_entity_is_parameter_literal (native_parser_handle, next_resolution_is_parameter_literal)
 					l_status := call_external_entity_ref_callback (external_entity_ref_callback, external_entity_callback_argument, l_context.item, default_pointer, l_system_id.item, l_public_pointer)
 					mark_next_external_entity_is_parameter (native_parser_handle, False)
+					mark_next_external_entity_is_parameter_literal (native_parser_handle, False)
+					next_resolution_is_parameter_literal := False
 					record_callback_stop_if_requested
 					if l_status /= 0 then
 						l_after_external_count := external_entity_parse_count (native_parser_handle)
 						if a_is_parameter and then l_after_external_count > l_before_external_count then
+							last_resolution_is_external_child_parse := True
+							last_resolution_replacement_byte_count := last_external_child_direct_count (native_parser_handle) + last_external_child_indirect_count (native_parser_handle)
 							create Result.make_from_string ("%N")
 						else
 							create Result.make_empty
@@ -1485,12 +1521,36 @@ feature {NONE} -- Native callback calls
 			"return $a_parser != 0 ? (EIF_INTEGER) ((struct XML_ParserStruct *) $a_parser)->externalChildParseCount : (EIF_INTEGER) 0;"
 		end
 
+	last_external_child_direct_count (a_parser: POINTER): INTEGER
+			-- Direct bytes reported by the most recent successful external child parse.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 ? (EIF_INTEGER) ((struct XML_ParserStruct *) $a_parser)->lastExternalChildDirectCount : (EIF_INTEGER) 0;"
+		end
+
+	last_external_child_indirect_count (a_parser: POINTER): INTEGER
+			-- Indirect bytes reported by the most recent successful external child parse.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 ? (EIF_INTEGER) ((struct XML_ParserStruct *) $a_parser)->lastExternalChildIndirectCount : (EIF_INTEGER) 0;"
+		end
+
 	mark_next_external_entity_is_parameter (a_parser: POINTER; a_is_parameter: BOOLEAN)
 			-- Tell the native bridge how the next external child parser should parse.
 		external
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"if ($a_parser != 0) { ((struct XML_ParserStruct *) $a_parser)->nextExternalEntityIsParameter = $a_is_parameter ? XML_TRUE : XML_FALSE; }"
+		end
+
+	mark_next_external_entity_is_parameter_literal (a_parser: POINTER; a_is_literal: BOOLEAN)
+			-- Tell the native bridge whether the next parameter child is inside an entity literal.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"if ($a_parser != 0) { ((struct XML_ParserStruct *) $a_parser)->nextExternalEntityIsParameterLiteral = $a_is_literal ? XML_TRUE : XML_FALSE; }"
 		end
 
 	native_stop_requested (a_parser: POINTER): BOOLEAN

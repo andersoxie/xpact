@@ -11,7 +11,7 @@
 #define XPACT_NATIVE_API
 #endif
 
-#define XPACT_EIFFEL_BRIDGE_ABI_VERSION 13u
+#define XPACT_EIFFEL_BRIDGE_ABI_VERSION 15u
 
 /*
  * Private bridge between the libexpat-compatible C ABI and the Eiffel parser.
@@ -37,8 +37,10 @@ typedef struct XPACT_EiffelBridge {
 	enum XML_Status (XMLCALL *set_encoding) (void *context, void *parser, const XML_Char *encoding);
 	XML_Bool (XMLCALL *set_external_entity_context) (void *context, void *parser, const XML_Char *entityContext);
 	XML_Bool (XMLCALL *set_external_entity_parameter_context) (void *context, void *parser, XML_Bool isParameter);
+	XML_Bool (XMLCALL *set_external_entity_parameter_literal_context) (void *context, void *parser, XML_Bool isLiteral);
 	XML_Bool (XMLCALL *inherit_external_entity_context) (void *context, void *parser, void *parentParser);
 	XML_Bool (XMLCALL *merge_external_entity_context) (void *context, void *parser, void *childParser);
+	XML_Bool (XMLCALL *merge_accounting) (void *context, void *parser, void *childParser);
 	XML_Bool (XMLCALL *set_param_entity_parsing) (
 		void *context,
 		void *parser,
@@ -139,6 +141,8 @@ typedef struct XPACT_EiffelBridge {
 	int (XMLCALL *get_specified_attribute_count) (void *context, void *parser);
 	int (XMLCALL *get_id_attribute_index) (void *context, void *parser);
 	const char *(XMLCALL *get_input_context) (void *context, void *parser, int *offset, int *size);
+	unsigned long long (XMLCALL *get_accounting_direct_count) (void *context, void *parser);
+	unsigned long long (XMLCALL *get_accounting_indirect_count) (void *context, void *parser);
 	void (XMLCALL *get_parsing_status) (void *context, void *parser, XML_ParsingStatus *status);
 } XPACT_EiffelBridge;
 

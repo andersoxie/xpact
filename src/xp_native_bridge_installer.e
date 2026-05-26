@@ -140,6 +140,14 @@ feature -- Parser lifecycle callbacks
 			end
 		end
 
+	set_external_entity_parameter_literal_context (a_parser: POINTER; a_is_literal: BOOLEAN): BOOLEAN
+			-- Mark whether parser represented by `a_parser' is parsing a parameter entity in a literal.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.set_external_entity_parameter_literal_context (a_is_literal)
+			end
+		end
+
 	inherit_external_entity_context (a_parser, a_parent: POINTER): BOOLEAN
 			-- Import parent DTD entity declarations into child parser `a_parser'.
 		do
@@ -153,6 +161,14 @@ feature -- Parser lifecycle callbacks
 		do
 			if attached parser_for (a_parser) as l_parser and then attached parser_for (a_child) as l_child then
 				Result := l_parser.merge_external_entity_context_from (l_child)
+			end
+		end
+
+	merge_accounting (a_parser, a_child: POINTER): BOOLEAN
+			-- Merge external entity child accounting into parent parser `a_parser'.
+		do
+			if attached parser_for (a_parser) as l_parser and then attached parser_for (a_child) as l_child then
+				Result := l_parser.merge_accounting_from (l_child)
 			end
 		end
 
@@ -430,6 +446,26 @@ feature -- Status callbacks
 			if attached parser_for (a_parser) as l_parser then
 				Result := l_parser.current_byte_count
 			end
+		end
+
+	get_accounting_direct_count (a_parser: POINTER): INTEGER_64
+			-- Direct byte accounting reported through upstream test hooks.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.accounting_direct_count
+			end
+		ensure
+			non_negative: Result >= 0
+		end
+
+	get_accounting_indirect_count (a_parser: POINTER): INTEGER_64
+			-- Indirect byte accounting reported through upstream test hooks.
+		do
+			if attached parser_for (a_parser) as l_parser then
+				Result := l_parser.accounting_indirect_count
+			end
+		ensure
+			non_negative: Result >= 0
 		end
 
 	get_specified_attribute_count (a_parser: POINTER): INTEGER

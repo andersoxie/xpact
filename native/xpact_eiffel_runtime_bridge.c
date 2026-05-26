@@ -12,8 +12,10 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelSetEncodingRoutine set_encoding;
 	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context;
 	XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_context;
+	XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_literal_context;
 	XPACT_EiffelInheritParserContextRoutine inherit_external_entity_context;
 	XPACT_EiffelInheritParserContextRoutine merge_external_entity_context;
+	XPACT_EiffelInheritParserContextRoutine merge_accounting;
 	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing;
 	XPACT_EiffelSetBooleanRoutine set_foreign_dtd;
 	XPACT_EiffelSetPointerRoutine set_user_data;
@@ -48,6 +50,8 @@ typedef struct XPACT_EiffelRuntimeBridgeState {
 	XPACT_EiffelIntegerQueryRoutine get_specified_attribute_count;
 	XPACT_EiffelIntegerQueryRoutine get_id_attribute_index;
 	XPACT_EiffelInputContextRoutine get_input_context;
+	XPACT_EiffelInteger64QueryRoutine get_accounting_direct_count;
+	XPACT_EiffelInteger64QueryRoutine get_accounting_indirect_count;
 	XPACT_EiffelParsingStatusRoutine get_parsing_status;
 	XPACT_EiffelBridge bridge;
 } XPACT_EiffelRuntimeBridgeState;
@@ -165,6 +169,20 @@ xp_rt_set_external_entity_parameter_context(void *context, void *parser, XML_Boo
 }
 
 static XML_Bool XMLCALL
+xp_rt_set_external_entity_parameter_literal_context(void *context, void *parser, XML_Bool isLiteral) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->set_external_entity_parameter_literal_context == NULL) {
+		return XML_FALSE;
+	}
+	return state->set_external_entity_parameter_literal_context(
+		installer,
+		(EIF_POINTER)parser,
+		(EIF_BOOLEAN)(isLiteral != XML_FALSE)
+	) ? XML_TRUE : XML_FALSE;
+}
+
+static XML_Bool XMLCALL
 xp_rt_inherit_external_entity_context(void *context, void *parser, void *parentParser) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
     EIF_REFERENCE installer = xp_installer_reference(state);
@@ -186,6 +204,20 @@ xp_rt_merge_external_entity_context(void *context, void *parser, void *childPars
 		return XML_FALSE;
 	}
 	return state->merge_external_entity_context(
+		installer,
+		(EIF_POINTER)parser,
+		(EIF_POINTER)childParser
+	) ? XML_TRUE : XML_FALSE;
+}
+
+static XML_Bool XMLCALL
+xp_rt_merge_accounting(void *context, void *parser, void *childParser) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->merge_accounting == NULL) {
+		return XML_FALSE;
+	}
+	return state->merge_accounting(
 		installer,
 		(EIF_POINTER)parser,
 		(EIF_POINTER)childParser
@@ -606,6 +638,26 @@ xp_rt_get_input_context(void *context, void *parser, int *offset, int *size) {
 	);
 }
 
+static unsigned long long XMLCALL
+xp_rt_get_accounting_direct_count(void *context, void *parser) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->get_accounting_direct_count == NULL) {
+		return 0;
+	}
+	return (unsigned long long)state->get_accounting_direct_count(installer, (EIF_POINTER)parser);
+}
+
+static unsigned long long XMLCALL
+xp_rt_get_accounting_indirect_count(void *context, void *parser) {
+	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
+    EIF_REFERENCE installer = xp_installer_reference(state);
+	if (installer == NULL || state->get_accounting_indirect_count == NULL) {
+		return 0;
+	}
+	return (unsigned long long)state->get_accounting_indirect_count(installer, (EIF_POINTER)parser);
+}
+
 static void XMLCALL
 xp_rt_get_parsing_status(void *context, void *parser, XML_ParsingStatus *status) {
 	XPACT_EiffelRuntimeBridgeState *state = xp_runtime_state(context);
@@ -656,8 +708,10 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->set_encoding != NULL
 		&& state->set_external_entity_context != NULL
 		&& state->set_external_entity_parameter_context != NULL
+		&& state->set_external_entity_parameter_literal_context != NULL
 		&& state->inherit_external_entity_context != NULL
 		&& state->merge_external_entity_context != NULL
+		&& state->merge_accounting != NULL
 		&& state->set_param_entity_parsing != NULL
 		&& state->set_foreign_dtd != NULL
 		&& state->set_user_data != NULL
@@ -672,6 +726,8 @@ xp_has_required_eiffel_routines(const XPACT_EiffelRuntimeBridgeState *state) {
 		&& state->get_specified_attribute_count != NULL
 		&& state->get_id_attribute_index != NULL
 		&& state->get_input_context != NULL
+		&& state->get_accounting_direct_count != NULL
+		&& state->get_accounting_indirect_count != NULL
 		&& state->default_current != NULL
 		&& state->set_hash_salt != NULL
 		&& state->set_hash_salt_16_bytes != NULL
@@ -692,8 +748,10 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->set_encoding = xp_rt_set_encoding;
 	bridge->set_external_entity_context = xp_rt_set_external_entity_context;
 	bridge->set_external_entity_parameter_context = xp_rt_set_external_entity_parameter_context;
+	bridge->set_external_entity_parameter_literal_context = xp_rt_set_external_entity_parameter_literal_context;
 	bridge->inherit_external_entity_context = xp_rt_inherit_external_entity_context;
 	bridge->merge_external_entity_context = xp_rt_merge_external_entity_context;
+	bridge->merge_accounting = xp_rt_merge_accounting;
 	bridge->set_param_entity_parsing = xp_rt_set_param_entity_parsing;
 	bridge->set_foreign_dtd = xp_rt_set_foreign_dtd;
 	bridge->set_user_data = xp_rt_set_user_data;
@@ -728,6 +786,8 @@ xp_fill_bridge_table(XPACT_EiffelRuntimeBridgeState *state) {
 	bridge->get_specified_attribute_count = xp_rt_get_specified_attribute_count;
 	bridge->get_id_attribute_index = xp_rt_get_id_attribute_index;
 	bridge->get_input_context = xp_rt_get_input_context;
+	bridge->get_accounting_direct_count = xp_rt_get_accounting_direct_count;
+	bridge->get_accounting_indirect_count = xp_rt_get_accounting_indirect_count;
 	bridge->get_parsing_status = xp_rt_get_parsing_status;
 }
 
@@ -741,8 +801,10 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelSetEncodingRoutine set_encoding,
 	XPACT_EiffelSetPointerBooleanRoutine set_external_entity_context,
 	XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_context,
+	XPACT_EiffelSetBooleanRoutine set_external_entity_parameter_literal_context,
 	XPACT_EiffelInheritParserContextRoutine inherit_external_entity_context,
 	XPACT_EiffelInheritParserContextRoutine merge_external_entity_context,
+	XPACT_EiffelInheritParserContextRoutine merge_accounting,
 	XPACT_EiffelSetIntegerBooleanRoutine set_param_entity_parsing,
 	XPACT_EiffelSetBooleanRoutine set_foreign_dtd,
 	XPACT_EiffelSetPointerRoutine set_user_data,
@@ -777,6 +839,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	XPACT_EiffelIntegerQueryRoutine get_specified_attribute_count,
 	XPACT_EiffelIntegerQueryRoutine get_id_attribute_index,
 	XPACT_EiffelInputContextRoutine get_input_context,
+	XPACT_EiffelInteger64QueryRoutine get_accounting_direct_count,
+	XPACT_EiffelInteger64QueryRoutine get_accounting_indirect_count,
 	XPACT_EiffelParsingStatusRoutine get_parsing_status
 ) {
 	if (installer == NULL
@@ -787,8 +851,10 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| set_encoding == NULL
 		|| set_external_entity_context == NULL
 		|| set_external_entity_parameter_context == NULL
+		|| set_external_entity_parameter_literal_context == NULL
 		|| inherit_external_entity_context == NULL
 		|| merge_external_entity_context == NULL
+		|| merge_accounting == NULL
 		|| set_param_entity_parsing == NULL
 		|| set_foreign_dtd == NULL
 		|| set_user_data == NULL
@@ -806,6 +872,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 		|| get_specified_attribute_count == NULL
 		|| get_id_attribute_index == NULL
 		|| get_input_context == NULL
+		|| get_accounting_direct_count == NULL
+		|| get_accounting_indirect_count == NULL
 		|| get_parsing_status == NULL) {
 		return XML_FALSE;
 	}
@@ -819,8 +887,10 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.set_encoding = set_encoding;
 	xp_runtime_bridge.set_external_entity_context = set_external_entity_context;
 	xp_runtime_bridge.set_external_entity_parameter_context = set_external_entity_parameter_context;
+	xp_runtime_bridge.set_external_entity_parameter_literal_context = set_external_entity_parameter_literal_context;
 	xp_runtime_bridge.inherit_external_entity_context = inherit_external_entity_context;
 	xp_runtime_bridge.merge_external_entity_context = merge_external_entity_context;
+	xp_runtime_bridge.merge_accounting = merge_accounting;
 	xp_runtime_bridge.set_param_entity_parsing = set_param_entity_parsing;
 	xp_runtime_bridge.set_foreign_dtd = set_foreign_dtd;
 	xp_runtime_bridge.set_user_data = set_user_data;
@@ -855,6 +925,8 @@ XPACT_RegisterEiffelRuntimeBridge(
 	xp_runtime_bridge.get_specified_attribute_count = get_specified_attribute_count;
 	xp_runtime_bridge.get_id_attribute_index = get_id_attribute_index;
 	xp_runtime_bridge.get_input_context = get_input_context;
+	xp_runtime_bridge.get_accounting_direct_count = get_accounting_direct_count;
+	xp_runtime_bridge.get_accounting_indirect_count = get_accounting_indirect_count;
 	xp_runtime_bridge.get_parsing_status = get_parsing_status;
 	if (!xp_has_required_eiffel_routines(&xp_runtime_bridge)) {
 		xp_release_runtime_bridge();
@@ -878,8 +950,10 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER set_encoding,
     EIF_POINTER set_external_entity_context,
     EIF_POINTER set_external_entity_parameter_context,
+    EIF_POINTER set_external_entity_parameter_literal_context,
     EIF_POINTER inherit_external_entity_context,
     EIF_POINTER merge_external_entity_context,
+    EIF_POINTER merge_accounting,
     EIF_POINTER set_param_entity_parsing,
     EIF_POINTER set_foreign_dtd,
     EIF_POINTER set_user_data,
@@ -914,6 +988,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
     EIF_POINTER get_specified_attribute_count,
     EIF_POINTER get_id_attribute_index,
     EIF_POINTER get_input_context,
+    EIF_POINTER get_accounting_direct_count,
+    EIF_POINTER get_accounting_indirect_count,
     EIF_POINTER get_parsing_status
 ) {
 	return XPACT_RegisterEiffelRuntimeBridge(
@@ -925,8 +1001,10 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelSetEncodingRoutine)set_encoding,
 		(XPACT_EiffelSetPointerBooleanRoutine)set_external_entity_context,
 		(XPACT_EiffelSetBooleanRoutine)set_external_entity_parameter_context,
+		(XPACT_EiffelSetBooleanRoutine)set_external_entity_parameter_literal_context,
 		(XPACT_EiffelInheritParserContextRoutine)inherit_external_entity_context,
 		(XPACT_EiffelInheritParserContextRoutine)merge_external_entity_context,
+		(XPACT_EiffelInheritParserContextRoutine)merge_accounting,
 		(XPACT_EiffelSetIntegerBooleanRoutine)set_param_entity_parsing,
 		(XPACT_EiffelSetBooleanRoutine)set_foreign_dtd,
 		(XPACT_EiffelSetPointerRoutine)set_user_data,
@@ -961,6 +1039,8 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 		(XPACT_EiffelIntegerQueryRoutine)get_specified_attribute_count,
 		(XPACT_EiffelIntegerQueryRoutine)get_id_attribute_index,
 		(XPACT_EiffelInputContextRoutine)get_input_context,
+		(XPACT_EiffelInteger64QueryRoutine)get_accounting_direct_count,
+		(XPACT_EiffelInteger64QueryRoutine)get_accounting_indirect_count,
 		(XPACT_EiffelParsingStatusRoutine)get_parsing_status
 	);
 }

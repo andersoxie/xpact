@@ -55,8 +55,12 @@ struct XML_ParserStruct {
 	XML_Bool useForeignDTD;
 	XML_Parser parentParser;
 	XML_Bool nextExternalEntityIsParameter;
+	XML_Bool nextExternalEntityIsParameterLiteral;
 	XML_Bool externalEntityIsParameter;
+	XML_Bool externalEntityIsParameterLiteral;
 	int externalChildParseCount;
+	unsigned long long lastExternalChildDirectCount;
+	unsigned long long lastExternalChildIndirectCount;
 	XML_Bool stopRequested;
 	XML_Bool stopResumable;
 	int activeCallbackKind;

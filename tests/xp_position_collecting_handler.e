@@ -6,6 +6,9 @@ class
 
 inherit
 	XP_EVENT_HANDLER
+		redefine
+			wants_default_events
+		end
 
 create
 	make
@@ -40,6 +43,12 @@ feature -- Element change
 		end
 
 feature -- Events
+
+	wants_default_events: BOOLEAN
+			-- Position tests do not inspect raw default-handler text.
+		do
+			Result := False
+		end
 
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 		do

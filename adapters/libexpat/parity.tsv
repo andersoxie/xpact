@@ -144,7 +144,7 @@ green	basic_tests.c	test_siphash_spec	The upstream SipHash specification vector 
 green	basic_tests.c	test_set_reparse_deferral	Eiffel-owned non-final parsing now remembers incomplete large tokens and delays newly discovered callbacks until the reparse-deferral threshold is met.
 green	basic_tests.c	test_reparse_deferral_is_inherited	External parameter-entity child parsers inherit the native reparse-deferral policy and apply the same Eiffel-side delayed callback release.
 green	basic_tests.c	test_set_reparse_deferral_on_the_fly	Disabling reparse deferral on a live parser releases the deferred Eiffel callback stream on the next non-final parse.
-red	acc_tests.c	test_accounting_precision	Upstream accounting precision semantics are not implemented behind the Windows native ABI.
+green	acc_tests.c	test_accounting_precision	Eiffel/native accounting now reports direct input bytes, nested external child bytes, parameter-entity replacement bytes, and predefined/internal expansion bytes through the upstream test hooks.
 green	acc_tests.c	test_billion_laughs_attack_protection_api	Billion-laughs attack-protection setters now enforce null parser, child parser, NaN, and lower-bound contracts through the native ABI.
 green	acc_tests.c	test_amplification_isolated_external_parser	Eiffel native parse state now rejects external-entity input once configured amplification limits are reached.
 red	alloc_tests.c	test_alloc_*	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.

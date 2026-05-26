@@ -19,6 +19,7 @@ inherit
 			on_attlist_decl,
 			on_entity_decl,
 			on_unparsed_entity_decl,
+			wants_default_events,
 			on_default
 		end
 
@@ -112,6 +113,12 @@ feature -- Configuration
 		end
 
 feature -- Events
+
+	wants_default_events: BOOLEAN
+			-- Should raw default-handler text be captured?
+		do
+			Result := record_default_events
+		end
 
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 		local

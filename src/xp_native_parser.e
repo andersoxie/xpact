@@ -145,6 +145,9 @@ feature -- Access
 	external_entity_is_parameter: BOOLEAN
 			-- Should this external parser parse DTD subset or parameter entity content?
 
+	external_entity_is_parameter_literal: BOOLEAN
+			-- Is this external parameter entity used inside an entity literal?
+
 	param_entity_parsing: INTEGER
 			-- Expat-compatible parameter entity parsing mode.
 
@@ -189,6 +192,30 @@ feature -- Access
 
 	deferred_reparse_end_index: INTEGER
 			-- End index of the delayed token once it has become complete.
+
+	deferred_reparse_scan_index: INTEGER
+			-- Next byte index to inspect while looking for the end of a delayed start tag.
+
+	deferred_reparse_scan_in_quote: BOOLEAN
+			-- Is the incremental delayed start-tag scan currently inside an attribute value?
+
+	deferred_reparse_scan_quote: CHARACTER_8
+			-- Quote that ends the current delayed start-tag attribute value.
+
+	ready_plain_start_tag_start_index: INTEGER
+			-- Start index of a completed plain start tag that can be emitted directly.
+
+	ready_plain_start_tag_end_index: INTEGER
+			-- End index of a completed plain start tag that can be emitted directly.
+
+	accounting_direct_count: INTEGER_64
+			-- Direct input bytes supplied to this parser.
+
+	accounting_indirect_count: INTEGER_64
+			-- Indirect entity replacement bytes accounted by this parser.
+
+	accounting_external_child_count: INTEGER_64
+			-- Direct and indirect bytes accounted by external entity child parsers.
 
 	native_parser_handle: POINTER
 			-- Public native parser handle used for native-only API callback state.
@@ -507,6 +534,18 @@ feature -- Element change
 			accepted_sets_value: Result implies external_entity_is_parameter = a_is_parameter
 		end
 
+	set_external_entity_parameter_literal_context (a_is_literal: BOOLEAN): BOOLEAN
+			-- Mark whether this external parameter parser is used in an entity literal.
+		do
+			if parsing_status = Xml_initialized then
+				external_entity_is_parameter_literal := a_is_literal
+				Result := True
+			end
+		ensure
+			accepted_only_before_parse: Result implies parsing_status = Xml_initialized
+			accepted_sets_value: Result implies external_entity_is_parameter_literal = a_is_literal
+		end
+
 	inherit_external_entity_context (a_parent: XP_NATIVE_PARSER): BOOLEAN
 			-- Import parent DTD entity declarations for an external entity child parser.
 		require
@@ -605,6 +644,14 @@ feature -- Element change
 			delivered_callback_count := 0
 			deferred_reparse_start_index := 0
 			deferred_reparse_end_index := 0
+			deferred_reparse_scan_index := 0
+			deferred_reparse_scan_in_quote := False
+			deferred_reparse_scan_quote := '%U'
+			ready_plain_start_tag_start_index := 0
+			ready_plain_start_tag_end_index := 0
+			accounting_direct_count := 0
+			accounting_indirect_count := 0
+			accounting_external_child_count := 0
 			context_buffer := Void
 			handler.reset_events
 			last_error_code := Xml_error_none
@@ -613,6 +660,7 @@ feature -- Element change
 			is_external_entity_parser := False
 			external_entity_context := Void
 			external_entity_is_parameter := False
+			external_entity_is_parameter_literal := False
 			param_entity_parsing := Xml_param_entity_parsing_never
 			use_foreign_dtd := False
 			create parser.make (handler)
@@ -636,12 +684,27 @@ feature -- Element change
 			not_final: not final_buffer
 			not_external_entity_parser: not is_external_entity_parser
 			not_external_parameter_entity_parser: not external_entity_is_parameter
+			not_external_parameter_literal_parser: not external_entity_is_parameter_literal
 			param_entity_parsing_reset: param_entity_parsing = Xml_param_entity_parsing_never
 			foreign_dtd_reset: not use_foreign_dtd
 			no_explicit_encoding: explicit_encoding = Void and not has_unsupported_explicit_encoding
 			no_hash_salt: not has_hash_salt and not has_hash_salt_16_bytes
 			no_delivered_callbacks: delivered_callback_count = 0
-			no_deferred_reparse: deferred_reparse_start_index = 0 and deferred_reparse_end_index = 0
+			no_deferred_reparse: deferred_reparse_start_index = 0 and deferred_reparse_end_index = 0 and deferred_reparse_scan_index = 0
+			no_ready_plain_start_tag: ready_plain_start_tag_start_index = 0 and ready_plain_start_tag_end_index = 0
+			no_accounting: accounting_direct_count = 0 and accounting_indirect_count = 0 and accounting_external_child_count = 0
+		end
+
+	merge_accounting_from (a_child: XP_NATIVE_PARSER): BOOLEAN
+			-- Add completed external entity child accounting into Current.
+		require
+			child_attached: a_child /= Void
+		do
+			accounting_external_child_count := accounting_external_child_count + a_child.accounting_direct_count + a_child.accounting_indirect_count
+			accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
+			Result := True
+		ensure
+			merged: Result
 		end
 
 feature -- Parsing
@@ -654,9 +717,13 @@ feature -- Parsing
 			l_ok: BOOLEAN
 			l_input: detachable STRING_8
 			l_parse_input: STRING_8
+			l_context_input: STRING_8
 			l_defer_callbacks: BOOLEAN
+			l_direct_callback_count: INTEGER
+			l_ready_end: INTEGER
 		do
 			final_buffer := a_is_final
+			accounting_direct_count := accounting_direct_count + a_input.count
 			if has_unsupported_explicit_encoding and then explicit_encoding_overrides_declaration and then not native_unknown_encoding_handler_available then
 				last_error_code := Xml_error_unknown_encoding
 				parsing_status := Xml_finished
@@ -679,7 +746,6 @@ feature -- Parsing
 					if namespace_mode then
 						parser.set_return_ns_triplet (native_return_ns_triplet (native_parser_handle))
 					end
-					create context_buffer.make (input_buffer)
 					l_input := decoded_input (input_buffer)
 					if l_input = Void then
 						Result := Xml_status_error
@@ -687,33 +753,66 @@ feature -- Parsing
 						l_defer_callbacks := should_defer_reparse_callbacks (l_input, a_is_final)
 						if l_defer_callbacks and then deferred_reparse_start_index > 1 then
 							l_parse_input := l_input.substring (1, deferred_reparse_start_index - 1)
+							l_context_input := input_buffer.substring (1, deferred_reparse_start_index - 1)
 						elseif l_defer_callbacks then
 							create l_parse_input.make_empty
+							create l_context_input.make_empty
 						else
 							l_parse_input := l_input
+							l_context_input := input_buffer
 						end
-						if l_defer_callbacks then
-							handler.prepare_callback_replay (delivered_callback_count)
-						else
-							handler.prepare_callback_replay (delivered_callback_count)
+						handler.prepare_callback_replay (delivered_callback_count)
+						if
+							not l_defer_callbacks
+							and then ready_plain_start_tag_start_index = 0
+							and then delivered_callback_count = 0
+							and then l_input.count > 0
+							and then l_input.item (1) = '<'
+						then
+							l_ready_end := parser.markup_prefix_end (l_input, 1)
+							if l_ready_end > 0 and then is_plain_completed_start_tag (l_input, 1, l_ready_end) then
+								ready_plain_start_tag_start_index := 1
+								ready_plain_start_tag_end_index := l_ready_end
+							end
 						end
-						if is_external_entity_parser and then external_entity_is_parameter then
-							if a_is_final then
-								l_ok := parser.parse_external_subset_with_context (l_parse_input, external_entity_context)
-							else
-								l_ok := parser.parse_external_subset_prefix (l_parse_input)
-							end
-						elseif is_external_entity_parser then
-							if a_is_final then
-								l_ok := parser.parse_external_entity (l_parse_input)
-							else
-								l_ok := parser.parse_prefix (l_parse_input)
+						if can_emit_ready_plain_start_tag_directly then
+							create context_buffer.make ("")
+							l_ok := emit_ready_plain_start_tag_directly (l_input)
+							if l_ok then
+								l_direct_callback_count := 1
 							end
 						else
-							if a_is_final then
-								l_ok := parser.parse (l_parse_input)
+							create context_buffer.make (l_context_input)
+						end
+						if l_direct_callback_count = 0 then
+							if is_external_entity_parser and then external_entity_is_parameter then
+								if a_is_final then
+									if external_entity_is_parameter_literal then
+										l_ok := parser.parse_external_parameter_literal_with_context (l_parse_input, external_entity_context)
+									else
+										l_ok := parser.parse_external_subset_with_context (l_parse_input, external_entity_context)
+									end
+								else
+									if external_entity_is_parameter_literal then
+										l_ok := True
+									elseif l_input.has_substring ("<![") or else l_input.has_substring ("%%") then
+										l_ok := True
+									else
+										l_ok := parser.parse_external_subset_prefix (l_parse_input)
+									end
+								end
+							elseif is_external_entity_parser then
+								if a_is_final then
+									l_ok := parser.parse_external_entity (l_parse_input)
+								else
+									l_ok := True
+								end
 							else
-								l_ok := parser.parse_prefix (l_parse_input)
+								if a_is_final then
+									l_ok := parser.parse (l_parse_input)
+								else
+									l_ok := parser.parse_prefix (l_parse_input)
+								end
 							end
 						end
 						if l_ok then
@@ -738,8 +837,16 @@ feature -- Parsing
 						delivered_callback_count := handler.last_suspending_callback_index
 					elseif Result = Xml_status_ok and not a_is_final then
 						parsing_status := Xml_parsing
-						delivered_callback_count := handler.callback_sequence_count
+						if l_direct_callback_count > 0 then
+							delivered_callback_count := delivered_callback_count + l_direct_callback_count
+						else
+							delivered_callback_count := handler.callback_sequence_count
+						end
+						accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
 					else
+						if Result = Xml_status_ok then
+							accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
+						end
 						handler.finish_successful_parse_callbacks
 						parsing_status := Xml_finished
 						input_buffer.wipe_out
@@ -800,36 +907,224 @@ feature {NONE} -- Encoding
 			l_token_length: INTEGER
 			l_bytes_after_token: INTEGER
 		do
+			ready_plain_start_tag_start_index := 0
+			ready_plain_start_tag_end_index := 0
 			if a_is_final or else not native_reparse_deferral_enabled (native_parser_handle) then
-				deferred_reparse_start_index := 0
-				deferred_reparse_end_index := 0
+				clear_deferred_reparse
 			else
 				if deferred_reparse_start_index = 0 then
-					l_start := parser.incomplete_markup_prefix_start (a_input)
-					if l_start > 0 then
-						deferred_reparse_start_index := l_start
+					if delivered_callback_count = 0 and then a_input.count > 0 and then is_deferred_start_tag_prefix (a_input, 1) then
+						deferred_reparse_start_index := 1
+					else
+						l_start := parser.incomplete_markup_prefix_start (a_input)
+						if l_start > 0 then
+							deferred_reparse_start_index := l_start
+						end
+					end
+					if deferred_reparse_start_index > 0 then
 						deferred_reparse_end_index := 0
+						deferred_reparse_scan_index := 0
+						deferred_reparse_scan_in_quote := False
+						deferred_reparse_scan_quote := '%U'
 					end
 				end
 				if deferred_reparse_start_index > 0 then
-					l_end := parser.markup_prefix_end (a_input, deferred_reparse_start_index)
+					if deferred_reparse_end_index > 0 then
+						l_end := deferred_reparse_end_index
+					elseif is_deferred_start_tag_prefix (a_input, deferred_reparse_start_index) then
+						l_end := incremental_deferred_start_tag_end (a_input)
+					else
+						l_end := parser.markup_prefix_end (a_input, deferred_reparse_start_index)
+					end
 					if l_end = 0 then
 						Result := True
 					else
 						if deferred_reparse_end_index = 0 then
 							deferred_reparse_end_index := l_end
 						end
-						l_token_length := deferred_reparse_end_index - deferred_reparse_start_index + 1
-						l_bytes_after_token := a_input.count - deferred_reparse_end_index
-						if l_bytes_after_token < l_token_length then
-							Result := True
+						if is_plain_completed_start_tag (a_input, deferred_reparse_start_index, deferred_reparse_end_index) then
+							ready_plain_start_tag_start_index := deferred_reparse_start_index
+							ready_plain_start_tag_end_index := deferred_reparse_end_index
+							clear_deferred_reparse
 						else
-							deferred_reparse_start_index := 0
-							deferred_reparse_end_index := 0
+							l_token_length := deferred_reparse_end_index - deferred_reparse_start_index + 1
+							l_bytes_after_token := a_input.count - deferred_reparse_end_index
+							if l_bytes_after_token < l_token_length then
+								Result := True
+							else
+								clear_deferred_reparse
+							end
 						end
 					end
 				end
 			end
+		end
+
+	clear_deferred_reparse
+			-- Forget any delayed token and incremental scan state.
+		do
+			deferred_reparse_start_index := 0
+			deferred_reparse_end_index := 0
+			deferred_reparse_scan_index := 0
+			deferred_reparse_scan_in_quote := False
+			deferred_reparse_scan_quote := '%U'
+		ensure
+			cleared: deferred_reparse_start_index = 0 and deferred_reparse_end_index = 0 and deferred_reparse_scan_index = 0
+		end
+
+	can_emit_ready_plain_start_tag_directly: BOOLEAN
+			-- Can the completed plain start tag be emitted without a full parser replay?
+		do
+			Result :=
+				ready_plain_start_tag_start_index > 0
+				and then ready_plain_start_tag_end_index >= ready_plain_start_tag_start_index
+				and then not namespace_mode
+				and then not is_external_entity_parser
+				and then native_has_start_element_handler (native_parser_handle)
+				and then not native_has_character_or_default_handler (native_parser_handle)
+		end
+
+	emit_ready_plain_start_tag_directly (a_input: READABLE_STRING_8): BOOLEAN
+			-- Emit the ready attribute-free start tag through the native handler.
+		require
+			input_attached: a_input /= Void
+			ready: can_emit_ready_plain_start_tag_directly
+		local
+			i: INTEGER
+			l_name_start: INTEGER
+			l_name: STRING_8
+			l_attributes: XP_ATTRIBUTES
+		do
+			create l_attributes.make
+			i := ready_plain_start_tag_start_index + 1
+			l_name_start := i
+			from
+				i := i + 1
+			until
+				i > ready_plain_start_tag_end_index or else not l_attributes.is_name_character (a_input.item (i))
+			loop
+				i := i + 1
+			variant
+				ready_plain_start_tag_end_index - i + 1
+			end
+			create l_name.make_from_string (a_input.substring (l_name_start, i - 1))
+			handler.prepare_callback_replay (0)
+			handler.on_start_element (l_name, l_attributes)
+			Result := not handler.stop_requested
+			ready_plain_start_tag_start_index := 0
+			ready_plain_start_tag_end_index := 0
+		ensure
+			ready_consumed: ready_plain_start_tag_start_index = 0 and ready_plain_start_tag_end_index = 0
+		end
+
+	is_deferred_start_tag_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+			-- Does the deferred token look like a normal start tag?
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+		do
+			Result :=
+				a_input.item (a_start_index) = '<'
+				and then a_start_index + 1 <= a_input.count
+				and then a_input.item (a_start_index + 1) /= '/'
+				and then a_input.item (a_start_index + 1) /= '!'
+				and then a_input.item (a_start_index + 1) /= '?'
+		end
+
+	incremental_deferred_start_tag_end (a_input: READABLE_STRING_8): INTEGER
+			-- End index of the deferred start tag, scanning only bytes not checked before.
+		require
+			input_attached: a_input /= Void
+			has_deferred_token: deferred_reparse_start_index >= 1 and deferred_reparse_start_index <= a_input.count
+		local
+			i: INTEGER
+			c: CHARACTER_8
+		do
+			if deferred_reparse_scan_index <= deferred_reparse_start_index then
+				deferred_reparse_scan_index := deferred_reparse_start_index + 1
+				deferred_reparse_scan_in_quote := False
+				deferred_reparse_scan_quote := '%U'
+			end
+			from
+				i := deferred_reparse_scan_index
+			until
+				i > a_input.count or Result > 0
+			loop
+				c := a_input.item (i)
+				if deferred_reparse_scan_in_quote then
+					if c = deferred_reparse_scan_quote then
+						deferred_reparse_scan_in_quote := False
+					end
+				elseif is_reparse_tag_quote (c) then
+					deferred_reparse_scan_in_quote := True
+					deferred_reparse_scan_quote := c
+				elseif c = '>' then
+					Result := i
+				end
+				i := i + 1
+			variant
+				a_input.count - i + 1
+			end
+			deferred_reparse_scan_index := i
+		ensure
+			result_in_bounds: Result >= 0 and Result <= a_input.count
+		end
+
+	is_plain_completed_start_tag (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): BOOLEAN
+			-- Is the completed token a start tag that contains only its name and whitespace?
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			valid_end: a_end_index >= a_start_index and a_end_index <= a_input.count
+		local
+			i: INTEGER
+			l_attributes: XP_ATTRIBUTES
+		do
+			if
+				a_input.item (a_start_index) = '<'
+				and then a_start_index + 1 <= a_end_index
+				and then a_input.item (a_start_index + 1) /= '/'
+				and then a_input.item (a_start_index + 1) /= '!'
+				and then a_input.item (a_start_index + 1) /= '?'
+			then
+				create l_attributes.make
+				i := a_start_index + 1
+				if l_attributes.is_name_start_character (a_input.item (i)) then
+					from
+						i := i + 1
+					until
+						i > a_end_index or else not l_attributes.is_name_character (a_input.item (i))
+					loop
+						i := i + 1
+					variant
+						a_end_index - i + 1
+					end
+					from
+					until
+						i > a_end_index or else not is_reparse_tag_space (a_input.item (i))
+					loop
+						i := i + 1
+					variant
+						a_end_index - i + 1
+					end
+					if i <= a_end_index and then a_input.item (i) = '/' then
+						i := i + 1
+					end
+					Result := i = a_end_index and then a_input.item (i) = '>'
+				end
+			end
+		end
+
+	is_reparse_tag_space (a_character: CHARACTER_8): BOOLEAN
+			-- Is `a_character' XML whitespace inside a deferred start tag?
+		do
+			Result := a_character = ' ' or else a_character = '%T' or else a_character = '%N' or else a_character = '%R'
+		end
+
+	is_reparse_tag_quote (a_character: CHARACTER_8): BOOLEAN
+			-- Is `a_character' an XML attribute quote?
+		do
+			Result := a_character = '%"' or else a_character = '%''
 		end
 
 	is_supported_explicit_encoding (a_encoding: READABLE_STRING_8): BOOLEAN
@@ -879,7 +1174,7 @@ feature {NONE} -- Encoding
 					elseif is_ascii_encoding_name (l_encoding) then
 						Result := decoded_ascii_input (a_input)
 					elseif is_utf8_encoding_name (l_encoding) then
-						create Result.make_from_string (a_input)
+						Result := same_or_copied_input (a_input)
 					elseif native_unknown_encoding_handler_available then
 						Result := decoded_unknown_encoding_input (a_input, l_encoding)
 					else
@@ -890,7 +1185,7 @@ feature {NONE} -- Encoding
 				elseif attached explicit_encoding as l_initial_encoding then
 					Result := decoded_input_with_encoding (a_input, l_initial_encoding)
 				else
-					create Result.make_from_string (a_input)
+					Result := same_or_copied_input (a_input)
 				end
 			end
 		end
@@ -918,12 +1213,27 @@ feature {NONE} -- Encoding
 					last_error_code := Xml_error_incorrect_encoding
 				end
 			elseif is_utf8_encoding_name (a_encoding) then
-				create Result.make_from_string (a_input)
+				Result := same_or_copied_input (a_input)
 			elseif native_unknown_encoding_handler_available then
 				Result := decoded_unknown_encoding_input (a_input, a_encoding)
 			else
 				last_error_code := Xml_error_unknown_encoding
 			end
+		end
+
+	same_or_copied_input (a_input: READABLE_STRING_8): STRING_8
+			-- `a_input' as a mutable UTF-8 string without copying when already stored that way.
+		require
+			input_attached: a_input /= Void
+		do
+			if attached {STRING_8} a_input as l_input then
+				Result := l_input
+			else
+				create Result.make_from_string (a_input)
+			end
+		ensure
+			result_attached: Result /= Void
+			same_text: Result.same_string (a_input)
 		end
 
 	declared_xml_encoding (a_input: READABLE_STRING_8): detachable STRING_8
@@ -1286,10 +1596,14 @@ feature {NONE} -- Encoding
 			input_attached: a_input /= Void
 		do
 			Result :=
-				a_input.has_substring ("encoding='utf-16'")
-				or else a_input.has_substring ("encoding=%"utf-16%"")
-				or else a_input.has_substring ("encoding='UTF-16'")
-				or else a_input.has_substring ("encoding=%"UTF-16%"")
+				a_input.count >= 5
+				and then a_input.substring (1, 5).same_string ("<?xml")
+				and then (
+					a_input.has_substring ("encoding='utf-16'")
+					or else a_input.has_substring ("encoding=%"utf-16%"")
+					or else a_input.has_substring ("encoding='UTF-16'")
+					or else a_input.has_substring ("encoding=%"UTF-16%"")
+				)
 		end
 
 	explicit_encoding_is_utf16: BOOLEAN
@@ -1599,6 +1913,22 @@ feature {NONE} -- Native helpers
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->reparseDeferralEnabled ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	native_has_start_element_handler (a_parser: POINTER): BOOLEAN
+			-- Does native parser `a_parser' have a start-element callback?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->startElementHandler != 0 ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	native_has_character_or_default_handler (a_parser: POINTER): BOOLEAN
+			-- Does native parser `a_parser' need character/default text callbacks?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 && (((struct XML_ParserStruct *) $a_parser)->characterDataHandler != 0 || ((struct XML_ParserStruct *) $a_parser)->defaultHandler != 0) ? EIF_TRUE : EIF_FALSE;"
 		end
 
 	native_amplification_limit_breached (a_parser: POINTER; a_byte_count: INTEGER; a_amplification: REAL_32): BOOLEAN
