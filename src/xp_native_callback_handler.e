@@ -584,7 +584,9 @@ feature -- Events
 				if character_data_callback /= default_pointer then
 					create l_text.make (a_text)
 					remember_default_text (a_text)
+					set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
 					call_character_data_callback (character_data_callback, user_data, l_text.item, a_text.count)
+					set_native_active_callback_kind (native_parser_handle, Native_callback_none)
 					forget_default_text
 				end
 			end
@@ -1369,6 +1371,20 @@ feature {NONE} -- Native callback calls
 		alias
 			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->stopResumable ? EIF_TRUE : EIF_FALSE;"
 		end
+
+	set_native_active_callback_kind (a_parser: POINTER; a_kind: INTEGER)
+			-- Record the native callback kind currently dispatching.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"if ($a_parser != 0) { ((struct XML_ParserStruct *) $a_parser)->activeCallbackKind = (int) $a_kind; }"
+		end
+
+	Native_callback_none: INTEGER = 0
+			-- No native callback is currently dispatching.
+
+	Native_callback_character_data: INTEGER = 1
+			-- Native character-data callback is currently dispatching.
 
 	native_start_namespace_decl_callback (a_parser: POINTER): POINTER
 			-- Native parser's namespace-start callback slot.

@@ -4,8 +4,6 @@ alloc_tests.c	test_alloc_*	Upstream allocation-failure injection exercises C all
 nsalloc_tests.c	test_nsalloc_*	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
 basic_tests.c	test_ext_entity_invalid_suspended_parse	Stop/suspend external entity fault handling is not implemented.
 basic_tests.c	test_subordinate_suspend	Subordinate parser suspension fault handling is not implemented.
-basic_tests.c	test_resume_invalid_parse	True resume continuation is not implemented.
-basic_tests.c	test_resume_resuspended	True resume continuation and resuspension are not implemented.
 basic_tests.c	test_suspend_resume_internal_entity	True resume continuation through internal entity expansion is not implemented.
 basic_tests.c	test_suspend_resume_internal_entity_issue_629	True resume continuation through internal entity expansion is not implemented.
 basic_tests.c	test_resume_entity_with_syntax_error	True resume continuation through entity syntax errors is not implemented.
@@ -13,7 +11,8 @@ basic_tests.c	test_suspend_resume_parameter_entity	True resume continuation thro
 basic_tests.c	test_nested_entity_suspend	True resume continuation through nested entity expansion is not implemented.
 basic_tests.c	test_nested_entity_suspend_2	True resume continuation through nested entity expansion is not implemented.
 basic_tests.c	test_siphash*	Hash collision/salt behavior is link-compatible but not libexpat-equivalent.
-basic_tests.c	test_set_reparse_deferral*	Reparse deferral setters are link-compatible but do not implement upstream behavior.
+basic_tests.c	test_set_reparse_deferral	Streaming reparse deferral behavior is not implemented.
+basic_tests.c	test_set_reparse_deferral_on_the_fly	Streaming reparse deferral behavior is not implemented.
 basic_tests.c	test_reparse*	Reparse deferral behavior is not implemented.
 basic_tests.c	test_bypass_heuristic_when_close_to_bufsize	Reparse deferral/buffer heuristic behavior is not implemented.
 basic_tests.c	test_varying_buffer_fills	Reparse deferral/buffer heuristic behavior is not implemented.

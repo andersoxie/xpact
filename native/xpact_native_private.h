@@ -59,7 +59,12 @@ struct XML_ParserStruct {
 	int externalChildParseCount;
 	XML_Bool stopRequested;
 	XML_Bool stopResumable;
+	int activeCallbackKind;
+	int stopCallbackKind;
 };
+
+#define XPACT_CALLBACK_NONE 0
+#define XPACT_CALLBACK_CHARACTER_DATA 1
 
 static XML_Bool
 xp_private_append_utf8(char **buffer, int *length, int *capacity, int codepoint) {

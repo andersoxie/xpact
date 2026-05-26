@@ -62,6 +62,7 @@ static void xp_clear_stop_state(XML_Parser parser) {
 	if (parser != NULL) {
 		parser->stopRequested = XML_FALSE;
 		parser->stopResumable = XML_FALSE;
+		parser->stopCallbackKind = XPACT_CALLBACK_NONE;
 	}
 }
 
@@ -763,6 +764,7 @@ XML_StopParser(XML_Parser parser, XML_Bool resumable) {
 	}
 	parser->stopRequested = XML_TRUE;
 	parser->stopResumable = resumable ? XML_TRUE : XML_FALSE;
+	parser->stopCallbackKind = parser->activeCallbackKind;
 	if (resumable) {
 		parser->parsing = XML_SUSPENDED;
 		xp_set_error(parser, XML_ERROR_NONE);
@@ -775,6 +777,9 @@ XML_StopParser(XML_Parser parser, XML_Bool resumable) {
 
 enum XML_Status XMLCALL
 XML_ResumeParser(XML_Parser parser) {
+	enum XML_Status status;
+	int stopCallbackKind;
+	static const char empty_input[] = "";
 	if (parser == NULL) {
 		return XML_STATUS_ERROR;
 	}
@@ -782,10 +787,36 @@ XML_ResumeParser(XML_Parser parser) {
 		xp_set_error(parser, XML_ERROR_NOT_SUSPENDED);
 		return XML_STATUS_ERROR;
 	}
+	if (parser->bridge == NULL || parser->bridge->parse == NULL || parser->eiffelParser == NULL) {
+		parser->parsing = XML_FINISHED;
+		xp_set_error(parser, XML_ERROR_NOT_STARTED);
+		return XML_STATUS_ERROR;
+	}
+	stopCallbackKind = parser->stopCallbackKind;
 	xp_clear_stop_state(parser);
-	parser->parsing = XML_FINISHED;
+	if (stopCallbackKind != XPACT_CALLBACK_CHARACTER_DATA) {
+		parser->parsing = XML_FINISHED;
+		parser->errorCode = XML_ERROR_NONE;
+		return XML_STATUS_OK;
+	}
+	parser->parsing = XML_PARSING;
 	parser->errorCode = XML_ERROR_NONE;
-	return XML_STATUS_OK;
+	status = parser->bridge->parse(
+		parser->bridge->context,
+		parser->eiffelParser,
+		empty_input,
+		0,
+		parser->finalBuffer
+	);
+	status = xp_finish_external_child_parse(parser, status, 0, parser->finalBuffer);
+	if (status == XML_STATUS_SUSPENDED) {
+		parser->parsing = XML_SUSPENDED;
+	} else if (status == XML_STATUS_OK && !parser->finalBuffer) {
+		parser->parsing = XML_PARSING;
+	} else {
+		parser->parsing = XML_FINISHED;
+	}
+	return status;
 }
 
 void XMLCALL
@@ -1186,7 +1217,9 @@ XML_SetAllocTrackerActivationThreshold(XML_Parser parser, unsigned long long act
 
 XML_Bool XMLCALL
 XML_SetReparseDeferralEnabled(XML_Parser parser, XML_Bool enabled) {
-	(void)parser;
 	(void)enabled;
+	if (parser == NULL) {
+		return XML_FALSE;
+	}
 	return XML_TRUE;
 }
