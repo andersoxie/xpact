@@ -65,6 +65,9 @@ feature -- Parser lifecycle callbacks
 			l_status: INTEGER
 		do
 			create l_parser.make
+			if a_namespace_separator /= default_pointer then
+				l_parser.set_namespace_mode (character_at (a_namespace_separator))
+			end
 			if a_encoding /= default_pointer then
 				l_status := l_parser.set_initial_encoding (a_encoding)
 			end
@@ -520,6 +523,16 @@ feature {NONE} -- Native helpers
 			"C inline use <stdint.h>"
 		alias
 			"return (EIF_INTEGER) (uintptr_t) $a_pointer;"
+		end
+
+	character_at (a_pointer: POINTER): CHARACTER_8
+			-- C `XML_Char' byte at `a_pointer'.
+		require
+			pointer_attached: a_pointer /= default_pointer
+		external
+			"C inline"
+		alias
+			"return (EIF_CHARACTER_8) *((char *) $a_pointer);"
 		end
 
 	put_parsing_status (a_status: POINTER; a_parsing: INTEGER; a_final: BOOLEAN)

@@ -18,7 +18,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 143 named upstream tests in the downloaded
+expected-failure patterns expand to 110 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint.
 
 ## Green Rows
@@ -175,13 +175,19 @@ The Windows release has green evidence for:
   declaration abort inside external entity child parsers, line-feed epilog
   abort/suspend, empty-element abort/suspend, and the misc stop/resume
   no-crash and unstarted-stop rejection cases.
+- namespace parsing now passes through the Eiffel-owned tokenizer and bridge,
+  including namespace declaration callbacks, expanded names, return triplets,
+  defaulted namespace attributes from DTD ATTLIST declarations, reserved prefix
+  and namespace URI diagnostics, unbound-prefix diagnostics, long prefixes, and
+  namespace-aware DOCTYPE/root-name matching.
 
 ## Red Rows
 
 The red rows are specific remaining parity gaps, not a suite-wide failure:
 
-- namespace parsing and namespace callback semantics;
-- allocation-failure injection and allocation accounting tests;
+- C allocator hook failure-injection tests, which exercise libexpat's manual
+  allocation contract rather than Eiffel-owned parser storage;
+- allocation accounting tests;
 - remaining subordinate parser suspension fault handling;
 - remaining external DTD encoding diagnostics and default-handler edge cases;
 - DTD default-handler replay and default-current edge cases;

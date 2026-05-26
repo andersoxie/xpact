@@ -145,6 +145,10 @@ XML_ParserCreate_MM(
 	parser->errorCode = XML_ERROR_NONE;
 	parser->parsing = XML_INITIALIZED;
 	parser->bridge = xp_bridge;
+	if (namespaceSeparator != NULL) {
+		parser->hasNamespaceSeparator = XML_TRUE;
+		parser->namespaceSeparator = *namespaceSeparator;
+	}
 
 	if (parser->bridge != NULL && parser->bridge->parser_create != NULL) {
 		parser->eiffelParser = parser->bridge->parser_create(
@@ -180,6 +184,7 @@ XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
 	parser->nextExternalEntityIsParameter = XML_FALSE;
 	parser->externalEntityIsParameter = XML_FALSE;
 	parser->externalChildParseCount = 0;
+	parser->returnNsTriplet = XML_FALSE;
 	xp_clear_stop_state(parser);
 	if (parser->bridge != NULL && parser->bridge->parser_reset != NULL && parser->eiffelParser != NULL) {
 		XML_Bool result = parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
@@ -469,11 +474,6 @@ XML_SetSkippedEntityHandler(XML_Parser parser, XML_SkippedEntityHandler handler)
 	}
 }
 
-#define XPACT_UNUSED_HANDLER_SETTER(name, type) \
-	void XMLCALL name(XML_Parser parser, type handler) { (void)parser; (void)handler; }
-
-XPACT_UNUSED_HANDLER_SETTER(XML_SetStartNamespaceDeclHandler, XML_StartNamespaceDeclHandler)
-XPACT_UNUSED_HANDLER_SETTER(XML_SetEndNamespaceDeclHandler, XML_EndNamespaceDeclHandler)
 void XMLCALL
 XML_SetNotStandaloneHandler(XML_Parser parser, XML_NotStandaloneHandler handler) {
 	if (parser == NULL) {
@@ -491,9 +491,27 @@ XML_SetNamespaceDeclHandler(
 	XML_StartNamespaceDeclHandler start,
 	XML_EndNamespaceDeclHandler end
 ) {
-	(void)parser;
-	(void)start;
-	(void)end;
+	if (parser == NULL) {
+		return;
+	}
+	parser->startNamespaceDeclHandler = start;
+	parser->endNamespaceDeclHandler = end;
+}
+
+void XMLCALL
+XML_SetStartNamespaceDeclHandler(XML_Parser parser, XML_StartNamespaceDeclHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->startNamespaceDeclHandler = handler;
+}
+
+void XMLCALL
+XML_SetEndNamespaceDeclHandler(XML_Parser parser, XML_EndNamespaceDeclHandler handler) {
+	if (parser == NULL) {
+		return;
+	}
+	parser->endNamespaceDeclHandler = handler;
 }
 
 void XMLCALL
@@ -519,8 +537,10 @@ XML_DefaultCurrent(XML_Parser parser) {
 
 void XMLCALL
 XML_SetReturnNSTriplet(XML_Parser parser, int do_nst) {
-	(void)parser;
-	(void)do_nst;
+	if (parser == NULL || parser->parsing == XML_PARSING) {
+		return;
+	}
+	parser->returnNsTriplet = do_nst ? XML_TRUE : XML_FALSE;
 }
 
 enum XML_Status XMLCALL
@@ -644,7 +664,13 @@ XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 	parser->parsing = XML_PARSING;
 	status = parser->bridge->parse(parser->bridge->context, parser->eiffelParser, s, len, isFinal);
 	status = xp_finish_external_child_parse(parser, status, len, isFinal);
-	parser->parsing = (status == XML_STATUS_SUSPENDED) ? XML_SUSPENDED : XML_FINISHED;
+	if (status == XML_STATUS_SUSPENDED) {
+		parser->parsing = XML_SUSPENDED;
+	} else if (status == XML_STATUS_OK && !isFinal) {
+		parser->parsing = XML_PARSING;
+	} else {
+		parser->parsing = XML_FINISHED;
+	}
 	parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
 	return status;
 }
@@ -688,7 +714,13 @@ XML_ParseBuffer(XML_Parser parser, int len, int isFinal) {
 		parser->parsing = XML_PARSING;
 		status = parser->bridge->parse_buffer(parser->bridge->context, parser->eiffelParser, len, isFinal);
 		status = xp_finish_external_child_parse(parser, status, len, isFinal);
-		parser->parsing = (status == XML_STATUS_SUSPENDED) ? XML_SUSPENDED : XML_FINISHED;
+		if (status == XML_STATUS_SUSPENDED) {
+			parser->parsing = XML_SUSPENDED;
+		} else if (status == XML_STATUS_OK && !isFinal) {
+			parser->parsing = XML_PARSING;
+		} else {
+			parser->parsing = XML_FINISHED;
+		}
 		parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
 		return status;
 	}

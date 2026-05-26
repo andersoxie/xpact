@@ -41,6 +41,11 @@ struct XML_ParserStruct {
 	void *externalEntityRefArg;
 	XML_Bool hasExternalEntityRefArg;
 	XML_SkippedEntityHandler skippedEntityHandler;
+	XML_StartNamespaceDeclHandler startNamespaceDeclHandler;
+	XML_EndNamespaceDeclHandler endNamespaceDeclHandler;
+	XML_Bool hasNamespaceSeparator;
+	XML_Char namespaceSeparator;
+	XML_Bool returnNsTriplet;
 	XML_UnknownEncodingHandler unknownEncodingHandler;
 	void *unknownEncodingHandlerData;
 	XML_Bool useForeignDTD;

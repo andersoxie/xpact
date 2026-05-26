@@ -40,8 +40,8 @@ feature -- Events
 			-- A start element was parsed.
 		require
 			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
 			attributes_attached: a_attributes /= Void
-			valid_name: a_attributes.is_valid_name (a_name)
 		deferred
 		end
 
@@ -49,7 +49,20 @@ feature -- Events
 			-- An end element was parsed.
 		require
 			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
 		deferred
+		end
+
+	on_start_namespace_decl (a_prefix: detachable READABLE_STRING_8; a_uri: READABLE_STRING_8)
+			-- Namespace declaration came into scope.
+		require
+			uri_attached: a_uri /= Void
+		do
+		end
+
+	on_end_namespace_decl (a_prefix: detachable READABLE_STRING_8)
+			-- Namespace declaration went out of scope.
+		do
 		end
 
 	on_character_data (a_text: READABLE_STRING_8)

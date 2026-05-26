@@ -19,6 +19,7 @@ feature {NONE} -- Initialization
 		require
 			handler_attached: a_handler /= Void
 		do
+			is_initialized := False
 			handler := a_handler
 			max_input_bytes := Default_max_input_bytes
 			max_element_depth := Default_max_element_depth
@@ -33,6 +34,8 @@ feature {NONE} -- Initialization
 			create external_entity_table.make (4)
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
+			create namespace_context_stack.make (8)
+			create namespace_declaration_stack.make (8)
 			create last_error.make_empty
 			create doctype_name.make_empty
 			create position_input.make_empty
@@ -54,6 +57,7 @@ feature {NONE} -- Initialization
 			attribute_limit_positive: a_max_attribute_count > 0
 			token_limit_positive: a_max_token_length > 0
 		do
+			is_initialized := False
 			handler := a_handler
 			max_input_bytes := a_max_input_bytes
 			max_element_depth := a_max_element_depth
@@ -68,6 +72,8 @@ feature {NONE} -- Initialization
 			create external_entity_table.make (4)
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
+			create namespace_context_stack.make (8)
+			create namespace_declaration_stack.make (8)
 			create last_error.make_empty
 			create doctype_name.make_empty
 			create position_input.make_empty
@@ -126,7 +132,35 @@ feature -- Access
 	parsing_external_entity: BOOLEAN
 			-- Is the active parse for an external parsed entity fragment?
 
+	namespace_mode: BOOLEAN
+			-- Should qualified names be resolved using XML namespace declarations?
+
+	namespace_separator: CHARACTER_8
+			-- Separator used in expanded namespace names.
+
+	return_ns_triplet: BOOLEAN
+			-- Should expanded names include the original prefix as a third field?
+
 feature -- Configuration
+
+	set_namespace_mode (a_separator: CHARACTER_8)
+			-- Enable XML namespace expansion using `a_separator'.
+		do
+			namespace_mode := True
+			namespace_separator := a_separator
+			reset_namespace_context
+		ensure
+			namespace_enabled: namespace_mode
+			separator_set: namespace_separator = a_separator
+		end
+
+	set_return_ns_triplet (a_enabled: BOOLEAN)
+			-- Control Expat-compatible namespace triplet output.
+		do
+			return_ns_triplet := a_enabled
+		ensure
+			value_set: return_ns_triplet = a_enabled
+		end
 
 	set_external_entity_policy (a_policy: INTEGER)
 			-- Set external entity loading policy.
@@ -461,28 +495,34 @@ feature {NONE} -- Markup parsing
 					Result := a_input.count + 1
 				else
 					create l_name.make_from_string (a_input.substring (name_start, i - 1))
-					if element_stack.count = 0 and then document_element_count = 0 and then not parsing_external_entity then
+					if namespace_mode and then not is_valid_qualified_name (l_name) then
+						set_error ("invalid namespace name")
+						Result := a_input.count + 1
+					end
+					if not has_error and then element_stack.count = 0 and then document_element_count = 0 and then not parsing_external_entity then
 						include_foreign_dtd_if_needed (l_name)
 					end
-					i := skip_spaces (a_input, i)
-					from
-					invariant
-						index_in_bounds: i >= 1 and i <= a_input.count + 1
-						attributes_within_limit: l_attributes.count <= max_attribute_count
-					until
-						has_error or is_suspended or i > a_input.count or else a_input.item (i) = '>' or else a_input.item (i) = '/'
-					loop
-						if l_attributes.count >= max_attribute_count then
-							set_error ("attribute count exceeds limit")
-							i := a_input.count + 1
-						else
-							i := parse_attribute (a_input, i, l_attributes)
-							if not has_error then
-								i := skip_spaces (a_input, i)
+					if not has_error then
+						i := skip_spaces (a_input, i)
+						from
+						invariant
+							index_in_bounds: i >= 1 and i <= a_input.count + 1
+							attributes_within_limit: l_attributes.count <= max_attribute_count
+						until
+							has_error or is_suspended or i > a_input.count or else a_input.item (i) = '>' or else a_input.item (i) = '/'
+						loop
+							if l_attributes.count >= max_attribute_count then
+								set_error ("attribute count exceeds limit")
+								i := a_input.count + 1
+							else
+								i := parse_attribute (a_input, i, l_attributes)
+								if not has_error then
+									i := skip_spaces (a_input, i)
+								end
 							end
+						variant
+							a_input.count - i + 1
 						end
-					variant
-						a_input.count - i + 1
 					end
 					if not has_error and not is_suspended then
 						if i > a_input.count then
@@ -544,8 +584,12 @@ feature {NONE} -- Markup parsing
 					Result := a_input.count + 1
 				else
 					create l_name.make_from_string (a_input.substring (name_start, i - 1))
-					i := skip_spaces (a_input, i)
-					if i <= a_input.count and then a_input.item (i) = '>' then
+					if namespace_mode and then not is_valid_qualified_name (l_name) then
+						set_error ("invalid namespace name")
+						Result := a_input.count + 1
+					else
+						i := skip_spaces (a_input, i)
+						if i <= a_input.count and then a_input.item (i) = '>' then
 						if element_stack.count > 0 and then element_stack.item.same_string (l_name) then
 							note_position (a_start_index)
 						else
@@ -554,10 +598,11 @@ feature {NONE} -- Markup parsing
 						emit_default (a_input.substring (a_start_index, i))
 						close_element (l_name)
 						Result := i + 1
-					else
-						note_position (i)
-						set_error ("unterminated end tag")
-						Result := a_input.count + 1
+						else
+							note_position (i)
+							set_error ("unterminated end tag")
+							Result := a_input.count + 1
+						end
 					end
 				end
 			end
@@ -588,29 +633,34 @@ feature {NONE} -- Markup parsing
 				name_start := i
 				i := scan_name (a_input, i)
 				create l_name.make_from_string (a_input.substring (name_start, i - 1))
-				i := skip_spaces (a_input, i)
-				if i > a_input.count or else a_input.item (i) /= '=' then
-					set_error ("missing attribute equals")
+				if namespace_mode and then not is_valid_qualified_name (l_name) then
+					set_error ("invalid namespace name")
 					Result := a_input.count + 1
 				else
-					i := skip_spaces (a_input, i + 1)
-					if i > a_input.count or else not is_quote (a_input.item (i)) then
-						set_error ("missing attribute quote")
-						Result := a_input.count + 1
+					i := skip_spaces (a_input, i)
+					if i > a_input.count or else a_input.item (i) /= '=' then
+					set_error ("missing attribute equals")
+					Result := a_input.count + 1
 					else
-						l_quote := a_input.item (i)
-						create l_value.make_empty
-						i := parse_attribute_value (a_input, i + 1, l_quote, l_value)
-						if not has_error then
-							if a_attributes.has (l_name) then
-								set_error ("duplicate attribute")
-								Result := a_input.count + 1
-							else
-								a_attributes.put (l_name, l_value)
-								Result := i + 1
-							end
-						else
+						i := skip_spaces (a_input, i + 1)
+						if i > a_input.count or else not is_quote (a_input.item (i)) then
+							set_error ("missing attribute quote")
 							Result := a_input.count + 1
+						else
+							l_quote := a_input.item (i)
+							create l_value.make_empty
+							i := parse_attribute_value (a_input, i + 1, l_quote, l_value)
+							if not has_error then
+								if a_attributes.has (l_name) then
+									set_error ("duplicate attribute")
+									Result := a_input.count + 1
+								else
+									a_attributes.put (l_name, l_value)
+									Result := i + 1
+								end
+							else
+								Result := a_input.count + 1
+							end
 						end
 					end
 				end
@@ -1018,7 +1068,15 @@ feature {NONE} -- Markup parsing
 						i := scan_name (a_input, i)
 						doctype_name.wipe_out
 						doctype_name.append (a_input.substring (name_start, i - 1))
-						has_doctype := True
+						if namespace_mode and then not is_valid_qualified_name (doctype_name) then
+							if has_multiple_colons (doctype_name) then
+								set_error ("namespace syntax")
+							else
+								set_error ("invalid namespace name")
+							end
+						else
+							has_doctype := True
+						end
 						l_subset_start := find_unquoted_character (a_input, '[', i, l_end)
 						if not has_error and then l_subset_start > 0 then
 							l_external_end := l_subset_start
@@ -2777,16 +2835,23 @@ feature {NONE} -- Event dispatch
 		require
 			name_attached: a_name /= Void
 			attributes_attached: a_attributes /= Void
-			valid_name: a_attributes.is_valid_name (a_name)
 			attributes_bounded: a_attributes.count <= max_attribute_count
 		local
 			l_name: STRING_8
+			l_event_name: attached STRING_8
+			l_event_attributes: attached XP_ATTRIBUTES
+			l_namespace_scope: attached HASH_TABLE [STRING_8, STRING_8]
+			l_namespace_prefixes: attached ARRAYED_LIST [STRING_8]
 		do
+			create l_event_name.make_from_string (a_name)
+			l_event_attributes := a_attributes
+			create l_namespace_scope.make (1)
+			create l_namespace_prefixes.make (0)
 			if element_stack.count >= max_element_depth then
 				set_error ("maximum element depth exceeded")
 			elseif element_stack.count = 0 and then document_element_count > 0 and then not parsing_external_entity then
 				set_error ("multiple document elements")
-			elseif element_stack.count = 0 and then not doctype_name.is_empty and then not doctype_name.same_string (a_name) and then not parsing_external_entity then
+			elseif element_stack.count = 0 and then not doctype_name.is_empty and then not doctype_matches_element_name (doctype_name, a_name) and then not parsing_external_entity then
 				set_error ("document element does not match doctype")
 			else
 				if element_stack.count = 0 then
@@ -2794,9 +2859,30 @@ feature {NONE} -- Event dispatch
 				end
 				apply_default_attributes (a_name, a_attributes)
 				if not has_error then
+					if namespace_mode then
+						create l_namespace_prefixes.make (4)
+						l_namespace_scope := namespace_scope_for_element (a_attributes, l_namespace_prefixes)
+						if not has_error then
+							l_event_name := expanded_element_name (a_name, l_namespace_scope)
+						end
+						if not has_error then
+							l_event_attributes := expanded_attributes (a_attributes, l_namespace_scope)
+						end
+					else
+						l_event_attributes := a_attributes
+					end
+				end
+				if not has_error then
 					create l_name.make_from_string (a_name)
 					element_stack.extend (l_name)
-					handler.on_start_element (a_name, a_attributes)
+					if namespace_mode then
+						namespace_context_stack.extend (l_namespace_scope)
+						namespace_declaration_stack.extend (l_namespace_prefixes)
+						emit_start_namespace_declarations (l_namespace_prefixes, l_namespace_scope)
+					end
+				end
+				if not has_error and not is_suspended then
+					handler.on_start_element (l_event_name, l_event_attributes)
 					check_handler_stop
 				end
 			end
@@ -2809,15 +2895,27 @@ feature {NONE} -- Event dispatch
 			-- Pop `a_name' and emit end-element event.
 		require
 			name_attached: a_name /= Void
+		local
+			l_event_name: STRING_8
 		do
 			if element_stack.count = 0 then
 				set_error ("unexpected end tag")
 			elseif not element_stack.item.same_string (a_name) then
 				set_error ("mismatched end tag")
 			else
+				if namespace_mode then
+					l_event_name := expanded_element_name (a_name, namespace_context_stack.item)
+				else
+					create l_event_name.make_from_string (a_name)
+				end
 				element_stack.remove
-				handler.on_end_element (a_name)
-				check_handler_stop
+				if not has_error then
+					handler.on_end_element (l_event_name)
+					check_handler_stop
+				end
+				if namespace_mode then
+					emit_end_namespace_declarations
+				end
 			end
 		ensure
 			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
@@ -2845,6 +2943,396 @@ feature {NONE} -- Event dispatch
 				check_handler_stop
 			end
 		end
+
+feature {NONE} -- Namespace handling
+
+	namespace_scope_for_element (a_attributes: XP_ATTRIBUTES; a_declared_prefixes: ARRAYED_LIST [STRING_8]): HASH_TABLE [STRING_8, STRING_8]
+			-- Namespace bindings in scope for a start tag after applying namespace declarations.
+		require
+			attributes_attached: a_attributes /= Void
+			prefixes_attached: a_declared_prefixes /= Void
+		local
+			i: INTEGER
+			l_name: STRING_8
+			l_value: STRING_8
+			l_prefix: STRING_8
+		do
+			Result := cloned_namespace_scope (namespace_context_stack.item)
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_attributes.count + 1
+			until
+				i > a_attributes.count or has_error
+			loop
+				l_name := a_attributes.i_th_name (i)
+				if is_namespace_declaration_name (l_name) then
+					l_value := a_attributes.i_th_value (i)
+					l_prefix := namespace_declaration_prefix (l_name)
+					validate_namespace_declaration (l_prefix, l_value)
+					if not has_error then
+						Result.force (l_value.twin, l_prefix.twin)
+						a_declared_prefixes.extend (l_prefix.twin)
+					end
+				end
+				i := i + 1
+			variant
+				a_attributes.count - i + 1
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	expanded_attributes (a_attributes: XP_ATTRIBUTES; a_scope: HASH_TABLE [STRING_8, STRING_8]): XP_ATTRIBUTES
+			-- Attribute vector with namespace declarations removed and prefixed names expanded.
+		require
+			attributes_attached: a_attributes /= Void
+			scope_attached: a_scope /= Void
+		local
+			i: INTEGER
+			l_name: STRING_8
+			l_value: STRING_8
+			l_expanded_name: STRING_8
+		do
+			create Result.make
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_attributes.count + 1
+				result_bounded: Result.count <= a_attributes.count
+			until
+				i > a_attributes.count or has_error
+			loop
+				l_name := a_attributes.i_th_name (i)
+				if not is_namespace_declaration_name (l_name) then
+					l_value := a_attributes.i_th_value (i)
+					l_expanded_name := expanded_attribute_name (l_name, a_scope)
+					if not has_error then
+						if Result.has (l_expanded_name) then
+							set_error ("duplicate attribute")
+						else
+							if i <= a_attributes.specified_attribute_count then
+								Result.put (l_expanded_name, l_value)
+							else
+								Result.put_default (l_expanded_name, l_value)
+							end
+							if a_attributes.id_attribute_index = (i - 1) * 2 then
+								Result.mark_id_attribute (l_expanded_name)
+							end
+						end
+					end
+				end
+				i := i + 1
+			variant
+				a_attributes.count - i + 1
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	expanded_element_name (a_name: READABLE_STRING_8; a_scope: HASH_TABLE [STRING_8, STRING_8]): STRING_8
+			-- Element name reported through namespace-aware callbacks.
+		require
+			name_attached: a_name /= Void
+			scope_attached: a_scope /= Void
+		local
+			l_colon: INTEGER
+			l_prefix: STRING_8
+			l_local_name: STRING_8
+		do
+			l_colon := a_name.index_of (':', 1)
+			if l_colon = 0 then
+				if attached a_scope.item ("") as l_uri and then not l_uri.is_empty then
+					create l_prefix.make_empty
+					create l_local_name.make_from_string (a_name)
+					Result := expanded_namespace_name (l_uri, l_local_name, l_prefix)
+				else
+					create Result.make_from_string (a_name)
+				end
+			else
+				create l_prefix.make_from_string (a_name.substring (1, l_colon - 1))
+				create l_local_name.make_from_string (a_name.substring (l_colon + 1, a_name.count))
+				if attached a_scope.item (l_prefix) as l_uri and then not l_uri.is_empty then
+					Result := expanded_namespace_name (l_uri, l_local_name, l_prefix)
+				else
+					set_error ("unbound namespace prefix")
+					create Result.make_from_string (a_name)
+				end
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	expanded_attribute_name (a_name: READABLE_STRING_8; a_scope: HASH_TABLE [STRING_8, STRING_8]): STRING_8
+			-- Attribute name reported through namespace-aware callbacks.
+		require
+			name_attached: a_name /= Void
+			scope_attached: a_scope /= Void
+		local
+			l_colon: INTEGER
+			l_prefix: STRING_8
+			l_local_name: STRING_8
+		do
+			l_colon := a_name.index_of (':', 1)
+			if l_colon = 0 then
+				create Result.make_from_string (a_name)
+			else
+				create l_prefix.make_from_string (a_name.substring (1, l_colon - 1))
+				create l_local_name.make_from_string (a_name.substring (l_colon + 1, a_name.count))
+				if attached a_scope.item (l_prefix) as l_uri and then not l_uri.is_empty then
+					Result := expanded_namespace_name (l_uri, l_local_name, l_prefix)
+				else
+					set_error ("unbound namespace prefix")
+					create Result.make_from_string (a_name)
+				end
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	expanded_namespace_name (a_uri, a_local_name, a_prefix: READABLE_STRING_8): STRING_8
+			-- Expat-style expanded namespace name.
+		require
+			uri_attached: a_uri /= Void
+			uri_not_empty: not a_uri.is_empty
+			local_attached: a_local_name /= Void
+			local_not_empty: not a_local_name.is_empty
+			prefix_attached: a_prefix /= Void
+		do
+			create Result.make (a_uri.count + a_local_name.count + a_prefix.count + 2)
+			Result.append (a_uri)
+			if namespace_separator.code /= 0 then
+				Result.append_character (namespace_separator)
+			end
+			Result.append (a_local_name)
+			if return_ns_triplet and then not a_prefix.is_empty then
+				if namespace_separator.code /= 0 then
+					Result.append_character (namespace_separator)
+				end
+				Result.append (a_prefix)
+			end
+		ensure
+			result_attached: Result /= Void
+			result_not_empty: not Result.is_empty
+		end
+
+	emit_start_namespace_declarations (a_prefixes: ARRAYED_LIST [STRING_8]; a_scope: HASH_TABLE [STRING_8, STRING_8])
+			-- Emit start namespace callbacks for declarations on the current element.
+		require
+			prefixes_attached: a_prefixes /= Void
+			scope_attached: a_scope /= Void
+		local
+			i: INTEGER
+			l_prefix: STRING_8
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_prefixes.count + 1
+			until
+				i > a_prefixes.count or has_error or is_suspended
+			loop
+				l_prefix := a_prefixes.i_th (i)
+				if attached a_scope.item (l_prefix) as l_uri then
+					if l_prefix.is_empty then
+						handler.on_start_namespace_decl (Void, l_uri)
+					else
+						handler.on_start_namespace_decl (l_prefix, l_uri)
+					end
+					check_handler_stop
+				end
+				i := i + 1
+			variant
+				a_prefixes.count - i + 1
+			end
+		end
+
+	emit_end_namespace_declarations
+			-- Emit end namespace callbacks for declarations on the current element and pop its namespace scope.
+		local
+			i: INTEGER
+			l_prefix: STRING_8
+			l_prefixes: ARRAYED_LIST [STRING_8]
+		do
+			if namespace_declaration_stack.count > 0 then
+				l_prefixes := namespace_declaration_stack.item
+				from
+					i := l_prefixes.count
+				invariant
+					index_in_bounds: i >= 0 and i <= l_prefixes.count
+				until
+					i < 1 or has_error or is_suspended
+				loop
+					l_prefix := l_prefixes.i_th (i)
+					if l_prefix.is_empty then
+						handler.on_end_namespace_decl (Void)
+					else
+						handler.on_end_namespace_decl (l_prefix)
+					end
+					check_handler_stop
+					i := i - 1
+				variant
+					i
+				end
+				namespace_declaration_stack.remove
+			end
+			if namespace_context_stack.count > 1 then
+				namespace_context_stack.remove
+			end
+		end
+
+	validate_namespace_declaration (a_prefix, a_uri: READABLE_STRING_8)
+			-- Check XML namespace reserved-prefix and URI rules.
+		require
+			prefix_attached: a_prefix /= Void
+			uri_attached: a_uri /= Void
+		do
+			if a_prefix.same_string ("xmlns") then
+				set_error ("reserved prefix xmlns")
+			elseif a_prefix.same_string ("xml") and then not a_uri.same_string (Xml_namespace_uri) then
+				set_error ("reserved prefix xml")
+			elseif not a_prefix.same_string ("xml") and then (a_uri.same_string (Xml_namespace_uri) or else a_uri.same_string (Xmlns_namespace_uri)) then
+				set_error ("reserved namespace URI")
+			elseif not a_prefix.is_empty and then a_uri.is_empty then
+				set_error ("undeclaring prefix")
+			elseif namespace_uri_contains_forbidden_separator (a_uri) then
+				set_error ("namespace separator in URI")
+			end
+		end
+
+	namespace_uri_contains_forbidden_separator (a_uri: READABLE_STRING_8): BOOLEAN
+			-- Does `a_uri' contain a separator form that Expat rejects?
+		require
+			uri_attached: a_uri /= Void
+		do
+			Result := namespace_separator.code /= 0 and then is_xml_space (namespace_separator) and then a_uri.has (namespace_separator)
+		end
+
+	is_namespace_declaration_name (a_name: READABLE_STRING_8): BOOLEAN
+			-- Is `a_name' an XML namespace declaration attribute name?
+		require
+			name_attached: a_name /= Void
+		do
+			Result := a_name.same_string ("xmlns") or else (a_name.count > 6 and then a_name.substring (1, 6).same_string ("xmlns:"))
+		end
+
+	namespace_declaration_prefix (a_name: READABLE_STRING_8): STRING_8
+			-- Declared namespace prefix, or empty for the default namespace.
+		require
+			declaration_name: is_namespace_declaration_name (a_name)
+		do
+			if a_name.same_string ("xmlns") then
+				create Result.make_empty
+			else
+				create Result.make_from_string (a_name.substring (7, a_name.count))
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	is_valid_qualified_name (a_name: READABLE_STRING_8): BOOLEAN
+			-- Is `a_name' a syntactically valid XML QName?
+		require
+			name_attached: a_name /= Void
+		local
+			l_colon: INTEGER
+			l_prefix: STRING_8
+			l_local_name: STRING_8
+		do
+			l_colon := a_name.index_of (':', 1)
+			if l_colon = 0 then
+				Result := is_valid_ncname (a_name)
+			elseif l_colon > 1 and then l_colon < a_name.count and then a_name.index_of (':', l_colon + 1) = 0 then
+				create l_prefix.make_from_string (a_name.substring (1, l_colon - 1))
+				create l_local_name.make_from_string (a_name.substring (l_colon + 1, a_name.count))
+				Result := is_valid_ncname (l_prefix) and then is_valid_ncname (l_local_name)
+			end
+		end
+
+	has_multiple_colons (a_name: READABLE_STRING_8): BOOLEAN
+			-- Does `a_name' contain more than one colon?
+		require
+			name_attached: a_name /= Void
+		local
+			l_first: INTEGER
+		do
+			l_first := a_name.index_of (':', 1)
+			Result := l_first > 0 and then a_name.index_of (':', l_first + 1) > 0
+		end
+
+	doctype_matches_element_name (a_doctype_name, a_element_name: READABLE_STRING_8): BOOLEAN
+			-- Does document type declaration name match the root element name?
+		require
+			doctype_attached: a_doctype_name /= Void
+			element_attached: a_element_name /= Void
+		local
+			l_element_colon: INTEGER
+		do
+			if a_doctype_name.same_string (a_element_name) then
+				Result := True
+			elseif namespace_mode and then not a_doctype_name.has (':') then
+				l_element_colon := a_element_name.index_of (':', 1)
+				Result := l_element_colon > 1
+					and then a_element_name.index_of (':', l_element_colon + 1) = 0
+					and then a_doctype_name.same_string (a_element_name.substring (l_element_colon + 1, a_element_name.count))
+			end
+		end
+
+	is_valid_ncname (a_name: READABLE_STRING_8): BOOLEAN
+			-- Is `a_name' an XML name with no namespace colon?
+		require
+			name_attached: a_name /= Void
+		do
+			Result := is_valid_name (a_name) and then not a_name.has (':')
+		end
+
+	cloned_namespace_scope (a_source: HASH_TABLE [STRING_8, STRING_8]): HASH_TABLE [STRING_8, STRING_8]
+			-- Copy namespace bindings from `a_source'.
+		require
+			source_attached: a_source /= Void
+		local
+			l_key: STRING_8
+			l_value: STRING_8
+		do
+			create Result.make (a_source.count + 1)
+			from
+				a_source.start
+			until
+				a_source.after
+			loop
+				create l_key.make_from_string (a_source.key_for_iteration)
+				create l_value.make_from_string (a_source.item_for_iteration)
+				Result.force (l_value, l_key)
+				a_source.forth
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	reset_namespace_context
+			-- Reset namespace stacks while preserving namespace mode settings.
+		local
+			l_scope: HASH_TABLE [STRING_8, STRING_8]
+			l_xml_prefix: STRING_8
+			l_xml_uri: STRING_8
+		do
+			namespace_context_stack.wipe_out
+			namespace_declaration_stack.wipe_out
+			create l_scope.make (4)
+			create l_xml_prefix.make_from_string ("xml")
+			create l_xml_uri.make_from_string (Xml_namespace_uri)
+			l_scope.force (l_xml_uri, l_xml_prefix)
+			namespace_context_stack.extend (l_scope)
+		ensure
+			one_base_scope: namespace_context_stack.count = 1
+			no_element_declarations: namespace_declaration_stack.count = 0
+		end
+
+	Xml_namespace_uri: STRING_8 = "http://www.w3.org/XML/1998/namespace"
+			-- Reserved XML namespace URI.
+
+	Xmlns_namespace_uri: STRING_8 = "http://www.w3.org/2000/xmlns/"
+			-- Reserved xmlns namespace URI.
 
 feature {NONE} -- Scanning
 
@@ -3919,6 +4407,7 @@ feature {NONE} -- State
 			xml_standalone := -1
 			foreign_dtd_loaded := False
 			not_standalone_checked := False
+			reset_namespace_context
 			initialize_predefined_entities
 			install_inherited_entity_context
 		ensure
@@ -4087,6 +4576,12 @@ feature {NONE} -- State
 	attribute_decl_table: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
 			-- Attribute declarations keyed by element name.
 
+	namespace_context_stack: ARRAYED_STACK [HASH_TABLE [STRING_8, STRING_8]]
+			-- Namespace scopes active at each element depth, plus one base scope.
+
+	namespace_declaration_stack: ARRAYED_STACK [ARRAYED_LIST [STRING_8]]
+			-- Namespace prefixes declared at each element depth.
+
 	inherited_entity_table: detachable HASH_TABLE [STRING_8, STRING_8]
 			-- Parent general entity bindings for external entity child parsers.
 
@@ -4154,6 +4649,9 @@ invariant
 	external_entity_table_attached: is_initialized implies external_entity_table /= Void
 	external_parameter_entity_table_attached: is_initialized implies external_parameter_entity_table /= Void
 	attribute_decl_table_attached: is_initialized implies attribute_decl_table /= Void
+	namespace_context_stack_attached: is_initialized implies namespace_context_stack /= Void
+	namespace_declaration_stack_attached: is_initialized implies namespace_declaration_stack /= Void
+	namespace_context_available: is_initialized implies namespace_context_stack.count >= 1
 	doctype_name_attached: is_initialized implies doctype_name /= Void
 	valid_external_entity_policy: is_initialized implies is_valid_policy (external_entity_policy)
 	input_limit_positive: is_initialized implies max_input_bytes > 0

@@ -26,6 +26,8 @@ inherit
 			on_entity_decl,
 			on_unparsed_entity_decl,
 			on_skipped_entity,
+			on_start_namespace_decl,
+			on_end_namespace_decl,
 			on_default
 		end
 	XP_EXTERNAL_ENTITY_RESOLVER
@@ -113,6 +115,12 @@ feature -- Access
 	skipped_entity_callback: POINTER
 			-- `XML_SkippedEntityHandler' callback pointer.
 
+	start_namespace_decl_callback: POINTER
+			-- `XML_StartNamespaceDeclHandler' callback pointer.
+
+	end_namespace_decl_callback: POINTER
+			-- `XML_EndNamespaceDeclHandler' callback pointer.
+
 	external_entity_ref_arg: POINTER
 			-- Optional first argument for `XML_ExternalEntityRefHandler'.
 
@@ -183,6 +191,12 @@ feature -- Metrics
 
 	skipped_entity_count: INTEGER
 			-- Number of skipped entity references reported.
+
+	start_namespace_decl_count: INTEGER
+			-- Number of namespace declarations opened.
+
+	end_namespace_decl_count: INTEGER
+			-- Number of namespace declarations closed.
 
 	current_specified_attribute_count: INTEGER
 			-- Expat-style count of explicit attribute vector entries for current start event.
@@ -346,6 +360,32 @@ feature -- Element change
 			handler_set: skipped_entity_callback = a_handler
 		end
 
+	set_namespace_decl_handlers (a_start, a_end: POINTER)
+			-- Set native namespace declaration callback slots.
+		do
+			start_namespace_decl_callback := a_start
+			end_namespace_decl_callback := a_end
+		ensure
+			start_set: start_namespace_decl_callback = a_start
+			end_set: end_namespace_decl_callback = a_end
+		end
+
+	set_start_namespace_decl_handler (a_handler: POINTER)
+			-- Set native start namespace declaration callback slot.
+		do
+			start_namespace_decl_callback := a_handler
+		ensure
+			handler_set: start_namespace_decl_callback = a_handler
+		end
+
+	set_end_namespace_decl_handler (a_handler: POINTER)
+			-- Set native end namespace declaration callback slot.
+		do
+			end_namespace_decl_callback := a_handler
+		ensure
+			handler_set: end_namespace_decl_callback = a_handler
+		end
+
 	set_native_parser_handle (a_parser: POINTER)
 			-- Set native parser handle used for callback APIs that expect it.
 		do
@@ -406,6 +446,8 @@ feature -- Element change
 			unparsed_entity_decl_count := 0
 			external_entity_ref_count := 0
 			skipped_entity_count := 0
+			start_namespace_decl_count := 0
+			end_namespace_decl_count := 0
 			current_specified_attribute_count := 0
 			current_id_attribute_index := -1
 		ensure
@@ -429,6 +471,8 @@ feature -- Element change
 			no_unparsed_entity_decl_events: unparsed_entity_decl_count = 0
 			no_external_entity_refs: external_entity_ref_count = 0
 			no_skipped_entities: skipped_entity_count = 0
+			no_start_namespace_decl_events: start_namespace_decl_count = 0
+			no_end_namespace_decl_events: end_namespace_decl_count = 0
 			no_current_specified_attributes: current_specified_attribute_count = 0
 			no_current_id_attribute: current_id_attribute_index = -1
 		end
@@ -860,6 +904,48 @@ feature -- Events
 			end
 		end
 
+	on_start_namespace_decl (a_prefix: detachable READABLE_STRING_8; a_uri: READABLE_STRING_8)
+		local
+			l_prefix: detachable C_STRING
+			l_uri: C_STRING
+			l_prefix_pointer: POINTER
+			l_callback: POINTER
+		do
+			start_namespace_decl_count := start_namespace_decl_count + 1
+			l_callback := start_namespace_decl_callback
+			if l_callback = default_pointer then
+				l_callback := native_start_namespace_decl_callback (native_parser_handle)
+			end
+			if l_callback /= default_pointer then
+				if attached a_prefix as l_attached_prefix then
+					create l_prefix.make (l_attached_prefix)
+					l_prefix_pointer := l_prefix.item
+				end
+				create l_uri.make (a_uri)
+				call_start_namespace_decl_callback (l_callback, user_data, l_prefix_pointer, l_uri.item)
+			end
+		end
+
+	on_end_namespace_decl (a_prefix: detachable READABLE_STRING_8)
+		local
+			l_prefix: detachable C_STRING
+			l_prefix_pointer: POINTER
+			l_callback: POINTER
+		do
+			end_namespace_decl_count := end_namespace_decl_count + 1
+			l_callback := end_namespace_decl_callback
+			if l_callback = default_pointer then
+				l_callback := native_end_namespace_decl_callback (native_parser_handle)
+			end
+			if l_callback /= default_pointer then
+				if attached a_prefix as l_attached_prefix then
+					create l_prefix.make (l_attached_prefix)
+					l_prefix_pointer := l_prefix.item
+				end
+				call_end_namespace_decl_callback (l_callback, user_data, l_prefix_pointer)
+			end
+		end
+
 	on_default (a_text: READABLE_STRING_8)
 		local
 			l_text: C_STRING
@@ -1200,6 +1286,27 @@ feature {NONE} -- Native callback calls
 			"((void (*)(void *, const char *, int)) $a_callback) ((void *) $a_user_data, (const char *) $a_name, $a_is_parameter ? 1 : 0);"
 		end
 
+	call_start_namespace_decl_callback (a_callback, a_user_data, a_prefix, a_uri: POINTER)
+			-- Invoke native `XML_StartNamespaceDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+			uri_attached: a_uri /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_prefix, (const char *) $a_uri);"
+		end
+
+	call_end_namespace_decl_callback (a_callback, a_user_data, a_prefix: POINTER)
+			-- Invoke native `XML_EndNamespaceDeclHandler'.
+		require
+			callback_attached: a_callback /= default_pointer
+		external
+			"C inline"
+		alias
+			"((void (*)(void *, const char *)) $a_callback) ((void *) $a_user_data, (const char *) $a_prefix);"
+		end
+
 	call_start_doctype_decl_callback (a_callback, a_user_data, a_name, a_system_id, a_public_id: POINTER; a_has_internal_subset: BOOLEAN)
 			-- Invoke native `XML_StartDoctypeDeclHandler'.
 		require
@@ -1261,6 +1368,22 @@ feature {NONE} -- Native callback calls
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->stopResumable ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	native_start_namespace_decl_callback (a_parser: POINTER): POINTER
+			-- Native parser's namespace-start callback slot.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 ? (EIF_POINTER) ((struct XML_ParserStruct *) $a_parser)->startNamespaceDeclHandler : (EIF_POINTER) 0;"
+		end
+
+	native_end_namespace_decl_callback (a_parser: POINTER): POINTER
+			-- Native parser's namespace-end callback slot.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 ? (EIF_POINTER) ((struct XML_ParserStruct *) $a_parser)->endNamespaceDeclHandler : (EIF_POINTER) 0;"
 		end
 
 	call_element_decl_callback (a_callback, a_user_data, a_name, a_model: POINTER)
@@ -1355,6 +1478,8 @@ invariant
 	non_negative_unparsed_entity_decl_count: unparsed_entity_decl_count >= 0
 	non_negative_external_entity_ref_count: external_entity_ref_count >= 0
 	non_negative_skipped_entity_count: skipped_entity_count >= 0
+	non_negative_start_namespace_decl_count: start_namespace_decl_count >= 0
+	non_negative_end_namespace_decl_count: end_namespace_decl_count >= 0
 	non_negative_current_specified_attribute_count: current_specified_attribute_count >= 0
 	current_id_attribute_index_valid: current_id_attribute_index >= -1
 

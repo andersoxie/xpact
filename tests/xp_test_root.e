@@ -1165,7 +1165,8 @@ feature {NONE} -- Tests
 			assert ("expected-failure list narrowed stop rows", not l_expected.has_substring ("test_abort*") and not l_expected.has_substring ("test_*suspend*") and not l_expected.has_substring ("test_*resume*"))
 			l_parity := file_text ("adapters\libexpat\parity.tsv")
 			assert ("parity list has green rows", l_parity.has_substring ("green%Tlocal%TWindows DLL XML_Parse smoke"))
-			assert ("parity list has red rows", l_parity.has_substring ("red%Tns_tests.c%Ttest_*"))
+			assert ("namespace parity is green", l_parity.has_substring ("green%Tns_tests.c%Ttest_*"))
+			assert ("namespace allocation parity remains red", l_parity.has_substring ("red%Tnsalloc_tests.c%Ttest_nsalloc_*"))
 			assert ("parity list has no blocked native suite row", not l_parity.has_substring ("blocked%Tupstream-native-suite"))
 			assert ("libexpat parity docs present", file_text ("docs\libexpat-parity.md").has_substring ("suite-wide expected failure"))
 		end

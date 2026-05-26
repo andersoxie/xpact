@@ -15,7 +15,7 @@ feature -- Defaults
 	Default_max_attribute_count: INTEGER = 1024
 			-- Maximum attributes accepted on a single start tag.
 
-	Default_max_name_length: INTEGER = 1024
+	Default_max_name_length: INTEGER = 4096
 			-- Maximum XML name length accepted by the Phase 1 parser.
 
 	Default_max_token_length: INTEGER = 1048576

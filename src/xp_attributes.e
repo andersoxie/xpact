@@ -42,7 +42,8 @@ feature -- Access
 	has (a_name: READABLE_STRING_8): BOOLEAN
 			-- Does `a_name' exist?
 		require
-			valid_name: is_valid_name (a_name)
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
 		local
 			l_name: STRING_8
 		do
@@ -53,7 +54,8 @@ feature -- Access
 	item (a_name: READABLE_STRING_8): detachable STRING_8
 			-- Value for `a_name', if present.
 		require
-			valid_name: is_valid_name (a_name)
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
 		local
 			l_name: STRING_8
 		do
@@ -69,7 +71,7 @@ feature -- Access
 			Result := names.i_th (i)
 		ensure
 			result_attached: Result /= Void
-			valid_name: is_valid_name (Result)
+			name_not_empty: not Result.is_empty
 		end
 
 	i_th_value (i: INTEGER): STRING_8
@@ -89,7 +91,8 @@ feature -- Element change
 	put (a_name, a_value: READABLE_STRING_8)
 			-- Add explicit attribute `a_name' with `a_value'.
 		require
-			valid_name: is_valid_name (a_name)
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
 			value_attached: a_value /= Void
 			not_full: count < Default_max_attribute_count
 			not_duplicate: not has (a_name)
@@ -111,7 +114,8 @@ feature -- Element change
 	put_default (a_name, a_value: READABLE_STRING_8)
 			-- Add DTD default attribute `a_name' with `a_value'.
 		require
-			valid_name: is_valid_name (a_name)
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
 			value_attached: a_value /= Void
 			not_full: count < Default_max_attribute_count
 			not_duplicate: not has (a_name)
@@ -132,7 +136,8 @@ feature -- Element change
 	mark_id_attribute (a_name: READABLE_STRING_8)
 			-- Mark `a_name' as the ID attribute in the Expat-style vector.
 		require
-			valid_name: is_valid_name (a_name)
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
 			present: has (a_name)
 		local
 			i: INTEGER

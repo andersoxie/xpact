@@ -89,6 +89,10 @@ feature -- Expat-compatible constants
 
 	Xml_error_cant_change_feature_once_parsing: INTEGER = 26
 
+	Xml_error_unbound_prefix: INTEGER = 27
+
+	Xml_error_undeclaring_prefix: INTEGER = 28
+
 	Xml_error_xml_decl: INTEGER = 30
 
 	Xml_error_publicid: INTEGER = 32
@@ -102,6 +106,14 @@ feature -- Expat-compatible constants
 	Xml_error_finished: INTEGER = 36
 
 	Xml_error_suspend_pe: INTEGER = 37
+
+	Xml_error_reserved_prefix_xml: INTEGER = 38
+
+	Xml_error_reserved_prefix_xmlns: INTEGER = 39
+
+	Xml_error_reserved_namespace_uri: INTEGER = 40
+
+	Xml_error_invalid_argument: INTEGER = 41
 
 	Xml_error_not_started: INTEGER = 44
 
@@ -157,6 +169,12 @@ feature -- Access
 
 	has_hash_salt_16_bytes: BOOLEAN
 			-- Has `hash_salt_16_bytes' been explicitly configured?
+
+	namespace_mode: BOOLEAN
+			-- Was this parser created with namespace expansion enabled?
+
+	namespace_separator: CHARACTER_8
+			-- Namespace separator configured by `XML_ParserCreateNS'.
 
 	input_buffer: STRING_8
 			-- Native chunks accumulated until the final parse call.
@@ -374,6 +392,17 @@ feature -- Element change
 			handler_set: handler.skipped_entity_callback = a_handler
 		end
 
+	set_namespace_mode (a_separator: CHARACTER_8)
+			-- Enable namespace processing for this native parser.
+		do
+			namespace_mode := True
+			namespace_separator := a_separator
+			parser.set_namespace_mode (a_separator)
+		ensure
+			namespace_enabled: namespace_mode
+			separator_set: namespace_separator = a_separator
+		end
+
 	default_current
 			-- Replay current callback text through the default handler.
 		do
@@ -573,6 +602,9 @@ feature -- Element change
 			param_entity_parsing := Xml_param_entity_parsing_never
 			use_foreign_dtd := False
 			create parser.make (handler)
+			if namespace_mode then
+				parser.set_namespace_mode (namespace_separator)
+			end
 			parser.set_external_entity_resolver (handler)
 			configure_external_entity_policy
 			explicit_encoding := Void
@@ -620,6 +652,9 @@ feature -- Parsing
 				else
 					parsing_status := Xml_parsing
 					handler.reset_events
+					if namespace_mode then
+						parser.set_return_ns_triplet (native_return_ns_triplet (native_parser_handle))
+					end
 					create context_buffer.make (input_buffer)
 					l_input := decoded_input (input_buffer)
 					if l_input = Void then
@@ -1290,6 +1325,16 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_incorrect_encoding
 			elseif a_error.same_string ("parsing aborted") then
 				Result := Xml_error_aborted
+			elseif a_error.same_string ("unbound namespace prefix") then
+				Result := Xml_error_unbound_prefix
+			elseif a_error.same_string ("undeclaring prefix") then
+				Result := Xml_error_undeclaring_prefix
+			elseif a_error.same_string ("reserved prefix xml") then
+				Result := Xml_error_reserved_prefix_xml
+			elseif a_error.same_string ("reserved prefix xmlns") then
+				Result := Xml_error_reserved_prefix_xmlns
+			elseif a_error.same_string ("reserved namespace URI") then
+				Result := Xml_error_reserved_namespace_uri
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then
 				Result := Xml_error_unclosed_token
 			elseif a_error.same_string ("partial character") then
@@ -1336,6 +1381,14 @@ feature {NONE} -- Native helpers
 			"return xp_has_unknown_encoding_handler((XML_Parser) $a_parser) ? EIF_TRUE : EIF_FALSE;"
 		end
 
+	native_return_ns_triplet (a_parser: POINTER): BOOLEAN
+			-- Should namespace-expanded names include the original prefix?
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->returnNsTriplet ? EIF_TRUE : EIF_FALSE;"
+		end
+
 	c_decode_unknown_encoding_input (a_parser, a_encoding, a_input: POINTER; a_length: INTEGER; a_decoded_length, a_error: POINTER): POINTER
 			-- Decode `a_input' through native parser's unknown-encoding handler.
 		require
@@ -1363,7 +1416,7 @@ invariant
 	handler_attached: handler /= Void
 	parser_attached: parser /= Void
 	input_buffer_attached: input_buffer /= Void
-	valid_parsing_status: parsing_status = Xml_initialized or parsing_status = Xml_parsing or parsing_status = Xml_finished
+	valid_parsing_status: parsing_status = Xml_initialized or parsing_status = Xml_parsing or parsing_status = Xml_finished or parsing_status = Xml_suspended
 	valid_last_error_code: last_error_code >= Xml_error_none
 
 end
