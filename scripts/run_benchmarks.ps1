@@ -283,6 +283,24 @@ if (-not $SkipNativeXpactC) {
 				-IterationCount $Iterations `
 				-DocumentBytes $DocumentBytes `
 				-Notes "MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks"))
+			$AllRows.AddRange((Invoke-TimedCommand `
+				-Name "catalog-100-items" `
+				-Executable $WindowsNativeExe `
+				-Arguments @("--iterations", "$Iterations", "--mode", "callbacks", "--reuse-parser") `
+				-Engine "xpact native C ABI callbacks via Windows MSVC DLL, parser reused" `
+				-Version $WindowsNativeVersion `
+				-IterationCount $Iterations `
+				-DocumentBytes $DocumentBytes `
+				-Notes "MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents"))
+			$AllRows.AddRange((Invoke-TimedCommand `
+				-Name "catalog-100-items" `
+				-Executable $WindowsNativeExe `
+				-Arguments @("--iterations", "$Iterations", "--mode", "tokenizer", "--reuse-parser") `
+				-Engine "xpact native C ABI tokenizer via Windows MSVC DLL, parser reused" `
+				-Version $WindowsNativeVersion `
+				-IterationCount $Iterations `
+				-DocumentBytes $DocumentBytes `
+				-Notes "MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents"))
 		} finally {
 			$env:Path = $OldPath
 		}

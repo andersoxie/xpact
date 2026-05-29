@@ -62,11 +62,7 @@ sample_document(char *buffer, size_t capacity) {
 }
 
 static int
-parse_document(const char *document, size_t document_length, int use_callbacks) {
-	XML_Parser parser = XML_ParserCreate(NULL);
-	enum XML_Status status;
-	enum XML_Error error;
-
+configure_parser(XML_Parser parser, int use_callbacks) {
 	if (parser == NULL) {
 		fputs("parser allocation failed\n", stderr);
 		return 1;
@@ -76,16 +72,69 @@ parse_document(const char *document, size_t document_length, int use_callbacks) 
 		XML_SetElementHandler(parser, start_element, end_element);
 		XML_SetCharacterDataHandler(parser, character_data);
 	}
+	return 0;
+}
+
+static int
+parse_document_with_parser(XML_Parser parser, const char *document, size_t document_length) {
+	enum XML_Status status;
+	enum XML_Error error;
 
 	status = XML_Parse(parser, document, (int)document_length, XML_TRUE);
 	if (status == XML_STATUS_ERROR) {
 		error = XML_GetErrorCode(parser);
 		fprintf(stderr, "parse failed: %s\n", XML_ErrorString(error));
-		XML_ParserFree(parser);
 		if (error == XML_ERROR_NOT_STARTED) {
 			return XPACT_BENCHMARK_UNAVAILABLE;
 		}
 		return 1;
+	}
+	return 0;
+}
+
+static int
+parse_document(const char *document, size_t document_length, int use_callbacks) {
+	XML_Parser parser = XML_ParserCreate(NULL);
+	int status;
+
+	status = configure_parser(parser, use_callbacks);
+	if (status != 0) {
+		if (parser != NULL) {
+			XML_ParserFree(parser);
+		}
+		return status;
+	}
+
+	status = parse_document_with_parser(parser, document, document_length);
+	XML_ParserFree(parser);
+	return status;
+}
+
+static int
+parse_documents_with_reused_parser(const char *document, size_t document_length, int use_callbacks, int iterations) {
+	XML_Parser parser = XML_ParserCreate(NULL);
+	int i;
+	int status;
+
+	status = configure_parser(parser, use_callbacks);
+	if (status != 0) {
+		if (parser != NULL) {
+			XML_ParserFree(parser);
+		}
+		return status;
+	}
+
+	for (i = 0; i < iterations; i++) {
+		status = parse_document_with_parser(parser, document, document_length);
+		if (status != 0) {
+			XML_ParserFree(parser);
+			return status;
+		}
+		if (i + 1 < iterations && XML_ParserReset(parser, NULL) != XML_TRUE) {
+			fputs("parser reset failed\n", stderr);
+			XML_ParserFree(parser);
+			return 1;
+		}
 	}
 
 	XML_ParserFree(parser);
@@ -96,6 +145,7 @@ int
 main(int argc, char **argv) {
 	int iterations = 1000;
 	int use_callbacks = 1;
+	int reuse_parser = 0;
 	char document[4096];
 	size_t document_length;
 	int i;
@@ -117,8 +167,10 @@ main(int argc, char **argv) {
 				fprintf(stderr, "unknown mode: %s\n", mode);
 				return 2;
 			}
+		} else if (strcmp(argv[i], "--reuse-parser") == 0) {
+			reuse_parser = 1;
 		} else {
-			fprintf(stderr, "usage: %s [--iterations N] [--mode callbacks|tokenizer] [--version]\n", argv[0]);
+			fprintf(stderr, "usage: %s [--iterations N] [--mode callbacks|tokenizer] [--reuse-parser] [--version]\n", argv[0]);
 			return 2;
 		}
 	}
@@ -134,19 +186,27 @@ main(int argc, char **argv) {
 		return 1;
 	}
 
-	for (i = 0; i < iterations; i++) {
-		parse_status = parse_document(document, document_length, use_callbacks);
+	if (reuse_parser) {
+		parse_status = parse_documents_with_reused_parser(document, document_length, use_callbacks, iterations);
 		if (parse_status != 0) {
 			return parse_status;
+		}
+	} else {
+		for (i = 0; i < iterations; i++) {
+			parse_status = parse_document(document, document_length, use_callbacks);
+			if (parse_status != 0) {
+				return parse_status;
+			}
 		}
 	}
 
 	printf(
-		"xpact native C ABI %s parsed %d documents (%lu bytes each, %lu callback events).\n",
+		"xpact native C ABI %s parsed %d documents (%lu bytes each, %lu callback events, parser %s).\n",
 		use_callbacks ? "callbacks" : "tokenizer",
 		iterations,
 		(unsigned long)document_length,
-		g_events
+		g_events,
+		reuse_parser ? "reused" : "created per document"
 	);
 	return 0;
 }

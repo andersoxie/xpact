@@ -7,6 +7,9 @@ class
 inherit
 	XP_EVENT_HANDLER
 		redefine
+			wants_start_element_events,
+			wants_end_element_events,
+			wants_character_data_events,
 			on_processing_instruction,
 			on_xml_declaration,
 			on_comment,
@@ -48,6 +51,7 @@ feature {NONE} -- Initialization
 		do
 			create events.make (16)
 			current_id_attribute_index := -1
+			diagnostic_events_enabled := True
 		ensure
 			no_events: events.count = 0
 			no_current_id_attribute: current_id_attribute_index = -1
@@ -138,6 +142,9 @@ feature -- Access
 
 	events: ARRAYED_LIST [STRING_8]
 			-- Eiffel-visible event log used by tests and diagnostics.
+
+	diagnostic_events_enabled: BOOLEAN
+			-- Should internal diagnostic counters and event strings be recorded?
 
 	callback_sequence_count: INTEGER
 			-- Number of native callbacks encountered in the current parse replay.
@@ -495,12 +502,38 @@ feature -- Element change
 			no_current_id_attribute: current_id_attribute_index = -1
 		end
 
+	set_diagnostic_events_enabled (a_enabled: BOOLEAN)
+			-- Control internal diagnostic event recording.
+		do
+			diagnostic_events_enabled := a_enabled
+		ensure
+			value_set: diagnostic_events_enabled = a_enabled
+		end
+
 feature -- Events
+
+	wants_start_element_events: BOOLEAN
+			-- Should start-element event objects be materialized and emitted?
+		do
+			Result := diagnostic_events_enabled or else start_element_callback /= default_pointer
+		end
+
+	wants_end_element_events: BOOLEAN
+			-- Should end-element event objects be materialized and emitted?
+		do
+			Result := diagnostic_events_enabled or else end_element_callback /= default_pointer
+		end
+
+	wants_character_data_events: BOOLEAN
+			-- Should character-data event text be materialized and emitted?
+		do
+			Result := diagnostic_events_enabled or else character_data_callback /= default_pointer
+		end
 
 	wants_automatic_character_data_default: BOOLEAN
 			-- Should character data also be emitted through `on_default' automatically?
 		do
-			Result := character_data_callback = default_pointer
+			Result := default_callback /= default_pointer and then character_data_callback = default_pointer
 		end
 
 	wants_default_events: BOOLEAN
@@ -588,11 +621,13 @@ feature -- Events
 			start_element_count := start_element_count + 1
 			current_specified_attribute_count := a_attributes.specified_attribute_count * 2
 			current_id_attribute_index := a_attributes.id_attribute_index
-			create l_event.make_from_string ("start:")
-			l_event.append (a_name)
-			l_event.append_character (':')
-			l_event.append_integer (a_attributes.count)
-			events.extend (l_event)
+			if diagnostic_events_enabled then
+				create l_event.make_from_string ("start:")
+				l_event.append (a_name)
+				l_event.append_character (':')
+				l_event.append_integer (a_attributes.count)
+				events.extend (l_event)
+			end
 			if start_element_callback /= default_pointer then
 				if not suppress_next_callback then
 					create l_name.make (a_name)
@@ -631,9 +666,11 @@ feature -- Events
 			l_name: C_STRING
 		do
 			end_element_count := end_element_count + 1
-			create l_event.make_from_string ("end:")
-			l_event.append (a_name)
-			events.extend (l_event)
+			if diagnostic_events_enabled then
+				create l_event.make_from_string ("end:")
+				l_event.append (a_name)
+				events.extend (l_event)
+			end
 			if end_element_callback /= default_pointer then
 				if not suppress_next_callback then
 					create l_name.make (a_name)
@@ -650,9 +687,11 @@ feature -- Events
 		do
 			if not a_text.is_empty then
 				character_data_count := character_data_count + 1
-				create l_event.make_from_string ("text:")
-				l_event.append (a_text)
-				events.extend (l_event)
+				if diagnostic_events_enabled then
+					create l_event.make_from_string ("text:")
+					l_event.append (a_text)
+					events.extend (l_event)
+				end
 				if character_data_callback /= default_pointer then
 					if not suppress_next_callback then
 						create l_text.make (a_text)

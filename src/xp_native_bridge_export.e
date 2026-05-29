@@ -6,9 +6,23 @@ class
 
 inherit
 	XP_NATIVE_BRIDGE_INSTALLER
+		redefine
+			make
+		end
 
 create
 	make
+
+feature {NONE} -- Initialization
+
+	make
+			-- Create bridge installer with production diagnostics disabled.
+		do
+			Precursor
+			set_diagnostic_events_enabled (False)
+		ensure then
+			diagnostics_disabled: not diagnostic_events_enabled
+		end
 
 feature -- Access
 

@@ -243,6 +243,18 @@ feature -- Configuration
 			value_set: use_foreign_dtd = a_enabled
 		end
 
+feature {XP_NATIVE_PARSER} -- State
+
+	reset_for_reuse
+			-- Reset parse state while preserving parser object storage.
+		do
+			reset
+		ensure
+			no_error: not has_error
+			no_message: last_error.is_empty
+			no_open_elements: element_stack.count = 0
+		end
+
 feature {XP_PARSER} -- Entity context import
 
 	general_entity_context_table: HASH_TABLE [STRING_8, STRING_8]

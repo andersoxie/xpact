@@ -16,6 +16,7 @@ feature {NONE} -- Initialization
 		do
 			create live_parser_ids.make (16)
 			create parse_buffers.make (16)
+			diagnostic_events_enabled := True
 		ensure
 			no_live_parsers: active_parser_count = 0
 		end
@@ -42,6 +43,9 @@ feature -- Access
 			non_negative: Result >= 0
 		end
 
+	diagnostic_events_enabled: BOOLEAN
+			-- Should parsers created by this installer record internal diagnostics?
+
 	parser_for (a_handle: POINTER): detachable XP_NATIVE_PARSER
 			-- Parser object represented by native opaque `a_handle', if live.
 		local
@@ -65,6 +69,7 @@ feature -- Parser lifecycle callbacks
 			l_status: INTEGER
 		do
 			create l_parser.make
+			l_parser.set_diagnostic_events_enabled (diagnostic_events_enabled)
 			if a_namespace_separator /= default_pointer then
 				l_parser.set_namespace_mode (character_at (a_namespace_separator))
 			end
@@ -78,6 +83,14 @@ feature -- Parser lifecycle callbacks
 			handle_returned: Result /= default_pointer
 			one_more_parser: active_parser_count = old active_parser_count + 1
 			parser_registered: attached parser_for (Result)
+		end
+
+	set_diagnostic_events_enabled (a_enabled: BOOLEAN)
+			-- Control diagnostics for subsequently created parsers.
+		do
+			diagnostic_events_enabled := a_enabled
+		ensure
+			value_set: diagnostic_events_enabled = a_enabled
 		end
 
 	parser_reset (a_parser, a_encoding: POINTER): BOOLEAN

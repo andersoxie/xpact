@@ -614,6 +614,14 @@ feature -- Element change
 			value_set: suspend_gc_during_parse = a_enabled
 		end
 
+	set_diagnostic_events_enabled (a_enabled: BOOLEAN)
+			-- Control internal diagnostic event recording.
+		do
+			handler.set_diagnostic_events_enabled (a_enabled)
+		ensure
+			value_set: handler.diagnostic_events_enabled = a_enabled
+		end
+
 	set_hash_salt (a_hash_salt: INTEGER_64): BOOLEAN
 			-- Set legacy Expat hash salt before parsing starts.
 		do
@@ -674,7 +682,7 @@ feature -- Element change
 			external_entity_is_parameter_literal := False
 			param_entity_parsing := Xml_param_entity_parsing_never
 			use_foreign_dtd := False
-			create parser.make (handler)
+			parser.reset_for_reuse
 			if namespace_mode then
 				parser.set_namespace_mode (namespace_separator)
 			end
