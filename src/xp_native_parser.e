@@ -223,6 +223,9 @@ feature -- Access
 	context_buffer: detachable C_STRING
 			-- C-visible copy of the current final input while parsing.
 
+	suspend_gc_during_parse: BOOLEAN
+			-- Should `parse' temporarily suspend Eiffel garbage collection?
+
 	last_error_text: STRING_8
 			-- Last Eiffel parser error text.
 		do
@@ -603,6 +606,14 @@ feature -- Element change
 			accepted_sets_value: Result implies use_foreign_dtd = a_use_dtd
 		end
 
+	set_suspend_gc_during_parse (a_enabled: BOOLEAN)
+			-- Control temporary garbage-collection suspension around `parse'.
+		do
+			suspend_gc_during_parse := a_enabled
+		ensure
+			value_set: suspend_gc_during_parse = a_enabled
+		end
+
 	set_hash_salt (a_hash_salt: INTEGER_64): BOOLEAN
 			-- Set legacy Expat hash salt before parsing starts.
 		do
@@ -711,6 +722,32 @@ feature -- Parsing
 
 	parse (a_input: READABLE_STRING_8; a_is_final: BOOLEAN): INTEGER
 			-- Parse `a_input' through the Eiffel parser.
+		require
+			input_attached: a_input /= Void
+		local
+			l_result: CELL [INTEGER]
+			l_section: XP_GC_CRITICAL_SECTION
+		do
+			if suspend_gc_during_parse then
+				create l_result.put (Xml_status_error)
+				create l_section.make
+				l_section.execute (agent parse_status_into_cell (a_input, a_is_final, l_result))
+				Result := l_result.item
+			else
+				Result := parse_with_current_gc_policy (a_input, a_is_final)
+			end
+		ensure
+			valid_status: Result = Xml_status_ok or Result = Xml_status_error or Result = Xml_status_suspended
+			success_has_no_error: Result = Xml_status_ok implies last_error_code = Xml_error_none
+			final_finished_or_suspended: a_is_final implies (parsing_status = Xml_finished or parsing_status = Xml_suspended)
+			success_non_final_parsing: Result = Xml_status_ok and not a_is_final implies parsing_status = Xml_parsing
+			final_recorded: final_buffer = a_is_final
+		end
+
+feature {NONE} -- Parsing implementation
+
+	parse_with_current_gc_policy (a_input: READABLE_STRING_8; a_is_final: BOOLEAN): INTEGER
+			-- Parse `a_input' without changing garbage-collection policy.
 		require
 			input_attached: a_input /= Void
 		local
@@ -863,6 +900,19 @@ feature -- Parsing
 			success_non_final_parsing: Result = Xml_status_ok and not a_is_final implies parsing_status = Xml_parsing
 			final_recorded: final_buffer = a_is_final
 		end
+
+	parse_status_into_cell (a_input: READABLE_STRING_8; a_is_final: BOOLEAN; a_result: CELL [INTEGER])
+			-- Store `parse_with_current_gc_policy (a_input, a_is_final)' in `a_result'.
+		require
+			input_attached: a_input /= Void
+			result_attached: a_result /= Void
+		do
+			a_result.put (parse_with_current_gc_policy (a_input, a_is_final))
+		ensure
+			valid_status: a_result.item = Xml_status_ok or a_result.item = Xml_status_error or a_result.item = Xml_status_suspended
+		end
+
+feature -- Parsing
 
 	input_context (a_offset, a_size: POINTER): POINTER
 			-- Current input context buffer for `XML_GetInputContext'.

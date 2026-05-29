@@ -151,6 +151,15 @@ feature -- Access
 	return_ns_triplet: BOOLEAN
 			-- Should expanded names include the original prefix as a third field?
 
+	garbage_collection_enabled: BOOLEAN
+			-- Is Eiffel garbage collection currently enabled?
+		local
+			l_memory: MEMORY
+		do
+			create l_memory
+			Result := l_memory.collecting
+		end
+
 feature -- Configuration
 
 	set_namespace_mode (a_separator: CHARACTER_8)
@@ -330,6 +339,26 @@ feature -- Parsing
 			result_matches_state: Result = (not has_error and not is_suspended)
 			success_is_balanced: Result implies element_stack.count = 0
 			success_has_root: Result implies document_element_count = 1
+		end
+
+	parse_without_garbage_collection (a_input: READABLE_STRING_8): BOOLEAN
+			-- Parse complete XML document `a_input' while temporarily suspending Eiffel garbage collection.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+		local
+			l_result: CELL [BOOLEAN]
+			l_section: XP_GC_CRITICAL_SECTION
+		do
+			create l_result.put (False)
+			create l_section.make
+			l_section.execute (agent parse_into_boolean_cell (a_input, l_result))
+			Result := l_result.item
+		ensure
+			result_matches_state: Result = (not has_error and not is_suspended)
+			success_is_balanced: Result implies element_stack.count = 0
+			success_has_root: Result implies document_element_count = 1
+			garbage_collection_status_preserved: garbage_collection_enabled = old garbage_collection_enabled
 		end
 
 	parse_prefix (a_input: READABLE_STRING_8): BOOLEAN
@@ -655,6 +684,20 @@ feature -- Parsing
 		ensure
 			result_matches_state: Result = (not has_error and not is_suspended)
 			not_external_after_parse: not parsing_external_entity
+		end
+
+feature {NONE} -- Garbage collection critical sections
+
+	parse_into_boolean_cell (a_input: READABLE_STRING_8; a_result: CELL [BOOLEAN])
+			-- Store `parse (a_input)' in `a_result'.
+		require
+			input_attached: a_input /= Void
+			input_within_limit: a_input.count <= max_input_bytes
+			result_attached: a_result /= Void
+		do
+			a_result.put (parse (a_input))
+		ensure
+			result_recorded: a_result.item = (not has_error and not is_suspended)
 		end
 
 feature {NONE} -- Markup parsing

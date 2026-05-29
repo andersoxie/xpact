@@ -13,6 +13,9 @@ This repository starts that track with a contracted parser core:
 - `include/xpact.h` records the libexpat 2.8.1-compatible public API surface.
 - `src/xp_expat_api.e` keeps the public API manifest under contract-enabled tests.
 - The Eiffel targets enable void safety explicitly with `support="all" use="all"` and use the safe Base precompile.
+- `src/xp_gc_critical_section.e` provides a contract-backed way to suspend
+  garbage collection temporarily during critical parser sections and restore
+  the previous collection state afterwards.
 - `tests/xpact_tests.ecf` runs the current contract-enabled, void-safe regression tests.
 - `benchmarks/xpact_benchmarks.ecf` gives a repeatable harness for publishing early results.
 
@@ -37,6 +40,13 @@ Implemented now:
   - external general entities, external parameter entities, and external DTD subsets are separately policy-gated;
   - resolver denial (`Void`) is a parse error;
   - unparsed external entities (`NDATA`) are rejected when referenced as parsed entities.
+- Temporary garbage-collection suspension:
+  - `XP_GC_CRITICAL_SECTION` wraps Eiffel `MEMORY.collection_off` /
+    `collection_on` and preserves the caller's previous collection state;
+  - `XP_PARSER.parse_without_garbage_collection` gives Eiffel callers an
+    explicit critical-section parse entry point;
+  - `XP_NATIVE_PARSER.set_suspend_gc_during_parse` lets the Eiffel-backed
+    native parser suspend collection while servicing parse calls.
 - Full libexpat 2.8.1 public API compatibility at the header/manifest level, including parser creation, parse-buffer, handler, DTD, namespace, external entity, error, position, memory, feature, attack-protection, hash-salt, and reparse-deferral declarations.
 - Adapter for the upstream libexpat test suite:
   - `scripts/run_libexpat_adapter.ps1` extracts a `START_TEST(...)` manifest from an upstream Expat checkout;

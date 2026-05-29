@@ -39,6 +39,7 @@ feature {NONE} -- Initialization
 			test_document_structure
 			test_position_accounting
 			test_handler_position_accounting
+			test_garbage_collection_suspension
 			test_native_eiffel_bridge_parser
 			test_native_bridge_installer
 			test_expat_api_manifest
@@ -838,6 +839,48 @@ feature {NONE} -- Tests
 			assert ("entity reference text byte info inside handler", l_handler.events.i_th (2).same_string (l_expected_event))
 		end
 
+	test_garbage_collection_suspension
+		local
+			l_memory: MEMORY
+			l_original_collecting: BOOLEAN
+			l_section: XP_GC_CRITICAL_SECTION
+			l_seen_collecting: CELL [BOOLEAN]
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+			l_native: XP_NATIVE_PARSER
+			l_status: INTEGER
+		do
+			create l_memory
+			l_original_collecting := l_memory.collecting
+			l_memory.collection_on
+			create l_section.make
+			create l_seen_collecting.put (True)
+			l_section.execute (agent record_garbage_collection_state (l_seen_collecting))
+			assert ("GC disabled inside critical section", not l_seen_collecting.item)
+			assert ("GC restored after critical section", l_memory.collecting)
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("GC-suspended parser accepts document", l_parser.parse_without_garbage_collection ("<root/>"))
+			assert ("GC restored after parser critical section", l_memory.collecting)
+
+			l_memory.collection_off
+			assert ("GC-suspended parser preserves disabled state", l_parser.parse_without_garbage_collection ("<root/>") and then not l_memory.collecting)
+
+			l_memory.collection_on
+			create l_native.make
+			l_native.set_suspend_gc_during_parse (True)
+			l_status := l_native.parse ("<root/>", True)
+			assert ("native GC-suspended parser accepts document", l_status = l_native.Xml_status_ok)
+			assert ("GC restored after native critical section", l_memory.collecting)
+
+			if l_original_collecting then
+				l_memory.collection_on
+			else
+				l_memory.collection_off
+			end
+		end
+
 	test_native_eiffel_bridge_parser
 		local
 			l_attributes: XP_ATTRIBUTES
@@ -1306,6 +1349,17 @@ feature {NONE} -- Tests
 			l_assertion.append (a_label)
 			l_assertion.append (" column")
 			assert (l_assertion, l_parser.current_column_number = a_column)
+		end
+
+	record_garbage_collection_state (a_state: CELL [BOOLEAN])
+			-- Store current Eiffel garbage-collection status in `a_state'.
+		require
+			state_attached: a_state /= Void
+		local
+			l_memory: MEMORY
+		do
+			create l_memory
+			a_state.put (l_memory.collecting)
 		end
 
 feature {NONE} -- Assertions

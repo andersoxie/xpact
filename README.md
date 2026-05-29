@@ -20,6 +20,8 @@ Implemented and verified now:
 
 - Eiffel targets explicitly compile with void safety enabled
   (`support="all" use="all"`), using the safe Base precompile.
+- Contract-backed temporary garbage-collection suspension for critical parse
+  sections.
 - XML 1.0 tokenization and entity handling in Eiffel.
 - Capability-based external entity resolver policy: xpact does not open files,
   URLs, or sockets by itself.

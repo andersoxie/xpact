@@ -27,6 +27,10 @@ Primary classes:
 - `XP_EXTERNAL_ENTITY_POLICY`
   Policy constants that gate external general entities, parameter entities,
   and external subsets.
+- `XP_GC_CRITICAL_SECTION`
+  Temporarily suspends Eiffel garbage collection during explicitly selected
+  critical sections, then restores the previous collection state under
+  contract.
 
 The core design rule is simple: XML semantics should be visible in Eiffel
 contracts and Eiffel code.
