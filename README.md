@@ -18,6 +18,8 @@ replacement for libexpat.
 
 Implemented and verified now:
 
+- Eiffel targets explicitly compile with void safety enabled
+  (`support="all" use="all"`), using the safe Base precompile.
 - XML 1.0 tokenization and entity handling in Eiffel.
 - Capability-based external entity resolver policy: xpact does not open files,
   URLs, or sockets by itself.
@@ -104,4 +106,3 @@ Package the Windows x64 preview release:
 ```powershell
 .\scripts\package_windows_release.ps1
 ```
-

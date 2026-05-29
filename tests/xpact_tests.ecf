@@ -9,6 +9,7 @@
 		<setting name="dead_code_removal" value="all"/>
 		<capability>
 			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
 		</capability>
 		<external_include location="..\..\..\..\include\"/>
 		<external_include location="..\..\..\..\native\"/>

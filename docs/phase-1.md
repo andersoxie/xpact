@@ -12,7 +12,8 @@ This repository starts that track with a contracted parser core:
 - `src/xp_event_handler.e` defines the SAX-style callback surface used internally and by tests.
 - `include/xpact.h` records the libexpat 2.8.1-compatible public API surface.
 - `src/xp_expat_api.e` keeps the public API manifest under contract-enabled tests.
-- `tests/xpact_tests.ecf` runs the current contract-enabled regression tests.
+- The Eiffel targets enable void safety explicitly with `support="all" use="all"` and use the safe Base precompile.
+- `tests/xpact_tests.ecf` runs the current contract-enabled, void-safe regression tests.
 - `benchmarks/xpact_benchmarks.ecf` gives a repeatable harness for publishing early results.
 
 ## Current Phase 1 Scope

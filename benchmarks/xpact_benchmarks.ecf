@@ -9,6 +9,7 @@
 		<setting name="dead_code_removal" value="all"/>
 		<capability>
 			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
 		</capability>
 		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
@@ -16,4 +17,3 @@
 		<cluster name="benchmarks" location=".\"/>
 	</target>
 </system>
-
