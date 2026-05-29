@@ -5139,9 +5139,12 @@ feature {NONE} -- State
 		do
 			if not position_input.is_empty or else a_index > 0 then
 				l_index := bounded_position_index (a_index)
+				if current_position_index <= 0 or else l_index < current_position_index then
+					recompute_position_from_start (l_index)
+				else
+					advance_position_to (l_index)
+				end
 				current_position_index := l_index
-				current_line_number := line_number_at (l_index)
-				current_column_number := column_number_at (l_index)
 				current_byte_index := l_index - 1
 				current_byte_count := 0
 			end
@@ -5162,6 +5165,71 @@ feature {NONE} -- State
 			line_positive: current_line_number >= 1
 			column_non_negative: current_column_number >= 0
 			byte_count_set: current_byte_count = a_byte_count
+		end
+
+	advance_position_to (a_index: INTEGER)
+			-- Advance line and column counters from current parser position to `a_index'.
+		require
+			index_in_bounds: a_index >= 1 and a_index <= position_input.count + 1
+			forward: current_position_index >= 1 and current_position_index <= a_index
+		local
+			i: INTEGER
+		do
+			from
+				i := current_position_index
+			invariant
+				index_in_bounds: i >= current_position_index and i <= a_index
+				line_positive: current_line_number >= 1
+				column_non_negative: current_column_number >= 0
+			until
+				i >= a_index
+			loop
+				if position_input.item (i) = '%N' then
+					current_line_number := current_line_number + 1
+					current_column_number := 0
+				else
+					current_column_number := current_column_number + 1
+				end
+				i := i + 1
+			variant
+				a_index - i
+			end
+		ensure
+			line_positive: current_line_number >= 1
+			column_non_negative: current_column_number >= 0
+		end
+
+	recompute_position_from_start (a_index: INTEGER)
+			-- Recompute line and column counters for `a_index' from the beginning.
+		require
+			index_in_bounds: a_index >= 1 and a_index <= position_input.count + 1
+		local
+			i: INTEGER
+		do
+			current_line_number := 1
+			current_column_number := 0
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_index
+				line_positive: current_line_number >= 1
+				column_non_negative: current_column_number >= 0
+			until
+				i >= a_index
+			loop
+				if position_input.item (i) = '%N' then
+					current_line_number := current_line_number + 1
+					current_column_number := 0
+				else
+					current_column_number := current_column_number + 1
+				end
+				i := i + 1
+			variant
+				a_index - i
+			end
+		ensure
+			line_positive: current_line_number >= 1
+			column_non_negative: current_column_number >= 0
 		end
 
 	bounded_position_index (a_index: INTEGER): INTEGER
