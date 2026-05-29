@@ -420,6 +420,8 @@ $Markdown.Add("")
 $Markdown.Add("Runtime context:")
 $Markdown.Add("")
 $Markdown.Add("- Eiffel target: ``benchmarks\xpact_benchmarks.ecf`` built as ``$EiffelBuild``.")
+$Markdown.Add('- Eiffel void safety: ``support="all" use="all"``.')
+$Markdown.Add("- Eiffel assertions in benchmark target: disabled.")
 $Markdown.Add("- Python: ``$PythonVersion``.")
 $Markdown.Add("- libexpat baseline available on this machine through CPython ``pyexpat``: ``$ExpatVersion``.")
 if ($null -ne $CompilerNote -and -not [string]::IsNullOrWhiteSpace($CompilerNote)) {
