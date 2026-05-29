@@ -837,37 +837,49 @@ feature {NONE} -- Markup parsing
 		local
 			i: INTEGER
 			name_start: INTEGER
-			l_name: STRING_8
-			l_attributes: XP_ATTRIBUTES
+			name_end: INTEGER
+			l_name: detachable STRING_8
 		do
-			create l_attributes.make
 			i := a_start_index + 2
 			note_position (i)
-			if i > a_input.count or else not l_attributes.is_name_start_character (a_input.item (i)) then
+			if i > a_input.count or else not is_name_start_character (a_input.item (i)) then
 				set_error ("invalid end tag name")
 				Result := a_input.count + 1
 			else
 				name_start := i
 				i := scan_name (a_input, i)
+				name_end := i - 1
 				if i - name_start > Default_max_name_length then
 					set_error ("end tag name exceeds limit")
 					Result := a_input.count + 1
 				else
-					create l_name.make_from_string (a_input.substring (name_start, i - 1))
-					if namespace_mode and then not is_valid_qualified_name (l_name) then
-						set_error ("invalid namespace name")
-						Result := a_input.count + 1
-					else
+					if namespace_mode then
+						create l_name.make_from_string (a_input.substring (name_start, name_end))
+						if not is_valid_qualified_name (l_name) then
+							set_error ("invalid namespace name")
+							Result := a_input.count + 1
+						end
+					end
+					if not has_error then
 						i := skip_spaces (a_input, i)
 						if i <= a_input.count and then a_input.item (i) = '>' then
-						if element_stack.count > 0 and then element_stack.item.same_string (l_name) then
-							note_position (a_start_index)
-						else
-							note_position (name_start)
-						end
-						emit_default_range (a_input, a_start_index, i)
-						close_element (l_name)
-						Result := i + 1
+							if element_stack.count > 0 and then input_range_same_string (a_input, name_start, name_end, element_stack.item) then
+								note_position (a_start_index)
+							else
+								note_position (name_start)
+							end
+							emit_default_range (a_input, a_start_index, i)
+							if not namespace_mode and then not handler.wants_end_element_events then
+								close_element_range (a_input, name_start, name_end)
+							else
+								if not attached l_name then
+									create l_name.make_from_string (a_input.substring (name_start, name_end))
+								end
+								check attached l_name as l_attached_name then
+									close_element (l_attached_name)
+								end
+							end
+							Result := i + 1
 						else
 							note_position (i)
 							set_error ("unterminated end tag")
@@ -3472,6 +3484,24 @@ feature {NONE} -- Event dispatch
 			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
 		end
 
+	close_element_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER)
+			-- Pop an end tag name represented as a range in `a_input' without materializing it.
+		require
+			input_attached: a_input /= Void
+			start_valid: a_name_start >= 1 and a_name_start <= a_input.count
+			end_valid: a_name_end >= a_name_start and a_name_end <= a_input.count
+		do
+			if element_stack.count = 0 then
+				set_error ("unexpected end tag")
+			elseif not input_range_same_string (a_input, a_name_start, a_name_end, element_stack.item) then
+				set_error ("mismatched end tag")
+			else
+				element_stack.remove
+			end
+		ensure
+			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
+		end
+
 	emit_text (a_text: READABLE_STRING_8)
 			-- Emit character data.
 		require
@@ -4018,15 +4048,13 @@ feature {NONE} -- Scanning
 			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
 		local
 			i: INTEGER
-			l_attributes: XP_ATTRIBUTES
 		do
-			create l_attributes.make
 			from
 				i := a_start_index
 			invariant
 				index_in_bounds: i >= a_start_index and i <= a_input.count + 1
 			until
-				i > a_input.count or else not l_attributes.is_name_character (a_input.item (i))
+				i > a_input.count or else not is_name_character (a_input.item (i))
 			loop
 				i := i + 1
 			variant
@@ -4036,6 +4064,56 @@ feature {NONE} -- Scanning
 		ensure
 			progress: Result > a_start_index
 			result_in_bounds: Result <= a_input.count + 1
+		end
+
+	input_range_same_string (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_text: READABLE_STRING_8): BOOLEAN
+			-- Is `a_input [a_start_index..a_end_index]' equal to `a_text'?
+		require
+			input_attached: a_input /= Void
+			text_attached: a_text /= Void
+			start_valid: a_start_index >= 1 and a_start_index <= a_input.count
+			end_valid: a_end_index >= a_start_index and a_end_index <= a_input.count
+		local
+			i: INTEGER
+			j: INTEGER
+		do
+			if a_end_index - a_start_index + 1 = a_text.count then
+				from
+					Result := True
+					i := a_start_index
+					j := 1
+				invariant
+					input_index_in_bounds: i >= a_start_index and i <= a_end_index + 1
+					text_index_in_bounds: j >= 1 and j <= a_text.count + 1
+					indexes_aligned: i - a_start_index = j - 1
+				until
+					i > a_end_index or not Result
+				loop
+					Result := a_input.item (i) = a_text.item (j)
+					i := i + 1
+					j := j + 1
+				variant
+					a_end_index - i + 1
+				end
+			end
+		end
+
+	is_name_start_character (c: CHARACTER_8): BOOLEAN
+			-- Is `c' an XML 1.0 name-start character representable in CHARACTER_8?
+		local
+			l_code: INTEGER
+		do
+			l_code := c.code
+			Result := c.is_alpha or c = '_' or c = ':' or else (l_code >= 192 and l_code <= 255)
+		end
+
+	is_name_character (c: CHARACTER_8): BOOLEAN
+			-- Is `c' an XML 1.0 name character representable in CHARACTER_8?
+		local
+			l_code: INTEGER
+		do
+			l_code := c.code
+			Result := is_name_start_character (c) or c.is_digit or c = '-' or c = '.' or l_code = 183 or else (l_code >= 128 and l_code <= 191)
 		end
 
 	skip_spaces (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
