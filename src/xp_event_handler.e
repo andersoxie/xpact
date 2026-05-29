@@ -6,6 +6,24 @@ deferred class
 
 feature -- Events
 
+	wants_start_element_events: BOOLEAN
+			-- Should start-element event objects be materialized and emitted?
+		do
+			Result := True
+		end
+
+	wants_end_element_events: BOOLEAN
+			-- Should end-element event objects be materialized and emitted?
+		do
+			Result := True
+		end
+
+	wants_character_data_events: BOOLEAN
+			-- Should character-data event text be materialized and emitted?
+		do
+			Result := True
+		end
+
 	wants_automatic_character_data_default: BOOLEAN
 			-- Should character data also be emitted through `on_default' automatically?
 		do

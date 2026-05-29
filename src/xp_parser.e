@@ -865,7 +865,7 @@ feature {NONE} -- Markup parsing
 						else
 							note_position (name_start)
 						end
-						emit_default (a_input.substring (a_start_index, i))
+						emit_default_range (a_input, a_start_index, i)
 						close_element (l_name)
 						Result := i + 1
 						else
@@ -1452,9 +1452,15 @@ feature {NONE} -- Character data and references
 		local
 			i: INTEGER
 			c: CHARACTER_8
-			l_text: STRING_8
+			l_text: detachable STRING_8
+			l_materialize_text: BOOLEAN
+			l_all_space: BOOLEAN
 		do
-			create l_text.make_empty
+			l_materialize_text := handler.wants_character_data_events or else handler.wants_default_events or else handler.wants_automatic_character_data_default
+			if l_materialize_text then
+				create l_text.make_empty
+			end
+			l_all_space := True
 			from
 				i := a_start_index
 			invariant
@@ -1472,7 +1478,12 @@ feature {NONE} -- Character data and references
 						set_error ("entity reference outside document element")
 						i := a_input.count + 1
 					else
-						i := append_reference_in_content (a_input, i, l_text)
+						if not attached l_text then
+							create l_text.make_empty
+						end
+						check attached l_text as l_attached_text then
+							i := append_reference_in_content (a_input, i, l_attached_text)
+						end
 					end
 				elseif is_incomplete_utf8_sequence_at (a_input, i) then
 					set_error ("partial character")
@@ -1481,7 +1492,12 @@ feature {NONE} -- Character data and references
 					set_error ("invalid XML character")
 					i := a_input.count + 1
 				else
-					l_text.append_character (c)
+					if l_all_space then
+						l_all_space := is_xml_space (c)
+					end
+					if attached l_text as l_attached_text then
+						l_attached_text.append_character (c)
+					end
 					i := i + 1
 				end
 			variant
@@ -1489,23 +1505,30 @@ feature {NONE} -- Character data and references
 			end
 			if not has_error and not is_suspended then
 				if element_stack.count = 0 and then not parsing_external_entity then
-					if not is_all_xml_space (l_text) then
+					if attached l_text as l_attached_text then
+						l_all_space := is_all_xml_space (l_attached_text)
+					end
+					if not l_all_space then
 						set_error ("character data outside document element")
 						Result := a_input.count + 1
 					else
-						emit_default (l_text)
+						if attached l_text as l_attached_text then
+							emit_default (l_attached_text)
+						end
 						Result := i
 					end
 				else
-					if handler.wants_automatic_character_data_default then
-						emit_default (l_text)
+					if attached l_text as l_attached_text then
+						if handler.wants_automatic_character_data_default then
+							emit_default (l_attached_text)
+						end
+						if entity_reference_count_stack.count > 0 then
+							note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+						else
+							note_token_position (a_start_index, l_attached_text.count)
+						end
+						emit_text (l_attached_text)
 					end
-					if entity_reference_count_stack.count > 0 then
-						note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
-					else
-						note_token_position (a_start_index, l_text.count)
-					end
-					emit_text (l_text)
 					Result := i
 				end
 			else
@@ -1525,10 +1548,16 @@ feature {NONE} -- Character data and references
 		local
 			i: INTEGER
 			c: CHARACTER_8
-			l_text: STRING_8
+			l_text: detachable STRING_8
+			l_materialize_text: BOOLEAN
+			l_all_space: BOOLEAN
 			l_done: BOOLEAN
 		do
-			create l_text.make_empty
+			l_materialize_text := handler.wants_character_data_events or else handler.wants_default_events or else handler.wants_automatic_character_data_default
+			if l_materialize_text then
+				create l_text.make_empty
+			end
+			l_all_space := True
 			from
 				i := a_start_index
 			invariant
@@ -1549,7 +1578,12 @@ feature {NONE} -- Character data and references
 						set_error ("entity reference outside document element")
 						i := a_input.count + 1
 					else
-						i := append_reference_in_content (a_input, i, l_text)
+						if not attached l_text then
+							create l_text.make_empty
+						end
+						check attached l_text as l_attached_text then
+							i := append_reference_in_content (a_input, i, l_attached_text)
+						end
 					end
 				elseif is_incomplete_utf8_sequence_at (a_input, i) then
 					l_done := True
@@ -1558,7 +1592,12 @@ feature {NONE} -- Character data and references
 					set_error ("invalid XML character")
 					i := a_input.count + 1
 				else
-					l_text.append_character (c)
+					if l_all_space then
+						l_all_space := is_xml_space (c)
+					end
+					if attached l_text as l_attached_text then
+						l_attached_text.append_character (c)
+					end
 					i := i + 1
 				end
 			variant
@@ -1566,23 +1605,30 @@ feature {NONE} -- Character data and references
 			end
 			if not has_error and not is_suspended then
 				if element_stack.count = 0 and then not parsing_external_entity then
-					if not is_all_xml_space (l_text) then
+					if attached l_text as l_attached_text then
+						l_all_space := is_all_xml_space (l_attached_text)
+					end
+					if not l_all_space then
 						set_error ("character data outside document element")
 						Result := a_input.count + 1
 					else
-						emit_default (l_text)
+						if attached l_text as l_attached_text then
+							emit_default (l_attached_text)
+						end
 						Result := i
 					end
 				else
-					if handler.wants_automatic_character_data_default then
-						emit_default (l_text)
+					if attached l_text as l_attached_text then
+						if handler.wants_automatic_character_data_default then
+							emit_default (l_attached_text)
+						end
+						if entity_reference_count_stack.count > 0 then
+							note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+						else
+							note_token_position (a_start_index, l_attached_text.count)
+						end
+						emit_text (l_attached_text)
 					end
-					if entity_reference_count_stack.count > 0 then
-						note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
-					else
-						note_token_position (a_start_index, l_text.count)
-					end
-					emit_text (l_text)
 					Result := i
 				end
 			else
@@ -3310,15 +3356,17 @@ feature {NONE} -- Event dispatch
 			attributes_bounded: a_attributes.count <= max_attribute_count
 		local
 			l_name: STRING_8
-			l_event_name: attached STRING_8
-			l_event_attributes: attached XP_ATTRIBUTES
-			l_namespace_scope: attached HASH_TABLE [STRING_8, STRING_8]
-			l_namespace_prefixes: attached ARRAYED_LIST [STRING_8]
+			l_event_name: detachable STRING_8
+			l_event_attributes: detachable XP_ATTRIBUTES
+			l_namespace_scope: detachable HASH_TABLE [STRING_8, STRING_8]
+			l_namespace_prefixes: detachable ARRAYED_LIST [STRING_8]
+			l_wants_start_events: BOOLEAN
 		do
-			create l_event_name.make_from_string (a_name)
-			l_event_attributes := a_attributes
-			create l_namespace_scope.make (1)
-			create l_namespace_prefixes.make (0)
+			l_wants_start_events := handler.wants_start_element_events
+			if l_wants_start_events then
+				create l_event_name.make_from_string (a_name)
+				l_event_attributes := a_attributes
+			end
 			if element_stack.count >= max_element_depth then
 				set_error ("maximum element depth exceeded")
 			elseif element_stack.count = 0 and then document_element_count > 0 and then not parsing_external_entity then
@@ -3335,27 +3383,52 @@ feature {NONE} -- Event dispatch
 						create l_namespace_prefixes.make (4)
 						l_namespace_scope := namespace_scope_for_element (a_attributes, l_namespace_prefixes)
 						if not has_error then
-							l_event_name := expanded_element_name (a_name, l_namespace_scope)
+							if attached l_namespace_scope as l_attached_scope then
+								if l_wants_start_events then
+									l_event_name := expanded_element_name (a_name, l_attached_scope)
+								else
+									l_event_name := Void
+								end
+							else
+								check namespace_scope_available: False end
+							end
 						end
 						if not has_error then
-							l_event_attributes := expanded_attributes (a_attributes, l_namespace_scope)
+							if attached l_namespace_scope as l_attached_scope then
+								l_event_attributes := expanded_attributes (a_attributes, l_attached_scope)
+								if not l_wants_start_events then
+									l_event_attributes := Void
+								end
+							else
+								check namespace_scope_available: False end
+							end
 						end
 					else
-						l_event_attributes := a_attributes
+						if l_wants_start_events then
+							l_event_attributes := a_attributes
+						end
 					end
 				end
 				if not has_error then
 					create l_name.make_from_string (a_name)
 					element_stack.extend (l_name)
 					if namespace_mode then
-						namespace_context_stack.extend (l_namespace_scope)
-						namespace_declaration_stack.extend (l_namespace_prefixes)
-						emit_start_namespace_declarations (l_namespace_prefixes, l_namespace_scope)
+						if attached l_namespace_scope as l_attached_scope and then attached l_namespace_prefixes as l_attached_prefixes then
+							namespace_context_stack.extend (l_attached_scope)
+							namespace_declaration_stack.extend (l_attached_prefixes)
+							emit_start_namespace_declarations (l_attached_prefixes, l_attached_scope)
+						else
+							check namespace_state_available: False end
+						end
 					end
 				end
-				if not has_error and not is_suspended then
-					handler.on_start_element (l_event_name, l_event_attributes)
-					check_handler_stop
+				if not has_error and not is_suspended and l_wants_start_events then
+					if attached l_event_name as l_attached_event_name and then attached l_event_attributes as l_attached_event_attributes then
+						handler.on_start_element (l_attached_event_name, l_attached_event_attributes)
+						check_handler_stop
+					else
+						check event_state_available: False end
+					end
 				end
 			end
 		ensure
@@ -3368,22 +3441,28 @@ feature {NONE} -- Event dispatch
 		require
 			name_attached: a_name /= Void
 		local
-			l_event_name: STRING_8
+			l_event_name: detachable STRING_8
+			l_wants_end_events: BOOLEAN
 		do
+			l_wants_end_events := handler.wants_end_element_events
 			if element_stack.count = 0 then
 				set_error ("unexpected end tag")
 			elseif not element_stack.item.same_string (a_name) then
 				set_error ("mismatched end tag")
 			else
-				if namespace_mode then
-					l_event_name := expanded_element_name (a_name, namespace_context_stack.item)
-				else
-					create l_event_name.make_from_string (a_name)
+				if l_wants_end_events then
+					if namespace_mode then
+						l_event_name := expanded_element_name (a_name, namespace_context_stack.item)
+					else
+						create l_event_name.make_from_string (a_name)
+					end
 				end
 				element_stack.remove
-				if not has_error then
-					handler.on_end_element (l_event_name)
-					check_handler_stop
+				if not has_error and l_wants_end_events then
+					check attached l_event_name as l_attached_event_name then
+						handler.on_end_element (l_attached_event_name)
+						check_handler_stop
+					end
 				end
 				if namespace_mode then
 					emit_end_namespace_declarations
@@ -3399,7 +3478,7 @@ feature {NONE} -- Event dispatch
 			text_attached: a_text /= Void
 			text_within_limit: a_text.count <= max_token_length
 		do
-			if a_text.count > 0 then
+			if handler.wants_character_data_events and then a_text.count > 0 then
 				handler.on_character_data (a_text)
 				check_handler_stop
 			end

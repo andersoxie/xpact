@@ -7,6 +7,10 @@ class
 inherit
 	XP_EVENT_HANDLER
 		redefine
+			wants_start_element_events,
+			wants_end_element_events,
+			wants_character_data_events,
+			wants_automatic_character_data_default,
 			wants_default_events
 		end
 
@@ -20,6 +24,30 @@ feature {NONE} -- Initialization
 		end
 
 feature -- Events
+
+	wants_start_element_events: BOOLEAN
+			-- No start-element event objects are needed by this sink.
+		do
+			Result := False
+		end
+
+	wants_end_element_events: BOOLEAN
+			-- No end-element event objects are needed by this sink.
+		do
+			Result := False
+		end
+
+	wants_character_data_events: BOOLEAN
+			-- No character-data event text is needed by this sink.
+		do
+			Result := False
+		end
+
+	wants_automatic_character_data_default: BOOLEAN
+			-- Character data should not be mirrored to the default handler.
+		do
+			Result := False
+		end
 
 	wants_default_events: BOOLEAN
 			-- No default-handler text is needed by this sink.
