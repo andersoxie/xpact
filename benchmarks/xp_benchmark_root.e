@@ -17,8 +17,10 @@ feature {NONE} -- Initialization
 			i: INTEGER
 			l_ok: BOOLEAN
 			l_iterations: INTEGER
+			l_suspend_gc: BOOLEAN
 		do
 			l_iterations := iteration_count
+			l_suspend_gc := suspend_gc_during_parse
 			create l_handler.make
 			create l_parser.make (l_handler)
 			l_input := sample_document
@@ -29,7 +31,11 @@ feature {NONE} -- Initialization
 			until
 				i > l_iterations
 			loop
-				l_ok := l_parser.parse (l_input)
+				if l_suspend_gc then
+					l_ok := l_parser.parse_without_garbage_collection (l_input)
+				else
+					l_ok := l_parser.parse (l_input)
+				end
 				if not l_ok then
 					io.put_string ("benchmark parse failed: ")
 					io.put_string (l_parser.last_error)
@@ -56,19 +62,54 @@ feature {NONE} -- Data
 			-- Requested iteration count, or the default.
 		local
 			l_arguments: ARGUMENTS
+			i: INTEGER
 		do
 			Result := Default_iterations
 			create l_arguments
-			if l_arguments.argument_count = 2 and then l_arguments.argument (1).same_string ("--iterations") then
-				if l_arguments.argument (2).is_integer then
-					Result := l_arguments.argument (2).to_integer
-					if Result <= 0 then
-						Result := Default_iterations
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= l_arguments.argument_count + 1
+			until
+				i > l_arguments.argument_count
+			loop
+				if l_arguments.argument (i).same_string ("--iterations") and then i < l_arguments.argument_count then
+					if l_arguments.argument (i + 1).is_integer then
+						Result := l_arguments.argument (i + 1).to_integer
+						if Result <= 0 then
+							Result := Default_iterations
+						end
 					end
+					i := i + 2
+				else
+					i := i + 1
 				end
+			variant
+				l_arguments.argument_count - i + 1
 			end
 		ensure
 			positive: Result > 0
+		end
+
+	suspend_gc_during_parse: BOOLEAN
+			-- Should the benchmark suspend garbage collection during each parse?
+		local
+			l_arguments: ARGUMENTS
+			i: INTEGER
+		do
+			create l_arguments
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= l_arguments.argument_count + 1
+			until
+				i > l_arguments.argument_count or Result
+			loop
+				Result := l_arguments.argument (i).same_string ("--suspend-gc")
+				i := i + 1
+			variant
+				l_arguments.argument_count - i + 1
+			end
 		end
 
 	sample_document: STRING_8

@@ -213,6 +213,15 @@ $AllRows.AddRange((Invoke-TimedCommand `
 	-Notes $XpactNotes))
 $AllRows.AddRange((Invoke-TimedCommand `
 	-Name "catalog-100-items" `
+	-Executable $XpactExe `
+	-Arguments @("--iterations", "$Iterations", "--suspend-gc") `
+	-Engine "$XpactEngine, GC suspended during parse" `
+	-Version $XpactVersion `
+	-IterationCount $Iterations `
+	-DocumentBytes $DocumentBytes `
+	-Notes "$XpactNotes; calls parse_without_garbage_collection"))
+$AllRows.AddRange((Invoke-TimedCommand `
+	-Name "catalog-100-items" `
 	-Executable $Python `
 	-Arguments @((Join-Path $RepoRoot "benchmarks\libexpat_py_benchmark.py"), "--iterations", "$Iterations", "--mode", "callbacks") `
 	-Engine "libexpat via CPython pyexpat callbacks" `
