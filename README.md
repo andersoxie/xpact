@@ -30,7 +30,7 @@ Implemented and verified now:
 - C ABI smoke tests for public callers and for the private Eiffel bridge.
 - A native C benchmark path against the Windows Eiffel-backed DLL.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
-- Published benchmark and parity documentation.
+- Published benchmark, performance-analysis, and parity documentation.
 
 The upstream Expat 2.8.1 manifest currently has 399 `START_TEST(...)` entries.
 The expected-failure list expands to 88 rows:

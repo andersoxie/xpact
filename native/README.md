@@ -33,20 +33,21 @@ library. It compiles the C export layer and Eiffel runtime trampoline, finalizes
 that `XML_Parse` reaches the Eiffel parser through the public `include/xpact.h`
 ABI.
 
-The next native packaging work is the equivalent Linux/WSL `libxpact.so` path
-and then the native xpact-vs-libexpat benchmark through the same C ABI. That
-Linux/WSL package is deferred platform expansion; the initial native package is
-Windows x64 only.
+Linux/WSL packaging for an Eiffel-backed `libxpact.so` remains deferred
+platform expansion. The current native release path is Windows x64, and the
+Windows native benchmark already exercises the Eiffel-backed DLL through the
+public C ABI.
 
 `scripts/package_windows_release.ps1` creates the Windows-only release archive
 under `dist/`. The archive contains `bin/xpact.dll`, `lib/xpact.lib`,
-`include/xpact.h`, Windows release notes, checksum rows, and the C smoke source
-used to verify a consumer link.
+`include/xpact.h`, Windows release notes, checksum rows, benchmark/parity
+documentation, and the C smoke source used to verify a consumer link.
 
 `scripts/run_benchmarks.ps1` also measures that Windows DLL through the public
 C ABI. It compiles `benchmarks/xpact_native_c_benchmark.c` with MSVC, links
 against `build/native-eiffel/xpact.lib`, runs with `build/native-eiffel` on
-`PATH`, and publishes the measured rows in `docs/benchmarks.md`.
+`PATH`, publishes create/free and parser-reuse rows in `docs/benchmarks.md`,
+and keeps the interpretation in `docs/performance-analysis.md`.
 
 Run the native ABI smoke tests with:
 

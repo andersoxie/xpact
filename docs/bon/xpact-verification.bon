@@ -17,6 +17,10 @@ cluster_chart verification
   external scripts/run_libexpat_adapter.ps1
   external scripts/run_benchmarks.ps1
   external scripts/package_windows_release.ps1
+  external docs/benchmarks.md
+  external docs/performance-analysis.md
+  external docs/libexpat-api-compatibility.md
+  external docs/libexpat-parity.md
   external adapters/libexpat/parity.tsv
   external adapters/libexpat/expected-failures.tsv
 
@@ -51,6 +55,18 @@ artifact_chart docs/benchmarks.md
   responsibility
     "Publish same-machine benchmark rows, including slower paths."
 
+artifact_chart docs/performance-analysis.md
+  responsibility
+    "Explain the current xpact-vs-libexpat performance gap and next optimization priorities."
+
+artifact_chart docs/libexpat-api-compatibility.md
+  responsibility
+    "Document public C API coverage and tracked compatibility gaps."
+
+artifact_chart docs/libexpat-parity.md
+  responsibility
+    "Summarize upstream Expat green/red parity status and expected failures."
+
 relations
   XP_TEST_ROOT client XP_PARSER
   XP_TEST_ROOT client XP_COLLECTING_HANDLER
@@ -61,6 +77,9 @@ relations
   scripts/run_native_abi_tests.ps1 client tests/native/xpact_bridge_smoke.c
   scripts/run_libexpat_adapter.ps1 client adapters/libexpat/parity.tsv
   scripts/run_libexpat_adapter.ps1 client adapters/libexpat/expected-failures.tsv
+  scripts/run_benchmarks.ps1 client docs/benchmarks.md
+  scripts/run_benchmarks.ps1 client docs/performance-analysis.md
   scripts/package_windows_release.ps1 client docs/benchmarks.md
+  scripts/package_windows_release.ps1 client docs/performance-analysis.md
+  scripts/package_windows_release.ps1 client docs/libexpat-api-compatibility.md
   scripts/package_windows_release.ps1 client docs/libexpat-parity.md
-

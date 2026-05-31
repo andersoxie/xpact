@@ -53,6 +53,7 @@ $Header = Join-Path $RepoRoot "include\xpact.h"
 $WindowsReadme = Join-Path $RepoRoot "docs\windows-release.md"
 $ProjectReadme = Join-Path $RepoRoot "README.md"
 $BenchmarkDoc = Join-Path $RepoRoot "docs\benchmarks.md"
+$PerformanceDoc = Join-Path $RepoRoot "docs\performance-analysis.md"
 $ApiDoc = Join-Path $RepoRoot "docs\libexpat-api-compatibility.md"
 $ParityDoc = Join-Path $RepoRoot "docs\libexpat-parity.md"
 $SmokeSource = Join-Path $RepoRoot "tests\native\xpact_eiffel_dll_smoke.c"
@@ -63,6 +64,7 @@ Require-File $Header
 Require-File $WindowsReadme
 Require-File $ProjectReadme
 Require-File $BenchmarkDoc
+Require-File $PerformanceDoc
 Require-File $ApiDoc
 Require-File $ParityDoc
 Require-File $SmokeSource
@@ -88,6 +90,7 @@ Copy-Item -LiteralPath $WindowsReadme -Destination (Join-Path $StageRoot "README
 Copy-Item -LiteralPath $ProjectReadme -Destination (Join-Path $StageRoot "PROJECT-README.md")
 Copy-Item -LiteralPath $SmokeSource -Destination (Join-Path $ExampleDir "xpact_eiffel_dll_smoke.c")
 Copy-Item -LiteralPath $BenchmarkDoc -Destination (Join-Path $DocsDir "benchmarks.md")
+Copy-Item -LiteralPath $PerformanceDoc -Destination (Join-Path $DocsDir "performance-analysis.md")
 Copy-Item -LiteralPath $ApiDoc -Destination (Join-Path $DocsDir "libexpat-api-compatibility.md")
 Copy-Item -LiteralPath $ParityDoc -Destination (Join-Path $DocsDir "libexpat-parity.md")
 

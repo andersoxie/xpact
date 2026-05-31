@@ -29,9 +29,10 @@ contract-tested manifest of the public names.
   forwarding.
 - Native C ABI benchmark wiring in `benchmarks/xpact_native_c_benchmark.c` and
   `scripts/run_benchmarks.ps1`; the Windows path links with
-  `build/native-eiffel/xpact.lib` and runs against the Eiffel-backed
-  `build/native-eiffel/xpact.dll`, while the older WSL bridge-only shared
-  object path remains separate until Linux/WSL packaging exists.
+  `build/native-eiffel/xpact.lib`, runs against the Eiffel-backed
+  `build/native-eiffel/xpact.dll`, publishes parser-create/free and
+  parser-reuse rows in `docs/benchmarks.md`, and leaves the older WSL
+  bridge-only shared object path separate until Linux/WSL packaging exists.
 - Eiffel-side bridge classes, `XP_NATIVE_PARSER`,
   `XP_NATIVE_CALLBACK_HANDLER`, `XP_NATIVE_BRIDGE_INSTALLER`, and
   `XP_NATIVE_BRIDGE_EXPORT`, that drive the Eiffel parser, adapt events to

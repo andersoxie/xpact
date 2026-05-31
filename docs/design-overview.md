@@ -43,7 +43,8 @@ Primary classes and C files:
   Keeps libexpat-compatible parser state and maps native parse calls to
   `XP_PARSER`.
 - `XP_NATIVE_CALLBACK_HANDLER`
-  Converts Eiffel events into native callback calls.
+  Converts Eiffel events into native callback calls and exposes callback
+  interest so no-callback parse paths avoid unnecessary native payload work.
 - `XP_NATIVE_BRIDGE_INSTALLER`
   Owns native parser handles and resolves them back to Eiffel parser objects.
 - `XP_NATIVE_BRIDGE_EXPORT`

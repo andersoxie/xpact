@@ -201,6 +201,7 @@ Archive these artifacts:
 - `build/libexpat-adapter-current/libexpat-parity-expanded.tsv`
 - `build/libexpat-adapter-current/libexpat-native-suite.log`
 - `docs/benchmarks.md` when benchmarks run
+- `docs/performance-analysis.md` when benchmarks run
 - `dist/*.zip`
 - CPython baseline and xpact-lane test logs when `RUN_PUBLIC_APP` is enabled
 
@@ -215,4 +216,3 @@ Before a public replacement claim, add a parser that:
 - fails the build if any non-expected row fails;
 - fails the build if an expected row unexpectedly passes and the manifest was
   not updated.
-

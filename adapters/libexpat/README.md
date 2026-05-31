@@ -8,7 +8,9 @@ It has three paths:
 - `scripts/run_libexpat_adapter.ps1` extracts a manifest from the upstream C
   tests and can run xpact over XML fixture files found in the upstream tree.
 - `adapters/libexpat/CMakeLists.txt` builds the upstream C unit-test harness
-  against xpact's libexpat-compatible native ABI once that DLL/SO exists.
+  against xpact's libexpat-compatible native ABI. The current Windows path
+  links against the Eiffel-backed import library; Unix-like SO packaging
+  remains future platform work.
 - `adapters/libexpat/expected-failures.tsv` records native-suite gaps that are
   allowed while parity work is still in progress.
 
@@ -35,7 +37,7 @@ from arbitrary fixture names.
 
 ## Native C Suite With Expected Failures
 
-After xpact has a native library exporting the declarations in `include\xpact.h`:
+For the current Windows Eiffel-backed native library:
 
 ```powershell
 .\scripts\build_native_eiffel.ps1

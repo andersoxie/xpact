@@ -154,9 +154,9 @@ pipeline {
         build/libexpat-adapter-current/*.tsv,
         build/libexpat-adapter-current/*.log,
         docs/benchmarks.md,
+        docs/performance-analysis.md,
         dist/*.zip
       ''', allowEmptyArchive: true
     }
   }
 }
-

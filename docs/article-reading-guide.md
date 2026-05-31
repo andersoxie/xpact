@@ -54,6 +54,9 @@ Read the repository in this order if you want to understand the design:
 8. `adapters/libexpat/parity.tsv`
    This is the public truth table for what upstream tests are green, red, or
    intentionally out of scope for the Windows preview.
+9. `docs/benchmarks.md` and `docs/performance-analysis.md`
+   These record the current same-machine measurements and explain the largest
+   remaining performance costs.
 
 ## How The Article Maps To Verification
 
@@ -85,4 +88,3 @@ No, if the claim is "100% drop-in replacement today":
 - two non-allocator upstream buffer/reparse heuristic rows remain red;
 - allocator-injection behavior needs a product decision;
 - replacement testing in public applications still needs to be automated.
-
