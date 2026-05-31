@@ -68,7 +68,9 @@ Start here, then read:
 5. `docs/libexpat-parity.md` and `adapters/libexpat/parity.tsv` for green/red
    upstream test-suite status.
 6. `docs/benchmarks.md` for same-machine benchmark results.
-7. `docs/drop-in-verification.md` for the Jenkins and public-application
+7. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
+   gap analysis and next optimization priorities.
+8. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
 
 ## Build And Verify
