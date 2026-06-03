@@ -73,28 +73,74 @@ Internal diagnostic event logging has already been disabled for the exported C
 bridge. That helped the no-callback native tokenizer path substantially, but real
 C callbacks still require payload materialization by design.
 
+## Article Performance Update
+
+Finnian Reilly's 2026-05-30 article update adds a more explicit Phase 2
+performance architecture. The important distinction is that the current
+`STRING_8` parser is still the right Phase 1 choice: it made XML behavior,
+contracts, and libexpat parity tractable first. The article's performance
+section defines what should come next.
+
+The central idea is to stop treating every token as a newly materialized Eiffel
+string. The article uses `C_STRING_8` as a proof-of-concept wrapper around
+C-allocated memory, with operations such as prefix comparison delegated to
+optimized C routines while Eiffel contracts check equivalence with `STRING_8`
+during development. The published microbenchmarks in the article report a
+large advantage for C-buffer prefix checks, a smaller but still meaningful
+advantage for occurrence counting, and a roughly 20% advantage for a
+CSV-style token extraction workflow.
+
+For xpact, the bigger point is architectural rather than the exact
+microbenchmark number: the parser should eventually operate on shared input
+buffers and token slices. Element names, attribute names, attribute values,
+namespace prefixes, and text runs can be represented as `(base pointer, offset,
+length)` views into the input, with `STRING_8` materialized only for public
+Eiffel APIs, diagnostics, or native callback payloads that actually need an
+owned string.
+
+The article also calls out three related performance levers:
+
+- string-pool recycling for repeated element names, attribute names, and
+  namespace prefixes;
+- garbage collection disabled across the parse window, which we already expose
+  experimentally but have not yet paired with a lower-allocation parser shape;
+- optional SCOOP pipeline parallelism after the single-threaded parser is fast
+  enough to justify parallel tokenizer/attribute/callback stages.
+
+That means the main Phase 2 target is not just "make current strings faster".
+It is to make the hot path buffer-backed, slice-oriented, pooled where useful,
+and contract-checked against ordinary `STRING_8` behavior in debug/test builds.
+
 ## Most Useful Next Optimizations
 
-The next high-value optimization is a no-DTD/no-namespace/no-event start-tag fast
-path. It should preserve the full parser behavior but avoid public event payload
-objects unless they are needed.
+The article changes the optimization priority. Local improvements to
+`XP_ATTRIBUTES` and no-callback paths still matter, but they should fit into a
+larger zero-copy buffer plan.
 
 Recommended order:
 
-1. Replace `XP_ATTRIBUTES` in the simple no-event path with a lightweight
-   duplicate-check structure for small attribute counts.
-2. Store element stack entries as compact internal tokens or pooled strings, and
-   materialize `STRING_8` only for event/API boundaries.
-3. Parse start-tag names and attribute names as ranges into the input buffer
-   where possible.
-4. Avoid `position_input` copying in success-only tokenizer paths, or make it
+1. Introduce a small contract-checked token-slice abstraction over a shared
+   byte buffer. Its debug/test contracts should prove equivalence with
+   `STRING_8` for prefix checks, equality, substring extraction, and conversion.
+2. Move tokenizer prefix checks and delimiter scans onto that buffer-backed
+   representation, using optimized byte operations where the Eiffel/C boundary
+   already exists.
+3. Store element-stack entries, names, and namespace prefixes as compact slices
+   or pooled strings, materializing `STRING_8` only for event/API boundaries.
+4. Replace `XP_ATTRIBUTES` in the simple path with a slice-backed structure and
+   lightweight duplicate checks for small attribute counts.
+5. Keep no-event/no-callback parsing lazy: avoid start-element payload objects,
+   attribute vectors, and character-data strings unless a handler or public API
+   asks for them.
+6. Avoid `position_input` copying in success-only tokenizer paths, or make it
    lazy so detailed line/column data is fully available on error but not paid
    for on every successful parse.
-5. For the native ABI tokenizer path, add a byte-buffer parse entry that avoids
+7. For the native ABI tokenizer path, add a byte-buffer parse entry that avoids
    an extra C-to-Eiffel-to-buffer copy when the input is already UTF-8.
+8. Treat SCOOP pipeline parsing as a later optional mode, after the
+   single-threaded buffer-backed path is competitive and well measured.
 
 These changes target the remaining structural differences from libexpat:
 libexpat scans over a byte buffer and materializes little unless a callback or
 API asks for it. xpact should keep the Eiffel design and contracts, but move more
 work to lazy materialization at the boundary.
-

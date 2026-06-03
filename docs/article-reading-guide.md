@@ -11,6 +11,8 @@ The working interpretation used in this repository is:
 - implement the core behavior in Eiffel, with contracts visible in the source;
 - use the existing C ecosystem as the compatibility oracle;
 - publish benchmarks and parity gaps honestly instead of hiding them;
+- separate Phase 1 correctness/parity work from Phase 2 performance
+  architecture;
 - keep enough C ABI compatibility to let real C callers test the Eiffel
   implementation.
 
@@ -72,6 +74,28 @@ that means layered verification:
   repository.
 
 `docs/drop-in-verification.md` turns that into a Jenkins plan.
+
+## How The Performance Update Maps To xpact
+
+The current article now gives a clearer Phase 2 performance argument. The
+important points for this repository are:
+
+- Phase 1 was correct to use ordinary Eiffel strings while closing XML behavior
+  and libexpat parity gaps.
+- The future hot path should move toward C-buffer-backed or byte-buffer-backed
+  token slices, with contracts proving equivalence to `STRING_8` behavior in
+  development builds.
+- Token names, attribute values, namespace prefixes, and text runs should be
+  shared views into the input where possible, not eagerly copied strings.
+- Repeated names should be pooled or interned so large documents do not allocate
+  the same vocabulary thousands of times.
+- GC-off parse windows are useful only when paired with lower allocation
+  pressure; by themselves they do not explain the current gap.
+- SCOOP pipeline parallelism is a later optional capability, not a substitute
+  for making the single-threaded tokenizer competitive first.
+
+`docs/performance-analysis.md` records this as the current optimization
+roadmap.
 
 ## Current Answer To "Are We On The Right Track?"
 

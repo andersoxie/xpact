@@ -49,6 +49,8 @@ Before calling xpact a credible drop-in replacement, the project still needs:
   reparse-buffer heuristic gaps;
 - a stronger native-suite gate that reports actual unexpected failures by
   upstream test name, not only the current expected-failure manifest expansion;
+- Phase 2 performance work: buffer-backed token slices, lazy materialization,
+  string-pool recycling, and a native byte-buffer parse path;
 - replacement testing in at least one public application that normally builds
   against libexpat;
 - Linux/WSL packaging for an Eiffel-backed `libxpact.so`;

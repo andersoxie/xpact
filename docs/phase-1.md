@@ -94,6 +94,10 @@ Windows-only Phase 1 closeout:
 
 Beyond this Windows-only Phase 1 scope:
 
+- Phase 2 performance work should follow the article's updated architecture:
+  buffer-backed token slices, lazy `STRING_8` materialization, string-pool
+  recycling, native byte-buffer parsing, and only later optional SCOOP pipeline
+  parallelism.
 - Linux/WSL `libxpact.so` packaging and benchmark parity remain future platform work.
 - Remaining red libexpat parity gaps are tracked in `adapters/libexpat/parity.tsv`.
 - Drop-in replacement verification in public applications is tracked in

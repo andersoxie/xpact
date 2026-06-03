@@ -35,6 +35,11 @@ Primary classes:
 The core design rule is simple: XML semantics should be visible in Eiffel
 contracts and Eiffel code.
 
+The current Phase 1 core is intentionally `STRING_8`-centric. The Phase 2
+performance direction from the article is to introduce contract-checked
+byte-buffer token slices so the tokenizer can scan shared input buffers and
+materialize Eiffel strings only at API, callback, or diagnostic boundaries.
+
 ## Native Adapter
 
 Primary classes and C files:
