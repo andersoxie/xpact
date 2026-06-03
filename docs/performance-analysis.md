@@ -6,14 +6,17 @@ on the Windows Phase 1 benchmark in `docs/benchmarks.md`.
 ## Current Baseline
 
 The benchmark parses the same 2611-byte UTF-8 catalog document 1000 times and
-reports the median of three process-level runs.
+reports the median of three process-level runs. The WSL2 C rows compile and
+link against Ubuntu libexpat directly, but elapsed time is measured from
+Windows and includes `wsl.exe` launch overhead.
 
 | Path | Median elapsed ms | Relative note |
 |---|---:|---|
-| libexpat via CPython `pyexpat` tokenizer | 107.682 | Baseline tokenizer row |
-| xpact direct Eiffel tokenizer/no-op | 916.026 | About 8.5x slower than libexpat tokenizer |
-| xpact native C ABI tokenizer | 3382.100 | About 3.7x slower than direct Eiffel |
-| xpact native C ABI callbacks | 6188.694 | About 6.8x slower than direct Eiffel |
+| libexpat C tokenizer via WSL2 gcc | 100.937 | Direct C baseline row |
+| libexpat via CPython `pyexpat` tokenizer | 114.742 | Python binding baseline row |
+| xpact direct Eiffel tokenizer/no-op | 851.331 | About 8.4x slower than direct C libexpat tokenizer |
+| xpact native C ABI tokenizer | 3458.657 | About 4.1x slower than direct Eiffel |
+| xpact native C ABI callbacks | 6420.215 | About 7.5x slower than direct Eiffel |
 
 The direct Eiffel row is the best measure of the Eiffel parser core. The native
 C ABI rows include the exported C bridge, C/Eiffel runtime transitions, native
@@ -22,8 +25,9 @@ callback adapter work, and byte/string conversions.
 ## What Has Already Been Ruled Out
 
 Temporary garbage-collection suspension does not explain the main gap. The
-`parse_without_garbage_collection` row is close to the normal direct Eiffel row,
-and the difference moves within normal process-level noise.
+`parse_without_garbage_collection` row is close to the normal direct Eiffel row
+in the latest table, and the difference moves within normal process-level
+noise.
 
 Parser creation and free are also not the main native cost. Reusing the native
 `XML_Parser` with `XML_ParserReset` produced nearly the same median as creating
