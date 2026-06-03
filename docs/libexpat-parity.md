@@ -18,8 +18,8 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 ```
 
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
-expected-failure patterns expand to 88 named upstream tests in the downloaded
-R_2_8_1 sources used for this checkpoint. Of those, 86 are C allocator
+expected-failure patterns expand to 86 named upstream tests in the downloaded
+R_2_8_1 sources used for this checkpoint. All 86 are C allocator
 failure-injection rows that are intentionally skipped for the Eiffel release
 scope because Eiffel parser storage is not a caller-managed allocation
 contract.
@@ -206,6 +206,10 @@ The Windows release has green evidence for:
   libexpat. Eiffel-owned non-final parsing also applies reparse deferral to
   incomplete large tokens, inherited external parameter-entity child parsers,
   and on-the-fly deferral disabling.
+- Expat's large start-tag reparse/buffer heuristic rows now pass through the
+  Windows DLL adapter: deferred callbacks are released within the buffer
+  ceiling, and varying multi-megabyte buffer-fill patterns stay inside the
+  upstream parse-attempt scan limits.
 - upstream accounting precision now passes through the native adapter:
   direct input bytes, external child parser bytes, predefined/internal entity
   expansion, conditional-section parameter entities, BOM-prefixed external
@@ -214,12 +218,11 @@ The Windows release has green evidence for:
 
 ## Red Rows
 
-The red rows are specific remaining parity gaps, not a suite-wide failure:
+The remaining red rows are allocator-injection rows, not a suite-wide failure:
 
-- C allocator hook failure-injection tests, which are skipped for the Eiffel
-  release scope because they exercise libexpat's manual allocation contract
-  rather than Eiffel-owned parser storage;
-- exact Expat large-buffer scan-count and allocation heuristic behavior.
+- C allocator hook failure-injection tests, which are skipped for the current
+  Eiffel release scope because they exercise libexpat's manual allocation
+  contract rather than Eiffel-owned parser storage.
 
 ## Native Suite
 

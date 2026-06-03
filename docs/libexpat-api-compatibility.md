@@ -66,7 +66,6 @@ external-subset loading, and error reporting.
 
 ## Tracked Parity Gaps
 
-- Exact Expat large-buffer scan-count and reparse-buffer heuristic behavior.
 - C allocator hook failure-injection semantics. These rows are intentionally
   skipped for the current Eiffel release scope, but a final drop-in claim needs
   a product decision: either emulate the behavior at the C ABI boundary or

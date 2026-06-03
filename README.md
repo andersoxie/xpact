@@ -33,20 +33,16 @@ Implemented and verified now:
 - Published benchmark, performance-analysis, and parity documentation.
 
 The upstream Expat 2.8.1 manifest currently has 399 `START_TEST(...)` entries.
-The expected-failure list expands to 88 rows:
+The expected-failure list expands to 86 rows:
 
 - 86 allocator-injection tests are intentionally out of the current Eiffel
   release scope because they exercise libexpat's manual C allocation hook
   contract.
-- 2 non-allocator rows remain red: exact Expat large-buffer scan-count and
-  reparse-buffer heuristic behavior.
 
 ## What Is Left
 
 Before calling xpact a credible drop-in replacement, the project still needs:
 
-- elimination or explicit product decision for the two non-allocator
-  reparse-buffer heuristic gaps;
 - a stronger native-suite gate that reports actual unexpected failures by
   upstream test name, not only the current expected-failure manifest expansion;
 - Phase 2 performance work: buffer-backed token slices, lazy materialization,

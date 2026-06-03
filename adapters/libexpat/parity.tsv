@@ -151,5 +151,5 @@ red	alloc_tests.c	test_alloc_*	Upstream allocation-failure injection exercises C
 red	nsalloc_tests.c	test_nsalloc_*	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
 green	ns_tests.c	test_*	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
 green	misc_tests.c	test_misc_attribute_leak	Attribute lifetime/leak regression row passes through the Eiffel-backed native bridge under the upstream adapter.
-red	basic_tests.c	test_bypass_heuristic_when_close_to_bufsize	Reparse deferral/buffer heuristic behavior is not implemented.
-red	basic_tests.c	test_varying_buffer_fills	Reparse deferral/buffer heuristic behavior is not implemented.
+green	basic_tests.c	test_bypass_heuristic_when_close_to_bufsize	The Eiffel-backed native parser now releases deferred large start-tag callbacks within Expat's buffer-ceiling heuristic without further large allocations.
+green	basic_tests.c	test_varying_buffer_fills	The upstream varying-buffer-fill reparse-deferral row passes through the Windows DLL adapter, including large-token callback release and parse-attempt scan limits.

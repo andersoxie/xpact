@@ -1,5 +1,3 @@
 source	name	reason
 alloc_tests.c	test_alloc_*	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
 nsalloc_tests.c	test_nsalloc_*	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
-basic_tests.c	test_bypass_heuristic_when_close_to_bufsize	Reparse deferral/buffer heuristic behavior is not implemented.
-basic_tests.c	test_varying_buffer_fills	Reparse deferral/buffer heuristic behavior is not implemented.

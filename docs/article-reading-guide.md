@@ -109,6 +109,5 @@ Yes, for the Eiffel-library vision:
 
 No, if the claim is "100% drop-in replacement today":
 
-- two non-allocator upstream buffer/reparse heuristic rows remain red;
 - allocator-injection behavior needs a product decision;
 - replacement testing in public applications still needs to be automated.
