@@ -4,6 +4,9 @@ note
 class
 	XP_BENCHMARK_ROOT
 
+inherit
+	XP_LIMITS
+
 create
 	make
 
@@ -21,9 +24,9 @@ feature {NONE} -- Initialization
 		do
 			l_iterations := iteration_count
 			l_suspend_gc := suspend_gc_during_parse
+			l_input := input_document
 			create l_handler.make
-			create l_parser.make (l_handler)
-			l_input := sample_document
+			create l_parser.make_with_limits (l_handler, input_limit_for (l_input.count), Default_max_element_depth, Default_max_attribute_count, Default_max_token_length)
 			from
 				i := 1
 			invariant
@@ -112,6 +115,54 @@ feature {NONE} -- Data
 			end
 		end
 
+	input_document: STRING_8
+			-- Benchmark input document.
+		local
+			l_file_text: detachable STRING_8
+		do
+			if attached file_argument as l_path then
+				l_file_text := file_text (l_path)
+				if attached l_file_text as l_text then
+					Result := l_text
+				else
+					io.put_string ("benchmark cannot read XML file: ")
+					io.put_string (l_path)
+					io.put_new_line
+					exit_with_code (2)
+					create Result.make_empty
+				end
+			else
+				Result := sample_document
+			end
+		ensure
+			result_attached: Result /= Void
+		end
+
+	file_argument: detachable STRING_8
+			-- `--file' argument value, if provided.
+		local
+			l_arguments: ARGUMENTS
+			i: INTEGER
+		do
+			create l_arguments
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= l_arguments.argument_count + 1
+			until
+				i > l_arguments.argument_count or Result /= Void
+			loop
+				if l_arguments.argument (i).same_string ("--file") and then i < l_arguments.argument_count then
+					create Result.make_from_string (l_arguments.argument (i + 1))
+					i := l_arguments.argument_count + 1
+				else
+					i := i + 1
+				end
+			variant
+				l_arguments.argument_count - i + 1
+			end
+		end
+
 	sample_document: STRING_8
 		local
 			i: INTEGER
@@ -135,6 +186,56 @@ feature {NONE} -- Data
 		ensure
 			result_attached: Result /= Void
 			not_empty: not Result.is_empty
+		end
+
+	input_limit_for (a_byte_count: INTEGER): INTEGER
+			-- Parser input limit for a benchmark document of `a_byte_count' bytes.
+		require
+			non_negative: a_byte_count >= 0
+		do
+			if a_byte_count > Default_max_input_bytes then
+				Result := a_byte_count
+			else
+				Result := Default_max_input_bytes
+			end
+		ensure
+			large_enough: Result >= a_byte_count
+		end
+
+	file_text (a_path: READABLE_STRING_8): detachable STRING_8
+			-- Entire contents of `a_path', if readable.
+		require
+			path_attached: a_path /= Void
+			path_not_empty: not a_path.is_empty
+		local
+			l_file: PLAIN_TEXT_FILE
+		do
+			create l_file.make_with_name (a_path)
+			if l_file.exists and then l_file.is_readable then
+				create Result.make_empty
+				l_file.open_read
+				from
+				invariant
+					result_attached: Result /= Void
+				until
+					l_file.end_of_file
+				loop
+					l_file.read_stream (65536)
+					Result.append (l_file.last_string)
+				end
+				l_file.close
+			end
+		end
+
+	exit_with_code (a_code: INTEGER)
+			-- End process with `a_code'.
+		require
+			non_negative: a_code >= 0
+		local
+			l_exceptions: EXCEPTIONS
+		do
+			create l_exceptions
+			l_exceptions.die (a_code)
 		end
 
 end

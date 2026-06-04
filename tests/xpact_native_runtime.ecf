@@ -20,4 +20,24 @@
 		<cluster name="src" location="..\src\"/>
 		<cluster name="tests" location=".\"/>
 	</target>
+	<target name="xpact_native_runtime_no_assertions">
+		<root class="XP_NATIVE_RUNTIME_SMOKE" feature="make"/>
+		<option warning="true" is_obsolete_routine_type="true">
+			<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<external_include location="..\..\..\..\include\"/>
+		<external_include location="..\..\..\..\native\"/>
+		<external_object location="..\..\..\build\native-runtime\xpact_native.obj"/>
+		<external_object location="..\..\..\build\native-runtime\xpact_eiffel_runtime_bridge.obj"/>
+		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<cluster name="src" location="..\src\"/>
+		<cluster name="tests" location=".\"/>
+	</target>
 </system>

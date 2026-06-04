@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(__GNUC__) || defined(__clang__)
+#define XPACT_PRIVATE_UNUSED __attribute__((unused))
+#else
+#define XPACT_PRIVATE_UNUSED
+#endif
+
 struct XML_ParserStruct {
 	void *userData;
 	XML_Bool useParserAsHandlerArg;
@@ -71,7 +77,7 @@ struct XML_ParserStruct {
 #define XPACT_CALLBACK_NONE 0
 #define XPACT_CALLBACK_CHARACTER_DATA 1
 
-static XML_Bool
+static XPACT_PRIVATE_UNUSED XML_Bool
 xp_private_append_utf8(char **buffer, int *length, int *capacity, int codepoint) {
 	int needed;
 	char bytes[4];
@@ -119,7 +125,7 @@ xp_private_append_utf8(char **buffer, int *length, int *capacity, int codepoint)
 	return XML_TRUE;
 }
 
-static XML_Bool
+static XPACT_PRIVATE_UNUSED XML_Bool
 xp_private_unknown_encoding_info_is_valid(const XML_Encoding *info, enum XML_Error *errorCode) {
 	int i;
 	for (i = 0; i < 128; i++) {
@@ -148,12 +154,12 @@ xp_private_unknown_encoding_info_is_valid(const XML_Encoding *info, enum XML_Err
 	return XML_TRUE;
 }
 
-static XML_Bool
+static XPACT_PRIVATE_UNUSED XML_Bool
 xp_has_unknown_encoding_handler(XML_Parser parser) {
 	return parser != NULL && parser->unknownEncodingHandler != NULL ? XML_TRUE : XML_FALSE;
 }
 
-static char *
+static XPACT_PRIVATE_UNUSED char *
 xp_decode_unknown_encoding_input(
 	XML_Parser parser,
 	const XML_Char *encoding,
@@ -267,7 +273,7 @@ xp_decode_unknown_encoding_input(
 	return decoded;
 }
 
-static void
+static XPACT_PRIVATE_UNUSED void
 xp_free_unknown_encoding_input(char *input) {
 	free(input);
 }

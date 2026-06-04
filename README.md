@@ -31,6 +31,8 @@ Implemented and verified now:
 - A native C benchmark path against the Windows Eiffel-backed DLL.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
 - Published benchmark, performance-analysis, and parity documentation.
+- An opt-in large XML benchmark runner for caller-supplied, pre-decompressed
+  real corpora.
 
 The upstream Expat 2.8.1 manifest currently has 399 `START_TEST(...)` entries.
 The expected-failure list expands to 86 rows:
@@ -61,23 +63,27 @@ Start here, then read:
 1. `docs/article-reading-guide.md` for how the repository maps to the original
    Eiffel.org article and the Design by Contract argument.
 2. `docs/phase-1.md` for the full Windows Phase 1 scope.
-3. `docs/design-overview.md` and `docs/bon/` for the design map and BON views.
-4. `docs/libexpat-api-compatibility.md` for the public C API surface.
-5. `docs/libexpat-parity.md` and `adapters/libexpat/parity.tsv` for green/red
+3. `docs/test-matrix.md` for assertion-on/assertion-off test lanes.
+4. `docs/platform-builds.md` for Windows, Linux, and Eiffel .NET build
+   preparation.
+5. `docs/design-overview.md` and `docs/bon/` for the design map and BON views.
+6. `docs/libexpat-api-compatibility.md` for the public C API surface.
+7. `docs/libexpat-parity.md` and `adapters/libexpat/parity.tsv` for green/red
    upstream test-suite status.
-6. `docs/benchmarks.md` for same-machine benchmark results.
-7. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
+8. `docs/benchmarks.md` for same-machine benchmark results.
+9. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
+10. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
    gap analysis and next optimization priorities.
-8. `docs/drop-in-verification.md` for the Jenkins and public-application
+11. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
 
 ## Build And Verify
 
-Compile and run the Eiffel regression tests:
+Compile and run the Eiffel regression matrix, both with and without Eiffel
+runtime assertions:
 
 ```powershell
-ec -batch -config tests\xpact_tests.ecf -target xpact_tests
-.\EIFGENs\xpact_tests\W_code\xpact_tests.exe
+.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode All -BuildMode All
 ```
 
 Build the Windows Eiffel-backed native DLL:
@@ -107,4 +113,10 @@ Package the Windows x64 preview release:
 
 ```powershell
 .\scripts\package_windows_release.ps1
+```
+
+Run opt-in large XML benchmarks with pre-decompressed real XML files:
+
+```powershell
+.\scripts\run_large_xml_benchmarks.ps1 -XmlFile C:\data\pubmed\pubmed25n0001.xml
 ```

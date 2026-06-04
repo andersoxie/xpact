@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
-	[string] $OutputDir = "build\native-runtime"
+	[string] $OutputDir = "build\native-runtime",
+	[ValidateSet("All", "Off", "On")]
+	[string] $AssertionMode = "All"
 )
 
 Set-StrictMode -Version Latest
@@ -59,26 +61,43 @@ function Compile-CObject {
 Compile-CObject (Join-Path $RepoRoot "native\xpact_native.c") (Join-Path $OutputRoot "xpact_native.obj")
 Compile-CObject (Join-Path $RepoRoot "native\xpact_eiffel_runtime_bridge.c") (Join-Path $OutputRoot "xpact_eiffel_runtime_bridge.obj")
 
-ec -batch -clean -config tests\xpact_native_runtime.ecf -target xpact_native_runtime
-if ($LASTEXITCODE -ne 0) {
-	throw "Eiffel native runtime target compilation failed."
+function Selected-RuntimeTargets {
+	if ($AssertionMode -eq "All" -or $AssertionMode -eq "On") {
+		[pscustomobject]@{
+			Label = "assertions-on"
+			Target = "xpact_native_runtime"
+		}
+	}
+	if ($AssertionMode -eq "All" -or $AssertionMode -eq "Off") {
+		[pscustomobject]@{
+			Label = "assertions-off"
+			Target = "xpact_native_runtime_no_assertions"
+		}
+	}
 }
 
-$WorkCode = Join-Path $RepoRoot "EIFGENs\xpact_native_runtime\W_code"
-if (Test-Path -LiteralPath (Join-Path $WorkCode "Makefile.SH") -PathType Leaf) {
-	Push-Location $WorkCode
-	try {
-		finish_freezing
-	} finally {
-		Pop-Location
-	}
+foreach ($RuntimeTarget in Selected-RuntimeTargets) {
+	Write-Host "== native runtime smoke: $($RuntimeTarget.Label) =="
+	ec -batch -clean -config tests\xpact_native_runtime.ecf -target $RuntimeTarget.Target
 	if ($LASTEXITCODE -ne 0) {
-		throw "finish_freezing failed for native runtime target."
+		throw "Eiffel native runtime target compilation failed for $($RuntimeTarget.Label)."
 	}
-}
+	$WorkCode = Join-Path $RepoRoot "EIFGENs\$($RuntimeTarget.Target)\W_code"
+	if (Test-Path -LiteralPath (Join-Path $WorkCode "Makefile.SH") -PathType Leaf) {
+		Push-Location $WorkCode
+		try {
+			finish_freezing
+		} finally {
+			Pop-Location
+		}
+		if ($LASTEXITCODE -ne 0) {
+			throw "finish_freezing failed for native runtime target $($RuntimeTarget.Label)."
+		}
+	}
 
-$Exe = Join-Path $WorkCode "xpact_native_runtime.exe"
-& $Exe
-if ($LASTEXITCODE -ne 0) {
-	throw "Native runtime smoke failed."
+	$Exe = Join-Path $WorkCode "xpact_native_runtime.exe"
+	& $Exe
+	if ($LASTEXITCODE -ne 0) {
+		throw "Native runtime smoke failed for $($RuntimeTarget.Label)."
+	}
 }

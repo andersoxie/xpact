@@ -148,3 +148,26 @@ These changes target the remaining structural differences from libexpat:
 libexpat scans over a byte buffer and materializes little unless a callback or
 API asks for it. xpact should keep the Eiffel design and contracts, but move more
 work to lazy materialization at the boundary.
+
+## Large XML Measurements
+
+The microbenchmark is intentionally small and repeatable. The repository now
+also has an opt-in large XML macro-benchmark runner,
+`scripts/run_large_xml_benchmarks.ps1`, documented in
+`docs/large-xml-benchmarks.md`.
+
+Those measurements should use real caller-supplied XML corpora, already
+decompressed, with download and decompression excluded from parser throughput.
+The first slice is explicitly a whole-file benchmark because the current Eiffel
+core consumes a complete `READABLE_STRING_8`. That makes it useful for
+realistic medium and large documents that fit in memory, but not yet for
+multi-gigabyte streaming claims.
+
+The first published macro comparison uses a 512 KiB valid subset derived from
+official PubMed update file `pubmed26n1380.xml.gz`: the original declaration,
+DOCTYPE, root element, and the first 53 complete `PubmedArticle` records. On
+that input, direct finalized Eiffel xpact takes 6724.675 ms, while the WSL2
+direct C libexpat tokenizer row takes 107.954 ms and CPython `pyexpat`
+tokenizer takes 91.006 ms. The macro result therefore shows a larger gap than
+the small catalog benchmark: roughly 62x versus direct C libexpat tokenizer and
+roughly 74x versus CPython `pyexpat` tokenizer. GC suspension remains neutral.

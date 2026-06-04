@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 from xml.parsers import expat
 
 
@@ -46,6 +47,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iterations", type=int, default=1000)
     parser.add_argument("--mode", choices=("callbacks", "tokenizer"), default="callbacks")
+    parser.add_argument("--file", help="pre-decompressed XML document to parse")
     parser.add_argument("--version", action="store_true")
     args = parser.parse_args()
 
@@ -56,7 +58,7 @@ def main() -> int:
     if args.iterations <= 0:
         raise SystemExit("--iterations must be positive")
 
-    document = sample_document()
+    document = Path(args.file).read_bytes() if args.file else sample_document()
     if args.mode == "callbacks":
         events = parse_with_callbacks(document, args.iterations)
     else:

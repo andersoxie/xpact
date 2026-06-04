@@ -45,6 +45,7 @@ feature {NONE} -- Initialization
 			test_expat_api_manifest
 			test_libexpat_adapter_files
 			test_benchmark_publication_files
+			test_ci_test_matrix_files
 			test_native_export_layer_files
 			if failed then
 				check tests_passed: False end
@@ -1231,16 +1232,45 @@ feature {NONE} -- Tests
 			assert ("benchmark script can record Windows Eiffel-backed native DLL", l_script.has_substring ("build_native_eiffel.ps1") and l_script.has_substring ("Windows MSVC DLL"))
 			assert ("benchmark script distinguishes bridge-only WSL path", l_script.has_substring ("XML_ERROR_NOT_STARTED") and l_script.has_substring ("build\native\libxpact.so"))
 			assert ("benchmark script writes docs table", l_script.has_substring ("docs\benchmarks.md"))
+			assert ("large XML benchmark script present", file_text ("scripts\run_large_xml_benchmarks.ps1").has_substring ("pre-decompressed XML"))
 			l_python := file_text ("benchmarks\libexpat_py_benchmark.py")
 			assert ("libexpat Python benchmark present", l_python.has_substring ("xml.parsers") and l_python.has_substring ("EXPAT_VERSION"))
+			assert ("libexpat Python benchmark accepts files", l_python.has_substring ("--file"))
 			assert ("libexpat C benchmark present", file_text ("benchmarks\libexpat_c_benchmark.c").has_substring ("XML_ExpatVersion"))
+			assert ("libexpat C benchmark accepts files", file_text ("benchmarks\libexpat_c_benchmark.c").has_substring ("--file"))
 			assert ("xpact native C benchmark present", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("XML_ERROR_NOT_STARTED"))
+			assert ("xpact native C benchmark accepts files", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("--file"))
 			l_table := file_text ("docs\benchmarks.md")
 			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
 			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))
 			assert ("published benchmark includes libexpat row", l_table.has_substring ("libexpat via CPython pyexpat"))
 			assert ("published benchmark documents optional WSL C rows", l_table.has_substring ("When present, WSL2 C rows"))
 			assert ("published benchmark includes Windows native C ABI rows", l_table.has_substring ("xpact native C ABI callbacks via Windows MSVC DLL"))
+			assert ("large XML benchmark docs present", file_text ("docs\large-xml-benchmarks.md").has_substring ("pre-decompressed"))
+		end
+
+	test_ci_test_matrix_files
+		local
+			l_ecf: STRING_8
+			l_script: STRING_8
+			l_jenkins: STRING_8
+			l_notes: STRING_8
+		do
+			l_ecf := file_text ("tests\xpact_tests.ecf")
+			assert ("test ECF has assertion-off target", l_ecf.has_substring ("<target name=%"xpact_tests%"") and l_ecf.has_substring ("precondition=%"false%""))
+			assert ("test ECF has assertion-on target", l_ecf.has_substring ("<target name=%"xpact_tests_assertions%"") and l_ecf.has_substring ("precondition=%"true%""))
+			l_script := file_text ("scripts\run_eiffel_test_matrix.ps1")
+			assert ("Eiffel test matrix script present", l_script.has_substring ("AssertionMode") and l_script.has_substring ("BuildMode"))
+			assert ("Eiffel test matrix covers finalized builds", l_script.has_substring ("finish_freezing") and l_script.has_substring ("Finalized"))
+			l_jenkins := file_text ("ci\Jenkinsfile.all-tests")
+			assert ("all-tests Jenkinsfile present", l_jenkins.has_substring ("Eiffel Regression Matrix"))
+			assert ("all-tests Jenkinsfile has assertion axis", l_jenkins.has_substring ("ASSERTIONS") and l_jenkins.has_substring ("Off") and l_jenkins.has_substring ("On"))
+			assert ("all-tests Jenkinsfile has build axis", l_jenkins.has_substring ("BUILD_MODE") and l_jenkins.has_substring ("Workbench") and l_jenkins.has_substring ("Finalized"))
+			assert ("all-tests Jenkinsfile runs native tests", l_jenkins.has_substring ("run_native_runtime_smoke.ps1") and l_jenkins.has_substring ("run_native_abi_tests.ps1"))
+			l_notes := file_text ("docs\test-matrix.md")
+			assert ("test matrix docs present", l_notes.has_substring ("Assertions off") and l_notes.has_substring ("Assertions on"))
+			l_notes := file_text ("docs\platform-builds.md")
+			assert ("platform build docs present", l_notes.has_substring ("Linux") and l_notes.has_substring ("Eiffel .NET"))
 		end
 
 	test_native_export_layer_files
@@ -1298,6 +1328,7 @@ feature {NONE} -- Tests
 			l_script := file_text ("scripts\run_native_runtime_smoke.ps1")
 			assert ("native runtime smoke script present", l_script.has_substring ("xpact_native_runtime.ecf"))
 			assert ("native runtime smoke compiles bridge objects", l_script.has_substring ("xpact_eiffel_runtime_bridge.c"))
+			assert ("native runtime smoke covers assertion modes", l_script.has_substring ("AssertionMode") and l_script.has_substring ("xpact_native_runtime_no_assertions"))
 			assert ("native runtime smoke runs Eiffel through C ABI", file_text ("tests\xp_native_runtime_smoke.e").has_substring ("XML_Parse"))
 			assert ("native runtime ECF present", file_text ("tests\xpact_native_runtime.ecf").has_substring ("xpact_native_runtime"))
 			l_script := file_text ("scripts\run_native_abi_tests.ps1")

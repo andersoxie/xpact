@@ -35,3 +35,6 @@ Interpretation: the `pyexpat` rows are same-machine Expat baselines through CPyt
 Native ABI note: the Windows `xpact native C ABI` rows are generated from a C executable linked against `include/xpact.h` and `build\native-eiffel\xpact.lib` and run against the Eiffel-backed `build\native-eiffel\xpact.dll`. Any WSL `xpact native C ABI` status row still targets the older bridge-only `build\native\libxpact.so` path and remains `not measured` until the Linux/WSL Eiffel-backed shared object is packaged.
 
 See `docs/performance-analysis.md` for the current interpretation of the xpact-vs-libexpat performance gap and optimization priorities.
+
+For opt-in macro-benchmarks against caller-supplied, pre-decompressed real XML
+corpora, see `docs/large-xml-benchmarks.md`.

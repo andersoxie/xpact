@@ -1,0 +1,230 @@
+pipeline {
+  agent none
+
+  options {
+    timestamps()
+    ansiColor('xterm')
+    buildDiscarder(logRotator(numToKeepStr: '30'))
+  }
+
+  parameters {
+    string(name: 'EXPAT_SOURCE_DIR',
+           defaultValue: 'C:\\src\\libexpat-R_2_8_1\\expat',
+           description: 'Path to the upstream Expat source tree.')
+    booleanParam(name: 'RUN_WSL_TESTS',
+                 defaultValue: true,
+                 description: 'Run WSL/Linux bridge and ABI smoke tests when WSL2 is available.')
+    booleanParam(name: 'RUN_LIBEXPAT_NATIVE_SUITE',
+                 defaultValue: true,
+                 description: 'Build and run upstream libexpat runtests through the xpact adapter.')
+    booleanParam(name: 'RUN_BENCHMARKS',
+                 defaultValue: false,
+                 description: 'Run same-machine benchmark publication.')
+    booleanParam(name: 'RUN_LARGE_XML_BENCHMARKS',
+                 defaultValue: false,
+                 description: 'Run opt-in large XML benchmark publication.')
+    string(name: 'LARGE_XML_FILE',
+           defaultValue: '',
+           description: 'Pre-decompressed XML file for the large XML benchmark.')
+  }
+
+  environment {
+    ADAPTER_OUTPUT = 'build\\libexpat-adapter-current'
+    XPACT_LIBRARY = 'build\\native-eiffel\\xpact.lib'
+  }
+
+  stages {
+    stage('Checkout') {
+      agent { label 'windows-eiffel' }
+      steps {
+        checkout scm
+        stash name: 'xpact-source',
+              includes: '**/*',
+              excludes: 'EIFGENs/**,build/**,dist/**,.git/**'
+      }
+    }
+
+    stage('Tool Versions') {
+      agent { label 'windows-eiffel' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          ec -version
+          cl
+          cmake --version
+          python --version
+        '''
+      }
+    }
+
+    stage('Eiffel Regression Matrix') {
+      matrix {
+        axes {
+          axis {
+            name 'ASSERTIONS'
+            values 'Off', 'On'
+          }
+          axis {
+            name 'BUILD_MODE'
+            values 'Workbench', 'Finalized'
+          }
+        }
+        agent { label 'windows-eiffel' }
+        stages {
+          stage('Run') {
+            steps {
+              deleteDir()
+              unstash 'xpact-source'
+              powershell '''
+                $ErrorActionPreference = "Stop"
+                .\\scripts\\run_eiffel_test_matrix.ps1 `
+                  -AssertionMode "${env:ASSERTIONS}" `
+                  -BuildMode "${env:BUILD_MODE}"
+              '''
+            }
+          }
+        }
+      }
+    }
+
+    stage('Windows Native Tests') {
+      agent { label 'windows-eiffel' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\build_native_eiffel.ps1
+          .\\scripts\\run_native_runtime_smoke.ps1
+          .\\scripts\\run_native_abi_tests.ps1 -Target Windows
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '''
+            build/native-eiffel/xpact.dll,
+            build/native-eiffel/xpact.lib,
+            build/native-runtime/*.obj
+          ''', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('WSL ABI Tests') {
+      when { expression { return params.RUN_WSL_TESTS } }
+      agent { label 'windows-eiffel' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_native_abi_tests.ps1 -Target Wsl
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'build/native/libxpact.so', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('libexpat Adapter') {
+      agent { label 'windows-eiffel' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\build_native_eiffel.ps1 -SkipSmoke
+          .\\scripts\\run_libexpat_adapter.ps1 `
+            -Mode Manifest `
+            -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+            -OutputDir "${env:ADAPTER_OUTPUT}" `
+            -XpactLibrary "${env:XPACT_LIBRARY}" `
+            -SkipNativeBuild
+          if (${env:RUN_LIBEXPAT_NATIVE_SUITE} -eq "true") {
+            .\\scripts\\run_libexpat_adapter.ps1 `
+              -Mode NativeSuite `
+              -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+              -OutputDir "${env:ADAPTER_OUTPUT}" `
+              -XpactLibrary "${env:XPACT_LIBRARY}" `
+              -SkipNativeBuild
+          }
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '''
+            build/libexpat-adapter-current/*.tsv,
+            build/libexpat-adapter-current/*.log
+          ''', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('Benchmarks') {
+      when { expression { return params.RUN_BENCHMARKS } }
+      agent { label 'windows-eiffel' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_benchmarks.ps1
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '''
+            build/benchmarks/*.tsv,
+            docs/benchmarks.md,
+            docs/performance-analysis.md
+          ''', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('Large XML Benchmarks') {
+      when { expression { return params.RUN_LARGE_XML_BENCHMARKS && params.LARGE_XML_FILE?.trim() } }
+      agent { label 'windows-eiffel' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_large_xml_benchmarks.ps1 `
+            -XmlFile "${env:LARGE_XML_FILE}" `
+            -MaxFileBytes 536870912
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: '''
+            build/large-xml-benchmarks/*.tsv,
+            docs/large-xml-benchmarks.md
+          ''', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('Package Windows Release') {
+      agent { label 'windows-eiffel' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\build_native_eiffel.ps1 -SkipSmoke
+          .\\scripts\\package_windows_release.ps1
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'dist/*.zip,dist/*.txt', allowEmptyArchive: true
+        }
+      }
+    }
+  }
+}

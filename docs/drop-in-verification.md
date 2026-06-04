@@ -35,11 +35,10 @@ The current Windows preview is between L2 and L3:
 
 Run from the repository root.
 
-Eiffel regression tests:
+Eiffel regression matrix, both with and without runtime assertions:
 
 ```powershell
-ec -batch -config tests\xpact_tests.ecf -target xpact_tests
-.\EIFGENs\xpact_tests\W_code\xpact_tests.exe
+.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode All -BuildMode All
 ```
 
 Windows Eiffel-backed DLL:
@@ -89,9 +88,25 @@ more sensitive to machine load:
 .\scripts\run_benchmarks.ps1
 ```
 
+Large XML macro-benchmarks are also nightly-only and require pre-decompressed
+real corpus files prepared outside the workspace:
+
+```powershell
+.\scripts\run_large_xml_benchmarks.ps1 `
+  -XmlFile C:\data\pubmed\pubmed25n0001.xml `
+  -Iterations 1 `
+  -Repetitions 3
+```
+
 ## Jenkins Pipeline
 
-The sample pipeline is in:
+The all-tests pipeline is in:
+
+```text
+ci/Jenkinsfile.all-tests
+```
+
+The Windows Phase 1 release-oriented pipeline is in:
 
 ```text
 ci/Jenkinsfile.windows-phase1
@@ -194,6 +209,8 @@ Acceptance rule:
 
 Archive these artifacts:
 
+- `EIFGENs/**/W_code/*.exe` and `EIFGENs/**/F_code/*.exe` when preserved by
+  the CI job configuration
 - `build/native-eiffel/xpact.dll`
 - `build/native-eiffel/xpact.lib`
 - `build/libexpat-adapter-current/libexpat-runtests-manifest.tsv`
@@ -201,7 +218,10 @@ Archive these artifacts:
 - `build/libexpat-adapter-current/libexpat-parity-expanded.tsv`
 - `build/libexpat-adapter-current/libexpat-native-suite.log`
 - `docs/benchmarks.md` when benchmarks run
+- `docs/large-xml-benchmarks.md` when large XML benchmarks run
 - `docs/performance-analysis.md` when benchmarks run
+- `build/large-xml-benchmarks/large-xml-benchmark-results.tsv` when large XML
+  benchmarks run
 - `dist/*.zip`
 - CPython baseline and xpact-lane test logs when `RUN_PUBLIC_APP` is enabled
 
