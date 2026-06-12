@@ -55,6 +55,7 @@ pipeline {
         powershell '''
           $ErrorActionPreference = "Stop"
           .\\scripts\\build_native_eiffel.ps1
+          .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions
         '''
       }
     }
@@ -110,7 +111,7 @@ pipeline {
       steps {
         powershell '''
           $ErrorActionPreference = "Stop"
-          .\\scripts\\run_benchmarks.ps1
+          .\\scripts\\run_benchmarks.ps1 -EiffelBuild Finalized,FinalizedAssertions
         '''
       }
     }
@@ -151,6 +152,8 @@ pipeline {
       archiveArtifacts artifacts: '''
         build/native-eiffel/xpact.dll,
         build/native-eiffel/xpact.lib,
+        build/native-eiffel/xpact_assertions.dll,
+        build/native-eiffel/xpact_assertions.lib,
         build/libexpat-adapter-current/*.tsv,
         build/libexpat-adapter-current/*.log,
         docs/benchmarks.md,

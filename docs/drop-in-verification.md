@@ -47,6 +47,12 @@ Windows Eiffel-backed DLL:
 .\scripts\build_native_eiffel.ps1
 ```
 
+Optimized assertion DLL for contract-audited validation runs:
+
+```powershell
+.\scripts\build_native_eiffel.ps1 -BuildTier Assertions
+```
+
 Native ABI/link smoke:
 
 ```powershell
@@ -85,7 +91,7 @@ Benchmark publication is useful but should normally run nightly because it is
 more sensitive to machine load:
 
 ```powershell
-.\scripts\run_benchmarks.ps1
+.\scripts\run_benchmarks.ps1 -EiffelBuild Finalized,FinalizedAssertions
 ```
 
 Large XML macro-benchmarks are also nightly-only and require pre-decompressed
@@ -213,6 +219,8 @@ Archive these artifacts:
   the CI job configuration
 - `build/native-eiffel/xpact.dll`
 - `build/native-eiffel/xpact.lib`
+- `build/native-eiffel/xpact_assertions.dll`
+- `build/native-eiffel/xpact_assertions.lib`
 - `build/libexpat-adapter-current/libexpat-runtests-manifest.tsv`
 - `build/libexpat-adapter-current/libexpat-expected-failures-expanded.tsv`
 - `build/libexpat-adapter-current/libexpat-parity-expanded.tsv`

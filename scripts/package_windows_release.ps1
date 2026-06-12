@@ -45,10 +45,16 @@ if (-not $SkipBuild) {
 	if ($LASTEXITCODE -ne 0) {
 		throw "Eiffel-backed Windows DLL build failed."
 	}
+	& (Join-Path $PSScriptRoot "build_native_eiffel.ps1") -BuildTier Assertions
+	if ($LASTEXITCODE -ne 0) {
+		throw "Eiffel-backed Windows assertion DLL build failed."
+	}
 }
 
 $Dll = Join-Path $RepoRoot "build\native-eiffel\xpact.dll"
 $Lib = Join-Path $RepoRoot "build\native-eiffel\xpact.lib"
+$AssertionDll = Join-Path $RepoRoot "build\native-eiffel\xpact_assertions.dll"
+$AssertionLib = Join-Path $RepoRoot "build\native-eiffel\xpact_assertions.lib"
 $Header = Join-Path $RepoRoot "include\xpact.h"
 $WindowsReadme = Join-Path $RepoRoot "docs\windows-release.md"
 $ProjectReadme = Join-Path $RepoRoot "README.md"
@@ -60,6 +66,8 @@ $SmokeSource = Join-Path $RepoRoot "tests\native\xpact_eiffel_dll_smoke.c"
 
 Require-File $Dll
 Require-File $Lib
+Require-File $AssertionDll
+Require-File $AssertionLib
 Require-File $Header
 Require-File $WindowsReadme
 Require-File $ProjectReadme
@@ -85,6 +93,8 @@ New-Item -ItemType Directory -Force -Path $BinDir, $LibDir, $IncludeDir, $Exampl
 
 Copy-Item -LiteralPath $Dll -Destination (Join-Path $BinDir "xpact.dll")
 Copy-Item -LiteralPath $Lib -Destination (Join-Path $LibDir "xpact.lib")
+Copy-Item -LiteralPath $AssertionDll -Destination (Join-Path $BinDir "xpact_assertions.dll")
+Copy-Item -LiteralPath $AssertionLib -Destination (Join-Path $LibDir "xpact_assertions.lib")
 Copy-Item -LiteralPath $Header -Destination (Join-Path $IncludeDir "xpact.h")
 Copy-Item -LiteralPath $WindowsReadme -Destination (Join-Path $StageRoot "README-WINDOWS.md")
 Copy-Item -LiteralPath $ProjectReadme -Destination (Join-Path $StageRoot "PROJECT-README.md")
@@ -99,6 +109,7 @@ $VersionText = @(
 	"Version: $Version",
 	"Platform: Windows x64",
 	"Native artifact: Eiffel-backed xpact.dll",
+	"Assertion artifact: Eiffel-backed xpact_assertions.dll with runtime assertions enabled",
 	"Generated: $((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"))"
 )
 Set-Content -Path (Join-Path $StageRoot "VERSION.txt") -Value $VersionText -Encoding ASCII

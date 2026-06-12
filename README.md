@@ -27,6 +27,8 @@ Implemented and verified now:
   URLs, or sockets by itself.
 - A libexpat 2.8.1 public API header surface in `include/xpact.h`.
 - A Windows x64 Eiffel-backed `xpact.dll` build path.
+- A finalized assertion-enabled `xpact_assertions.dll` tier for contract-audited
+  validation runs.
 - C ABI smoke tests for public callers and for the private Eiffel bridge.
 - A native C benchmark path against the Windows Eiffel-backed DLL.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
@@ -90,6 +92,12 @@ Build the Windows Eiffel-backed native DLL:
 
 ```powershell
 .\scripts\build_native_eiffel.ps1
+```
+
+Build the optimized assertion tier:
+
+```powershell
+.\scripts\build_native_eiffel.ps1 -BuildTier Assertions
 ```
 
 Run native ABI/link smoke tests:

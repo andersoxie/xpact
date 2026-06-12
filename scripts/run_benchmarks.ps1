@@ -3,8 +3,8 @@ param(
 	[int] $Iterations = 1000,
 	[int] $Repetitions = 3,
 	[string] $OutputDir = "build\benchmarks",
-	[ValidateSet("Finalized", "Workbench")]
-	[string] $EiffelBuild = "Finalized",
+	[ValidateSet("Finalized", "FinalizedAssertions", "Workbench")]
+	[string[]] $EiffelBuild = @("Finalized", "FinalizedAssertions"),
 	[switch] $SkipBuild,
 	[switch] $SkipWslC,
 	[switch] $SkipNativeXpactC
@@ -151,49 +151,94 @@ function Invoke-VcCommand {
 	}
 }
 
-if (-not $SkipBuild) {
-	if ($EiffelBuild -eq "Finalized") {
-		& ec -batch -finalize -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
-		if ($LASTEXITCODE -ne 0) {
-			throw "Finalized benchmark target generation failed."
-		}
-		$FinalCodeDir = Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\F_code"
-		Push-Location $FinalCodeDir
-		try {
-			& finish_freezing
-			if ($LASTEXITCODE -ne 0) {
-				throw "Finalized benchmark C compilation failed."
+function Get-EiffelBuildSpec {
+	param([string] $Build)
+	switch ($Build) {
+		"Finalized" {
+			[pscustomobject]@{
+				Name = "Finalized"
+				Target = "xpact_benchmarks"
+				Mode = "Finalized"
+				CodeDirectory = "F_code"
+				Engine = "xpact Eiffel finalized, assertions discarded"
+				Version = "Phase 1 finalized"
+				Notes = "Parser object reused; no-op event handler; finalized Eiffel C compilation"
 			}
-		} finally {
-			Pop-Location
 		}
-	} else {
-		& ec -batch -config benchmarks\xpact_benchmarks.ecf -target xpact_benchmarks
-		if ($LASTEXITCODE -ne 0) {
-			throw "Workbench benchmark target compilation failed."
+		"FinalizedAssertions" {
+			[pscustomobject]@{
+				Name = "FinalizedAssertions"
+				Target = "xpact_benchmarks_assertions"
+				Mode = "Finalized"
+				CodeDirectory = "F_code"
+				Engine = "xpact Eiffel finalized, assertions enabled"
+				Version = "Phase 1 finalized assertions"
+				Notes = "Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled"
+			}
+		}
+		"Workbench" {
+			[pscustomobject]@{
+				Name = "Workbench"
+				Target = "xpact_benchmarks_assertions"
+				Mode = "Workbench"
+				CodeDirectory = "W_code"
+				Engine = "xpact Eiffel workbench, assertions enabled"
+				Version = "Phase 1 workbench"
+				Notes = "Parser object reused; no-op event handler; runtime assertions enabled"
+			}
+		}
+		default {
+			throw "Unsupported Eiffel build type: $Build"
 		}
 	}
 }
 
-$XpactExe = if ($EiffelBuild -eq "Finalized") {
-	Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\F_code\xpact_benchmarks.exe"
-} else {
-	Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\W_code\xpact_benchmarks.exe"
-}
-if (-not (Test-Path -LiteralPath $XpactExe -PathType Leaf)) {
-	throw "xpact benchmark executable not found: $XpactExe"
+function Get-SelectedEiffelBuildSpecs {
+	$Selected = New-Object System.Collections.Generic.List[object]
+	$SelectedNames = New-Object System.Collections.Generic.List[string]
+	foreach ($Build in $EiffelBuild) {
+		if (-not $SelectedNames.Contains($Build)) {
+			$Selected.Add((Get-EiffelBuildSpec $Build))
+			$SelectedNames.Add($Build)
+		}
+	}
+	$Selected
 }
 
-$XpactEngine = if ($EiffelBuild -eq "Finalized") {
-	"xpact Eiffel finalized, assertions discarded"
-} else {
-	"xpact Eiffel workbench, contracts enabled"
+function Invoke-EiffelBenchmarkBuild {
+	param([object] $BuildSpec)
+	$ConfigPath = Join-Path $RepoRoot "benchmarks\xpact_benchmarks.ecf"
+	$CompileArgs = @("-batch", "-clean")
+	if ($BuildSpec.Mode -eq "Finalized") {
+		$CompileArgs += "-finalize"
+	}
+	$CompileArgs += @("-config", $ConfigPath, "-target", $BuildSpec.Target)
+
+	& ec @CompileArgs
+	if ($LASTEXITCODE -ne 0) {
+		throw "$($BuildSpec.Name) benchmark target generation failed."
+	}
+
+	$CodeDir = Join-Path $RepoRoot "EIFGENs\$($BuildSpec.Target)\$($BuildSpec.CodeDirectory)"
+	if (Test-Path -LiteralPath (Join-Path $CodeDir "Makefile.SH") -PathType Leaf) {
+		Push-Location $CodeDir
+		try {
+			& finish_freezing
+			if ($LASTEXITCODE -ne 0) {
+				throw "$($BuildSpec.Name) benchmark C compilation failed."
+			}
+		} finally {
+			Pop-Location
+		}
+	}
 }
-$XpactVersion = if ($EiffelBuild -eq "Finalized") { "Phase 1 finalized" } else { "Phase 1 workbench" }
-$XpactNotes = if ($EiffelBuild -eq "Finalized") {
-	"Parser object reused; no-op event handler; finalized Eiffel C compilation"
-} else {
-	"Parser object reused; no-op event handler; runtime assertions enabled"
+
+$SelectedEiffelBuilds = Get-SelectedEiffelBuildSpecs
+
+if (-not $SkipBuild) {
+	foreach ($BuildSpec in $SelectedEiffelBuilds) {
+		Invoke-EiffelBenchmarkBuild $BuildSpec
+	}
 }
 
 $Python = (Get-Command python -ErrorAction Stop).Source
@@ -202,24 +247,30 @@ $ExpatVersion = (& $Python (Join-Path $RepoRoot "benchmarks\libexpat_py_benchmar
 $DocumentBytes = Get-SampleDocumentBytes
 
 $AllRows = New-Object System.Collections.Generic.List[object]
-$AllRows.AddRange((Invoke-TimedCommand `
-	-Name "catalog-100-items" `
-	-Executable $XpactExe `
-	-Arguments @("--iterations", "$Iterations") `
-	-Engine $XpactEngine `
-	-Version $XpactVersion `
-	-IterationCount $Iterations `
-	-DocumentBytes $DocumentBytes `
-	-Notes $XpactNotes))
-$AllRows.AddRange((Invoke-TimedCommand `
-	-Name "catalog-100-items" `
-	-Executable $XpactExe `
-	-Arguments @("--iterations", "$Iterations", "--suspend-gc") `
-	-Engine "$XpactEngine, GC suspended during parse" `
-	-Version $XpactVersion `
-	-IterationCount $Iterations `
-	-DocumentBytes $DocumentBytes `
-	-Notes "$XpactNotes; calls parse_without_garbage_collection"))
+foreach ($BuildSpec in $SelectedEiffelBuilds) {
+	$XpactExe = Join-Path $RepoRoot "EIFGENs\$($BuildSpec.Target)\$($BuildSpec.CodeDirectory)\xpact_benchmarks.exe"
+	if (-not (Test-Path -LiteralPath $XpactExe -PathType Leaf)) {
+		throw "xpact benchmark executable not found: $XpactExe"
+	}
+	$AllRows.AddRange((Invoke-TimedCommand `
+		-Name "catalog-100-items" `
+		-Executable $XpactExe `
+		-Arguments @("--iterations", "$Iterations") `
+		-Engine $BuildSpec.Engine `
+		-Version $BuildSpec.Version `
+		-IterationCount $Iterations `
+		-DocumentBytes $DocumentBytes `
+		-Notes $BuildSpec.Notes))
+	$AllRows.AddRange((Invoke-TimedCommand `
+		-Name "catalog-100-items" `
+		-Executable $XpactExe `
+		-Arguments @("--iterations", "$Iterations", "--suspend-gc") `
+		-Engine "$($BuildSpec.Engine), GC suspended during parse" `
+		-Version $BuildSpec.Version `
+		-IterationCount $Iterations `
+		-DocumentBytes $DocumentBytes `
+		-Notes "$($BuildSpec.Notes); calls parse_without_garbage_collection"))
+}
 $AllRows.AddRange((Invoke-TimedCommand `
 	-Name "catalog-100-items" `
 	-Executable $Python `
@@ -438,6 +489,7 @@ try {
 }
 
 $Markdown = New-Object System.Collections.Generic.List[string]
+$SelectedEiffelBuildNames = ($SelectedEiffelBuilds | ForEach-Object { $_.Name }) -join ", "
 $Markdown.Add("# Benchmarks")
 $Markdown.Add("")
 $Markdown.Add("Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz')")
@@ -446,9 +498,9 @@ $Markdown.Add("Machine: $Machine")
 $Markdown.Add("")
 $Markdown.Add("Runtime context:")
 $Markdown.Add("")
-$Markdown.Add("- Eiffel target: ``benchmarks\xpact_benchmarks.ecf`` built as ``$EiffelBuild``.")
+$Markdown.Add("- Eiffel benchmark build types: ``$SelectedEiffelBuildNames``.")
+$Markdown.Add("- Eiffel benchmark targets: ``xpact_benchmarks`` (assertions disabled) and ``xpact_benchmarks_assertions`` (assertions enabled).")
 $Markdown.Add('- Eiffel void safety: ``support="all" use="all"``.')
-$Markdown.Add("- Eiffel assertions in benchmark target: disabled.")
 $Markdown.Add("- Python: ``$PythonVersion``.")
 $Markdown.Add("- libexpat baseline available on this machine through CPython ``pyexpat``: ``$ExpatVersion``.")
 if ($null -ne $CompilerNote -and -not [string]::IsNullOrWhiteSpace($CompilerNote)) {

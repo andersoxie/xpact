@@ -32,10 +32,16 @@ four independent cells:
 - assertions on / workbench;
 - assertions on / finalized.
 
+The assertions-on / finalized cell is also the executable shape used for the
+optimized assertion tier: native packaging builds it as `xpact_assertions.dll`
+so users can run contract-audited validation without falling back to workbench
+debug builds.
+
 The rest of the pipeline builds the Windows Eiffel-backed DLL, runs native
 runtime smoke tests in both assertion modes, runs ABI smoke tests, expands the
 libexpat adapter manifest, optionally runs the upstream libexpat native suite,
-and optionally publishes benchmarks.
+and optionally publishes benchmarks for the production-finalized and
+assertion-finalized benchmark builds.
 
 ## Why Both Assertion Modes
 

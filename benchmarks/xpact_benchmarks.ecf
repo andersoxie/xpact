@@ -16,4 +16,20 @@
 		<cluster name="src" location="..\src\"/>
 		<cluster name="benchmarks" location=".\"/>
 	</target>
+	<target name="xpact_benchmarks_assertions">
+		<root class="XP_BENCHMARK_ROOT" feature="make"/>
+		<option warning="true" is_obsolete_routine_type="true">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<cluster name="src" location="..\src\"/>
+		<cluster name="benchmarks" location=".\"/>
+	</target>
 </system>

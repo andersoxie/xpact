@@ -19,4 +19,23 @@
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<cluster name="src" location="..\src\"/>
 	</target>
+	<target name="xpact_native_library_assertions">
+		<root class="XP_NATIVE_LIBRARY_ROOT" feature="make"/>
+		<option warning="true" is_obsolete_routine_type="true">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="false"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<external_include location="..\..\..\..\include\"/>
+		<external_include location="..\..\..\..\native\"/>
+		<external_object location="..\..\..\build\native-eiffel\xpact_native.obj"/>
+		<external_object location="..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj"/>
+		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<cluster name="src" location="..\src\"/>
+	</target>
 </system>

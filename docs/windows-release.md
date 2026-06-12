@@ -1,17 +1,20 @@
 # xpact Windows Native Release
 
 The first native-library package is intentionally Windows x64 only. It ships
-the Eiffel-backed `xpact.dll` and its MSVC import library, not the bridge-only
-placeholder DLL/SO build.
+the Eiffel-backed `xpact.dll`, the assertion-enabled `xpact_assertions.dll`,
+and their MSVC import libraries, not the bridge-only placeholder DLL/SO build.
 
 ## Scope
 
 - Platform: Windows x64.
 - C API surface: `include/xpact.h`, tracking the libexpat 2.8.1 public header
   surface used by xpact.
-- Native library: `bin/xpact.dll`, initialized with the Eiffel runtime and
-  wired to the Eiffel parser core.
-- Link library: `lib/xpact.lib`.
+- Production native library: `bin/xpact.dll`, initialized with the Eiffel
+  runtime and wired to the Eiffel parser core.
+- Production link library: `lib/xpact.lib`.
+- Assertion native library: `bin/xpact_assertions.dll`, finalized with Eiffel
+  runtime assertions enabled for contract-audited validation runs.
+- Assertion link library: `lib/xpact_assertions.lib`.
 - Out of scope for this package: Linux/WSL `libxpact.so`, MinGW import
   libraries, and claims of full libexpat behavioral parity while the expected
   failure list still exists.
@@ -22,9 +25,10 @@ placeholder DLL/SO build.
 .\scripts\package_windows_release.ps1
 ```
 
-The package script runs `scripts\build_native_eiffel.ps1`, which finalizes the
-Eiffel native-library target and runs an external C smoke test against the
-generated import library. The resulting archive is written to:
+The package script runs `scripts\build_native_eiffel.ps1` for both the
+production and assertion tiers, finalizes the Eiffel native-library targets,
+and runs an external C smoke test against each generated import library. The
+resulting archive is written to:
 
 ```text
 dist\xpact-0.1.0-preview-windows-x64.zip
@@ -41,7 +45,9 @@ Use `-Version` to choose a release label:
 ```text
 xpact-<version>-windows-x64\
   bin\xpact.dll
+  bin\xpact_assertions.dll
   lib\xpact.lib
+  lib\xpact_assertions.lib
   include\xpact.h
   examples\xpact_eiffel_dll_smoke.c
   docs\benchmarks.md

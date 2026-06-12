@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
 	[string] $OutputDir = "build\native-eiffel",
+	[ValidateSet("Production", "Assertions")]
+	[string] $BuildTier = "Production",
 	[switch] $SkipSmoke
 )
 
@@ -9,7 +11,8 @@ $ErrorActionPreference = "Stop"
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $OutputRoot = Join-Path $RepoRoot $OutputDir
-New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
+$EcfObjectRoot = Join-Path $RepoRoot "build\native-eiffel"
+New-Item -ItemType Directory -Force -Path $OutputRoot, $EcfObjectRoot | Out-Null
 
 function Get-VcVars {
 	$VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -64,20 +67,43 @@ function Compile-CObject {
 	Invoke-VcCommand $Command
 }
 
-$NativeObj = Join-Path $OutputRoot "xpact_native.obj"
-$RuntimeObj = Join-Path $OutputRoot "xpact_eiffel_runtime_bridge.obj"
+function Get-LinkResponseFile {
+	param(
+		[string] $CodeDirectory,
+		[string] $Target
+	)
+	$Expected = Join-Path $CodeDirectory "$Target.lnk"
+	if (Test-Path -LiteralPath $Expected -PathType Leaf) {
+		return $Expected
+	}
+	$Candidates = @(Get-ChildItem -LiteralPath $CodeDirectory -Filter "*.lnk" |
+		Where-Object { $_.Name -ne "xpact_dll.lnk" -and $_.Name -notlike "*.dll.lnk" } |
+		Sort-Object Name)
+	if ($Candidates.Count -eq 1) {
+		return $Candidates[0].FullName
+	}
+	throw "Expected Eiffel link response file not found: $Expected"
+}
+
+$EiffelTarget = if ($BuildTier -eq "Assertions") { "xpact_native_library_assertions" } else { "xpact_native_library" }
+$DllName = if ($BuildTier -eq "Assertions") { "xpact_assertions.dll" } else { "xpact.dll" }
+$LibName = if ($BuildTier -eq "Assertions") { "xpact_assertions.lib" } else { "xpact.lib" }
+$SmokeName = if ($BuildTier -eq "Assertions") { "xpact_assertions_eiffel_dll_smoke.exe" } else { "xpact_eiffel_dll_smoke.exe" }
+
+$NativeObj = Join-Path $EcfObjectRoot "xpact_native.obj"
+$RuntimeObj = Join-Path $EcfObjectRoot "xpact_eiffel_runtime_bridge.obj"
 $DllMainObj = Join-Path $OutputRoot "xpact_eiffel_dllmain.obj"
 
 Compile-CObject (Join-Path $RepoRoot "native\xpact_native.c") $NativeObj -BuildingDll
 Compile-CObject (Join-Path $RepoRoot "native\xpact_eiffel_runtime_bridge.c") $RuntimeObj -BuildingDll
 Compile-CObject (Join-Path $RepoRoot "native\xpact_eiffel_dllmain.c") $DllMainObj
 
-ec -batch -clean -finalize -keep -config tests\xpact_native_library.ecf -target xpact_native_library
+ec -batch -clean -finalize -keep -config tests\xpact_native_library.ecf -target $EiffelTarget
 if ($LASTEXITCODE -ne 0) {
-	throw "Eiffel native library target compilation failed."
+	throw "Eiffel native library target compilation failed for $BuildTier."
 }
 
-$FinalCode = Join-Path $RepoRoot "EIFGENs\xpact_native_library\F_code"
+$FinalCode = Join-Path $RepoRoot "EIFGENs\$EiffelTarget\F_code"
 Push-Location $FinalCode
 try {
 	finish_freezing
@@ -85,17 +111,14 @@ try {
 	Pop-Location
 }
 if ($LASTEXITCODE -ne 0) {
-	throw "finish_freezing failed for native library target."
+	throw "finish_freezing failed for native library target $EiffelTarget."
 }
 
-$OriginalLink = Join-Path $FinalCode "xpact_native_library.lnk"
-if (-not (Test-Path -LiteralPath $OriginalLink -PathType Leaf)) {
-	throw "Expected Eiffel link response file not found: $OriginalLink"
-}
+$OriginalLink = Get-LinkResponseFile $FinalCode $EiffelTarget
 
-$Dll = Join-Path $OutputRoot "xpact.dll"
-$Lib = Join-Path $OutputRoot "xpact.lib"
-$DllLink = Join-Path $FinalCode "xpact_dll.lnk"
+$Dll = Join-Path $OutputRoot $DllName
+$Lib = Join-Path $OutputRoot $LibName
+$DllLink = Join-Path $FinalCode "$EiffelTarget.dll.lnk"
 $Response = New-Object System.Collections.Generic.List[string]
 $Response.Add("-DLL -NOLOGO -NODEFAULTLIB:libc -OUT:`"$Dll`" -IMPLIB:`"$Lib`"")
 $Response.Add("`"$DllMainObj`"")
@@ -113,10 +136,10 @@ Set-Content -Path $DllLink -Value $Response
 
 $LinkCommand = "cd /d `"$FinalCode`" && link @`"$DllLink`""
 Invoke-VcCommand $LinkCommand
-Write-Host "Built $Dll"
+Write-Host "Built $Dll ($BuildTier)"
 
 if (-not $SkipSmoke) {
-	$SmokeExe = Join-Path $OutputRoot "xpact_eiffel_dll_smoke.exe"
+	$SmokeExe = Join-Path $OutputRoot $SmokeName
 	$SmokeSource = Join-Path $RepoRoot "tests\native\xpact_eiffel_dll_smoke.c"
 	$Include = Join-Path $RepoRoot "include"
 	$SmokeCommand = "cl /nologo /I`"$Include`" `"$SmokeSource`" `"$Lib`" /Fe:`"$SmokeExe`" && `"$SmokeExe`""
