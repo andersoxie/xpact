@@ -544,6 +544,7 @@ feature -- Parsing
 					l_end := markup_prefix_end (a_input, i)
 					if l_end = 0 then
 						Result := i
+						i := a_input.count + 1
 					else
 						i := l_end + 1
 					end

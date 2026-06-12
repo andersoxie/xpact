@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-20-0 http://www.eiffel.com/developers/xml/configuration-1-20-0.xsd" name="xpact_autotest" uuid="712DA3C9-A7A2-41D5-A518-0A13F034F245">
+	<target name="xpact_autotest">
+		<description>Generated EiffelStudio AutoTest cases for xpact.</description>
+		<root class="AUTOTEST" feature="make"/>
+		<file_rule>
+			<exclude>/.git$</exclude>
+			<exclude>/.svn$</exclude>
+			<exclude>/EIFGENs$</exclude>
+		</file_rule>
+		<option warning="true" is_obsolete_routine_type="true">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<external_include location="..\..\..\..\include\"/>
+		<external_include location="..\..\..\..\native\"/>
+		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf"/>
+		<cluster name="src" location="..\src\"/>
+		<cluster name="test_support" location=".\"/>
+		<tests name="generated" location=".\autotest\" recursive="true"/>
+	</target>
+</system>
