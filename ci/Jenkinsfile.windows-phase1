@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'windows-eiffel' }
+  agent { label 'built-in' }
 
   options {
     timestamps()
