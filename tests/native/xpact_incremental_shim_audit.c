@@ -176,7 +176,7 @@ test_plain_start_nonfinal(void) {
 }
 
 static int
-test_attributed_start_deferred(void) {
+test_attributed_start_nonfinal(void) {
 	XML_Parser parser;
 	struct audit_state state;
 	enum XML_Status first_status;
@@ -188,7 +188,7 @@ test_attributed_start_deferred(void) {
 	memset(&state, 0, sizeof(state));
 	parser = XML_ParserCreate(NULL);
 	if (parser == NULL) {
-		report_case("attributed_start_nonfinal_deferred", "current_gap", 0, "parser allocation failed");
+		report_case("attributed_start_nonfinal", "passes", 0, "parser allocation failed");
 		return 0;
 	}
 	state.parser = parser;
@@ -197,7 +197,7 @@ test_attributed_start_deferred(void) {
 	first_status = XML_Parse(parser, "<doc id='1'>", 12, XML_FALSE);
 	first_start_count = state.start_count;
 	final_status = XML_Parse(parser, "x</doc>", 7, XML_TRUE);
-	observed = first_status == XML_STATUS_OK && first_start_count == 0 && final_status == XML_STATUS_OK && state.start_count == 1 && state.end_count == 1;
+	observed = first_status == XML_STATUS_OK && first_start_count == 1 && final_status == XML_STATUS_OK && state.start_count == 1 && state.end_count == 1;
 	(void)snprintf(
 		detail,
 		sizeof(detail),
@@ -208,7 +208,7 @@ test_attributed_start_deferred(void) {
 		state.start_count,
 		state.end_count
 	);
-	report_case("attributed_start_nonfinal_deferred", "current_gap", observed, detail);
+	report_case("attributed_start_nonfinal", "passes", observed, detail);
 	XML_ParserFree(parser);
 	return observed;
 }
@@ -345,7 +345,7 @@ main(void) {
 	printf("case\tclassification\tresult\tdetail\n");
 	(void)test_plain_start_nonfinal();
 	(void)test_parse_buffer_plain_start();
-	(void)test_attributed_start_deferred();
+	(void)test_attributed_start_nonfinal();
 	(void)test_attributed_start_without_deferral();
 	(void)test_accumulated_context_window();
 	(void)test_suspend_resume_replay();

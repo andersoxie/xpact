@@ -816,7 +816,7 @@ feature {NONE} -- Parsing implementation
 							and then l_input.item (1) = '<'
 						then
 							l_ready_end := parser.markup_prefix_end (l_input, 1)
-							if l_ready_end > 0 and then is_plain_completed_start_tag (l_input, 1, l_ready_end) then
+							if l_ready_end > 0 and then is_directly_emittable_completed_start_tag (l_input, 1, l_ready_end) then
 								ready_plain_start_tag_start_index := 1
 								ready_plain_start_tag_end_index := l_ready_end
 							end
@@ -1001,7 +1001,7 @@ feature {NONE} -- Encoding
 						if deferred_reparse_end_index = 0 then
 							deferred_reparse_end_index := l_end
 						end
-						if is_plain_completed_start_tag (a_input, deferred_reparse_start_index, deferred_reparse_end_index) then
+						if is_directly_emittable_completed_start_tag (a_input, deferred_reparse_start_index, deferred_reparse_end_index) then
 							ready_plain_start_tag_start_index := deferred_reparse_start_index
 							ready_plain_start_tag_end_index := deferred_reparse_end_index
 							clear_deferred_reparse
@@ -1044,36 +1044,187 @@ feature {NONE} -- Encoding
 		end
 
 	emit_ready_plain_start_tag_directly (a_input: READABLE_STRING_8): BOOLEAN
-			-- Emit the ready attribute-free start tag through the native handler.
+			-- Emit the ready start tag through the native handler.
 		require
 			input_attached: a_input /= Void
 			ready: can_emit_ready_plain_start_tag_directly
 		local
-			i: INTEGER
-			l_name_start: INTEGER
-			l_name: STRING_8
-			l_attributes: XP_ATTRIBUTES
+			l_name: detachable STRING_8
+			l_attributes: detachable XP_ATTRIBUTES
 		do
-			create l_attributes.make
-			i := ready_plain_start_tag_start_index + 1
-			l_name_start := i
-			from
-				i := i + 1
-			until
-				i > ready_plain_start_tag_end_index or else not l_attributes.is_name_character (a_input.item (i))
-			loop
-				i := i + 1
-			variant
-				ready_plain_start_tag_end_index - i + 1
+			l_name := direct_start_tag_name (a_input, ready_plain_start_tag_start_index, ready_plain_start_tag_end_index)
+			l_attributes := direct_start_tag_attributes (a_input, ready_plain_start_tag_start_index, ready_plain_start_tag_end_index)
+			if attached l_name as l_attached_name and then attached l_attributes as l_attached_attributes then
+				handler.prepare_callback_replay (0)
+				handler.on_start_element (l_attached_name, l_attached_attributes)
+				Result := not handler.stop_requested
 			end
-			create l_name.make_from_string (a_input.substring (l_name_start, i - 1))
-			handler.prepare_callback_replay (0)
-			handler.on_start_element (l_name, l_attributes)
-			Result := not handler.stop_requested
 			ready_plain_start_tag_start_index := 0
 			ready_plain_start_tag_end_index := 0
 		ensure
 			ready_consumed: ready_plain_start_tag_start_index = 0 and ready_plain_start_tag_end_index = 0
+		end
+
+	is_directly_emittable_completed_start_tag (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): BOOLEAN
+			-- Can completed start tag be emitted without reparsing the whole input?
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			valid_end: a_end_index >= a_start_index and a_end_index <= a_input.count
+		do
+			Result := attached direct_start_tag_name (a_input, a_start_index, a_end_index)
+				and then attached direct_start_tag_attributes (a_input, a_start_index, a_end_index)
+		end
+
+	direct_start_tag_name (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): detachable STRING_8
+			-- Name of a directly emittable start tag, if the token shape is supported.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			valid_end: a_end_index >= a_start_index and a_end_index <= a_input.count
+		local
+			i: INTEGER
+			l_name_start: INTEGER
+			l_attributes: XP_ATTRIBUTES
+		do
+			if
+				a_input.item (a_start_index) = '<'
+				and then a_start_index + 1 < a_end_index
+				and then a_input.item (a_end_index) = '>'
+				and then a_input.item (a_start_index + 1) /= '/'
+				and then a_input.item (a_start_index + 1) /= '!'
+				and then a_input.item (a_start_index + 1) /= '?'
+			then
+				create l_attributes.make
+				i := a_start_index + 1
+				if l_attributes.is_name_start_character (a_input.item (i)) then
+					l_name_start := i
+					from
+						i := i + 1
+					until
+						i >= a_end_index or else not l_attributes.is_name_character (a_input.item (i))
+					loop
+						i := i + 1
+					variant
+						a_end_index - i
+					end
+					create Result.make_from_string (a_input.substring (l_name_start, i - 1))
+				end
+			end
+		end
+
+	direct_start_tag_attributes (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): detachable XP_ATTRIBUTES
+			-- Attributes for a directly emittable start tag, if all values are literal.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			valid_end: a_end_index >= a_start_index and a_end_index <= a_input.count
+		local
+			i: INTEGER
+			l_name_start: INTEGER
+			l_value_start: INTEGER
+			l_quote: CHARACTER_8
+			l_name: STRING_8
+			l_value: STRING_8
+			l_attributes: XP_ATTRIBUTES
+			l_valid: BOOLEAN
+			l_done: BOOLEAN
+		do
+			if attached direct_start_tag_name (a_input, a_start_index, a_end_index) then
+				create l_attributes.make
+				l_valid := True
+				i := a_start_index + 2
+				from
+				until
+					i >= a_end_index or else not l_attributes.is_name_character (a_input.item (i))
+				loop
+					i := i + 1
+				variant
+					a_end_index - i
+				end
+				from
+				until
+					i >= a_end_index or else not l_valid or else l_done
+				loop
+					i := skip_reparse_tag_spaces (a_input, i, a_end_index)
+					if i >= a_end_index then
+						l_done := True
+					elseif a_input.item (i) = '/' then
+						l_valid := False
+					elseif not l_attributes.is_name_start_character (a_input.item (i)) then
+						l_valid := False
+					else
+						l_name_start := i
+						from
+							i := i + 1
+						until
+							i >= a_end_index or else not l_attributes.is_name_character (a_input.item (i))
+						loop
+							i := i + 1
+						variant
+							a_end_index - i
+						end
+						create l_name.make_from_string (a_input.substring (l_name_start, i - 1))
+						i := skip_reparse_tag_spaces (a_input, i, a_end_index)
+						if i >= a_end_index or else a_input.item (i) /= '=' then
+							l_valid := False
+						else
+							i := skip_reparse_tag_spaces (a_input, i + 1, a_end_index)
+							if i >= a_end_index or else not is_reparse_tag_quote (a_input.item (i)) then
+								l_valid := False
+							else
+								l_quote := a_input.item (i)
+								l_value_start := i + 1
+								from
+									i := i + 1
+								until
+									i >= a_end_index or else a_input.item (i) = l_quote
+								loop
+									i := i + 1
+								variant
+									a_end_index - i
+								end
+								if i >= a_end_index then
+									l_valid := False
+								else
+									create l_value.make_from_string (a_input.substring (l_value_start, i - 1))
+									if l_value.has ('&') or else l_attributes.has (l_name) then
+										l_valid := False
+									else
+										l_attributes.put (l_name, l_value)
+										i := i + 1
+									end
+								end
+							end
+						end
+					end
+				variant
+					a_end_index - i
+				end
+				if l_valid and then i = a_end_index then
+					Result := l_attributes
+				end
+			end
+		end
+
+	skip_reparse_tag_spaces (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
+			-- First non-space index at or after `a_start_index', bounded by `a_end_index'.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_end_index
+			valid_end: a_end_index <= a_input.count
+		do
+			from
+				Result := a_start_index
+			until
+				Result >= a_end_index or else not is_reparse_tag_space (a_input.item (Result))
+			loop
+				Result := Result + 1
+			variant
+				a_end_index - Result
+			end
+		ensure
+			result_in_bounds: Result >= a_start_index and Result <= a_end_index
 		end
 
 	is_deferred_start_tag_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN

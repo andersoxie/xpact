@@ -1340,7 +1340,7 @@ feature {NONE} -- Tests
 			assert ("xpact native C benchmark present", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("XML_ERROR_NOT_STARTED"))
 			assert ("xpact native C benchmark accepts files", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("--file"))
 			assert ("chunked CRC C harness present", file_text ("tests\native\xpact_chunked_crc.c").has_substring ("semantic_crc") and file_text ("tests\native\xpact_chunked_crc.c").has_substring ("XPACT_USE_SYSTEM_EXPAT"))
-			assert ("incremental shim C audit present", file_text ("tests\native\xpact_incremental_shim_audit.c").has_substring ("current_gap") and file_text ("tests\native\xpact_incremental_shim_audit.c").has_substring ("XML_SetReparseDeferralEnabled"))
+			assert ("incremental shim C audit present", file_text ("tests\native\xpact_incremental_shim_audit.c").has_substring ("attributed_start_nonfinal") and file_text ("tests\native\xpact_incremental_shim_audit.c").has_substring ("current_gap") and file_text ("tests\native\xpact_incremental_shim_audit.c").has_substring ("XML_SetReparseDeferralEnabled"))
 			l_table := file_text ("docs\benchmarks.md")
 			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
 			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))

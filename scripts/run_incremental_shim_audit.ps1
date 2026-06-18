@@ -41,14 +41,35 @@ function Invoke-VcCommand {
 	}
 }
 
-if (-not $SkipBuild) {
-	$BuildOutput = & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "build_native_eiffel.ps1") -SkipSmoke 2>&1
-	if ($LASTEXITCODE -ne 0) {
-		throw "Eiffel-backed Windows DLL build failed.`n$($BuildOutput | Out-String)"
+function Invoke-NativeBuild {
+	$Stdout = Join-Path $OutputRoot "native-build.stdout.log"
+	$Stderr = Join-Path $OutputRoot "native-build.stderr.log"
+	$BuildScript = Join-Path $PSScriptRoot "build_native_eiffel.ps1"
+	$Command = "`"powershell.exe`" -NoProfile -ExecutionPolicy Bypass -File `"$BuildScript`" -SkipSmoke > `"$Stdout`" 2> `"$Stderr`""
+	Push-Location $RepoRoot
+	try {
+		cmd.exe /d /c $Command
+		$ExitCode = $LASTEXITCODE
+	} finally {
+		Pop-Location
 	}
-	foreach ($Line in $BuildOutput) {
+	$Output = @()
+	if (Test-Path -LiteralPath $Stdout -PathType Leaf) {
+		$Output += Get-Content -LiteralPath $Stdout
+	}
+	if (Test-Path -LiteralPath $Stderr -PathType Leaf) {
+		$Output += Get-Content -LiteralPath $Stderr
+	}
+	foreach ($Line in $Output) {
 		Write-Host $Line
 	}
+	if ($ExitCode -ne 0) {
+		throw "Eiffel-backed Windows DLL build failed with exit code $ExitCode. Logs: $Stdout, $Stderr"
+	}
+}
+
+if (-not $SkipBuild) {
+	Invoke-NativeBuild
 }
 
 $NativeRoot = Join-Path $RepoRoot "build\native-eiffel"

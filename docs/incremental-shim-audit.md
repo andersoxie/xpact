@@ -28,7 +28,7 @@ The audit covers these native API behaviors:
 |---|---|---|
 | `plain_start_nonfinal` | `passes` | A completed plain start tag in a non-final `XML_Parse` chunk emits a start callback and leaves the parser in `XML_PARSING`. |
 | `parse_buffer_plain_start_nonfinal` | `passes` | The same plain start-tag case works through `XML_GetBuffer` / `XML_ParseBuffer`. |
-| `attributed_start_nonfinal_deferred` | `current_gap` | A completed attributed start tag is accepted on a non-final chunk but its start callback is deferred until more input arrives. |
+| `attributed_start_nonfinal` | `passes` | A completed attributed start tag with literal attribute values emits its start callback on the non-final chunk. |
 | `attributed_start_nonfinal_without_reparse_deferral` | `passes` | Disabling reparse deferral makes that attributed start callback arrive on the non-final chunk. |
 | `input_context_retains_accumulated_prefix` | `current_gap` | Callback-time `XML_GetInputContext` reflects the accumulated prefix buffer. |
 | `suspend_resume_replay` | `passes` | A resumable stop from a character-data callback can be resumed without duplicating delivered character data. |
@@ -38,8 +38,7 @@ The audit covers these native API behaviors:
 The true incremental session should keep the passing API behavior while
 removing the replay dependency:
 
-- completed tokens should be emitted from parser state, not from reparsing an
-  accumulated document prefix;
+- completed tokens should keep being emitted as soon as the token is complete;
 - `XML_GetInputContext` should be backed by a bounded context window rather
   than full-prefix retention;
 - `XML_SetReparseDeferralEnabled` should control Expat-compatible deferral
