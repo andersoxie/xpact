@@ -79,8 +79,9 @@ Current incremental shim audit:
 .\scripts\run_incremental_shim_audit.ps1 -SkipBuild
 ```
 
-This records which non-final chunk behaviors are already usable and which
-behaviors still depend on accumulated-buffer replay.
+This records the non-final chunk behaviors and bounded input-context behavior
+that must remain green while the accumulated-buffer replay internals are
+replaced.
 
 Upstream Expat manifest and parity expansion:
 

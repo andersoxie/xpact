@@ -248,7 +248,7 @@ test_attributed_start_without_deferral(void) {
 }
 
 static int
-test_accumulated_context_window(void) {
+test_bounded_context_window(void) {
 	XML_Parser parser;
 	struct audit_state state;
 	enum XML_Status first_status;
@@ -262,7 +262,7 @@ test_accumulated_context_window(void) {
 	memset(text, 'a', sizeof(text));
 	parser = XML_ParserCreate(NULL);
 	if (parser == NULL) {
-		report_case("input_context_retains_accumulated_prefix", "current_gap", 0, "parser allocation failed");
+		report_case("input_context_uses_bounded_window", "passes", 0, "parser allocation failed");
 		return 0;
 	}
 	state.parser = parser;
@@ -277,7 +277,10 @@ test_accumulated_context_window(void) {
 		&& final_status == XML_STATUS_OK
 		&& !state.callback_failed
 		&& state.text_bytes == (int)sizeof(text)
-		&& state.max_context_size >= (int)sizeof(text) + 5;
+		&& state.max_context_size > 0
+		&& state.max_context_size <= 1024
+		&& state.max_context_offset >= 0
+		&& state.max_context_offset <= state.max_context_size;
 	(void)snprintf(
 		detail,
 		sizeof(detail),
@@ -289,7 +292,7 @@ test_accumulated_context_window(void) {
 		state.max_context_size,
 		state.max_context_offset
 	);
-	report_case("input_context_retains_accumulated_prefix", "current_gap", observed, detail);
+	report_case("input_context_uses_bounded_window", "passes", observed, detail);
 	XML_ParserFree(parser);
 	return observed;
 }
@@ -347,7 +350,7 @@ main(void) {
 	(void)test_parse_buffer_plain_start();
 	(void)test_attributed_start_nonfinal();
 	(void)test_attributed_start_without_deferral();
-	(void)test_accumulated_context_window();
+	(void)test_bounded_context_window();
 	(void)test_suspend_resume_replay();
 	return g_failed ? 1 : 0;
 }

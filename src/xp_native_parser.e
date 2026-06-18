@@ -16,6 +16,7 @@ feature {NONE} -- Initialization
 			parser.set_external_entity_resolver (handler)
 			configure_external_entity_policy
 			create input_buffer.make_empty
+			create context_source_buffer.make_empty
 			create hash_salt_16_bytes.make_empty
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
@@ -221,7 +222,10 @@ feature -- Access
 			-- Public native parser handle used for native-only API callback state.
 
 	context_buffer: detachable C_STRING
-			-- C-visible copy of the current final input while parsing.
+			-- C-visible bounded input context window.
+
+	context_source_buffer: STRING_8
+			-- Raw input bytes available to `XML_GetInputContext' during callbacks.
 
 	suspend_gc_during_parse: BOOLEAN
 			-- Should `parse' temporarily suspend Eiffel garbage collection?
@@ -671,6 +675,7 @@ feature -- Element change
 			accounting_direct_count := 0
 			accounting_indirect_count := 0
 			accounting_external_child_count := 0
+			context_source_buffer.wipe_out
 			context_buffer := Void
 			handler.reset_events
 			handler.finish_successful_parse_callbacks
@@ -822,13 +827,15 @@ feature {NONE} -- Parsing implementation
 							end
 						end
 						if can_emit_ready_plain_start_tag_directly then
-							create context_buffer.make ("")
+							context_source_buffer := l_context_input.twin
+							context_buffer := Void
 							l_ok := emit_ready_plain_start_tag_directly (l_input)
 							if l_ok then
 								l_direct_callback_count := 1
 							end
 						else
-							create context_buffer.make (l_context_input)
+							context_source_buffer := l_context_input.twin
+							context_buffer := Void
 						end
 						if l_direct_callback_count = 0 then
 							if is_external_entity_parser and then external_entity_is_parameter then
@@ -889,16 +896,18 @@ feature {NONE} -- Parsing implementation
 							delivered_callback_count := handler.callback_sequence_count
 						end
 						accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
-					else
-						if Result = Xml_status_ok then
-							accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
-						end
-						handler.finish_successful_parse_callbacks
-						parsing_status := Xml_finished
-						input_buffer.wipe_out
-						delivered_callback_count := 0
-						deferred_reparse_start_index := 0
-						deferred_reparse_end_index := 0
+			else
+				if Result = Xml_status_ok then
+					accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
+				end
+				handler.finish_successful_parse_callbacks
+				parsing_status := Xml_finished
+				input_buffer.wipe_out
+				context_source_buffer.wipe_out
+				context_buffer := Void
+				delivered_callback_count := 0
+				deferred_reparse_start_index := 0
+				deferred_reparse_end_index := 0
 					end
 				end
 			end
@@ -925,15 +934,42 @@ feature -- Parsing
 
 	input_context (a_offset, a_size: POINTER): POINTER
 			-- Current input context buffer for `XML_GetInputContext'.
+		local
+			l_start: INTEGER
+			l_end: INTEGER
+			l_offset: INTEGER
+			l_source_count: INTEGER
 		do
-			if parsing_status = Xml_parsing and then attached context_buffer as l_context then
+			if parsing_status = Xml_parsing and then not context_source_buffer.is_empty then
+				l_source_count := context_source_buffer.count
+				l_offset := current_byte_index
+				if l_offset < 0 then
+					l_offset := 0
+				elseif l_offset > l_source_count then
+					l_offset := l_source_count
+				end
+				l_start := l_offset - Context_bytes_before_event + 1
+				if l_start < 1 then
+					l_start := 1
+				end
+				l_end := l_start + Context_byte_window - 1
+				if l_end > l_source_count then
+					l_end := l_source_count
+					l_start := l_end - Context_byte_window + 1
+					if l_start < 1 then
+						l_start := 1
+					end
+				end
+				create context_buffer.make (context_source_buffer.substring (l_start, l_end))
 				if a_offset /= default_pointer then
-					put_integer (a_offset, current_byte_index)
+					put_integer (a_offset, l_offset - l_start + 1)
 				end
 				if a_size /= default_pointer then
-					put_integer (a_size, l_context.count)
+					put_integer (a_size, l_end - l_start + 1)
 				end
-				Result := l_context.item
+				check attached context_buffer as l_context then
+					Result := l_context.item
+				end
 			else
 				if a_offset /= default_pointer then
 					put_integer (a_offset, 0)
@@ -1018,6 +1054,12 @@ feature {NONE} -- Encoding
 				end
 			end
 		end
+
+	Context_byte_window: INTEGER = 1024
+			-- Maximum byte window returned through `XML_GetInputContext'.
+
+	Context_bytes_before_event: INTEGER = 64
+			-- Preferred number of bytes retained before the current callback.
 
 	clear_deferred_reparse
 			-- Forget any delayed token and incremental scan state.
@@ -2202,6 +2244,7 @@ invariant
 	handler_attached: handler /= Void
 	parser_attached: parser /= Void
 	input_buffer_attached: input_buffer /= Void
+	context_source_buffer_attached: context_source_buffer /= Void
 	valid_parsing_status: parsing_status = Xml_initialized or parsing_status = Xml_parsing or parsing_status = Xml_finished or parsing_status = Xml_suspended
 	valid_last_error_code: last_error_code >= Xml_error_none
 
