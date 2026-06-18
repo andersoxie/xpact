@@ -37,6 +37,7 @@ feature {NONE} -- Initialization
 			test_external_policy_blocks_parameter_entities
 			test_token_well_formedness_errors
 			test_document_structure
+			test_incremental_parse_session_prototype
 			test_position_accounting
 			test_handler_position_accounting
 			test_garbage_collection_suspension
@@ -772,6 +773,49 @@ feature {NONE} -- Tests
 			assert ("outside root error", l_parser.last_error.same_string ("character data outside document element"))
 		end
 
+	test_incremental_parse_session_prototype
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_session: XP_INCREMENTAL_PARSE_SESSION
+			l_status: INTEGER
+		do
+			create l_handler.make
+			create l_session.make (l_handler)
+			l_status := l_session.feed ("<doc a='", False)
+			assert ("incremental session waits inside attribute", l_status = l_session.Status_need_more)
+			assert ("incremental session keeps only incomplete token", l_session.buffer_window.same_string ("<doc a='"))
+			assert ("incremental session has no early attribute event", l_handler.events.count = 0)
+			l_status := l_session.feed ("1'>x</doc>", True)
+			assert ("incremental session finishes split attribute document", l_status = l_session.Status_finished)
+			assert ("incremental session emitted split attribute start", l_handler.events.i_th (1).same_string ("start:doc:1"))
+			assert ("incremental session captured attribute", l_handler.last_attribute_value.same_string ("1"))
+			assert ("incremental session emitted text", l_handler.events.i_th (2).same_string ("text:x"))
+			assert ("incremental session emitted end", l_handler.events.i_th (3).same_string ("end:doc"))
+			assert ("incremental session releases consumed buffer", l_session.buffer_window.is_empty)
+			assert ("incremental session advances byte index", l_session.current_byte_index = 18)
+
+			create l_handler.make
+			create l_session.make (l_handler)
+			l_status := l_session.feed ("<doc a='1'>", False)
+			assert ("incremental session emits attributed non-final start", l_status = l_session.Status_need_more)
+			assert ("incremental session start arrives without reparse deferral", l_handler.events.i_th (1).same_string ("start:doc:1"))
+			assert ("incremental session does not retain completed start", l_session.buffer_window.is_empty)
+			l_status := l_session.feed ("hello", False)
+			assert ("incremental session emits non-final text", l_status = l_session.Status_need_more)
+			assert ("incremental session emitted hello", l_handler.events.i_th (2).same_string ("text:hello"))
+			l_status := l_session.feed ("</doc>", True)
+			assert ("incremental session finishes simple document", l_status = l_session.Status_finished)
+			assert ("incremental session end after text", l_handler.events.i_th (3).same_string ("end:doc"))
+
+			create l_handler.make
+			create l_session.make (l_handler)
+			l_status := l_session.feed ("<a>", False)
+			assert ("incremental session accepts open a", l_status = l_session.Status_need_more)
+			l_status := l_session.feed ("</b>", True)
+			assert ("incremental session rejects mismatched end", l_status = l_session.Status_error)
+			assert ("incremental session mismatch error", l_session.last_error.same_string ("mismatched end tag"))
+		end
+
 	test_position_accounting
 		local
 			l_handler: XP_NULL_EVENT_HANDLER
@@ -1317,6 +1361,7 @@ feature {NONE} -- Tests
 			assert ("Eiffel native parser target present", file_text ("src\xp_native_parser.e").has_substring ("XP_PARSER"))
 			assert ("Eiffel native callback adapter present", file_text ("src\xp_native_callback_handler.e").has_substring ("XML_StartElementHandler"))
 			assert ("Eiffel native callback replay tracks growing text", file_text ("src\xp_native_callback_handler.e").has_substring ("delivered_character_data_lengths"))
+			assert ("Eiffel incremental session prototype present", file_text ("src\xp_incremental_parse_session.e").has_substring ("buffer_window") and file_text ("src\xp_incremental_parse_session.e").has_substring ("element_stack"))
 			assert ("Eiffel native bridge installer present", file_text ("src\xp_native_bridge_installer.e").has_substring ("XP_NATIVE_PARSER"))
 			assert ("Eiffel native bridge installer uses runtime object ids", file_text ("src\xp_native_bridge_installer.e").has_substring ("eif_object_id"))
 			assert ("Eiffel native bridge export present", file_text ("src\xp_native_bridge_export.e").has_substring ("XPACT_RegisterEiffelRuntimeBridgePointers"))

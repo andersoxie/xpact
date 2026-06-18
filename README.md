@@ -82,11 +82,13 @@ Start here, then read:
    CRC-32 event digests across chunk sizes.
 9. `docs/incremental-shim-audit.md` for the current accumulated-buffer replay
    baseline before the true incremental parser session.
-10. `docs/benchmarks.md` for same-machine benchmark results.
-11. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
-12. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
+10. `docs/incremental-core-prototype.md` for the isolated Eiffel session
+    prototype that starts replacing replay with state-owned parsing.
+11. `docs/benchmarks.md` for same-machine benchmark results.
+12. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
+13. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
    gap analysis and next optimization priorities.
-13. `docs/drop-in-verification.md` for the Jenkins and public-application
+14. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
 
 ## Build And Verify
