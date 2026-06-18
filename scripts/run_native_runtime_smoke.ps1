@@ -12,6 +12,8 @@ $RepoRoot = Split-Path -Parent $PSScriptRoot
 $OutputRoot = Join-Path $RepoRoot $OutputDir
 New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
 
+. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
+
 function Get-VcVars {
 	$VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 	if (-not (Test-Path -LiteralPath $VsWhere -PathType Leaf)) {

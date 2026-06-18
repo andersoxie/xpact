@@ -221,6 +221,7 @@ function Invoke-EiffelBenchmarkBuild {
 
 	$CodeDir = Join-Path $RepoRoot "EIFGENs\$($BuildSpec.Target)\$($BuildSpec.CodeDirectory)"
 	if (Test-Path -LiteralPath (Join-Path $CodeDir "Makefile.SH") -PathType Leaf) {
+		. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
 		Push-Location $CodeDir
 		try {
 			& finish_freezing

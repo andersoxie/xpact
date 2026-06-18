@@ -32,6 +32,7 @@ pipeline {
       steps {
         powershell '''
           $ErrorActionPreference = "Stop"
+          . .\\scripts\\import_msvc_environment.ps1
           ec -version
           cl
           cmake --version

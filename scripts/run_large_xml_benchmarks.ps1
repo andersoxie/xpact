@@ -143,6 +143,7 @@ if (-not $SkipBuild) {
 			throw "Finalized benchmark target generation failed."
 		}
 		$FinalCodeDir = Join-Path $RepoRoot "EIFGENs\xpact_benchmarks\F_code"
+		. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
 		Push-Location $FinalCodeDir
 		try {
 			& finish_freezing

@@ -82,8 +82,13 @@ function Invoke-TestLane {
 	}
 }
 
+$SelectedBuildModes = @(Selected-BuildModes)
+if ($SelectedBuildModes -contains "Finalized") {
+	. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
+}
+
 foreach ($AssertionTarget in Selected-AssertionTargets) {
-	foreach ($Mode in Selected-BuildModes) {
+	foreach ($Mode in $SelectedBuildModes) {
 		Invoke-TestLane `
 			-AssertionLabel $AssertionTarget.Label `
 			-Target $AssertionTarget.Target `
