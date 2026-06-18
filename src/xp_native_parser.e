@@ -673,6 +673,7 @@ feature -- Element change
 			accounting_external_child_count := 0
 			context_buffer := Void
 			handler.reset_events
+			handler.finish_successful_parse_callbacks
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
 			final_buffer := False

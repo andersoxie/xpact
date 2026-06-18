@@ -190,7 +190,8 @@ function Build-XpactHarness {
 		throw "xpact DLL not found: $Dll"
 	}
 	$Exe = Join-Path $OutputRoot "xpact_chunked_crc.exe"
-	$Command = "cl /nologo /W4 /WX /O2 /MT /I`"$RepoRoot\include`" `"$Source`" `"$ImportLib`" /Fe`"$Exe`" /link /NOLOGO"
+	$ObjectFile = Join-Path $OutputRoot "xpact_chunked_crc.obj"
+	$Command = "cl /nologo /W4 /WX /O2 /MT /I`"$RepoRoot\include`" /Fo`"$ObjectFile`" `"$Source`" `"$ImportLib`" /Fe`"$Exe`" /link /NOLOGO"
 	Invoke-VcCommand $Command
 	[pscustomobject]@{
 		Exe = $Exe

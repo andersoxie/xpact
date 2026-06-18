@@ -50,10 +50,12 @@ feature {NONE} -- Initialization
 	make
 		do
 			create events.make (16)
+			create delivered_character_data_lengths.make (16)
 			current_id_attribute_index := -1
 			diagnostic_events_enabled := True
 		ensure
 			no_events: events.count = 0
+			no_delivered_text_lengths: delivered_character_data_lengths.count = 0
 			no_current_id_attribute: current_id_attribute_index = -1
 		end
 
@@ -154,6 +156,9 @@ feature -- Access
 
 	last_suspending_callback_index: INTEGER
 			-- Callback sequence index that most recently requested resumable suspension.
+
+	delivered_character_data_lengths: HASH_TABLE [INTEGER, INTEGER]
+			-- Delivered character-data byte counts keyed by replay callback index.
 
 feature -- Metrics
 
@@ -603,9 +608,11 @@ feature -- Events
 		do
 			callbacks_to_suppress := 0
 			last_suspending_callback_index := 0
+			delivered_character_data_lengths.wipe_out
 		ensure
 			no_suppression: callbacks_to_suppress = 0
 			no_suspend_point: last_suspending_callback_index = 0
+			no_delivered_text_lengths: delivered_character_data_lengths.count = 0
 		end
 
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
@@ -684,6 +691,9 @@ feature -- Events
 		local
 			l_event: STRING_8
 			l_text: C_STRING
+			l_suppressed: BOOLEAN
+			l_already_delivered: INTEGER
+			l_suffix: STRING_8
 		do
 			if not a_text.is_empty then
 				character_data_count := character_data_count + 1
@@ -693,12 +703,27 @@ feature -- Events
 					events.extend (l_event)
 				end
 				if character_data_callback /= default_pointer then
-					if not suppress_next_callback then
+					l_suppressed := suppress_next_callback
+					if l_suppressed then
+						l_already_delivered := delivered_character_data_length (callback_sequence_count)
+						if a_text.count > l_already_delivered then
+							create l_suffix.make_from_string (a_text.substring (l_already_delivered + 1, a_text.count))
+							create l_text.make (l_suffix)
+							remember_default_text (l_suffix)
+							set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
+							call_character_data_callback (character_data_callback, user_data, l_text.item, l_suffix.count)
+							set_native_active_callback_kind (native_parser_handle, Native_callback_none)
+							record_delivered_character_data_length (callback_sequence_count, a_text.count)
+							record_callback_stop_if_requested
+							forget_default_text
+						end
+					else
 						create l_text.make (a_text)
 						remember_default_text (a_text)
 						set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
 						call_character_data_callback (character_data_callback, user_data, l_text.item, a_text.count)
 						set_native_active_callback_kind (native_parser_handle, Native_callback_none)
+						record_delivered_character_data_length (callback_sequence_count, a_text.count)
 						record_callback_stop_if_requested
 						forget_default_text
 					end
@@ -1218,6 +1243,29 @@ feature {NONE} -- Native callback calls
 			end
 		ensure
 			recorded_when_resumable_stop: (stop_requested and then stop_is_resumable) implies last_suspending_callback_index = callback_sequence_count
+		end
+
+	delivered_character_data_length (a_callback_index: INTEGER): INTEGER
+			-- Previously delivered character-data bytes for replay callback `a_callback_index'.
+		require
+			positive_index: a_callback_index > 0
+		do
+			if delivered_character_data_lengths.has (a_callback_index) then
+				Result := delivered_character_data_lengths.item (a_callback_index)
+			end
+		ensure
+			non_negative: Result >= 0
+		end
+
+	record_delivered_character_data_length (a_callback_index, a_count: INTEGER)
+			-- Remember delivered character-data byte count for replay callback `a_callback_index'.
+		require
+			positive_index: a_callback_index > 0
+			non_negative_count: a_count >= 0
+		do
+			delivered_character_data_lengths.force (a_count, a_callback_index)
+		ensure
+			recorded: delivered_character_data_length (a_callback_index) = a_count
 		end
 
 	remember_default_text (a_text: READABLE_STRING_8)

@@ -50,9 +50,9 @@ The expected-failure list expands to 86 rows:
 Before calling xpact a credible drop-in replacement, the project still needs:
 
 - true incremental parsing in the Eiffel parser/session core; the current
-  native adapter accepts chunks but still relies on accumulated-buffer replay,
-  and the chunked CRC harness has exposed at least one silent semantic mismatch
-  for a generated document at chunk size 31;
+  native adapter accepts chunks and now has CRC coverage for replayed character
+  data, but it still relies on accumulated-buffer replay rather than a
+  suspendable parser session;
 - a stronger native-suite gate that reports actual unexpected failures by
   upstream test name, not only the current expected-failure manifest expansion;
 - Phase 2 performance work: buffer-backed token slices, lazy materialization,

@@ -38,7 +38,7 @@ build\chunked-crc\chunked-crc-results.tsv
 ```
 
 By default, any semantic mismatch makes the script fail. To collect diagnostic
-rows while known mismatches still exist:
+rows while investigating a suspected mismatch:
 
 ```powershell
 .\scripts\run_chunked_crc_harness.ps1 `
@@ -88,9 +88,9 @@ Use `-ChunkSizes` to focus on suspicious split points:
   -AllowMismatches
 ```
 
-## Current Diagnostic Finding
+## Regression Case
 
-The first local run against the existing Eiffel-backed Windows DLL found a
+The first local run against the previous Eiffel-backed Windows DLL found a
 silent semantic mismatch in both direct and parse-buffer modes:
 
 - generated catalog document, 564 bytes;
@@ -99,8 +99,17 @@ silent semantic mismatch in both direct and parse-buffer modes:
 - expected `semantic_crc` `01b319c0`, observed `59836860`;
 - expected text bytes 121, observed 99.
 
-That is not a harness failure. It confirms the incremental parsing concern:
-the current native chunk adapter can report success while delivering a different
-callback stream for at least one chunk boundary. This row should become a normal
-strict gate after the true incremental parser/session implementation replaces
-the current accumulated-buffer reparse path.
+The root cause was native replay suppression for character data. The adapter
+suppressed the first N replay callbacks, but a previously delivered text
+callback can grow when later chunks arrive. The fix tracks delivered
+character-data length by callback sequence index and emits only the new suffix
+on replay.
+
+This case is now a strict harness gate:
+
+```powershell
+.\scripts\run_chunked_crc_harness.ps1 `
+  -Target Xpact `
+  -ParseMode All `
+  -Repeat 10
+```
