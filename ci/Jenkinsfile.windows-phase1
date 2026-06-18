@@ -9,7 +9,7 @@ pipeline {
   parameters {
     string(name: 'EXPAT_SOURCE_DIR',
            defaultValue: 'C:\\src\\libexpat-R_2_8_1\\expat',
-           description: 'Path to the upstream Expat source tree.')
+           description: 'Path to the upstream Expat source tree. libexpat stages are skipped when this path does not exist.')
     booleanParam(name: 'RUN_BENCHMARKS',
                  defaultValue: false,
                  description: 'Run same-machine benchmark publication.')
@@ -73,6 +73,10 @@ pipeline {
       steps {
         powershell '''
           $ErrorActionPreference = "Stop"
+          if (-not (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container)) {
+            Write-Host "Skipping libexpat manifest: EXPAT_SOURCE_DIR does not exist: ${env:EXPAT_SOURCE_DIR}"
+            return
+          }
           .\\scripts\\run_libexpat_adapter.ps1 `
             -Mode Manifest `
             -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
@@ -87,6 +91,10 @@ pipeline {
       steps {
         powershell '''
           $ErrorActionPreference = "Stop"
+          if (-not (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container)) {
+            Write-Host "Skipping libexpat native suite: EXPAT_SOURCE_DIR does not exist: ${env:EXPAT_SOURCE_DIR}"
+            return
+          }
           .\\scripts\\run_libexpat_adapter.ps1 `
             -Mode NativeSuite `
             -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
