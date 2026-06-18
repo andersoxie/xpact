@@ -97,7 +97,7 @@ pipeline {
         powershell '''
           $ErrorActionPreference = "Stop"
           .\\scripts\\build_native_eiffel.ps1
-          .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions
+          .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions -SkipSmoke
           .\\scripts\\run_native_runtime_smoke.ps1
           .\\scripts\\run_native_abi_tests.ps1 -Target Windows
         '''

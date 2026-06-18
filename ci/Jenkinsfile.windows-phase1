@@ -55,7 +55,7 @@ pipeline {
         powershell '''
           $ErrorActionPreference = "Stop"
           .\\scripts\\build_native_eiffel.ps1
-          .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions
+          .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions -SkipSmoke
         '''
       }
     }

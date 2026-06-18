@@ -49,9 +49,13 @@ function Get-IseInclude {
 function Invoke-VcCommand {
 	param([string] $Command)
 	$VcVars = Get-VcVars
-	cmd.exe /c "`"$VcVars`" >nul && $Command"
-	if ($LASTEXITCODE -ne 0) {
-		throw "Visual C++ command failed: $Command"
+	$Output = cmd.exe /c "`"$VcVars`" >nul && $Command" 2>&1
+	$ExitCode = $LASTEXITCODE
+	foreach ($Line in $Output) {
+		Write-Host $Line
+	}
+	if ($ExitCode -ne 0) {
+		throw "Visual C++ command failed with exit code ${ExitCode}: $Command"
 	}
 }
 
@@ -144,6 +148,20 @@ if (-not $SkipSmoke) {
 	$SmokeExe = Join-Path $OutputRoot $SmokeName
 	$SmokeSource = Join-Path $RepoRoot "tests\native\xpact_eiffel_dll_smoke.c"
 	$Include = Join-Path $RepoRoot "include"
-	$SmokeCommand = "cl /nologo /I`"$Include`" `"$SmokeSource`" `"$Lib`" /Fe:`"$SmokeExe`" && `"$SmokeExe`""
+	$SmokeCommand = "cl /nologo /I`"$Include`" `"$SmokeSource`" `"$Lib`" /Fe:`"$SmokeExe`""
 	Invoke-VcCommand $SmokeCommand
+	$OldPath = $env:Path
+	try {
+		$env:Path = "$OutputRoot;$OldPath"
+		$SmokeOutput = & $SmokeExe 2>&1
+		$SmokeExitCode = $LASTEXITCODE
+		foreach ($Line in $SmokeOutput) {
+			Write-Host $Line
+		}
+		if ($SmokeExitCode -ne 0) {
+			throw "Smoke executable failed with exit code ${SmokeExitCode}: $SmokeExe"
+		}
+	} finally {
+		$env:Path = $OldPath
+	}
 }

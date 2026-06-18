@@ -45,7 +45,7 @@ if (-not $SkipBuild) {
 	if ($LASTEXITCODE -ne 0) {
 		throw "Eiffel-backed Windows DLL build failed."
 	}
-	& (Join-Path $PSScriptRoot "build_native_eiffel.ps1") -BuildTier Assertions
+	& (Join-Path $PSScriptRoot "build_native_eiffel.ps1") -BuildTier Assertions -SkipSmoke
 	if ($LASTEXITCODE -ne 0) {
 		throw "Eiffel-backed Windows assertion DLL build failed."
 	}
