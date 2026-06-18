@@ -117,7 +117,7 @@ Run native ABI/link smoke tests:
 Run chunked `XML_Parse` CRC diagnostics:
 
 ```powershell
-.\scripts\run_chunked_crc_harness.ps1 -Target Xpact -ParseMode All -AllowMismatches
+.\scripts\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All
 ```
 
 Refresh the upstream Expat manifest and parity expansion:

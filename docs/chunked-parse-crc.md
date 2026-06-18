@@ -37,6 +37,31 @@ The script writes:
 build\chunked-crc\chunked-crc-results.tsv
 ```
 
+## Run The Corpus Gate
+
+The corpus runner generates deterministic XML files under
+`build\chunked-crc\corpus` and runs the same chunk matrix over all of them:
+
+```powershell
+.\scripts\run_chunked_crc_corpus.ps1 `
+  -Target Xpact `
+  -ParseMode All
+```
+
+The corpus covers plain character data, internal entities, CDATA, comments,
+processing instructions, namespace-qualified names, mixed content, deep
+nesting, and a larger catalog-style document. This is the preferred local gate
+after changing chunked parse behavior.
+
+To turn the catalog fixture into a heavier replay stress case:
+
+```powershell
+.\scripts\run_chunked_crc_corpus.ps1 `
+  -Target Xpact `
+  -ParseMode All `
+  -CatalogItems 120
+```
+
 By default, any semantic mismatch makes the script fail. To collect diagnostic
 rows while investigating a suspected mismatch:
 

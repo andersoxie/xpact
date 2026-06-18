@@ -62,14 +62,16 @@ Native ABI/link smoke:
 Chunked `XML_Parse` CRC diagnostics:
 
 ```powershell
-.\scripts\run_chunked_crc_harness.ps1 `
+.\scripts\run_chunked_crc_corpus.ps1 `
   -Target Xpact `
   -ParseMode All
 ```
 
 The current native chunk adapter still uses accumulated-buffer replay, but this
-harness is a strict gate for callback-stream equivalence across chunk sizes.
-Use `-AllowMismatches` only while collecting rows for a newly discovered gap.
+corpus gate is a strict check for callback-stream equivalence across chunk
+sizes on plain text, entities, CDATA, namespaces, mixed content, deep nesting,
+and a larger catalog document. Use `-AllowMismatches` only while collecting
+rows for a newly discovered gap.
 
 Upstream Expat manifest and parity expansion:
 
