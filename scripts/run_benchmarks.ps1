@@ -117,6 +117,20 @@ function Add-CompilerNote {
 	}
 }
 
+function Get-ExistingBenchmarkHistory {
+	param([string] $Path)
+	if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+		return $null
+	}
+	$Text = Get-Content -LiteralPath $Path -Raw
+	$Marker = "## Previous Published Values"
+	$Index = $Text.IndexOf($Marker)
+	if ($Index -lt 0) {
+		return $null
+	}
+	$Text.Substring($Index).Trim()
+}
+
 function ConvertTo-WslPath {
 	param(
 		[string] $WindowsPath,
@@ -489,6 +503,8 @@ try {
 	$Machine = "$env:PROCESSOR_IDENTIFIER; $env:OS"
 }
 
+$MarkdownPath = Join-Path $RepoRoot "docs\benchmarks.md"
+$ExistingHistory = Get-ExistingBenchmarkHistory $MarkdownPath
 $Markdown = New-Object System.Collections.Generic.List[string]
 $SelectedEiffelBuildNames = ($SelectedEiffelBuilds | ForEach-Object { $_.Name }) -join ", "
 $Markdown.Add("# Benchmarks")
@@ -523,8 +539,16 @@ $Markdown.Add("")
 $Markdown.Add("Native ABI note: the Windows ``xpact native C ABI`` rows are generated from a C executable linked against ``include/xpact.h`` and ``build\native-eiffel\xpact.lib`` and run against the Eiffel-backed ``build\native-eiffel\xpact.dll``. Any WSL ``xpact native C ABI`` status row still targets the older bridge-only ``build\native\libxpact.so`` path and remains ``not measured`` until the Linux/WSL Eiffel-backed shared object is packaged.")
 $Markdown.Add("")
 $Markdown.Add("See ``docs/performance-analysis.md`` for the current interpretation of the xpact-vs-libexpat performance gap and optimization priorities.")
+$Markdown.Add("")
+$Markdown.Add("For opt-in macro-benchmarks against caller-supplied, pre-decompressed real XML")
+$Markdown.Add("corpora, see ``docs/large-xml-benchmarks.md``.")
+if (-not [string]::IsNullOrWhiteSpace($ExistingHistory)) {
+	$Markdown.Add("")
+	foreach ($Line in ($ExistingHistory -split "\r?\n")) {
+		$Markdown.Add($Line)
+	}
+}
 
-$MarkdownPath = Join-Path $RepoRoot "docs\benchmarks.md"
 $Markdown | Set-Content -LiteralPath $MarkdownPath -Encoding UTF8
 
 Write-Host "Benchmark medians written to $MarkdownPath"

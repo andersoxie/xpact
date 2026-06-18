@@ -6,17 +6,20 @@ on the Windows Phase 1 benchmark in `docs/benchmarks.md`.
 ## Current Baseline
 
 The benchmark parses the same 2611-byte UTF-8 catalog document 1000 times and
-reports the median of three process-level runs. The WSL2 C rows compile and
-link against Ubuntu libexpat directly, but elapsed time is measured from
-Windows and includes `wsl.exe` launch overhead.
+reports the median of three process-level runs. The current 2026-06-18 run did
+not include WSL2 C rows because WSL `gcc` was not visible to the benchmark
+process. The previous published 2026-06-03 WSL2 C rows are kept as historical
+comparison values in `docs/benchmarks.md`.
 
 | Path | Median elapsed ms | Relative note |
 |---|---:|---|
-| libexpat C tokenizer via WSL2 gcc | 100.937 | Direct C baseline row |
-| libexpat via CPython `pyexpat` tokenizer | 114.742 | Python binding baseline row |
-| xpact direct Eiffel tokenizer/no-op | 851.331 | About 8.4x slower than direct C libexpat tokenizer |
-| xpact native C ABI tokenizer | 3458.657 | About 4.1x slower than direct Eiffel |
-| xpact native C ABI callbacks | 6420.215 | About 7.5x slower than direct Eiffel |
+| libexpat via CPython `pyexpat` tokenizer | 138.316 | Current available Expat baseline row |
+| libexpat via CPython `pyexpat` callbacks | 204.702 | Current Python callback baseline row |
+| xpact direct Eiffel tokenizer/no-op | 874.84 | About 6.3x slower than current `pyexpat` tokenizer |
+| xpact direct Eiffel tokenizer/no-op, assertions enabled | 881.754 | Assertion-enabled finalized build is effectively the same speed for this workload |
+| xpact native C ABI tokenizer | 3474.593 | About 4.0x slower than direct Eiffel |
+| xpact native C ABI callbacks | 6044.687 | About 6.9x slower than direct Eiffel |
+| libexpat C tokenizer via WSL2 gcc | 100.937 | Historical 2026-06-03 direct C row; not measured in the current run |
 
 The direct Eiffel row is the best measure of the Eiffel parser core. The native
 C ABI rows include the exported C bridge, C/Eiffel runtime transitions, native
@@ -33,6 +36,11 @@ Parser creation and free are also not the main native cost. Reusing the native
 `XML_Parser` with `XML_ParserReset` produced nearly the same median as creating
 one parser per document. The remaining native overhead is per-parse bridge and
 payload work.
+
+The finalized assertion build is also not a material benchmark cost for this
+workload: 881.754 ms with assertions enabled versus 874.84 ms with assertions
+discarded. That supports keeping assertion-enabled finalized lanes as a
+validation tool without treating them as a separate performance architecture.
 
 Position accounting used to be a major issue. Earlier versions recomputed line
 and column numbers from the start of the input on many token transitions. That
