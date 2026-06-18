@@ -18,7 +18,7 @@ pipeline {
                  description: 'Run the experimental CPython replacement lane.')
     string(name: 'CPYTHON_SOURCE_DIR',
            defaultValue: 'C:\\src\\cpython',
-           description: 'Path to a CPython checkout for public-app replacement testing.')
+           description: 'Path to a CPython checkout for public-app replacement testing. CPython stages are skipped when this path does not exist.')
     booleanParam(name: 'RUN_SONARQUBE',
                  defaultValue: true,
                  description: 'Run SonarQube analysis using the Jenkins Sonar configuration.')
@@ -186,6 +186,10 @@ pipeline {
       steps {
         powershell '''
           $ErrorActionPreference = "Stop"
+          if (-not (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container)) {
+            Write-Host "Skipping CPython baseline: CPYTHON_SOURCE_DIR does not exist: ${env:CPYTHON_SOURCE_DIR}"
+            return
+          }
           Set-Location "${env:CPYTHON_SOURCE_DIR}"
           .\\PCbuild\\build.bat -p x64 -c Release
           .\\PCbuild\\amd64\\python.exe -m test `
@@ -203,6 +207,10 @@ pipeline {
       steps {
         powershell '''
           $ErrorActionPreference = "Stop"
+          if (-not (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container)) {
+            Write-Host "Skipping CPython xpact replacement: CPYTHON_SOURCE_DIR does not exist: ${env:CPYTHON_SOURCE_DIR}"
+            return
+          }
           Write-Host "Apply the maintained CPython pyexpat-to-xpact patch here."
           Write-Host "The patch should link pyexpat against ${env:XPACT_LIBRARY}"
           Write-Host "and copy build\\native-eiffel\\xpact.dll beside the test interpreter."
