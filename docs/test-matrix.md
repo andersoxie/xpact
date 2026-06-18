@@ -38,9 +38,10 @@ so users can run contract-audited validation without falling back to workbench
 debug builds.
 
 The rest of the pipeline builds the Windows Eiffel-backed DLL, runs native
-runtime smoke tests in both assertion modes, runs ABI smoke tests, expands the
-libexpat adapter manifest, optionally runs the upstream libexpat native suite,
-and optionally publishes benchmarks for the production-finalized and
+runtime smoke tests in both assertion modes, runs ABI smoke tests, runs the
+chunked CRC corpus gate for direct and parse-buffer input, expands the libexpat
+adapter manifest, optionally runs the upstream libexpat native suite, and
+optionally publishes benchmarks for the production-finalized and
 assertion-finalized benchmark builds.
 
 ## Why Both Assertion Modes

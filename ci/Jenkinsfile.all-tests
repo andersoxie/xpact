@@ -100,6 +100,7 @@ pipeline {
           .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions -SkipSmoke
           .\\scripts\\run_native_runtime_smoke.ps1
           .\\scripts\\run_native_abi_tests.ps1 -Target Windows
+          .\\scripts\\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All -SkipBuild
         '''
       }
       post {
@@ -109,7 +110,8 @@ pipeline {
             build/native-eiffel/xpact.lib,
             build/native-eiffel/xpact_assertions.dll,
             build/native-eiffel/xpact_assertions.lib,
-            build/native-runtime/*.obj
+            build/native-runtime/*.obj,
+            build/chunked-crc/*.tsv
           ''', allowEmptyArchive: true
         }
       }

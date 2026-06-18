@@ -1282,8 +1282,10 @@ feature {NONE} -- Tests
 			assert ("all-tests Jenkinsfile builds assertion native tier", l_jenkins.has_substring ("-BuildTier Assertions") and l_jenkins.has_substring ("xpact_assertions.dll"))
 			assert ("all-tests Jenkinsfile benchmarks assertion tier", l_jenkins.has_substring ("FinalizedAssertions"))
 			assert ("all-tests Jenkinsfile runs native tests", l_jenkins.has_substring ("run_native_runtime_smoke.ps1") and l_jenkins.has_substring ("run_native_abi_tests.ps1"))
+			assert ("all-tests Jenkinsfile runs chunked CRC corpus", l_jenkins.has_substring ("run_chunked_crc_corpus.ps1") and l_jenkins.has_substring ("build/chunked-crc/*.tsv"))
 			l_notes := file_text ("docs\test-matrix.md")
 			assert ("test matrix docs present", l_notes.has_substring ("Assertions off") and l_notes.has_substring ("Assertions on"))
+			assert ("test matrix docs include chunked CRC corpus", l_notes.has_substring ("chunked CRC corpus gate"))
 			l_notes := file_text ("docs\platform-builds.md")
 			assert ("platform build docs present", l_notes.has_substring ("Linux") and l_notes.has_substring ("Eiffel .NET"))
 		end

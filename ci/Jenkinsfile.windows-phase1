@@ -69,6 +69,15 @@ pipeline {
       }
     }
 
+    stage('Chunked CRC Corpus') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All -SkipBuild
+        '''
+      }
+    }
+
     stage('libexpat Manifest') {
       steps {
         powershell '''
@@ -162,6 +171,7 @@ pipeline {
         build/native-eiffel/xpact.lib,
         build/native-eiffel/xpact_assertions.dll,
         build/native-eiffel/xpact_assertions.lib,
+        build/chunked-crc/*.tsv,
         build/libexpat-adapter-current/*.tsv,
         build/libexpat-adapter-current/*.log,
         docs/benchmarks.md,
