@@ -38,6 +38,7 @@ feature {NONE} -- Initialization
 			test_token_well_formedness_errors
 			test_document_structure
 			test_incremental_parse_session_prototype
+			test_expat_port_parse_session_spike
 			test_position_accounting
 			test_handler_position_accounting
 			test_garbage_collection_suspension
@@ -816,6 +817,47 @@ feature {NONE} -- Tests
 			assert ("incremental session mismatch error", l_session.last_error.same_string ("mismatched end tag"))
 		end
 
+	test_expat_port_parse_session_spike
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_session: XP_EXPAT_PORT_PARSE_SESSION
+			l_status: INTEGER
+		do
+			create l_handler.make
+			create l_session.make (l_handler)
+			assert ("expat-port spike starts at prolog init", l_session.processor = l_session.Processor_prolog_init)
+			assert ("expat-port spike records source reference", l_session.expat_source_reference.has_substring ("xmlparse.c"))
+			l_status := l_session.parse ("<doc a='", False)
+			assert ("expat-port spike waits inside attribute", l_status = l_session.Status_need_more)
+			assert ("expat-port spike entered content processor", l_session.processor = l_session.Processor_content)
+			assert ("expat-port spike keeps incomplete token", l_session.buffer.same_string ("<doc a='"))
+			assert ("expat-port spike has no early attribute event", l_handler.events.count = 0)
+			l_status := l_session.parse ("1'>x</doc>", True)
+			assert ("expat-port spike finishes split document", l_status = l_session.Status_finished)
+			assert ("expat-port spike uses epilog processor at finish", l_session.processor = l_session.Processor_epilog)
+			assert ("expat-port spike emitted start", l_handler.events.i_th (1).same_string ("start:doc:1"))
+			assert ("expat-port spike captured attribute", l_handler.last_attribute_value.same_string ("1"))
+			assert ("expat-port spike emitted text", l_handler.events.i_th (2).same_string ("text:x"))
+			assert ("expat-port spike emitted end", l_handler.events.i_th (3).same_string ("end:doc"))
+			assert ("expat-port spike releases consumed input", l_session.buffer.is_empty)
+
+			create l_handler.make
+			create l_session.make (l_handler)
+			l_status := l_session.parse ("<?xml version='1.0'?>%N<root/>", True)
+			assert ("expat-port spike consumes xml declaration prolog", l_status = l_session.Status_finished)
+			assert ("expat-port spike emitted root start", l_handler.events.i_th (1).same_string ("start:root:0"))
+			assert ("expat-port spike emitted root end", l_handler.events.i_th (2).same_string ("end:root"))
+
+			create l_handler.make
+			create l_session.make (l_handler)
+			l_status := l_session.parse ("<a>", False)
+			assert ("expat-port spike accepts open a", l_status = l_session.Status_need_more)
+			l_status := l_session.parse ("</b>", True)
+			assert ("expat-port spike rejects mismatch", l_status = l_session.Status_error)
+			assert ("expat-port spike mismatch error", l_session.last_error.same_string ("mismatched end tag"))
+			assert ("expat-port spike switches to error processor", l_session.processor = l_session.Processor_error)
+		end
+
 	test_position_accounting
 		local
 			l_handler: XP_NULL_EVENT_HANDLER
@@ -1362,6 +1404,7 @@ feature {NONE} -- Tests
 			assert ("Eiffel native callback adapter present", file_text ("src\xp_native_callback_handler.e").has_substring ("XML_StartElementHandler"))
 			assert ("Eiffel native callback replay tracks growing text", file_text ("src\xp_native_callback_handler.e").has_substring ("delivered_character_data_lengths"))
 			assert ("Eiffel incremental session prototype present", file_text ("src\xp_incremental_parse_session.e").has_substring ("buffer_window") and file_text ("src\xp_incremental_parse_session.e").has_substring ("element_stack"))
+			assert ("Eiffel Expat-port spike present", file_text ("src\xp_expat_port_parse_session.e").has_substring ("Processor_prolog_init") and file_text ("src\xp_expat_port_parse_session.e").has_substring ("expat_source_reference"))
 			assert ("Eiffel native bridge installer present", file_text ("src\xp_native_bridge_installer.e").has_substring ("XP_NATIVE_PARSER"))
 			assert ("Eiffel native bridge installer uses runtime object ids", file_text ("src\xp_native_bridge_installer.e").has_substring ("eif_object_id"))
 			assert ("Eiffel native bridge export present", file_text ("src\xp_native_bridge_export.e").has_substring ("XPACT_RegisterEiffelRuntimeBridgePointers"))

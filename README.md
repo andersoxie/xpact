@@ -84,11 +84,13 @@ Start here, then read:
    baseline before the true incremental parser session.
 10. `docs/incremental-core-prototype.md` for the isolated Eiffel session
     prototype that starts replacing replay with state-owned parsing.
-11. `docs/benchmarks.md` for same-machine benchmark results.
-12. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
-13. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
+11. `docs/expat-port-spike.md` for the isolated Expat-processor-style Eiffel
+    port experiment.
+12. `docs/benchmarks.md` for same-machine benchmark results.
+13. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
+14. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
    gap analysis and next optimization priorities.
-14. `docs/drop-in-verification.md` for the Jenkins and public-application
+15. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
 
 ## Build And Verify

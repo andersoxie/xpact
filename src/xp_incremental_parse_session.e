@@ -346,14 +346,17 @@ feature {NONE} -- Parsing implementation
 			l_name: STRING_8
 			l_value: STRING_8
 			l_quote: CHARACTER_8
+			l_done: BOOLEAN
 		do
 			from
 				i := a_start_index
 			until
-				i >= a_end_index or has_error
+				i >= a_end_index or has_error or l_done
 			loop
 				i := skip_spaces (i, a_end_index)
-				if i < a_end_index and then buffer_window.item (i) /= '/' then
+				if i < a_end_index and then buffer_window.item (i) = '/' then
+					l_done := True
+				elseif i < a_end_index then
 					if not a_attributes.is_name_start_character (buffer_window.item (i)) then
 						set_error ("invalid attribute")
 					else
