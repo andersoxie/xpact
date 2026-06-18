@@ -73,6 +73,15 @@ sizes on plain text, entities, CDATA, namespaces, mixed content, deep nesting,
 and a larger catalog document. Use `-AllowMismatches` only while collecting
 rows for a newly discovered gap.
 
+Current incremental shim audit:
+
+```powershell
+.\scripts\run_incremental_shim_audit.ps1 -SkipBuild
+```
+
+This records which non-final chunk behaviors are already usable and which
+behaviors still depend on accumulated-buffer replay.
+
 Upstream Expat manifest and parity expansion:
 
 ```powershell
@@ -240,6 +249,7 @@ Archive these artifacts:
 - `build/libexpat-adapter-current/libexpat-parity-expanded.tsv`
 - `build/libexpat-adapter-current/libexpat-native-suite.log`
 - `build/chunked-crc/chunked-crc-results.tsv`
+- `build/incremental-shim-audit/incremental-shim-audit.tsv`
 - `docs/benchmarks.md` when benchmarks run
 - `docs/large-xml-benchmarks.md` when large XML benchmarks run
 - `docs/performance-analysis.md` when benchmarks run

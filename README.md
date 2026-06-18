@@ -80,11 +80,13 @@ Start here, then read:
    upstream test-suite status.
 8. `docs/chunked-parse-crc.md` for incremental parsing verification through
    CRC-32 event digests across chunk sizes.
-9. `docs/benchmarks.md` for same-machine benchmark results.
-10. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
-11. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
+9. `docs/incremental-shim-audit.md` for the current accumulated-buffer replay
+   baseline before the true incremental parser session.
+10. `docs/benchmarks.md` for same-machine benchmark results.
+11. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
+12. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
    gap analysis and next optimization priorities.
-12. `docs/drop-in-verification.md` for the Jenkins and public-application
+13. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
 
 ## Build And Verify
@@ -118,6 +120,12 @@ Run chunked `XML_Parse` CRC diagnostics:
 
 ```powershell
 .\scripts\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All
+```
+
+Audit the current accumulated-buffer incremental shim:
+
+```powershell
+.\scripts\run_incremental_shim_audit.ps1 -SkipBuild
 ```
 
 Refresh the upstream Expat manifest and parity expansion:

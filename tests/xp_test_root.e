@@ -1244,6 +1244,8 @@ feature {NONE} -- Tests
 			assert ("chunked CRC corpus script present", l_script.has_substring ("plain-text.xml") and l_script.has_substring ("large-catalog.xml"))
 			assert ("chunked CRC corpus drives harness", l_script.has_substring ("run_chunked_crc_harness.ps1") and l_script.has_substring ("XmlFile"))
 			assert ("chunked CRC corpus has stress size knob", l_script.has_substring ("CatalogItems"))
+			l_script := file_text ("scripts\run_incremental_shim_audit.ps1")
+			assert ("incremental shim audit script present", l_script.has_substring ("incremental-shim-audit.tsv") and l_script.has_substring ("xpact_incremental_shim_audit.c"))
 			l_python := file_text ("benchmarks\libexpat_py_benchmark.py")
 			assert ("libexpat Python benchmark present", l_python.has_substring ("xml.parsers") and l_python.has_substring ("EXPAT_VERSION"))
 			assert ("libexpat Python benchmark accepts files", l_python.has_substring ("--file"))
@@ -1252,6 +1254,7 @@ feature {NONE} -- Tests
 			assert ("xpact native C benchmark present", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("XML_ERROR_NOT_STARTED"))
 			assert ("xpact native C benchmark accepts files", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("--file"))
 			assert ("chunked CRC C harness present", file_text ("tests\native\xpact_chunked_crc.c").has_substring ("semantic_crc") and file_text ("tests\native\xpact_chunked_crc.c").has_substring ("XPACT_USE_SYSTEM_EXPAT"))
+			assert ("incremental shim C audit present", file_text ("tests\native\xpact_incremental_shim_audit.c").has_substring ("current_gap") and file_text ("tests\native\xpact_incremental_shim_audit.c").has_substring ("XML_SetReparseDeferralEnabled"))
 			l_table := file_text ("docs\benchmarks.md")
 			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
 			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))
@@ -1260,6 +1263,7 @@ feature {NONE} -- Tests
 			assert ("published benchmark includes Windows native C ABI rows", l_table.has_substring ("xpact native C ABI callbacks via Windows MSVC DLL"))
 			assert ("large XML benchmark docs present", file_text ("docs\large-xml-benchmarks.md").has_substring ("pre-decompressed"))
 			assert ("chunked CRC docs present", file_text ("docs\chunked-parse-crc.md").has_substring ("semantic_crc") and file_text ("docs\chunked-parse-crc.md").has_substring ("chunk size 31"))
+			assert ("incremental shim audit docs present", file_text ("docs\incremental-shim-audit.md").has_substring ("accumulated-buffer replay") and file_text ("docs\incremental-shim-audit.md").has_substring ("current_gap"))
 		end
 
 	test_ci_test_matrix_files
