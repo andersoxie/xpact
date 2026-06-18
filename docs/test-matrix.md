@@ -39,10 +39,11 @@ debug builds.
 
 The rest of the pipeline builds the Windows Eiffel-backed DLL, runs native
 runtime smoke tests in both assertion modes, runs ABI smoke tests, runs the
-chunked CRC corpus gate for direct and parse-buffer input, expands the libexpat
-adapter manifest, optionally runs the upstream libexpat native suite, and
-optionally publishes benchmarks for the production-finalized and
-assertion-finalized benchmark builds.
+chunked CRC corpus gate for direct and parse-buffer input, runs the
+incremental shim audit, runs SonarQube analysis using the Jenkins tool named
+`Sonar` and `sonar.projectKey=xpact`, expands the libexpat adapter manifest,
+optionally runs the upstream libexpat native suite, and optionally publishes
+benchmarks for the production-finalized and assertion-finalized benchmark builds.
 
 ## Why Both Assertion Modes
 

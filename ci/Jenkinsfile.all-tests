@@ -25,6 +25,12 @@ pipeline {
     string(name: 'LARGE_XML_FILE',
            defaultValue: '',
            description: 'Pre-decompressed XML file for the large XML benchmark.')
+    booleanParam(name: 'RUN_SONARQUBE',
+                 defaultValue: true,
+                 description: 'Run SonarQube analysis using the Jenkins Sonar configuration.')
+    booleanParam(name: 'SONARQUBE_REQUIRED',
+                 defaultValue: false,
+                 description: 'Fail the pipeline when SonarQube analysis fails. When false, SonarQube failures mark the build unstable and later stages can continue.')
   }
 
   environment {
@@ -34,7 +40,7 @@ pipeline {
 
   stages {
     stage('Checkout') {
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         checkout scm
         stash name: 'xpact-source',
@@ -44,7 +50,7 @@ pipeline {
     }
 
     stage('Tool Versions') {
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         deleteDir()
         unstash 'xpact-source'
@@ -56,6 +62,42 @@ pipeline {
           cmake --version
           python --version
         '''
+      }
+    }
+
+    stage('SonarQube analysis') {
+      when { expression { return params.RUN_SONARQUBE } }
+      agent { label 'built-in' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        script {
+          def runSonarScanner = {
+            def scannerHome = tool 'Sonar'
+            withSonarQubeEnv() {
+              withEnv(["SONAR_SCANNER_HOME=${scannerHome}"]) {
+                powershell '''
+                  $ErrorActionPreference = "Stop"
+                  Set-Location $env:WORKSPACE
+                  if (-not (Test-Path sonar-project.properties)) {
+                    throw "sonar-project.properties was not found."
+                  }
+                  Select-String -Path sonar-project.properties -Pattern '^sonar\.projectKey='
+                  & "$env:SONAR_SCANNER_HOME\bin\sonar-scanner.bat"
+                  if ($LASTEXITCODE -ne 0) { throw "SonarQube analysis failed with exit code $LASTEXITCODE" }
+                '''
+              }
+            }
+          }
+
+          if (params.SONARQUBE_REQUIRED) {
+            runSonarScanner()
+          } else {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              runSonarScanner()
+            }
+          }
+        }
       }
     }
 
@@ -71,7 +113,7 @@ pipeline {
             values 'Workbench', 'Finalized'
           }
         }
-        agent { label 'windows-eiffel' }
+        agent { label 'built-in' }
         stages {
           stage('Run') {
             steps {
@@ -90,7 +132,7 @@ pipeline {
     }
 
     stage('Windows Native Tests') {
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         deleteDir()
         unstash 'xpact-source'
@@ -101,6 +143,7 @@ pipeline {
           .\\scripts\\run_native_runtime_smoke.ps1
           .\\scripts\\run_native_abi_tests.ps1 -Target Windows
           .\\scripts\\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All -SkipBuild
+          .\\scripts\\run_incremental_shim_audit.ps1 -SkipBuild
         '''
       }
       post {
@@ -111,7 +154,8 @@ pipeline {
             build/native-eiffel/xpact_assertions.dll,
             build/native-eiffel/xpact_assertions.lib,
             build/native-runtime/*.obj,
-            build/chunked-crc/*.tsv
+            build/chunked-crc/*.tsv,
+            build/incremental-shim-audit/*.tsv
           ''', allowEmptyArchive: true
         }
       }
@@ -119,7 +163,7 @@ pipeline {
 
     stage('WSL ABI Tests') {
       when { expression { return params.RUN_WSL_TESTS } }
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         deleteDir()
         unstash 'xpact-source'
@@ -136,7 +180,7 @@ pipeline {
     }
 
     stage('libexpat Adapter') {
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         deleteDir()
         unstash 'xpact-source'
@@ -175,7 +219,7 @@ pipeline {
 
     stage('Benchmarks') {
       when { expression { return params.RUN_BENCHMARKS } }
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         deleteDir()
         unstash 'xpact-source'
@@ -197,7 +241,7 @@ pipeline {
 
     stage('Large XML Benchmarks') {
       when { expression { return params.RUN_LARGE_XML_BENCHMARKS && params.LARGE_XML_FILE?.trim() } }
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         deleteDir()
         unstash 'xpact-source'
@@ -219,7 +263,7 @@ pipeline {
     }
 
     stage('Package Windows Release') {
-      agent { label 'windows-eiffel' }
+      agent { label 'built-in' }
       steps {
         deleteDir()
         unstash 'xpact-source'

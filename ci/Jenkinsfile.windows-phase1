@@ -19,6 +19,12 @@ pipeline {
     string(name: 'CPYTHON_SOURCE_DIR',
            defaultValue: 'C:\\src\\cpython',
            description: 'Path to a CPython checkout for public-app replacement testing.')
+    booleanParam(name: 'RUN_SONARQUBE',
+                 defaultValue: true,
+                 description: 'Run SonarQube analysis using the Jenkins Sonar configuration.')
+    booleanParam(name: 'SONARQUBE_REQUIRED',
+                 defaultValue: false,
+                 description: 'Fail the pipeline when SonarQube analysis fails. When false, SonarQube failures mark the build unstable and later stages can continue.')
   }
 
   environment {
@@ -50,6 +56,39 @@ pipeline {
       }
     }
 
+    stage('SonarQube analysis') {
+      when { expression { return params.RUN_SONARQUBE } }
+      steps {
+        script {
+          def runSonarScanner = {
+            def scannerHome = tool 'Sonar'
+            withSonarQubeEnv() {
+              withEnv(["SONAR_SCANNER_HOME=${scannerHome}"]) {
+                powershell '''
+                  $ErrorActionPreference = "Stop"
+                  Set-Location $env:WORKSPACE
+                  if (-not (Test-Path sonar-project.properties)) {
+                    throw "sonar-project.properties was not found."
+                  }
+                  Select-String -Path sonar-project.properties -Pattern '^sonar\.projectKey='
+                  & "$env:SONAR_SCANNER_HOME\bin\sonar-scanner.bat"
+                  if ($LASTEXITCODE -ne 0) { throw "SonarQube analysis failed with exit code $LASTEXITCODE" }
+                '''
+              }
+            }
+          }
+
+          if (params.SONARQUBE_REQUIRED) {
+            runSonarScanner()
+          } else {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              runSonarScanner()
+            }
+          }
+        }
+      }
+    }
+
     stage('Build Eiffel-Backed DLL') {
       steps {
         powershell '''
@@ -74,6 +113,15 @@ pipeline {
         powershell '''
           $ErrorActionPreference = "Stop"
           .\\scripts\\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All -SkipBuild
+        '''
+      }
+    }
+
+    stage('Incremental Shim Audit') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_incremental_shim_audit.ps1 -SkipBuild
         '''
       }
     }
@@ -172,6 +220,7 @@ pipeline {
         build/native-eiffel/xpact_assertions.dll,
         build/native-eiffel/xpact_assertions.lib,
         build/chunked-crc/*.tsv,
+        build/incremental-shim-audit/*.tsv,
         build/libexpat-adapter-current/*.tsv,
         build/libexpat-adapter-current/*.log,
         docs/benchmarks.md,
