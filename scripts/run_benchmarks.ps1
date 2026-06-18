@@ -556,3 +556,7 @@ Write-Host "Raw benchmark rows written to $TsvPath"
 foreach ($Row in $MedianRows) {
 	Write-Host "$(Format-MarkdownRow $Row)"
 }
+
+# Jenkins' PowerShell wrapper can observe a stale native command exit code
+# after successful nonfatal probes, such as the expected WSL status probe.
+$global:LASTEXITCODE = 0

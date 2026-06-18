@@ -377,3 +377,7 @@ Write-Host "Raw large XML benchmark rows written to $TsvPath"
 foreach ($Row in $MedianRows) {
 	Write-Host "$(Format-MarkdownRow $Row)"
 }
+
+# Jenkins' PowerShell wrapper can observe a stale native command exit code
+# after successful nonfatal probes.
+$global:LASTEXITCODE = 0
