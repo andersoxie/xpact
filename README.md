@@ -31,6 +31,8 @@ Implemented and verified now:
   validation runs.
 - C ABI smoke tests for public callers and for the private Eiffel bridge.
 - A native C benchmark path against the Windows Eiffel-backed DLL.
+- A chunked `XML_Parse` CRC harness that compares event digests across buffer
+  sizes and can be compiled against xpact or libexpat.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
 - Published benchmark, performance-analysis, and parity documentation.
 - An opt-in large XML benchmark runner for caller-supplied, pre-decompressed
@@ -47,6 +49,10 @@ The expected-failure list expands to 86 rows:
 
 Before calling xpact a credible drop-in replacement, the project still needs:
 
+- true incremental parsing in the Eiffel parser/session core; the current
+  native adapter accepts chunks but still relies on accumulated-buffer replay,
+  and the chunked CRC harness has exposed at least one silent semantic mismatch
+  for a generated document at chunk size 31;
 - a stronger native-suite gate that reports actual unexpected failures by
   upstream test name, not only the current expected-failure manifest expansion;
 - Phase 2 performance work: buffer-backed token slices, lazy materialization,
@@ -72,11 +78,13 @@ Start here, then read:
 6. `docs/libexpat-api-compatibility.md` for the public C API surface.
 7. `docs/libexpat-parity.md` and `adapters/libexpat/parity.tsv` for green/red
    upstream test-suite status.
-8. `docs/benchmarks.md` for same-machine benchmark results.
-9. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
-10. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
+8. `docs/chunked-parse-crc.md` for incremental parsing verification through
+   CRC-32 event digests across chunk sizes.
+9. `docs/benchmarks.md` for same-machine benchmark results.
+10. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
+11. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
    gap analysis and next optimization priorities.
-11. `docs/drop-in-verification.md` for the Jenkins and public-application
+12. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
 
 ## Build And Verify
@@ -104,6 +112,12 @@ Run native ABI/link smoke tests:
 
 ```powershell
 .\scripts\run_native_abi_tests.ps1 -Target Windows
+```
+
+Run chunked `XML_Parse` CRC diagnostics:
+
+```powershell
+.\scripts\run_chunked_crc_harness.ps1 -Target Xpact -ParseMode All -AllowMismatches
 ```
 
 Refresh the upstream Expat manifest and parity expansion:

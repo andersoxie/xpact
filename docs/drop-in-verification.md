@@ -59,6 +59,20 @@ Native ABI/link smoke:
 .\scripts\run_native_abi_tests.ps1 -Target Windows
 ```
 
+Chunked `XML_Parse` CRC diagnostics:
+
+```powershell
+.\scripts\run_chunked_crc_harness.ps1 `
+  -Target Xpact `
+  -ParseMode All `
+  -AllowMismatches
+```
+
+Strict mode should be enabled once the incremental parser/session core is in
+place. The current native chunk adapter still uses accumulated-buffer replay,
+and the first harness run found a silent semantic mismatch for the generated
+catalog document at chunk size 31.
+
 Upstream Expat manifest and parity expansion:
 
 ```powershell
@@ -225,6 +239,7 @@ Archive these artifacts:
 - `build/libexpat-adapter-current/libexpat-expected-failures-expanded.tsv`
 - `build/libexpat-adapter-current/libexpat-parity-expanded.tsv`
 - `build/libexpat-adapter-current/libexpat-native-suite.log`
+- `build/chunked-crc/chunked-crc-results.tsv`
 - `docs/benchmarks.md` when benchmarks run
 - `docs/large-xml-benchmarks.md` when large XML benchmarks run
 - `docs/performance-analysis.md` when benchmarks run

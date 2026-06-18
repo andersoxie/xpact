@@ -49,6 +49,13 @@ against `build/native-eiffel/xpact.lib`, runs with `build/native-eiffel` on
 `PATH`, publishes create/free and parser-reuse rows in `docs/benchmarks.md`,
 and keeps the interpretation in `docs/performance-analysis.md`.
 
+`tests/native/xpact_chunked_crc.c` is a diagnostic harness for the public
+`XML_Parse` contract. It compiles against either xpact or system libexpat,
+feeds the same XML through multiple chunk sizes, and records semantic CRC-32
+event digests. It does not parse XML in C; it only observes callback streams
+from the active parser implementation. Use `scripts/run_chunked_crc_harness.ps1`
+to build and run it.
+
 Run the native ABI smoke tests with:
 
 ```powershell

@@ -1236,6 +1236,10 @@ feature {NONE} -- Tests
 			assert ("benchmark script distinguishes bridge-only WSL path", l_script.has_substring ("XML_ERROR_NOT_STARTED") and l_script.has_substring ("build\native\libxpact.so"))
 			assert ("benchmark script writes docs table", l_script.has_substring ("docs\benchmarks.md"))
 			assert ("large XML benchmark script present", file_text ("scripts\run_large_xml_benchmarks.ps1").has_substring ("pre-decompressed XML"))
+			l_script := file_text ("scripts\run_chunked_crc_harness.ps1")
+			assert ("chunked CRC harness script present", not l_script.is_empty and l_script.has_substring ("chunked-crc-results.tsv"))
+			assert ("chunked CRC harness can target xpact and libexpat", l_script.has_substring ("Xpact") and l_script.has_substring ("LibexpatWsl"))
+			assert ("chunked CRC harness supports diagnostic mismatches", l_script.has_substring ("AllowMismatches"))
 			l_python := file_text ("benchmarks\libexpat_py_benchmark.py")
 			assert ("libexpat Python benchmark present", l_python.has_substring ("xml.parsers") and l_python.has_substring ("EXPAT_VERSION"))
 			assert ("libexpat Python benchmark accepts files", l_python.has_substring ("--file"))
@@ -1243,6 +1247,7 @@ feature {NONE} -- Tests
 			assert ("libexpat C benchmark accepts files", file_text ("benchmarks\libexpat_c_benchmark.c").has_substring ("--file"))
 			assert ("xpact native C benchmark present", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("XML_ERROR_NOT_STARTED"))
 			assert ("xpact native C benchmark accepts files", file_text ("benchmarks\xpact_native_c_benchmark.c").has_substring ("--file"))
+			assert ("chunked CRC C harness present", file_text ("tests\native\xpact_chunked_crc.c").has_substring ("semantic_crc") and file_text ("tests\native\xpact_chunked_crc.c").has_substring ("XPACT_USE_SYSTEM_EXPAT"))
 			l_table := file_text ("docs\benchmarks.md")
 			assert ("published benchmark table present", l_table.has_substring ("| Benchmark | Engine | Version | Iterations |"))
 			assert ("published benchmark includes finalized xpact row", l_table.has_substring ("xpact Eiffel finalized, assertions discarded"))
@@ -1250,6 +1255,7 @@ feature {NONE} -- Tests
 			assert ("published benchmark documents optional WSL C rows", l_table.has_substring ("When present, WSL2 C rows"))
 			assert ("published benchmark includes Windows native C ABI rows", l_table.has_substring ("xpact native C ABI callbacks via Windows MSVC DLL"))
 			assert ("large XML benchmark docs present", file_text ("docs\large-xml-benchmarks.md").has_substring ("pre-decompressed"))
+			assert ("chunked CRC docs present", file_text ("docs\chunked-parse-crc.md").has_substring ("semantic_crc") and file_text ("docs\chunked-parse-crc.md").has_substring ("chunk size 31"))
 		end
 
 	test_ci_test_matrix_files
