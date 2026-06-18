@@ -9,7 +9,7 @@ pipeline {
   parameters {
     string(name: 'EXPAT_SOURCE_DIR',
            defaultValue: 'C:\\src\\libexpat-R_2_8_1\\expat',
-           description: 'Path to the upstream Expat source tree. libexpat stages are skipped when this path does not exist.')
+           description: 'Path to the upstream Expat source tree. libexpat stages are marked unstable when this path does not exist.')
     booleanParam(name: 'RUN_BENCHMARKS',
                  defaultValue: false,
                  description: 'Run same-machine benchmark publication.')
@@ -18,7 +18,7 @@ pipeline {
                  description: 'Run the experimental CPython replacement lane.')
     string(name: 'CPYTHON_SOURCE_DIR',
            defaultValue: 'C:\\src\\cpython',
-           description: 'Path to a CPython checkout for public-app replacement testing. CPython stages are skipped when this path does not exist.')
+           description: 'Path to a CPython checkout for public-app replacement testing. CPython stages are marked unstable when this path does not exist.')
     booleanParam(name: 'RUN_SONARQUBE',
                  defaultValue: true,
                  description: 'Run SonarQube analysis using the Jenkins Sonar configuration.')
@@ -128,37 +128,51 @@ pipeline {
 
     stage('libexpat Manifest') {
       steps {
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          if (-not (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container)) {
-            Write-Host "Skipping libexpat manifest: EXPAT_SOURCE_DIR does not exist: ${env:EXPAT_SOURCE_DIR}"
-            return
+        script {
+          if (powershell(returnStatus: true, script: '''
+            if (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container) { exit 0 }
+            exit 1
+          ''') != 0) {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              error "Skipping libexpat manifest: EXPAT_SOURCE_DIR does not exist: ${env.EXPAT_SOURCE_DIR}"
+            }
+          } else {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_libexpat_adapter.ps1 `
+                -Mode Manifest `
+                -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+                -OutputDir "${env:ADAPTER_OUTPUT}" `
+                -XpactLibrary "${env:XPACT_LIBRARY}" `
+                -SkipNativeBuild
+            '''
           }
-          .\\scripts\\run_libexpat_adapter.ps1 `
-            -Mode Manifest `
-            -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
-            -OutputDir "${env:ADAPTER_OUTPUT}" `
-            -XpactLibrary "${env:XPACT_LIBRARY}" `
-            -SkipNativeBuild
-        '''
+        }
       }
     }
 
     stage('libexpat Native Suite') {
       steps {
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          if (-not (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container)) {
-            Write-Host "Skipping libexpat native suite: EXPAT_SOURCE_DIR does not exist: ${env:EXPAT_SOURCE_DIR}"
-            return
+        script {
+          if (powershell(returnStatus: true, script: '''
+            if (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container) { exit 0 }
+            exit 1
+          ''') != 0) {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              error "Skipping libexpat native suite: EXPAT_SOURCE_DIR does not exist: ${env.EXPAT_SOURCE_DIR}"
+            }
+          } else {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_libexpat_adapter.ps1 `
+                -Mode NativeSuite `
+                -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+                -OutputDir "${env:ADAPTER_OUTPUT}" `
+                -XpactLibrary "${env:XPACT_LIBRARY}" `
+                -SkipNativeBuild
+            '''
           }
-          .\\scripts\\run_libexpat_adapter.ps1 `
-            -Mode NativeSuite `
-            -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
-            -OutputDir "${env:ADAPTER_OUTPUT}" `
-            -XpactLibrary "${env:XPACT_LIBRARY}" `
-            -SkipNativeBuild
-        '''
+        }
       }
     }
 
@@ -184,38 +198,52 @@ pipeline {
     stage('CPython Baseline') {
       when { expression { return params.RUN_PUBLIC_APP } }
       steps {
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          if (-not (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container)) {
-            Write-Host "Skipping CPython baseline: CPYTHON_SOURCE_DIR does not exist: ${env:CPYTHON_SOURCE_DIR}"
-            return
+        script {
+          if (powershell(returnStatus: true, script: '''
+            if (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container) { exit 0 }
+            exit 1
+          ''') != 0) {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              error "Skipping CPython baseline: CPYTHON_SOURCE_DIR does not exist: ${env.CPYTHON_SOURCE_DIR}"
+            }
+          } else {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              Set-Location "${env:CPYTHON_SOURCE_DIR}"
+              .\\PCbuild\\build.bat -p x64 -c Release
+              .\\PCbuild\\amd64\\python.exe -m test `
+                test_pyexpat `
+                test_xml_etree `
+                test_xml_dom_minidom `
+                test_xml_sax `
+                test_xmlrpc
+            '''
           }
-          Set-Location "${env:CPYTHON_SOURCE_DIR}"
-          .\\PCbuild\\build.bat -p x64 -c Release
-          .\\PCbuild\\amd64\\python.exe -m test `
-            test_pyexpat `
-            test_xml_etree `
-            test_xml_dom_minidom `
-            test_xml_sax `
-            test_xmlrpc
-        '''
+        }
       }
     }
 
     stage('CPython xpact Replacement') {
       when { expression { return params.RUN_PUBLIC_APP } }
       steps {
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          if (-not (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container)) {
-            Write-Host "Skipping CPython xpact replacement: CPYTHON_SOURCE_DIR does not exist: ${env:CPYTHON_SOURCE_DIR}"
-            return
+        script {
+          if (powershell(returnStatus: true, script: '''
+            if (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container) { exit 0 }
+            exit 1
+          ''') != 0) {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              error "Skipping CPython xpact replacement: CPYTHON_SOURCE_DIR does not exist: ${env.CPYTHON_SOURCE_DIR}"
+            }
+          } else {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              Write-Host "Apply the maintained CPython pyexpat-to-xpact patch here."
+              Write-Host "The patch should link pyexpat against ${env:XPACT_LIBRARY}"
+              Write-Host "and copy build\\native-eiffel\\xpact.dll beside the test interpreter."
+              throw "CPython xpact replacement patch is not installed yet."
+            '''
           }
-          Write-Host "Apply the maintained CPython pyexpat-to-xpact patch here."
-          Write-Host "The patch should link pyexpat against ${env:XPACT_LIBRARY}"
-          Write-Host "and copy build\\native-eiffel\\xpact.dll beside the test interpreter."
-          throw "CPython xpact replacement patch is not installed yet."
-        '''
+        }
       }
     }
   }

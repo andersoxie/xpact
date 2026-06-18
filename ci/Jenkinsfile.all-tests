@@ -9,7 +9,7 @@ pipeline {
   parameters {
     string(name: 'EXPAT_SOURCE_DIR',
            defaultValue: 'C:\\src\\libexpat-R_2_8_1\\expat',
-           description: 'Path to the upstream Expat source tree. libexpat adapter stages are skipped when this path does not exist.')
+           description: 'Path to the upstream Expat source tree. libexpat adapter stages are marked unstable when this path does not exist.')
     booleanParam(name: 'RUN_WSL_TESTS',
                  defaultValue: true,
                  description: 'Run WSL/Linux bridge and ABI smoke tests when WSL2 is available.')
@@ -184,28 +184,35 @@ pipeline {
       steps {
         deleteDir()
         unstash 'xpact-source'
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          if (-not (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container)) {
-            Write-Host "Skipping libexpat adapter: EXPAT_SOURCE_DIR does not exist: ${env:EXPAT_SOURCE_DIR}"
-            return
+        script {
+          if (powershell(returnStatus: true, script: '''
+            if (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container) { exit 0 }
+            exit 1
+          ''') != 0) {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              error "Skipping libexpat adapter: EXPAT_SOURCE_DIR does not exist: ${env.EXPAT_SOURCE_DIR}"
+            }
+          } else {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\build_native_eiffel.ps1 -SkipSmoke
+              .\\scripts\\run_libexpat_adapter.ps1 `
+                -Mode Manifest `
+                -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+                -OutputDir "${env:ADAPTER_OUTPUT}" `
+                -XpactLibrary "${env:XPACT_LIBRARY}" `
+                -SkipNativeBuild
+              if (${env:RUN_LIBEXPAT_NATIVE_SUITE} -eq "true") {
+                .\\scripts\\run_libexpat_adapter.ps1 `
+                  -Mode NativeSuite `
+                  -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+                  -OutputDir "${env:ADAPTER_OUTPUT}" `
+                  -XpactLibrary "${env:XPACT_LIBRARY}" `
+                  -SkipNativeBuild
+              }
+            '''
           }
-          .\\scripts\\build_native_eiffel.ps1 -SkipSmoke
-          .\\scripts\\run_libexpat_adapter.ps1 `
-            -Mode Manifest `
-            -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
-            -OutputDir "${env:ADAPTER_OUTPUT}" `
-            -XpactLibrary "${env:XPACT_LIBRARY}" `
-            -SkipNativeBuild
-          if (${env:RUN_LIBEXPAT_NATIVE_SUITE} -eq "true") {
-            .\\scripts\\run_libexpat_adapter.ps1 `
-              -Mode NativeSuite `
-              -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
-              -OutputDir "${env:ADAPTER_OUTPUT}" `
-              -XpactLibrary "${env:XPACT_LIBRARY}" `
-              -SkipNativeBuild
-          }
-        '''
+        }
       }
       post {
         always {
