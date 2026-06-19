@@ -38,6 +38,7 @@ feature {NONE} -- Initialization
 			test_token_well_formedness_errors
 			test_document_structure
 			test_token_slice_abstraction
+			test_plain_tokenizer_attribute_fast_path
 			test_incremental_parse_session_prototype
 			test_expat_port_parse_session_spike
 			test_position_accounting
@@ -821,6 +822,30 @@ feature {NONE} -- Tests
 			assert ("empty token slice starts with empty prefix", l_empty.starts_with (""))
 			assert ("empty token slice rejects non-empty prefix", not l_empty.starts_with ("x"))
 			assert ("empty token slice conversion", l_empty.to_string_8.is_empty)
+		end
+
+	test_plain_tokenizer_attribute_fast_path
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer accepts simple attributes", l_parser.parse ("<root a='1' b=%"two%"><child c='3'/></root>"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer rejects duplicate attributes", not l_parser.parse ("<root a='1' a='2'/>"))
+			assert ("plain tokenizer duplicate attribute error", l_parser.last_error.same_string ("duplicate attribute"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer falls back for attribute entities", l_parser.parse ("<root a='A &amp; B'/>"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer rejects left angle in attribute", not l_parser.parse ("<root a='<bad'/>"))
+			assert ("plain tokenizer left angle attribute error", l_parser.last_error.same_string ("left angle bracket in attribute value"))
 		end
 
 	test_incremental_parse_session_prototype

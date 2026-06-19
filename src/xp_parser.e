@@ -760,12 +760,12 @@ feature {NONE} -- Markup parsing
 			i: INTEGER
 			name_start: INTEGER
 			name_end: INTEGER
+			attribute_start: INTEGER
 			l_name: detachable STRING_8
-			l_attributes: XP_ATTRIBUTES
+			l_attributes: detachable XP_ATTRIBUTES
 			l_empty_element: BOOLEAN
 			l_use_slice_stack: BOOLEAN
 		do
-			create l_attributes.make
 			i := a_start_index + 1
 			if i > a_input.count then
 				set_error ("unterminated start tag")
@@ -773,7 +773,7 @@ feature {NONE} -- Markup parsing
 			elseif is_incomplete_utf8_sequence_at (a_input, i) then
 				set_error ("partial character")
 				Result := a_input.count + 1
-			elseif not l_attributes.is_name_start_character (a_input.item (i)) then
+			elseif not is_name_start_character (a_input.item (i)) then
 				set_error ("invalid start tag name")
 				Result := a_input.count + 1
 			else
@@ -799,24 +799,42 @@ feature {NONE} -- Markup parsing
 					end
 					if not has_error then
 						i := skip_spaces (a_input, i)
-						from
-						invariant
-							index_in_bounds: i >= 1 and i <= a_input.count + 1
-							attributes_within_limit: l_attributes.count <= max_attribute_count
-						until
-							has_error or is_suspended or i > a_input.count or else a_input.item (i) = '>' or else a_input.item (i) = '/'
-						loop
-							if l_attributes.count >= max_attribute_count then
-								set_error ("attribute count exceeds limit")
-								i := a_input.count + 1
-							else
-								i := parse_attribute (a_input, i, l_attributes)
-								if not has_error then
-									i := skip_spaces (a_input, i)
+						attribute_start := i
+						if l_use_slice_stack then
+							i := parse_attributes_no_events (a_input, i)
+							if i = 0 then
+								l_use_slice_stack := False
+								i := attribute_start
+								create l_attributes.make
+								if not attached l_name then
+									create l_name.make_from_string (a_input.substring (name_start, name_end))
 								end
 							end
-						variant
-							a_input.count - i + 1
+						else
+							create l_attributes.make
+						end
+						if not l_use_slice_stack and not has_error then
+							check attached l_attributes as l_attached_attributes then
+								from
+								invariant
+									index_in_bounds: i >= 1 and i <= a_input.count + 1
+									attributes_within_limit: l_attached_attributes.count <= max_attribute_count
+								until
+									has_error or is_suspended or i > a_input.count or else a_input.item (i) = '>' or else a_input.item (i) = '/'
+								loop
+									if l_attached_attributes.count >= max_attribute_count then
+										set_error ("attribute count exceeds limit")
+										i := a_input.count + 1
+									else
+										i := parse_attribute (a_input, i, l_attached_attributes)
+										if not has_error then
+											i := skip_spaces (a_input, i)
+										end
+									end
+								variant
+									a_input.count - i + 1
+								end
+							end
 						end
 					end
 					if not has_error and not is_suspended then
@@ -841,14 +859,14 @@ feature {NONE} -- Markup parsing
 						emit_default_range (a_input, a_start_index, Result - 1)
 						note_position (a_start_index)
 						if l_use_slice_stack then
-							open_element_range (a_input, name_start, name_end, l_attributes)
+							open_element_range (a_input, name_start, name_end)
 							if l_empty_element and not has_error and not is_suspended then
 								note_position (Result)
 								close_element_range (a_input, name_start, name_end)
 							end
 						else
-							check attached l_name as l_attached_name then
-								open_element (l_attached_name, l_attributes)
+							check attached l_name as l_attached_name and attached l_attributes as l_attached_attributes then
+								open_element (l_attached_name, l_attached_attributes)
 								if l_empty_element and not has_error and not is_suspended then
 									note_position (Result)
 									close_element (l_attached_name)
@@ -926,6 +944,166 @@ feature {NONE} -- Markup parsing
 		ensure
 			progress_or_error: Result > a_start_index or has_error
 			result_in_bounds: Result <= a_input.count + 1
+		end
+
+	parse_attributes_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Parse attributes without materializing `XP_ATTRIBUTES', or return zero if unsupported.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count + 1
+			slice_path_available: can_use_element_name_slices
+		local
+			i: INTEGER
+			l_count: INTEGER
+			l_names: detachable ARRAYED_LIST [XP_TOKEN_SLICE]
+			l_unsupported: BOOLEAN
+		do
+			from
+				i := a_start_index
+			invariant
+				index_in_bounds: i >= 1 and i <= a_input.count + 1
+				count_non_negative: l_count >= 0
+			until
+				has_error or is_suspended or l_unsupported or i > a_input.count or else a_input.item (i) = '>' or else a_input.item (i) = '/'
+			loop
+				if l_count >= max_attribute_count then
+					set_error ("attribute count exceeds limit")
+					i := a_input.count + 1
+				else
+					if not attached l_names then
+						create l_names.make (4)
+					end
+					check attached l_names as l_attached_names then
+						i := parse_attribute_no_events (a_input, i, l_attached_names)
+					end
+					if i = 0 then
+						l_unsupported := True
+						i := a_input.count + 1
+					elseif not has_error then
+						l_count := l_count + 1
+						i := skip_spaces (a_input, i)
+					end
+				end
+			variant
+				a_input.count - i + 1
+			end
+			if l_unsupported then
+				Result := 0
+			elseif has_error or is_suspended then
+				Result := a_input.count + 1
+			else
+				Result := i
+			end
+		ensure
+			unsupported_or_in_bounds: Result = 0 or else (Result >= a_start_index and Result <= a_input.count + 1)
+		end
+
+	parse_attribute_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_names: ARRAYED_LIST [XP_TOKEN_SLICE]): INTEGER
+			-- Parse one simple attribute without materializing name/value strings, or return zero if unsupported.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			names_attached: a_names /= Void
+		local
+			i: INTEGER
+			name_start: INTEGER
+			name_end: INTEGER
+			l_quote: CHARACTER_8
+			l_name: XP_TOKEN_SLICE
+			l_unsupported: BOOLEAN
+			c: CHARACTER_8
+		do
+			i := a_start_index
+			if not is_name_start_character (a_input.item (i)) then
+				set_error ("invalid attribute name")
+				Result := a_input.count + 1
+			else
+				name_start := i
+				i := scan_name (a_input, i)
+				name_end := i - 1
+				create l_name.make (a_input, name_start, name_end - name_start + 1)
+				i := skip_spaces (a_input, i)
+				if i > a_input.count or else a_input.item (i) /= '=' then
+					set_error ("missing attribute equals")
+					Result := a_input.count + 1
+				else
+					i := skip_spaces (a_input, i + 1)
+					if i > a_input.count or else not is_quote (a_input.item (i)) then
+						set_error ("missing attribute quote")
+						Result := a_input.count + 1
+					else
+						l_quote := a_input.item (i)
+						from
+							i := i + 1
+						invariant
+							index_in_bounds: i >= 1 and i <= a_input.count + 1
+						until
+							i > a_input.count or has_error or l_unsupported or else a_input.item (i) = l_quote
+						loop
+							c := a_input.item (i)
+							if c = '<' then
+								set_error ("left angle bracket in attribute value")
+								i := a_input.count + 1
+							elseif c = '&' then
+								l_unsupported := True
+								i := a_input.count + 1
+							elseif is_incomplete_utf8_sequence_at (a_input, i) then
+								set_error ("partial character")
+								i := a_input.count + 1
+							elseif not is_xml_character_code (c.code) then
+								set_error ("invalid XML character")
+								i := a_input.count + 1
+							else
+								i := i + 1
+							end
+						variant
+							a_input.count - i + 1
+						end
+						if l_unsupported then
+							Result := 0
+						elseif has_error then
+							Result := a_input.count + 1
+						elseif i > a_input.count then
+							set_error ("unterminated attribute value")
+							Result := a_input.count + 1
+						elseif has_attribute_name_slice (a_names, l_name) then
+							set_error ("duplicate attribute")
+							Result := a_input.count + 1
+						else
+							a_names.extend (l_name)
+							Result := i + 1
+						end
+					end
+				end
+			end
+		ensure
+			unsupported_or_progress_or_error: Result = 0 or else Result > a_start_index or has_error
+			result_in_bounds: Result <= a_input.count + 1
+		end
+
+	has_attribute_name_slice (a_names: ARRAYED_LIST [XP_TOKEN_SLICE]; a_name: XP_TOKEN_SLICE): BOOLEAN
+			-- Does `a_names' already contain `a_name'?
+		require
+			names_attached: a_names /= Void
+			name_attached: a_name /= Void
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			invariant
+				index_in_bounds: i >= 1 and i <= a_names.count + 1
+			until
+				i > a_names.count or Result
+			loop
+				if a_names.i_th (i).same_slice (a_name) then
+					Result := True
+				else
+					i := i + 1
+				end
+			variant
+				a_names.count - i + 1
+			end
 		end
 
 	parse_attribute (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_attributes: XP_ATTRIBUTES): INTEGER
@@ -3499,14 +3677,12 @@ feature {NONE} -- Event dispatch
 			depth_bounded: element_stack.count <= max_element_depth
 		end
 
-	open_element_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER; a_attributes: XP_ATTRIBUTES)
+	open_element_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER)
 			-- Push an element name represented as a range in `a_input' without materializing it.
 		require
 			input_attached: a_input /= Void
 			start_valid: a_name_start >= 1 and a_name_start <= a_input.count
 			end_valid: a_name_end >= a_name_start and a_name_end <= a_input.count
-			attributes_attached: a_attributes /= Void
-			attributes_bounded: a_attributes.count <= max_attribute_count
 			slice_path_available: can_use_element_name_slices
 		local
 			l_name: XP_TOKEN_SLICE
