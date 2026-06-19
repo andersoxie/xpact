@@ -853,6 +853,7 @@ feature {NONE} -- Tests
 		local
 			l_handler: XP_NULL_EVENT_HANDLER
 			l_parser: XP_PARSER
+			l_input: STRING_8
 		do
 			create l_handler.make
 			create l_parser.make (l_handler)
@@ -867,6 +868,13 @@ feature {NONE} -- Tests
 			create l_parser.make (l_handler)
 			assert ("plain tokenizer character data rejects cdata close", not l_parser.parse ("<root>bad ]]></root>"))
 			assert ("plain tokenizer character data cdata close error", l_parser.last_error.same_string ("CDATA close marker in character data"))
+
+			create l_input.make_from_string ("<root>kept</root>")
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer accepts reusable input", l_parser.parse (l_input))
+			assert ("plain tokenizer accepts next input", l_parser.parse ("<next/>"))
+			assert ("plain tokenizer does not mutate reusable input", l_input.same_string ("<root>kept</root>"))
 		end
 
 	test_incremental_parse_session_prototype

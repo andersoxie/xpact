@@ -311,12 +311,13 @@ feature -- Parsing
 		local
 			i: INTEGER
 			l_input: STRING_8
+			l_can_defer_positions: BOOLEAN
 		do
 			reset
-			l_input := normalized_input (a_input)
-			position_input.wipe_out
-			position_input.append (l_input)
-			lazy_position_accounting := can_defer_position_accounting
+			l_can_defer_positions := can_defer_position_accounting
+			l_input := normalized_input (a_input, l_can_defer_positions)
+			position_input := l_input
+			lazy_position_accounting := l_can_defer_positions
 			note_position (1)
 			if not has_error then
 				from
@@ -389,9 +390,8 @@ feature -- Parsing
 			l_input: STRING_8
 		do
 			reset
-			l_input := normalized_input (a_input)
-			position_input.wipe_out
-			position_input.append (l_input)
+			l_input := normalized_input (a_input, False)
+			position_input := l_input
 			note_position (1)
 			from
 				i := 1
@@ -433,9 +433,8 @@ feature -- Parsing
 		do
 			reset
 			parsing_external_entity := True
-			l_input := normalized_input (a_input)
-			position_input.wipe_out
-			position_input.append (l_input)
+			l_input := normalized_input (a_input, False)
+			position_input := l_input
 			note_position (1)
 			if not has_error then
 				if looks_like_external_subset (l_input) then
@@ -488,9 +487,8 @@ feature -- Parsing
 		do
 			reset
 			parsing_external_entity := True
-			l_input := normalized_input (a_input)
-			position_input.wipe_out
-			position_input.append (l_input)
+			l_input := normalized_input (a_input, False)
+			position_input := l_input
 			note_position (1)
 			if not has_error then
 				process_internal_subset (l_input)
@@ -515,9 +513,8 @@ feature -- Parsing
 		do
 			reset
 			parsing_external_entity := True
-			l_input := normalized_input (a_input)
-			position_input.wipe_out
-			position_input.append (l_input)
+			l_input := normalized_input (a_input, False)
+			position_input := l_input
 			note_position (1)
 			process_internal_subset_prefix (l_input)
 			if not has_error and not is_suspended then
@@ -608,9 +605,8 @@ feature -- Parsing
 		do
 			reset
 			parsing_external_entity := True
-			l_input := normalized_input (a_input)
-			position_input.wipe_out
-			position_input.append (l_input)
+			l_input := normalized_input (a_input, False)
+			position_input := l_input
 			note_position (1)
 			if attached a_context as l_context and then not l_context.is_empty and then is_valid_name (l_context) then
 				push_entity (l_context)
@@ -645,9 +641,8 @@ feature -- Parsing
 		do
 			reset
 			parsing_external_entity := True
-			l_input := normalized_input (a_input)
-			position_input.wipe_out
-			position_input.append (l_input)
+			l_input := normalized_input (a_input, False)
+			position_input := l_input
 			note_position (1)
 			if attached a_context as l_context and then not l_context.is_empty and then is_valid_name (l_context) then
 				push_entity (l_context)
@@ -4383,48 +4378,84 @@ feature {NONE} -- Namespace handling
 
 feature {NONE} -- Scanning
 
-	normalized_input (a_input: READABLE_STRING_8): STRING_8
+	normalized_input (a_input: READABLE_STRING_8; a_allow_alias: BOOLEAN): STRING_8
 			-- XML line-end normalized input.
 		require
 			input_attached: a_input /= Void
 		local
 			i: INTEGER
 			c: CHARACTER_8
+			l_needs_copy: BOOLEAN
 		do
-			create Result.make (a_input.count)
-			if
-				a_input.count >= 3
-				and then a_input.item (1).code = 239
-				and then a_input.item (2).code = 187
-				and then a_input.item (3).code = 191
-			then
-				i := 4
-			else
-				i := 1
-			end
-			from
-			invariant
-				index_in_bounds: i >= 1 and i <= a_input.count + 1
-			until
-				i > a_input.count or has_error
-			loop
-				c := a_input.item (i)
-				if c = '%R' then
-					Result.append_character ('%N')
-					if i + 1 <= a_input.count and then a_input.item (i + 1) = '%N' then
-						i := i + 2
+			if a_allow_alias then
+				if
+					a_input.count >= 3
+					and then a_input.item (1).code = 239
+					and then a_input.item (2).code = 187
+					and then a_input.item (3).code = 191
+				then
+					l_needs_copy := True
+					i := 4
+				else
+					i := 1
+				end
+				from
+				invariant
+					index_in_bounds: i >= 1 and i <= a_input.count + 1
+				until
+					i > a_input.count or has_error or l_needs_copy
+				loop
+					c := a_input.item (i)
+					if c = '%R' then
+						l_needs_copy := True
+					elseif not is_xml_character_code (c.code) then
+						set_error ("invalid XML character")
+						i := a_input.count + 1
 					else
 						i := i + 1
 					end
-				elseif not is_xml_character_code (c.code) then
-					set_error ("invalid XML character")
-					i := a_input.count + 1
-				else
-					Result.append_character (c)
-					i := i + 1
+				variant
+					a_input.count - i + 1
 				end
-			variant
-				a_input.count - i + 1
+			end
+			if a_allow_alias and then not has_error and then not l_needs_copy and then attached {STRING_8} a_input as l_string then
+				Result := l_string
+			else
+				create Result.make (a_input.count)
+				if
+					a_input.count >= 3
+					and then a_input.item (1).code = 239
+					and then a_input.item (2).code = 187
+					and then a_input.item (3).code = 191
+				then
+					i := 4
+				else
+					i := 1
+				end
+				from
+				invariant
+					index_in_bounds: i >= 1 and i <= a_input.count + 1
+				until
+					i > a_input.count or has_error
+				loop
+					c := a_input.item (i)
+					if c = '%R' then
+						Result.append_character ('%N')
+						if i + 1 <= a_input.count and then a_input.item (i + 1) = '%N' then
+							i := i + 2
+						else
+							i := i + 1
+						end
+					elseif not is_xml_character_code (c.code) then
+						set_error ("invalid XML character")
+						i := a_input.count + 1
+					else
+						Result.append_character (c)
+						i := i + 1
+					end
+				variant
+					a_input.count - i + 1
+				end
 			end
 		ensure
 			result_attached: Result /= Void
@@ -5630,7 +5661,7 @@ feature {NONE} -- State
 		do
 			has_error := False
 			last_error.wipe_out
-			position_input.wipe_out
+			create position_input.make_empty
 			lazy_position_accounting := False
 			current_position_index := 0
 			current_line_number := 1
