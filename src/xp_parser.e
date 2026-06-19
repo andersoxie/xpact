@@ -27,6 +27,8 @@ feature {NONE} -- Initialization
 			max_token_length := Default_max_token_length
 			create element_stack.make (32)
 			create entity_stack.make (8)
+			create element_slice_stack.make (32)
+			create element_stack_marker.make_empty
 			create entity_reference_start_stack.make (8)
 			create entity_reference_count_stack.make (8)
 			create entity_table.make (8)
@@ -66,6 +68,8 @@ feature {NONE} -- Initialization
 			max_token_length := a_max_token_length
 			create element_stack.make (32)
 			create entity_stack.make (8)
+			create element_slice_stack.make (32)
+			create element_stack_marker.make_empty
 			create entity_reference_start_stack.make (8)
 			create entity_reference_count_stack.make (8)
 			create entity_table.make (8)
@@ -755,9 +759,11 @@ feature {NONE} -- Markup parsing
 		local
 			i: INTEGER
 			name_start: INTEGER
-			l_name: STRING_8
+			name_end: INTEGER
+			l_name: detachable STRING_8
 			l_attributes: XP_ATTRIBUTES
 			l_empty_element: BOOLEAN
+			l_use_slice_stack: BOOLEAN
 		do
 			create l_attributes.make
 			i := a_start_index + 1
@@ -773,17 +779,23 @@ feature {NONE} -- Markup parsing
 			else
 				name_start := i
 				i := scan_name (a_input, i)
+				name_end := i - 1
 				if i - name_start > Default_max_name_length then
 					set_error ("element name exceeds limit")
 					Result := a_input.count + 1
 				else
-					create l_name.make_from_string (a_input.substring (name_start, i - 1))
-					if namespace_mode and then not is_valid_qualified_name (l_name) then
-						set_error ("invalid namespace name")
-						Result := a_input.count + 1
-					end
-					if not has_error and then element_stack.count = 0 and then document_element_count = 0 and then not parsing_external_entity then
-						include_foreign_dtd_if_needed (l_name)
+					l_use_slice_stack := can_use_element_name_slices
+					if not l_use_slice_stack then
+						create l_name.make_from_string (a_input.substring (name_start, name_end))
+						check attached l_name as l_attached_name then
+							if namespace_mode and then not is_valid_qualified_name (l_attached_name) then
+								set_error ("invalid namespace name")
+								Result := a_input.count + 1
+							end
+							if not has_error and then element_stack.count = 0 and then document_element_count = 0 and then not parsing_external_entity then
+								include_foreign_dtd_if_needed (l_attached_name)
+							end
+						end
 					end
 					if not has_error then
 						i := skip_spaces (a_input, i)
@@ -828,10 +840,20 @@ feature {NONE} -- Markup parsing
 					if not has_error and not is_suspended then
 						emit_default_range (a_input, a_start_index, Result - 1)
 						note_position (a_start_index)
-						open_element (l_name, l_attributes)
-						if l_empty_element and not has_error and not is_suspended then
-							note_position (Result)
-							close_element (l_name)
+						if l_use_slice_stack then
+							open_element_range (a_input, name_start, name_end, l_attributes)
+							if l_empty_element and not has_error and not is_suspended then
+								note_position (Result)
+								close_element_range (a_input, name_start, name_end)
+							end
+						else
+							check attached l_name as l_attached_name then
+								open_element (l_attached_name, l_attributes)
+								if l_empty_element and not has_error and not is_suspended then
+									note_position (Result)
+									close_element (l_attached_name)
+								end
+							end
 						end
 					end
 				end
@@ -876,7 +898,7 @@ feature {NONE} -- Markup parsing
 					if not has_error then
 						i := skip_spaces (a_input, i)
 						if i <= a_input.count and then a_input.item (i) = '>' then
-							if element_stack.count > 0 and then input_range_same_string (a_input, name_start, name_end, element_stack.item) then
+							if element_stack.count > 0 and then open_element_matches_range (a_input, name_start, name_end) then
 								note_position (a_start_index)
 							else
 								note_position (name_start)
@@ -3373,6 +3395,22 @@ feature {NONE} -- DTD entity declarations
 
 feature {NONE} -- Event dispatch
 
+	can_use_element_name_slices: BOOLEAN
+			-- Can the current parse state keep open element names as input slices?
+		do
+			Result :=
+				not namespace_mode
+				and then not handler.wants_start_element_events
+				and then not handler.wants_end_element_events
+				and then not handler.wants_character_data_events
+				and then not handler.wants_automatic_character_data_default
+				and then not handler.wants_default_events
+				and then not use_foreign_dtd
+				and then doctype_name.is_empty
+				and then attribute_decl_table.count = 0
+				and then element_slice_stack.count = element_stack.count
+		end
+
 	open_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 			-- Push `a_name' and emit start-element event.
 		require
@@ -3461,6 +3499,36 @@ feature {NONE} -- Event dispatch
 			depth_bounded: element_stack.count <= max_element_depth
 		end
 
+	open_element_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER; a_attributes: XP_ATTRIBUTES)
+			-- Push an element name represented as a range in `a_input' without materializing it.
+		require
+			input_attached: a_input /= Void
+			start_valid: a_name_start >= 1 and a_name_start <= a_input.count
+			end_valid: a_name_end >= a_name_start and a_name_end <= a_input.count
+			attributes_attached: a_attributes /= Void
+			attributes_bounded: a_attributes.count <= max_attribute_count
+			slice_path_available: can_use_element_name_slices
+		local
+			l_name: XP_TOKEN_SLICE
+		do
+			if element_stack.count >= max_element_depth then
+				set_error ("maximum element depth exceeded")
+			elseif element_stack.count = 0 and then document_element_count > 0 and then not parsing_external_entity then
+				set_error ("multiple document elements")
+			else
+				if element_stack.count = 0 then
+					document_element_count := document_element_count + 1
+				end
+				create l_name.make (a_input, a_name_start, a_name_end - a_name_start + 1)
+				element_slice_stack.extend (l_name)
+				element_stack.extend (element_stack_marker)
+			end
+		ensure
+			pushed_or_error: (not has_error) implies element_stack.count = old element_stack.count + 1
+			slice_pushed_or_error: (not has_error) implies element_slice_stack.count = old element_slice_stack.count + 1
+			depth_bounded: element_stack.count <= max_element_depth
+		end
+
 	close_element (a_name: READABLE_STRING_8)
 			-- Pop `a_name' and emit end-element event.
 		require
@@ -3472,7 +3540,7 @@ feature {NONE} -- Event dispatch
 			l_wants_end_events := handler.wants_end_element_events
 			if element_stack.count = 0 then
 				set_error ("unexpected end tag")
-			elseif not element_stack.item.same_string (a_name) then
+			elseif not open_element_matches_string (a_name) then
 				set_error ("mismatched end tag")
 			else
 				if l_wants_end_events then
@@ -3482,7 +3550,7 @@ feature {NONE} -- Event dispatch
 						create l_event_name.make_from_string (a_name)
 					end
 				end
-				element_stack.remove
+				pop_open_element
 				if not has_error and l_wants_end_events then
 					check attached l_event_name as l_attached_event_name then
 						handler.on_end_element (l_attached_event_name)
@@ -3506,13 +3574,55 @@ feature {NONE} -- Event dispatch
 		do
 			if element_stack.count = 0 then
 				set_error ("unexpected end tag")
-			elseif not input_range_same_string (a_input, a_name_start, a_name_end, element_stack.item) then
+			elseif not open_element_matches_range (a_input, a_name_start, a_name_end) then
 				set_error ("mismatched end tag")
 			else
-				element_stack.remove
+				pop_open_element
 			end
 		ensure
 			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
+		end
+
+	open_element_matches_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER): BOOLEAN
+			-- Does the current open element match `a_input [a_name_start..a_name_end]'?
+		require
+			input_attached: a_input /= Void
+			start_valid: a_name_start >= 1 and a_name_start <= a_input.count
+			end_valid: a_name_end >= a_name_start and a_name_end <= a_input.count
+			has_open_element: element_stack.count > 0
+		do
+			if element_slice_stack.count = element_stack.count then
+				Result := element_slice_stack.item.same_range (a_input, a_name_start, a_name_end - a_name_start + 1)
+			else
+				Result := input_range_same_string (a_input, a_name_start, a_name_end, element_stack.item)
+			end
+		end
+
+	open_element_matches_string (a_name: READABLE_STRING_8): BOOLEAN
+			-- Does the current open element match `a_name'?
+		require
+			name_attached: a_name /= Void
+			has_open_element: element_stack.count > 0
+		do
+			if element_slice_stack.count = element_stack.count then
+				Result := element_slice_stack.item.same_string (a_name)
+			else
+				Result := element_stack.item.same_string (a_name)
+			end
+		end
+
+	pop_open_element
+			-- Pop current element name from the active stack representation.
+		require
+			has_open_element: element_stack.count > 0
+		do
+			if element_slice_stack.count = element_stack.count then
+				element_slice_stack.remove
+			end
+			element_stack.remove
+		ensure
+			one_less_element: element_stack.count = old element_stack.count - 1
+			slice_not_above_element_stack: element_slice_stack.count <= element_stack.count
 		end
 
 	emit_text (a_text: READABLE_STRING_8)
@@ -5262,6 +5372,7 @@ feature {NONE} -- State
 			current_byte_count := 0
 			doctype_name.wipe_out
 			element_stack.wipe_out
+			element_slice_stack.wipe_out
 			entity_stack.wipe_out
 			entity_reference_start_stack.wipe_out
 			entity_reference_count_stack.wipe_out
@@ -5493,6 +5604,12 @@ feature {NONE} -- State
 	element_stack: ARRAYED_STACK [STRING_8]
 			-- Open element names.
 
+	element_slice_stack: ARRAYED_STACK [XP_TOKEN_SLICE]
+			-- Slice-backed open element names for the plain tokenizer path.
+
+	element_stack_marker: STRING_8
+			-- Non-mutated marker stored in `element_stack' when the real name is in `element_slice_stack'.
+
 	entity_stack: ARRAYED_LIST [STRING_8]
 			-- Active entity names for recursion detection.
 
@@ -5590,6 +5707,9 @@ invariant
 	handler_attached: is_initialized implies handler /= Void
 	last_error_attached: is_initialized implies last_error /= Void
 	stack_attached: is_initialized implies element_stack /= Void
+	element_slice_stack_attached: is_initialized implies element_slice_stack /= Void
+	element_stack_marker_attached: is_initialized implies element_stack_marker /= Void
+	element_slice_stack_not_above_stack: is_initialized implies element_slice_stack.count <= element_stack.count
 	entity_stack_attached: is_initialized implies entity_stack /= Void
 	entity_reference_start_stack_attached: is_initialized implies entity_reference_start_stack /= Void
 	entity_reference_count_stack_attached: is_initialized implies entity_reference_count_stack /= Void

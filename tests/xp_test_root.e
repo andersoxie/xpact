@@ -798,6 +798,8 @@ feature {NONE} -- Tests
 			assert ("token slice comparison is case-sensitive", not l_name.same_string ("Root"))
 			assert ("token slice differs from other text", not l_name.same_slice (l_text))
 			assert ("token slice same content across ranges", l_name.same_slice (l_same_name))
+			assert ("token slice same input range", l_name.same_range (l_input, 26, 4))
+			assert ("token slice different input range", not l_name.same_range (l_input, 20, 4))
 			assert ("token slice starts with prefix", l_name.starts_with ("ro"))
 			assert ("token slice starts with empty prefix", l_name.starts_with (""))
 			assert ("token slice rejects too-long prefix", not l_name.starts_with ("roots"))

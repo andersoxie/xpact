@@ -187,6 +187,33 @@ feature -- Comparison
 			end
 		end
 
+	same_range (a_buffer: READABLE_STRING_8; a_start_index, a_count: INTEGER): BOOLEAN
+			-- Does this slice contain the same characters as `a_buffer' range?
+		require
+			buffer_attached: a_buffer /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_buffer.count + 1
+			non_negative_count: a_count >= 0
+			range_in_bounds: a_start_index + a_count - 1 <= a_buffer.count
+		local
+			i: INTEGER
+		do
+			if a_count = count then
+				from
+					Result := True
+					i := 1
+				invariant
+					index_in_bounds: i >= 1 and i <= count + 1
+				until
+					i > count or not Result
+				loop
+					Result := item (i) = a_buffer.item (a_start_index + i - 1)
+					i := i + 1
+				variant
+					count - i + 1
+				end
+			end
+		end
+
 	starts_with (a_prefix: READABLE_STRING_8): BOOLEAN
 			-- Does this slice begin with `a_prefix'?
 		require
