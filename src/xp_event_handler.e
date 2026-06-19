@@ -48,6 +48,12 @@ feature -- Events
 			Result := False
 		end
 
+	requires_eager_position_accounting: BOOLEAN
+			-- Can callbacks or handler code observe parser position during parsing?
+		do
+			Result := True
+		end
+
 	stop_requested: BOOLEAN
 			-- Did the application request parsing to stop from inside a callback?
 		do

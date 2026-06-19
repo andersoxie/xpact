@@ -316,6 +316,7 @@ feature -- Parsing
 			l_input := normalized_input (a_input)
 			position_input.wipe_out
 			position_input.append (l_input)
+			lazy_position_accounting := can_defer_position_accounting
 			note_position (1)
 			if not has_error then
 				from
@@ -350,6 +351,7 @@ feature -- Parsing
 			if not has_error and not is_suspended then
 				note_position (l_input.count + 1)
 			end
+			force_current_position
 			Result := not has_error and not is_suspended
 		ensure
 			result_matches_state: Result = (not has_error and not is_suspended)
@@ -1098,6 +1100,7 @@ feature {NONE} -- Markup parsing
 			loop
 				if a_names.i_th (i).same_slice (a_name) then
 					Result := True
+					i := a_names.count + 1
 				else
 					i := i + 1
 				end
@@ -1682,86 +1685,160 @@ feature {NONE} -- Character data and references
 			l_all_space: BOOLEAN
 		do
 			l_materialize_text := handler.wants_character_data_events or else handler.wants_default_events or else handler.wants_automatic_character_data_default
-			if l_materialize_text then
-				create l_text.make_empty
+			if lazy_position_accounting and then not l_materialize_text then
+				Result := parse_character_data_no_events (a_input, a_start_index)
 			end
+			if Result = 0 then
+				force_current_position
+				if l_materialize_text then
+					create l_text.make_empty
+				end
+				l_all_space := True
+				from
+					i := a_start_index
+				invariant
+					index_in_bounds: i >= a_start_index and i <= a_input.count + 1
+				until
+					i > a_input.count or has_error or is_suspended or else a_input.item (i) = '<'
+				loop
+					note_position (i)
+					c := a_input.item (i)
+					if has_at (a_input, i, "]]>") then
+						set_error ("CDATA close marker in character data")
+						i := a_input.count + 1
+					elseif c = '&' then
+						if element_stack.count = 0 and then not parsing_external_entity then
+							set_error ("entity reference outside document element")
+							i := a_input.count + 1
+						else
+							if not attached l_text then
+								create l_text.make_empty
+							end
+							check attached l_text as l_attached_text then
+								i := append_reference_in_content (a_input, i, l_attached_text)
+							end
+						end
+					elseif is_incomplete_utf8_sequence_at (a_input, i) then
+						set_error ("partial character")
+						i := a_input.count + 1
+					elseif not is_xml_character_code (c.code) then
+						set_error ("invalid XML character")
+						i := a_input.count + 1
+					else
+						if l_all_space then
+							l_all_space := is_xml_space (c)
+						end
+						if attached l_text as l_attached_text then
+							l_attached_text.append_character (c)
+						end
+						i := i + 1
+					end
+				variant
+					a_input.count - i + 1
+				end
+				if not has_error and not is_suspended then
+					if element_stack.count = 0 and then not parsing_external_entity then
+						if attached l_text as l_attached_text then
+							l_all_space := is_all_xml_space (l_attached_text)
+						end
+						if not l_all_space then
+							set_error ("character data outside document element")
+							Result := a_input.count + 1
+						else
+							if attached l_text as l_attached_text then
+								emit_default (l_attached_text)
+							end
+							Result := i
+						end
+					else
+						if attached l_text as l_attached_text then
+							if handler.wants_automatic_character_data_default then
+								emit_default (l_attached_text)
+							end
+							if entity_reference_count_stack.count > 0 then
+								note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+							else
+								note_token_position (a_start_index, l_attached_text.count)
+							end
+							emit_text (l_attached_text)
+						end
+						Result := i
+					end
+				else
+					Result := a_input.count + 1
+				end
+			end
+		ensure
+			progress_or_error: Result > a_start_index or has_error
+			result_in_bounds: Result <= a_input.count + 1
+		end
+
+	parse_character_data_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Parse no-callback character data, or return zero when entity expansion is needed.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+			not_markup: a_input.item (a_start_index) /= '<'
+			lazy_positions_enabled: lazy_position_accounting
+		local
+			i: INTEGER
+			c: CHARACTER_8
+			l_outside_document: BOOLEAN
+			l_all_space: BOOLEAN
+			l_fallback: BOOLEAN
+		do
+			l_outside_document := element_stack.count = 0 and then not parsing_external_entity
 			l_all_space := True
 			from
 				i := a_start_index
 			invariant
 				index_in_bounds: i >= a_start_index and i <= a_input.count + 1
 			until
-				i > a_input.count or has_error or is_suspended or else a_input.item (i) = '<'
+				i > a_input.count or has_error or is_suspended or l_fallback or else a_input.item (i) = '<'
 			loop
-				note_position (i)
 				c := a_input.item (i)
-				if has_at (a_input, i, "]]>") then
+				if c = '&' then
+					l_fallback := True
+					i := a_input.count + 1
+				elseif c = ']' and then has_at (a_input, i, "]]>") then
+					note_position (i)
 					set_error ("CDATA close marker in character data")
 					i := a_input.count + 1
-				elseif c = '&' then
-					if element_stack.count = 0 and then not parsing_external_entity then
-						set_error ("entity reference outside document element")
-						i := a_input.count + 1
-					else
-						if not attached l_text then
-							create l_text.make_empty
-						end
-						check attached l_text as l_attached_text then
-							i := append_reference_in_content (a_input, i, l_attached_text)
-						end
-					end
 				elseif is_incomplete_utf8_sequence_at (a_input, i) then
+					note_position (i)
 					set_error ("partial character")
 					i := a_input.count + 1
 				elseif not is_xml_character_code (c.code) then
+					note_position (i)
 					set_error ("invalid XML character")
 					i := a_input.count + 1
 				else
-					if l_all_space then
+					if l_outside_document and then l_all_space then
 						l_all_space := is_xml_space (c)
+						if not l_all_space then
+							note_position (i)
+							set_error ("character data outside document element")
+							i := a_input.count + 1
+						else
+							i := i + 1
+						end
+					else
+						i := i + 1
 					end
-					if attached l_text as l_attached_text then
-						l_attached_text.append_character (c)
-					end
-					i := i + 1
 				end
 			variant
 				a_input.count - i + 1
 			end
-			if not has_error and not is_suspended then
-				if element_stack.count = 0 and then not parsing_external_entity then
-					if attached l_text as l_attached_text then
-						l_all_space := is_all_xml_space (l_attached_text)
-					end
-					if not l_all_space then
-						set_error ("character data outside document element")
-						Result := a_input.count + 1
-					else
-						if attached l_text as l_attached_text then
-							emit_default (l_attached_text)
-						end
-						Result := i
-					end
-				else
-					if attached l_text as l_attached_text then
-						if handler.wants_automatic_character_data_default then
-							emit_default (l_attached_text)
-						end
-						if entity_reference_count_stack.count > 0 then
-							note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
-						else
-							note_token_position (a_start_index, l_attached_text.count)
-						end
-						emit_text (l_attached_text)
-					end
-					Result := i
-				end
-			else
+			if l_fallback then
+				Result := 0
+			elseif has_error or is_suspended then
 				Result := a_input.count + 1
+			else
+				Result := i
 			end
 		ensure
-			progress_or_error: Result > a_start_index or has_error
-			result_in_bounds: Result <= a_input.count + 1
+			fallback_or_progress_or_error: Result = 0 or else Result > a_start_index or has_error
+			result_in_bounds: Result >= 0 and Result <= a_input.count + 1
 		end
 
 	parse_character_data_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
@@ -3587,6 +3664,19 @@ feature {NONE} -- Event dispatch
 				and then doctype_name.is_empty
 				and then attribute_decl_table.count = 0
 				and then element_slice_stack.count = element_stack.count
+		end
+
+	can_defer_position_accounting: BOOLEAN
+			-- Can this parse defer line/column accounting until an error or final query?
+		do
+			Result :=
+				not handler.requires_eager_position_accounting
+				and then not handler.wants_start_element_events
+				and then not handler.wants_end_element_events
+				and then not handler.wants_character_data_events
+				and then not handler.wants_automatic_character_data_default
+				and then not handler.wants_default_events
+				and then not handler.reports_skipped_internal_general_entities
 		end
 
 	open_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
@@ -5541,6 +5631,7 @@ feature {NONE} -- State
 			has_error := False
 			last_error.wipe_out
 			position_input.wipe_out
+			lazy_position_accounting := False
 			current_position_index := 0
 			current_line_number := 1
 			current_column_number := 0
@@ -5596,12 +5687,16 @@ feature {NONE} -- State
 		do
 			if not position_input.is_empty or else a_index > 0 then
 				l_index := bounded_position_index (a_index)
-				if current_position_index <= 0 or else l_index < current_position_index then
-					recompute_position_from_start (l_index)
+				if lazy_position_accounting then
+					current_position_index := l_index
 				else
-					advance_position_to (l_index)
+					if current_position_index <= 0 or else l_index < current_position_index then
+						recompute_position_from_start (l_index)
+					else
+						advance_position_to (l_index)
+					end
+					current_position_index := l_index
 				end
-				current_position_index := l_index
 				current_byte_index := l_index - 1
 				current_byte_count := 0
 			end
@@ -5622,6 +5717,25 @@ feature {NONE} -- State
 			line_positive: current_line_number >= 1
 			column_non_negative: current_column_number >= 0
 			byte_count_set: current_byte_count = a_byte_count
+		end
+
+	force_current_position
+			-- Materialize deferred line and column counters for the current position.
+		local
+			l_index: INTEGER
+		do
+			if lazy_position_accounting and then current_position_index > 0 then
+				l_index := bounded_position_index (current_position_index)
+				recompute_position_from_start (l_index)
+				current_position_index := l_index
+				current_byte_index := l_index - 1
+				current_byte_count := 0
+				lazy_position_accounting := False
+			end
+		ensure
+			line_positive: current_line_number >= 1
+			column_non_negative: current_column_number >= 0
+			byte_count_non_negative: current_byte_count >= 0
 		end
 
 	advance_position_to (a_index: INTEGER)
@@ -5769,7 +5883,11 @@ feature {NONE} -- State
 				last_error.wipe_out
 				last_error.append (a_message)
 				if current_position_index > 0 then
-					note_position (current_position_index)
+					if lazy_position_accounting then
+						force_current_position
+					else
+						note_position (current_position_index)
+					end
 				end
 			end
 		ensure
@@ -5872,6 +5990,9 @@ feature {NONE} -- State
 
 	current_position_index: INTEGER
 			-- Current 1-based position in `position_input'.
+
+	lazy_position_accounting: BOOLEAN
+			-- Are line and column counters deferred for the current no-callback parse?
 
 	parsed_content_model: detachable XP_CONTENT_MODEL
 			-- Scratch content model produced by recursive DTD parsing.

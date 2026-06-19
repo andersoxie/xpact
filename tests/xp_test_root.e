@@ -39,6 +39,7 @@ feature {NONE} -- Initialization
 			test_document_structure
 			test_token_slice_abstraction
 			test_plain_tokenizer_attribute_fast_path
+			test_plain_tokenizer_character_data_fast_path
 			test_incremental_parse_session_prototype
 			test_expat_port_parse_session_spike
 			test_position_accounting
@@ -846,6 +847,26 @@ feature {NONE} -- Tests
 			create l_parser.make (l_handler)
 			assert ("plain tokenizer rejects left angle in attribute", not l_parser.parse ("<root a='<bad'/>"))
 			assert ("plain tokenizer left angle attribute error", l_parser.last_error.same_string ("left angle bracket in attribute value"))
+		end
+
+	test_plain_tokenizer_character_data_fast_path
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer accepts character data", l_parser.parse ("<root>alpha beta gamma</root>"))
+			assert ("plain tokenizer character data end column", l_parser.current_column_number = 29)
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer character data falls back for entity", l_parser.parse ("<root>A &amp; B</root>"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer character data rejects cdata close", not l_parser.parse ("<root>bad ]]></root>"))
+			assert ("plain tokenizer character data cdata close error", l_parser.last_error.same_string ("CDATA close marker in character data"))
 		end
 
 	test_incremental_parse_session_prototype

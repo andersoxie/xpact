@@ -11,7 +11,8 @@ inherit
 			wants_end_element_events,
 			wants_character_data_events,
 			wants_automatic_character_data_default,
-			wants_default_events
+			wants_default_events,
+			requires_eager_position_accounting
 		end
 
 create
@@ -51,6 +52,12 @@ feature -- Events
 
 	wants_default_events: BOOLEAN
 			-- No default-handler text is needed by this sink.
+		do
+			Result := False
+		end
+
+	requires_eager_position_accounting: BOOLEAN
+			-- This sink never observes callback-time parser positions.
 		do
 			Result := False
 		end
