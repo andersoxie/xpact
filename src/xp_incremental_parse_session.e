@@ -347,6 +347,7 @@ feature {NONE} -- Parsing implementation
 			l_value: STRING_8
 			l_quote: CHARACTER_8
 			l_done: BOOLEAN
+			l_done_index: INTEGER
 		do
 			from
 				i := a_start_index
@@ -355,7 +356,9 @@ feature {NONE} -- Parsing implementation
 			loop
 				i := skip_spaces (i, a_end_index)
 				if i < a_end_index and then buffer_window.item (i) = '/' then
+					l_done_index := i
 					l_done := True
+					i := a_end_index
 				elseif i < a_end_index then
 					if not a_attributes.is_name_start_character (buffer_window.item (i)) then
 						set_error ("invalid attribute")
@@ -408,7 +411,11 @@ feature {NONE} -- Parsing implementation
 			variant
 				a_end_index - i
 			end
-			Result := i
+			if l_done_index > 0 then
+				Result := l_done_index
+			else
+				Result := i
+			end
 		ensure
 			result_in_bounds: Result >= a_start_index and Result <= a_end_index
 		end

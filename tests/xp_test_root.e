@@ -37,6 +37,7 @@ feature {NONE} -- Initialization
 			test_external_policy_blocks_parameter_entities
 			test_token_well_formedness_errors
 			test_document_structure
+			test_token_slice_abstraction
 			test_incremental_parse_session_prototype
 			test_expat_port_parse_session_spike
 			test_position_accounting
@@ -772,6 +773,52 @@ feature {NONE} -- Tests
 			assert ("multiple roots error", l_parser.last_error.same_string ("multiple document elements"))
 			assert ("non-whitespace outside root rejected", not l_parser.parse ("text<a/>"))
 			assert ("outside root error", l_parser.last_error.same_string ("character data outside document element"))
+		end
+
+	test_token_slice_abstraction
+		local
+			l_input: STRING_8
+			l_name: XP_TOKEN_SLICE
+			l_same_name: XP_TOKEN_SLICE
+			l_text: XP_TOKEN_SLICE
+			l_subslice: XP_TOKEN_SLICE
+			l_appended: STRING_8
+			l_empty: XP_TOKEN_SLICE
+		do
+			create l_input.make_from_string ("<root attr='value'>text</root>")
+			create l_name.make (l_input, 2, 4)
+			create l_same_name.make (l_input, 26, 4)
+			create l_text.make (l_input, 20, 4)
+
+			assert ("token slice count", l_name.count = 4)
+			assert ("token slice end index", l_name.end_index = 5)
+			assert ("token slice first item", l_name.item (1) = 'r')
+			assert ("token slice last item", l_name.item (4) = 't')
+			assert ("token slice same string", l_name.same_string ("root"))
+			assert ("token slice comparison is case-sensitive", not l_name.same_string ("Root"))
+			assert ("token slice differs from other text", not l_name.same_slice (l_text))
+			assert ("token slice same content across ranges", l_name.same_slice (l_same_name))
+			assert ("token slice starts with prefix", l_name.starts_with ("ro"))
+			assert ("token slice starts with empty prefix", l_name.starts_with (""))
+			assert ("token slice rejects too-long prefix", not l_name.starts_with ("roots"))
+			assert ("token slice conversion", l_name.to_string_8.same_string ("root"))
+			assert ("token slice substring", l_name.substring (2, 3).same_string ("oo"))
+			l_subslice := l_name.subslice (2, 2)
+			assert ("token subslice shares buffer", l_subslice.buffer = l_input)
+			assert ("token subslice text", l_subslice.same_string ("oo"))
+			assert ("token slice hash matches string hash", l_name.hash_code = l_name.to_string_8.hash_code)
+			assert ("equal token slices have equal hashes", l_name.hash_code = l_same_name.hash_code)
+
+			create l_appended.make_from_string ("prefix:")
+			l_name.append_to (l_appended)
+			assert ("token slice append", l_appended.same_string ("prefix:root"))
+
+			create l_empty.make_empty (l_input, l_input.count + 1)
+			assert ("empty token slice count", l_empty.count = 0)
+			assert ("empty token slice same string", l_empty.same_string (""))
+			assert ("empty token slice starts with empty prefix", l_empty.starts_with (""))
+			assert ("empty token slice rejects non-empty prefix", not l_empty.starts_with ("x"))
+			assert ("empty token slice conversion", l_empty.to_string_8.is_empty)
 		end
 
 	test_incremental_parse_session_prototype
