@@ -826,16 +826,17 @@ feature {NONE} -- Parsing implementation
 								ready_plain_start_tag_end_index := l_ready_end
 							end
 						end
-						if can_emit_ready_plain_start_tag_directly then
+						if handler.has_observable_native_callbacks then
 							context_source_buffer := l_context_input.twin
-							context_buffer := Void
+						else
+							context_source_buffer.wipe_out
+						end
+						context_buffer := Void
+						if can_emit_ready_plain_start_tag_directly then
 							l_ok := emit_ready_plain_start_tag_directly (l_input)
 							if l_ok then
 								l_direct_callback_count := 1
 							end
-						else
-							context_source_buffer := l_context_input.twin
-							context_buffer := Void
 						end
 						if l_direct_callback_count = 0 then
 							if is_external_entity_parser and then external_entity_is_parameter then

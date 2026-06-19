@@ -1032,6 +1032,7 @@ feature {NONE} -- Markup parsing
 			l_quote: CHARACTER_8
 			l_unsupported: BOOLEAN
 			c: CHARACTER_8
+			l_code: INTEGER
 		do
 			i := a_start_index
 			if not is_name_start_character (a_input.item (i)) then
@@ -1060,16 +1061,22 @@ feature {NONE} -- Markup parsing
 							i > a_input.count or has_error or l_unsupported or else a_input.item (i) = l_quote
 						loop
 							c := a_input.item (i)
+							l_code := c.code
 							if c = '<' then
 								set_error ("left angle bracket in attribute value")
 								i := a_input.count + 1
 							elseif c = '&' then
 								l_unsupported := True
 								i := a_input.count + 1
+							elseif (l_code >= 32 and l_code < 128) or else l_code = 9 or else l_code = 10 then
+								i := i + 1
+							elseif l_code < 128 then
+								set_error ("invalid XML character")
+								i := a_input.count + 1
 							elseif is_incomplete_utf8_sequence_at (a_input, i) then
 								set_error ("partial character")
 								i := a_input.count + 1
-							elseif not is_xml_character_code (c.code) then
+							elseif not is_xml_character_code (l_code) then
 								set_error ("invalid XML character")
 								i := a_input.count + 1
 							else
@@ -1805,6 +1812,7 @@ feature {NONE} -- Character data and references
 			l_outside_document: BOOLEAN
 			l_all_space: BOOLEAN
 			l_fallback: BOOLEAN
+			l_code: INTEGER
 		do
 			l_outside_document := element_stack.count = 0 and then not parsing_external_entity
 			l_all_space := True
@@ -1816,6 +1824,7 @@ feature {NONE} -- Character data and references
 				i > a_input.count or has_error or is_suspended or l_fallback or else a_input.item (i) = '<'
 			loop
 				c := a_input.item (i)
+				l_code := c.code
 				if c = '&' then
 					l_fallback := True
 					i := a_input.count + 1
@@ -1823,11 +1832,28 @@ feature {NONE} -- Character data and references
 					note_position (i)
 					set_error ("CDATA close marker in character data")
 					i := a_input.count + 1
+				elseif (l_code >= 32 and l_code < 128) or else l_code = 9 or else l_code = 10 then
+					if l_outside_document and then l_all_space then
+						l_all_space := is_xml_space_ascii (c)
+						if not l_all_space then
+							note_position (i)
+							set_error ("character data outside document element")
+							i := a_input.count + 1
+						else
+							i := i + 1
+						end
+					else
+						i := i + 1
+					end
+				elseif l_code < 128 then
+					note_position (i)
+					set_error ("invalid XML character")
+					i := a_input.count + 1
 				elseif is_incomplete_utf8_sequence_at (a_input, i) then
 					note_position (i)
 					set_error ("partial character")
 					i := a_input.count + 1
-				elseif not is_xml_character_code (c.code) then
+				elseif not is_xml_character_code (l_code) then
 					note_position (i)
 					set_error ("invalid XML character")
 					i := a_input.count + 1
@@ -4492,19 +4518,43 @@ feature {NONE} -- Scanning
 			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
 		local
 			i: INTEGER
+			l_code: INTEGER
+			c: CHARACTER_8
+			l_stopped: BOOLEAN
 		do
 			from
 				i := a_start_index
 			invariant
 				index_in_bounds: i >= a_start_index and i <= a_input.count + 1
 			until
-				i > a_input.count or else not is_name_character (a_input.item (i))
+				i > a_input.count or else l_stopped
 			loop
-				i := i + 1
+				c := a_input.item (i)
+				l_code := c.code
+				if
+					(l_code >= 65 and l_code <= 90)
+					or else (l_code >= 97 and l_code <= 122)
+					or else (l_code >= 48 and l_code <= 57)
+					or else l_code = 95
+					or else l_code = 58
+					or else l_code = 45
+					or else l_code = 46
+					or else l_code = 183
+					or else (l_code >= 128 and l_code <= 255)
+				then
+					i := i + 1
+				else
+					l_stopped := True
+					i := i + 1
+				end
 			variant
 				a_input.count - i + 1
 			end
-			Result := i
+			if l_stopped then
+				Result := i - 1
+			else
+				Result := i
+			end
 		ensure
 			progress: Result > a_start_index
 			result_in_bounds: Result <= a_input.count + 1
@@ -4581,7 +4631,12 @@ feature {NONE} -- Scanning
 			l_code: INTEGER
 		do
 			l_code := c.code
-			Result := c.is_alpha or c = '_' or c = ':' or else (l_code >= 192 and l_code <= 255)
+			Result :=
+				(l_code >= 65 and l_code <= 90)
+				or else (l_code >= 97 and l_code <= 122)
+				or else l_code = 95
+				or else l_code = 58
+				or else (l_code >= 192 and l_code <= 255)
 		end
 
 	is_name_character (c: CHARACTER_8): BOOLEAN
@@ -4590,7 +4645,16 @@ feature {NONE} -- Scanning
 			l_code: INTEGER
 		do
 			l_code := c.code
-			Result := is_name_start_character (c) or c.is_digit or c = '-' or c = '.' or l_code = 183 or else (l_code >= 128 and l_code <= 191)
+			Result :=
+				(l_code >= 65 and l_code <= 90)
+				or else (l_code >= 97 and l_code <= 122)
+				or else (l_code >= 48 and l_code <= 57)
+				or else l_code = 95
+				or else l_code = 58
+				or else l_code = 45
+				or else l_code = 46
+				or else l_code = 183
+				or else (l_code >= 128 and l_code <= 255)
 		end
 
 	skip_spaces (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
@@ -5057,6 +5121,12 @@ feature {NONE} -- Character and name validation
 			-- Is `c' XML whitespace?
 		do
 			Result := c = ' ' or c = '%T' or c = '%N' or c = '%R'
+		end
+
+	is_xml_space_ascii (c: CHARACTER_8): BOOLEAN
+			-- Is `c' normalized ASCII XML whitespace?
+		do
+			Result := c = ' ' or c = '%T' or c = '%N'
 		end
 
 	is_all_xml_space (a_text: READABLE_STRING_8): BOOLEAN

@@ -19,6 +19,7 @@ inherit
 			wants_default_events,
 			expands_internal_general_entity_references,
 			reports_skipped_internal_general_entities,
+			requires_eager_position_accounting,
 			stop_requested,
 			stop_is_resumable,
 			on_start_doctype_decl,
@@ -557,6 +558,41 @@ feature -- Events
 			-- Should skipped internal general entities be reported through `on_skipped_entity'?
 		do
 			Result := skipped_entity_callback /= default_pointer
+		end
+
+	requires_eager_position_accounting: BOOLEAN
+			-- Can native callback code observe parser positions during parsing?
+		do
+			Result := has_observable_native_callbacks
+		end
+
+	has_observable_native_callbacks: BOOLEAN
+			-- Is any native callback slot installed that can call parser query APIs?
+		do
+			Result :=
+				start_element_callback /= default_pointer
+				or else end_element_callback /= default_pointer
+				or else character_data_callback /= default_pointer
+				or else processing_instruction_callback /= default_pointer
+				or else xml_decl_callback /= default_pointer
+				or else comment_callback /= default_pointer
+				or else start_cdata_section_callback /= default_pointer
+				or else end_cdata_section_callback /= default_pointer
+				or else default_callback /= default_pointer
+				or else start_doctype_decl_callback /= default_pointer
+				or else end_doctype_decl_callback /= default_pointer
+				or else not_standalone_callback /= default_pointer
+				or else element_decl_callback /= default_pointer
+				or else notation_decl_callback /= default_pointer
+				or else attlist_decl_callback /= default_pointer
+				or else entity_decl_callback /= default_pointer
+				or else unparsed_entity_decl_callback /= default_pointer
+				or else external_entity_ref_callback /= default_pointer
+				or else skipped_entity_callback /= default_pointer
+				or else start_namespace_decl_callback /= default_pointer
+				or else end_namespace_decl_callback /= default_pointer
+				or else native_start_namespace_decl_callback (native_parser_handle) /= default_pointer
+				or else native_end_namespace_decl_callback (native_parser_handle) /= default_pointer
 		end
 
 	stop_requested: BOOLEAN
