@@ -86,11 +86,13 @@ Start here, then read:
     prototype that starts replacing replay with state-owned parsing.
 11. `docs/expat-port-spike.md` for the isolated Expat-processor-style Eiffel
     port experiment.
-12. `docs/benchmarks.md` for same-machine benchmark results.
-13. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
-14. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
+12. `docs/expat-c-code-investigation.md` for what the original Expat C source
+    suggests about incremental parsing and optional low-level C helpers.
+13. `docs/benchmarks.md` for same-machine benchmark results.
+14. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
+15. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
    gap analysis and next optimization priorities.
-15. `docs/drop-in-verification.md` for the Jenkins and public-application
+16. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
 
 ## Build And Verify
