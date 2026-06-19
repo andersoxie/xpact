@@ -39,25 +39,30 @@ See `docs/performance-analysis.md` for the current interpretation of the xpact-v
 For opt-in macro-benchmarks against caller-supplied, pre-decompressed real XML
 corpora, see `docs/large-xml-benchmarks.md`.
 
-## 2026-06-19 Direct Tokenizer Update
+## 2026-06-19 Direct Tokenizer Updates
 
 After the slice-backed element stack, no-event attribute parsing, lazy
-position accounting, and no-event character-data scanner landed, a controlled
-post-publication run was taken against the same catalog workload. This was not
-the full publishing script above; it was a focused finalized-build timing run
-with five process-level repetitions and the same 1000-document workload.
+position accounting, no-event character-data scanning, and normalized-input
+aliasing for the safe no-callback `STRING_8` path landed, controlled
+post-publication runs were taken against the same catalog workload. These were
+not produced by the full publishing script above; they were focused
+finalized-build timing runs with five process-level repetitions and the same
+1000-document workload.
 
 | Benchmark | Engine | Version | Iterations | Bytes/doc | Median elapsed ms | Docs/sec | MiB/sec | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1000 | 2611 | 271.328 | 3685.576 | 9.177 | Parser object reused; no-op event handler; finalized Eiffel C compilation; slice/no-event fast paths |
-| catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1000 | 2611 | 276.164 | 3621.037 | 9.017 | Parser object reused; no-op event handler; finalized Eiffel C compilation; slice/no-event fast paths; calls parse_without_garbage_collection |
-| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1000 | 2611 | 113.867 | 8782.176 | 21.868 | Parser created per document; no callbacks; same-run baseline |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1000 | 2611 | 247.600 | 4038.772 | 10.057 | Parser object reused; no-op event handler; finalized Eiffel C compilation; slice/no-event fast paths; normalized `STRING_8` input aliased when safe |
+| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1000 | 2611 | 111.683 | 8953.914 | 22.296 | Parser created per document; no callbacks; same-run baseline |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded, previous focused row | Phase 1 finalized | 1000 | 2611 | 271.328 | 3685.576 | 9.177 | Parser object reused; no-op event handler; finalized Eiffel C compilation; slice/no-event fast paths before normalized-input aliasing |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse, previous focused row | Phase 1 finalized | 1000 | 2611 | 276.164 | 3621.037 | 9.017 | Parser object reused; no-op event handler; finalized Eiffel C compilation; slice/no-event fast paths; calls parse_without_garbage_collection |
 
 This reduces the direct Eiffel tokenizer/no-op median from the previous
-controlled 774.653 ms measurement to 271.328 ms, about a 65.0% reduction. Against
-the same-run `pyexpat` tokenizer row, the remaining direct Eiffel gap is about
-2.38x. Compared with the 2026-06-18 published direct Eiffel row of 874.84 ms, the
-new focused measurement is about 69.0% faster.
+controlled 774.653 ms measurement to 247.600 ms, about a 68.0% reduction. The
+normalized-input alias step alone improved the focused direct row from 271.328 ms
+to 247.600 ms, about 8.7%. Against the same-run `pyexpat` tokenizer row, the
+remaining direct Eiffel gap is about 2.22x. Compared with the 2026-06-18
+published direct Eiffel row of 874.84 ms, the new focused measurement is about
+71.7% faster.
 
 ## Previous Published Values
 

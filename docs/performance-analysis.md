@@ -9,14 +9,17 @@ The benchmark parses the same 2611-byte UTF-8 catalog document 1000 times and
 reports process-level elapsed time. The generated 2026-06-18 publication table
 reported the median of three runs. After the no-callback fast paths landed, a
 focused 2026-06-19 finalized-build update measured the direct Eiffel tokenizer
-path with five process-level runs against the same workload. That focused row is
-now the best current measurement of the Eiffel parser core.
+path with five process-level runs against the same workload. A later focused run
+on the same date added normalized-input aliasing for the safe no-callback
+`STRING_8` path. That latest focused row is now the best current measurement of
+the Eiffel parser core.
 
 | Path | Median elapsed ms | Relative note |
 |---|---:|---|
-| libexpat via CPython `pyexpat` tokenizer | 113.867 | 2026-06-19 same-run Expat tokenizer baseline |
-| xpact direct Eiffel tokenizer/no-op | 271.328 | 2026-06-19 focused row; about 2.38x slower than same-run `pyexpat` tokenizer |
-| xpact direct Eiffel tokenizer/no-op, GC suspended | 276.164 | GC suspension remains neutral for this workload |
+| libexpat via CPython `pyexpat` tokenizer | 111.683 | 2026-06-19 same-run Expat tokenizer baseline |
+| xpact direct Eiffel tokenizer/no-op | 247.600 | 2026-06-19 latest focused row; about 2.22x slower than same-run `pyexpat` tokenizer |
+| xpact direct Eiffel tokenizer/no-op, previous focused row | 271.328 | Slice/no-event fast paths before normalized-input aliasing |
+| xpact direct Eiffel tokenizer/no-op, GC suspended, previous focused row | 276.164 | GC suspension remains neutral for this workload |
 | libexpat via CPython `pyexpat` callbacks | 204.702 | 2026-06-18 Python callback baseline row |
 | xpact direct Eiffel tokenizer/no-op, assertions enabled | 881.754 | 2026-06-18 pre-fast-path assertion-enabled row |
 | xpact native C ABI tokenizer | 3474.593 | 2026-06-18 native bridge row; now much slower than the optimized direct Eiffel core |
@@ -28,11 +31,12 @@ C ABI rows include the exported C bridge, C/Eiffel runtime transitions, native
 callback adapter work, and byte/string conversions.
 
 The direct Eiffel tokenizer/no-op path has improved from the previous
-controlled 774.653 ms measurement to 271.328 ms, about a 65.0% reduction. Against
-the 2026-06-18 published direct row of 874.84 ms, the focused 2026-06-19 row is
-about 69.0% faster. The direct core is no longer an order-of-magnitude problem
-on this catalog microbenchmark; the remaining direct gap is roughly 2.4x versus
-same-run `pyexpat`.
+controlled 774.653 ms measurement to 247.600 ms, about a 68.0% reduction. The
+latest normalized-input alias step improved the previous focused direct row of
+271.328 ms by about 8.7%. Against the 2026-06-18 published direct row of
+874.84 ms, the focused 2026-06-19 row is about 71.7% faster. The direct core is
+no longer an order-of-magnitude problem on this catalog microbenchmark; the
+remaining direct gap is roughly 2.2x versus same-run `pyexpat`.
 
 ## What Has Already Been Ruled Out
 
@@ -68,7 +72,9 @@ scanner. The largest object-materialization costs in the catalog no-callback
 path have now been removed: open element names are slice-backed, simple
 attributes are parsed without building `XP_ATTRIBUTES`, successful no-callback
 character data is scanned without creating text strings, and line/column
-position counters are lazy.
+position counters are lazy. The latest step also avoids building a normalized
+copy when the complete-document no-callback path receives a `STRING_8` that has
+no UTF-8 BOM or CR line endings to normalize.
 
 Those changes are deliberately guarded. If a handler wants start/end/text/default
 events, if an attribute value needs entity expansion, or if character data sees
@@ -77,9 +83,11 @@ That preserves the eventful parser contract while making the tokenizer/no-op
 case much closer to libexpat's "scan only" behavior.
 
 The input is also scanned or copied more than once. The parser normalizes input,
-keeps `position_input` for diagnostics, and then scans the normalized text. This
-is safer and simpler than libexpat's buffer-oriented scanner, but it costs time
-and memory bandwidth.
+keeps `position_input` for diagnostics, and then scans the normalized text. The
+safe no-callback `STRING_8` path now aliases the validated input as the parser
+and position buffer, but other entry points still keep owned normalized buffers.
+That is safer and simpler than libexpat's buffer-oriented scanner, but it still
+leaves work for native byte-buffer and eventful paths.
 
 ## Native C ABI Gap
 
@@ -143,19 +151,18 @@ and contract-checked against ordinary `STRING_8` behavior in debug/test builds.
 
 The latest no-callback work completed the first slice/lazy-materialization slice
 of the plan: element-stack names, simple attributes, successful character data,
-and line/column accounting now avoid most materialization in the direct
-tokenizer/no-op path. The remaining gap is smaller and should be attacked with
-more measurement discipline, because some changes that were previously obvious
-will now move less needle.
+line/column accounting, and ordinary normalized input now avoid most
+materialization in the direct tokenizer/no-op path. The remaining gap is smaller
+and should be attacked with more measurement discipline, because some changes
+that were previously obvious will now move less needle.
 
 Recommended order:
 
 1. Extend the focused benchmark to publish the 2026-06-19 direct rows through
    `scripts/run_benchmarks.ps1`, then rerun the native C ABI rows so bridge cost
    is measured against the optimized core.
-2. Avoid or narrow the remaining `position_input` copy in success-only tokenizer
-   paths. Lazy line/column counters help, but the normalized text is still copied
-   for diagnostics.
+2. Rerun the same improvements through the native C ABI path, where bytes are
+   still converted and buffered before reaching the optimized Eiffel scanner.
 3. Move delimiter scans and prefix checks toward shared-buffer or slice-oriented
    operations, especially for markup recognition, comments, CDATA, processing
    instructions, and DTD scans.
