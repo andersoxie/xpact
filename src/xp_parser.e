@@ -952,8 +952,12 @@ feature {NONE} -- Markup parsing
 		local
 			i: INTEGER
 			l_count: INTEGER
-			l_names: detachable ARRAYED_LIST [XP_TOKEN_SLICE]
+			l_first_name_start: INTEGER
+			l_first_name_end: INTEGER
+			l_name_starts: detachable ARRAYED_LIST [INTEGER]
+			l_name_ends: detachable ARRAYED_LIST [INTEGER]
 			l_unsupported: BOOLEAN
+			l_duplicate: BOOLEAN
 		do
 			from
 				i := a_start_index
@@ -967,18 +971,39 @@ feature {NONE} -- Markup parsing
 					set_error ("attribute count exceeds limit")
 					i := a_input.count + 1
 				else
-					if not attached l_names then
-						create l_names.make (4)
-					end
-					check attached l_names as l_attached_names then
-						i := parse_attribute_no_events (a_input, i, l_attached_names)
-					end
+					i := parse_attribute_no_events (a_input, i)
 					if i = 0 then
 						l_unsupported := True
 						i := a_input.count + 1
 					elseif not has_error then
-						l_count := l_count + 1
-						i := skip_spaces (a_input, i)
+						if l_count = 0 then
+							l_first_name_start := last_attribute_name_start
+							l_first_name_end := last_attribute_name_end
+						else
+							l_duplicate := input_ranges_same (a_input, last_attribute_name_start, last_attribute_name_end, l_first_name_start, l_first_name_end)
+							if not l_duplicate and then attached l_name_starts as l_attached_starts and then attached l_name_ends as l_attached_ends then
+								l_duplicate := has_attribute_name_range (a_input, last_attribute_name_start, last_attribute_name_end, l_attached_starts, l_attached_ends)
+							end
+							if l_duplicate then
+								set_error ("duplicate attribute")
+								i := a_input.count + 1
+							else
+								if not attached l_name_starts then
+									create l_name_starts.make (4)
+									create l_name_ends.make (4)
+								end
+								if attached l_name_starts as l_attached_starts and then attached l_name_ends as l_attached_ends then
+									l_attached_starts.extend (last_attribute_name_start)
+									l_attached_ends.extend (last_attribute_name_end)
+								else
+									check attribute_name_ranges_available: False end
+								end
+							end
+						end
+						if not has_error then
+							l_count := l_count + 1
+							i := skip_spaces (a_input, i)
+						end
 					end
 				end
 			variant
@@ -995,18 +1020,16 @@ feature {NONE} -- Markup parsing
 			unsupported_or_in_bounds: Result = 0 or else (Result >= a_start_index and Result <= a_input.count + 1)
 		end
 
-	parse_attribute_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_names: ARRAYED_LIST [XP_TOKEN_SLICE]): INTEGER
+	parse_attribute_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse one simple attribute without materializing name/value strings, or return zero if unsupported.
 		require
 			input_attached: a_input /= Void
 			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
-			names_attached: a_names /= Void
 		local
 			i: INTEGER
 			name_start: INTEGER
 			name_end: INTEGER
 			l_quote: CHARACTER_8
-			l_name: XP_TOKEN_SLICE
 			l_unsupported: BOOLEAN
 			c: CHARACTER_8
 		do
@@ -1018,7 +1041,6 @@ feature {NONE} -- Markup parsing
 				name_start := i
 				i := scan_name (a_input, i)
 				name_end := i - 1
-				create l_name.make (a_input, name_start, name_end - name_start + 1)
 				i := skip_spaces (a_input, i)
 				if i > a_input.count or else a_input.item (i) /= '=' then
 					set_error ("missing attribute equals")
@@ -1063,11 +1085,9 @@ feature {NONE} -- Markup parsing
 						elseif i > a_input.count then
 							set_error ("unterminated attribute value")
 							Result := a_input.count + 1
-						elseif has_attribute_name_slice (a_names, l_name) then
-							set_error ("duplicate attribute")
-							Result := a_input.count + 1
 						else
-							a_names.extend (l_name)
+							last_attribute_name_start := name_start
+							last_attribute_name_end := name_end
 							Result := i + 1
 						end
 					end
@@ -1078,29 +1098,33 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	has_attribute_name_slice (a_names: ARRAYED_LIST [XP_TOKEN_SLICE]; a_name: XP_TOKEN_SLICE): BOOLEAN
-			-- Does `a_names' already contain `a_name'?
+	has_attribute_name_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER; a_name_starts, a_name_ends: ARRAYED_LIST [INTEGER]): BOOLEAN
+			-- Do stored attribute name ranges contain `a_input [a_name_start..a_name_end]'?
 		require
-			names_attached: a_names /= Void
-			name_attached: a_name /= Void
+			input_attached: a_input /= Void
+			valid_start: a_name_start >= 1 and a_name_start <= a_input.count
+			valid_end: a_name_end >= a_name_start and a_name_end <= a_input.count
+			starts_attached: a_name_starts /= Void
+			ends_attached: a_name_ends /= Void
+			ranges_aligned: a_name_starts.count = a_name_ends.count
 		local
 			i: INTEGER
 		do
 			from
 				i := 1
 			invariant
-				index_in_bounds: i >= 1 and i <= a_names.count + 1
+				index_in_bounds: i >= 1 and i <= a_name_starts.count + 1
 			until
-				i > a_names.count or Result
+				i > a_name_starts.count or Result
 			loop
-				if a_names.i_th (i).same_slice (a_name) then
+				if input_ranges_same (a_input, a_name_start, a_name_end, a_name_starts.i_th (i), a_name_ends.i_th (i)) then
 					Result := True
-					i := a_names.count + 1
+					i := a_name_starts.count + 1
 				else
 					i := i + 1
 				end
 			variant
-				a_names.count - i + 1
+				a_name_starts.count - i + 1
 			end
 		end
 
@@ -4518,6 +4542,39 @@ feature {NONE} -- Scanning
 			end
 		end
 
+	input_ranges_same (a_input: READABLE_STRING_8; a_left_start, a_left_end, a_right_start, a_right_end: INTEGER): BOOLEAN
+			-- Are the two ranges in `a_input' equal?
+		require
+			input_attached: a_input /= Void
+			left_start_valid: a_left_start >= 1 and a_left_start <= a_input.count
+			left_end_valid: a_left_end >= a_left_start and a_left_end <= a_input.count
+			right_start_valid: a_right_start >= 1 and a_right_start <= a_input.count
+			right_end_valid: a_right_end >= a_right_start and a_right_end <= a_input.count
+		local
+			i: INTEGER
+			j: INTEGER
+		do
+			if a_left_end - a_left_start = a_right_end - a_right_start then
+				from
+					Result := True
+					i := a_left_start
+					j := a_right_start
+				invariant
+					left_index_in_bounds: i >= a_left_start and i <= a_left_end + 1
+					right_index_in_bounds: j >= a_right_start and j <= a_right_end + 1
+					indexes_aligned: i - a_left_start = j - a_right_start
+				until
+					i > a_left_end or not Result
+				loop
+					Result := a_input.item (i) = a_input.item (j)
+					i := i + 1
+					j := j + 1
+				variant
+					a_left_end - i + 1
+				end
+			end
+		end
+
 	is_name_start_character (c: CHARACTER_8): BOOLEAN
 			-- Is `c' an XML 1.0 name-start character representable in CHARACTER_8?
 		local
@@ -5663,6 +5720,8 @@ feature {NONE} -- State
 			last_error.wipe_out
 			create position_input.make_empty
 			lazy_position_accounting := False
+			last_attribute_name_start := 0
+			last_attribute_name_end := 0
 			current_position_index := 0
 			current_line_number := 1
 			current_column_number := 0
@@ -6024,6 +6083,12 @@ feature {NONE} -- State
 
 	lazy_position_accounting: BOOLEAN
 			-- Are line and column counters deferred for the current no-callback parse?
+
+	last_attribute_name_start: INTEGER
+			-- Scratch start index for the most recent no-event attribute name.
+
+	last_attribute_name_end: INTEGER
+			-- Scratch end index for the most recent no-event attribute name.
 
 	parsed_content_model: detachable XP_CONTENT_MODEL
 			-- Scratch content model produced by recursive DTD parsing.

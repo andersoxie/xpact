@@ -836,8 +836,17 @@ feature {NONE} -- Tests
 
 			create l_handler.make
 			create l_parser.make (l_handler)
+			assert ("plain tokenizer accepts three attributes", l_parser.parse ("<root a='1' b='2' c='3'/>"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
 			assert ("plain tokenizer rejects duplicate attributes", not l_parser.parse ("<root a='1' a='2'/>"))
 			assert ("plain tokenizer duplicate attribute error", l_parser.last_error.same_string ("duplicate attribute"))
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("plain tokenizer rejects later duplicate attributes", not l_parser.parse ("<root a='1' b='2' a='3'/>"))
+			assert ("plain tokenizer later duplicate attribute error", l_parser.last_error.same_string ("duplicate attribute"))
 
 			create l_handler.make
 			create l_parser.make (l_handler)
