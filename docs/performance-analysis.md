@@ -7,22 +7,27 @@ on the Windows Phase 1 benchmark in `docs/benchmarks.md`.
 
 The benchmark parses the same 2611-byte UTF-8 catalog document 1000 times and
 reports process-level elapsed time. The generated 2026-06-18 publication table
-reported the median of three runs. After the no-callback fast paths landed, a
-focused 2026-06-19 finalized-build update measured the direct Eiffel tokenizer
-path with five process-level runs against the same workload. A later focused run
-on the same date added normalized-input aliasing for the safe no-callback
-`STRING_8` path. That latest focused row is now the best current measurement of
-the Eiffel parser core.
+reported the median of three runs. Focused 2026-06-19 finalized-build updates
+then measured the direct Eiffel tokenizer path and selected native C ABI
+tokenizer rows against the same workload. The latest focused direct row includes
+slice-backed open element names, no-event attribute and character-data scanning,
+lazy position accounting, normalized-input aliasing for the safe no-callback
+`STRING_8` path, direct ASCII XML/name-character checks, and an inlined
+`scan_name` loop. It is now the best current measurement of the Eiffel parser
+core.
 
 | Path | Median elapsed ms | Relative note |
 |---|---:|---|
-| libexpat via CPython `pyexpat` tokenizer | 111.683 | 2026-06-19 same-run Expat tokenizer baseline |
-| xpact direct Eiffel tokenizer/no-op | 247.600 | 2026-06-19 latest focused row; about 2.22x slower than same-run `pyexpat` tokenizer |
-| xpact direct Eiffel tokenizer/no-op, previous focused row | 271.328 | Slice/no-event fast paths before normalized-input aliasing |
+| libexpat via CPython `pyexpat` tokenizer | 115.293 | 2026-06-19 same-run Expat tokenizer baseline |
+| xpact direct Eiffel tokenizer/no-op | 184.700 | 2026-06-19 latest focused row; about 1.60x slower than same-run `pyexpat` tokenizer |
+| xpact native C ABI tokenizer, parser reused | 784.110 | 2026-06-19 focused row through the Windows Eiffel-backed native DLL |
+| xpact native C ABI tokenizer, parser created per document | 787.427 | 2026-06-19 focused row through the Windows Eiffel-backed native DLL |
+| xpact direct Eiffel tokenizer/no-op, previous focused row | 247.600 | Slice/no-event fast paths plus normalized-input aliasing, before direct ASCII/name-scanner work |
+| xpact direct Eiffel tokenizer/no-op, earlier focused row | 271.328 | Slice/no-event fast paths before normalized-input aliasing |
 | xpact direct Eiffel tokenizer/no-op, GC suspended, previous focused row | 276.164 | GC suspension remains neutral for this workload |
 | libexpat via CPython `pyexpat` callbacks | 204.702 | 2026-06-18 Python callback baseline row |
 | xpact direct Eiffel tokenizer/no-op, assertions enabled | 881.754 | 2026-06-18 pre-fast-path assertion-enabled row |
-| xpact native C ABI tokenizer | 3474.593 | 2026-06-18 native bridge row; now much slower than the optimized direct Eiffel core |
+| xpact native C ABI tokenizer, previous publication | 3474.593 | 2026-06-18 native bridge row before latest direct-core and no-callback native improvements |
 | xpact native C ABI callbacks | 6044.687 | 2026-06-18 native callback row |
 | libexpat C tokenizer via WSL2 gcc | 100.937 | Historical 2026-06-03 direct C row; not measured in the current run |
 
@@ -31,12 +36,12 @@ C ABI rows include the exported C bridge, C/Eiffel runtime transitions, native
 callback adapter work, and byte/string conversions.
 
 The direct Eiffel tokenizer/no-op path has improved from the previous
-controlled 774.653 ms measurement to 247.600 ms, about a 68.0% reduction. The
-latest normalized-input alias step improved the previous focused direct row of
-271.328 ms by about 8.7%. Against the 2026-06-18 published direct row of
-874.84 ms, the focused 2026-06-19 row is about 71.7% faster. The direct core is
+controlled 774.653 ms measurement to 184.700 ms, about a 76.2% reduction. The
+latest direct ASCII/name-scanner work improved the previous focused direct row
+of 247.600 ms by about 25.4%. Against the 2026-06-18 published direct row of
+874.84 ms, the focused 2026-06-19 row is about 78.9% faster. The direct core is
 no longer an order-of-magnitude problem on this catalog microbenchmark; the
-remaining direct gap is roughly 2.2x versus same-run `pyexpat`.
+remaining direct gap is roughly 1.6x versus same-run `pyexpat`.
 
 ## What Has Already Been Ruled Out
 
@@ -47,9 +52,9 @@ in both the published and focused tables. In the 2026-06-19 focused run it was
 normal process-level noise.
 
 Parser creation and free are also not the main native cost. Reusing the native
-`XML_Parser` with `XML_ParserReset` produced nearly the same median as creating
-one parser per document. The remaining native overhead is per-parse bridge and
-payload work.
+`XML_Parser` with `XML_ParserReset` produced nearly the same focused median as
+creating one parser per document: 784.110 ms versus 787.427 ms. The remaining
+native overhead is per-parse bridge, byte/string conversion, and payload work.
 
 The finalized assertion build is also not a material benchmark cost for this
 workload in the 2026-06-18 pre-fast-path table: 881.754 ms with assertions
@@ -70,11 +75,14 @@ The direct Eiffel parser is still slower mainly because the hot tokenization pat
 does more Eiffel-level dispatch and validation than libexpat's tight C byte
 scanner. The largest object-materialization costs in the catalog no-callback
 path have now been removed: open element names are slice-backed, simple
-attributes are parsed without building `XP_ATTRIBUTES`, successful no-callback
-character data is scanned without creating text strings, and line/column
-position counters are lazy. The latest step also avoids building a normalized
-copy when the complete-document no-callback path receives a `STRING_8` that has
-no UTF-8 BOM or CR line endings to normalize.
+attributes are parsed without building `XP_ATTRIBUTES`, duplicate-attribute
+checks keep name ranges instead of token objects, successful no-callback
+character data is scanned without creating text strings, line/column position
+counters are lazy, ordinary ASCII XML characters bypass the expensive Unicode
+validation path, and XML name scanning uses direct code comparisons instead of
+per-character Eiffel library predicates. The latest steps also avoid building a
+normalized copy when the complete-document no-callback path receives a
+`STRING_8` that has no UTF-8 BOM or CR line endings to normalize.
 
 Those changes are deliberately guarded. If a handler wants start/end/text/default
 events, if an attribute value needs entity expansion, or if character data sees
@@ -91,11 +99,12 @@ leaves work for native byte-buffer and eventful paths.
 
 ## Native C ABI Gap
 
-The published native tokenizer row is now stale relative to the faster direct
-Eiffel core. It is slower because bytes cross the C/Eiffel boundary and are
-converted before the Eiffel parser sees them. The path includes C bytes to
-Eiffel `STRING_8`, native parser input buffering, decoding or normalization,
-position-input copying, and then normal parsing.
+The native tokenizer rows have been rerun against the faster direct Eiffel core
+and are much better than the 2026-06-18 publication, but they are still slower
+than direct Eiffel parsing. Bytes cross the C/Eiffel boundary and are converted
+before the Eiffel parser sees them. The path includes C bytes to Eiffel
+`STRING_8`, native parser input buffering, decoding or normalization,
+position-input handling, and then normal parsing.
 
 The native callback row is slower again because every event requires callback
 payload materialization and a C callback transition. Start-element callbacks in
@@ -103,11 +112,11 @@ particular need C strings for the element name and for each attribute name/value
 plus a null-terminated pointer vector.
 
 Internal diagnostic event logging has already been disabled for the exported C
-bridge. That helped the no-callback native tokenizer path substantially, but real
-C callbacks still require payload materialization by design. The next native
-benchmark publication should be rerun after the direct-core fast paths are
-exposed through the C ABI, because the old native rows include pre-fast-path
-parser costs.
+bridge. The no-callback native path now also avoids eager context-buffer copies
+and eager position accounting when no installed callback can observe parser
+positions. That helped the native tokenizer path substantially, but real C
+callbacks still require payload materialization by design. The callback row has
+not yet been republished after the latest direct-core scanner improvements.
 
 ## Article Performance Update
 
@@ -151,31 +160,30 @@ and contract-checked against ordinary `STRING_8` behavior in debug/test builds.
 
 The latest no-callback work completed the first slice/lazy-materialization slice
 of the plan: element-stack names, simple attributes, successful character data,
-line/column accounting, and ordinary normalized input now avoid most
-materialization in the direct tokenizer/no-op path. The remaining gap is smaller
-and should be attacked with more measurement discipline, because some changes
-that were previously obvious will now move less needle.
+line/column accounting, ordinary normalized input, ASCII character validation,
+and XML name scanning now avoid most materialization and generic Eiffel
+predicate dispatch in the direct tokenizer/no-op path. The remaining gap is
+smaller and should be attacked with more measurement discipline, because some
+changes that were previously obvious will now move less needle.
 
 Recommended order:
 
-1. Extend the focused benchmark to publish the 2026-06-19 direct rows through
-   `scripts/run_benchmarks.ps1`, then rerun the native C ABI rows so bridge cost
-   is measured against the optimized core.
-2. Rerun the same improvements through the native C ABI path, where bytes are
-   still converted and buffered before reaching the optimized Eiffel scanner.
+1. Fold the focused 2026-06-19 rows into the full publication flow in
+   `scripts/run_benchmarks.ps1`, including callback rows, so future comparisons
+   use one repeatable command.
+2. Add a native ABI byte-buffer parse entry that avoids an extra C-to-Eiffel copy
+   when the input is already UTF-8, then keep callback payload materialization
+   only at callback boundaries.
 3. Move delimiter scans and prefix checks toward shared-buffer or slice-oriented
    operations, especially for markup recognition, comments, CDATA, processing
    instructions, and DTD scans.
 4. Extend slice-backed no-event parsing beyond the simple catalog shape:
    namespace-safe names, selected DTD/default-attribute cases, and entity-free
    attribute values that currently force materialization.
-5. Add a native ABI byte-buffer parse entry that avoids an extra C-to-Eiffel copy
-   when the input is already UTF-8, then keep callback payload materialization
-   only at callback boundaries.
-6. Revisit string pooling for eventful parsing, where element names, attribute
+5. Revisit string pooling for eventful parsing, where element names, attribute
    names, namespace prefixes, and repeated callback strings still need owned
    Eiffel or C-compatible storage.
-7. Treat SCOOP pipeline parsing as a later optional mode, after the
+6. Treat SCOOP pipeline parsing as a later optional mode, after the
    single-threaded buffer-backed path and native byte-buffer path are competitive
    and well measured.
 
