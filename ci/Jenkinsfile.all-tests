@@ -1,3 +1,130 @@
+def xmlEscape(value) {
+  if (value == null) {
+    return ''
+  }
+  return value.toString()
+    .replace('&', '&amp;')
+    .replace('<', '&lt;')
+    .replace('>', '&gt;')
+    .replace('"', '&quot;')
+    .replace("'", '&apos;')
+}
+
+def safeReportToken(value) {
+  def token = value.toString().replaceAll(/[^A-Za-z0-9_.-]+/, '-')
+  token = token.replaceAll(/^-+/, '').replaceAll(/-+$/, '')
+  if (token.length() == 0) {
+    return 'report'
+  }
+  if (token.length() > 120) {
+    return token.substring(0, 120)
+  }
+  return token
+}
+
+def formatSeconds(value) {
+  return String.format(java.util.Locale.US, '%.3f', value as double)
+}
+
+def writeSingleCaseJUnitReport(suiteName, caseName, elapsedSeconds, failureMessage, failureText) {
+  def failures = failureText == null ? 0 : 1
+  def failureXml = ''
+  if (failureText != null) {
+    failureXml = "\n    <failure message=\"${xmlEscape(failureMessage)}\">${xmlEscape(failureText)}</failure>\n  "
+  }
+  writeFile file: "jenkins-test-results-${safeReportToken(suiteName)}-${safeReportToken(caseName)}.xml",
+            text: """<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="${xmlEscape(suiteName)}" tests="1" failures="${failures}" skipped="0" time="${formatSeconds(elapsedSeconds)}">
+  <testcase classname="${xmlEscape(suiteName)}" name="${xmlEscape(caseName)}" time="${formatSeconds(elapsedSeconds)}">${failureXml}</testcase>
+</testsuite>
+"""
+}
+
+def runWithJenkinsTestResult(suiteName, caseName, Closure body) {
+  def started = System.currentTimeMillis()
+  def failureMessage = null
+  def failureText = null
+  try {
+    body()
+  } catch (Throwable err) {
+    failureMessage = err.getMessage()
+    failureText = err.toString()
+    throw err
+  } finally {
+    def elapsedSeconds = (System.currentTimeMillis() - started) / 1000.0
+    writeSingleCaseJUnitReport(suiteName, caseName, elapsedSeconds, failureMessage, failureText)
+  }
+}
+
+def parseTsvLine(line) {
+  return line.split('\t', -1).collect { cell ->
+    def value = cell
+    if (value.length() >= 2 && value.startsWith('"') && value.endsWith('"')) {
+      value = value.substring(1, value.length() - 1).replace('""', '"')
+    }
+    value
+  }
+}
+
+def writeBenchmarkJUnitReport(tsvPath, suiteName, reportName) {
+  if (!fileExists(tsvPath)) {
+    return
+  }
+  def text = readFile(tsvPath).replaceFirst(/^\uFEFF/, '')
+  def lines = text.split(/\r?\n/).findAll { it.trim().length() > 0 }
+  if (lines.size() < 2) {
+    return
+  }
+
+  def headers = parseTsvLine(lines[0]).collect { it.replaceFirst(/^\uFEFF/, '') }
+  def cases = new StringBuilder()
+  def count = 0
+  lines.drop(1).each { line ->
+    def values = parseTsvLine(line)
+    def row = [:]
+    headers.eachWithIndex { header, index ->
+      row[header] = index < values.size() ? values[index] : ''
+    }
+    count += 1
+
+    def elapsedSeconds = '0.000'
+    try {
+      elapsedSeconds = formatSeconds(Double.parseDouble(row['ElapsedMs']) / 1000.0)
+    } catch (Throwable ignored) {
+      elapsedSeconds = '0.000'
+    }
+
+    def primaryName = row['Benchmark'] ?: row['CorpusId'] ?: "row-${count}"
+    def engineName = row['Engine'] ?: 'engine'
+    def repetition = row['Repetition'] ?: count.toString()
+    def caseName = "${primaryName} / ${engineName} / rep ${repetition}"
+    def properties = new StringBuilder()
+    headers.each { header ->
+      properties.append("      <property name=\"${xmlEscape(header)}\" value=\"${xmlEscape(row[header])}\"/>\n")
+    }
+    cases.append("""  <testcase classname="${xmlEscape(suiteName)}" name="${xmlEscape(caseName)}" time="${elapsedSeconds}">
+    <properties>
+${properties}    </properties>
+  </testcase>
+""")
+  }
+
+  writeFile file: "jenkins-test-results-${safeReportToken(reportName)}.xml",
+            text: """<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="${xmlEscape(suiteName)}" tests="${count}" failures="0" skipped="0">
+${cases}</testsuite>
+"""
+}
+
+def publishJenkinsTestResults() {
+  junit testResults: 'jenkins-test-results-*.xml',
+        allowEmptyResults: true
+  powershell returnStatus: true, script: '''
+    Get-ChildItem -LiteralPath . -Filter 'jenkins-test-results-*.xml' -File -ErrorAction SilentlyContinue |
+      Remove-Item -Force
+  '''
+}
+
 pipeline {
   agent none
 
@@ -122,12 +249,24 @@ pipeline {
             steps {
               deleteDir()
               unstash 'xpact-source'
-              powershell '''
-                $ErrorActionPreference = "Stop"
-                .\\scripts\\run_eiffel_test_matrix.ps1 `
-                  -AssertionMode "${env:ASSERTIONS}" `
-                  -BuildMode "${env:BUILD_MODE}"
-              '''
+              script {
+                runWithJenkinsTestResult('xpact Eiffel regression matrix',
+                                         "assertions ${env.ASSERTIONS} / ${env.BUILD_MODE}") {
+                  powershell '''
+                    $ErrorActionPreference = "Stop"
+                    .\\scripts\\run_eiffel_test_matrix.ps1 `
+                      -AssertionMode "${env:ASSERTIONS}" `
+                      -BuildMode "${env:BUILD_MODE}"
+                  '''
+                }
+              }
+            }
+            post {
+              always {
+                script {
+                  publishJenkinsTestResults()
+                }
+              }
             }
           }
         }
@@ -139,18 +278,45 @@ pipeline {
       steps {
         deleteDir()
         unstash 'xpact-source'
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          .\\scripts\\build_native_eiffel.ps1
-          .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions -SkipSmoke
-          .\\scripts\\run_native_runtime_smoke.ps1
-          .\\scripts\\run_native_abi_tests.ps1 -Target Windows
-          .\\scripts\\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All -SkipBuild
-          .\\scripts\\run_incremental_shim_audit.ps1 -SkipBuild
-        '''
+        script {
+          runWithJenkinsTestResult('xpact Windows native tests', 'build Eiffel-backed DLLs') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\build_native_eiffel.ps1
+              .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions -SkipSmoke
+            '''
+          }
+          runWithJenkinsTestResult('xpact Windows native tests', 'runtime smoke') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_native_runtime_smoke.ps1
+            '''
+          }
+          runWithJenkinsTestResult('xpact Windows native tests', 'Windows ABI smoke') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_native_abi_tests.ps1 -Target Windows
+            '''
+          }
+          runWithJenkinsTestResult('xpact Windows native tests', 'chunked CRC corpus') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All -SkipBuild
+            '''
+          }
+          runWithJenkinsTestResult('xpact Windows native tests', 'incremental shim audit') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_incremental_shim_audit.ps1 -SkipBuild
+            '''
+          }
+        }
       }
       post {
         always {
+          script {
+            publishJenkinsTestResults()
+          }
           archiveArtifacts artifacts: '''
             build/native-eiffel/xpact.dll,
             build/native-eiffel/xpact.lib,
@@ -170,13 +336,20 @@ pipeline {
       steps {
         deleteDir()
         unstash 'xpact-source'
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          .\\scripts\\run_native_abi_tests.ps1 -Target Wsl
-        '''
+        script {
+          runWithJenkinsTestResult('xpact WSL ABI tests', 'WSL ABI smoke') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_native_abi_tests.ps1 -Target Wsl
+            '''
+          }
+        }
       }
       post {
         always {
+          script {
+            publishJenkinsTestResults()
+          }
           archiveArtifacts artifacts: 'build/native/libxpact.so', allowEmptyArchive: true
         }
       }
@@ -193,32 +366,44 @@ pipeline {
             exit 1
           ''') != 0) {
             catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-              error "Skipping libexpat adapter: EXPAT_SOURCE_DIR does not exist: ${env.EXPAT_SOURCE_DIR}"
+              runWithJenkinsTestResult('libexpat adapter', 'source tree available') {
+                error "Skipping libexpat adapter: EXPAT_SOURCE_DIR does not exist: ${env.EXPAT_SOURCE_DIR}"
+              }
             }
           } else {
-            powershell '''
-              $ErrorActionPreference = "Stop"
-              .\\scripts\\build_native_eiffel.ps1 -SkipSmoke
-              .\\scripts\\run_libexpat_adapter.ps1 `
-                -Mode Manifest `
-                -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
-                -OutputDir "${env:ADAPTER_OUTPUT}" `
-                -XpactLibrary "${env:XPACT_LIBRARY}" `
-                -SkipNativeBuild
-              if (${env:RUN_LIBEXPAT_NATIVE_SUITE} -eq "true") {
+            runWithJenkinsTestResult('libexpat adapter', 'manifest and parity expansion') {
+              powershell '''
+                $ErrorActionPreference = "Stop"
+                .\\scripts\\build_native_eiffel.ps1 -SkipSmoke
                 .\\scripts\\run_libexpat_adapter.ps1 `
-                  -Mode NativeSuite `
+                  -Mode Manifest `
                   -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
                   -OutputDir "${env:ADAPTER_OUTPUT}" `
                   -XpactLibrary "${env:XPACT_LIBRARY}" `
                   -SkipNativeBuild
+              '''
+            }
+            if (params.RUN_LIBEXPAT_NATIVE_SUITE) {
+              runWithJenkinsTestResult('libexpat adapter', 'native suite expected-failure gate') {
+                powershell '''
+                  $ErrorActionPreference = "Stop"
+                  .\\scripts\\run_libexpat_adapter.ps1 `
+                    -Mode NativeSuite `
+                    -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
+                    -OutputDir "${env:ADAPTER_OUTPUT}" `
+                    -XpactLibrary "${env:XPACT_LIBRARY}" `
+                    -SkipNativeBuild
+                '''
               }
-            '''
+            }
           }
         }
       }
       post {
         always {
+          script {
+            publishJenkinsTestResults()
+          }
           archiveArtifacts artifacts: '''
             build/libexpat-adapter-current/*.tsv,
             build/libexpat-adapter-current/*.log
@@ -233,15 +418,22 @@ pipeline {
       steps {
         deleteDir()
         unstash 'xpact-source'
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          $runWslExpatComparison = "${env:RUN_WSL_TESTS}" -eq "true"
-          .\\scripts\\run_contributed_examples.ps1 `
-            -RunWslExpatComparison:$runWslExpatComparison
-        '''
+        script {
+          runWithJenkinsTestResult('xpact contributed examples', 'incremental examples') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              $runWslExpatComparison = "${env:RUN_WSL_TESTS}" -eq "true"
+              .\\scripts\\run_contributed_examples.ps1 `
+                -RunWslExpatComparison:$runWslExpatComparison
+            '''
+          }
+        }
       }
       post {
         always {
+          script {
+            publishJenkinsTestResults()
+          }
           archiveArtifacts artifacts: 'build/contributed-examples/*.log', allowEmptyArchive: true
         }
       }
@@ -253,13 +445,23 @@ pipeline {
       steps {
         deleteDir()
         unstash 'xpact-source'
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          .\\scripts\\run_benchmarks.ps1 -EiffelBuild Finalized,FinalizedAssertions
-        '''
+        script {
+          runWithJenkinsTestResult('xpact benchmarks', 'same-machine benchmark publication') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_benchmarks.ps1 -EiffelBuild Finalized,FinalizedAssertions
+            '''
+          }
+        }
       }
       post {
         always {
+          script {
+            writeBenchmarkJUnitReport('build/benchmarks/benchmark-results.tsv',
+                                      'xpact same-machine benchmark rows',
+                                      'same-machine-benchmarks')
+            publishJenkinsTestResults()
+          }
           archiveArtifacts artifacts: '''
             build/benchmarks/*.tsv,
             docs/benchmarks.md,
@@ -275,15 +477,25 @@ pipeline {
       steps {
         deleteDir()
         unstash 'xpact-source'
-        powershell '''
-          $ErrorActionPreference = "Stop"
-          .\\scripts\\run_large_xml_benchmarks.ps1 `
-            -XmlFile "${env:LARGE_XML_FILE}" `
-            -MaxFileBytes 536870912
-        '''
+        script {
+          runWithJenkinsTestResult('xpact large XML benchmarks', 'large XML benchmark publication') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              .\\scripts\\run_large_xml_benchmarks.ps1 `
+                -XmlFile "${env:LARGE_XML_FILE}" `
+                -MaxFileBytes 536870912
+            '''
+          }
+        }
       }
       post {
         always {
+          script {
+            writeBenchmarkJUnitReport('build/large-xml-benchmarks/large-xml-benchmark-results.tsv',
+                                      'xpact large XML benchmark rows',
+                                      'large-xml-benchmarks')
+            publishJenkinsTestResults()
+          }
           archiveArtifacts artifacts: '''
             build/large-xml-benchmarks/*.tsv,
             docs/large-xml-benchmarks.md
