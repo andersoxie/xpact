@@ -13,6 +13,9 @@ pipeline {
     booleanParam(name: 'RUN_BENCHMARKS',
                  defaultValue: false,
                  description: 'Run same-machine benchmark publication.')
+    booleanParam(name: 'RUN_CONTRIBUTED_EXAMPLES',
+                 defaultValue: true,
+                 description: 'Build and run contributed xpact incremental examples.')
     booleanParam(name: 'RUN_PUBLIC_APP',
                  defaultValue: false,
                  description: 'Run the experimental CPython replacement lane.')
@@ -176,6 +179,16 @@ pipeline {
       }
     }
 
+    stage('Contributed Examples') {
+      when { expression { return params.RUN_CONTRIBUTED_EXAMPLES } }
+      steps {
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          .\\scripts\\run_contributed_examples.ps1
+        '''
+      }
+    }
+
     stage('Package Windows Release') {
       steps {
         powershell '''
@@ -259,6 +272,7 @@ pipeline {
         build/incremental-shim-audit/*.tsv,
         build/libexpat-adapter-current/*.tsv,
         build/libexpat-adapter-current/*.log,
+        build/contributed-examples/*.log,
         docs/benchmarks.md,
         docs/performance-analysis.md,
         dist/*.zip

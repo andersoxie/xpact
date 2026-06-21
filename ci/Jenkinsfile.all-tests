@@ -16,6 +16,9 @@ pipeline {
     booleanParam(name: 'RUN_LIBEXPAT_NATIVE_SUITE',
                  defaultValue: true,
                  description: 'Build and run upstream libexpat runtests through the xpact adapter.')
+    booleanParam(name: 'RUN_CONTRIBUTED_EXAMPLES',
+                 defaultValue: true,
+                 description: 'Build and run contributed xpact incremental examples.')
     booleanParam(name: 'RUN_BENCHMARKS',
                  defaultValue: false,
                  description: 'Run same-machine benchmark publication.')
@@ -220,6 +223,26 @@ pipeline {
             build/libexpat-adapter-current/*.tsv,
             build/libexpat-adapter-current/*.log
           ''', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('Contributed Examples') {
+      when { expression { return params.RUN_CONTRIBUTED_EXAMPLES } }
+      agent { label 'built-in' }
+      steps {
+        deleteDir()
+        unstash 'xpact-source'
+        powershell '''
+          $ErrorActionPreference = "Stop"
+          $runWslExpatComparison = "${env:RUN_WSL_TESTS}" -eq "true"
+          .\\scripts\\run_contributed_examples.ps1 `
+            -RunWslExpatComparison:$runWslExpatComparison
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'build/contributed-examples/*.log', allowEmptyArchive: true
         }
       }
     }

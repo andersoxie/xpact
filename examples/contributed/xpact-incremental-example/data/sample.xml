@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bookstore>
+	<!--Test data for the billion-user project xpact-->
+	<book category="cooking">
+		<title lang="en">Everyday Italian</title>
+		<author>Giada De Laurentiis</author>
+		<price>30.00</price>
+	</book>
+	<book category="children">
+		
+		<title lang="en">
+			<!--Test leading/trailing space adjust-->
+			Harry Potter
+		</title>
+		<author>J K. Rowling</author>
+	<price>29.99</price>
+	</book>
+<dvd region="2" format="PAL"/>
+</bookstore>

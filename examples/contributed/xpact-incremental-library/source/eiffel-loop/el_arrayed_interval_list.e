@@ -1,0 +1,288 @@
+note
+	description: "[
+		Sequence of ${INTEGER_32} intervals (compressed as ${INTEGER_64}'s for better performance)
+	]"
+	descendants: "See end of class"
+
+	author: "Finnian Reilly"
+	copyright: "Copyright (c) 2001-2026 Finnian Reilly"
+	contact: "finnian at eiffel hyphen loop dot com"
+
+	license: "MIT license (See: en.wikipedia.org/wiki/MIT_License)"
+	date: "2026-06-20 18:12:34 GMT (Saturday 20th June 2026)"
+	revision: "22"
+
+class
+	EL_ARRAYED_INTERVAL_LIST
+
+inherit
+	ARRAYED_LIST [INTEGER]
+		rename
+			extend as item_extend,
+			first as item_first,
+			last as item_last,
+			lower as lower_index,
+			upper as upper_index,
+			put_i_th as item_put_i_th,
+			replace as item_replace
+		export
+			{NONE} item_extend, item, i_th, item_put_i_th
+		undefine
+			count, upper_index
+		redefine
+			grow, make, out, remove, new_cursor
+		end
+
+	EL_INTERVAL_LIST
+		rename
+			area as area_v2
+		end
+
+create
+	make
+
+feature {NONE} -- Initialization
+
+	make (n: INTEGER)
+		do
+			Precursor (n * 2)
+		end
+
+feature -- Iterative query
+
+	new_cursor: EL_ARRAYED_INTERVALS_CURSOR
+			-- <Precursor>
+		do
+			create Result.make (Current)
+		end
+
+feature -- Status query
+
+	item_has (n: INTEGER): BOOLEAN
+		-- `True' if interval at `index' contains `n'
+		require
+			valid_index: not off
+		do
+			Result := i_th_has (index, n)
+		end
+
+	i_th_has (i, n: INTEGER): BOOLEAN
+		-- `True' if i'th interval contains `n'
+		do
+			Result := area_item_has (area_v2, (i - 1) * 2, n)
+		end
+
+	same_as (other: EL_ARRAYED_INTERVAL_LIST): BOOLEAN
+		do
+			if count = other.count then
+				Result := area_v2.same_items (other.area_v2, 0, 0, count * 2)
+			end
+		end
+
+feature -- Conversion
+
+	to_compact_array: ARRAY [INTEGER_64]
+		local
+			i: INTEGER; ir: EL_INTERVAL_ROUTINES
+		do
+			create Result.make_filled (0, 1, count)
+			if attached area_v2 as a then
+				from until i = a.count loop
+					Result [i // 2 + 1] := ir.compact (a [i], a [i + 1])
+					i := i + 2
+				end
+			end
+		end
+
+	out: STRING
+		local
+			i: INTEGER
+		do
+			create Result.make (8 * count)
+			if attached area_v2 as a then
+				from until i = a.count loop
+					if not Result.is_empty then
+						Result.append (", ")
+					end
+					Result.append_character ('[')
+					Result.append_integer (a [i])
+					Result.append_character (':')
+					Result.append_integer (a [i + 1])
+					Result.append_character (']')
+					i := i + 2
+				end
+			end
+		end
+
+feature -- Element change
+
+	extend_compact (compact_interval: NATURAL_64)
+		do
+			if compact_interval > 0 then
+				extend ((compact_interval |>> 32).to_integer_32, compact_interval.to_integer_32)
+			end
+		end
+
+	extend_next_upper (compact_interval: NATURAL_64; i: INTEGER): NATURAL_64
+		-- performance optimized form of `extend_upper' with the `last_interval' tracked
+		-- externally by a compact interval
+
+		-- (Note: call `extend_compact' to finalize list after filling from an external loop)
+		note
+
+		local
+			lower, upper: INTEGER
+		do
+			if compact_interval = 0 then
+				lower := i; upper := i
+			else
+				lower := (compact_interval |>> 32).to_integer_32
+				upper := compact_interval.to_integer_32
+				if i = upper + 1 then
+					upper := i
+				else
+					extend (lower, upper)
+					lower := i; upper := i
+				end
+			end
+			Result := (lower.to_natural_64 |<< 32) | upper.to_natural_64
+		end
+
+	extend (a_lower, a_upper: INTEGER)
+		local
+			i: INTEGER; l_area: like area_v2
+		do
+			i := count * 2 + 2
+			l_area := area_v2
+			if i > l_area.capacity then
+				l_area := l_area.aliased_resized_area (i + additional_space)
+				area_v2 := l_area
+			end
+			l_area.extend (a_lower); l_area.extend (a_upper)
+		end
+
+	extend_upper (a_upper: INTEGER)
+		-- if `a_upper' = `last_upper + 1' then `last_upper' is incremented by one
+		-- else a new interval `a_upper .. a_upper' is added
+		do
+			if is_empty then
+				extend (a_upper, a_upper)
+
+			elseif attached area_v2 as a and then a [a.count - 1] + 1 = a_upper then
+				a [a.count - 1] := a_upper
+			else
+				extend (a_upper, a_upper)
+			end
+		end
+
+	put_i_th (a_lower, a_upper, i: INTEGER)
+		require
+			valid_index: valid_index (i)
+		local
+			j: INTEGER
+		do
+			j := (i - 1) * 2
+			if attached area_v2 as a then
+				a [j] := a_lower; a [j + 1] := a_upper
+			end
+		end
+
+feature -- Removal
+
+	remove
+			-- Remove current item.
+			-- Move cursor to right neighbor
+			-- (or `after' if no right neighbor)
+		local
+			i: INTEGER
+		do
+			if index < count then
+				i := (index - 1) * 2
+				area_v2.move_data (i + 2, i, (count - index) * 2)
+			end
+			area_v2.remove_tail (2)
+		ensure then
+			shifted_by_one: not off implies i_th_compact (index) = old next_compact_item
+		end
+
+	remove_head (n: INTEGER)
+		do
+			if n <= count and then attached area_v2 as l_area then
+				l_area.move_data (n * 2, 0, (count - n) * 2)
+				l_area.remove_tail (n * 2)
+				if index > n then
+					index := index - n
+				end
+			end
+		ensure
+			moved_items: n < old count
+				implies old i_th_compact (n + 1) = i_th_compact (1) and old i_th_compact (count) = i_th_compact (count)
+
+			same_item: old (not off and index > n) implies old item_compact = item_compact
+		end
+
+	remove_tail (n: INTEGER)
+		do
+			if n <= count then
+				area.remove_tail (n * 2)
+			end
+			if index > count + 1 then
+				index := count + 1
+			end
+		ensure
+			items_removed: to_compact_array ~ old to_compact_array.subarray (1, count - n)
+		end
+
+feature -- Resizing
+
+	grow (i: INTEGER)
+			-- Change the capacity to at least `i'.
+		do
+			if i * 2 > area_v2.capacity then
+				area_v2 := area_v2.aliased_resized_area (i * 2)
+			end
+		end
+
+feature {NONE} -- Implementation
+
+	area_item_has (a_area: like area; i, n: INTEGER): BOOLEAN
+		do
+			if attached area_v2 as a then
+				Result := a [i] <= n and then n <= a [i + 1]
+			end
+		end
+note
+	descendants: "[
+			EL_ARRAYED_INTERVAL_LIST
+				${EL_SEQUENTIAL_INTERVALS}
+					${EL_OCCURRENCE_INTERVALS}
+						${CLASS_RENAMER}
+						${EL_SPLIT_INTERVALS}
+							${EL_ZSTRING_SPLIT_INTERVALS}
+							${EL_STRING_8_SPLIT_INTERVALS}
+							${EL_STRING_32_SPLIT_INTERVALS}
+						${EL_ZSTRING_OCCURRENCE_INTERVALS}
+							${EL_ZSTRING_SPLIT_INTERVALS}
+							${CLASS_LINK_OCCURRENCE_INTERVALS}
+						${EL_STRING_8_OCCURRENCE_INTERVALS}
+							${EL_STRING_8_SPLIT_INTERVALS}
+							${EL_STRING_8_OCCURRENCE_EDITOR}
+								${CLASS_LEADING_SPACE_EDITOR}
+						${EL_STRING_32_OCCURRENCE_INTERVALS}
+							${EL_STRING_32_SPLIT_INTERVALS}
+					${EL_ZSTRING_INTERVALS}
+						${EL_COMPARABLE_ZSTRING_INTERVALS* [C, S -> READABLE_INDEXABLE [C]]}
+							${EL_COMPARE_ZSTRING_TO_STRING_8}
+								${EL_CASELESS_COMPARE_ZSTRING_TO_STRING_8}
+							${EL_COMPARE_ZSTRING_TO_STRING_32}
+								${EL_CASELESS_COMPARE_ZSTRING_TO_STRING_32}
+				${CODE_INTERVAL_LIST}
+				${TP_REPEATED_PATTERN*}
+					${TP_COUNT_WITHIN_BOUNDS}
+						${TP_ONE_OR_MORE_TIMES}
+						${TP_ZERO_OR_MORE_TIMES}
+					${TP_LOOP*}
+						${TP_P1_UNTIL_P2_MATCH}
+						${TP_P2_WHILE_NOT_P1_MATCH}
+	]"
+end

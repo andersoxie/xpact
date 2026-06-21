@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE rdf:RDF [
+	 <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+	 <!ENTITY a 'http://www.cogsci.princeton.edu/~wn/concept#'>
+	 <!ENTITY b 'http://www.cogsci.princeton.edu/~wn/schema/'>
+]>
+<rdf:RDF xmlns:rdf="&rdf;" xmlns:a="&a;" xmlns:b="&b;">
+	<rdf:Description rdf:about="&a;100027235"
+		 b:glossaryEntry="the act of enrolling"/>
+	<rdf:Description rdf:about="&a;100027339">
+		<b:glossaryEntry xml:space='preserve'><![CDATA[the act of appearing in public view; "the rookie made a brief appearance in the first period"; "it was Bernhardt''s last appearance in America"]]></b:glossaryEntry>
+	</rdf:Description>
+	<rdf:Description rdf:about="&a;100027592"
+		 b:glossaryEntry="the act of emerging"/>
+	<rdf:Description rdf:about="&a;100027678"
+		 b:glossaryEntry="the act of appearing again"/>
+	<rdf:Description rdf:about="&a;100027781">
+		<b:glossaryEntry>(astronomy) the reappearance of a celestial body after an eclipse</b:glossaryEntry>
+	</rdf:Description>
+</rdf:RDF>

@@ -1,8 +1,8 @@
 ﻿# Benchmarks
 
-Generated: 2026-06-18 20:05:28 +02:00
+Generated: 2026-06-19 22:14:18 +02:00
 
-Machine: AMD64 Family 23 Model 49 Stepping 0, AuthenticAMD; Windows_NT
+Machine: AMD Ryzen Threadripper 3970X 32-Core Processor ; 63.9 GiB RAM; Microsoft Windows 11 Pro
 
 Runtime context:
 
@@ -11,22 +11,24 @@ Runtime context:
 - Eiffel void safety: ``support="all" use="all"``.
 - Python: `Python 3.14.0`.
 - libexpat baseline available on this machine through CPython `pyexpat`: `expat_2.7.3`.
-- No direct C libexpat benchmark was run: WSL2 gcc was not visible to this process. No WSL xpact native C ABI benchmark was run: WSL2 gcc was not visible to this process.
 
 Workload: parse the same UTF-8 catalog document containing 100 `<item>` elements. Each table row reports the median of 3 process-level runs.
 
 | Benchmark | Engine | Version | Iterations | Bytes/doc | Median elapsed ms | Docs/sec | MiB/sec | Notes |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1000 | 2611 | 874.84 | 1143.067 | 2.846 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
-| catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1000 | 2611 | 891.838 | 1121.28 | 2.792 | Parser object reused; no-op event handler; finalized Eiffel C compilation; calls parse_without_garbage_collection |
-| catalog-100-items | xpact Eiffel finalized, assertions enabled | Phase 1 finalized assertions | 1000 | 2611 | 881.754 | 1134.103 | 2.824 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled |
-| catalog-100-items | xpact Eiffel finalized, assertions enabled, GC suspended during parse | Phase 1 finalized assertions | 1000 | 2611 | 897.704 | 1113.953 | 2.774 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled; calls parse_without_garbage_collection |
-| catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 1000 | 2611 | 204.702 | 4885.143 | 12.164 | Parser created per document; Python callbacks |
-| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1000 | 2611 | 138.316 | 7229.822 | 18.003 | Parser created per document; no callbacks |
-| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 6044.687 | 165.435 | 0.412 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks |
-| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 3474.593 | 287.804 | 0.717 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks |
-| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL, parser reused | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 6078.09 | 164.525 | 0.41 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents |
-| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 3420.794 | 292.33 | 0.728 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1000 | 2611 | 193.8 | 5159.961 | 12.849 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1000 | 2611 | 194.754 | 5134.672 | 12.786 | Parser object reused; no-op event handler; finalized Eiffel C compilation; calls parse_without_garbage_collection |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled | Phase 1 finalized assertions | 1000 | 2611 | 199.462 | 5013.484 | 12.484 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled, GC suspended during parse | Phase 1 finalized assertions | 1000 | 2611 | 190.243 | 5256.427 | 13.089 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled; calls parse_without_garbage_collection |
+| catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 1000 | 2611 | 208.242 | 4802.103 | 11.957 | Parser created per document; Python callbacks |
+| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1000 | 2611 | 136.86 | 7306.764 | 18.194 | Parser created per document; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 6475.666 | 154.424 | 0.385 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 805.676 | 1241.193 | 3.091 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL, parser reused | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 5842.685 | 171.154 | 0.426 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 779.704 | 1282.539 | 3.194 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents |
+| catalog-100-items | libexpat C callbacks via WSL2 gcc | expat_2.2.9 | 1000 | 2611 | 99.917 | 10008.287 | 24.921 | gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0; parser created per document; C callbacks; launched through wsl.exe |
+| catalog-100-items | libexpat C tokenizer via WSL2 gcc | expat_2.2.9 | 1000 | 2611 | 100.23 | 9977.063 | 24.843 | gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0; parser created per document; no callbacks; launched through wsl.exe |
+| catalog-100-items | xpact native C ABI via WSL2 gcc | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | not measured | not measured | not measured | Compiled and linked through include/xpact.h; XML_Parse reports XML_ERROR_NOT_STARTED because the Eiffel bridge is not connected yet |
 
 Raw run data is written to `build\benchmarks\benchmark-results.tsv`.
 
@@ -75,19 +77,18 @@ document and from 3420.794 ms to 784.110 ms with parser reuse.
 ## Previous Published Values
 
 The previous published same-machine run was generated on 2026-06-03. Keep these
-rows for trend comparison; the WSL2 C rows are historical in the current update
-because WSL `gcc` was not visible to the 2026-06-18 benchmark process.
+rows for trend comparison against the current 2026-06-19 full publication.
 
 | Engine | Previous median ms | Current median ms | Change |
 |---|---:|---:|---:|
-| xpact Eiffel finalized, assertions discarded | 851.331 | 874.84 | +2.8% |
-| xpact Eiffel finalized, assertions discarded, GC suspended during parse | 860.699 | 891.838 | +3.6% |
-| libexpat via CPython pyexpat callbacks | 192.109 | 204.702 | +6.6% |
-| libexpat via CPython pyexpat tokenizer | 114.742 | 138.316 | +20.5% |
-| xpact native C ABI callbacks via Windows MSVC DLL | 6420.215 | 6044.687 | -5.8% |
-| xpact native C ABI tokenizer via Windows MSVC DLL | 3458.657 | 3474.593 | +0.5% |
-| xpact native C ABI callbacks via Windows MSVC DLL, parser reused | 6392.354 | 6078.09 | -4.9% |
-| xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | 3443.014 | 3420.794 | -0.6% |
-| libexpat C callbacks via WSL2 gcc | 105.146 | not measured | n/a |
-| libexpat C tokenizer via WSL2 gcc | 100.937 | not measured | n/a |
+| xpact Eiffel finalized, assertions discarded | 851.331 | 193.8 | -77.2% |
+| xpact Eiffel finalized, assertions discarded, GC suspended during parse | 860.699 | 194.754 | -77.4% |
+| libexpat via CPython pyexpat callbacks | 192.109 | 208.242 | +8.4% |
+| libexpat via CPython pyexpat tokenizer | 114.742 | 136.86 | +19.3% |
+| xpact native C ABI callbacks via Windows MSVC DLL | 6420.215 | 6475.666 | +0.9% |
+| xpact native C ABI tokenizer via Windows MSVC DLL | 3458.657 | 805.676 | -76.7% |
+| xpact native C ABI callbacks via Windows MSVC DLL, parser reused | 6392.354 | 5842.685 | -8.6% |
+| xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | 3443.014 | 779.704 | -77.4% |
+| libexpat C callbacks via WSL2 gcc | 105.146 | 99.917 | -5.0% |
+| libexpat C tokenizer via WSL2 gcc | 100.937 | 100.23 | -0.7% |
 | xpact native C ABI via WSL2 gcc | not measured | not measured | n/a |

@@ -6,30 +6,34 @@ on the Windows Phase 1 benchmark in `docs/benchmarks.md`.
 ## Current Baseline
 
 The benchmark parses the same 2611-byte UTF-8 catalog document 1000 times and
-reports process-level elapsed time. The generated 2026-06-18 publication table
-reported the median of three runs. Focused 2026-06-19 finalized-build updates
-then measured the direct Eiffel tokenizer path and selected native C ABI
-tokenizer rows against the same workload. The latest focused direct row includes
-slice-backed open element names, no-event attribute and character-data scanning,
-lazy position accounting, normalized-input aliasing for the safe no-callback
-`STRING_8` path, direct ASCII XML/name-character checks, and an inlined
-`scan_name` loop. It is now the best current measurement of the Eiffel parser
-core.
+reports process-level elapsed time. The generated 2026-06-19 publication table
+reports the median of three process-level runs and now includes the WSL2 direct
+C libexpat rows. Focused 2026-06-19 finalized-build updates also measured the
+direct Eiffel tokenizer path and selected native C ABI tokenizer rows against
+the same workload with tighter repetitions. The latest focused direct row
+includes slice-backed open element names, no-event attribute and character-data
+scanning, lazy position accounting, normalized-input aliasing for the safe
+no-callback `STRING_8` path, direct ASCII XML/name-character checks, and an
+inlined `scan_name` loop. It is now the best current measurement of the Eiffel
+parser core.
 
 | Path | Median elapsed ms | Relative note |
 |---|---:|---|
+| libexpat C tokenizer via WSL2 gcc | 100.230 | 2026-06-19 full publication direct C baseline |
+| libexpat C callbacks via WSL2 gcc | 99.917 | 2026-06-19 full publication direct C callback baseline |
 | libexpat via CPython `pyexpat` tokenizer | 115.293 | 2026-06-19 same-run Expat tokenizer baseline |
-| xpact direct Eiffel tokenizer/no-op | 184.700 | 2026-06-19 latest focused row; about 1.60x slower than same-run `pyexpat` tokenizer |
-| xpact native C ABI tokenizer, parser reused | 784.110 | 2026-06-19 focused row through the Windows Eiffel-backed native DLL |
-| xpact native C ABI tokenizer, parser created per document | 787.427 | 2026-06-19 focused row through the Windows Eiffel-backed native DLL |
+| libexpat via CPython `pyexpat` tokenizer, full publication | 136.860 | 2026-06-19 full publication Python binding baseline |
+| xpact direct Eiffel tokenizer/no-op | 184.700 | 2026-06-19 latest focused row; about 1.60x slower than same-run `pyexpat` tokenizer and 1.84x slower than the current WSL2 direct C tokenizer |
+| xpact direct Eiffel tokenizer/no-op, full publication | 193.800 | 2026-06-19 full publication row; about 1.93x slower than the WSL2 direct C tokenizer |
+| xpact native C ABI tokenizer, parser reused | 779.704 | 2026-06-19 full publication row through the Windows Eiffel-backed native DLL |
+| xpact native C ABI tokenizer, parser created per document | 805.676 | 2026-06-19 full publication row through the Windows Eiffel-backed native DLL |
 | xpact direct Eiffel tokenizer/no-op, previous focused row | 247.600 | Slice/no-event fast paths plus normalized-input aliasing, before direct ASCII/name-scanner work |
 | xpact direct Eiffel tokenizer/no-op, earlier focused row | 271.328 | Slice/no-event fast paths before normalized-input aliasing |
 | xpact direct Eiffel tokenizer/no-op, GC suspended, previous focused row | 276.164 | GC suspension remains neutral for this workload |
-| libexpat via CPython `pyexpat` callbacks | 204.702 | 2026-06-18 Python callback baseline row |
-| xpact direct Eiffel tokenizer/no-op, assertions enabled | 881.754 | 2026-06-18 pre-fast-path assertion-enabled row |
+| libexpat via CPython `pyexpat` callbacks | 208.242 | 2026-06-19 full publication Python callback baseline row |
+| xpact direct Eiffel tokenizer/no-op, assertions enabled | 199.462 | 2026-06-19 full publication assertion-enabled row |
 | xpact native C ABI tokenizer, previous publication | 3474.593 | 2026-06-18 native bridge row before latest direct-core and no-callback native improvements |
-| xpact native C ABI callbacks | 6044.687 | 2026-06-18 native callback row |
-| libexpat C tokenizer via WSL2 gcc | 100.937 | Historical 2026-06-03 direct C row; not measured in the current run |
+| xpact native C ABI callbacks | 6475.666 | 2026-06-19 full publication native callback row |
 
 The direct Eiffel row is the best measure of the Eiffel parser core. The native
 C ABI rows include the exported C bridge, C/Eiffel runtime transitions, native
@@ -40,25 +44,29 @@ controlled 774.653 ms measurement to 184.700 ms, about a 76.2% reduction. The
 latest direct ASCII/name-scanner work improved the previous focused direct row
 of 247.600 ms by about 25.4%. Against the 2026-06-18 published direct row of
 874.84 ms, the focused 2026-06-19 row is about 78.9% faster. The direct core is
-no longer an order-of-magnitude problem on this catalog microbenchmark; the
-remaining direct gap is roughly 1.6x versus same-run `pyexpat`.
+no longer an order-of-magnitude problem on this catalog microbenchmark. The
+remaining direct gap is roughly 1.6x versus same-run `pyexpat` and about 1.84x
+versus the current WSL2 direct C libexpat tokenizer row. In the full publication
+table, where the direct Eiffel median is 193.800 ms, the gap is about 1.93x
+versus WSL2 direct C libexpat and about 1.42x versus the same-table CPython
+`pyexpat` tokenizer.
 
 ## What Has Already Been Ruled Out
 
 Temporary garbage-collection suspension does not explain the main gap. The
 `parse_without_garbage_collection` row is close to the normal direct Eiffel row
-in both the published and focused tables. In the 2026-06-19 focused run it was
-276.164 ms versus 271.328 ms without suspension, so the difference remains
+in both the published and focused tables. In the 2026-06-19 full publication it
+was 194.754 ms versus 193.800 ms without suspension, so the difference remains
 normal process-level noise.
 
 Parser creation and free are also not the main native cost. Reusing the native
-`XML_Parser` with `XML_ParserReset` produced nearly the same focused median as
-creating one parser per document: 784.110 ms versus 787.427 ms. The remaining
+`XML_Parser` with `XML_ParserReset` produced nearly the same median as creating
+one parser per document: 779.704 ms versus 805.676 ms. The remaining
 native overhead is per-parse bridge, byte/string conversion, and payload work.
 
 The finalized assertion build is also not a material benchmark cost for this
-workload in the 2026-06-18 pre-fast-path table: 881.754 ms with assertions
-enabled versus 874.84 ms with assertions discarded. That supports keeping
+workload in the 2026-06-19 full publication: 199.462 ms with assertions enabled
+versus 193.800 ms with assertions discarded. That supports keeping
 assertion-enabled finalized lanes as a validation tool without treating them as
 a separate performance architecture.
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system name="xpact" xmlns="http://www.eiffel.com/developers/xml/configuration-1-23-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-23-0 http://www.eiffel.com/developers/xml/configuration-1-23-0.xsd" library_target="xpact" uuid="5C280ACE-B87D-44D1-838B-1FEB8F211452">
+	<target name="xpact">
+		<root all_classes="true"/>
+		<option  full_class_checking="false" is_obsolete_routine_type="true"  syntax="standard" warning="warning">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<capability>
+			<concurrency support="thread"/>
+			<void_safety support="none"/>
+		</capability>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<cluster name="src" location="source" recursive="true">
+			<file_rule>
+				<exclude>/small-size$</exclude>
+				<condition>
+					<custom name="buffer_size" excluded_value="small"/>
+				</condition>
+			</file_rule>
+			<file_rule>
+				<exclude>/big-size$</exclude>
+				<condition>
+					<custom name="buffer_size" excluded_value="big"/>
+				</condition>
+			</file_rule>
+		</cluster>
+	
+	</target>
+</system>

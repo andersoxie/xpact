@@ -123,12 +123,18 @@ function Get-ExistingBenchmarkHistory {
 		return $null
 	}
 	$Text = Get-Content -LiteralPath $Path -Raw
-	$Marker = "## Previous Published Values"
-	$Index = $Text.IndexOf($Marker)
-	if ($Index -lt 0) {
-		return $null
+	$Markers = @(
+		"## 2026-06-19 Focused Performance Updates",
+		"## 2026-06-19 Direct Tokenizer Updates",
+		"## Previous Published Values"
+	)
+	foreach ($Marker in $Markers) {
+		$Index = $Text.IndexOf($Marker)
+		if ($Index -ge 0) {
+			return $Text.Substring($Index).Trim()
+		}
 	}
-	$Text.Substring($Index).Trim()
+	$null
 }
 
 function ConvertTo-WslPath {
