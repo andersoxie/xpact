@@ -86,6 +86,35 @@ feature -- Access
 			result_attached: Result /= Void
 		end
 
+feature {XP_PARSER} -- Parser insertion
+
+	has_string (a_name: STRING_8): BOOLEAN
+			-- Does `a_name' exist?
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+		do
+			Result := table.has (a_name)
+		end
+
+	put_owned (a_name, a_value: STRING_8)
+			-- Add explicit parser-owned attribute strings without cloning them.
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+			value_attached: a_value /= Void
+			not_full: count < Default_max_attribute_count
+			not_duplicate: not has_string (a_name)
+		do
+			table.put (a_value, a_name)
+			names.extend (a_name)
+			specified_attribute_count := specified_attribute_count + 1
+		ensure
+			one_more: count = old count + 1
+			one_more_specified: specified_attribute_count = old specified_attribute_count + 1
+			inserted: has_string (a_name)
+		end
+
 feature -- Element change
 
 	put (a_name, a_value: READABLE_STRING_8)

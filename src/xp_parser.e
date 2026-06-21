@@ -1175,11 +1175,11 @@ feature {NONE} -- Markup parsing
 							create l_value.make_empty
 							i := parse_attribute_value (a_input, i + 1, l_quote, l_value)
 							if not has_error then
-								if a_attributes.has (l_name) then
+								if a_attributes.has_string (l_name) then
 									set_error ("duplicate attribute")
 									Result := a_input.count + 1
 								else
-									a_attributes.put (l_name, l_value)
+									a_attributes.put_owned (l_name, l_value)
 									Result := i + 1
 								end
 							else
@@ -1739,6 +1739,9 @@ feature {NONE} -- Character data and references
 						else
 							if not attached l_text then
 								create l_text.make_empty
+								if l_materialize_text and then i > a_start_index then
+									l_text.append (a_input.substring (a_start_index, i - 1))
+								end
 							end
 							check attached l_text as l_attached_text then
 								i := append_reference_in_content (a_input, i, l_attached_text)
@@ -1764,6 +1767,9 @@ feature {NONE} -- Character data and references
 				end
 				if not has_error and not is_suspended then
 					if element_stack.count = 0 and then not parsing_external_entity then
+						if not attached l_text and l_materialize_text then
+							create l_text.make_from_string (a_input.substring (a_start_index, i - 1))
+						end
 						if attached l_text as l_attached_text then
 							l_all_space := is_all_xml_space (l_attached_text)
 						end
@@ -1777,6 +1783,9 @@ feature {NONE} -- Character data and references
 							Result := i
 						end
 					else
+						if not attached l_text and l_materialize_text then
+							create l_text.make_from_string (a_input.substring (a_start_index, i - 1))
+						end
 						if attached l_text as l_attached_text then
 							if handler.wants_automatic_character_data_default then
 								emit_default (l_attached_text)
