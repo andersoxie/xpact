@@ -227,7 +227,7 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
               $ValueLine = $Values -join ","
               Set-Content -LiteralPath $SourceFile -Value @($HeaderLine, $ValueLine) -Encoding UTF8
               $ManifestRows.Add([pscustomobject]@{
-                sourceFile = $SourceFile.Replace('\', '/')
+                sourceFile = $SourceFile.Replace([string] [char] 92, '/')
                 csvFileName = "plot-$($env:PLOT_REPORT_PREFIX)-$Token-elapsed-ms.csv"
                 group = $env:PLOT_GROUP_NAME
                 title = "$TestName median elapsed time"
