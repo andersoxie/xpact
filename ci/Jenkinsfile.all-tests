@@ -201,27 +201,23 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
 
 def publishBenchmarkPlots(plots) {
   plots.each { spec ->
-    try {
-      plot csvFileName: spec.csvFileName,
-           csvSeries: [[file: spec.sourceFile,
-                        exclusionValues: '',
-                        displayTableFlag: false,
-                        inclusionFlag: 'OFF',
-                        url: '']],
-           group: spec.group,
-           title: spec.title,
-           style: 'line',
-           exclZero: false,
-           keepRecords: false,
-           logarithmic: false,
-           numBuilds: '',
-           useDescr: false,
-           yaxis: spec.yaxis,
-           yaxisMaximum: '',
-           yaxisMinimum: ''
-    } catch (Throwable err) {
-      echo "Benchmark plot '${spec.title}' was not published: ${err.getMessage()}"
-    }
+    plot csvFileName: spec.csvFileName,
+         csvSeries: [[file: spec.sourceFile,
+                      exclusionValues: '',
+                      displayTableFlag: false,
+                      inclusionFlag: 'OFF',
+                      url: '']],
+         group: spec.group,
+         title: spec.title,
+         style: 'line',
+         exclZero: false,
+         keepRecords: false,
+         logarithmic: false,
+         numBuilds: '',
+         useDescr: false,
+         yaxis: spec.yaxis,
+         yaxisMaximum: '',
+         yaxisMinimum: ''
   }
 }
 
