@@ -147,54 +147,119 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
   if (!fileExists(tsvPath)) {
     return []
   }
-  def text = readFile(tsvPath).replaceFirst(/^\uFEFF/, '')
+  def manifestPath = "jenkins-plot-${safeReportToken(reportPrefix)}-manifest.tsv"
+  withEnv([
+    "PLOT_TSV_PATH=${tsvPath}",
+    "PLOT_REPORT_PREFIX=${safeReportToken(reportPrefix)}",
+    "PLOT_GROUP_NAME=${groupName}",
+    "PLOT_MANIFEST_PATH=${manifestPath}"
+  ]) {
+    powershell '''
+      $ErrorActionPreference = "Stop"
+      $Rows = @(Import-Csv -LiteralPath $env:PLOT_TSV_PATH -Delimiter "`t")
+
+      function ConvertTo-SafeToken {
+        param([string] $Value)
+        $Token = $Value -replace '[^A-Za-z0-9_.-]+', '-'
+        $Token = $Token.Trim('-')
+        if ([string]::IsNullOrWhiteSpace($Token)) {
+          return "plot"
+        }
+        if ($Token.Length -gt 120) {
+          return $Token.Substring(0, 120)
+        }
+        return $Token
+      }
+
+      function ConvertTo-CsvCell {
+        param([string] $Value)
+        if ($Value -match '[",`r`n]') {
+          return '"' + $Value.Replace('"', '""') + '"'
+        }
+        return $Value
+      }
+
+      function ConvertTo-Number {
+        param([string] $Value)
+        if ([string]::IsNullOrWhiteSpace($Value)) {
+          return $null
+        }
+        $Parsed = 0.0
+        $Ok = [double]::TryParse($Value, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::InvariantCulture, [ref] $Parsed)
+        if (-not $Ok) {
+          $Ok = [double]::TryParse($Value, [Globalization.NumberStyles]::Float, [Globalization.CultureInfo]::CurrentCulture, [ref] $Parsed)
+        }
+        if ($Ok) {
+          return $Parsed
+        }
+        return $null
+      }
+
+      $OutputDir = Split-Path -Parent $env:PLOT_TSV_PATH
+      if ([string]::IsNullOrWhiteSpace($OutputDir)) {
+        $OutputDir = "."
+      }
+      $ManifestRows = New-Object System.Collections.Generic.List[object]
+      $Rows |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_.Engine) } |
+        Group-Object { if (-not [string]::IsNullOrWhiteSpace($_.Benchmark)) { $_.Benchmark } else { $_.CorpusId } } |
+        Sort-Object Name |
+        ForEach-Object {
+          $TestName = $_.Name
+          if (-not [string]::IsNullOrWhiteSpace($TestName)) {
+            $Headers = New-Object System.Collections.Generic.List[string]
+            $Values = New-Object System.Collections.Generic.List[string]
+            $_.Group |
+              Group-Object Engine |
+              Sort-Object Name |
+              ForEach-Object {
+                $Numbers = @($_.Group | ForEach-Object { ConvertTo-Number $_.ElapsedMs } | Where-Object { $null -ne $_ } | Sort-Object)
+                if ($Numbers.Count -gt 0) {
+                  $Median = $Numbers[[int] [math]::Floor(($Numbers.Count - 1) / 2)]
+                  $Headers.Add($_.Name)
+                  $Values.Add($Median.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture))
+                }
+              }
+            if ($Headers.Count -gt 0) {
+              $Token = ConvertTo-SafeToken $TestName
+              $SourceFile = Join-Path $OutputDir "jenkins-plot-$($env:PLOT_REPORT_PREFIX)-$Token-elapsed-ms.csv"
+              $HeaderLine = (($Headers | ForEach-Object { ConvertTo-CsvCell $_ }) -join ",")
+              $ValueLine = $Values -join ","
+              Set-Content -LiteralPath $SourceFile -Value @($HeaderLine, $ValueLine) -Encoding UTF8
+              $ManifestRows.Add([pscustomobject]@{
+                sourceFile = ($SourceFile -replace '\\', '/')
+                csvFileName = "plot-$($env:PLOT_REPORT_PREFIX)-$Token-elapsed-ms.csv"
+                group = $env:PLOT_GROUP_NAME
+                title = "$TestName median elapsed time"
+                yaxis = "Median elapsed ms"
+              })
+            }
+          }
+        }
+      if ($ManifestRows.Count -eq 0) {
+        throw "No numeric benchmark rows were found in $($env:PLOT_TSV_PATH); no Jenkins plots can be published."
+      }
+      $ManifestRows | Export-Csv -LiteralPath $env:PLOT_MANIFEST_PATH -Delimiter "`t" -NoTypeInformation -Encoding UTF8
+    '''
+  }
+
+  if (!fileExists(manifestPath)) {
+    return []
+  }
+  def text = readFile(manifestPath).replaceFirst(/^\uFEFF/, '')
   def lines = text.split(/\r?\n/).findAll { it.trim().length() > 0 }
   if (lines.size() < 2) {
     return []
   }
-
   def headers = parseTsvLine(lines[0]).collect { it.replaceFirst(/^\uFEFF/, '') }
-  def byTest = [:]
+  def plots = []
   lines.drop(1).each { line ->
     def values = parseTsvLine(line)
     def row = [:]
     headers.eachWithIndex { header, index ->
       row[header] = index < values.size() ? values[index] : ''
     }
-
-    def testName = row['Benchmark'] ?: row['CorpusId']
-    def engineName = row['Engine']
-    def elapsedMs = parseNumericValue(row['ElapsedMs'])
-    if (testName && engineName && elapsedMs != null) {
-      if (!byTest.containsKey(testName)) {
-        byTest[testName] = [:]
-      }
-      if (!byTest[testName].containsKey(engineName)) {
-        byTest[testName][engineName] = []
-      }
-      byTest[testName][engineName] << elapsedMs
-    }
-  }
-
-  def plots = []
-  def outputDir = tsvPath.contains('/') ? tsvPath.substring(0, tsvPath.lastIndexOf('/')) : '.'
-  byTest.keySet().toList().sort().each { testName ->
-    def engineNames = byTest[testName].keySet().toList().sort()
-    def medians = engineNames.collect { engineName -> medianNumeric(byTest[testName][engineName]) }
-    if (medians.any { it != null }) {
-      def token = safeReportToken(testName)
-      def sourceFile = "${outputDir}/jenkins-plot-${safeReportToken(reportPrefix)}-${token}-elapsed-ms.csv"
-      def header = engineNames.collect { csvEscape(it) }.join(',')
-      def values = medians.collect { it == null ? '' : String.format(java.util.Locale.US, '%.3f', it as double) }.join(',')
-      writeFile file: sourceFile, text: "${header}\n${values}\n"
-      plots << [
-        sourceFile: sourceFile,
-        csvFileName: "plot-${safeReportToken(reportPrefix)}-${token}-elapsed-ms.csv",
-        group: groupName,
-        title: "${testName} median elapsed time",
-        yaxis: 'Median elapsed ms'
-      ]
-    }
+    plots << row
   }
   return plots
 }
@@ -539,12 +604,14 @@ pipeline {
       steps {
         script {
           if (powershell(returnStatus: true, script: '''
-            if (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container) { exit 0 }
+            $root = "${env:CPYTHON_SOURCE_DIR}"
+            if (-not [string]::IsNullOrWhiteSpace($root) -and
+                (Test-Path -LiteralPath (Join-Path $root 'PCbuild\build.bat') -PathType Leaf)) { exit 0 }
             exit 1
           ''') != 0) {
             catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
               runWithJenkinsTestResult('CPython public application tests', 'source tree available for baseline') {
-                error "Skipping CPython baseline: CPYTHON_SOURCE_DIR does not exist: ${env.CPYTHON_SOURCE_DIR}"
+                error "Skipping CPython baseline: CPYTHON_SOURCE_DIR is not a CPython checkout with PCbuild\\build.bat: ${env.CPYTHON_SOURCE_DIR}"
               }
             }
           } else {
@@ -578,12 +645,14 @@ pipeline {
       steps {
         script {
           if (powershell(returnStatus: true, script: '''
-            if (Test-Path -LiteralPath "${env:CPYTHON_SOURCE_DIR}" -PathType Container) { exit 0 }
+            $root = "${env:CPYTHON_SOURCE_DIR}"
+            if (-not [string]::IsNullOrWhiteSpace($root) -and
+                (Test-Path -LiteralPath (Join-Path $root 'PCbuild\build.bat') -PathType Leaf)) { exit 0 }
             exit 1
           ''') != 0) {
             catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
               runWithJenkinsTestResult('CPython public application tests', 'source tree available for xpact replacement') {
-                error "Skipping CPython xpact replacement: CPYTHON_SOURCE_DIR does not exist: ${env.CPYTHON_SOURCE_DIR}"
+                error "Skipping CPython xpact replacement: CPYTHON_SOURCE_DIR is not a CPython checkout with PCbuild\\build.bat: ${env.CPYTHON_SOURCE_DIR}"
               }
             }
           } else {
