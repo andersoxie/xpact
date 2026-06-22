@@ -195,11 +195,86 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
         return $null
       }
 
+      function ConvertTo-HtmlText {
+        param([string] $Value)
+        if ($null -eq $Value) {
+          return ""
+        }
+        return ([System.Net.WebUtility]::HtmlEncode($Value)).Replace("'", "&#39;")
+      }
+
+      function New-BenchmarkSvg {
+        param(
+          [string] $Title,
+          [object] $Headers,
+          [object] $Values
+        )
+        $Pairs = New-Object System.Collections.Generic.List[object]
+        for ($Index = 0; $Index -lt $Headers.Count; $Index += 1) {
+          $Number = ConvertTo-Number $Values[$Index]
+          if ($null -ne $Number) {
+            $Pairs.Add([pscustomobject]@{
+              Name = [string] $Headers[$Index]
+              Value = [double] $Number
+            })
+          }
+        }
+        if ($Pairs.Count -eq 0) {
+          return ""
+        }
+
+        $Max = ($Pairs | Measure-Object -Property Value -Maximum).Maximum
+        if ($Max -le 0) {
+          $Max = 1
+        }
+
+        $LabelWidth = 260
+        $PlotWidth = 560
+        $ValueWidth = 140
+        $Left = 20
+        $Top = 24
+        $RowHeight = 30
+        $Width = $Left + $LabelWidth + $PlotWidth + $ValueWidth + 20
+        $Height = $Top + ($Pairs.Count * $RowHeight) + 22
+        $AxisX = $Left + $LabelWidth
+        $AxisBottom = $Top + ($Pairs.Count * $RowHeight)
+        $Colors = @("#1f77b4", "#d62728", "#2ca02c", "#9467bd", "#ff7f0e", "#17becf", "#8c564b", "#7f7f7f")
+        $EncodedTitle = ConvertTo-HtmlText $Title
+        $Builder = New-Object System.Text.StringBuilder
+        [void] $Builder.AppendLine("<section>")
+        [void] $Builder.AppendLine("<h2>$EncodedTitle</h2>")
+        [void] $Builder.AppendLine("<svg xmlns='http://www.w3.org/2000/svg' width='$Width' height='$Height' viewBox='0 0 $Width $Height' role='img' aria-label='$EncodedTitle'>")
+        [void] $Builder.AppendLine("<line x1='$AxisX' y1='$Top' x2='$AxisX' y2='$AxisBottom' stroke='#d0d7de'/>")
+        for ($Index = 0; $Index -lt $Pairs.Count; $Index += 1) {
+          $Pair = $Pairs[$Index]
+          $Y = $Top + ($Index * $RowHeight)
+          $TextY = $Y + 18
+          $BarWidth = [int] [math]::Round(($Pair.Value / $Max) * $PlotWidth)
+          if ($BarWidth -lt 1 -and $Pair.Value -gt 0) {
+            $BarWidth = 1
+          }
+          $Name = ConvertTo-HtmlText $Pair.Name
+          $ValueText = ConvertTo-HtmlText ($Pair.Value.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture) + " ms")
+          $Color = $Colors[$Index % $Colors.Count]
+          $ValueX = $AxisX + $BarWidth + 8
+          if ($ValueX -gt ($AxisX + $PlotWidth + 8)) {
+            $ValueX = $AxisX + $PlotWidth + 8
+          }
+          [void] $Builder.AppendLine("<text x='$Left' y='$TextY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$Name</text>")
+          [void] $Builder.AppendLine("<rect x='$AxisX' y='$Y' width='$BarWidth' height='20' fill='$Color'/>")
+          [void] $Builder.AppendLine("<text x='$ValueX' y='$TextY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$ValueText</text>")
+        }
+        [void] $Builder.AppendLine("</svg>")
+        [void] $Builder.AppendLine("</section>")
+        return $Builder.ToString()
+      }
+
       $OutputDir = Split-Path -Parent $env:PLOT_TSV_PATH
       if ([string]::IsNullOrWhiteSpace($OutputDir)) {
         $OutputDir = "."
       }
       $ManifestRows = New-Object System.Collections.Generic.List[object]
+      $HtmlSections = New-Object System.Collections.Generic.List[string]
       $Rows |
         Where-Object { -not [string]::IsNullOrWhiteSpace($_.Engine) } |
         Group-Object { if (-not [string]::IsNullOrWhiteSpace($_.Benchmark)) { $_.Benchmark } else { $_.CorpusId } } |
@@ -233,12 +308,24 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
                 title = "$TestName median elapsed time"
                 yaxis = "Median elapsed ms"
               })
+              $HtmlSections.Add((New-BenchmarkSvg -Title "$TestName median elapsed time" -Headers $Headers -Values $Values))
             }
           }
         }
       if ($ManifestRows.Count -eq 0) {
         throw "No numeric benchmark rows were found in $($env:PLOT_TSV_PATH); no Jenkins plots can be published."
       }
+      $ReportPath = Join-Path $OutputDir "benchmark-plots.html"
+      $Report = New-Object System.Text.StringBuilder
+      [void] $Report.AppendLine("<!doctype html>")
+      [void] $Report.AppendLine("<html><head><meta charset='utf-8'><title>Benchmark Plots</title></head><body>")
+      [void] $Report.AppendLine("<h1>Benchmark Plots</h1>")
+      [void] $Report.AppendLine("<p>Median elapsed time for the current Jenkins build.</p>")
+      foreach ($Section in $HtmlSections) {
+        [void] $Report.AppendLine($Section)
+      }
+      [void] $Report.AppendLine("</body></html>")
+      Set-Content -LiteralPath $ReportPath -Value $Report.ToString() -Encoding UTF8
       $ManifestRows | Export-Csv -LiteralPath $env:PLOT_MANIFEST_PATH -Delimiter "`t" -NoTypeInformation -Encoding UTF8
     '''
   }
@@ -283,6 +370,21 @@ def publishBenchmarkPlots(plots) {
          yaxis: spec.yaxis,
          yaxisMaximum: '',
          yaxisMinimum: ''
+  }
+}
+
+def publishBenchmarkHtmlReport(reportDir, reportFiles, reportName) {
+  try {
+    publishHTML(target: [
+      allowMissing: true,
+      alwaysLinkToLastBuild: true,
+      keepAll: true,
+      reportDir: reportDir,
+      reportFiles: reportFiles,
+      reportName: reportName
+    ])
+  } catch (Throwable err) {
+    echo "HTML benchmark report was archived but not published by HTML Publisher: ${err.getMessage()}"
   }
 }
 
@@ -593,6 +695,7 @@ pipeline {
             publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/benchmarks/benchmark-results.tsv',
                                                              'same-machine-benchmarks',
                                                              'xpact same-machine benchmarks'))
+            publishBenchmarkHtmlReport('build/benchmarks', 'benchmark-plots.html', 'Benchmark Plots')
             publishJenkinsTestResults()
           }
         }
@@ -690,7 +793,9 @@ pipeline {
         build/libexpat-adapter-current/*.tsv,
         build/libexpat-adapter-current/*.log,
         build/contributed-examples/*.log,
+        build/benchmarks/*.tsv,
         build/benchmarks/*.csv,
+        build/benchmarks/*.html,
         docs/benchmarks.md,
         docs/performance-analysis.md,
         dist/*.zip
