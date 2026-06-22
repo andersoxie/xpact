@@ -308,7 +308,7 @@ pipeline {
            defaultValue: 'C:\\src\\libexpat-R_2_8_1\\expat',
            description: 'Path to the upstream Expat source tree. libexpat stages are marked unstable when this path does not exist.')
     booleanParam(name: 'RUN_BENCHMARKS',
-                 defaultValue: false,
+                 defaultValue: true,
                  description: 'Run same-machine benchmark publication.')
     booleanParam(name: 'RUN_CONTRIBUTED_EXAMPLES',
                  defaultValue: true,
