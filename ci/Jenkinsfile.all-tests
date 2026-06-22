@@ -87,12 +87,8 @@ def writeBenchmarkJUnitReport(tsvPath, suiteName, reportName) {
     }
     count += 1
 
-    def elapsedSeconds = '0.000'
-    try {
-      elapsedSeconds = formatSeconds(Double.parseDouble(row['ElapsedMs']) / 1000.0)
-    } catch (Throwable ignored) {
-      elapsedSeconds = '0.000'
-    }
+    def elapsedMs = parseNumericValue(row['ElapsedMs'])
+    def elapsedSeconds = elapsedMs == null ? '0.000' : formatSeconds(elapsedMs / 1000.0)
 
     def primaryName = row['Benchmark'] ?: row['CorpusId'] ?: "row-${count}"
     def engineName = row['Engine'] ?: 'engine'
@@ -114,6 +110,119 @@ ${properties}    </properties>
 <testsuite name="${xmlEscape(suiteName)}" tests="${count}" failures="0" skipped="0">
 ${cases}</testsuite>
 """
+}
+
+def csvEscape(value) {
+  def text = value == null ? '' : value.toString()
+  if (text.contains('"') || text.contains(',') || text.contains('\n') || text.contains('\r')) {
+    return '"' + text.replace('"', '""') + '"'
+  }
+  return text
+}
+
+def parseNumericValue(value) {
+  try {
+    def text = value == null ? '' : value.toString().trim()
+    if (text.length() == 0) {
+      return null
+    }
+    if (text.contains(',') && !text.contains('.')) {
+      text = text.replace(',', '.')
+    }
+    return Double.parseDouble(text)
+  } catch (Throwable ignored) {
+    return null
+  }
+}
+
+def medianNumeric(values) {
+  if (values == null || values.isEmpty()) {
+    return null
+  }
+  def sorted = values.collect { it as double }.sort()
+  return sorted[(int) Math.floor((sorted.size() - 1) / 2)]
+}
+
+def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
+  if (!fileExists(tsvPath)) {
+    return []
+  }
+  def text = readFile(tsvPath).replaceFirst(/^\uFEFF/, '')
+  def lines = text.split(/\r?\n/).findAll { it.trim().length() > 0 }
+  if (lines.size() < 2) {
+    return []
+  }
+
+  def headers = parseTsvLine(lines[0]).collect { it.replaceFirst(/^\uFEFF/, '') }
+  def byTest = [:]
+  lines.drop(1).each { line ->
+    def values = parseTsvLine(line)
+    def row = [:]
+    headers.eachWithIndex { header, index ->
+      row[header] = index < values.size() ? values[index] : ''
+    }
+
+    def testName = row['Benchmark'] ?: row['CorpusId']
+    def engineName = row['Engine']
+    def elapsedMs = parseNumericValue(row['ElapsedMs'])
+    if (testName && engineName && elapsedMs != null) {
+      if (!byTest.containsKey(testName)) {
+        byTest[testName] = [:]
+      }
+      if (!byTest[testName].containsKey(engineName)) {
+        byTest[testName][engineName] = []
+      }
+      byTest[testName][engineName] << elapsedMs
+    }
+  }
+
+  def plots = []
+  def outputDir = tsvPath.contains('/') ? tsvPath.substring(0, tsvPath.lastIndexOf('/')) : '.'
+  byTest.keySet().toList().sort().each { testName ->
+    def engineNames = byTest[testName].keySet().toList().sort()
+    def medians = engineNames.collect { engineName -> medianNumeric(byTest[testName][engineName]) }
+    if (medians.any { it != null }) {
+      def token = safeReportToken(testName)
+      def sourceFile = "${outputDir}/jenkins-plot-${safeReportToken(reportPrefix)}-${token}-elapsed-ms.csv"
+      def header = engineNames.collect { csvEscape(it) }.join(',')
+      def values = medians.collect { it == null ? '' : String.format(java.util.Locale.US, '%.3f', it as double) }.join(',')
+      writeFile file: sourceFile, text: "${header}\n${values}\n"
+      plots << [
+        sourceFile: sourceFile,
+        csvFileName: "plot-${safeReportToken(reportPrefix)}-${token}-elapsed-ms.csv",
+        group: groupName,
+        title: "${testName} median elapsed time",
+        yaxis: 'Median elapsed ms'
+      ]
+    }
+  }
+  return plots
+}
+
+def publishBenchmarkPlots(plots) {
+  plots.each { spec ->
+    try {
+      plot csvFileName: spec.csvFileName,
+           csvSeries: [[file: spec.sourceFile,
+                        exclusionValues: '',
+                        displayTableFlag: false,
+                        inclusionFlag: 'OFF',
+                        url: '']],
+           group: spec.group,
+           title: spec.title,
+           style: 'line',
+           exclZero: false,
+           keepRecords: false,
+           logarithmic: false,
+           numBuilds: '',
+           useDescr: false,
+           yaxis: spec.yaxis,
+           yaxisMaximum: '',
+           yaxisMinimum: ''
+    } catch (Throwable err) {
+      echo "Benchmark plot '${spec.title}' was not published: ${err.getMessage()}"
+    }
+  }
 }
 
 def publishJenkinsTestResults() {
@@ -460,10 +569,14 @@ pipeline {
             writeBenchmarkJUnitReport('build/benchmarks/benchmark-results.tsv',
                                       'xpact same-machine benchmark rows',
                                       'same-machine-benchmarks')
+            publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/benchmarks/benchmark-results.tsv',
+                                                             'same-machine-benchmarks',
+                                                             'xpact same-machine benchmarks'))
             publishJenkinsTestResults()
           }
           archiveArtifacts artifacts: '''
             build/benchmarks/*.tsv,
+            build/benchmarks/*.csv,
             docs/benchmarks.md,
             docs/performance-analysis.md
           ''', allowEmptyArchive: true
@@ -494,10 +607,14 @@ pipeline {
             writeBenchmarkJUnitReport('build/large-xml-benchmarks/large-xml-benchmark-results.tsv',
                                       'xpact large XML benchmark rows',
                                       'large-xml-benchmarks')
+            publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/large-xml-benchmarks/large-xml-benchmark-results.tsv',
+                                                             'large-xml-benchmarks',
+                                                             'xpact large XML benchmarks'))
             publishJenkinsTestResults()
           }
           archiveArtifacts artifacts: '''
             build/large-xml-benchmarks/*.tsv,
+            build/large-xml-benchmarks/*.csv,
             docs/large-xml-benchmarks.md
           ''', allowEmptyArchive: true
         }
