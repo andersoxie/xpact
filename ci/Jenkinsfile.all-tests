@@ -388,6 +388,14 @@ def publishBenchmarkHtmlReport(reportDir, reportFiles, reportName) {
   }
 }
 
+def linkBenchmarkReportInBuildDescription(artifactPath, label) {
+  def baseUrl = env.BUILD_URL ?: ''
+  def reportUrl = "${baseUrl}artifact/${artifactPath}"
+  def link = "<a href=\"${xmlEscape(reportUrl)}\">${xmlEscape(label)}</a>"
+  def previousDescription = currentBuild.description?.trim()
+  currentBuild.description = previousDescription ? "${previousDescription}<br/>${link}" : link
+}
+
 def publishJenkinsTestResults() {
   junit testResults: 'jenkins-test-results-*.xml',
         allowEmptyResults: true
@@ -734,8 +742,9 @@ pipeline {
                                       'same-machine-benchmarks')
             publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/benchmarks/benchmark-results.tsv',
                                                              'same-machine-benchmarks',
-                                                             'xpact same-machine benchmarks'))
+                                                             'Benchmark Trends'))
             publishBenchmarkHtmlReport('build/benchmarks', 'benchmark-plots.html', 'Benchmark Plots')
+            linkBenchmarkReportInBuildDescription('build/benchmarks/benchmark-plots.html', 'Benchmark Plots')
             publishJenkinsTestResults()
           }
           archiveArtifacts artifacts: '''
@@ -774,8 +783,9 @@ pipeline {
                                       'large-xml-benchmarks')
             publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/large-xml-benchmarks/large-xml-benchmark-results.tsv',
                                                              'large-xml-benchmarks',
-                                                             'xpact large XML benchmarks'))
+                                                             'Large XML Benchmark Trends'))
             publishBenchmarkHtmlReport('build/large-xml-benchmarks', 'benchmark-plots.html', 'Large XML Benchmark Plots')
+            linkBenchmarkReportInBuildDescription('build/large-xml-benchmarks/benchmark-plots.html', 'Large XML Benchmark Plots')
             publishJenkinsTestResults()
           }
           archiveArtifacts artifacts: '''
