@@ -228,27 +228,26 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
           $Max = 1
         }
 
-        $LabelWidth = 260
-        $PlotWidth = 560
-        $ValueWidth = 140
-        $Left = 20
-        $Top = 24
-        $RowHeight = 30
-        $Width = $Left + $LabelWidth + $PlotWidth + $ValueWidth + 20
-        $Height = $Top + ($Pairs.Count * $RowHeight) + 22
-        $AxisX = $Left + $LabelWidth
-        $AxisBottom = $Top + ($Pairs.Count * $RowHeight)
+        $PlotWidth = 720
+        $ValueWidth = 150
+        $Left = 28
+        $Top = 20
+        $RowHeight = 50
+        $BarHeight = 16
+        $Width = $Left + $PlotWidth + $ValueWidth + 30
+        $Height = $Top + ($Pairs.Count * $RowHeight) + 8
         $Colors = @("#1f77b4", "#d62728", "#2ca02c", "#9467bd", "#ff7f0e", "#17becf", "#8c564b", "#7f7f7f")
         $EncodedTitle = ConvertTo-HtmlText $Title
         $Builder = New-Object System.Text.StringBuilder
         [void] $Builder.AppendLine("<section>")
         [void] $Builder.AppendLine("<h2>$EncodedTitle</h2>")
         [void] $Builder.AppendLine("<svg xmlns='http://www.w3.org/2000/svg' width='$Width' height='$Height' viewBox='0 0 $Width $Height' role='img' aria-label='$EncodedTitle'>")
-        [void] $Builder.AppendLine("<line x1='$AxisX' y1='$Top' x2='$AxisX' y2='$AxisBottom' stroke='#d0d7de'/>")
         for ($Index = 0; $Index -lt $Pairs.Count; $Index += 1) {
           $Pair = $Pairs[$Index]
           $Y = $Top + ($Index * $RowHeight)
-          $TextY = $Y + 18
+          $LabelY = $Y + 13
+          $BarY = $Y + 22
+          $ValueY = $BarY + 13
           $BarWidth = [int] [math]::Round(($Pair.Value / $Max) * $PlotWidth)
           if ($BarWidth -lt 1 -and $Pair.Value -gt 0) {
             $BarWidth = 1
@@ -256,13 +255,14 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
           $Name = ConvertTo-HtmlText $Pair.Name
           $ValueText = ConvertTo-HtmlText ($Pair.Value.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture) + " ms")
           $Color = $Colors[$Index % $Colors.Count]
-          $ValueX = $AxisX + $BarWidth + 8
-          if ($ValueX -gt ($AxisX + $PlotWidth + 8)) {
-            $ValueX = $AxisX + $PlotWidth + 8
+          $ValueX = $Left + $BarWidth + 8
+          if ($ValueX -gt ($Left + $PlotWidth + 8)) {
+            $ValueX = $Left + $PlotWidth + 8
           }
-          [void] $Builder.AppendLine("<text x='$Left' y='$TextY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$Name</text>")
-          [void] $Builder.AppendLine("<rect x='$AxisX' y='$Y' width='$BarWidth' height='20' fill='$Color'/>")
-          [void] $Builder.AppendLine("<text x='$ValueX' y='$TextY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$ValueText</text>")
+          [void] $Builder.AppendLine("<text x='$Left' y='$LabelY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$Name</text>")
+          [void] $Builder.AppendLine("<rect x='$Left' y='$BarY' width='$PlotWidth' height='$BarHeight' fill='#f2f4f7'/>")
+          [void] $Builder.AppendLine("<rect x='$Left' y='$BarY' width='$BarWidth' height='$BarHeight' fill='$Color'/>")
+          [void] $Builder.AppendLine("<text x='$ValueX' y='$ValueY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$ValueText</text>")
         }
         [void] $Builder.AppendLine("</svg>")
         [void] $Builder.AppendLine("</section>")
@@ -391,9 +391,9 @@ def publishBenchmarkHtmlReport(reportDir, reportFiles, reportName) {
 def linkBenchmarkReportInBuildDescription(artifactPath, label) {
   def baseUrl = env.BUILD_URL ?: ''
   def reportUrl = "${baseUrl}artifact/${artifactPath}"
-  def link = "<a href=\"${xmlEscape(reportUrl)}\">${xmlEscape(label)}</a>"
+  def link = "${label}: ${reportUrl}"
   def previousDescription = currentBuild.description?.trim()
-  currentBuild.description = previousDescription ? "${previousDescription}<br/>${link}" : link
+  currentBuild.description = previousDescription ? "${previousDescription}\n${link}" : link
 }
 
 def publishJenkinsTestResults() {
