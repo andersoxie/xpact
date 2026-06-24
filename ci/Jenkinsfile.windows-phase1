@@ -203,6 +203,97 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
         return ([System.Net.WebUtility]::HtmlEncode($Value)).Replace("'", "&#39;")
       }
 
+      function ConvertTo-BuildSortKey {
+        param([string] $Build)
+        $Parsed = 0
+        if ([int]::TryParse($Build, [ref] $Parsed)) {
+          return $Parsed
+        }
+        return [int]::MaxValue
+      }
+
+      function Get-BenchmarkName {
+        param($Row)
+        if (-not [string]::IsNullOrWhiteSpace([string] $Row.Benchmark)) {
+          return [string] $Row.Benchmark
+        }
+        return [string] $Row.CorpusId
+      }
+
+      function Add-MedianHistoryRows {
+        param(
+          [object[]] $InputRows,
+          [string] $BuildNumber,
+          [object] $TargetRows
+        )
+        if ([string]::IsNullOrWhiteSpace($BuildNumber)) {
+          return
+        }
+        $InputRows |
+          Where-Object { -not [string]::IsNullOrWhiteSpace($_.Engine) } |
+          Group-Object { Get-BenchmarkName $_ } |
+          ForEach-Object {
+            $TestName = $_.Name
+            if (-not [string]::IsNullOrWhiteSpace($TestName)) {
+              $_.Group |
+                Group-Object Engine |
+                ForEach-Object {
+                  $Numbers = @($_.Group | ForEach-Object { ConvertTo-Number $_.ElapsedMs } | Where-Object { $null -ne $_ } | Sort-Object)
+                  if ($Numbers.Count -gt 0) {
+                    $Median = $Numbers[[int] [math]::Floor(($Numbers.Count - 1) / 2)]
+                    $TargetRows.Add([pscustomobject]@{
+                      Build = $BuildNumber
+                      Benchmark = $TestName
+                      Engine = $_.Name
+                      MedianElapsedMs = $Median.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture)
+                    })
+                  }
+                }
+            }
+          }
+      }
+
+      function Import-BenchmarkHistoryRows {
+        param(
+          [string] $Path,
+          [string] $CurrentBuildNumber,
+          [object] $TargetRows
+        )
+        if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+          return
+        }
+        @(Import-Csv -LiteralPath $Path -Delimiter "`t") |
+          Where-Object {
+            -not [string]::IsNullOrWhiteSpace($_.Build) -and
+            $_.Build -ne $CurrentBuildNumber -and
+            -not [string]::IsNullOrWhiteSpace($_.Benchmark) -and
+            -not [string]::IsNullOrWhiteSpace($_.Engine) -and
+            -not [string]::IsNullOrWhiteSpace($_.MedianElapsedMs)
+          } |
+          ForEach-Object {
+            $TargetRows.Add([pscustomobject]@{
+              Build = [string] $_.Build
+              Benchmark = [string] $_.Benchmark
+              Engine = [string] $_.Engine
+              MedianElapsedMs = [string] $_.MedianElapsedMs
+            })
+          }
+      }
+
+      function Save-UrlToFile {
+        param(
+          [string] $Url,
+          [string] $Path
+        )
+        try {
+          Invoke-WebRequest -Uri $Url -UseBasicParsing -OutFile $Path -TimeoutSec 15 | Out-Null
+          return $true
+        } catch {
+          Write-Host "Could not read previous benchmark artifact at ${Url}: $($_.Exception.Message)"
+          return $false
+        }
+      }
+
       function New-BenchmarkSvg {
         param(
           [string] $Title,
@@ -269,12 +360,175 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
         return $Builder.ToString()
       }
 
+      function New-BenchmarkTrendSvg {
+        param(
+          [string] $Title,
+          [string] $Benchmark,
+          [object] $HistoryRows
+        )
+        $RowsForBenchmark = @($HistoryRows | Where-Object { $_.Benchmark -eq $Benchmark })
+        $Builds = @($RowsForBenchmark |
+          Select-Object -ExpandProperty Build -Unique |
+          Sort-Object { ConvertTo-BuildSortKey $_ }, { $_ })
+        if ($Builds.Count -lt 2) {
+          return ""
+        }
+
+        $Engines = @($RowsForBenchmark |
+          Select-Object -ExpandProperty Engine -Unique |
+          Sort-Object)
+        if ($Engines.Count -eq 0) {
+          return ""
+        }
+
+        $Left = 28
+        $LabelWidth = 330
+        $SparkWidth = 300
+        $ValueWidth = 330
+        $Top = 22
+        $RowHeight = 42
+        $SparkHeight = 24
+        $Width = $Left + $LabelWidth + $SparkWidth + $ValueWidth + 30
+        $Height = $Top + ($Engines.Count * $RowHeight) + 16
+        $SparkX = $Left + $LabelWidth
+        $ValueX = $SparkX + $SparkWidth + 16
+        $Colors = @("#1f77b4", "#d62728", "#2ca02c", "#9467bd", "#ff7f0e", "#17becf", "#8c564b", "#7f7f7f")
+        $EncodedTitle = ConvertTo-HtmlText $Title
+        $Builder = New-Object System.Text.StringBuilder
+        [void] $Builder.AppendLine("<section>")
+        [void] $Builder.AppendLine("<h2>$EncodedTitle</h2>")
+        [void] $Builder.AppendLine("<svg xmlns='http://www.w3.org/2000/svg' width='$Width' height='$Height' viewBox='0 0 $Width $Height' role='img' aria-label='$EncodedTitle'>")
+
+        for ($Index = 0; $Index -lt $Engines.Count; $Index += 1) {
+          $Engine = $Engines[$Index]
+          $Series = New-Object System.Collections.Generic.List[object]
+          @($RowsForBenchmark |
+            Where-Object { $_.Engine -eq $Engine } |
+            Sort-Object { ConvertTo-BuildSortKey $_.Build }, Build) |
+            ForEach-Object {
+              $Number = ConvertTo-Number $_.MedianElapsedMs
+              if ($null -ne $Number) {
+                $Series.Add([pscustomobject]@{
+                  Build = [string] $_.Build
+                  Value = [double] $Number
+                })
+              }
+            }
+          if ($Series.Count -eq 0) {
+            continue
+          }
+
+          $Y = $Top + ($Index * $RowHeight)
+          $LabelY = $Y + 17
+          $SparkY = $Y + 6
+          $Min = ($Series | Measure-Object -Property Value -Minimum).Minimum
+          $Max = ($Series | Measure-Object -Property Value -Maximum).Maximum
+          $Range = $Max - $Min
+          if ($Range -le 0) {
+            $Range = 1
+          }
+          $Color = $Colors[$Index % $Colors.Count]
+          $Name = ConvertTo-HtmlText $Engine
+          [void] $Builder.AppendLine("<text x='$Left' y='$LabelY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$Name</text>")
+          [void] $Builder.AppendLine("<rect x='$SparkX' y='$SparkY' width='$SparkWidth' height='$SparkHeight' fill='#f2f4f7'/>")
+
+          $Points = New-Object System.Collections.Generic.List[string]
+          $PointObjects = New-Object System.Collections.Generic.List[object]
+          for ($PointIndex = 0; $PointIndex -lt $Series.Count; $PointIndex += 1) {
+            $Point = $Series[$PointIndex]
+            if ($Series.Count -eq 1) {
+              $X = $SparkX + [int] [math]::Round($SparkWidth / 2)
+            } else {
+              $X = $SparkX + [int] [math]::Round(($PointIndex * $SparkWidth) / ($Series.Count - 1))
+            }
+            $YPoint = $SparkY + $SparkHeight - [int] [math]::Round((($Point.Value - $Min) / $Range) * $SparkHeight)
+            $Points.Add("$X,$YPoint")
+            $PointObjects.Add([pscustomobject]@{ X = $X; Y = $YPoint })
+          }
+
+          if ($Points.Count -gt 1) {
+            $PointText = $Points -join " "
+            [void] $Builder.AppendLine("<polyline points='$PointText' fill='none' stroke='$Color' stroke-width='2'/>")
+          }
+          foreach ($PointObject in $PointObjects) {
+            [void] $Builder.AppendLine("<circle cx='$($PointObject.X)' cy='$($PointObject.Y)' r='3' fill='$Color'/>")
+          }
+
+          $First = $Series[0]
+          $Last = $Series[$Series.Count - 1]
+          $FirstText = $First.Value.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture)
+          $LastText = $Last.Value.ToString("0.###", [Globalization.CultureInfo]::InvariantCulture)
+          $DeltaText = ""
+          if ([math]::Abs($First.Value) -gt 0.000001) {
+            $Delta = (($Last.Value - $First.Value) / $First.Value) * 100.0
+            $DeltaPrefix = if ($Delta -gt 0) { "+" } else { "" }
+            $DeltaText = " ($DeltaPrefix$($Delta.ToString("0.#", [Globalization.CultureInfo]::InvariantCulture))%)"
+          }
+          $Summary = ConvertTo-HtmlText "#$($First.Build) $FirstText ms -> #$($Last.Build) $LastText ms$DeltaText"
+          [void] $Builder.AppendLine("<text x='$ValueX' y='$LabelY' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#24292f'>$Summary</text>")
+        }
+
+        [void] $Builder.AppendLine("</svg>")
+        [void] $Builder.AppendLine("</section>")
+        return $Builder.ToString()
+      }
+
       $OutputDir = Split-Path -Parent $env:PLOT_TSV_PATH
       if ([string]::IsNullOrWhiteSpace($OutputDir)) {
         $OutputDir = "."
       }
+      $CurrentBuildNumber = if ([string]::IsNullOrWhiteSpace($env:BUILD_NUMBER)) { "0" } else { $env:BUILD_NUMBER }
+      $HistoryPath = Join-Path $OutputDir "benchmark-history.tsv"
+      $HistoryRows = New-Object System.Collections.Generic.List[object]
+      Import-BenchmarkHistoryRows -Path $HistoryPath -CurrentBuildNumber $CurrentBuildNumber -TargetRows $HistoryRows
+
+      if (-not [string]::IsNullOrWhiteSpace($env:JOB_URL)) {
+        $JobUrl = $env:JOB_URL.TrimEnd("/") + "/"
+        $PreviousBuildNumber = $null
+        try {
+          $PreviousBuildNumber = (Invoke-WebRequest -Uri ($JobUrl + "lastSuccessfulBuild/buildNumber") -UseBasicParsing -TimeoutSec 15).Content.Trim()
+          if ($PreviousBuildNumber -eq $CurrentBuildNumber) {
+            $PreviousBuildNumber = $null
+          }
+        } catch {
+          Write-Host "Could not determine previous successful build number: $($_.Exception.Message)"
+        }
+
+        $HistoryArtifactPath = $HistoryPath.Replace([string] [char] 92, "/")
+        $PreviousHistoryPath = Join-Path $OutputDir "previous-benchmark-history.tsv"
+        if (Save-UrlToFile -Url ($JobUrl + "lastSuccessfulBuild/artifact/$HistoryArtifactPath") -Path $PreviousHistoryPath) {
+          Import-BenchmarkHistoryRows -Path $PreviousHistoryPath -CurrentBuildNumber $CurrentBuildNumber -TargetRows $HistoryRows
+          Remove-Item -LiteralPath $PreviousHistoryPath -Force -ErrorAction SilentlyContinue
+        }
+
+        if ($HistoryRows.Count -eq 0 -and -not [string]::IsNullOrWhiteSpace($PreviousBuildNumber)) {
+          $PreviousResultsPath = Join-Path $OutputDir "previous-benchmark-results.tsv"
+          $ResultsArtifactPath = $env:PLOT_TSV_PATH.Replace([string] [char] 92, "/")
+          if (Save-UrlToFile -Url ($JobUrl + "lastSuccessfulBuild/artifact/$ResultsArtifactPath") -Path $PreviousResultsPath) {
+            $PreviousRows = @(Import-Csv -LiteralPath $PreviousResultsPath -Delimiter "`t")
+            Add-MedianHistoryRows -InputRows $PreviousRows -BuildNumber $PreviousBuildNumber -TargetRows $HistoryRows
+            Remove-Item -LiteralPath $PreviousResultsPath -Force -ErrorAction SilentlyContinue
+          }
+        }
+      }
+      Add-MedianHistoryRows -InputRows $Rows -BuildNumber $CurrentBuildNumber -TargetRows $HistoryRows
+      $HistoryRows = @($HistoryRows |
+        Group-Object { "$($_.Build)`t$($_.Benchmark)`t$($_.Engine)" } |
+        ForEach-Object { $_.Group[-1] })
+      $HistoryBuilds = @($HistoryRows |
+        Select-Object -ExpandProperty Build -Unique |
+        Sort-Object { ConvertTo-BuildSortKey $_ }, { $_ })
+      if ($HistoryBuilds.Count -gt 30) {
+        $KeptBuilds = @($HistoryBuilds | Select-Object -Last 30)
+        $HistoryRows = @($HistoryRows | Where-Object { $KeptBuilds -contains $_.Build })
+      }
+      $HistoryRows |
+        Sort-Object { ConvertTo-BuildSortKey $_.Build }, Benchmark, Engine |
+        Export-Csv -LiteralPath $HistoryPath -Delimiter "`t" -NoTypeInformation -Encoding UTF8
+
       $ManifestRows = New-Object System.Collections.Generic.List[object]
       $HtmlSections = New-Object System.Collections.Generic.List[string]
+      $CurrentGroups = New-Object System.Collections.Generic.List[object]
       $Rows |
         Where-Object { -not [string]::IsNullOrWhiteSpace($_.Engine) } |
         Group-Object { if (-not [string]::IsNullOrWhiteSpace($_.Benchmark)) { $_.Benchmark } else { $_.CorpusId } } |
@@ -308,19 +562,30 @@ def writeBenchmarkPlotCsvFiles(tsvPath, reportPrefix, groupName) {
                 title = "$TestName median elapsed time"
                 yaxis = "Median elapsed ms"
               })
-              $HtmlSections.Add((New-BenchmarkSvg -Title "$TestName median elapsed time" -Headers $Headers -Values $Values))
+              $CurrentGroups.Add([pscustomobject]@{
+                TestName = $TestName
+                Headers = @($Headers.ToArray())
+                Values = @($Values.ToArray())
+              })
             }
           }
         }
       if ($ManifestRows.Count -eq 0) {
         throw "No numeric benchmark rows were found in $($env:PLOT_TSV_PATH); no Jenkins plots can be published."
       }
+      foreach ($Group in $CurrentGroups) {
+        $HtmlSections.Add((New-BenchmarkSvg -Title "$($Group.TestName) current median elapsed time" -Headers $Group.Headers -Values $Group.Values))
+        $TrendHtml = New-BenchmarkTrendSvg -Title "$($Group.TestName) median elapsed trend" -Benchmark $Group.TestName -HistoryRows $HistoryRows
+        if (-not [string]::IsNullOrWhiteSpace($TrendHtml)) {
+          $HtmlSections.Add($TrendHtml)
+        }
+      }
       $ReportPath = Join-Path $OutputDir "benchmark-plots.html"
       $Report = New-Object System.Text.StringBuilder
       [void] $Report.AppendLine("<!doctype html>")
       [void] $Report.AppendLine("<html><head><meta charset='utf-8'><title>Benchmark Plots</title></head><body>")
       [void] $Report.AppendLine("<h1>Benchmark Plots</h1>")
-      [void] $Report.AppendLine("<p>Median elapsed time for the current Jenkins build.</p>")
+      [void] $Report.AppendLine("<p>Median elapsed time for the current Jenkins build and earlier successful builds.</p>")
       foreach ($Section in $HtmlSections) {
         [void] $Report.AppendLine($Section)
       }
