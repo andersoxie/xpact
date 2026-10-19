@@ -1,0 +1,13 @@
+commit cada501ca3117135d3649e1e8ca45b2ccc717748
+ISE_C_COMPILER=[]
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+cmd.exe : 'vswhere.exe' is not recognized as an internal or external command,
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\build_native_eiffel.ps1:52 char:12
++     $Output = cmd.exe /c "`"$VcVars`" >nul && $Command" 2>&1
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('vswhere.exe' i...ternal command,:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+EXIT=1 after 1s

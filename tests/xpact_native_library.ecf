@@ -15,7 +15,6 @@
 		<external_include location="..\..\..\..\native\"/>
 		<external_object location="..\..\..\build\native-eiffel\xpact_native.obj"/>
 		<external_object location="..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj"/>
-		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<cluster name="src" location="..\src\"/>
 	</target>
@@ -34,7 +33,6 @@
 		<external_include location="..\..\..\..\native\"/>
 		<external_object location="..\..\..\build\native-eiffel\xpact_native.obj"/>
 		<external_object location="..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj"/>
-		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<cluster name="src" location="..\src\"/>
 	</target>

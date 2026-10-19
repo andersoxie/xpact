@@ -49,8 +49,16 @@ function Get-IseInclude {
 function Invoke-VcCommand {
 	param([string] $Command)
 	$VcVars = Get-VcVars
-	$Output = cmd.exe /c "`"$VcVars`" >nul && $Command" 2>&1
-	$ExitCode = $LASTEXITCODE
+	# vcvars64.bat writes harmless messages such as "'vswhere.exe' is not
+	# recognized" to stderr; under "Stop" the 2>&1 below would make them fatal.
+	$SavedErrorActionPreference = $ErrorActionPreference
+	$ErrorActionPreference = "Continue"
+	try {
+		$Output = cmd.exe /c "`"$VcVars`" >nul && $Command" 2>&1
+		$ExitCode = $LASTEXITCODE
+	} finally {
+		$ErrorActionPreference = $SavedErrorActionPreference
+	}
 	foreach ($Line in $Output) {
 		Write-Host $Line
 	}
@@ -104,20 +112,46 @@ Compile-CObject (Join-Path $RepoRoot "native\xpact_native.c") $NativeObj -Buildi
 Compile-CObject (Join-Path $RepoRoot "native\xpact_eiffel_runtime_bridge.c") $RuntimeObj -BuildingDll
 Compile-CObject (Join-Path $RepoRoot "native\xpact_eiffel_dllmain.c") $DllMainObj
 
-ec -batch -clean -finalize -keep -config tests\xpact_native_library.ecf -target $EiffelTarget
-if ($LASTEXITCODE -ne 0) {
-	throw "Eiffel native library target compilation failed for $BuildTier."
-}
-
-$FinalCode = Join-Path $RepoRoot "EIFGENs\$EiffelTarget\F_code"
-Push-Location $FinalCode
+# The link step below consumes the MSVC response file (`<target>.lnk`) that the
+# Eiffel finalizer emits only when the target is compiled with an MSVC backend.
+# Select the backend that matches the installed Visual Studio C++ tools; the
+# mingw backend emits no `.lnk` and its objects cannot be linked by `link.exe`.
+# The plain "msc" backend does not link with Visual Studio 18 (unresolved
+# __iob_func, _set_output_format), so use "msc_vc140".
+$OldCompiler = $env:ISE_C_COMPILER
+$env:ISE_C_COMPILER = "msc_vc140"
 try {
-	finish_freezing
+	$SavedErrorActionPreference = $ErrorActionPreference
+	$ErrorActionPreference = "Continue"
+	try {
+		ec -batch -clean -finalize -keep -config tests\xpact_native_library.ecf -target $EiffelTarget
+		$EiffelExitCode = $LASTEXITCODE
+	} finally {
+		$ErrorActionPreference = $SavedErrorActionPreference
+	}
+	if ($EiffelExitCode -ne 0) {
+		throw "Eiffel native library target compilation failed for $BuildTier."
+	}
+
+	$FinalCode = Join-Path $RepoRoot "EIFGENs\$EiffelTarget\F_code"
+	Push-Location $FinalCode
+	try {
+		$SavedErrorActionPreference = $ErrorActionPreference
+		$ErrorActionPreference = "Continue"
+		try {
+			finish_freezing
+			$FinishExitCode = $LASTEXITCODE
+		} finally {
+			$ErrorActionPreference = $SavedErrorActionPreference
+		}
+	} finally {
+		Pop-Location
+	}
+	if ($FinishExitCode -ne 0) {
+		throw "finish_freezing failed for native library target $EiffelTarget."
+	}
 } finally {
-	Pop-Location
-}
-if ($LASTEXITCODE -ne 0) {
-	throw "finish_freezing failed for native library target $EiffelTarget."
+	$env:ISE_C_COMPILER = $OldCompiler
 }
 
 $OriginalLink = Get-LinkResponseFile $FinalCode $EiffelTarget
@@ -153,8 +187,14 @@ if (-not $SkipSmoke) {
 	$OldPath = $env:Path
 	try {
 		$env:Path = "$OutputRoot;$OldPath"
-		$SmokeOutput = & $SmokeExe 2>&1
-		$SmokeExitCode = $LASTEXITCODE
+		$SavedErrorActionPreference = $ErrorActionPreference
+		$ErrorActionPreference = "Continue"
+		try {
+			$SmokeOutput = & $SmokeExe 2>&1
+			$SmokeExitCode = $LASTEXITCODE
+		} finally {
+			$ErrorActionPreference = $SavedErrorActionPreference
+		}
 		foreach ($Line in $SmokeOutput) {
 			Write-Host $Line
 		}
