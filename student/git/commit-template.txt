@@ -1,0 +1,10 @@
+
+# Subject: imperative, max ~70 characters, no period. Example:
+#   Fix Eiffel runtime include fallback path in build_native_eiffel.ps1
+#
+# Body: why the change was needed, what it changes, how it was tested.
+#
+# Last line: the issue. Every commit must name its issue (fix.ps1 finish checks it).
+#   Refs #<issue>
+#
+# Lines starting with # are removed.
