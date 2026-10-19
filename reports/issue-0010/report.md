@@ -45,8 +45,8 @@ Both expectations were met.
 Not tested: `-AssertionMode On` / `Off` on their own (both cells ran in run 1), a custom `-OutputDir`.
 
 Logs:
-- Before: [fix-issue-10-before-default.txt](fix-issue-10-before-default.txt), [fix-issue-10-before-ise-eiffel.txt](fix-issue-10-before-ise-eiffel.txt)
-- After: [fix-issue-10-after.txt](fix-issue-10-after.txt)
+- Before: [before-default.txt](before-default.txt), [before-ise-eiffel.txt](before-ise-eiffel.txt)
+- After: [after.txt](after.txt)
 
 ## How to revert
 

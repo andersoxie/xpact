@@ -21,7 +21,7 @@ Issue: [#7](https://github.com/andersoxie/xpact/issues/7)   Branch: `fix/7-msvc-
 
 ## Cause
 
-Confirmed by the rerun in #7 (log: [fix-issue-7-before-vswhere-on-path.txt](fix-issue-7-before-vswhere-on-path.txt)):
+Confirmed by the rerun in #7 (log: [before-vswhere-on-path.txt](before-vswhere-on-path.txt)):
 
 - `ec` printed "Preparing C compilation using already configured **mingw** C compiler" and compiled every C file with `gcc`.
 - `F_code` then held `xpact_native_library.exe` and **no `.lnk`**, so `Get-LinkResponseFile` threw.
@@ -30,7 +30,7 @@ Confirmed by the rerun in #7 (log: [fix-issue-7-before-vswhere-on-path.txt](fix-
 Two more problems sit on the same path:
 
 - `tests\xpact_native_library.ecf` uses the precompiled library `base-safe`, which only exists for the mingw backend (week 1 report §4.2).
-- In a fresh `powershell -File` process, `Invoke-VcCommand` (`cmd.exe /c ... 2>&1` under `$ErrorActionPreference = "Stop"`) turned the harmless `'vswhere.exe' is not recognized` message from `vcvars64.bat` into a fatal error (log: [fix-issue-7-before-fresh-process.txt](fix-issue-7-before-fresh-process.txt), exit 1 after 1 s). That stopped the build before it even reached the `.lnk` step.
+- In a fresh `powershell -File` process, `Invoke-VcCommand` (`cmd.exe /c ... 2>&1` under `$ErrorActionPreference = "Stop"`) turned the harmless `'vswhere.exe' is not recognized` message from `vcvars64.bat` into a fatal error (log: [before-fresh-process.txt](before-fresh-process.txt), exit 1 after 1 s). That stopped the build before it even reached the `.lnk` step.
 
 ## What changed
 
@@ -78,8 +78,8 @@ Notes:
 - Not tested: the Assertions smoke test (known crash at load, week 1 report §4.8), Finalized test matrix cells, other scripts that use the DLL.
 
 Logs:
-- Before: [fix-issue-7-before-fresh-process.txt](fix-issue-7-before-fresh-process.txt), [fix-issue-7-before-vswhere-on-path.txt](fix-issue-7-before-vswhere-on-path.txt)
-- After: [fix-issue-7-after-production.txt](fix-issue-7-after-production.txt), [fix-issue-7-after-assertions.txt](fix-issue-7-after-assertions.txt)
+- Before: [before-fresh-process.txt](before-fresh-process.txt), [before-vswhere-on-path.txt](before-vswhere-on-path.txt)
+- After: [after-production.txt](after-production.txt), [after-assertions.txt](after-assertions.txt)
 
 ## How to revert
 

@@ -15,9 +15,11 @@ revert** (one commit undoes it). This page describes how that is done on
 3. **One branch per fix:** `fix/<issue>-<short-name>`, e.g.
    `fix/2-include-fallback`, always created from the latest `student-Mass`.
 4. **Every commit names its issue** with `Refs #<issue>` on the last line.
-5. **Every fix has a report** at `reports/fix-report-issue-<issue>.md` with a
-   `## Verification` section: the exact command, the result and the exit status.
-   Logs go next to it as `reports/fix-issue-<issue>-<what>.txt`.
+5. **Every fix has its own folder** `reports/issue-<NNNN>/` (issue number padded
+   to four digits, e.g. `reports/issue-0002/`). It holds `report.md` with a
+   `## Verification` section (the exact command, the result and the exit
+   status) and the logs as `<what>.txt`. Add the fix to the index in
+   [`reports/README.md`](../reports/README.md).
 6. **Every fix goes through a pull request** into `student-Mass`, and is
    **squash-merged**. So each fix becomes exactly one commit on `student-Mass`,
    with the pull request number in its subject.
@@ -32,13 +34,14 @@ revert** (one commit undoes it). This page describes how that is done on
 ```powershell
 cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
 
-# 1. Branch from the latest student-Mass
+# 1. Branch from the latest student-Mass (also creates reports\issue-0002\)
 .\student\tools\fix.ps1 start -Issue 2 -Name include-fallback
 
 # 2. Change the code, then test it and save the log
-.\scripts\build_native_eiffel.ps1 *> reports\fix-issue-2-build-log.txt
+.\scripts\build_native_eiffel.ps1 *> reports\issue-0002\build-log.txt
 
-# 3. Write reports\fix-report-issue-2.md (cause, options, ## Verification)
+# 3. Write reports\issue-0002\report.md (cause, options, ## Verification)
+#    and add a row to reports\README.md
 
 # 4. Commit (the template asks for "Refs #2")
 git add scripts\build_native_eiffel.ps1 reports\
@@ -59,7 +62,7 @@ the commit to use if the fix ever has to be reverted.
 
 ```powershell
 .\student\tools\fix.ps1 revert -Issue 2 -Commit 9eb18bd
-# test again, add to reports\fix-report-issue-2.md why it was reverted, commit
+# test again, add to reports\issue-0002\report.md why it was reverted, commit
 .\student\tools\fix.ps1 finish
 .\student\tools\fix.ps1 merge
 ```

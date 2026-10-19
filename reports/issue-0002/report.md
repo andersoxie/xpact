@@ -1,7 +1,7 @@
 # Fix report: issue #2, "Cannot find Eiffel runtime include directory"
 
 Issue: [#2](https://github.com/andersoxie/xpact/issues/2)   Branch: `student-Mass`   Date: 2026-10-20
-Error report: [error-report-2026-10-19.md](error-report-2026-10-19.md), error 1
+Error report: [error-reports/2026-10-19.md](../error-reports/2026-10-19.md), error 1
 
 ## Summary
 
@@ -141,7 +141,7 @@ unset (PATH length 1,038):
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\build_native_eiffel.ps1
 ```
 
-Full log: [fix-issue-2-build-log.txt](fix-issue-2-build-log.txt). Exit status: 1.
+Full log: [build-log.txt](build-log.txt). Exit status: 1.
 
 **Result:** "Cannot find Eiffel runtime include directory" no longer appears.
 `Get-IseInclude` returned the new path, and the script went on to the first

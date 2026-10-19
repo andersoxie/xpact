@@ -22,7 +22,7 @@ param(
 # Versioning workflow for fixes; see student/VERSIONING.md.
 #
 #   .\student\tools\fix.ps1 start  -Issue 2 -Name include-fallback
-#   ... edit, test, write reports\fix-report-issue-2.md, commit ...
+#   ... edit, test, write reports\issue-0002\report.md, commit ...
 #   .\student\tools\fix.ps1 finish
 #   .\student\tools\fix.ps1 merge
 #   .\student\tools\fix.ps1 revert -Issue 2 -Commit 9eb18bd
@@ -80,6 +80,13 @@ function Get-BranchIssue {
 	[int] $Matches[1]
 }
 
+# Every fix keeps its report and logs in one folder, e.g. reports/issue-0002.
+# Zero-padded so the folders sort by issue number.
+function Get-ReportDirectory {
+	param([int] $Number)
+	"reports/issue-{0:D4}" -f $Number
+}
+
 function Update-Base {
 	Invoke-Git @("fetch", "--prune", "origin") | Out-Null
 	Invoke-Git @("switch", $Base) | Out-Null
@@ -105,8 +112,10 @@ switch ($Action) {
 		$Branch = "fix/$Issue-$Name"
 		Invoke-Git @("switch", "-c", $Branch) | Out-Null
 		Write-Host "On $Branch, from $Base @ $("$(Invoke-Git @("rev-parse", "--short", "HEAD"))".Trim())"
+		$ReportDirectory = Get-ReportDirectory $Issue
+		New-Item -ItemType Directory -Force -Path (Join-Path $RepoRoot $ReportDirectory) | Out-Null
 		Write-Host "Issue #${Issue}: $Title"
-		Write-Host "Next: fix, test, write reports\fix-report-issue-$Issue.md, commit with 'Refs #$Issue', then: fix.ps1 finish"
+		Write-Host "Next: fix, test, write $ReportDirectory/report.md (logs next to it), commit with 'Refs #$Issue', then: fix.ps1 finish"
 	}
 
 	"revert" {
@@ -123,7 +132,7 @@ switch ($Action) {
 		Invoke-Git @("revert", "--no-edit", $Short) | Out-Null
 		Invoke-Git @("commit", "--amend", "-m", $Message) | Out-Null
 		Write-Host "On $Branch with a revert of $Short ($Subject)."
-		Write-Host "Next: test, write reports\fix-report-issue-$Issue.md (why it was reverted), commit, then: fix.ps1 finish"
+		Write-Host "Next: test, add to $(Get-ReportDirectory $Issue)/report.md why it was reverted, commit, then: fix.ps1 finish"
 	}
 
 	"finish" {
@@ -144,7 +153,7 @@ switch ($Action) {
 			}
 		}
 		# Tested: the fix report exists and records a verification.
-		$Report = "reports/fix-report-issue-$BranchIssue.md"
+		$Report = "$(Get-ReportDirectory $BranchIssue)/report.md"
 		if (-not (Test-Path -LiteralPath (Join-Path $RepoRoot $Report) -PathType Leaf)) {
 			throw "Missing $Report. Every fix needs a report with a Verification section."
 		}

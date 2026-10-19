@@ -51,9 +51,9 @@ All four expectations were met. The first import's PATH is 110 characters shorte
 Not tested: the other 5 scripts that dot-source the import; `run_eiffel_test_matrix.ps1 -BuildMode Finalized` is the most common one.
 
 Logs:
-- Before: [fix-issue-4-before-repeat-import.txt](fix-issue-4-before-repeat-import.txt)
-- After: [fix-issue-4-after-repeat-import.txt](fix-issue-4-after-repeat-import.txt), [fix-issue-4-after-two-builds.txt](fix-issue-4-after-two-builds.txt)
-- Test script: [fix-issue-4-repeat-import.ps1.txt](fix-issue-4-repeat-import.ps1.txt)
+- Before: [before-repeat-import.txt](before-repeat-import.txt)
+- After: [after-repeat-import.txt](after-repeat-import.txt), [after-two-builds.txt](after-two-builds.txt)
+- Test script: [repeat-import.ps1.txt](repeat-import.ps1.txt)
 
 ## How to revert
 
