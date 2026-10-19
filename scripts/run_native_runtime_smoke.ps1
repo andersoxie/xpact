@@ -37,11 +37,26 @@ function Get-IseInclude {
 			return $Candidate
 		}
 	}
-	$Fallback = "C:\El2502E\studio\spec\win64\include"
+	$Fallback = "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\include"
 	if (Test-Path -LiteralPath $Fallback -PathType Container) {
 		return $Fallback
 	}
 	throw "Cannot find Eiffel runtime include directory."
+}
+
+# Runs a native command without letting harmless stderr output (such as the
+# vcvars "'vswhere.exe' is not recognized" message) become a terminating error
+# under $ErrorActionPreference = "Stop". Returns the command's exit code.
+function Invoke-NativeCommand {
+	param([scriptblock] $Block)
+	$SavedErrorActionPreference = $ErrorActionPreference
+	$ErrorActionPreference = "Continue"
+	try {
+		& $Block | Out-Host
+		return $LASTEXITCODE
+	} finally {
+		$ErrorActionPreference = $SavedErrorActionPreference
+	}
 }
 
 function Compile-CObject {
@@ -54,8 +69,8 @@ function Compile-CObject {
 	$Include = Join-Path $RepoRoot "include"
 	$Native = Join-Path $RepoRoot "native"
 	$Command = "`"$VcVars`" >nul && cl /nologo /c /I`"$Include`" /I`"$Native`" /I`"$IseInclude`" `"$Source`" /Fo:`"$Object`""
-	cmd.exe /c $Command
-	if ($LASTEXITCODE -ne 0) {
+	$CompileExitCode = Invoke-NativeCommand { cmd.exe /c $Command }
+	if ($CompileExitCode -ne 0) {
 		throw "C object build failed: $Source"
 	}
 }
@@ -78,28 +93,39 @@ function Selected-RuntimeTargets {
 	}
 }
 
-foreach ($RuntimeTarget in Selected-RuntimeTargets) {
-	Write-Host "== native runtime smoke: $($RuntimeTarget.Label) =="
-	ec -batch -clean -config tests\xpact_native_runtime.ecf -target $RuntimeTarget.Target
-	if ($LASTEXITCODE -ne 0) {
-		throw "Eiffel native runtime target compilation failed for $($RuntimeTarget.Label)."
-	}
-	$WorkCode = Join-Path $RepoRoot "EIFGENs\$($RuntimeTarget.Target)\W_code"
-	if (Test-Path -LiteralPath (Join-Path $WorkCode "Makefile.SH") -PathType Leaf) {
-		Push-Location $WorkCode
-		try {
-			finish_freezing
-		} finally {
-			Pop-Location
+# The external objects above are compiled with MSVC `cl`, so they reference
+# MSVC CRT symbols (`__security_check_cookie`, `__GSHandlerCheck`) and carry
+# `/DEFAULTLIB:LIBCMT` directives. The Eiffel C code must therefore be built and
+# linked with the MSVC backend too; the machine's default mingw backend links
+# with gcc/ld, which cannot resolve those symbols.
+$OldCompiler = $env:ISE_C_COMPILER
+$env:ISE_C_COMPILER = "msc_vc140"
+try {
+	foreach ($RuntimeTarget in Selected-RuntimeTargets) {
+		Write-Host "== native runtime smoke: $($RuntimeTarget.Label) =="
+		$EiffelExitCode = Invoke-NativeCommand { ec -batch -clean -config tests\xpact_native_runtime.ecf -target $RuntimeTarget.Target }
+		if ($EiffelExitCode -ne 0) {
+			throw "Eiffel native runtime target compilation failed for $($RuntimeTarget.Label)."
 		}
-		if ($LASTEXITCODE -ne 0) {
-			throw "finish_freezing failed for native runtime target $($RuntimeTarget.Label)."
+		$WorkCode = Join-Path $RepoRoot "EIFGENs\$($RuntimeTarget.Target)\W_code"
+		if (Test-Path -LiteralPath (Join-Path $WorkCode "Makefile.SH") -PathType Leaf) {
+			Push-Location $WorkCode
+			try {
+				$FinishExitCode = Invoke-NativeCommand { finish_freezing }
+			} finally {
+				Pop-Location
+			}
+			if ($FinishExitCode -ne 0) {
+				throw "finish_freezing failed for native runtime target $($RuntimeTarget.Label)."
+			}
 		}
-	}
 
-	$Exe = Join-Path $WorkCode "xpact_native_runtime.exe"
-	& $Exe
-	if ($LASTEXITCODE -ne 0) {
-		throw "Native runtime smoke failed for $($RuntimeTarget.Label)."
+		$Exe = Join-Path $WorkCode "xpact_native_runtime.exe"
+		$SmokeExitCode = Invoke-NativeCommand { & $Exe }
+		if ($SmokeExitCode -ne 0) {
+			throw "Native runtime smoke failed for $($RuntimeTarget.Label)."
+		}
 	}
+} finally {
+	$env:ISE_C_COMPILER = $OldCompiler
 }

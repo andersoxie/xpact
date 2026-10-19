@@ -1,0 +1,12 @@
+commit 3b8a20508fa35b2ef2c632f6764b71cdd339c9ca
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Cannot find Eiffel runtime include directory.
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_native_runtime_smoke.ps1:44 char:2
++     throw "Cannot find Eiffel runtime include directory."
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Cannot find Eif...lude directory.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Cannot find Eiffel runtime include directory.
+ 
+EXIT=1
