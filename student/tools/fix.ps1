@@ -162,7 +162,8 @@ switch ($Action) {
 
 		$Title = "$(Invoke-Git @("log", "--reverse", "--format=%s", "origin/$Base..HEAD") | Select-Object -First 1)".Trim()
 		$CommitList = (Invoke-Git @("log", "--reverse", "--format=- %h %s", "origin/$Base..HEAD")) -join "`n"
-		$ReportUrl = "https://github.com/$Repo/blob/$Branch/$Report"
+		# Link by commit, not by branch: the branch is deleted after merging.
+		$ReportUrl = "https://github.com/$Repo/blob/$("$(Invoke-Git @("rev-parse", "HEAD"))".Trim())/$Report"
 		$PrBody = @"
 Refs #$BranchIssue
 
