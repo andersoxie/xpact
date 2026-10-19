@@ -4,7 +4,17 @@ param()
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$VsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+# Scripts dot-source this file into the caller's session on every run. Each
+# vcvars64.bat import prepends another copy of the Visual Studio directories to
+# PATH, so after a few runs in one window cmd.exe exceeds its 8191-character
+# line limit and fails with "The input line is too long." Skip the import when
+# an x64 MSVC environment is already loaded.
+if ($env:VSCMD_VER -and $env:VSCMD_ARG_TGT_ARCH -eq "x64" -and (Get-Command cl.exe -ErrorAction SilentlyContinue)) {
+	Write-Host "Visual Studio C++ x64 environment already loaded ($env:VSCMD_VER)"
+	return
+}
+
+$VsWhere ="${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 if (-not (Test-Path -LiteralPath $VsWhere -PathType Leaf)) {
 	throw "vswhere.exe not found. Install Visual Studio 2022 Build Tools with the C++ x64 toolchain."
 }
@@ -32,7 +42,22 @@ foreach ($Line in $EnvironmentLines) {
 	if ($Name.StartsWith("=")) {
 		continue
 	}
-	Set-Item -Path "Env:$Name" -Value $Matches[2]
+	$Value = $Matches[2]
+	if ($Name -ieq "Path") {
+		# Drop duplicate PATH entries, keeping the first occurrence, so PATH stays
+		# bounded even if the environment is imported on top of another one.
+		$Seen = @{}
+		$Value = (@($Value -split ";" | Where-Object {
+			$Key = $_.TrimEnd("\").ToLowerInvariant()
+			if ([string]::IsNullOrWhiteSpace($Key) -or $Seen.ContainsKey($Key)) {
+				$false
+			} else {
+				$Seen[$Key] = $true
+				$true
+			}
+		}) -join ";")
+	}
+	Set-Item -Path "Env:$Name" -Value $Value
 }
 
 Write-Host "Loaded Visual Studio C++ x64 environment from $VcVars"

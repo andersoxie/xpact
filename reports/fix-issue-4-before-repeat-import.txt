@@ -1,0 +1,25 @@
+### before (eb6fc5d)
+start: PATH length 1335
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+import 1: ok, PATH length 2767
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+import 2: ok, PATH length 4199
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+import 3: ok, PATH length 5631
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+import 4: ok, PATH length 7063
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+The input line is too long.
+The syntax of the command is incorrect.
+import 5: FAILED, PATH length 7063
+error: Failed to import Visual Studio C++ environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+EXIT=1

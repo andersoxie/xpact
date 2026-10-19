@@ -1,0 +1,18 @@
+# Dot-sources import_msvc_environment.ps1 20 times in one process, as running
+# several scripts in one PowerShell window does, then checks cl and link.
+param([string] $ScriptsRoot)
+$ErrorActionPreference = "Stop"
+"start: PATH length $($env:Path.Length)"
+for ($i = 1; $i -le 20; $i++) {
+	try {
+		. (Join-Path $ScriptsRoot "scripts\import_msvc_environment.ps1")
+		"import ${i}: ok, PATH length $($env:Path.Length)"
+	} catch {
+		"import ${i}: FAILED, PATH length $($env:Path.Length)"
+		"error: $($_.Exception.Message)"
+		exit 1
+	}
+}
+"cl.exe:   $((Get-Command cl.exe -ErrorAction SilentlyContinue).Source)"
+"link.exe: $((Get-Command link.exe -ErrorAction SilentlyContinue).Source)"
+exit 0

@@ -1,0 +1,47 @@
+### after (fix branch fix/4-msvc-import-path-growth)
+start: PATH length 1335
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+import 1: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 2: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 3: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 4: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 5: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 6: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 7: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 8: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 9: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 10: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 11: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 12: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 13: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 14: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 15: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 16: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 17: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 18: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 19: ok, PATH length 2657
+Visual Studio C++ x64 environment already loaded (18.0)
+import 20: ok, PATH length 2657
+cl.exe:   C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\cl.exe
+link.exe: C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\HostX64\x64\link.exe
+EXIT=0
