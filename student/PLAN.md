@@ -21,6 +21,7 @@ write the weekly note in [`notes/weekly/`](notes/weekly/).
 | Done in week 3 | The week 1 build fixes are now commits on `student-Mass`, each with an issue, a report with verification and a pull request: [#2](https://github.com/andersoxie/xpact/issues/2), [#4](https://github.com/andersoxie/xpact/issues/4), [#7](https://github.com/andersoxie/xpact/issues/7), [#10](https://github.com/andersoxie/xpact/issues/10). Versioning workflow ([#5](https://github.com/andersoxie/xpact/issues/5)) and one report folder per fix ([#14](https://github.com/andersoxie/xpact/issues/14)). B03 root cause found ([#3](https://github.com/andersoxie/xpact/issues/3)) and a new finding behind it ([#13](https://github.com/andersoxie/xpact/issues/13)) |
 | Waiting | [#12](https://github.com/andersoxie/xpact/pull/12) (B03 loop variant) needs review by the parser's developer before merging |
 | Still blocked | The build fixes are on `student-Mass`, not on `main` ([draft 22](github/issues/22-blocker-build-fixes.md)). Ask the supervisor whether to open a pull request into `main` |
+| Also done | A01 orientation ([#18](https://github.com/andersoxie/xpact/issues/18)) |
 | Next | A02: rerun the baseline in the git clone now that the build works there. Then B01/B02. Write the week 3 note |
 
 ## Week 1 – Setup
@@ -28,7 +29,7 @@ write the weekly note in [`notes/weekly/`](notes/weekly/).
 **Bring to review:** Setup notes and one successful example parse.
 - [x] Native build working (done outside git in weeks 1-2, see [PLAN2.md](PLAN2.md) week 1; brought into git in week 3, see [Build fixes in git](#build-fixes-and-workflow-in-git-week-3))
 - [x] First error report ([history/](history/)) and setup notes ([week-01.md](notes/weekly/week-01.md))
-- [ ] [A01](github/issues/01-A01.md) Learn XML events, contracts, Git and the layout; trace one accepted and one rejected document. Partly done: both documents traced in [walkthrough/trace-output.txt](baseline/walkthrough/trace-output.txt); still to do: link the checking tests, change-and-predict
+- [x] [A01](github/issues/01-A01.md) Learn XML events, contracts, Git and the layout; trace one accepted and one rejected document. Done 2026-10-20 ([#18](https://github.com/andersoxie/xpact/issues/18)). Traces: [walkthrough/trace-output.txt](baseline/walkthrough/trace-output.txt). The notes on the checking tests and the change-and-predict exercise go in `results/A01-orientation/`
 
 ## Week 2 – Baseline
 **Activity:** Follow parser events and run the assertions-enabled tests.
