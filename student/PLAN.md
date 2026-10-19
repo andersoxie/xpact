@@ -1,35 +1,78 @@
 # 10-week plan
 
 Based on [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md):
-"A proposed ten week plan" and "Suggested student selection". Each task links to
-its issue draft in [`github/issues/`](github/issues/). Once the issues exist on
-GitHub, tick the boxes here or close the issues.
+"A proposed ten week plan" and "Suggested student selection". Tasks link to
+their GitHub issue once it exists, otherwise to the draft in
+[`github/issues/`](github/issues/). Every fix follows
+[`VERSIONING.md`](VERSIONING.md), and its report is indexed in
+[`reports/README.md`](../reports/README.md).
 
 Week 1 = 2026-10-05. Review with the supervisor at the end of every week, and
 write the weekly note in [`notes/weekly/`](notes/weekly/).
 
+**Last updated:** 2026-10-20 (week 3), `student-Mass` @ `4a957b1`.
+[PLAN2.md](PLAN2.md) has the detailed record of weeks 1-2 (evidence, tests run, findings) as of 2026-10-15.
+
+## Where things stand
+
+| | |
+|---|---|
+| Current week | 3 – Failure reporting |
+| Done in week 3 | The week 1 build fixes are now commits on `student-Mass`, each with an issue, a report with verification and a pull request: [#2](https://github.com/andersoxie/xpact/issues/2), [#4](https://github.com/andersoxie/xpact/issues/4), [#7](https://github.com/andersoxie/xpact/issues/7), [#10](https://github.com/andersoxie/xpact/issues/10). Versioning workflow ([#5](https://github.com/andersoxie/xpact/issues/5)) and one report folder per fix ([#14](https://github.com/andersoxie/xpact/issues/14)). B03 root cause found ([#3](https://github.com/andersoxie/xpact/issues/3)) and a new finding behind it ([#13](https://github.com/andersoxie/xpact/issues/13)) |
+| Waiting | [#12](https://github.com/andersoxie/xpact/pull/12) (B03 loop variant) needs review by the parser's developer before merging |
+| Still blocked | The build fixes are on `student-Mass`, not on `main` ([draft 22](github/issues/22-blocker-build-fixes.md)). Ask the supervisor whether to open a pull request into `main` |
+| Next | A02: rerun the baseline in the git clone now that the build works there. Then B01/B02. Write the week 3 note |
+
 ## Week 1 – Setup
 **Activity:** Learn basic XML, the project structure and the Git workflow. Build with help.
 **Bring to review:** Setup notes and one successful example parse.
-- [ ] [A01](github/issues/01-A01.md) Learn XML events, contracts, Git and the layout; trace one accepted and one rejected document
+- [x] Native build working (done outside git in weeks 1-2, see [PLAN2.md](PLAN2.md) week 1; brought into git in week 3, see [Build fixes in git](#build-fixes-and-workflow-in-git-week-3))
+- [x] First error report ([history/](history/)) and setup notes ([week-01.md](notes/weekly/week-01.md))
+- [ ] [A01](github/issues/01-A01.md) Learn XML events, contracts, Git and the layout; trace one accepted and one rejected document. Partly done: both documents traced in [walkthrough/trace-output.txt](baseline/walkthrough/trace-output.txt); still to do: link the checking tests, change-and-predict
 
 ## Week 2 – Baseline
 **Activity:** Follow parser events and run the assertions-enabled tests.
 **Bring to review:** A baseline log with revision, configuration, commands and known failures.
-- [ ] [A02](github/issues/02-A02.md) Reproduce assertions-enabled workbench and finalized builds (rerun the baseline in this repo)
+- [x] Assertions-enabled baseline with every lane logged: [baseline/BASELINE.md](baseline/BASELINE.md)
+- [ ] [A02](github/issues/02-A02.md) Reproduce assertions-enabled workbench and finalized builds. Done outside git in week 2; **rerun in the git clone** is next, now that the build fixes are on `student-Mass`
 - [ ] Report the baseline findings:
   - [ ] [Finalized lane drops assertions (missing `-keep`)](github/issues/04-finding-finalized-keep.md)
-  - [ ] [Postcondition `final_finished_or_suspended` fails (B03)](github/issues/05-finding-b03-postcondition.md)
+  - [x] Postcondition `final_finished_or_suspended` fails (B03): reported as [#3](https://github.com/andersoxie/xpact/issues/3). Root cause: the loop variant in `direct_start_tag_attributes` is wrong; fix proposed in [#12](https://github.com/andersoxie/xpact/pull/12), waiting for review
+  - [x] New, found while analysing B03: `XP_GC_CRITICAL_SECTION.execute` swallows exceptions, which hid the real B03 failure: [#13](https://github.com/andersoxie/xpact/issues/13)
   - [ ] [Test runner stops at the first failure](github/issues/06-finding-runner-stops.md)
   - [ ] [Assertions DLL smoke test crashes](github/issues/07-finding-dll-crash.md)
   - [ ] [Python harness fails on Python 3.10](github/issues/08-finding-python310.md)
+  - [ ] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md)
+  - [ ] [Jenkins precompile prompt](github/issues/23-finding-jenkins-precompile.md)
 - [ ] **Decision:** choose one main improvement and a small input set with the supervisor
+
+## Build fixes and workflow in git (week 3)
+Not a week of the guide's plan: the week 2 blocker ("build fixes not in `main`,
+branches deleted") had to be solved before the baseline could be rerun in git.
+Each item is one issue, one report and one squashed commit on `student-Mass`.
+
+| | Issue | What | Pull request | Commit | Report |
+|---|---|---|---|---|---|
+| ✅ | [#2](https://github.com/andersoxie/xpact/issues/2) | Eiffel runtime include fallback path (`build_native_eiffel.ps1`) | - (before the workflow) | `9eb18bd` | [issue-0002](../reports/issue-0002/report.md) |
+| ✅ | [#5](https://github.com/andersoxie/xpact/issues/5) | Versioning workflow: [`VERSIONING.md`](VERSIONING.md), [`tools/fix.ps1`](tools/fix.ps1) | [#6](https://github.com/andersoxie/xpact/pull/6) | `cada501` | [issue-0005](../reports/issue-0005/report.md) |
+| ✅ | [#7](https://github.com/andersoxie/xpact/issues/7) | Missing `.lnk`: build the native library with the `msc_vc140` backend | [#8](https://github.com/andersoxie/xpact/pull/8) | `eb6fc5d` | [issue-0007](../reports/issue-0007/report.md) |
+| ✅ | [#4](https://github.com/andersoxie/xpact/issues/4) | "The input line is too long": stop repeated MSVC imports growing PATH | [#9](https://github.com/andersoxie/xpact/pull/9) | `3b8a205` | [issue-0004](../reports/issue-0004/report.md) |
+| ✅ | [#10](https://github.com/andersoxie/xpact/issues/10) | Native runtime smoke test: include fallback and `msc_vc140` backend | [#11](https://github.com/andersoxie/xpact/pull/11) | `20e6bc3` | [issue-0010](../reports/issue-0010/report.md) |
+| ✅ | [#14](https://github.com/andersoxie/xpact/issues/14) | One folder per fix under `reports/` | [#15](https://github.com/andersoxie/xpact/pull/15) | `4a957b1` | [issue-0014](../reports/issue-0014/report.md) |
+| 🟡 | [#3](https://github.com/andersoxie/xpact/issues/3) | B03 loop variant | [#12](https://github.com/andersoxie/xpact/pull/12) (review) | | |
+
+Together, #2, #7 and #10 bring in the week 1 build fixes from
+[patch 01](history/patches/01-week1-build-fixes.patch), except its
+`run_xmlconf_conformance.ps1` part. [Patch 02](history/patches/02-week2-runner-changes.patch)
+(pinned W3C download, test-matrix stderr guard) is not applied yet.
+The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/error-reports/2026-10-19.md).
 
 ## Week 3 – Failure reporting
 **Activity:** Learn how the test runner reports failure. Reproduce a deliberately failing test.
 **Bring to review:** A bounded failure-reporting fix, or a precise proposal with evidence.
 - [ ] [B01](github/issues/09-B01.md) Failing tests must return a nonzero exit status
 - [ ] [B02](github/issues/10-B02.md) Deliberately failing meta-tests
+- [ ] Week 3 note in [`notes/weekly/`](notes/weekly/)
 
 ## Week 4 – Input matrix
 **Activity:** Design small regressions and select 50–100 applicable W3C XML cases with the supervisor.
@@ -71,7 +114,7 @@ write the weekly note in [`notes/weekly/`](notes/weekly/).
 **Activity:** Demonstrate the work, address review comments and hand it over.
 **Bring to review:** Final report, tests, code or proposals, setup guide and follow-up list.
 - [ ] [Report, demonstration and handover](github/issues/18-report-handover.md)
-- [ ] [A06](github/issues/03-A06.md) All weekly notes and result records complete
+- [ ] [A06](github/issues/03-A06.md) All weekly notes and result records complete. Weeks 1-2 written
 
 ## Not in the plan (unless the supervisor asks)
 The other tasks in the register (A03, A05, B03–B07, C01, C04–C09, D, E, F03–F09,

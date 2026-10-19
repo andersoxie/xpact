@@ -1,9 +1,15 @@
 # 10-week plan, with the work done so far
 
+> **Snapshot as of 2026-10-15 (week 2), kept as the record of weeks 1-2.** The
+> current status is in [PLAN.md](PLAN.md). Since this snapshot, the build fixes
+> listed below as blocked or "fixed in patch 01" were brought into git on
+> `student-Mass` through issues #2, #4, #7 and #10, and B03 was analysed in #3
+> and #13.
+
 This is the plan from [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md)
 ("A proposed ten week plan", "Suggested student selection" and the task register),
 filled in with everything done up to **2026-10-15 (week 2)**: tests run, bugs
-found and fixes made. [PLAN.md](PLAN.md) is the empty version of the same plan.
+found and fixes made. On 2026-10-15, [PLAN.md](PLAN.md) was the empty version of the same plan.
 
 **Status:** ✅ done · 🟡 partly done · ⬜ not started · 🔴 blocked
 Week 1 = 2026-10-05. The build troubleshooting began in September.

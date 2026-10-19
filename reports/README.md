@@ -15,7 +15,8 @@ test scripts that back it up. The rules are in
 | [#5](https://github.com/andersoxie/xpact/issues/5) | Versioning workflow for fixes | [#6](https://github.com/andersoxie/xpact/pull/6) | `cada501` | [issue-0005](issue-0005/report.md) |
 | [#7](https://github.com/andersoxie/xpact/issues/7) | Build the native Eiffel library with the `msc_vc140` C backend | [#8](https://github.com/andersoxie/xpact/pull/8) | `eb6fc5d` | [issue-0007](issue-0007/report.md) |
 | [#10](https://github.com/andersoxie/xpact/issues/10) | Build the native runtime smoke test with the `msc_vc140` C backend | [#11](https://github.com/andersoxie/xpact/pull/11) | `20e6bc3` | [issue-0010](issue-0010/report.md) |
-| [#14](https://github.com/andersoxie/xpact/issues/14) | One folder per fix under `reports/` | this change | - | [issue-0014](issue-0014/report.md) |
+| [#14](https://github.com/andersoxie/xpact/issues/14) | One folder per fix under `reports/` | [#15](https://github.com/andersoxie/xpact/pull/15) | `4a957b1` | [issue-0014](issue-0014/report.md) |
+| [#16](https://github.com/andersoxie/xpact/issues/16) | Update `student/PLAN.md` with the week 3 work | [#17](https://github.com/andersoxie/xpact/pull/17) | see the pull request | [issue-0016](issue-0016/report.md) |
 
 Open: [#3](https://github.com/andersoxie/xpact/issues/3) (B03 loop variant, fix
 in pull request [#12](https://github.com/andersoxie/xpact/pull/12) waiting for
