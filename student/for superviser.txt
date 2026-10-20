@@ -18,16 +18,6 @@ week 1 fixes (old patch b930600), now as reviewed, tested commits.
   #10  20e6bc3  scripts/run_native_runtime_smoke.ps1, tests/xpact_native_runtime.ecf
        Same two problems as #2/#7 in the smoke script -> same fix. Both cells ok.
 
-WAITING FOR YOUR REVIEW (not on student-Mass)
----------------------------------------------
-  #3 / PR #12  src/xp_native_parser.e  (one line)  - B03
-       The contract was wrong, not the code: the loop variant in
-       direct_start_tag_attributes does not decrease at the '/' of "<root/>".
-       Fix: variant a_end_index - i + l_valid.to_integer. All 4 test matrix cells pass.
-  #13  (finding, no fix yet)  XP_GC_CRITICAL_SECTION.execute uses
-       MEMORY.execute_without_collection, which swallows exceptions. That is why B03
-       showed up as the misleading final_finished_or_suspended postcondition.
-
 DOCUMENTATION / WORKFLOW ONLY (no effect on the parser or tests)
 ----------------------------------------------------------------
   a17db10 cd0e1e4 f146008  student/ workspace, 10-week plan, weeks 1-2 record
@@ -42,7 +32,7 @@ GITHUB LABELS (added 2026-10-20, #24)
   I added 9 labels from student/github/labels.json (plus a new "workflow" label)
   to andersoxie/xpact and labelled every issue, WITHOUT ASKING YOU FIRST - sorry.
   Build fixes: type:finding group:B-reliable-results D2-guided P0.
-  #3/#12: group:C-correctness D3-advanced P0. #13: same, P1.
+  Parser findings: group:C-correctness D3-advanced.
   Workflow tasks: type:task workflow. Details: student/github/README.md.
   I can remove them if you prefer the repo without labels.
 
@@ -54,7 +44,6 @@ HOW EVERY FIX IS DONE
 
 QUESTIONS FOR YOU
 -----------------
-  1. Review PR #12 (B03 parser fix).
-  2. Should the build fixes (#2, #7, #4, #10) go into main via a pull request?
-  3. Next: A02 baseline rerun in git, then B01/B02. OK?
-  4. Keep the GitHub labels (see above)?
+  1. Should the build fixes (#2, #7, #4, #10) go into main via a pull request?
+  2. Next: A02 baseline rerun in git, then B01/B02. OK?
+  3. Keep the GitHub labels (see above)?

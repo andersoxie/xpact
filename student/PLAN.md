@@ -19,7 +19,7 @@ write the weekly note in [`notes/weekly/`](notes/weekly/).
 |---|---|
 | Current week | 3 – Failure reporting |
 | Done in week 3 | The week 1 build fixes are now commits on `student-Mass`, each with an issue, a report with verification and a pull request: [#2](https://github.com/andersoxie/xpact/issues/2), [#4](https://github.com/andersoxie/xpact/issues/4), [#7](https://github.com/andersoxie/xpact/issues/7), [#10](https://github.com/andersoxie/xpact/issues/10). Versioning workflow ([#5](https://github.com/andersoxie/xpact/issues/5)) and one report folder per fix ([#14](https://github.com/andersoxie/xpact/issues/14)). B03 root cause found ([#3](https://github.com/andersoxie/xpact/issues/3)) and a new finding behind it ([#13](https://github.com/andersoxie/xpact/issues/13)) |
-| Waiting | [#12](https://github.com/andersoxie/xpact/pull/12) (B03 loop variant) needs review by the parser's developer before merging |
+| On hold | B03 ([#3](https://github.com/andersoxie/xpact/issues/3), draft pull request [#12](https://github.com/andersoxie/xpact/pull/12)) and [#13](https://github.com/andersoxie/xpact/issues/13): being checked further before asking for review ([#26](https://github.com/andersoxie/xpact/issues/26)) |
 | Still blocked | The build fixes are on `student-Mass`, not on `main` ([draft 22](github/issues/22-blocker-build-fixes.md)). Ask the supervisor whether to open a pull request into `main` |
 | Also done | A01 orientation ([#18](https://github.com/andersoxie/xpact/issues/18)) |
 | Next | A02: rerun the baseline in the git clone now that the build works there. Then B01/B02. Bring in `run_xmlconf_conformance.ps1` and patch 02 (see [history/README.md](history/README.md)) |
@@ -38,7 +38,7 @@ write the weekly note in [`notes/weekly/`](notes/weekly/).
 - [ ] [A02](github/issues/02-A02.md) Reproduce assertions-enabled workbench and finalized builds. Done outside git in week 2; **rerun in the git clone** is next, now that the build fixes are on `student-Mass`
 - [ ] Report the baseline findings:
   - [ ] [Finalized lane drops assertions (missing `-keep`)](github/issues/04-finding-finalized-keep.md)
-  - [x] Postcondition `final_finished_or_suspended` fails (B03): reported as [#3](https://github.com/andersoxie/xpact/issues/3). Root cause: the loop variant in `direct_start_tag_attributes` is wrong; fix proposed in [#12](https://github.com/andersoxie/xpact/pull/12), waiting for review
+  - [x] Postcondition `final_finished_or_suspended` fails (B03): reported as [#3](https://github.com/andersoxie/xpact/issues/3). Root cause: the loop variant in `direct_start_tag_attributes` is wrong; fix proposed in draft [#12](https://github.com/andersoxie/xpact/pull/12), on hold
   - [x] New, found while analysing B03: `XP_GC_CRITICAL_SECTION.execute` swallows exceptions, which hid the real B03 failure: [#13](https://github.com/andersoxie/xpact/issues/13)
   - [ ] [Test runner stops at the first failure](github/issues/06-finding-runner-stops.md)
   - [ ] [Assertions DLL smoke test crashes](github/issues/07-finding-dll-crash.md)
@@ -61,7 +61,7 @@ Each item is one issue, one report and one squashed commit on `student-Mass`.
 | ✅ | [#10](https://github.com/andersoxie/xpact/issues/10) | Native runtime smoke test: include fallback and `msc_vc140` backend | [#11](https://github.com/andersoxie/xpact/pull/11) | `20e6bc3` | [issue-0010](../reports/issue-0010/report.md) |
 | ✅ | [#14](https://github.com/andersoxie/xpact/issues/14) | One folder per fix under `reports/` | [#15](https://github.com/andersoxie/xpact/pull/15) | `4a957b1` | [issue-0014](../reports/issue-0014/report.md) |
 | ✅ | [#20](https://github.com/andersoxie/xpact/issues/20) | Docs in line with the week 3 workflow; week 3 note | [#21](https://github.com/andersoxie/xpact/pull/21) | | [issue-0020](../reports/issue-0020/report.md) |
-| 🟡 | [#3](https://github.com/andersoxie/xpact/issues/3) | B03 loop variant | [#12](https://github.com/andersoxie/xpact/pull/12) (review) | | |
+| 🟡 | [#3](https://github.com/andersoxie/xpact/issues/3) | B03 loop variant | [#12](https://github.com/andersoxie/xpact/pull/12) (draft, on hold) | | |
 
 Together, #2, #7 and #10 bring in the week 1 build fixes from
 [patch 01](history/patches/01-week1-build-fixes.patch), except its

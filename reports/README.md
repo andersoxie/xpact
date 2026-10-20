@@ -20,13 +20,14 @@ test scripts that back it up. The rules are in
 | [#18](https://github.com/andersoxie/xpact/issues/18) | Mark A01 as done in `student/PLAN.md` | [#19](https://github.com/andersoxie/xpact/pull/19) | `df189d9` | [issue-0018](issue-0018/report.md) |
 | [#20](https://github.com/andersoxie/xpact/issues/20) | Bring the student docs in line with the week 3 workflow; week 3 note | [#21](https://github.com/andersoxie/xpact/pull/21) | `4df05be` | [issue-0020](issue-0020/report.md) |
 | [#22](https://github.com/andersoxie/xpact/issues/22) | One-page status summary for the supervisor: `student/for superviser.txt` | [#23](https://github.com/andersoxie/xpact/pull/23) | `384f838` | [issue-0022](issue-0022/report.md) |
-| [#24](https://github.com/andersoxie/xpact/issues/24) | Record the GitHub labels in the repository | [#25](https://github.com/andersoxie/xpact/pull/25) | see the pull request | [issue-0024](issue-0024/report.md) |
+| [#24](https://github.com/andersoxie/xpact/issues/24) | Record the GitHub labels in the repository | [#25](https://github.com/andersoxie/xpact/pull/25) | `e6d6732` | [issue-0024](issue-0024/report.md) |
+| [#26](https://github.com/andersoxie/xpact/issues/26) | Put the B03 work (#3, #12, #13) on hold | [#27](https://github.com/andersoxie/xpact/pull/27) | see the pull request | [issue-0026](issue-0026/report.md) |
 
-Open: [#3](https://github.com/andersoxie/xpact/issues/3) (B03 loop variant, fix
-in pull request [#12](https://github.com/andersoxie/xpact/pull/12) waiting for
-review by the parser's developer) and
+On hold ([#26](https://github.com/andersoxie/xpact/issues/26)):
+[#3](https://github.com/andersoxie/xpact/issues/3) (B03 loop variant, fix in
+draft pull request [#12](https://github.com/andersoxie/xpact/pull/12)) and
 [#13](https://github.com/andersoxie/xpact/issues/13) (GC critical section
-swallows exceptions).
+swallows exceptions), being checked further before asking for review.
 
 ## Error reports
 
