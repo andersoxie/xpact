@@ -1,0 +1,50 @@
+STATUS FOR SUPERVISOR - branch student-Mass @ 4df05be (16 commits ahead of main), 2026-10-20
+Repo: github.com/andersoxie/xpact   Full index: reports/README.md   Plan: student/PLAN.md
+
+CODE CHANGES (only 5 files outside student/ and reports/; no parser code on student-Mass)
+-----------------------------------------------------------------------------------------
+Why: the native Eiffel DLL and smoke test did not build on Windows. These are the
+week 1 fixes (old patch b930600), now as reviewed, tested commits.
+
+  #2   9eb18bd  scripts/build_native_eiffel.ps1
+       Include fallback pointed to C:\El2502E (does not exist) -> EiffelStudio 25.12 path.
+  #7   eb6fc5d  scripts/build_native_eiffel.ps1, tests/xpact_native_library.ecf
+       Default mingw C backend writes no .lnk -> build with ISE_C_COMPILER=msc_vc140,
+       remove mingw-only precompile, stop harmless stderr aborting the script.
+       Result: xpact.dll + smoke test ok, xpact_assertions.dll builds.
+  #4   3b8a205  scripts/import_msvc_environment.ps1
+       Each import grew PATH by 1,432 chars; 5th run failed "input line is too long"
+       -> skip import if MSVC already loaded, de-duplicate PATH.
+  #10  20e6bc3  scripts/run_native_runtime_smoke.ps1, tests/xpact_native_runtime.ecf
+       Same two problems as #2/#7 in the smoke script -> same fix. Both cells ok.
+
+WAITING FOR YOUR REVIEW (not on student-Mass)
+---------------------------------------------
+  #3 / PR #12  src/xp_native_parser.e  (one line)  - B03
+       The contract was wrong, not the code: the loop variant in
+       direct_start_tag_attributes does not decrease at the '/' of "<root/>".
+       Fix: variant a_end_index - i + l_valid.to_integer. All 4 test matrix cells pass.
+  #13  (finding, no fix yet)  XP_GC_CRITICAL_SECTION.execute uses
+       MEMORY.execute_without_collection, which swallows exceptions. That is why B03
+       showed up as the misleading final_finished_or_suspended postcondition.
+
+DOCUMENTATION / WORKFLOW ONLY (no effect on the parser or tests)
+----------------------------------------------------------------
+  a17db10 cd0e1e4 f146008  student/ workspace, 10-week plan, weeks 1-2 record
+  aa8e0aa 1e699a0          an upload and its revert (no net change)
+  b7181f0 5240cfc          error report 2026-10-19 (reports/error-reports/)
+  cada501 (#5)             versioning workflow: student/VERSIONING.md, student/tools/fix.ps1
+  4a957b1 (#14)            one folder per fix: reports/issue-NNNN/
+  b631e15 df189d9 4df05be  PLAN.md updates, week 3 note, docs aligned (#16, #18, #20)
+
+HOW EVERY FIX IS DONE
+---------------------
+  Issue -> branch fix/<issue>-<name> -> expected result written before testing ->
+  report with before/after logs in reports/issue-NNNN/ -> PR -> squash merge.
+  One commit per fix, revertable with git revert. Parser changes wait for review.
+
+QUESTIONS FOR YOU
+-----------------
+  1. Review PR #12 (B03 parser fix).
+  2. Should the build fixes (#2, #7, #4, #10) go into main via a pull request?
+  3. Next: A02 baseline rerun in git, then B01/B02. OK?
