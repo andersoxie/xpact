@@ -15,15 +15,20 @@ September to 2026-10-15. It is copied here so nothing is lost.
 The branches that held `b930600` (`student-test`, `Mass-test-workbench`) were
 deleted from GitHub, so these patches are now the only copy outside the Desktop folder.
 
-## Applying the patches
+## Status of the patches (2026-10-20)
 
-The build on this PC needs them (see the blocker issue `22-blocker-build-fixes.md`):
+The patches are kept as the record of the week 1–2 fixes. Do **not** `git apply`
+them on `student-Mass`: most of patch 01 is already there, so it would conflict.
 
-```powershell
-cd C:\Users\masou\Documents\xpact-student-mass
-git apply student\history\patches\01-week1-build-fixes.patch
-git apply student\history\patches\02-week2-runner-changes.patch
-```
+| Patch part | Status |
+|---|---|
+| 01: include fallback, `msc_vc140` backend, stderr guards, no precompile in `build_native_eiffel.ps1` / `xpact_native_library.ecf` | On `student-Mass`: #2 (`9eb18bd`), #7 (`eb6fc5d`) |
+| 01: the same in `run_native_runtime_smoke.ps1` / `xpact_native_runtime.ecf` | On `student-Mass`: #10 (`20e6bc3`) |
+| 01: stderr guard in `import_msvc_environment.ps1` | Not applied; the import's stderr message is printed but no longer stops a run. #4 (`3b8a205`) changed the same file to stop PATH growth |
+| 01: new `run_xmlconf_conformance.ps1` | **Not in git yet** |
+| 02: pinned W3C download, `finish_freezing`, test-matrix stderr guard | **Not in git yet** |
 
-Apply them on an issue branch, not directly on `student-Mass`, and agree with the
-supervisor whether they should be committed.
+Bring each missing part in through its own issue with
+[`VERSIONING.md`](../VERSIONING.md), in the clone
+`C:\Users\masou\Desktop\Lia\xpact\xpactGit`. The fix reports are indexed in
+[`reports/README.md`](../../reports/README.md).

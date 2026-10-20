@@ -1,14 +1,22 @@
 # Results
 
-One folder per issue, named after the issue's task ID and branch, e.g.
-`B01-nonzero-exit/`. Link the folder from the issue and from its pull request.
+Evidence for **task work that is not a code fix**: investigations, orientation
+notes, measurements and data sets, e.g. `A01-orientation/` or the
+[`xmlconf-crashes-2026-10-14/`](xmlconf-crashes-2026-10-14/) analysis.
 
-Each folder starts with a `README.md` like this:
+**Fixes do not go here.** A change to code, scripts or configuration keeps its
+report and logs in `reports/issue-NNNN/` (see
+[`reports/README.md`](../../reports/README.md) and
+[`VERSIONING.md`](../VERSIONING.md)). If a task here leads to a fix, link this
+folder from the fix's report.
+
+One folder per task, named after its task ID, e.g. `A01-orientation/`. Link the
+folder from the issue. Each folder starts with a `README.md` like this:
 
 ```markdown
-# B01 - Failing tests must return a nonzero exit status
+# A02 - Reproduce assertions-enabled workbench and finalized builds
 
-Issue: #12   Branch: b01-nonzero-exit   Revision: <git rev-parse HEAD>
+Issue: #<n>   Revision: <git rev-parse HEAD>
 
 ## Configuration
 Build: workbench / finalized (-keep)   Assertions: pre/post/check/invariant on

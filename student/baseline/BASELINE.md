@@ -16,7 +16,7 @@ the sources are identified by content:
 | | |
 |---|---|
 | Source fingerprint | `e2c5eafe68445b8ba3c79feaa921b2af72fef4ec9a5d9ca6e2497a0067fbd981` (SHA-256 over 119 `*.e/*.ecf/*.c/*.h/*.ps1` files; per-file hashes in [`logs/sources.sha256`](logs/sources.sha256)) |
-| Closest pushed commit | `student-test` @ `b930600` on github.com/andersoxie/xpact |
+| Closest pushed commit | `student-test` @ `b930600` on github.com/andersoxie/xpact. *Update 2026-10-20:* that branch has been deleted; its build fixes are now on `student-Mass` as #2 (`9eb18bd`), #7 (`eb6fc5d`) and #10 (`20e6bc3`), see [`reports/README.md`](../../reports/README.md). Rerunning this baseline in the git clone is task A02. |
 | Local changes on top of it | `scripts/run_xmlconf_conformance.ps1` (downloads the pinned W3C ZIP; `ec` stderr guard; runs `finish_freezing`), `scripts/run_eiffel_test_matrix.ps1` (stderr guard so the lanes can be logged), and this folder |
 
 ## 2. Configuration
@@ -82,7 +82,7 @@ What this shows:
 
 | ID | Failure | Evidence | Status / note |
 |---|---|---|---|
-| **K1** | `XP_NATIVE_PARSER.parse @10 final_finished_or_suspended: Postcondition violated`, raised from `XP_TEST_ROOT.test_garbage_collection_suspension` | `matrix-workbench.log`, `matrix-finalized-keep.log` | Known (B03). Fails in workbench **and** finalized-with-`-keep`. The test runner stops at the first failure, so **tests after this one did not run** in the assertions-on lanes. |
+| **K1** | `XP_NATIVE_PARSER.parse @10 final_finished_or_suspended: Postcondition violated`, raised from `XP_TEST_ROOT.test_garbage_collection_suspension` | `matrix-workbench.log`, `matrix-finalized-keep.log` | Known (B03). Fails in workbench **and** finalized-with-`-keep`. The test runner stops at the first failure, so **tests after this one did not run** in the assertions-on lanes. *Update 2026-10-20:* root cause found in [#3](https://github.com/andersoxie/xpact/issues/3): a wrong loop variant in `XP_NATIVE_PARSER.direct_start_tag_attributes`, hidden behind this postcondition because `MEMORY.execute_without_collection` swallows exceptions ([#13](https://github.com/andersoxie/xpact/issues/13)). With the fix from pull request [#12](https://github.com/andersoxie/xpact/pull/12) (waiting for review) all four matrix cells pass, including the tests after this one. |
 | **K2** | The "assertions-on / Finalized" lane does not check assertions | `run_eiffel_test_matrix.ps1` calls `ec -finalize` **without `-keep`**; with `-keep` (step 4) the lane fails like K1 | **New finding.** The green result in step 3 (and in CI) is misleading. Fix: add `-keep` to the finalized lane, as `build_native_eiffel.ps1` already does. Not changed here, because it alters what CI reports. Discuss with the supervisor first. |
 | **K3** | Assertions-tier DLL smoke test crashes, exit code `-1073741784` = **`0xC0000028` STATUS_BAD_STACK** | `assertions-dll.log` | Known open issue. Earlier notes recorded `0xC0000008` (STATUS_INVALID_HANDLE): the crash code is not stable. CI hides this with `-SkipSmoke`. |
 | **K4** | Invalid UTF-8 (`C3 28`) accepted | `event-trace-output.txt` (06), xmlconf | Known (P0, C08/C10). |

@@ -8,7 +8,22 @@ issues and a project board.
 | `labels.json` | 14 labels: group (A, B, C, F, G), difficulty (D1–D4), priority (P0, P1), type (task, finding, blocker) |
 | `milestones.json` | One milestone per review point, weeks 2, 3, 4, 5, 7 and 10. Due dates assume that week 1 started on 2026-10-05. Change them if that is wrong. |
 | `issues/*.md` | 23 issue drafts: the guide's suggested selection, the week 2 findings, and 3 from the weeks 1–2 history (21–23). Edit or delete drafts before running the script. |
-| `setup-github.ps1` | Creates all of the above on GitHub. Safe to run again. |
+| `setup-github.ps1` | Creates all of the above on GitHub. Safe to run again: it skips a draft whose title **exactly** matches an existing issue. |
+
+## Drafts and real issues (2026-10-20)
+
+Issues on GitHub so far were created one by one, not with the script. Before
+running it, check that no draft duplicates a real issue:
+
+| Draft | Real issue | Note |
+|---|---|---|
+| `05-finding-b03-postcondition.md` | [#3](https://github.com/andersoxie/xpact/issues/3) | Title changed to match #3 exactly, so the script skips it |
+| `22-blocker-build-fixes.md` | (none) | Partly solved by #2, #7, #10 on `student-Mass`; still not in `main` |
+| `01-A01.md` | (none; A01 was marked done in [#18](https://github.com/andersoxie/xpact/issues/18)) | The script would create an A01 issue for finished work: delete the draft or close the issue afterwards |
+
+Issues created outside the drafts: #2, #4, #7, #10, #13 (findings), #5, #14,
+#16, #18, #20 (tasks). Their reports are indexed in
+[`reports/README.md`](../../reports/README.md).
 
 ## Milestones and issues
 
@@ -27,11 +42,11 @@ Creating labels, milestones and issues needs **write access** to the repository.
 Ask the supervisor first whether to use `andersoxie/xpact` or a fork of your own.
 
 ```powershell
-winget install GitHub.cli          # once; then open a new PowerShell window
+winget install GitHub.cli          # once (on this PC winget is missing: gh is in %LOCALAPPDATA%\Programs\GitHubCLI\bin)
 gh auth login                      # once; choose GitHub.com and log in with the browser
 gh auth refresh -s project         # only for -CreateProject
 
-cd C:\Users\masou\Documents\xpact-student-mass
+cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
 .\student\github\setup-github.ps1 -DryRun                    # shows what it would do
 .\student\github\setup-github.ps1                            # labels, milestones, issues
 .\student\github\setup-github.ps1 -CreateProject             # ... plus the project board

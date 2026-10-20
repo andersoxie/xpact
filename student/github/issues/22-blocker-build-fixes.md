@@ -3,6 +3,8 @@ title: "Blocker: Windows build fixes (msc_vc140 backend, stderr guards) are not 
 labels: group:A-orientation, D2-guided, P0, type:blocker
 milestone: Week 2 - Baseline
 ---
+> **Update 2026-10-20:** the build fixes are now on `student-Mass` as #2 (`9eb18bd`), #7 (`eb6fc5d`) and #10 (`20e6bc3`), and the build works there. Still open: they are not in `main`, and `run_xmlconf_conformance.ps1` plus patch 02 are not in git. Ask the supervisor whether to open a pull request into `main`.
+
 ## Steps to reproduce
 1. Fresh clone of `main` on a Windows PC where EiffelStudio's default C backend is mingw (`ISE_C_COMPILER` empty).
 2. `.\scripts\build_native_eiffel.ps1`, or `.\scripts\run_native_runtime_smoke.ps1`

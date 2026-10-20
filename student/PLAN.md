@@ -10,7 +10,7 @@ their GitHub issue once it exists, otherwise to the draft in
 Week 1 = 2026-10-05. Review with the supervisor at the end of every week, and
 write the weekly note in [`notes/weekly/`](notes/weekly/).
 
-**Last updated:** 2026-10-20 (week 3), `student-Mass` @ `4a957b1`.
+**Last updated:** 2026-10-20 (week 3), `student-Mass` @ `df189d9` plus #20.
 [PLAN2.md](PLAN2.md) has the detailed record of weeks 1-2 (evidence, tests run, findings) as of 2026-10-15.
 
 ## Where things stand
@@ -22,7 +22,7 @@ write the weekly note in [`notes/weekly/`](notes/weekly/).
 | Waiting | [#12](https://github.com/andersoxie/xpact/pull/12) (B03 loop variant) needs review by the parser's developer before merging |
 | Still blocked | The build fixes are on `student-Mass`, not on `main` ([draft 22](github/issues/22-blocker-build-fixes.md)). Ask the supervisor whether to open a pull request into `main` |
 | Also done | A01 orientation ([#18](https://github.com/andersoxie/xpact/issues/18)) |
-| Next | A02: rerun the baseline in the git clone now that the build works there. Then B01/B02. Write the week 3 note |
+| Next | A02: rerun the baseline in the git clone now that the build works there. Then B01/B02. Bring in `run_xmlconf_conformance.ps1` and patch 02 (see [history/README.md](history/README.md)) |
 
 ## Week 1 – Setup
 **Activity:** Learn basic XML, the project structure and the Git workflow. Build with help.
@@ -60,6 +60,7 @@ Each item is one issue, one report and one squashed commit on `student-Mass`.
 | ✅ | [#4](https://github.com/andersoxie/xpact/issues/4) | "The input line is too long": stop repeated MSVC imports growing PATH | [#9](https://github.com/andersoxie/xpact/pull/9) | `3b8a205` | [issue-0004](../reports/issue-0004/report.md) |
 | ✅ | [#10](https://github.com/andersoxie/xpact/issues/10) | Native runtime smoke test: include fallback and `msc_vc140` backend | [#11](https://github.com/andersoxie/xpact/pull/11) | `20e6bc3` | [issue-0010](../reports/issue-0010/report.md) |
 | ✅ | [#14](https://github.com/andersoxie/xpact/issues/14) | One folder per fix under `reports/` | [#15](https://github.com/andersoxie/xpact/pull/15) | `4a957b1` | [issue-0014](../reports/issue-0014/report.md) |
+| ✅ | [#20](https://github.com/andersoxie/xpact/issues/20) | Docs in line with the week 3 workflow; week 3 note | [#21](https://github.com/andersoxie/xpact/pull/21) | | [issue-0020](../reports/issue-0020/report.md) |
 | 🟡 | [#3](https://github.com/andersoxie/xpact/issues/3) | B03 loop variant | [#12](https://github.com/andersoxie/xpact/pull/12) (review) | | |
 
 Together, #2, #7 and #10 bring in the week 1 build fixes from
@@ -73,7 +74,7 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 **Bring to review:** A bounded failure-reporting fix, or a precise proposal with evidence.
 - [ ] [B01](github/issues/09-B01.md) Failing tests must return a nonzero exit status
 - [ ] [B02](github/issues/10-B02.md) Deliberately failing meta-tests
-- [ ] Week 3 note in [`notes/weekly/`](notes/weekly/)
+- [x] Week 3 note: [week-03.md](notes/weekly/week-03.md) (written 2026-10-20, mid-week)
 
 ## Week 4 – Input matrix
 **Activity:** Design small regressions and select 50–100 applicable W3C XML cases with the supervisor.

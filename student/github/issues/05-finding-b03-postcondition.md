@@ -1,8 +1,10 @@
 ---
-title: "Finding: postcondition final_finished_or_suspended fails in GC-suspension test (B03)"
+title: "Finding: postcondition final_finished_or_suspended fails in test_garbage_collection_suspension (B03)"
 labels: group:B-reliable-results, D3-advanced, P0, type:finding
 milestone: Week 2 - Baseline
 ---
+> **Created on GitHub as [#3](https://github.com/andersoxie/xpact/issues/3)** (2026-10-19). The title matches #3 exactly, so `setup-github.ps1` skips this draft. Root cause and fix: #3 and pull request #12.
+
 ## Steps to reproduce
 1. `.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode On -BuildMode Workbench`
 
