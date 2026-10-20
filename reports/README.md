@@ -18,7 +18,7 @@ test scripts that back it up. The rules are in
 | [#14](https://github.com/andersoxie/xpact/issues/14) | One folder per fix under `reports/` | [#15](https://github.com/andersoxie/xpact/pull/15) | `4a957b1` | [issue-0014](issue-0014/report.md) |
 | [#16](https://github.com/andersoxie/xpact/issues/16) | Update `student/PLAN.md` with the week 3 work | [#17](https://github.com/andersoxie/xpact/pull/17) | `b631e15` | [issue-0016](issue-0016/report.md) |
 | [#18](https://github.com/andersoxie/xpact/issues/18) | Mark A01 as done in `student/PLAN.md` | [#19](https://github.com/andersoxie/xpact/pull/19) | `df189d9` | [issue-0018](issue-0018/report.md) |
-| [#20](https://github.com/andersoxie/xpact/issues/20) | Bring the student docs in line with the week 3 workflow; week 3 note | [#21](https://github.com/andersoxie/xpact/pull/21) | this pull request's squash commit | [issue-0020](issue-0020/report.md) |
+| [#20](https://github.com/andersoxie/xpact/issues/20) | Bring the student docs in line with the week 3 workflow; week 3 note | [#21](https://github.com/andersoxie/xpact/pull/21) | `4df05be` | [issue-0020](issue-0020/report.md) |
 | [#22](https://github.com/andersoxie/xpact/issues/22) | One-page status summary for the supervisor: `student/for superviser.txt` | [#23](https://github.com/andersoxie/xpact/pull/23) | this pull request's squash commit | [issue-0022](issue-0022/report.md) |
 
 Open: [#3](https://github.com/andersoxie/xpact/issues/3) (B03 loop variant, fix
