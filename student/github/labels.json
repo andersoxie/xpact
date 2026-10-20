@@ -12,5 +12,6 @@
   { "name": "P1",                       "color": "d4c5f9", "description": "Important, after P0" },
   { "name": "type:task",                "color": "0075ca", "description": "Planned work from the task register" },
   { "name": "type:finding",             "color": "d73a4a", "description": "Something observed that is wrong or surprising" },
-  { "name": "type:blocker",             "color": "000000", "description": "Stops other work until resolved" }
+  { "name": "type:blocker",             "color": "000000", "description": "Stops other work until resolved" },
+  { "name": "workflow",                 "color": "c5def5", "description": "Versioning, reports and plan updates (not a project finding)" }
 ]

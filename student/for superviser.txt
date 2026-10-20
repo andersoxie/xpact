@@ -37,6 +37,15 @@ DOCUMENTATION / WORKFLOW ONLY (no effect on the parser or tests)
   4a957b1 (#14)            one folder per fix: reports/issue-NNNN/
   b631e15 df189d9 4df05be  PLAN.md updates, week 3 note, docs aligned (#16, #18, #20)
 
+GITHUB LABELS (added 2026-10-20, #24)
+-------------------------------------
+  I added 9 labels from student/github/labels.json (plus a new "workflow" label)
+  to andersoxie/xpact and labelled every issue, WITHOUT ASKING YOU FIRST - sorry.
+  Build fixes: type:finding group:B-reliable-results D2-guided P0.
+  #3/#12: group:C-correctness D3-advanced P0. #13: same, P1.
+  Workflow tasks: type:task workflow. Details: student/github/README.md.
+  I can remove them if you prefer the repo without labels.
+
 HOW EVERY FIX IS DONE
 ---------------------
   Issue -> branch fix/<issue>-<name> -> expected result written before testing ->
@@ -48,3 +57,4 @@ QUESTIONS FOR YOU
   1. Review PR #12 (B03 parser fix).
   2. Should the build fixes (#2, #7, #4, #10) go into main via a pull request?
   3. Next: A02 baseline rerun in git, then B01/B02. OK?
+  4. Keep the GitHub labels (see above)?

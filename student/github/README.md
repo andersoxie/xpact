@@ -5,7 +5,7 @@ issues and a project board.
 
 | File | Content |
 |---|---|
-| `labels.json` | 14 labels: group (A, B, C, F, G), difficulty (D1–D4), priority (P0, P1), type (task, finding, blocker) |
+| `labels.json` | 15 labels: group (A, B, C, F, G), difficulty (D1–D4), priority (P0, P1), type (task, finding, blocker), and `workflow` |
 | `milestones.json` | One milestone per review point, weeks 2, 3, 4, 5, 7 and 10. Due dates assume that week 1 started on 2026-10-05. Change them if that is wrong. |
 | `issues/*.md` | 23 issue drafts: the guide's suggested selection, the week 2 findings, and 3 from the weeks 1–2 history (21–23). Edit or delete drafts before running the script. |
 | `setup-github.ps1` | Creates all of the above on GitHub. Safe to run again: it skips a draft whose title **exactly** matches an existing issue. |
@@ -24,6 +24,27 @@ running it, check that no draft duplicates a real issue:
 Issues created outside the drafts: #2, #4, #7, #10, #13 (findings), #5, #14,
 #16, #18, #20 (tasks). Their reports are indexed in
 [`reports/README.md`](../../reports/README.md).
+
+## Labels on GitHub (2026-10-20)
+
+Nine of the labels in `labels.json` were created on GitHub by hand with
+`gh label create` (not with the script), with the colours and descriptions
+from `labels.json`. They were created **without asking the supervisor first**,
+although the section "Running it" below says to ask; this is noted in
+[`for superviser.txt`](../for%20superviser.txt).
+
+| Labels | Applied to |
+|---|---|
+| `type:finding` `group:B-reliable-results` `D2-guided` `P0` | #2, #4, #7, #10: build fixes; without them no result could be reproduced |
+| `type:finding` `group:C-correctness` `D3-advanced` `P0` | #3 (B03) and pull request #12; a parser change reviewed by its developer |
+| `type:finding` `group:C-correctness` `D3-advanced` `P1` | #13 |
+| `type:task` `workflow` | #5, #14, #16, #18, #20, #22, #24: versioning, reports, plan and summary updates |
+
+`workflow` is new: housekeeping tasks are not findings and belong to no group
+of the task register. The other six labels in `labels.json` (`group:A`,
+`group:F`, `group:G`, `D1`, `D4`, `type:blocker`) are not on GitHub yet. The
+issue templates add `type:finding` or `type:task` automatically; add the group,
+difficulty and priority labels by hand.
 
 ## Milestones and issues
 
