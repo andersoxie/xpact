@@ -32,7 +32,7 @@ revert** (one commit undoes it). This page describes how that is done on
 ## A fix, step by step
 
 ```powershell
-cd C:\xpact\xpact-student-Mass
+cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
 
 # 1. Branch from the latest student-Mass (also creates reports\issue-0002\)
 .\student\tools\fix.ps1 start -Issue 2 -Name include-fallback
@@ -57,37 +57,6 @@ git commit
 `finish` refuses to push if a commit doesn't mention the issue, if the report
 is missing, or if the report has no `## Verification` section. `merge` prints
 the commit to use if the fix ever has to be reverted.
-
-## `fix.ps1` in Windows PowerShell 5.1
-
-In Windows PowerShell 5.1 the script stops as soon as git writes to stderr,
-which git also does for normal messages ("Already on 'student-Mass'", push
-progress). Until the script is fixed, run the same steps by hand. This is how
-#29 was done:
-
-```powershell
-# start
-git fetch --prune origin
-git switch student-Mass
-git merge --ff-only origin/student-Mass
-git switch -c fix/29-w3c-assertions
-mkdir reports\issue-0029
-
-# ... change, test, write reports\issue-0029\report.md, commit with "Refs #29" ...
-
-# finish: check yourself that every commit says "Refs #29" and that the
-# report has a "## Verification" section, then
-git push -u origin fix/29-w3c-assertions
-gh pr create --repo andersoxie/xpact --base student-Mass --head fix/29-w3c-assertions --title "<subject>" --body-file <file>
-#   body: "Refs #29", the commit list, a link to the report, the revert command
-
-# merge, after the checks pass
-gh pr merge <pr> --repo andersoxie/xpact --squash --subject "<subject> (#<pr>)" --body "Refs #29"
-git switch student-Mass
-git pull --ff-only
-git push origin --delete fix/29-w3c-assertions
-git branch -D fix/29-w3c-assertions
-```
 
 ## Reverting a fix
 
@@ -130,17 +99,13 @@ numbers already identify each fix.
 ## Setup (once per clone)
 
 ```powershell
-cd C:\xpact\xpact-student-Mass
+cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
 git config commit.template "$PWD\student\git\commit-template.txt"
 git config pull.ff only           # never create accidental merge commits on pull
 git config fetch.prune true       # forget remote branches deleted after merging
 git config push.autoSetupRemote true
 gh auth status                    # GitHub CLI must be logged in
 ```
-
-`gh` was installed with `winget install GitHub.cli`; see
-[README.md](README.md#tools-on-this-pc-2026-10-21) for where it and Python are
-on this PC.
 
 ## Already on `student-Mass` before this workflow
 

@@ -9,36 +9,9 @@ folder, so it stays separate from the parser code. The plan, the task register
 (the live status). [PLAN2.md](PLAN2.md) is the frozen, detailed record of weeks 1–2
 as of 2026-10-15.
 
-## Find it fast
-
-| I want to see… | Open |
-|---|---|
-| Where things stand and what's next | [PLAN.md](PLAN.md), section "Where things stand" and "Next tests" |
-| A one-page status for the supervisor | [`for superviser.txt`](for%20superviser.txt) |
-| Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
-| What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |
-| Test results and investigations | [`results/README.md`](results/README.md) |
-| The week 2 baseline | [`baseline/BASELINE.md`](baseline/BASELINE.md) |
-| Weekly notes | [`notes/weekly/`](notes/weekly/) |
-| Issues not on GitHub yet | [`github/issues/`](github/issues/), listed in [`github/README.md`](github/README.md) |
-| How to make and revert a fix | [VERSIONING.md](VERSIONING.md) |
-
-The clone on this PC is `C:\xpact\xpact-student-Mass`. Make every
+The clone on this PC is `C:\Users\masou\Desktop\Lia\xpact\xpactGit`. Make every
 change there, never in a copied folder: a copy has no commit hash, so its
 results can't be traced.
-
-## Tools on this PC (2026-10-21)
-
-| Tool | Where | Note |
-|---|---|---|
-| Python 3.15 | `%APPDATA%\uv\python\cpython-3.15.0-windows-x86_64-none\python.exe` | Installed with uv, **not on `PATH`**: `python` opens the Microsoft Store alias. Call it by its full path, or run `uv python install --default` once |
-| GitHub CLI 2.102 | `%LOCALAPPDATA%\Microsoft\WinGet\Packages\GitHub.cli_Microsoft.Winget.Source_8wekyb3d8bbwe\bin\gh.exe` | Installed with winget, logged in as `CodTanium`. A VS Code terminal opened before the install doesn't find `gh` until VS Code is restarted |
-| EiffelStudio 25.12, Visual Studio 18 (MSVC 14.51) | standard install paths | `ec` is on `PATH`; load MSVC with `. .\scripts\import_msvc_environment.ps1` |
-
-`tools/fix.ps1` does not work in **Windows PowerShell 5.1**: git writes normal
-messages ("Already on …", push progress) to stderr, and the script stops on
-them. Until that is fixed, do its steps by hand, as described in
-[VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51).
 
 ## Layout
 
@@ -50,11 +23,10 @@ them. Until that is fixed, do its steps by hand, as described in
 | [`git/commit-template.txt`](git/commit-template.txt) | Commit message template (asks for `Refs #<issue>`) |
 | [`history/`](history/) | Weeks 1–2 before this repository: error reports, build fix notes, the old fixes as patches |
 | [`baseline/`](baseline/) | The week 2 assertions-enabled baseline: script, event trace, logs, BASELINE.md |
-| [`results/`](results/) | Evidence for task work that is **not** a code fix: investigations, orientation notes, measurements, test runs |
+| [`results/`](results/) | Evidence for task work that is **not** a code fix: investigations, orientation notes, measurements |
 | [`notes/weekly/`](notes/weekly/) | Half-page weekly notes, one file per week |
 | [`report/`](report/) | The university report, demonstration notes and handover guide (weeks 8–10) |
 | [`github/`](github/) | Labels, milestones and issue drafts, plus `setup-github.ps1`, which creates them on GitHub |
-| [`for superviser.txt`](for%20superviser.txt) | One-page status for the supervisor |
 
 Outside this folder:
 
@@ -82,7 +54,7 @@ changes the parser.
 The full rules are in [VERSIONING.md](VERSIONING.md). In short:
 
 ```powershell
-cd C:\xpact\xpact-student-Mass
+cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
 .\student\tools\fix.ps1 start -Issue 7 -Name msvc-c-backend   # branch + reports\issue-0007\
 #   write the expected results in reports\issue-0007\report.md BEFORE testing,
 #   change, test, save the logs next to the report, add "## Verification",

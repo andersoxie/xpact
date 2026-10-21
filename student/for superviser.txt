@@ -1,24 +1,8 @@
-STATUS FOR SUPERVISOR - branch student-Mass @ 8850dab (20 commits ahead of main), 2026-10-21
+STATUS FOR SUPERVISOR - branch student-Mass @ 4df05be (16 commits ahead of main), 2026-10-20
 Repo: github.com/andersoxie/xpact   Full index: reports/README.md   Plan: student/PLAN.md
 
-NEW SINCE 2026-10-20
---------------------
-  #29  8850dab  W3C suite (2,585 cases, 1,727 applicable) with your Python runner,
-                scripts/run_w3c_conformance.py, against two builds of xpact_benchmarks:
-                  assertions off (-finalize):        1,491 passed, 236 failed, 0 crashes
-                  assertions on  (-finalize -keep):    270 passed,  97 failed, 1,360 crashes
-                Off: 220 malformed documents are accepted, 16 well-formed ones rejected.
-                Results: student/results/w3c-conformance-2026-10-21/
-  #28  (open)   New finding from that run. 1,357 of the crashes are one bug:
-                the loop variant in XP_PARSER.normalized_input does not decrease
-                when the loop meets a CR (src/xp_parser.e:4468-4477). The loop still
-                ends correctly, so only assertions-on builds fail - on every file
-                with CR LF line ends. 9-byte repro: <r> CR LF </r>.
-                Same kind of bug as B03 (#3). It hides the 53 crashes from week 2.
-                I have not changed the parser.
-
-CODE CHANGES (only build scripts and ECFs; no parser code on student-Mass)
---------------------------------------------------------------------------
+CODE CHANGES (only 5 files outside student/ and reports/; no parser code on student-Mass)
+-----------------------------------------------------------------------------------------
 Why: the native Eiffel DLL and smoke test did not build on Windows. These are the
 week 1 fixes (old patch b930600), now as reviewed, tested commits.
 
@@ -42,23 +26,15 @@ DOCUMENTATION / WORKFLOW ONLY (no effect on the parser or tests)
   cada501 (#5)             versioning workflow: student/VERSIONING.md, student/tools/fix.ps1
   4a957b1 (#14)            one folder per fix: reports/issue-NNNN/
   b631e15 df189d9 4df05be  PLAN.md updates, week 3 note, docs aligned (#16, #18, #20)
-  384f838 (#22)            this status page
-  e6d6732 (#24)            GitHub labels recorded in the repository
-  2f0d441 (#26)            B03 work (#3, PR #12, #13) put on hold
-  8850dab (#29)            W3C results, error report 2026-10-21 (see above)
-
-ON HOLD
--------
-  B03 (#3, draft PR #12) and #13: I am checking them further before asking for review.
 
 GITHUB LABELS (added 2026-10-20, #24)
 -------------------------------------
   I added 9 labels from student/github/labels.json (plus a new "workflow" label)
   to andersoxie/xpact and labelled every issue, WITHOUT ASKING YOU FIRST - sorry.
   Build fixes: type:finding group:B-reliable-results D2-guided P0.
-  Parser findings (#3, #13, #28): group:C-correctness D3-advanced.
-  Workflow tasks: type:task workflow. #29: type:task D2-guided P1.
-  Details: student/github/README.md. I can remove them if you prefer.
+  Parser findings: group:C-correctness D3-advanced.
+  Workflow tasks: type:task workflow. Details: student/github/README.md.
+  I can remove them if you prefer the repo without labels.
 
 HOW EVERY FIX IS DONE
 ---------------------
@@ -69,7 +45,5 @@ HOW EVERY FIX IS DONE
 QUESTIONS FOR YOU
 -----------------
   1. Should the build fixes (#2, #7, #4, #10) go into main via a pull request?
-  2. #28: who should repair the loop variant? I can write the regression test.
-  3. Next tests (student/PLAN.md, "Next tests"): #28 regression, B02, C02, C03,
-     C10. C02/C03/C10 go through the DLL and need a small C test program. OK?
-  4. Keep the GitHub labels (see above)?
+  2. Next: A02 baseline rerun in git, then B01/B02. OK?
+  3. Keep the GitHub labels (see above)?

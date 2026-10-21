@@ -64,11 +64,11 @@ Creating labels, milestones and issues needs **write access** to the repository.
 Ask the supervisor first whether to use `andersoxie/xpact` or a fork of your own.
 
 ```powershell
-winget install GitHub.cli          # once (done on this PC 2026-10-21, see ../README.md "Tools on this PC")
+winget install GitHub.cli          # once (on this PC winget is missing: gh is in %LOCALAPPDATA%\Programs\GitHubCLI\bin)
 gh auth login                      # once; choose GitHub.com and log in with the browser
 gh auth refresh -s project         # only for -CreateProject
 
-cd C:\xpact\xpact-student-Mass
+cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
 .\student\github\setup-github.ps1 -DryRun                    # shows what it would do
 .\student\github\setup-github.ps1                            # labels, milestones, issues
 .\student\github\setup-github.ps1 -CreateProject             # ... plus the project board

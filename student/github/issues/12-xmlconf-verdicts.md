@@ -26,7 +26,7 @@ rejected), 0 crashes. Assertions on: 1,360 crashes, 1,357 of them #28. These
 are the numbers to compare this runner with after the fix.
 
 ## Done when
-- [x] `invalid` -> expected ACCEPT; `error` -> no required verdict (reported, not counted as a failure): done by the Python runner (#29); `run_xmlconf_conformance.ps1` itself was not changed
-- [x] Cases that need external entities or XML 1.1 are skipped and counted separately: Python runner, 858 skipped with a reason (#29)
-- [x] Totals reconcile: passed + failed + skipped = cases: 1,491 + 236 + 0 errors + 858 = 2,585 (#29, `student/results/w3c-conformance-2026-10-21/summary.md`)
+- [ ] `invalid` -> expected ACCEPT; `error` -> no required verdict (reported, not counted as a failure)
+- [ ] Cases that need external entities or XML 1.1 are skipped and counted separately
+- [ ] Totals reconcile: passed + failed + skipped = cases
 - [ ] Before/after summary compared with the Python runner in `student/results/xmlconf-verdicts/`

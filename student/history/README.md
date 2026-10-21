@@ -28,13 +28,7 @@ them on `student-Mass`: most of patch 01 is already there, so it would conflict.
 | 01: new `run_xmlconf_conformance.ps1` | **Not in git yet** |
 | 02: pinned W3C download, `finish_freezing`, test-matrix stderr guard | **Not in git yet** |
 
-*Update 2026-10-21:* the W3C suite no longer needs `run_xmlconf_conformance.ps1`
-or the pinned download from patch 02: `scripts/run_w3c_conformance.py` (already
-on `student-Mass`) downloads and checks the ZIP itself. See
-[`results/w3c-conformance-2026-10-21/`](../results/w3c-conformance-2026-10-21/README.md) (#29).
-The test-matrix stderr guard from patch 02 is still missing.
-
 Bring each missing part in through its own issue with
 [`VERSIONING.md`](../VERSIONING.md), in the clone
-`C:\xpact\xpact-student-Mass`. The fix reports are indexed in
+`C:\Users\masou\Desktop\Lia\xpact\xpactGit`. The fix reports are indexed in
 [`reports/README.md`](../../reports/README.md).
