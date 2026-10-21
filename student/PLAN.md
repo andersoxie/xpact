@@ -10,7 +10,7 @@ their GitHub issue once it exists, otherwise to the draft in
 Week 1 = 2026-10-05. Review with the supervisor at the end of every week, and
 write the weekly note in [`notes/weekly/`](notes/weekly/).
 
-**Last updated:** 2026-10-21 (week 3), `student-Mass` @ `2f0d441` plus #29.
+**Last updated:** 2026-10-21 (week 3), `student-Mass` @ `8850dab`.
 [PLAN2.md](PLAN2.md) has the detailed record of weeks 1-2 (evidence, tests run, findings) as of 2026-10-15.
 
 ## Where things stand
