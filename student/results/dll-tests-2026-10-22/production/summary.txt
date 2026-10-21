@@ -1,0 +1,135 @@
+xpact DLL tests (tests/dotnet/XpactDllTests)
+Date:      2026-10-22 01:53:39
+Commit:    97e734485ba72297270e2645ddc2809fe57d8ffe
+DLL:       C:\xpact\xpact-student-Mass\build\native-eiffel\xpact.dll
+           9,661,440 bytes, modified 2026-10-21 16:25, SHA-256 62a2706bd7dadc8e09d6af932215b0f71de2aea4010940fd66afd9226d892bc2
+Version:   expat_2.8.1-xpact-eiffel-bridge
+Filters:   none, --jobs 8
+Run:       3360 cases in 8 process(es), 0.3 s
+
+TOTAL  3360   pass 1200   fail 2160   crash 0   timeout 0
+
+1. BY GROUP AND CHUNKING
+   group  chunks  total   pass   fail  crash  timeout
+   c02    whole      42     36      6      0        0
+   c02    split     396    366     30      0        0
+   c02    bytes      36     36      0      0        0
+   cr     whole      24     22      2      0        0
+   cr     split     180    176      4      0        0
+   cr     bytes      24     24      0      0        0
+   utf8   whole     180     38    142      0        0
+   utf8   split    2298    460   1838      0        0
+   utf8   bytes     180     42    138      0        0
+
+2. BY INPUT  (whole document per callback set: ok, or what went wrong; then chunked runs not ok)
+   input                              expect  none       start      end        start+end  chardata   default    chunked
+   c02-valid                          ACCEPT  ok         ok         ok         ok         ok         ok         0/42
+   c02-valid-pair                     ACCEPT  ok         ok         ok         EVENTS!    ok         ok         5/78
+   c02-text                           ACCEPT  ok         ok         ok         EVENTS!    ok         ok         5/90
+   c02-empty                          REJECT  ok         ok         ok         ok         ok         ok         -
+   c02-incomplete                     REJECT  ok         ACCEPT!    ok         ACCEPT!    ok         ok         10/36
+   c02-mismatched                     REJECT  ok         ACCEPT!    ok         ACCEPT!    ok         ok         10/120
+   c02-trailing-junk                  REJECT  ok         ok         ok         ok         ok         ok         0/66
+   cr-crlf                            ACCEPT  ok         ok         ok         EVENTS!    ok         ok         2/54
+   cr-lone                            ACCEPT  ok         ok         ok         EVENTS!    ok         ok         2/48
+   cr-last-byte                       ACCEPT  ok         ok         ok         ok         ok         ok         0/30
+   cr-attribute                       ACCEPT  ok         ok         ok         ok         ok         ok         0/72
+   utf8-valid-e9-text                 ACCEPT  ok         ok         ok         EVENTS!    ok         ok         2/54
+   utf8-valid-e9-attribute            ACCEPT  ok         ok         ok         ok         ok         ok         0/66
+   utf8-valid-e9-name                 ACCEPT  ok         ok         ok         ok         ok         ok         0/36
+   utf8-valid-e9-comment              ACCEPT  ok         ok         ok         EVENTS!    ok         ok         2/96
+   utf8-valid-e9-pi                   ACCEPT  ok         ok         ok         EVENTS!    ok         ok         2/96
+   utf8-valid-e9-cdata                ACCEPT  ok         ok         ok         EVENTS!    ok         ok         2/126
+   utf8-bad-continuation-text         REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    54/54
+   utf8-bad-continuation-attribute    REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    66/66
+   utf8-bad-continuation-name         REJECT  ok         ok         ok         ok         ok         ok         0/36
+   utf8-bad-continuation-comment      REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-bad-continuation-pi           REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-bad-continuation-cdata        REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    126/126
+   utf8-overlong-text                 REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    54/54
+   utf8-overlong-attribute            REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    66/66
+   utf8-overlong-name                 REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    36/36
+   utf8-overlong-comment              REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-overlong-pi                   REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-overlong-cdata                REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    126/126
+   utf8-surrogate-text                REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    60/60
+   utf8-surrogate-attribute           REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    72/72
+   utf8-surrogate-name                REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    42/42
+   utf8-surrogate-comment             REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    102/102
+   utf8-surrogate-pi                  REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    102/102
+   utf8-surrogate-cdata               REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    132/132
+   utf8-above-10ffff-text             REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    66/66
+   utf8-above-10ffff-attribute        REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    78/78
+   utf8-above-10ffff-name             REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    48/48
+   utf8-above-10ffff-comment          REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    108/108
+   utf8-above-10ffff-pi               REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    108/108
+   utf8-above-10ffff-cdata            REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    138/138
+   Cells: ok = right result. ACCEPT!/REJECT! = wrong verdict. EVENTS! = right verdict, wrong events.
+
+4. CHUNKED RUNS THAT DIFFER FROM THE WHOLE DOCUMENT  (same input and callbacks; verdict or error code)
+   32 run(s)
+   c02-incomplete/start/bytes                         whole: ACCEPT         this: REJECT 5
+   c02-incomplete/start+end/bytes                     whole: ACCEPT         this: REJECT 5
+   c02-mismatched/start/split@6                       whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@7                       whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@8                       whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@9                       whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@10                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@11                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@12                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@13                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@14                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@15                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@16                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@17                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@18                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/split@19                      whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start/bytes                         whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@6                   whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@7                   whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@8                   whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@9                   whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@10                  whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@11                  whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@12                  whole: ACCEPT         this: REJECT 7
+   c02-mismatched/start+end/split@13                  whole: ACCEPT         this: REJECT 7
+   ... 7 more in results.tsv
+
+5. ERROR CODES OF REJECTED DOCUMENTS  (information only; libexpat reference to confirm in G03)
+   c02-empty                          libexpat 3   xpact: 3 no element found (6x)
+   c02-incomplete                     libexpat 3   xpact: 5 unclosed token (30x)
+   c02-mismatched                     libexpat 7   xpact: 7 mismatched tag (114x)
+   c02-trailing-junk                  libexpat 9   xpact: 4 not well-formed (invalid token) (72x)
+   utf8-bad-continuation-name         libexpat 4   xpact: 4 not well-formed (invalid token) (42x)
+
+6. FAILURES  (2160; first 30)
+   c02-valid-pair/start+end/whole                     element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@1                   element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@2                   element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@3                   element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@4                   element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@5                   element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/whole                           element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@1                         element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@2                         element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@3                         element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@4                         element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@5                         element events: expected [start:root, end:root], got [start:root]
+   c02-incomplete/start/whole                         expected REJECT, got ACCEPT
+   c02-incomplete/start/split@1                       expected REJECT, got ACCEPT
+   c02-incomplete/start/split@2                       expected REJECT, got ACCEPT
+   c02-incomplete/start/split@3                       expected REJECT, got ACCEPT
+   c02-incomplete/start/split@4                       expected REJECT, got ACCEPT
+   c02-incomplete/start/split@5                       expected REJECT, got ACCEPT
+   c02-incomplete/start+end/whole                     expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@1                   expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@2                   expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@3                   expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@4                   expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@5                   expected REJECT, got ACCEPT
+   c02-mismatched/start/whole                         expected REJECT, got ACCEPT
+   c02-mismatched/start/split@1                       expected REJECT, got ACCEPT
+   c02-mismatched/start/split@2                       expected REJECT, got ACCEPT
+   c02-mismatched/start/split@3                       expected REJECT, got ACCEPT
+   c02-mismatched/start/split@4                       expected REJECT, got ACCEPT
+   c02-mismatched/start/split@5                       expected REJECT, got ACCEPT

@@ -1,0 +1,55 @@
+case: c02-valid/none/split@1
+input: <root/>
+exit code: -1073740791 (0xC0000409)
+
+
+xpact_native_library: PANIC: main entry point vanished ...
+
+xpact_native_library: system execution failed.
+Following is the set of recorded exceptions.
+NB: The raised panic may have induced completely inconsistent information:
+
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+XP_PARSER           find_markup_declaration_end @4
+                                           index_in_bounds:
+<000001F48B08EF88>                         Loop invariant violated.      Fail
+-------------------------------------------------------------------------------
+XP_PARSER           find_markup_declaration_end @4
+<000001F48B08EF88>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_PARSER           markup_prefix_end @18                               
+<000001F48B08EF88>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_PARSER           incomplete_markup_prefix_start @8
+<000001F48B08EF88>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    should_defer_reparse_callbacks @9
+<000001F48B08EA78>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse_with_current_gc_policy @26
+<000001F48B08EA78>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse @7                                            
+<000001F48B08EA78>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_BRIDGE_EXPORT
+                    parse @3               
+<000001F48B08E5A8>  (From XP_NATIVE_BRIDGE_INSTALLER)
+                                           Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_LIBRARY_ROOT
+                    root's creation        
+<000001F48B08E588>                         Routine failure.              Exit
+-------------------------------------------------------------------------------
+XP_NATIVE_LIBRARY_ROOT
+                    root's creation        Unhandled exception:
+<000001F48B08E588>                         External event.               Exit
+-------------------------------------------------------------------------------
+XP_NATIVE_LIBRARY_ROOT
+                    root's creation        main entry point vanished:
+<000001F48B08E588>                         Eiffel run-time panic.        Bye
+-------------------------------------------------------------------------------
+
+xpact_native_library: dumping core to generate debugging information...

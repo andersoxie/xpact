@@ -1,0 +1,12 @@
+﻿Recheck of the TIMEOUT cases, one process each (--isolate), --timeout 60, machine otherwise idle. 2026-10-22T01:34:40
+utf8-bad-continuation-pi/none/bytes                            CRASH    5.1s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel]
+utf8-overlong-comment/start+end/split@1                        CRASH    5.5s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel]
+utf8-overlong-pi/start+end/split@1                             CRASH    4.9s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel]
+utf8-overlong-pi/default/bytes                                 CRASH    5.3s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel]
+utf8-overlong-cdata/default/split@4                            CRASH    5.1s  exit -1073740791 (0xC0000409)  [native-eiffel]
+utf8-surrogate-text/chardata/bytes                             CRASH    4.7s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel]
+utf8-surrogate-attribute/none/split@5                          CRASH    5.1s  exit -1073740791 (0xC0000409)  [native-eiffel]
+utf8-above-10ffff-text/start+end/bytes                         CRASH    5.6s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel]
+c02-trailing-junk/none/bytes                                   CRASH    5.1s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel-b03]
+cr-crlf/none/split@5                                           CRASH    5.5s  exit -1073740791 (0xC0000409)  [native-eiffel-b03]
+cr-attribute/end/split@1                                       CRASH    5.6s  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)  [native-eiffel-b03]

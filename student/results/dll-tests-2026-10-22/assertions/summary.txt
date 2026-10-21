@@ -1,0 +1,143 @@
+xpact DLL tests (tests/dotnet/XpactDllTests)
+Date:      2026-10-22 01:50:03
+Commit:    97e734485ba72297270e2645ddc2809fe57d8ffe
+DLL:       C:\xpact\xpact-student-Mass\build\native-eiffel\xpact_assertions.dll
+           9,716,736 bytes, modified 2026-10-22 00:44, SHA-256 8cc967941266b0e49b54c11c7dbad9ed03996b0625466a52dabcd745a18e88bb
+Version:   expat_2.8.1-xpact-eiffel-bridge
+Filters:   none, --jobs 8
+Run:       3360 cases in 1336 process(es), 200.0 s
+
+TOTAL  3360   pass 637   fail 1394   crash 1329   timeout 0
+       1 case(s) gave TIMEOUT in the full run and were retried alone; the table shows the retry:
+         utf8-surrogate-name/end/split@5                    -> CRASH
+
+1. BY GROUP AND CHUNKING
+   group  chunks  total   pass   fail  crash  timeout
+   c02    whole      42     24      6     12        0
+   c02    split     396    236     24    136        0
+   c02    bytes      36      0      0     36        0
+   cr     whole      24      8      2     14        0
+   cr     split     180     57      2    121        0
+   cr     bytes      24      0      0     24        0
+   utf8   whole     180     20    100     60        0
+   utf8   split    2298    292   1260    746        0
+   utf8   bytes     180      0      0    180        0
+
+2. BY INPUT  (whole document per callback set: ok, or what went wrong; then chunked runs not ok)
+   input                              expect  none       start      end        start+end  chardata   default    chunked
+   c02-valid                          ACCEPT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      42/42
+   c02-valid-pair                     ACCEPT  ok         ok         ok         EVENTS!    ok         ok         20/78
+   c02-text                           ACCEPT  ok         ok         ok         EVENTS!    ok         ok         20/90
+   c02-empty                          REJECT  ok         ok         ok         ok         ok         ok         -
+   c02-incomplete                     REJECT  ok         ACCEPT!    ok         ACCEPT!    ok         ok         20/36
+   c02-mismatched                     REJECT  ok         ACCEPT!    ok         ACCEPT!    ok         ok         28/120
+   c02-trailing-junk                  REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      66/66
+   cr-crlf                            ACCEPT  CRASH      ok         ok         EVENTS!    ok         ok         23/54
+   cr-lone                            ACCEPT  CRASH      ok         ok         EVENTS!    ok         ok         22/48
+   cr-last-byte                       ACCEPT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      30/30
+   cr-attribute                       ACCEPT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      72/72
+   utf8-valid-e9-text                 ACCEPT  ok         ok         ok         EVENTS!    ok         ok         17/54
+   utf8-valid-e9-attribute            ACCEPT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      66/66
+   utf8-valid-e9-name                 ACCEPT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      36/36
+   utf8-valid-e9-comment              ACCEPT  ok         ok         ok         EVENTS!    ok         ok         21/96
+   utf8-valid-e9-pi                   ACCEPT  ok         ok         ok         EVENTS!    ok         ok         21/96
+   utf8-valid-e9-cdata                ACCEPT  ok         ok         ok         EVENTS!    ok         ok         21/126
+   utf8-bad-continuation-text         REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    54/54
+   utf8-bad-continuation-attribute    REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      66/66
+   utf8-bad-continuation-name         REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      36/36
+   utf8-bad-continuation-comment      REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-bad-continuation-pi           REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-bad-continuation-cdata        REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    126/126
+   utf8-overlong-text                 REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    54/54
+   utf8-overlong-attribute            REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      66/66
+   utf8-overlong-name                 REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      36/36
+   utf8-overlong-comment              REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-overlong-pi                   REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    96/96
+   utf8-overlong-cdata                REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    126/126
+   utf8-surrogate-text                REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    60/60
+   utf8-surrogate-attribute           REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      72/72
+   utf8-surrogate-name                REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      42/42
+   utf8-surrogate-comment             REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    102/102
+   utf8-surrogate-pi                  REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    102/102
+   utf8-surrogate-cdata               REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    132/132
+   utf8-above-10ffff-text             REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    66/66
+   utf8-above-10ffff-attribute        REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      78/78
+   utf8-above-10ffff-name             REJECT  CRASH      CRASH      CRASH      CRASH      CRASH      CRASH      48/48
+   utf8-above-10ffff-comment          REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    108/108
+   utf8-above-10ffff-pi               REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    108/108
+   utf8-above-10ffff-cdata            REJECT  ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    ACCEPT!    138/138
+   Cells: ok = right result. ACCEPT!/REJECT! = wrong verdict. EVENTS! = right verdict, wrong events.
+
+3. CRASH REASONS  (full output in crashes\<case number>.txt)
+     811 x  exit -1073740791 (0xC0000409)
+           e.g. c02-valid/none/whole, c02-valid/none/split@2, c02-valid/none/split@3
+     514 x  XP_PARSER find_markup_declaration_end @4 index_in_bounds: Loop invariant violated., exit -1073740791 (0xC0000409)
+           e.g. c02-valid/none/split@1, c02-valid/none/bytes, c02-valid/start/split@1
+       4 x  XP_NATIVE_PARSER direct_start_tag_attributes @11 a_end_index - i: Non-decreasing loop variant or negative value reached., exit -1073740791 (0xC0000409)
+           e.g. utf8-surrogate-attribute/none/split@6, utf8-above-10ffff-attribute/none/whole, utf8-above-10ffff-attribute/none/split@3
+
+4. CHUNKED RUNS THAT DIFFER FROM THE WHOLE DOCUMENT  (same input and callbacks; verdict or error code)
+   498 run(s)
+   c02-valid-pair/none/split@1                        whole: ACCEPT         this: CRASH
+   c02-valid-pair/none/split@7                        whole: ACCEPT         this: CRASH
+   c02-valid-pair/none/bytes                          whole: ACCEPT         this: CRASH
+   c02-valid-pair/start/split@1                       whole: ACCEPT         this: CRASH
+   c02-valid-pair/start/bytes                         whole: ACCEPT         this: CRASH
+   c02-valid-pair/end/split@1                         whole: ACCEPT         this: CRASH
+   c02-valid-pair/end/split@7                         whole: ACCEPT         this: CRASH
+   c02-valid-pair/end/bytes                           whole: ACCEPT         this: CRASH
+   c02-valid-pair/start+end/split@1                   whole: ACCEPT         this: CRASH
+   c02-valid-pair/start+end/bytes                     whole: ACCEPT         this: CRASH
+   c02-valid-pair/chardata/split@1                    whole: ACCEPT         this: CRASH
+   c02-valid-pair/chardata/split@7                    whole: ACCEPT         this: CRASH
+   c02-valid-pair/chardata/bytes                      whole: ACCEPT         this: CRASH
+   c02-valid-pair/default/split@1                     whole: ACCEPT         this: CRASH
+   c02-valid-pair/default/split@7                     whole: ACCEPT         this: CRASH
+   c02-valid-pair/default/bytes                       whole: ACCEPT         this: CRASH
+   c02-text/none/split@1                              whole: ACCEPT         this: CRASH
+   c02-text/none/split@9                              whole: ACCEPT         this: CRASH
+   c02-text/none/bytes                                whole: ACCEPT         this: CRASH
+   c02-text/start/split@1                             whole: ACCEPT         this: CRASH
+   c02-text/start/bytes                               whole: ACCEPT         this: CRASH
+   c02-text/end/split@1                               whole: ACCEPT         this: CRASH
+   c02-text/end/split@9                               whole: ACCEPT         this: CRASH
+   c02-text/end/bytes                                 whole: ACCEPT         this: CRASH
+   c02-text/start+end/split@1                         whole: ACCEPT         this: CRASH
+   ... 473 more in results.tsv
+
+5. ERROR CODES OF REJECTED DOCUMENTS  (information only; libexpat reference to confirm in G03)
+   c02-empty                          libexpat 3   xpact: 3 no element found (6x)
+   c02-incomplete                     libexpat 3   xpact: 5 unclosed token (20x)
+   c02-mismatched                     libexpat 7   xpact: 7 mismatched tag (96x)
+
+6. FAILURES  (1394; first 30)
+   c02-valid-pair/start+end/whole                     element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@2                   element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@3                   element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@4                   element events: expected [start:root, end:root], got [start:root]
+   c02-valid-pair/start+end/split@5                   element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/whole                           element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@2                         element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@3                         element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@4                         element events: expected [start:root, end:root], got [start:root]
+   c02-text/start+end/split@5                         element events: expected [start:root, end:root], got [start:root]
+   c02-incomplete/start/whole                         expected REJECT, got ACCEPT
+   c02-incomplete/start/split@2                       expected REJECT, got ACCEPT
+   c02-incomplete/start/split@3                       expected REJECT, got ACCEPT
+   c02-incomplete/start/split@4                       expected REJECT, got ACCEPT
+   c02-incomplete/start/split@5                       expected REJECT, got ACCEPT
+   c02-incomplete/start+end/whole                     expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@2                   expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@3                   expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@4                   expected REJECT, got ACCEPT
+   c02-incomplete/start+end/split@5                   expected REJECT, got ACCEPT
+   c02-mismatched/start/whole                         expected REJECT, got ACCEPT
+   c02-mismatched/start/split@2                       expected REJECT, got ACCEPT
+   c02-mismatched/start/split@3                       expected REJECT, got ACCEPT
+   c02-mismatched/start/split@4                       expected REJECT, got ACCEPT
+   c02-mismatched/start/split@5                       expected REJECT, got ACCEPT
+   c02-mismatched/start+end/whole                     expected REJECT, got ACCEPT
+   c02-mismatched/start+end/split@2                   expected REJECT, got ACCEPT
+   c02-mismatched/start+end/split@3                   expected REJECT, got ACCEPT
+   c02-mismatched/start+end/split@4                   expected REJECT, got ACCEPT
+   c02-mismatched/start+end/split@5                   expected REJECT, got ACCEPT

@@ -1,0 +1,4 @@
+case: c02-valid/none/whole
+input: <root/>
+exit code: -1073740791 (0xC0000409)
+

@@ -1,0 +1,50 @@
+case: utf8-surrogate-attribute/none/split@6
+input: <r a='\xed\xa0\x80'/>
+exit code: -1073740791 (0xC0000409)
+
+
+xpact_native_library: PANIC: main entry point vanished ...
+
+xpact_native_library: system execution failed.
+Following is the set of recorded exceptions.
+NB: The raised panic may have induced completely inconsistent information:
+
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    direct_start_tag_attributes @11
+                                           a_end_index - i:
+<000001B792E101C8>                         Non-decreasing loop variant or negative value reached.
+                                                                         Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    direct_start_tag_attributes @11
+<000001B792E101C8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    is_directly_emittable_completed_start_tag @4
+<000001B792E101C8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse_with_current_gc_policy @38
+<000001B792E101C8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse @7                                            
+<000001B792E101C8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_BRIDGE_EXPORT
+                    parse @3               
+<000001B792E065A8>  (From XP_NATIVE_BRIDGE_INSTALLER)
+                                           Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_LIBRARY_ROOT
+                    root's creation        
+<000001B792E06588>                         Routine failure.              Exit
+-------------------------------------------------------------------------------
+XP_NATIVE_LIBRARY_ROOT
+                    root's creation        Unhandled exception:
+<000001B792E06588>                         External event.               Exit
+-------------------------------------------------------------------------------
+XP_NATIVE_LIBRARY_ROOT
+                    root's creation        main entry point vanished:
+<000001B792E06588>                         Eiffel run-time panic.        Bye
+-------------------------------------------------------------------------------
+
+xpact_native_library: dumping core to generate debugging information...
