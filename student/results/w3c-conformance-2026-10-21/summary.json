@@ -1,0 +1,37 @@
+{
+  "suite_version": "20130923",
+  "source": "https://www.w3.org/XML/Test/xmlts20130923.zip",
+  "archive_sha256": "f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb",
+  "source_mode": "verified-archive",
+  "suite_directory": "C:\\xpact\\xpact-student-Mass\\build\\validation-corpora\\w3c-xml-20130923\\xmlconf",
+  "executables": {
+    "Finalized": "C:\\xpact\\xpact-student-Mass\\EIFGENs\\xpact_benchmarks\\F_code\\xpact_benchmarks.exe",
+    "FinalizedAssertions": "C:\\xpact\\xpact-student-Mass\\EIFGENs\\xpact_benchmarks_assertions\\F_code\\xpact_benchmarks.exe"
+  },
+  "catalog_cases": 2585,
+  "profile": "XML 1.0 fifth edition; namespaces unless NAMESPACE=no; nonvalidating; no external entities; binary verdicts only",
+  "engines": [
+    {
+      "engine": "Finalized",
+      "total": 2585,
+      "passed": 1491,
+      "failed": 236,
+      "errors": 0,
+      "skipped": 858,
+      "accepted": 980,
+      "rejected": 747,
+      "elapsed_ms": 24568.818
+    },
+    {
+      "engine": "FinalizedAssertions",
+      "total": 2585,
+      "passed": 270,
+      "failed": 97,
+      "errors": 1360,
+      "skipped": 858,
+      "accepted": 205,
+      "rejected": 162,
+      "elapsed_ms": 35126.768
+    }
+  ]
+}

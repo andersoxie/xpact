@@ -21,7 +21,8 @@ test scripts that back it up. The rules are in
 | [#20](https://github.com/andersoxie/xpact/issues/20) | Bring the student docs in line with the week 3 workflow; week 3 note | [#21](https://github.com/andersoxie/xpact/pull/21) | `4df05be` | [issue-0020](issue-0020/report.md) |
 | [#22](https://github.com/andersoxie/xpact/issues/22) | One-page status summary for the supervisor: `student/for superviser.txt` | [#23](https://github.com/andersoxie/xpact/pull/23) | `384f838` | [issue-0022](issue-0022/report.md) |
 | [#24](https://github.com/andersoxie/xpact/issues/24) | Record the GitHub labels in the repository | [#25](https://github.com/andersoxie/xpact/pull/25) | `e6d6732` | [issue-0024](issue-0024/report.md) |
-| [#26](https://github.com/andersoxie/xpact/issues/26) | Put the B03 work (#3, #12, #13) on hold | [#27](https://github.com/andersoxie/xpact/pull/27) | see the pull request | [issue-0026](issue-0026/report.md) |
+| [#26](https://github.com/andersoxie/xpact/issues/26) | Put the B03 work (#3, #12, #13) on hold | [#27](https://github.com/andersoxie/xpact/pull/27) | `2f0d441` | [issue-0026](issue-0026/report.md) |
+| [#29](https://github.com/andersoxie/xpact/issues/29) | W3C suite with assertions off and on: results, error report, finding [#28](https://github.com/andersoxie/xpact/issues/28) | see the issue | see the pull request | [issue-0029](issue-0029/report.md) |
 
 On hold ([#26](https://github.com/andersoxie/xpact/issues/26)):
 [#3](https://github.com/andersoxie/xpact/issues/3) (B03 loop variant, fix in
@@ -37,5 +38,6 @@ issues.
 | Date | Report | Issues |
 |---|---|---|
 | 2026-10-19 | [error-reports/2026-10-19.md](error-reports/2026-10-19.md) | #2, #3, #4 |
+| 2026-10-21 | [error-reports/2026-10-21.md](error-reports/2026-10-21.md) | #28, #29 |
 
 Weeks 1-2 (before git) are in [`student/history/`](../student/history/).

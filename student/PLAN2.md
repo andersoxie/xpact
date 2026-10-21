@@ -168,6 +168,8 @@ Every problem found so far. "§" refers to sections of [the error report](histor
 | 2026-10-14 | xmlconf, 2,168 cases | 1,314 pass, 854 mismatch, **53 crashes** | [xmlconf-summary.txt](baseline/logs/xmlconf-summary.txt), [crashes](results/xmlconf-crashes-2026-10-14/) |
 | 2026-10-15 | Walkthrough `ok.xml` / `rejected.xml` | ACCEPT 7 events / REJECT 1:15 mismatched end tag | [trace-output.txt](baseline/walkthrough/trace-output.txt) |
 | 2026-10-15 | Python harness tests, Python 3.10.6 | 21 / 22 (csv NUL) | [issue 08](github/issues/08-finding-python310.md) |
+| 2026-10-21 | Python harness tests, Python 3.15.0 | ✅ 22 / 22 | [#29](https://github.com/andersoxie/xpact/issues/29) |
+| 2026-10-21 | W3C suite, Python runner, 1,727 applicable cases: `Finalized` (assertions off) / `FinalizedAssertions` (on, `-keep`) | off: 1,491 pass, 236 fail · on: 270 pass, 97 fail, **1,360 crashes** (1,357 = [#28](https://github.com/andersoxie/xpact/issues/28)) | [results](results/w3c-conformance-2026-10-21/README.md) |
 
 ## 5. Where everything is
 

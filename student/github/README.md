@@ -21,8 +21,8 @@ running it, check that no draft duplicates a real issue:
 | `22-blocker-build-fixes.md` | (none) | Partly solved by #2, #7, #10 on `student-Mass`; still not in `main` |
 | `01-A01.md` | (none; A01 was marked done in [#18](https://github.com/andersoxie/xpact/issues/18)) | The script would create an A01 issue for finished work: delete the draft or close the issue afterwards |
 
-Issues created outside the drafts: #2, #4, #7, #10, #13 (findings), #5, #14,
-#16, #18, #20 (tasks). Their reports are indexed in
+Issues created outside the drafts: #2, #4, #7, #10, #13, #28 (findings), #5, #14,
+#16, #18, #20, #29 (tasks). Their reports are indexed in
 [`reports/README.md`](../../reports/README.md).
 
 ## Labels on GitHub (2026-10-20)
@@ -36,9 +36,10 @@ although the section "Running it" below says to ask; this is noted in
 | Labels | Applied to |
 |---|---|
 | `type:finding` `group:B-reliable-results` `D2-guided` `P0` | #2, #4, #7, #10: build fixes; without them no result could be reproduced |
-| `type:finding` `group:C-correctness` `D3-advanced` `P0` | #3 (B03) and pull request #12; a parser change reviewed by its developer |
+| `type:finding` `group:C-correctness` `D3-advanced` `P0` | #3 (B03) and pull request #12; a parser change reviewed by its developer. #28 (loop variant in `normalized_input`) |
 | `type:finding` `group:C-correctness` `D3-advanced` `P1` | #13 |
 | `type:task` `workflow` | #5, #14, #16, #18, #20, #22, #24: versioning, reports, plan and summary updates |
+| `type:task` `D2-guided` `P1` | #29: W3C run with assertions off and on (no `group:G` label on GitHub yet) |
 
 `workflow` is new: housekeeping tasks are not findings and belong to no group
 of the task register. The other six labels in `labels.json` (`group:A`,

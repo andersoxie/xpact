@@ -16,6 +16,15 @@ On 2026-10-14, 53 of 2,168 cases crashed with an Eiffel contract violation at 8 
 ## Logs
 `student/results/xmlconf-crashes-2026-10-14/`: `README.md` (table of crash sites), `crashes.tsv` (every case) and `exception_trace.log`.
 
+## Update 2026-10-21
+
+Not rechecked yet, and blocked: with the Python runner and an assertions-on
+build (#29), 1,357 of 1,727 cases crash first in `XP_PARSER.normalized_input`
+on any CR byte (#28), which hides the crash sites above. One of them still
+shows: `rmt-e3e-12` (no CR) fails the loop invariant `index_in_bounds` in
+`parse_attlist_default_value`. The assertions-off build reports 0 crashes,
+but it has no contracts compiled in. Recheck this finding after #28 is fixed.
+
 ## Proposed next step
 1. Reproduce and minimize one case per crash site (student work: fixtures and reproductions).
 2. Report crashes separately in the runner (B04).
