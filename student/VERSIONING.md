@@ -32,7 +32,7 @@ revert** (one commit undoes it). This page describes how that is done on
 ## A fix, step by step
 
 ```powershell
-cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
+cd C:\xpact\xpact-student-Mass
 
 # 1. Branch from the latest student-Mass (also creates reports\issue-0002\)
 .\student\tools\fix.ps1 start -Issue 2 -Name include-fallback
@@ -57,6 +57,37 @@ git commit
 `finish` refuses to push if a commit doesn't mention the issue, if the report
 is missing, or if the report has no `## Verification` section. `merge` prints
 the commit to use if the fix ever has to be reverted.
+
+## `fix.ps1` in Windows PowerShell 5.1
+
+In Windows PowerShell 5.1 the script stops as soon as git writes to stderr,
+which git also does for normal messages ("Already on 'student-Mass'", push
+progress). Until the script is fixed, run the same steps by hand. This is how
+#29 was done:
+
+```powershell
+# start
+git fetch --prune origin
+git switch student-Mass
+git merge --ff-only origin/student-Mass
+git switch -c fix/29-w3c-assertions
+mkdir reports\issue-0029
+
+# ... change, test, write reports\issue-0029\report.md, commit with "Refs #29" ...
+
+# finish: check yourself that every commit says "Refs #29" and that the
+# report has a "## Verification" section, then
+git push -u origin fix/29-w3c-assertions
+gh pr create --repo andersoxie/xpact --base student-Mass --head fix/29-w3c-assertions --title "<subject>" --body-file <file>
+#   body: "Refs #29", the commit list, a link to the report, the revert command
+
+# merge, after the checks pass
+gh pr merge <pr> --repo andersoxie/xpact --squash --subject "<subject> (#<pr>)" --body "Refs #29"
+git switch student-Mass
+git pull --ff-only
+git push origin --delete fix/29-w3c-assertions
+git branch -D fix/29-w3c-assertions
+```
 
 ## Reverting a fix
 
@@ -99,13 +130,17 @@ numbers already identify each fix.
 ## Setup (once per clone)
 
 ```powershell
-cd C:\Users\masou\Desktop\Lia\xpact\xpactGit
+cd C:\xpact\xpact-student-Mass
 git config commit.template "$PWD\student\git\commit-template.txt"
 git config pull.ff only           # never create accidental merge commits on pull
 git config fetch.prune true       # forget remote branches deleted after merging
 git config push.autoSetupRemote true
 gh auth status                    # GitHub CLI must be logged in
 ```
+
+`gh` was installed with `winget install GitHub.cli`; see
+[README.md](README.md#tools-on-this-pc-2026-10-21) for where it and Python are
+on this PC.
 
 ## Already on `student-Mass` before this workflow
 
@@ -117,3 +152,22 @@ noted and can each be reverted with `fix.ps1 revert`:
 | `b7181f0`, `5240cfc` | Error report for 2026-10-19 | #2, #3, #4 |
 | `9eb18bd` | Fix the Eiffel include fallback path, with fix report | #2 |
 | `aa8e0aa`, `1e699a0` | An upload and its revert (no net change) | - |
+
+## Committed without a pull request (2026-10-21)
+
+These four commits were pushed straight to `student-Mass`, against rule 5
+(found and recorded in [#34](https://github.com/andersoxie/xpact/issues/34)).
+Each one has `Refs #N`, a report with verification and its logs, so it can be
+traced and reverted like the others, but nobody reviewed it before it landed.
+The history is not rewritten: that would need a force push on a shared branch.
+
+| Commit | What | Issue | Report |
+|---|---|---|---|
+| `1ea242e` | Regression test for the CR loop variant (pull request #31 was closed instead of merged) | #28 | [issue-0028](../reports/issue-0028/report.md) |
+| `492c6eb` | W3C harness tests pass on Python 3.10 | #32 | [issue-0032](../reports/issue-0032/report.md) |
+| `1799b35` | `run_baseline.ps1 -LogDir` | #33 | [A02-baseline](results/A02-baseline/README.md) |
+| `42d6b40` | A02 baseline rerun and setup guide | #33 | [A02-baseline](results/A02-baseline/README.md) |
+
+**Rule from now on:** even when `fix.ps1` cannot run, every change goes
+through a `fix/<issue>-<name>` branch and a pull request (the manual steps
+above). `git push origin student-Mass` is never used for new work.

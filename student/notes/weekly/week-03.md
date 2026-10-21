@@ -17,3 +17,11 @@
 
 ## Next week
 - A02: rerun the baseline in the git clone. B01/B02: nonzero exit on failure and meta-tests. Bring in `run_xmlconf_conformance.ps1` and patch 02.
+
+## Update 2026-10-21
+- Moved the clone to `C:\xpact\xpact-student-Mass`; installed Python 3.15 (uv) and the GitHub CLI there.
+- Ran the W3C suite with the teacher's Python runner for the first time, with assertions off and on (#29, [results](../../results/w3c-conformance-2026-10-21/README.md)): off 1,491 of 1,727 passed, 236 failed (220 malformed documents accepted); on 1,360 crashed.
+- 1,357 of those crashes are one new finding (#28): the loop variant in `XP_PARSER.normalized_input` fails on any CR, reproduced with a 9-byte file. Same kind of bug as B03, and it hides the 53 crashes of week 2 (draft 21).
+- The Python runner downloads the pinned W3C ZIP itself, so `run_xmlconf_conformance.ps1` and patch 02 are no longer needed for that.
+- Chose the next five tests from the guide (PLAN.md, "Next tests"): #28 regression, B02, C02, C03, C10.
+- Blocked: `fix.ps1` stops in Windows PowerShell 5.1 (steps done by hand, see VERSIONING.md). Tests C02/C03/C10 through the DLL need a small C program first.
