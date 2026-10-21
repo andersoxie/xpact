@@ -1,0 +1,41 @@
+﻿commit: 8850dabf628e028be55c0f3c0a358d3fa5a0e4ef
+date: 2026-10-22T00:19:52
+== xpact_benchmarks  lf.xml  exit 0
+XPACT_CONFORMANCE	ACCEPT
+== xpact_benchmarks  cr-lf.xml  exit 0
+XPACT_CONFORMANCE	ACCEPT
+== xpact_benchmarks_assertions  lf.xml  exit 0
+XPACT_CONFORMANCE	ACCEPT
+== xpact_benchmarks_assertions  cr-lf.xml  exit 1
+xpact_benchmarks.exe : 
+At line:6 char:10
++     $o = & $exe --conformance-file "$r\$f" 2>&1 | Out-String
++          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+xpact_benchmarks: system execution failed.
+Following is the set of recorded exceptions:
+
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+XP_PARSER           normalized_input @8    a_input.count - i + 1:       
+<00000283C7D044D8>                         Non-decreasing loop variant or negative value reached.
+                                                                         Fail
+-------------------------------------------------------------------------------
+XP_PARSER           normalized_input @8                                 
+<00000283C7D044D8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_PARSER           parse @5                                            
+<00000283C7D044D8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_BENCHMARK_ROOT   run_conformance @24                                 
+<00000283C7D03588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_BENCHMARK_ROOT   make @2                                             
+<00000283C7D03588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_BENCHMARK_ROOT   root's creation                                     
+<00000283C7D03588>                         Routine failure.              Exit
+-------------------------------------------------------------------------------

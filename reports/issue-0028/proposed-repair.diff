@@ -1,0 +1,12 @@
+diff --git a/src/xp_parser.e b/src/xp_parser.e
+index 59d220d..8f8da90 100644
+--- a/src/xp_parser.e
++++ b/src/xp_parser.e
+@@ -4467,6 +4467,7 @@ feature {NONE} -- Scanning
+ 					c := a_input.item (i)
+ 					if c = '%R' then
+ 						l_needs_copy := True
++						i := i + 1
+ 					elseif not is_xml_character_code (c.code) then
+ 						set_error ("invalid XML character")
+ 						i := a_input.count + 1

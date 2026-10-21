@@ -1,0 +1,89 @@
+commit:  8850dabf628e028be55c0f3c0a358d3fa5a0e4ef (+ uncommitted changes in src/tests/scripts)
+command: .\scripts\run_eiffel_test_matrix.ps1 -AssertionMode On -BuildMode Workbench
+date:    2026-10-22T00:32:18
+ISE_C_COMPILER: msc_vc140
+note:    MSVC loaded first: the workbench lane does not load it itself
+
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+== xpact tests: assertions-on / Workbench ==
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Freezing System Changes
+Degree -1: Generating Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\xpact\xpact-student-Mass\EIFGENs\xpact_tests_assertions\W_code
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+eoption.c
+big_file_C1_c.c
+epattern.c
+efrozen.c
+ecall.c
+eplug.c
+eskelet.c
+enames.c
+evisib.c
+ececil.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+Microsoft (R) Incremental Linker Version 14.51.36244.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_tests.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\wkbench.lib" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB "c:\users\masou\documents\eiffel user files\25.12\precomp\spec\win64\EIFGENs\base-safe\W_code\msc_vc140\precomp.lib" 
+xpact_tests.res 
+E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj E1\enames.obj 
+E1\eskelet.obj E1\eplug.obj E1\ecall.obj E1\efrozen.obj E1\epattern.obj 
+E1\eoption.obj C1\Cobj1.lib 
+C compilation completed
+
+xpact_tests: system execution failed.
+Following is the set of recorded exceptions:
+
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+XP_PARSER           normalized_input @8    a_input.count - i + 1:       
+<000001F90E118D18>                         Non-decreasing loop variant or negative value reached.
+                                                                         Fail
+-------------------------------------------------------------------------------
+XP_PARSER           normalized_input @8                                 
+<000001F90E118D18>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_PARSER           parse @5                                            
+<000001F90E118D18>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        test_cr_line_ends_with_deferred_positions @3
+<000001F90DED4588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        make @34                                            
+<000001F90DED4588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        root's creation                                     
+<000001F90DED4588>                         Routine failure.              Exit
+-------------------------------------------------------------------------------
+Test executable failed for assertions-on / Workbench.
+At C:\xpact\xpact-student-Mass\scripts\run_eiffel_test_matrix.ps1:81 char:3
++         throw "Test executable failed for $AssertionLabel / $Mode."
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Test executable...on / Workbench.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Test executable failed for assertions-on / Workbench.
+ 
+
+EXIT_CODE=1  (21 s)

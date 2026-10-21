@@ -44,6 +44,7 @@ feature {NONE} -- Initialization
 			test_expat_port_parse_session_spike
 			test_position_accounting
 			test_handler_position_accounting
+			test_cr_line_ends_with_deferred_positions
 			test_garbage_collection_suspension
 			test_native_eiffel_bridge_parser
 			test_native_bridge_installer
@@ -1036,6 +1037,23 @@ feature {NONE} -- Tests
 			l_expected_event.append (":11")
 			assert ("entity reference context document parses", l_parser.parse (l_reference_input))
 			assert ("entity reference text byte info inside handler", l_handler.events.i_th (2).same_string (l_expected_event))
+		end
+
+	test_cr_line_ends_with_deferred_positions
+			-- Regression for #28: a CR in the input must not break the loop
+			-- variant of `normalized_input'. Only a handler that wants no events
+			-- defers position accounting and reaches that loop.
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert ("CR LF line end accepted", l_parser.parse ("<r>%R%N</r>"))
+			assert ("lone CR line end accepted", l_parser.parse ("<r>%R</r>"))
+			assert ("CR as last byte accepted", l_parser.parse ("<r/>%R"))
+			assert ("CR in attribute value accepted", l_parser.parse ("<r a='x%Ry'/>"))
+			assert ("CR after BOM accepted", l_parser.parse ("%/239/%/187/%/191/<r>%R%N</r>"))
 		end
 
 	test_garbage_collection_suspension
