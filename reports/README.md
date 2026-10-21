@@ -22,7 +22,7 @@ test scripts that back it up. The rules are in
 | [#22](https://github.com/andersoxie/xpact/issues/22) | One-page status summary for the supervisor: `student/for superviser.txt` | [#23](https://github.com/andersoxie/xpact/pull/23) | `384f838` | [issue-0022](issue-0022/report.md) |
 | [#24](https://github.com/andersoxie/xpact/issues/24) | Record the GitHub labels in the repository | [#25](https://github.com/andersoxie/xpact/pull/25) | `e6d6732` | [issue-0024](issue-0024/report.md) |
 | [#26](https://github.com/andersoxie/xpact/issues/26) | Put the B03 work (#3, #12, #13) on hold | [#27](https://github.com/andersoxie/xpact/pull/27) | `2f0d441` | [issue-0026](issue-0026/report.md) |
-| [#29](https://github.com/andersoxie/xpact/issues/29) | W3C suite with assertions off and on: results, error report, finding [#28](https://github.com/andersoxie/xpact/issues/28) | see the issue | see the pull request | [issue-0029](issue-0029/report.md) |
+| [#29](https://github.com/andersoxie/xpact/issues/29) | W3C suite with assertions off and on: results, error report, finding [#28](https://github.com/andersoxie/xpact/issues/28) | [#30](https://github.com/andersoxie/xpact/pull/30) | see the pull request | [issue-0029](issue-0029/report.md) |
 
 On hold ([#26](https://github.com/andersoxie/xpact/issues/26)):
 [#3](https://github.com/andersoxie/xpact/issues/3) (B03 loop variant, fix in
