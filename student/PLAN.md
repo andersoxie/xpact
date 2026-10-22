@@ -17,7 +17,7 @@ record of weeks 1-2. Day-to-day status of every issue: the
 |---|---|---|---|
 | 1 Setup | ✅ | Build working, A01 | [week-01](notes/weekly/week-01.md), [#18](https://github.com/andersoxie/xpact/issues/18) |
 | 2 Baseline | ✅ | Assertions baseline (2026-10-14) and its rerun in git, A02 | [BASELINE.md](baseline/BASELINE.md), [A02-baseline](results/A02-baseline/README.md) |
-| 3 Failure reporting | 🟡 | Build fixes in git ✅, W3C run ✅, #28 test and repair ✅, repair and GitHub setup ✅ · **B01 ✅, B02 ✅, runner continues after a failure (#60) ✅** (2026-10-22); Jenkins check of B02 open | [week-03](notes/weekly/week-03.md) |
+| 3 Failure reporting | ✅ | Build fixes in git ✅, W3C run ✅, #28 test and repair ✅, repair and GitHub setup ✅ · **B01 ✅, B02 ✅, runner continues after a failure (#60) ✅** (2026-10-22); Jenkins check of B02 dropped (2026-10-22, not pursued) | [week-03](notes/weekly/week-03.md) |
 | 4 Input matrix | ⬜ | G01: 50-100 reviewed W3C cases | |
 | 5 Regressions | 🟡 | C02, C03, C10 (part) **run early** through the DLL: 3,360 cases, 3 new findings | [dll-tests-2026-10-22](results/dll-tests-2026-10-22/README.md) |
 | 6-10 | ⬜ | One improvement, Expat comparison, consolidate, report, handover | |
@@ -83,7 +83,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 ## ➡️ Next
 
-1. ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)), **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)) and draft 06 ([#60](https://github.com/andersoxie/xpact/issues/60)) done 2026-10-22. Still to do: set `XPACT_META_FAIL=assert` on one Jenkins run and check the stage turns red.
+1. ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)), **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)) and draft 06 ([#60](https://github.com/andersoxie/xpact/issues/60)) done 2026-10-22. The Jenkins check (`XPACT_META_FAIL=assert` on one Jenkins run) was dropped on 2026-10-22, not pursued; B02 is verified on the student PC only.
 2. **B03** ([#3](https://github.com/andersoxie/xpact/issues/3), draft PR [#12](https://github.com/andersoxie/xpact/pull/12)): now the only failure in the assertions-on test lanes; decide whether to take it off hold.
 3. **Ask the supervisor** the questions in [`for superviser.txt`](for%20superviser.txt).
 4. **Week 4, G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds).
@@ -160,7 +160,7 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 **Activity:** Learn how the test runner reports failure. Reproduce a deliberately failing test.
 **Bring to review:** A bounded failure-reporting fix, or a precise proposal with evidence.
 - [x] [B01](https://github.com/andersoxie/xpact/issues/45) Failing tests must return a nonzero exit status: done 2026-10-22, PR [#62](https://github.com/andersoxie/xpact/pull/62) ([report](../reports/issue-0045/report.md), [logs](results/B01-nonzero-exit/README.md))
-- [x] [B02](https://github.com/andersoxie/xpact/issues/46) Deliberately failing meta-tests: done 2026-10-22, PR [#63](https://github.com/andersoxie/xpact/pull/63), `XPACT_META_FAIL` ([report](../reports/issue-0046/report.md), [results](results/B02-meta-tests/README.md)); Jenkins not checked
+- [x] [B02](https://github.com/andersoxie/xpact/issues/46) Deliberately failing meta-tests: done 2026-10-22, PR [#63](https://github.com/andersoxie/xpact/pull/63), `XPACT_META_FAIL` ([report](../reports/issue-0046/report.md), [results](results/B02-meta-tests/README.md)); Jenkins check dropped on 2026-10-22, not pursued
 - [x] Week 3 note: [week-03.md](notes/weekly/week-03.md) (written 2026-10-20, updated 2026-10-21 and 2026-10-22)
 - [x] W3C suite with the Python runner, assertions off and on: [#29](https://github.com/andersoxie/xpact/issues/29), [results/w3c-conformance-2026-10-21/](results/w3c-conformance-2026-10-21/README.md), [error report](../reports/error-reports/2026-10-21.md)
 - [x] Regression test for the CR crash: [#28](https://github.com/andersoxie/xpact/issues/28), `1ea242e`; parser repaired 2026-10-22 (PR [#59](https://github.com/andersoxie/xpact/pull/59))
