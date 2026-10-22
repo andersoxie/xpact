@@ -48,7 +48,6 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | Start handler: rest of the document not parsed, `<root>` accepted, end events lost (C01) | DLL tests, all DLLs | ❓ C01 shortcut | [#38](https://github.com/andersoxie/xpact/issues/38) | parser developer |
 | Invalid UTF-8 accepted in all six places (K4) | DLL tests: 2,106 of 2,148 | ❓ no strict decoder (C08) | [#39](https://github.com/andersoxie/xpact/issues/39) | parser developer |
 | Non-final chunk ending with `<` crashes the assertions DLL | DLL tests: 644 crashes | ✔ trigger · ❓ in the code | [#40](https://github.com/andersoxie/xpact/issues/40) | parser developer |
-| The test program stops at the first contract failure | baseline K1 | ✔ | [draft 06](github/issues/06-finding-runner-stops.md) | part of B01 |
 | Assertions DLL smoke test crashes `0xC0000028` (K3) | baseline; A02; still with the B03 fix | ❔ (B03 is not the only cause) | [draft 07](github/issues/07-finding-dll-crash.md) | after #28 and #40 are repaired, rerun |
 | W3C, assertions on: 47 cases crash in DTD declaration parsing (`parse_attlist_declaration`, `parse_content_particle`, `parse_attlist_default_value`, `put_external_entity`) | W3C after the #28 repair, 2026-10-22 ([list](../reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv)) | ✔ trigger · ❓ in the code | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | was hidden behind #28 (week 2: 53); file as findings |
 | W3C, assertions off: 220 malformed documents accepted, 16 well-formed rejected | [W3C 2026-10-21](results/w3c-conformance-2026-10-21/README.md) | ❔ (partly #39?) | [#29](https://github.com/andersoxie/xpact/issues/29) | sort them in G01 |
@@ -74,6 +73,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | `vcvars64.bat` needed the Visual Studio Installer folder on `PATH` | `3076a92` | [#51](https://github.com/andersoxie/xpact/issues/51) |
 | Workbench lane did not load MSVC, `finish_freezing` failed with `msc_vc140` | `ec3c3e6` | [#53](https://github.com/andersoxie/xpact/issues/53) |
 | CR in the input: `normalized_input` loop variant failed (assertions on); W3C crashes 1,360 to 47 | PR [#59](https://github.com/andersoxie/xpact/pull/59) | [#28](https://github.com/andersoxie/xpact/issues/28) |
+| The test program stopped at the first contract failure; later tests did not run | PR [#61](https://github.com/andersoxie/xpact/pull/61) | [#60](https://github.com/andersoxie/xpact/issues/60) (draft 06) |
 | Test matrix started outside the repository root ran a stale `xpact_tests.exe` and reported ok | PR [#58](https://github.com/andersoxie/xpact/pull/58) | [#55](https://github.com/andersoxie/xpact/issues/55) |
 | Jenkins precompile prompt: **dropped** 2026-10-22, the student decided not to pursue it | - | [draft 23](github/issues/23-finding-jenkins-precompile.md), [#56](https://github.com/andersoxie/xpact/issues/56) |
 
@@ -119,7 +119,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
   - [x] [Finalized lane drops assertions (missing `-keep`)](github/issues/04-finding-finalized-keep.md): filed as [#48](https://github.com/andersoxie/xpact/issues/48), fixed in [reports/issue-0048](../reports/issue-0048/report.md)
   - [x] Postcondition `final_finished_or_suspended` fails (B03): [#3](https://github.com/andersoxie/xpact/issues/3). Fix in draft [#12](https://github.com/andersoxie/xpact/pull/12), on hold. *2026-10-22:* also the cause of every `/>` crash through the DLL (confirmed with a B03-fixed build, #37)
   - [x] New, found while analysing B03: `XP_GC_CRITICAL_SECTION.execute` swallows exceptions: [#13](https://github.com/andersoxie/xpact/issues/13)
-  - [ ] [Test runner stops at the first failure](github/issues/06-finding-runner-stops.md): still a draft
+  - [x] [Test runner stops at the first failure](github/issues/06-finding-runner-stops.md): filed as [#60](https://github.com/andersoxie/xpact/issues/60), fixed in [reports/issue-0060](../reports/issue-0060/report.md)
   - [ ] [Assertions DLL smoke test crashes](github/issues/07-finding-dll-crash.md): still a draft; *2026-10-22:* still crashes with the B03 fix
   - [x] Python harness fails on Python 3.10: fixed in `492c6eb` ([#32](https://github.com/andersoxie/xpact/issues/32))
   - [ ] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md): rechecked after the #28 repair: 47 crashes left, all in DTD declaration parsing ([list](../reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv)); still a draft

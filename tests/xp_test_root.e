@@ -11,48 +11,51 @@ feature {NONE} -- Initialization
 
 	make
 		do
-			test_well_formed_callbacks
-			test_mismatched_tag_is_rejected
-			test_depth_limit_is_enforced
-			test_comments_and_cdata
-			test_xml_declaration_callbacks
-			test_attlist_declaration_callbacks
-			test_attlist_default_attributes
-			test_element_declaration_callbacks
-			test_notation_declaration_callbacks
-			test_malformed_doctype_diagnostics
-			test_entity_declaration_callbacks
-			test_predefined_and_numeric_entities
-			test_internal_entity_declarations
-			test_parameter_entity_declarations
-			test_entity_markup_expansion
-			test_async_internal_entities_are_rejected
-			test_attribute_entity_expansion
-			test_recursive_entity_is_rejected
-			test_external_entity_is_rejected
-			test_external_general_entity_resolver
-			test_external_entity_resolver_denial
-			test_external_parameter_entity_resolver
-			test_external_subset_resolver
-			test_external_policy_blocks_parameter_entities
-			test_token_well_formedness_errors
-			test_document_structure
-			test_token_slice_abstraction
-			test_plain_tokenizer_attribute_fast_path
-			test_plain_tokenizer_character_data_fast_path
-			test_incremental_parse_session_prototype
-			test_expat_port_parse_session_spike
-			test_position_accounting
-			test_handler_position_accounting
-			test_cr_line_ends_with_deferred_positions
-			test_garbage_collection_suspension
-			test_native_eiffel_bridge_parser
-			test_native_bridge_installer
-			test_expat_api_manifest
-			test_libexpat_adapter_files
-			test_benchmark_publication_files
-			test_ci_test_matrix_files
-			test_native_export_layer_files
+			run_test ("test_well_formed_callbacks", agent test_well_formed_callbacks)
+			run_test ("test_mismatched_tag_is_rejected", agent test_mismatched_tag_is_rejected)
+			run_test ("test_depth_limit_is_enforced", agent test_depth_limit_is_enforced)
+			run_test ("test_comments_and_cdata", agent test_comments_and_cdata)
+			run_test ("test_xml_declaration_callbacks", agent test_xml_declaration_callbacks)
+			run_test ("test_attlist_declaration_callbacks", agent test_attlist_declaration_callbacks)
+			run_test ("test_attlist_default_attributes", agent test_attlist_default_attributes)
+			run_test ("test_element_declaration_callbacks", agent test_element_declaration_callbacks)
+			run_test ("test_notation_declaration_callbacks", agent test_notation_declaration_callbacks)
+			run_test ("test_malformed_doctype_diagnostics", agent test_malformed_doctype_diagnostics)
+			run_test ("test_entity_declaration_callbacks", agent test_entity_declaration_callbacks)
+			run_test ("test_predefined_and_numeric_entities", agent test_predefined_and_numeric_entities)
+			run_test ("test_internal_entity_declarations", agent test_internal_entity_declarations)
+			run_test ("test_parameter_entity_declarations", agent test_parameter_entity_declarations)
+			run_test ("test_entity_markup_expansion", agent test_entity_markup_expansion)
+			run_test ("test_async_internal_entities_are_rejected", agent test_async_internal_entities_are_rejected)
+			run_test ("test_attribute_entity_expansion", agent test_attribute_entity_expansion)
+			run_test ("test_recursive_entity_is_rejected", agent test_recursive_entity_is_rejected)
+			run_test ("test_external_entity_is_rejected", agent test_external_entity_is_rejected)
+			run_test ("test_external_general_entity_resolver", agent test_external_general_entity_resolver)
+			run_test ("test_external_entity_resolver_denial", agent test_external_entity_resolver_denial)
+			run_test ("test_external_parameter_entity_resolver", agent test_external_parameter_entity_resolver)
+			run_test ("test_external_subset_resolver", agent test_external_subset_resolver)
+			run_test ("test_external_policy_blocks_parameter_entities", agent test_external_policy_blocks_parameter_entities)
+			run_test ("test_token_well_formedness_errors", agent test_token_well_formedness_errors)
+			run_test ("test_document_structure", agent test_document_structure)
+			run_test ("test_token_slice_abstraction", agent test_token_slice_abstraction)
+			run_test ("test_plain_tokenizer_attribute_fast_path", agent test_plain_tokenizer_attribute_fast_path)
+			run_test ("test_plain_tokenizer_character_data_fast_path", agent test_plain_tokenizer_character_data_fast_path)
+			run_test ("test_incremental_parse_session_prototype", agent test_incremental_parse_session_prototype)
+			run_test ("test_expat_port_parse_session_spike", agent test_expat_port_parse_session_spike)
+			run_test ("test_position_accounting", agent test_position_accounting)
+			run_test ("test_handler_position_accounting", agent test_handler_position_accounting)
+			run_test ("test_cr_line_ends_with_deferred_positions", agent test_cr_line_ends_with_deferred_positions)
+			run_test ("test_garbage_collection_suspension", agent test_garbage_collection_suspension)
+			run_test ("test_native_eiffel_bridge_parser", agent test_native_eiffel_bridge_parser)
+			run_test ("test_native_bridge_installer", agent test_native_bridge_installer)
+			run_test ("test_expat_api_manifest", agent test_expat_api_manifest)
+			run_test ("test_libexpat_adapter_files", agent test_libexpat_adapter_files)
+			run_test ("test_benchmark_publication_files", agent test_benchmark_publication_files)
+			run_test ("test_ci_test_matrix_files", agent test_ci_test_matrix_files)
+			run_test ("test_native_export_layer_files", agent test_native_export_layer_files)
+			if exception_count > 0 then
+				io.put_string ("xpact Phase 1 tests: " + test_count.out + " run, " + exception_count.out + " raised an exception%N")
+			end
 			if failed then
 				check tests_passed: False end
 			else
@@ -1649,6 +1652,46 @@ feature {NONE} -- Tests
 			create l_memory
 			a_state.put (l_memory.collecting)
 		end
+
+feature {NONE} -- Running
+
+	run_test (a_name: READABLE_STRING_8; a_test: PROCEDURE)
+			-- Run `a_test'. If it raises an exception, record the failure with its
+			-- trace and go on with the next test.
+		require
+			name_attached: a_name /= Void
+			name_not_empty: not a_name.is_empty
+			test_attached: a_test /= Void
+		local
+			l_retried: BOOLEAN
+		do
+			if not l_retried then
+				test_count := test_count + 1
+				a_test.call (Void)
+			end
+		rescue
+			failed := True
+			exception_count := exception_count + 1
+			io.put_string ("FAIL: ")
+			io.put_string (a_name)
+			io.put_string (" raised an exception")
+			io.put_new_line
+			if
+				attached (create {EXCEPTION_MANAGER_FACTORY}).exception_manager.last_exception as l_exception and then
+				attached l_exception.original.trace as l_trace
+			then
+				io.put_string ({UTF_CONVERTER}.string_32_to_utf_8_string_8 (l_trace))
+				io.put_new_line
+			end
+			l_retried := True
+			retry
+		end
+
+	test_count: INTEGER
+			-- Number of tests started by `run_test'.
+
+	exception_count: INTEGER
+			-- Number of tests that raised an exception.
 
 feature {NONE} -- Assertions
 
