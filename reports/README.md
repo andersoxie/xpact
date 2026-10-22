@@ -44,6 +44,7 @@ test scripts that back it up. The rules are in
 | [#45](https://github.com/andersoxie/xpact/issues/45) | B01: both Eiffel test runners exit 1 when a test failed, in every build (`{EXCEPTIONS}.die (1)` instead of `check`) | [#62](https://github.com/andersoxie/xpact/pull/62) | see `git log --grep "(#62)"` | [issue-0045](issue-0045/report.md), [logs](../student/results/B01-nonzero-exit/README.md) |
 | [#46](https://github.com/andersoxie/xpact/issues/46) | B02: `XPACT_META_FAIL=assert\|exception` makes the test runners fail on purpose; every lane exits nonzero | [#63](https://github.com/andersoxie/xpact/pull/63) | see `git log --grep "(#63)"` | [issue-0046](issue-0046/report.md), [results](../student/results/B02-meta-tests/README.md) |
 | [#55](https://github.com/andersoxie/xpact/issues/55) | `run_eiffel_test_matrix.ps1` runs every lane from the repository root, wherever it is started | [#58](https://github.com/andersoxie/xpact/pull/58) | see `git log --grep "(#58)"` | [issue-0055](issue-0055/report.md) |
+| [#64](https://github.com/andersoxie/xpact/issues/64) | Jenkins check of B02 dropped (not pursued); week 3 marked complete in `student/PLAN.md` | (the pull request) | see `git log --grep "Refs #64"` | (the pull request) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 
