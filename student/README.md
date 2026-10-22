@@ -6,7 +6,7 @@ folder, so it stays separate from the parser code. The plan, the task register
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
 > **Updated 2026-10-22 (week 3).** Week 1-2 ✅ · week 3 🟡 (B01/B02 to do) ·
-> 4 pull requests waiting for review · 3 new parser findings (#38, #39, #40).
+> 3 new parser findings (#38, #39, #40).
 
 ## Start here
 

@@ -1,5 +1,5 @@
 STATUS FOR SUPERVISOR - 2026-10-22 (week 3)
-student-Mass @ 42d6b40 (24 commits ahead of main; main untouched) + 4 open pull requests
+student-Mass after #36, #41, #42, #44 (28 commits ahead of main; main untouched)
 Repo: github.com/andersoxie/xpact   Plan + known problems: student/PLAN.md   Index: reports/README.md
 
 IN ONE LINE
@@ -17,7 +17,7 @@ NEW SINCE 2026-10-21
              xpact_assertions.dll         637  1,394  1,329
              same + only the B03 line     928  1,760    672
              xpact.dll (assertions off) 1,200  2,160      0
-           Results: student/results/dll-tests-2026-10-22/      (PR #41, open)
+           Results: student/results/dll-tests-2026-10-22/      (PR #41, 79f2a29)
 
   New findings (each with command, expected/actual, logs, cause marked):
   [ ] #38  Start handler set: <root> and <root><child></root> are ACCEPTED, and
@@ -43,10 +43,10 @@ NEW SINCE 2026-10-21
            been overwritten in the working copy (restored), FOUR COMMITS WERE
            PUSHED TO student-Mass WITHOUT A PULL REQUEST (1ea242e, 492c6eb,
            1799b35, 42d6b40 - listed in VERSIONING.md, not rewritten), and doc
-           updates had been left uncommitted.                (PR #36, open)
+           updates had been left uncommitted.                (PR #36, 6e2278e)
   [x] #35  On andersoxie/xpact: labels test, build, regression, investigation
-           and milestones "Week 1" ... "Week 10" on every issue.  (PR #42, open)
-  [x] #43  All student docs brought up to date.               (PR #44, open)
+           and milestones "Week 1" ... "Week 10" on every issue.  (PR #42, c01f743)
+  [x] #43  All student docs brought up to date.               (PR #44)
   [x] #32  Python harness tests pass on Python 3.10 (492c6eb).
   [x] #33  A02: week 2 baseline rerun in the git clone (1799b35, 42d6b40).
 
@@ -59,7 +59,7 @@ CODE CHANGES ON student-Mass (build scripts, ECFs, one test; no parser code)
   #28  1ea242e  tests/xp_test_root.e: regression test for the CR loop variant
   #32  492c6eb  run_w3c_conformance.py: NUL -> ? in results.tsv (Python 3.10)
   #33  1799b35  student/baseline/run_baseline.ps1 -LogDir
-  Open: #41 adds tests/dotnet/XpactDllTests (new folder, nothing else changes).
+  #37  79f2a29  tests/dotnet/XpactDllTests: new folder, nothing else changes
   Everything else is documentation: see reports/README.md.
 
 HOW EVERY CHANGE IS DONE

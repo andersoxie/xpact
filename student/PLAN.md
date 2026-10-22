@@ -1,6 +1,6 @@
 # 10-week plan
 
-> **Last updated:** 2026-10-22 (week 3) · describes `student-Mass` @ `42d6b40` plus the open pull requests #36, #41, #42, #44
+> **Last updated:** 2026-10-22 (week 3) · describes `student-Mass` after #36, #41, #42 and #44 were merged
 > · ✅ done · 🟡 in progress / waiting · ⬜ not started · 🔴 open problem
 
 The plan comes from [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md)
@@ -16,25 +16,24 @@ record of weeks 1-2.
 |---|---|---|---|
 | 1 Setup | ✅ | Build working, A01 | [week-01](notes/weekly/week-01.md), [#18](https://github.com/andersoxie/xpact/issues/18) |
 | 2 Baseline | ✅ | Assertions baseline (2026-10-14) and its rerun in git, A02 | [BASELINE.md](baseline/BASELINE.md), [A02-baseline](results/A02-baseline/README.md) |
-| 3 Failure reporting | 🟡 | Build fixes in git ✅, W3C run ✅, #28 test ✅, repair and GitHub setup 🟡 · **B01, B02 ⬜ (due Fri 2026-10-23)** | [week-03](notes/weekly/week-03.md) |
+| 3 Failure reporting | 🟡 | Build fixes in git ✅, W3C run ✅, #28 test ✅, repair and GitHub setup ✅ · **B01, B02 ⬜ (due Fri 2026-10-23)** | [week-03](notes/weekly/week-03.md) |
 | 4 Input matrix | ⬜ | G01: 50-100 reviewed W3C cases | |
 | 5 Regressions | 🟡 | C02, C03, C10 (part) **run early** through the DLL: 3,360 cases, 3 new findings | [dll-tests-2026-10-22](results/dll-tests-2026-10-22/README.md) |
 | 6-10 | ⬜ | One improvement, Expat comparison, consolidate, report, handover | |
 
-## 🟡 Waiting for you: review and merge, in this order
+## ✅ Merged on 2026-10-22
 
-Claude opens pull requests but does not merge them. They build on each other,
-so merge them **in this order** (each one's base is the one before):
+Four stacked pull requests, merged in order at the student's request:
 
-| # | Pull request | Issue |
-|---|---|---|
-| 1 | [#36](https://github.com/andersoxie/xpact/pull/36) Repair the repository state left on 2026-10-21 | [#34](https://github.com/andersoxie/xpact/issues/34) |
-| 2 | [#41](https://github.com/andersoxie/xpact/pull/41) C# test program for the xpact DLL | [#37](https://github.com/andersoxie/xpact/issues/37) |
-| 3 | [#42](https://github.com/andersoxie/xpact/pull/42) Record the GitHub labels and week milestones | [#35](https://github.com/andersoxie/xpact/issues/35) |
-| 4 | [#44](https://github.com/andersoxie/xpact/pull/44) These doc updates | [#43](https://github.com/andersoxie/xpact/issues/43) |
+| # | Pull request | Commit | Issue |
+|---|---|---|---|
+| 1 | [#36](https://github.com/andersoxie/xpact/pull/36) Repair the repository state left on 2026-10-21 | `6e2278e` | [#34](https://github.com/andersoxie/xpact/issues/34) ✅ closed |
+| 2 | [#41](https://github.com/andersoxie/xpact/pull/41) C# test program for the xpact DLL | `79f2a29` | [#37](https://github.com/andersoxie/xpact/issues/37) ✅ closed |
+| 3 | [#42](https://github.com/andersoxie/xpact/pull/42) Record the GitHub labels and week milestones | `c01f743` | [#35](https://github.com/andersoxie/xpact/issues/35) ✅ closed |
+| 4 | [#44](https://github.com/andersoxie/xpact/pull/44) These doc updates | this one | [#43](https://github.com/andersoxie/xpact/issues/43) ✅ closed |
 
-After each merge: check the result, then close its issue by hand with
-"Fixed in `<sha>` (PR #N)" (merging into `student-Mass` does not close it).
+Next time a pull request is merged: check the result, then close its issue
+by hand with "Fixed in `<sha>` (PR #N)" (merging into `student-Mass` does not close it).
 
 ## 🔴 Known problems (living list)
 
@@ -73,19 +72,18 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | Native library needs the `msc_vc140` backend | `eb6fc5d` | [#7](https://github.com/andersoxie/xpact/issues/7) |
 | Native runtime smoke test build | `20e6bc3` | [#10](https://github.com/andersoxie/xpact/issues/10) |
 | W3C harness tests fail on Python 3.10 | `492c6eb` | [#32](https://github.com/andersoxie/xpact/issues/32) |
-| Repository state of 2026-10-21 (overwritten baseline log, direct pushes, uncommitted docs) | PR #36 | [#34](https://github.com/andersoxie/xpact/issues/34) |
+| Repository state of 2026-10-21 (overwritten baseline log, direct pushes, uncommitted docs) | `6e2278e` | [#34](https://github.com/andersoxie/xpact/issues/34) |
 
 </details>
 
 ## ➡️ Next
 
-1. **Merge** #36 → #41 → #42 → #44 (above).
-2. **B02** (week 3, due Friday): one deliberately failing test; every lane of `run_eiffel_test_matrix.ps1` must exit nonzero. Expected to show K2.
-3. **B01**: accumulated failures give a nonzero exit code; the runner does not stop at the first failure (draft 06).
-4. **Ask the supervisor** the questions in [`for superviser.txt`](for%20superviser.txt).
-5. **Week 4, G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds).
-6. **C02/C03/C10, remaining:** compare with Expat 2.8.1 (needs an Expat build); turn the findings into regression tests once the parser is repaired.
-7. Once: `gh auth refresh -s project`, then create the project board ([github/README.md](github/README.md#project-board)).
+1. **B02** (week 3, due Friday): one deliberately failing test; every lane of `run_eiffel_test_matrix.ps1` must exit nonzero. Expected to show K2.
+2. **B01**: accumulated failures give a nonzero exit code; the runner does not stop at the first failure (draft 06).
+3. **Ask the supervisor** the questions in [`for superviser.txt`](for%20superviser.txt).
+4. **Week 4, G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds).
+5. **C02/C03/C10, remaining:** compare with Expat 2.8.1 (needs an Expat build); turn the findings into regression tests once the parser is repaired.
+6. Once: `gh auth refresh -s project`, then create the project board ([github/README.md](github/README.md#project-board)).
 
 <details>
 <summary>The five tests chosen on 2026-10-21 and where they stand</summary>
@@ -143,9 +141,9 @@ Each item is one issue, one report and one squashed commit on `student-Mass`.
 | ✅ | [#20](https://github.com/andersoxie/xpact/issues/20) | Docs in line with the week 3 workflow; week 3 note | [#21](https://github.com/andersoxie/xpact/pull/21) | | [issue-0020](../reports/issue-0020/report.md) |
 | ✅ | [#22](https://github.com/andersoxie/xpact/issues/22), [#24](https://github.com/andersoxie/xpact/issues/24), [#26](https://github.com/andersoxie/xpact/issues/26) | Supervisor page, labels recorded, B03 on hold | [#23](https://github.com/andersoxie/xpact/pull/23), [#25](https://github.com/andersoxie/xpact/pull/25), [#27](https://github.com/andersoxie/xpact/pull/27) | `384f838`, `e6d6732`, `2f0d441` | [reports/](../reports/README.md) |
 | ✅ | [#28](https://github.com/andersoxie/xpact/issues/28), [#32](https://github.com/andersoxie/xpact/issues/32), [#33](https://github.com/andersoxie/xpact/issues/33) | CR regression test, Python 3.10, A02 rerun (**pushed without a pull request**, see #34) | - | `1ea242e`, `492c6eb`, `1799b35`, `42d6b40` | [issue-0028](../reports/issue-0028/report.md), [issue-0032](../reports/issue-0032/report.md) |
-| 🟡 | [#34](https://github.com/andersoxie/xpact/issues/34) | Repair of the repository state of 2026-10-21 | [#36](https://github.com/andersoxie/xpact/pull/36) | | [issue-0034](../reports/issue-0034/report.md) |
-| 🟡 | [#35](https://github.com/andersoxie/xpact/issues/35) | GitHub labels and week milestones (`CLAUDE.md`) | [#42](https://github.com/andersoxie/xpact/pull/42) | | [issue-0035](../reports/issue-0035/report.md) |
-| 🟡 | [#43](https://github.com/andersoxie/xpact/issues/43) | All student docs brought up to date | [#44](https://github.com/andersoxie/xpact/pull/44) | | |
+| ✅ | [#34](https://github.com/andersoxie/xpact/issues/34) | Repair of the repository state of 2026-10-21 | [#36](https://github.com/andersoxie/xpact/pull/36) | `6e2278e` | [issue-0034](../reports/issue-0034/report.md) |
+| ✅ | [#35](https://github.com/andersoxie/xpact/issues/35) | GitHub labels and week milestones (`CLAUDE.md`) | [#42](https://github.com/andersoxie/xpact/pull/42) | `c01f743` | [issue-0035](../reports/issue-0035/report.md) |
+| ✅ | [#43](https://github.com/andersoxie/xpact/issues/43) | All student docs brought up to date | [#44](https://github.com/andersoxie/xpact/pull/44) | | |
 | 🟡 | [#3](https://github.com/andersoxie/xpact/issues/3) | B03 loop variant | [#12](https://github.com/andersoxie/xpact/pull/12) (draft, on hold) | | |
 
 Together, #2, #7 and #10 bring in the week 1 build fixes from
@@ -162,7 +160,7 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 - [x] Week 3 note: [week-03.md](notes/weekly/week-03.md) (written 2026-10-20, updated 2026-10-21 and 2026-10-22)
 - [x] W3C suite with the Python runner, assertions off and on: [#29](https://github.com/andersoxie/xpact/issues/29), [results/w3c-conformance-2026-10-21/](results/w3c-conformance-2026-10-21/README.md), [error report](../reports/error-reports/2026-10-21.md)
 - [x] Regression test for the CR crash: [#28](https://github.com/andersoxie/xpact/issues/28), `1ea242e` (fails with assertions on until the parser is repaired)
-- [ ] Repository repair and GitHub setup per `CLAUDE.md`: [#34](https://github.com/andersoxie/xpact/issues/34), [#35](https://github.com/andersoxie/xpact/issues/35), [#43](https://github.com/andersoxie/xpact/issues/43) (pull requests open)
+- [x] Repository repair and GitHub setup per `CLAUDE.md`: [#34](https://github.com/andersoxie/xpact/issues/34), [#35](https://github.com/andersoxie/xpact/issues/35), [#43](https://github.com/andersoxie/xpact/issues/43) (merged 2026-10-22)
 
 ## Week 4 – Input matrix
 **Activity:** Design small regressions and select 50–100 applicable W3C XML cases with the supervisor.
