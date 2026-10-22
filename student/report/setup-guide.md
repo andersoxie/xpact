@@ -46,10 +46,16 @@ cd C:\xpact\xpact-student-Mass
 
 - The import puts the Visual Studio Installer folder (`vswhere.exe`) on `PATH`
   for `vcvars64.bat` itself (#51); it no longer has to be added by hand.
-- It loads the MSVC compiler (`cl`, `link`). It is needed for the
-  **workbench** test lane: `run_eiffel_test_matrix.ps1` only loads MSVC when a
-  finalized lane is selected, and with `msc_vc140` `finish_freezing` then fails
-  with no explanation. Running the import twice is safe (#4).
+- It loads the MSVC compiler (`cl`, `link`) for commands you run by hand
+  (`ec`, `finish_freezing`, `cl`). The scripts load it themselves;
+  `run_eiffel_test_matrix.ps1` also for workbench lanes when `ISE_C_COMPILER`
+  is `msc*` (#53). Running the import twice is safe (#4).
+- Run the scripts from the repository root: `ec` writes `EIFGENs` to the
+  current folder.
+- With `msc_vc140`, EiffelBase must also be precompiled for MSVC:
+  `...\Eiffel User Files\25.12\precomp\spec\win64\EIFGENs\base-safe\W_code\msc_vc140\precomp.lib`.
+  If only `W_code\mingw` exists, workbench builds stop with `LNK1181` (see
+  section 5).
 
 ## 4. Build and test
 
@@ -89,7 +95,8 @@ A command finishing is not proof that the tests passed. Check the exit code
 | Symptom | Cause | Fix |
 |---|---|---|
 | `'vswhere.exe' is not recognized` and the script stops | Visual Studio Installer folder not on `PATH`; PowerShell 5.1 turns stderr into an error | Fixed in #51 |
-| `finish_freezing failed for assertions-on / Workbench`, no other message | MSVC not loaded, `ISE_C_COMPILER=msc_vc140` | Section 3, second line |
+| `finish_freezing failed for assertions-on / Workbench`, no other message | MSVC not loaded, `ISE_C_COMPILER=msc_vc140` | Fixed in #53 |
+| `LNK1181: cannot open input file '...\base-safe\W_code\msc_vc140\precomp.lib'` | EiffelBase is precompiled only for mingw | Back up `EIFGENs\base-safe`, delete the `finished` files in its `W_code\C*` folders, then run `finish_freezing` in `W_code` with MSVC loaded and `ISE_C_COMPILER=msc_vc140` (done 2026-10-22, [issue-0053](../../reports/issue-0053/report.md)) |
 | A script stops at `ec.exe : Eiffel Compilation Manager` / `NativeCommandError` | You captured its output inside PowerShell (`*>&1`, `| Out-File`); PowerShell 5.1 then treats `ec`'s stderr as fatal | Run without redirection, or let `cmd` write the log: `cmd /c "powershell -NoProfile -File scripts\... > log.txt 2>&1"` |
 | `Expected Eiffel link response file not found` | mingw backend (no `.lnk` file) | Fixed in #7; set `ISE_C_COMPILER` (section 2) |
 | `The input line is too long` | `PATH` grew with every MSVC import | Fixed in #4; open a new terminal |

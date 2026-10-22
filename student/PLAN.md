@@ -53,7 +53,7 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | Assertions DLL smoke test crashes `0xC0000028` (K3) | baseline; A02; still with the B03 fix | ❔ (B03 is not the only cause) | [draft 07](github/issues/07-finding-dll-crash.md) | after #28 and #40 are repaired, rerun |
 | 53 W3C cases crash (week 2) | xmlconf 2026-10-14 | ❔ hidden behind #28 | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | recheck after #28 |
 | W3C, assertions off: 220 malformed documents accepted, 16 well-formed rejected | [W3C 2026-10-21](results/w3c-conformance-2026-10-21/README.md) | ❔ (partly #39?) | [#29](https://github.com/andersoxie/xpact/issues/29) | sort them in G01 |
-| `run_eiffel_test_matrix.ps1 -BuildMode Workbench` does not load MSVC, `finish_freezing` fails | [#28 report](../reports/issue-0028/report.md#how-the-lanes-were-run) | ✔ | not filed yet | file as a finding |
+| `run_eiffel_test_matrix.ps1 -BuildMode Workbench` does not load MSVC, `finish_freezing` fails | [#28 report](../reports/issue-0028/report.md#how-the-lanes-were-run) | ✔ fixed | [#53](https://github.com/andersoxie/xpact/issues/53) | MSVC is loaded for workbench lanes when `ISE_C_COMPILER` is `msc*` |
 | Error codes differ from libexpat (`<root>` 5 not 3, junk 4 not 9) | DLL tests | ❔ reference values not checked | (G03) | check against Expat 2.8.1 |
 | Jenkins precompile prompt | weeks 1-2 history | ❔ | [draft 23](github/issues/23-finding-jenkins-precompile.md) | |
 | Build fixes are on `student-Mass`, not `main` | | (decision) | [draft 22](github/issues/22-blocker-build-fixes.md) | **supervisor decides; never merge into `main` ourselves** |

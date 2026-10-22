@@ -1,0 +1,27 @@
+ISE_C_COMPILER=[msc_vc140] cl.exe on PATH: False
+== xpact tests: assertions-off / Workbench ==
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Freezing System Changes
+Degree -1: Generating Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_tests\W_code
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+finish_freezing failed for assertions-off / Workbench.
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_eiffel_test_matrix.ps1:69 char:5
++ ...             throw "finish_freezing failed for $AssertionLabel / $Mode ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (finish_freezing...ff / Workbench.:String) [], RuntimeException
+    + FullyQualifiedErrorId : finish_freezing failed for assertions-off / Workbench.
+ 
+EXIT STATUS: 1

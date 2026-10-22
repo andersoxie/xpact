@@ -84,7 +84,9 @@ function Invoke-TestLane {
 }
 
 $SelectedBuildModes = @(Selected-BuildModes)
-if ($SelectedBuildModes -contains "Finalized") {
+# finish_freezing also runs for Workbench lanes; with an MSVC C backend it
+# needs cl and link.
+if ($SelectedBuildModes -contains "Finalized" -or $env:ISE_C_COMPILER -like "msc*") {
 	. (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
 }
 
