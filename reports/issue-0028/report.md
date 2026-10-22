@@ -86,7 +86,7 @@ changed:
    `finish_freezing` then fails silently. Workaround: dot-source
    `scripts\import_msvc_environment.ps1` first. Worth a separate finding.
 
-## Proposed repair (not committed)
+## Proposed repair (2026-10-21; committed 2026-10-22, see below)
 
 In the first loop of `XP_PARSER.normalized_input`, a CR sets
 `l_needs_copy` but does not advance `i`. The loop would stop anyway (its
@@ -103,11 +103,74 @@ if c = '%R' then
 This is a parser change, so it is left to the parser's developers, like
 B03 (#3, pull request #12).
 
+## Repair (2026-10-22)
+
+The student asked for the repair on 2026-10-22. Branch `fix/28-cr-loop-variant`,
+base `2787005`, pull request [#59](https://github.com/andersoxie/xpact/pull/59).
+`src/xp_parser.e`: the one line from [proposed-repair.diff](proposed-repair.diff),
+nothing else. No contract was changed or switched off.
+
+### Expected results (written before testing)
+
+- Assertions on, Workbench and Finalized: the CR test passes; the run then
+  stops at the next known failure, B03 (#3, `final_finished_or_suspended` in
+  `test_garbage_collection_suspension`), as row 6 above already showed.
+- Assertions off, both modes: `ok`, unchanged.
+- W3C, assertions on: far fewer crashes than 1,360; assertions off unchanged.
+
+### Verification
+
+Lanes: [run-lane.ps1](run-lane.ps1) loads MSVC and runs one lane of
+`run_eiffel_test_matrix.ps1` from the repository root (default mingw C backend,
+EiffelStudio 25.12.9.8922). W3C: [run-w3c.ps1](run-w3c.ps1) builds
+`xpact_benchmarks` (`-finalize`) and `xpact_benchmarks_assertions`
+(`-finalize -keep`) and runs `scripts/run_w3c_conformance.py` with
+`--timeout 10`, as in `student/results/w3c-conformance-2026-10-21/` (here with
+Python 3.13.14, since Python 3.15 is no longer installed, and the mingw C
+backend instead of MSVC). Each run: `cmd /c "powershell -NoProfile
+-ExecutionPolicy Bypass -File <script> [args] > <log> 2>&1"`.
+
+| # | Run | Actual | Exit | Log |
+|---|---|---|---|---|
+| 1 | Before, `-AssertionMode On -BuildMode Workbench` | `XP_PARSER normalized_input @8`, `Non-decreasing loop variant` | 1 | [fix-before-on-workbench.txt](fix-before-on-workbench.txt) |
+| 2 | After, On / Workbench | CR test passes; stops at `XP_NATIVE_PARSER parse @10 final_finished_or_suspended: Postcondition violated` in `test_garbage_collection_suspension` (B03, #3) | 1 | [fix-after-on-workbench.txt](fix-after-on-workbench.txt) |
+| 3 | After, On / Finalized | same as 2 | 1 | [fix-after-on-finalized.txt](fix-after-on-finalized.txt) |
+| 4 | After, Off / Workbench | `xpact Phase 1 tests: ok` | 0 | [fix-after-off-workbench.txt](fix-after-off-workbench.txt) |
+| 5 | After, Off / Finalized | `xpact Phase 1 tests: ok` | 0 | [fix-after-off-finalized.txt](fix-after-off-finalized.txt) |
+| 6 | After, W3C build | both executables built; SHA-256 in the log | 0 | [w3c-build.txt](w3c-build.txt) |
+| 7 | After, W3C run | see the table below; runner exit 1 because cases still fail | 1 | [w3c-run.txt](w3c-run.txt), [w3c-after-fix/](w3c-after-fix/summary.md) |
+
+| W3C build | Assertions | Passed | Failed | Errors (crash) | Skipped |
+|---|---|---:|---:|---:|---:|
+| `Finalized`, 2026-10-21 | off | 1,491 | 236 | 0 | 858 |
+| `Finalized`, after the repair | off | 1,491 | 236 | 0 | 858 |
+| `FinalizedAssertions`, 2026-10-21 | on | 270 | 97 | 1,360 | 858 |
+| `FinalizedAssertions`, after the repair | on | **1,444** | 236 | **47** | 858 |
+
+With assertions on, the failures (236) are now the same number as with
+assertions off, and 1,313 crashes are gone.
+
+### The 47 crashes that are left
+
+They were hidden behind this bug (draft 21 predicted it). All are in DTD
+declaration parsing, none involves a CR. Not repaired here; listed in
+[w3c-after-fix/crashes-assertions-on.tsv](w3c-after-fix/crashes-assertions-on.tsv).
+
+| Cases | Routine | Contract |
+|---:|---|---|
+| 11 | `XP_PARSER.parse_attlist_declaration` | loop invariant `index_in_bounds` |
+| 10 | `XP_PARSER.parse_attlist_declaration` | loop variant `l_end - i` |
+| 10 | `XP_PARSER.parse_content_particle` | loop invariant `index_in_bounds` |
+| 7 | `XP_PARSER.parse_attlist_default_value` | loop invariant `index_in_bounds` |
+| 5 | `XP_PARSER.parse_content_particle` | loop variant `a_end_index - i + 2` |
+| 2 | `XP_PARSER.put_external_entity` | precondition `system_id_not_empty` |
+| 2 | (`not-wf-sa-050`, `o-p39fail3`) | `conformance file read failed`, exit 2 |
+
 ## How to revert
 
 ```powershell
 .\student\tools\fix.ps1 revert -Issue 28 -Commit <merged sha>
 ```
 
-This removes the test and this folder. Issue #28 stays open until the
-parser is repaired.
+For the repair alone: `git revert <sha of the #59 squash commit>`. Reverting
+the test commit `1ea242e` removes the test and this folder.

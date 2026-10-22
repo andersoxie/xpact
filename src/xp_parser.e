@@ -4467,6 +4467,7 @@ feature {NONE} -- Scanning
 					c := a_input.item (i)
 					if c = '%R' then
 						l_needs_copy := True
+						i := i + 1
 					elseif not is_xml_character_code (c.code) then
 						set_error ("invalid XML character")
 						i := a_input.count + 1

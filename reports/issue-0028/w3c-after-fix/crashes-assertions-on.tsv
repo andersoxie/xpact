@@ -1,0 +1,48 @@
+case_id	path	kind	expected	class	routine	tag	nature
+not-wf-sa-050	xmlconf/xmltest/not-wf/sa/050.xml	not-wf	REJECT				conformance file read failed
+not-wf-sa-078	xmlconf/xmltest/not-wf/sa/078.xml	not-wf	REJECT	XP_PARSER	parse_attlist_default_value	index_in_bounds	Loop invariant violated.
+not-wf-sa-079	xmlconf/xmltest/not-wf/sa/079.xml	not-wf	REJECT	XP_PARSER	parse_attlist_default_value	index_in_bounds	Loop invariant violated.
+not-wf-sa-080	xmlconf/xmltest/not-wf/sa/080.xml	not-wf	REJECT	XP_PARSER	parse_attlist_default_value	index_in_bounds	Loop invariant violated.
+not-wf-sa-084	xmlconf/xmltest/not-wf/sa/084.xml	not-wf	REJECT	XP_PARSER	parse_attlist_default_value	index_in_bounds	Loop invariant violated.
+not-wf-sa-124	xmlconf/xmltest/not-wf/sa/124.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+not-wf-sa-132	xmlconf/xmltest/not-wf/sa/132.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+not-wf-sa-180	xmlconf/xmltest/not-wf/sa/180.xml	not-wf	REJECT	XP_PARSER	parse_attlist_default_value	index_in_bounds	Loop invariant violated.
+not-wf-sa-183	xmlconf/xmltest/not-wf/sa/183.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	a_end_index - i + 2	Non-decreasing loop variant or negative value reached.
+o-p39fail3	xmlconf/oasis/p39fail3.xml	not-wf	REJECT				conformance file read failed
+o-p51fail3	xmlconf/oasis/p51fail3.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+o-p51fail5	xmlconf/oasis/p51fail5.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	a_end_index - i + 2	Non-decreasing loop variant or negative value reached.
+o-p51fail6	xmlconf/oasis/p51fail6.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	a_end_index - i + 2	Non-decreasing loop variant or negative value reached.
+o-p53fail3	xmlconf/oasis/p53fail3.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+o-p53fail5	xmlconf/oasis/p53fail5.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+o-p58fail6	xmlconf/oasis/p58fail6.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+o-p58fail7	xmlconf/oasis/p58fail7.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+o-p60fail3	xmlconf/oasis/p60fail3.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+o-p60fail5	xmlconf/oasis/p60fail5.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P29-ibm29n03.xml	xmlconf/ibm/not-wf/P29/ibm29n03.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P48-ibm48n01.xml	xmlconf/ibm/not-wf/P48/ibm48n01.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P48-ibm48n06.xml	xmlconf/ibm/not-wf/P48/ibm48n06.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P49-ibm49n02.xml	xmlconf/ibm/not-wf/P49/ibm49n02.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P49-ibm49n05.xml	xmlconf/ibm/not-wf/P49/ibm49n05.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P50-ibm50n02.xml	xmlconf/ibm/not-wf/P50/ibm50n02.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P50-ibm50n05.xml	xmlconf/ibm/not-wf/P50/ibm50n05.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P51-ibm51n02.xml	xmlconf/ibm/not-wf/P51/ibm51n02.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P51-ibm51n03.xml	xmlconf/ibm/not-wf/P51/ibm51n03.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	a_end_index - i + 2	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P51-ibm51n07.xml	xmlconf/ibm/not-wf/P51/ibm51n07.xml	not-wf	REJECT	XP_PARSER	parse_content_particle	a_end_index - i + 2	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P52-ibm52n01.xml	xmlconf/ibm/not-wf/P52/ibm52n01.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P52-ibm52n03.xml	xmlconf/ibm/not-wf/P52/ibm52n03.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P52-ibm52n05.xml	xmlconf/ibm/not-wf/P52/ibm52n05.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P53-ibm53n03.xml	xmlconf/ibm/not-wf/P53/ibm53n03.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P53-ibm53n05.xml	xmlconf/ibm/not-wf/P53/ibm53n05.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P53-ibm53n07.xml	xmlconf/ibm/not-wf/P53/ibm53n07.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P53-ibm53n08.xml	xmlconf/ibm/not-wf/P53/ibm53n08.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P55-ibm55n02.xml	xmlconf/ibm/not-wf/P55/ibm55n02.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P56-ibm56n07.xml	xmlconf/ibm/not-wf/P56/ibm56n07.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P58-ibm58n02.xml	xmlconf/ibm/not-wf/P58/ibm58n02.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P58-ibm58n04.xml	xmlconf/ibm/not-wf/P58/ibm58n04.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P59-ibm59n02.xml	xmlconf/ibm/not-wf/P59/ibm59n02.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	index_in_bounds	Loop invariant violated.
+ibm-not-wf-P60-ibm60n06.xml	xmlconf/ibm/not-wf/P60/ibm60n06.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P60-ibm60n08.xml	xmlconf/ibm/not-wf/P60/ibm60n08.xml	not-wf	REJECT	XP_PARSER	parse_attlist_declaration	l_end - i	Non-decreasing loop variant or negative value reached.
+ibm-not-wf-P68-ibm68n07.xml	xmlconf/ibm/not-wf/P68/ibm68n07.xml	not-wf	REJECT	XP_PARSER	parse_attlist_default_value	index_in_bounds	Loop invariant violated.
+ibm-valid-P11-ibm11v01.xml	xmlconf/ibm/valid/P11/ibm11v01.xml	valid	ACCEPT	XP_PARSER	put_external_entity	system_id_not_empty	Precondition violated.
+ibm-valid-P11-ibm11v02.xml	xmlconf/ibm/valid/P11/ibm11v02.xml	valid	ACCEPT	XP_PARSER	put_external_entity	system_id_not_empty	Precondition violated.
+rmt-e3e-12	xmlconf/eduni/errata-3e/E12.xml	not-wf	REJECT	XP_PARSER	parse_attlist_default_value	index_in_bounds	Loop invariant violated.

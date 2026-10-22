@@ -43,7 +43,6 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 
 | Problem | Seen in | Cause | Issue | Next step |
 |---|---|---|---|---|
-| CR in the input: `normalized_input` loop variant fails (assertions on) | W3C 1,357 crashes; DLL; [regression test](../reports/issue-0028/report.md) | ✔ one line, repair proposed | [#28](https://github.com/andersoxie/xpact/issues/28) | parser developer repairs; then rerun W3C |
 | B03: `direct_start_tag_attributes` loop variant at `/>` | test matrix (K1); **every `/>` input through the DLL** | ✔ fix in draft [#12](https://github.com/andersoxie/xpact/pull/12), confirmed with a DLL build | [#3](https://github.com/andersoxie/xpact/issues/3) | review #12 |
 | GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | parser developer |
 | Start handler: rest of the document not parsed, `<root>` accepted, end events lost (C01) | DLL tests, all DLLs | ❓ C01 shortcut | [#38](https://github.com/andersoxie/xpact/issues/38) | parser developer |
@@ -51,7 +50,7 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | Non-final chunk ending with `<` crashes the assertions DLL | DLL tests: 644 crashes | ✔ trigger · ❓ in the code | [#40](https://github.com/andersoxie/xpact/issues/40) | parser developer |
 | The test program stops at the first contract failure | baseline K1 | ✔ | [draft 06](github/issues/06-finding-runner-stops.md) | part of B01 |
 | Assertions DLL smoke test crashes `0xC0000028` (K3) | baseline; A02; still with the B03 fix | ❔ (B03 is not the only cause) | [draft 07](github/issues/07-finding-dll-crash.md) | after #28 and #40 are repaired, rerun |
-| 53 W3C cases crash (week 2) | xmlconf 2026-10-14 | ❔ hidden behind #28 | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | recheck after #28 |
+| W3C, assertions on: 47 cases crash in DTD declaration parsing (`parse_attlist_declaration`, `parse_content_particle`, `parse_attlist_default_value`, `put_external_entity`) | W3C after the #28 repair, 2026-10-22 ([list](../reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv)) | ✔ trigger · ❓ in the code | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | was hidden behind #28 (week 2: 53); file as findings |
 | W3C, assertions off: 220 malformed documents accepted, 16 well-formed rejected | [W3C 2026-10-21](results/w3c-conformance-2026-10-21/README.md) | ❔ (partly #39?) | [#29](https://github.com/andersoxie/xpact/issues/29) | sort them in G01 |
 | Error codes differ from libexpat (`<root>` 5 not 3, junk 4 not 9) | DLL tests | ❔ reference values not checked | (G03) | check against Expat 2.8.1 |
 | Build fixes are on `student-Mass`, not `main` | | (decision) | [draft 22](github/issues/22-blocker-build-fixes.md) | **supervisor decides; never merge into `main` ourselves** |
@@ -74,6 +73,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | Finalized test lane had no `-keep`, so assertions were off (K2) | `ccd30ab` | [#48](https://github.com/andersoxie/xpact/issues/48) |
 | `vcvars64.bat` needed the Visual Studio Installer folder on `PATH` | `3076a92` | [#51](https://github.com/andersoxie/xpact/issues/51) |
 | Workbench lane did not load MSVC, `finish_freezing` failed with `msc_vc140` | `ec3c3e6` | [#53](https://github.com/andersoxie/xpact/issues/53) |
+| CR in the input: `normalized_input` loop variant failed (assertions on); W3C crashes 1,360 to 47 | PR [#59](https://github.com/andersoxie/xpact/pull/59) | [#28](https://github.com/andersoxie/xpact/issues/28) |
 | Test matrix started outside the repository root ran a stale `xpact_tests.exe` and reported ok | PR [#58](https://github.com/andersoxie/xpact/pull/58) | [#55](https://github.com/andersoxie/xpact/issues/55) |
 | Jenkins precompile prompt: **dropped** 2026-10-22, the student decided not to pursue it | - | [draft 23](github/issues/23-finding-jenkins-precompile.md), [#56](https://github.com/andersoxie/xpact/issues/56) |
 
@@ -94,7 +94,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
 
 | | Test | State |
 |---|---|---|
-| ✅ | 1. CR regression (#28) | Test in `1ea242e`; fails with assertions on until the parser is repaired |
+| ✅ | 1. CR regression (#28) | Test in `1ea242e`; parser repaired in PR [#59](https://github.com/andersoxie/xpact/pull/59), the test passes |
 | ⬜ | 2. B02 deliberately failing meta-test | next |
 | ✅ | 3. C02 through the DLL | [#37](https://github.com/andersoxie/xpact/issues/37), found #38 |
 | 🟡 | 4. C03 every split position | run in #37 (found #40); the Expat comparison is still to do |
@@ -122,7 +122,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
   - [ ] [Test runner stops at the first failure](github/issues/06-finding-runner-stops.md): still a draft
   - [ ] [Assertions DLL smoke test crashes](github/issues/07-finding-dll-crash.md): still a draft; *2026-10-22:* still crashes with the B03 fix
   - [x] Python harness fails on Python 3.10: fixed in `492c6eb` ([#32](https://github.com/andersoxie/xpact/issues/32))
-  - [ ] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md): can't be rechecked until #28 is repaired
+  - [ ] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md): rechecked after the #28 repair: 47 crashes left, all in DTD declaration parsing ([list](../reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv)); still a draft
   - [x] New, found in the W3C run with assertions on: the loop variant in `XP_PARSER.normalized_input` fails on every input with a CR: [#28](https://github.com/andersoxie/xpact/issues/28), regression test `1ea242e`
   - [x] [Jenkins precompile prompt](github/issues/23-finding-jenkins-precompile.md): dropped on 2026-10-22, not pursued ([#56](https://github.com/andersoxie/xpact/issues/56))
 - [ ] **Decision:** choose one main improvement and a small input set with the supervisor
@@ -161,7 +161,7 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 - [ ] [B02](https://github.com/andersoxie/xpact/issues/46) Deliberately failing meta-tests
 - [x] Week 3 note: [week-03.md](notes/weekly/week-03.md) (written 2026-10-20, updated 2026-10-21 and 2026-10-22)
 - [x] W3C suite with the Python runner, assertions off and on: [#29](https://github.com/andersoxie/xpact/issues/29), [results/w3c-conformance-2026-10-21/](results/w3c-conformance-2026-10-21/README.md), [error report](../reports/error-reports/2026-10-21.md)
-- [x] Regression test for the CR crash: [#28](https://github.com/andersoxie/xpact/issues/28), `1ea242e` (fails with assertions on until the parser is repaired)
+- [x] Regression test for the CR crash: [#28](https://github.com/andersoxie/xpact/issues/28), `1ea242e`; parser repaired 2026-10-22 (PR [#59](https://github.com/andersoxie/xpact/pull/59))
 - [x] Repository repair and GitHub setup per `CLAUDE.md`: [#34](https://github.com/andersoxie/xpact/issues/34), [#35](https://github.com/andersoxie/xpact/issues/35), [#43](https://github.com/andersoxie/xpact/issues/43) (merged 2026-10-22)
 
 ## Week 4 – Input matrix

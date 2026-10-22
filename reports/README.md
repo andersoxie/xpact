@@ -39,6 +39,7 @@ test scripts that back it up. The rules are in
 | [#51](https://github.com/andersoxie/xpact/issues/51) | `import_msvc_environment.ps1` puts the VS Installer folder (`vswhere.exe`) on `PATH` for `vcvars64.bat` | [#52](https://github.com/andersoxie/xpact/pull/52) | `3076a92` | [issue-0051](issue-0051/report.md) |
 | [#53](https://github.com/andersoxie/xpact/issues/53) | `run_eiffel_test_matrix.ps1` loads MSVC for workbench lanes when `ISE_C_COMPILER` is `msc*` | [#54](https://github.com/andersoxie/xpact/pull/54) | `ec3c3e6` | [issue-0053](issue-0053/report.md) |
 | [#56](https://github.com/andersoxie/xpact/issues/56) | Jenkins precompile finding dropped; #48, #51, #53 recorded as solved in `student/PLAN.md`; finding #55 added | (the pull request) | see `git log --grep "Refs #56"` | (the pull request) |
+| [#28](https://github.com/andersoxie/xpact/issues/28) | Parser repair: `normalized_input` advances past a CR (W3C crashes with assertions on: 1,360 to 47) | [#59](https://github.com/andersoxie/xpact/pull/59) | see `git log --grep "(#59)"` | [issue-0028](issue-0028/report.md#repair-2026-10-22) |
 | [#55](https://github.com/andersoxie/xpact/issues/55) | `run_eiffel_test_matrix.ps1` runs every lane from the repository root, wherever it is started | [#58](https://github.com/andersoxie/xpact/pull/58) | see `git log --grep "(#58)"` | [issue-0055](issue-0055/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.

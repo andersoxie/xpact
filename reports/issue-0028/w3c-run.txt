@@ -1,0 +1,28 @@
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Python 3.13.14
+W3C XML: Finalized: 2585 catalog cases
+  Finalized: 250/2585
+  Finalized: 500/2585
+  Finalized: 750/2585
+  Finalized: 1000/2585
+  Finalized: 1250/2585
+  Finalized: 1500/2585
+  Finalized: 1750/2585
+  Finalized: 2000/2585
+  Finalized: 2250/2585
+  Finalized: 2500/2585
+W3C XML: FinalizedAssertions: 2585 catalog cases
+  FinalizedAssertions: 250/2585
+  FinalizedAssertions: 500/2585
+  FinalizedAssertions: 750/2585
+  FinalizedAssertions: 1000/2585
+  FinalizedAssertions: 1250/2585
+  FinalizedAssertions: 1500/2585
+  FinalizedAssertions: 1750/2585
+  FinalizedAssertions: 2000/2585
+  FinalizedAssertions: 2250/2585
+  FinalizedAssertions: 2500/2585
+{"engine": "Finalized", "total": 2585, "passed": 1491, "failed": 236, "errors": 0, "skipped": 858, "accepted": 980, "rejected": 747, "elapsed_ms": 18979.927}
+{"engine": "FinalizedAssertions", "total": 2585, "passed": 1444, "failed": 236, "errors": 47, "skipped": 858, "accepted": 978, "rejected": 702, "elapsed_ms": 16403.067}
+W3C XML reports: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\benchmarks\w3c-xml-conformance
+EXIT STATUS: 1
