@@ -58,3 +58,18 @@ One command failed and was repeated: `gh issue edit 13 --milestone "Week2 - Base
 `git revert <merged sha>` restores the files. The labels and milestones on
 GitHub stay; remove them with `gh label delete` and
 `gh api -X DELETE repos/andersoxie/xpact/milestones/<n>` if needed.
+
+## Update 2026-10-22: project board ✅
+
+After the student ran `gh auth refresh -s project`:
+
+| | Command | Result |
+|---|---|---|
+| ✅ | `gh project create --owner CodTanium --title "xpact student work (Mass)"` | [project 3](https://github.com/users/CodTanium/projects/3) |
+| ✅ | GraphQL `updateProjectV2Field` on the Status field | options `Todo`, `In progress`, `In review`, `Done` |
+| ❌ | `gh project link 3 --owner CodTanium --repo andersoxie/xpact`, then GraphQL `linkProjectV2ToRepository` | "Only projects owned by the same owner as the repository can be linked." **Confirmed** GitHub rule; the board still holds the repository's issues |
+| ✅ | `gh issue create` from drafts 09 and 10 | #45 (B01), #46 (B02), same titles as the drafts |
+| ✅ | `gh project item-add` + `item-edit` for #2-#46 and PR #12 | `gh project item-list 3 --owner CodTanium`: Done 19, In review 2 (#3, PR #12), Todo 7 |
+
+Still to do by hand in the browser: switch the view to **Board** layout and
+check the built-in workflows (item closed / pull request merged → `Done`).

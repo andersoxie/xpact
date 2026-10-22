@@ -9,8 +9,8 @@ project week, and a pull request into `student-Mass` for every change
 |---|---|---|
 | ✅ | Labels | 21, listed in [`labels.json`](labels.json); all on GitHub except 6 (see below) |
 | ✅ | Milestones | `Week 1 - Setup` … `Week 10 - Handover`, in [`milestones.json`](milestones.json), all on GitHub |
-| ✅ | Issues | #2-#40 on GitHub, each with a milestone and labels; drafts for the rest in [`issues/`](issues/) |
-| ⬜ | Project board | Not created: `gh` needs the `project` scope first (`gh auth refresh -s project`, in the browser) |
+| ✅ | Issues | #2-#46 on GitHub, each with a milestone and labels; drafts for the rest in [`issues/`](issues/) |
+| ✅ | Project board | [xpact student work (Mass)](https://github.com/users/CodTanium/projects/3): Todo → In progress → In review → Done, every issue on it ([below](#project-board)) |
 
 ## Labels
 
@@ -49,7 +49,7 @@ Due on the Friday of each week; week 1 started on 2026-10-05.
 |---|---|---|
 | Week 1 - Setup | #2, #4, #7, #10 (build fixes), #18 (A01) | |
 | Week 2 - Baseline | #3 (B03), #13, #33 (A02) | 04 `-keep`, 06 runner stops, 07 DLL crash, 21 xmlconf crashes, 22 build fixes not in `main` |
-| Week 3 - Failure reporting | #5, #14, #16, #20, #22, #24, #26, #34, #35 (workflow) · #28 (CR loop variant), #29 (W3C run), #32 (Python 3.10) | 09 B01, 10 B02, 23 Jenkins precompile |
+| Week 3 - Failure reporting | #5, #14, #16, #20, #22, #24, #26, #34, #35 (workflow) · #28 (CR loop variant), #29 (W3C run), #32 (Python 3.10) · #45 B01, #46 B02 | 23 Jenkins precompile |
 | Week 4 - Input matrix | | 11 G01, 12 xmlconf verdicts |
 | Week 5 - Regressions | #37 (DLL test program) · #38 (C01), #39 (UTF-8), #40 (chunk ends with `<`) | 13 C02, 14 C03, 15 C10 (now partly covered by #37) |
 | Week 6 - One improvement | | |
@@ -68,6 +68,7 @@ Every issue's report is indexed in [`reports/README.md`](../../reports/README.md
 | `05-finding-b03-postcondition.md` | [#3](https://github.com/andersoxie/xpact/issues/3) | Title matches #3 exactly, so the script skips it |
 | `08-finding-python310.md` | [#32](https://github.com/andersoxie/xpact/issues/32) | Fixed; delete the draft or the script makes a duplicate |
 | `02-A02.md` | [#33](https://github.com/andersoxie/xpact/issues/33) | Done; delete the draft or the script makes a duplicate |
+| `09-B01.md`, `10-B02.md` | [#45](https://github.com/andersoxie/xpact/issues/45), [#46](https://github.com/andersoxie/xpact/issues/46) | Same titles, so the script skips them |
 | `01-A01.md` | (none; A01 was marked done in [#18](https://github.com/andersoxie/xpact/issues/18)) | The script would create an A01 issue for finished work |
 | `22-blocker-build-fixes.md` | (none) | Partly solved by #2, #7, #10 on `student-Mass`; still not in `main` |
 
@@ -78,20 +79,36 @@ Issues created outside the drafts: #2, #4, #7, #10, #13, #28, #38, #39, #40
 
 ## Project board
 
-`CLAUDE.md` asks for a board with **Todo → In progress → In review → Done**.
-Not created yet, because `gh` is logged in without the `project` scope. Once:
+✅ **[xpact student work (Mass)](https://github.com/users/CodTanium/projects/3)**,
+created 2026-10-22 ([#35](https://github.com/andersoxie/xpact/issues/35)), with
+the columns `CLAUDE.md` asks for:
 
-```powershell
-gh auth refresh -s project                                   # opens the browser
-.\student\github\setup-github.ps1 -CreateProject -DryRun     # check first
-```
+| Status | Means | On 2026-10-22 |
+|---|---|---|
+| ⬜ Todo | Not started | #13, #28, #38, #39, #40 (parser repairs), #45 B01, #46 B02 |
+| 🟡 In progress | Being worked on | |
+| 🔵 In review | Pull request open, or waiting for the parser developer | #3 and its draft PR #12 |
+| ✅ Done | Merged **and** the result verified | the 19 closed issues |
 
-Then in the browser: **Settings → Status**, options `Todo`, `In progress`,
-`In review`, `Done`; **Layout: Board**, grouped by Status; under
-**Workflows**, "Item closed → Done" and "Pull request merged → Done".
-An issue goes to `In review` when its pull request is open, and to `Done`
-only after the result is verified (`CLAUDE.md`: never close an issue just
-because the code changed).
+An issue goes to `Done` only after its result is checked (`CLAUDE.md`: never
+close an issue just because the code changed).
+
+- The board belongs to the account `CodTanium`. It **cannot be linked** to
+  `andersoxie/xpact` (GitHub only links a project to a repository of the same
+  owner), so it does not show in the repository's Projects tab. Issues of
+  the repository can be added to it all the same.
+- A new issue does not land on the board by itself. Add it with
+  `gh project item-add 3 --owner CodTanium --url <issue url>`, or from the
+  issue page (**Projects** → *xpact student work (Mass)*).
+- Set up once in the browser (the API cannot do it): **Layout → Board** for
+  the view, and under **⋯ → Workflows** check that "Item closed" and "Pull
+  request merged" set the status to `Done`.
+
+How it was made: `gh project create --owner CodTanium`, the Status field
+options set with the GraphQL mutation `updateProjectV2Field`, then
+`gh project item-add` and `gh project item-edit` for every issue.
+`setup-github.ps1 -CreateProject` was not used: it tries to link the board
+to the repository, which fails for the reason above.
 
 ## Running the setup script
 

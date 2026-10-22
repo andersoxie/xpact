@@ -8,7 +8,8 @@ The plan comes from [`docs/xpact-student-introduction.md`](../docs/xpact-student
 issues, reports and pull requests are in [`CLAUDE.md`](../CLAUDE.md) and
 [`VERSIONING.md`](VERSIONING.md). Week 1 = 2026-10-05; review with the
 supervisor at the end of every week. [PLAN2.md](PLAN2.md) is the frozen
-record of weeks 1-2.
+record of weeks 1-2. Day-to-day status of every issue: the
+[project board](https://github.com/users/CodTanium/projects/3).
 
 ## At a glance
 
@@ -78,12 +79,11 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 ## ➡️ Next
 
-1. **B02** (week 3, due Friday): one deliberately failing test; every lane of `run_eiffel_test_matrix.ps1` must exit nonzero. Expected to show K2.
-2. **B01**: accumulated failures give a nonzero exit code; the runner does not stop at the first failure (draft 06).
+1. **B02** ([#46](https://github.com/andersoxie/xpact/issues/46), week 3, due Friday): one deliberately failing test; every lane of `run_eiffel_test_matrix.ps1` must exit nonzero. Expected to show K2.
+2. **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): accumulated failures give a nonzero exit code; the runner does not stop at the first failure (draft 06).
 3. **Ask the supervisor** the questions in [`for superviser.txt`](for%20superviser.txt).
 4. **Week 4, G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds).
 5. **C02/C03/C10, remaining:** compare with Expat 2.8.1 (needs an Expat build); turn the findings into regression tests once the parser is repaired.
-6. Once: `gh auth refresh -s project`, then create the project board ([github/README.md](github/README.md#project-board)).
 
 <details>
 <summary>The five tests chosen on 2026-10-21 and where they stand</summary>
@@ -155,8 +155,8 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 ## Week 3 – Failure reporting
 **Activity:** Learn how the test runner reports failure. Reproduce a deliberately failing test.
 **Bring to review:** A bounded failure-reporting fix, or a precise proposal with evidence.
-- [ ] [B01](github/issues/09-B01.md) Failing tests must return a nonzero exit status
-- [ ] [B02](github/issues/10-B02.md) Deliberately failing meta-tests
+- [ ] [B01](https://github.com/andersoxie/xpact/issues/45) Failing tests must return a nonzero exit status
+- [ ] [B02](https://github.com/andersoxie/xpact/issues/46) Deliberately failing meta-tests
 - [x] Week 3 note: [week-03.md](notes/weekly/week-03.md) (written 2026-10-20, updated 2026-10-21 and 2026-10-22)
 - [x] W3C suite with the Python runner, assertions off and on: [#29](https://github.com/andersoxie/xpact/issues/29), [results/w3c-conformance-2026-10-21/](results/w3c-conformance-2026-10-21/README.md), [error report](../reports/error-reports/2026-10-21.md)
 - [x] Regression test for the CR crash: [#28](https://github.com/andersoxie/xpact/issues/28), `1ea242e` (fails with assertions on until the parser is repaired)

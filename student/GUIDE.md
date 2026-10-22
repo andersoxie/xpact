@@ -125,8 +125,8 @@ every other bug behind them. Repairs of #28, #3 and #40 come first.
 
 | | Step | Why | How |
 |---|---|---|---|
-| 1 | **B02**: one test that must fail (week 3, due Friday) | if a failing test still says "ok", no green result means anything | add a deliberately wrong test; run the matrix `-AssertionMode All -BuildMode All`; check `$LASTEXITCODE` after each lane. Expected: nonzero everywhere; the finalized lane will probably say "ok", which proves K2 |
-| 2 | **B01**: failures give a nonzero exit code | same reason | together with draft 06 |
+| 1 | **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)): one test that must fail (week 3, due Friday) | if a failing test still says "ok", no green result means anything | add a deliberately wrong test; run the matrix `-AssertionMode All -BuildMode All`; check `$LASTEXITCODE` after each lane. Expected: nonzero everywhere; the finalized lane will probably say "ok", which proves K2 |
+| 2 | **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): failures give a nonzero exit code | same reason | together with draft 06 |
 | 3 | **Ask the supervisor** | decisions are theirs | [`for superviser.txt`](for%20superviser.txt), questions at the end |
 | 4 | **G01** (week 4): 50-100 W3C cases | an agreed regression set | from `results.tsv`: passes and failures, both builds |
 | 5 | **Expat comparison** (C03, C10, G03) | the error codes still need a real reference | needs an Expat 2.8.1 build |
