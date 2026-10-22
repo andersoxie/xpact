@@ -50,8 +50,9 @@ cd C:\xpact\xpact-student-Mass
   (`ec`, `finish_freezing`, `cl`). The scripts load it themselves;
   `run_eiffel_test_matrix.ps1` also for workbench lanes when `ISE_C_COMPILER`
   is `msc*` (#53). Running the import twice is safe (#4).
-- Run the scripts from the repository root: `ec` writes `EIFGENs` to the
-  current folder.
+- `run_eiffel_test_matrix.ps1` switches to the repository root itself (#55).
+  For `ec` commands you run by hand, start in the repository root: `ec` writes
+  `EIFGENs` to the current folder.
 - With `msc_vc140`, EiffelBase must also be precompiled for MSVC:
   `...\Eiffel User Files\25.12\precomp\spec\win64\EIFGENs\base-safe\W_code\msc_vc140\precomp.lib`.
   If only `W_code\mingw` exists, workbench builds stop with `LNK1181` (see

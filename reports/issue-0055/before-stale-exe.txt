@@ -1,0 +1,231 @@
+Current folder: C:\Users\masou\AppData\Local\Temp\xpact-issue55-cwd
+Before: repo xpact_tests.exe: 2026-10-22 09:39:07
+== xpact tests: assertions-off / Workbench ==
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Freezing System Changes
+Degree -1: Generating Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\AppData\Local\Temp\xpact-issue55-cwd\EIFGENs\xpact_tests\W_code
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured mingw C compiler...
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/cp" "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/config/win64/templates/emain.template" "E1/emain.c"
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eparents.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" einit.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" ececil.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" evisib.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" enames.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eskelet.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eplug.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" ecall.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" efrozen.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" emain.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" epattern.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eoption.o  ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `eparents.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+cd C1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj1.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `einit.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `ececil.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/windres" --preprocessor='"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/cpp.exe"' -I../../.. ../../../xpact_tests.rc -O coff -o xpact_tests.res
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `evisib.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `eplug.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `enames.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `ecall.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `eskelet.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `eoption.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `efrozen.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O0 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -DWORKBENCH -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c emain.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: `epattern.o' is up to date.
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests/W_code/E1'
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:859: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:859: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:859: digit exceeds base
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f xpact_tests.exe
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc"  -mconsole -o xpact_tests.exe E1/emain.o "c:\users\masou\documents\eiffel user files\25.12\precomp\spec\win64\EIFGENs\base-safe\W_code/mingw/precomp.lib" xpact_tests.res E1/eparents.o  E1/einit.o  E1/ececil.o  E1/evisib.o  E1/enames.o  E1/eskelet.o  E1/eplug.o  E1/ecall.o  E1/efrozen.o  E1/epattern.o  E1/eoption.o  C1/Cobj1.o   "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/lib/mingw/wkbench.a" -luser32 -lws2_32 -ladvapi32 -lgdi32 -lshell32 -lmsimg32 -lcomdlg32 -luuid -lole32 -loleaut32 -lcomctl32 -lmpr -lshlwapi -lwinspool -lstdc++ 
+echo done > completed.eif
+C compilation completed
+FAIL: public header loaded
+FAIL: public header has version macro
+FAIL: public header has status suspended
+FAIL: public header has external entity declaration
+FAIL: public header has parser buffer declaration
+FAIL: public header has reparse deferral declaration
+FAIL: libexpat adapter script present
+FAIL: adapter extracts upstream START_TEST names
+FAIL: adapter writes test manifest
+FAIL: adapter expands expected failures
+FAIL: adapter expands parity rows
+FAIL: adapter rejects suite-wide expected failure
+FAIL: adapter can run native suite
+FAIL: adapter fails stale expected failures
+FAIL: adapter drives xpact file parser
+FAIL: adapter knows Expat split test sources
+FAIL: libexpat CMake adapter present
+FAIL: CMake adapter imports xpact native library
+FAIL: CMake adapter builds upstream runtests
+FAIL: CMake adapter enables DTD and general entities
+FAIL: libexpat expat.h shim present
+FAIL: libexpat expat_config.h shim present
+FAIL: libexpat adapter docs present
+FAIL: expected-failure list keeps allocator rows
+FAIL: parity list has green rows
+FAIL: namespace parity is green
+FAIL: namespace allocation parity remains red
+FAIL: libexpat parity docs present
+FAIL: benchmark publication script present
+FAIL: benchmark script runs xpact benchmark
+FAIL: benchmark script supports finalized assertion build
+FAIL: benchmark script records assertion build row
+FAIL: benchmark ECF has assertion target
+FAIL: benchmark script records pyexpat baseline
+FAIL: benchmark script can record WSL C baseline
+FAIL: benchmark script can record xpact native C ABI
+FAIL: benchmark script can record Windows Eiffel-backed native DLL
+FAIL: benchmark script distinguishes bridge-only WSL path
+FAIL: benchmark script writes docs table
+FAIL: benchmark script preserves history section
+FAIL: large XML benchmark script present
+FAIL: chunked CRC harness script present
+FAIL: chunked CRC harness can target xpact and libexpat
+FAIL: chunked CRC harness supports diagnostic mismatches
+FAIL: chunked CRC corpus script present
+FAIL: chunked CRC corpus drives harness
+FAIL: chunked CRC corpus has stress size knob
+FAIL: incremental shim audit script present
+FAIL: libexpat Python benchmark present
+FAIL: libexpat Python benchmark accepts files
+FAIL: libexpat C benchmark present
+FAIL: libexpat C benchmark accepts files
+FAIL: xpact native C benchmark present
+FAIL: xpact native C benchmark accepts files
+FAIL: chunked CRC C harness present
+FAIL: incremental shim C audit present
+FAIL: published benchmark table present
+FAIL: published benchmark includes finalized xpact row
+FAIL: published benchmark includes libexpat row
+FAIL: published benchmark documents optional WSL C rows
+FAIL: published benchmark includes Windows native C ABI rows
+FAIL: published benchmark keeps previous values
+FAIL: large XML benchmark docs present
+FAIL: chunked CRC docs present
+FAIL: incremental shim audit docs present
+FAIL: test ECF has assertion-off target
+FAIL: test ECF has assertion-on target
+FAIL: Eiffel test matrix script present
+FAIL: Eiffel test matrix covers finalized builds
+FAIL: all-tests Jenkinsfile present
+FAIL: all-tests Jenkinsfile runs on built-in agent
+FAIL: all-tests Jenkinsfile has assertion axis
+FAIL: all-tests Jenkinsfile has build axis
+FAIL: all-tests Jenkinsfile builds assertion native tier
+FAIL: all-tests Jenkinsfile benchmarks assertion tier
+FAIL: all-tests Jenkinsfile runs native tests
+FAIL: all-tests Jenkinsfile runs chunked CRC corpus
+FAIL: all-tests Jenkinsfile runs incremental shim audit
+FAIL: all-tests Jenkinsfile runs SonarQube analysis
+FAIL: windows phase1 Jenkinsfile runs on built-in agent
+FAIL: windows phase1 Jenkinsfile runs incremental shim audit
+FAIL: windows phase1 Jenkinsfile runs SonarQube analysis
+FAIL: SonarQube project key is xpact
+FAIL: test matrix docs present
+FAIL: test matrix docs include chunked CRC corpus
+FAIL: test matrix docs include incremental shim audit
+FAIL: test matrix docs include SonarQube analysis
+FAIL: platform build docs present
+FAIL: native export source present
+FAIL: native layer exports parser create
+FAIL: native layer exports parse
+FAIL: native layer exports handler setters
+FAIL: native layer reports Eiffel bridge version
+FAIL: Eiffel bridge header present
+FAIL: Eiffel bridge can be registered
+FAIL: Eiffel native parser target present
+FAIL: Eiffel native callback adapter present
+FAIL: Eiffel native callback replay tracks growing text
+FAIL: Eiffel incremental session prototype present
+FAIL: Eiffel Expat-port spike present
+FAIL: Eiffel native bridge installer present
+FAIL: Eiffel native bridge installer uses runtime object ids
+FAIL: Eiffel native bridge export present
+FAIL: Eiffel native library root installs bridge
+FAIL: Eiffel runtime bridge header present
+FAIL: Eiffel runtime bridge pointer wrapper present
+FAIL: Eiffel runtime bridge header accepts installer object
+FAIL: Eiffel runtime bridge source present
+FAIL: Eiffel runtime bridge adopts installer
+FAIL: Eiffel runtime bridge accesses installer
+FAIL: Eiffel runtime bridge releases installer
+FAIL: Eiffel runtime bridge registers bridge table
+FAIL: Eiffel DLL entry initializes runtime
+FAIL: native build script present
+FAIL: native build script builds Windows DLL
+FAIL: native build script builds WSL shared object
+FAIL: Eiffel native DLL build script present
+FAIL: Eiffel native DLL build script builds xpact DLL
+FAIL: Eiffel native DLL build script supports assertion tier
+FAIL: Eiffel native DLL build script runs C smoke
+FAIL: Eiffel native library ECF present
+FAIL: Eiffel native library ECF has assertion target
+FAIL: Eiffel native DLL C smoke present
+FAIL: native runtime smoke script present
+FAIL: native runtime smoke compiles bridge objects
+FAIL: native runtime smoke covers assertion modes
+FAIL: native runtime smoke runs Eiffel through C ABI
+FAIL: native runtime ECF present
+FAIL: native ABI test script present
+FAIL: native bridge ABI test script present
+FAIL: native ABI tests cover Windows and WSL
+FAIL: public native ABI smoke present
+FAIL: bridge native ABI smoke present
+FAIL: native export notes present
+FAIL: native export notes keep parser semantics in Eiffel
+FAIL: Windows release package script present
+FAIL: Windows release package script stages DLL
+FAIL: Windows release package script stages assertion DLL
+FAIL: Windows release package script stages public header
+FAIL: Windows release package script stages parity doc
+FAIL: Windows release package script writes archive
+FAIL: Windows release package script writes checksums
+FAIL: Windows release notes present
+FAIL: Windows release notes exclude Linux package
+FAIL: Phase 1 documents Windows-only native release
+xpact Eiffel test matrix: ok
+After:  repo xpact_tests.exe: 2026-10-22 09:39:11
+EIFGENs in the current folder: True
+EXIT STATUS: 0
