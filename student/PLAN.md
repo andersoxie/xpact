@@ -48,14 +48,12 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | Start handler: rest of the document not parsed, `<root>` accepted, end events lost (C01) | DLL tests, all DLLs | ❓ C01 shortcut | [#38](https://github.com/andersoxie/xpact/issues/38) | parser developer |
 | Invalid UTF-8 accepted in all six places (K4) | DLL tests: 2,106 of 2,148 | ❓ no strict decoder (C08) | [#39](https://github.com/andersoxie/xpact/issues/39) | parser developer |
 | Non-final chunk ending with `<` crashes the assertions DLL | DLL tests: 644 crashes | ✔ trigger · ❓ in the code | [#40](https://github.com/andersoxie/xpact/issues/40) | parser developer |
-| Finalized test lane has no `-keep`, so assertions are off (K2) | baseline step 3 | ✔ fixed | [#48](https://github.com/andersoxie/xpact/issues/48) | `-keep` added; the lane now fails on #28 until that is repaired |
 | The test program stops at the first contract failure | baseline K1 | ✔ | [draft 06](github/issues/06-finding-runner-stops.md) | part of B01 |
 | Assertions DLL smoke test crashes `0xC0000028` (K3) | baseline; A02; still with the B03 fix | ❔ (B03 is not the only cause) | [draft 07](github/issues/07-finding-dll-crash.md) | after #28 and #40 are repaired, rerun |
 | 53 W3C cases crash (week 2) | xmlconf 2026-10-14 | ❔ hidden behind #28 | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | recheck after #28 |
 | W3C, assertions off: 220 malformed documents accepted, 16 well-formed rejected | [W3C 2026-10-21](results/w3c-conformance-2026-10-21/README.md) | ❔ (partly #39?) | [#29](https://github.com/andersoxie/xpact/issues/29) | sort them in G01 |
-| `run_eiffel_test_matrix.ps1 -BuildMode Workbench` does not load MSVC, `finish_freezing` fails | [#28 report](../reports/issue-0028/report.md#how-the-lanes-were-run) | ✔ fixed | [#53](https://github.com/andersoxie/xpact/issues/53) | MSVC is loaded for workbench lanes when `ISE_C_COMPILER` is `msc*` |
+| `run_eiffel_test_matrix.ps1` started outside the repository root runs a stale `xpact_tests.exe` and reports ok | [#53 report](../reports/issue-0053/report.md#found-while-testing-not-changed-by-this-fix) | ✔ | [#55](https://github.com/andersoxie/xpact/issues/55) | pass `-project_path` to `ec` |
 | Error codes differ from libexpat (`<root>` 5 not 3, junk 4 not 9) | DLL tests | ❔ reference values not checked | (G03) | check against Expat 2.8.1 |
-| Jenkins precompile prompt | weeks 1-2 history | ❔ | [draft 23](github/issues/23-finding-jenkins-precompile.md) | |
 | Build fixes are on `student-Mass`, not `main` | | (decision) | [draft 22](github/issues/22-blocker-build-fixes.md) | **supervisor decides; never merge into `main` ourselves** |
 
 **Workarounds in use (not fixes):** `fix.ps1` stops in Windows PowerShell 5.1,
@@ -73,6 +71,10 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | Native runtime smoke test build | `20e6bc3` | [#10](https://github.com/andersoxie/xpact/issues/10) |
 | W3C harness tests fail on Python 3.10 | `492c6eb` | [#32](https://github.com/andersoxie/xpact/issues/32) |
 | Repository state of 2026-10-21 (overwritten baseline log, direct pushes, uncommitted docs) | `6e2278e` | [#34](https://github.com/andersoxie/xpact/issues/34) |
+| Finalized test lane had no `-keep`, so assertions were off (K2) | `ccd30ab` | [#48](https://github.com/andersoxie/xpact/issues/48) |
+| `vcvars64.bat` needed the Visual Studio Installer folder on `PATH` | `3076a92` | [#51](https://github.com/andersoxie/xpact/issues/51) |
+| Workbench lane did not load MSVC, `finish_freezing` failed with `msc_vc140` | `ec3c3e6` | [#53](https://github.com/andersoxie/xpact/issues/53) |
+| Jenkins precompile prompt: **dropped** 2026-10-22, the student decided not to pursue it | - | [draft 23](github/issues/23-finding-jenkins-precompile.md), [#56](https://github.com/andersoxie/xpact/issues/56) |
 
 </details>
 
@@ -122,7 +124,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
   - [x] Python harness fails on Python 3.10: fixed in `492c6eb` ([#32](https://github.com/andersoxie/xpact/issues/32))
   - [ ] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md): can't be rechecked until #28 is repaired
   - [x] New, found in the W3C run with assertions on: the loop variant in `XP_PARSER.normalized_input` fails on every input with a CR: [#28](https://github.com/andersoxie/xpact/issues/28), regression test `1ea242e`
-  - [ ] [Jenkins precompile prompt](github/issues/23-finding-jenkins-precompile.md): still a draft
+  - [x] [Jenkins precompile prompt](github/issues/23-finding-jenkins-precompile.md): dropped on 2026-10-22, not pursued ([#56](https://github.com/andersoxie/xpact/issues/56))
 - [ ] **Decision:** choose one main improvement and a small input set with the supervisor
 
 ## Build fixes and workflow in git (week 3)
