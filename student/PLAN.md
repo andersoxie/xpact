@@ -48,7 +48,7 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | Start handler: rest of the document not parsed, `<root>` accepted, end events lost (C01) | DLL tests, all DLLs | ❓ C01 shortcut | [#38](https://github.com/andersoxie/xpact/issues/38) | parser developer |
 | Invalid UTF-8 accepted in all six places (K4) | DLL tests: 2,106 of 2,148 | ❓ no strict decoder (C08) | [#39](https://github.com/andersoxie/xpact/issues/39) | parser developer |
 | Non-final chunk ending with `<` crashes the assertions DLL | DLL tests: 644 crashes | ✔ trigger · ❓ in the code | [#40](https://github.com/andersoxie/xpact/issues/40) | parser developer |
-| Finalized test lane has no `-keep`, so assertions are off (K2) | baseline step 3 | ✔ | [draft 04](github/issues/04-finding-finalized-keep.md) | B02 shows it; ask the supervisor before changing CI |
+| Finalized test lane has no `-keep`, so assertions are off (K2) | baseline step 3 | ✔ fixed | [#48](https://github.com/andersoxie/xpact/issues/48) | `-keep` added; the lane now fails on #28 until that is repaired |
 | The test program stops at the first contract failure | baseline K1 | ✔ | [draft 06](github/issues/06-finding-runner-stops.md) | part of B01 |
 | Assertions DLL smoke test crashes `0xC0000028` (K3) | baseline; A02; still with the B03 fix | ❔ (B03 is not the only cause) | [draft 07](github/issues/07-finding-dll-crash.md) | after #28 and #40 are repaired, rerun |
 | 53 W3C cases crash (week 2) | xmlconf 2026-10-14 | ❔ hidden behind #28 | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | recheck after #28 |
@@ -114,7 +114,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
 - [x] Assertions-enabled baseline with every lane logged: [baseline/BASELINE.md](baseline/BASELINE.md)
 - [x] [A02](github/issues/02-A02.md) Reproduce assertions-enabled workbench and finalized builds: rerun in the git clone on 2026-10-22 at `1799b35`, every step as expected ([#33](https://github.com/andersoxie/xpact/issues/33), [A02-baseline](results/A02-baseline/README.md), [setup guide](report/setup-guide.md))
 - [ ] Report the baseline findings (each one's state is in [Known problems](#-known-problems-living-list)):
-  - [ ] [Finalized lane drops assertions (missing `-keep`)](github/issues/04-finding-finalized-keep.md): still a draft
+  - [x] [Finalized lane drops assertions (missing `-keep`)](github/issues/04-finding-finalized-keep.md): filed as [#48](https://github.com/andersoxie/xpact/issues/48), fixed in [reports/issue-0048](../reports/issue-0048/report.md)
   - [x] Postcondition `final_finished_or_suspended` fails (B03): [#3](https://github.com/andersoxie/xpact/issues/3). Fix in draft [#12](https://github.com/andersoxie/xpact/pull/12), on hold. *2026-10-22:* also the cause of every `/>` crash through the DLL (confirmed with a B03-fixed build, #37)
   - [x] New, found while analysing B03: `XP_GC_CRITICAL_SECTION.execute` swallows exceptions: [#13](https://github.com/andersoxie/xpact/issues/13)
   - [ ] [Test runner stops at the first failure](github/issues/06-finding-runner-stops.md): still a draft

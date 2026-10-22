@@ -44,7 +44,8 @@ function Invoke-TestLane {
 	)
 	$CompileArgs = @("-batch", "-clean")
 	if ($Mode -eq "Finalized") {
-		$CompileArgs += "-finalize"
+		# Without -keep, ec -finalize drops every assertion from the system.
+		$CompileArgs += @("-finalize", "-keep")
 	}
 	$CompileArgs += @("-config", $ConfigPath, "-target", $Target)
 
