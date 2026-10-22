@@ -1,8 +1,12 @@
 [
-  { "title": "Week 2 - Baseline",          "due_on": "2026-10-16", "description": "Setup notes, one example parse, assertions-enabled baseline and its findings." },
-  { "title": "Week 3 - Failure reporting", "due_on": "2026-10-23", "description": "A bounded failure-reporting fix or a precise proposal with evidence (B01, B02)." },
-  { "title": "Week 4 - Input matrix",      "due_on": "2026-10-30", "description": "An input matrix with reviewed expected outcomes; 50-100 W3C cases (G01)." },
-  { "title": "Week 5 - Regressions",       "due_on": "2026-11-06", "description": "Repeatable regressions and small bug reproductions (C02, C03, C10). Review what is realistic." },
-  { "title": "Week 7 - Comparison",        "due_on": "2026-11-20", "description": "A table of matches, differences and untested cases, xpact vs Expat (A04, G03)." },
-  { "title": "Week 10 - Handover",         "due_on": "2026-12-11", "description": "Final report, tests, code or proposals, setup guide and follow-up list." }
+  { "title": "Week 1 - Setup",              "due_on": "2026-10-09", "description": "Learn basic XML, the project structure and the Git workflow. Build with help. Setup notes and one example parse." },
+  { "title": "Week 2 - Baseline",           "due_on": "2026-10-16", "description": "Follow parser events and run the assertions-enabled tests. Baseline log with revision, configuration, commands and known failures." },
+  { "title": "Week 3 - Failure reporting",  "due_on": "2026-10-23", "description": "How the test runner reports failure; a deliberately failing test (B01, B02). A bounded fix or a precise proposal with evidence." },
+  { "title": "Week 4 - Input matrix",       "due_on": "2026-10-30", "description": "Small regressions and 50-100 reviewed W3C cases (G01). An input matrix with reviewed expected outcomes." },
+  { "title": "Week 5 - Regressions",        "due_on": "2026-11-06", "description": "Small inputs with different callbacks and chunk boundaries (C02, C03, C10). Repeatable regressions and bug reproductions." },
+  { "title": "Week 6 - One improvement",    "due_on": "2026-11-13", "description": "One test-framework or verification-script improvement, with before-and-after results and review." },
+  { "title": "Week 7 - Comparison",         "due_on": "2026-11-20", "description": "xpact vs libexpat (A04, G03): a table of matches, differences and untested cases." },
+  { "title": "Week 8 - Consolidate",        "due_on": "2026-11-27", "description": "Shared fixtures and comparison output; optional SVG, libxml2 or Core cases." },
+  { "title": "Week 9 - Analyse and draft",  "due_on": "2026-12-04", "description": "Analyse the results and draft the report, with result tables tied to specific builds." },
+  { "title": "Week 10 - Handover",          "due_on": "2026-12-11", "description": "Final report, tests, code or proposals, setup guide and follow-up list." }
 ]

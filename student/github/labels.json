@@ -13,5 +13,11 @@
   { "name": "type:task",                "color": "0075ca", "description": "Planned work from the task register" },
   { "name": "type:finding",             "color": "d73a4a", "description": "Something observed that is wrong or surprising" },
   { "name": "type:blocker",             "color": "000000", "description": "Stops other work until resolved" },
-  { "name": "workflow",                 "color": "c5def5", "description": "Versioning, reports and plan updates (not a project finding)" }
+  { "name": "workflow",                 "color": "c5def5", "description": "Versioning, reports and plan updates (not a project finding)" },
+  { "name": "bug",                      "color": "d73a4a", "description": "Something isn't working" },
+  { "name": "test",                     "color": "1d76db", "description": "Tests, test runs and test tools" },
+  { "name": "build",                    "color": "5319e7", "description": "Build scripts, ECFs, compilers and the C backend" },
+  { "name": "documentation",            "color": "0075ca", "description": "Improvements or additions to documentation" },
+  { "name": "regression",               "color": "fbca04", "description": "A regression test, or behaviour that used to work" },
+  { "name": "investigation",            "color": "c2e0c6", "description": "Cause not confirmed yet: being investigated" }
 ]
