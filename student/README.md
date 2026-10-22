@@ -5,15 +5,26 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-**Start here: [PLAN.md](PLAN.md)**: the 10-week plan and where things stand now
-(the live status). [PLAN2.md](PLAN2.md) is the frozen, detailed record of weeks 1–2
-as of 2026-10-15.
+> **Updated 2026-10-22 (week 3).** Week 1-2 ✅ · week 3 🟡 (B01/B02 to do) ·
+> 4 pull requests waiting for review · 3 new parser findings (#38, #39, #40).
+
+## Start here
+
+| | Read | When |
+|---|---|---|
+| 1️⃣ | [GUIDE.md](GUIDE.md) | **Lost?** The whole project in plain words: what it is, the builds, the scripts, what to do next |
+| 2️⃣ | [PLAN.md](PLAN.md) | **Every day.** Where things stand, pull requests to merge, the known problems, next steps |
+| 3️⃣ | [`../CLAUDE.md`](../CLAUDE.md) and [VERSIONING.md](VERSIONING.md) | **Before a change.** How to report, test, branch and open a pull request |
+
+[PLAN2.md](PLAN2.md) is the frozen, detailed record of weeks 1–2 as of 2026-10-15.
 
 ## Find it fast
 
 | I want to see… | Open |
 |---|---|
-| Where things stand and what's next | [PLAN.md](PLAN.md), section "Where things stand" and "Next tests" |
+| Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
+| Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
+| The newest test results (DLL, 3,360 cases) | [`results/dll-tests-2026-10-22/`](results/dll-tests-2026-10-22/README.md) |
 | A one-page status for the supervisor | [`for superviser.txt`](for%20superviser.txt) |
 | Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
 | What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |
@@ -44,6 +55,7 @@ them. Until that is fixed, do its steps by hand, as described in
 
 | Path | What goes there |
 |---|---|
+| [`GUIDE.md`](GUIDE.md) | The project in plain words (written 2026-10-21 as `guide.txt`, updated) |
 | [`PLAN.md`](PLAN.md) / [`PLAN2.md`](PLAN2.md) | Live plan and status / frozen weeks 1–2 record |
 | [`VERSIONING.md`](VERSIONING.md) | How every fix is made: issue, branch, report, pull request, squash merge, revert |
 | [`tools/fix.ps1`](tools/fix.ps1) | Runs and checks those steps (`start`, `finish`, `merge`, `revert`, `status`) |
@@ -51,7 +63,7 @@ them. Until that is fixed, do its steps by hand, as described in
 | [`history/`](history/) | Weeks 1–2 before this repository: error reports, build fix notes, the old fixes as patches |
 | [`baseline/`](baseline/) | The week 2 assertions-enabled baseline: script, event trace, logs, BASELINE.md |
 | [`results/`](results/) | Evidence for task work that is **not** a code fix: investigations, orientation notes, measurements, test runs |
-| [`notes/weekly/`](notes/weekly/) | Half-page weekly notes, one file per week |
+| [`notes/weekly/`](notes/weekly/) | Half-page weekly notes, one file per week; other notes in [`notes/`](notes/), e.g. the [tests chosen on 2026-10-21](notes/next-tests-2026-10-21.txt) |
 | [`report/`](report/) | The university report, demonstration notes and handover guide (weeks 8–10) |
 | [`github/`](github/) | Labels, milestones and issue drafts, plus `setup-github.ps1`, which creates them on GitHub |
 | [`for superviser.txt`](for%20superviser.txt) | One-page status for the supervisor |

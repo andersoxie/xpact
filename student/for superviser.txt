@@ -1,75 +1,82 @@
-STATUS FOR SUPERVISOR - branch student-Mass @ 8850dab (20 commits ahead of main), 2026-10-21
-Repo: github.com/andersoxie/xpact   Full index: reports/README.md   Plan: student/PLAN.md
+STATUS FOR SUPERVISOR - 2026-10-22 (week 3)
+student-Mass @ 42d6b40 (24 commits ahead of main; main untouched) + 4 open pull requests
+Repo: github.com/andersoxie/xpact   Plan + known problems: student/PLAN.md   Index: reports/README.md
 
-NEW SINCE 2026-10-20
+IN ONE LINE
+-----------
+  Three new parser findings through the DLL (#38, #39, #40), B03 confirmed as the
+  cause of every "/>" crash in the DLL, and the repository tidied up. No parser
+  code changed on student-Mass.
+
+NEW SINCE 2026-10-21
 --------------------
-  #29  8850dab  W3C suite (2,585 cases, 1,727 applicable) with your Python runner,
-                scripts/run_w3c_conformance.py, against two builds of xpact_benchmarks:
-                  assertions off (-finalize):        1,491 passed, 236 failed, 0 crashes
-                  assertions on  (-finalize -keep):    270 passed,  97 failed, 1,360 crashes
-                Off: 220 malformed documents are accepted, 16 well-formed ones rejected.
-                Results: student/results/w3c-conformance-2026-10-21/
-  #28  (open)   New finding from that run. 1,357 of the crashes are one bug:
-                the loop variant in XP_PARSER.normalized_input does not decrease
-                when the loop meets a CR (src/xp_parser.e:4468-4477). The loop still
-                ends correctly, so only assertions-on builds fail - on every file
-                with CR LF line ends. 9-byte repro: <r> CR LF </r>.
-                Same kind of bug as B03 (#3). It hides the 53 crashes from week 2.
-                I have not changed the parser.
+  [x] #37  C# program tests/dotnet/XpactDllTests: calls the DLL like a C program
+           (XML_Parse + handlers). 3,360 cases = C02 inputs, CR inputs, bad UTF-8
+           in 6 places (C10) x 6 callback sets x every chunking (C03).
+                                         pass   fail  crash
+             xpact_assertions.dll         637  1,394  1,329
+             same + only the B03 line     928  1,760    672
+             xpact.dll (assertions off) 1,200  2,160      0
+           Results: student/results/dll-tests-2026-10-22/      (PR #41, open)
 
-CODE CHANGES (only build scripts and ECFs; no parser code on student-Mass)
+  New findings (each with command, expected/actual, logs, cause marked):
+  [ ] #38  Start handler set: <root> and <root><child></root> are ACCEPTED, and
+           the end event of <root></root> is lost. The C01 shortcut is still
+           there, on every DLL.                         cause: suspected (C01)
+  [ ] #39  Invalid UTF-8 (C3 28, C0 AF, ED A0 80, F4 90 80 80) accepted in text,
+           attributes, names, comments, PIs, CDATA: 2,106 of 2,148 cases.
+           K4 is one case of it.                        cause: suspected (C08)
+  [ ] #40  A non-final XML_Parse chunk that ends with "<" crashes the assertions
+           DLL (find_markup_declaration_end, index_in_bounds). Every byte-by-byte
+           run crashes.                     trigger confirmed, code suspected
+
+  Evidence added to existing issues:
+  [ ] #3   B03 crashes the assertions DLL on every "/>" input, <root/> included.
+           With only the B03 line (draft PR #12) none of them crash. Supports
+           reviewing #12. The DLL smoke test (K3) still crashes, so B03 is not
+           its only cause.
+  [ ] #28  The CR crash also happens through the DLL when no callbacks are set.
+           Regression test committed (1ea242e); parser not repaired.
+
+  Housekeeping (per CLAUDE.md, the student's working rules):
+  [x] #34  Repaired the repository state of 2026-10-21: a week 2 baseline log had
+           been overwritten in the working copy (restored), FOUR COMMITS WERE
+           PUSHED TO student-Mass WITHOUT A PULL REQUEST (1ea242e, 492c6eb,
+           1799b35, 42d6b40 - listed in VERSIONING.md, not rewritten), and doc
+           updates had been left uncommitted.                (PR #36, open)
+  [x] #35  On andersoxie/xpact: labels test, build, regression, investigation
+           and milestones "Week 1" ... "Week 10" on every issue.  (PR #42, open)
+  [x] #43  All student docs brought up to date.               (PR #44, open)
+  [x] #32  Python harness tests pass on Python 3.10 (492c6eb).
+  [x] #33  A02: week 2 baseline rerun in the git clone (1799b35, 42d6b40).
+
+CODE CHANGES ON student-Mass (build scripts, ECFs, one test; no parser code)
 --------------------------------------------------------------------------
-Why: the native Eiffel DLL and smoke test did not build on Windows. These are the
-week 1 fixes (old patch b930600), now as reviewed, tested commits.
+  #2   9eb18bd  build_native_eiffel.ps1: Eiffel runtime include fallback path
+  #7   eb6fc5d  build_native_eiffel.ps1, xpact_native_library.ecf: msc_vc140 backend
+  #4   3b8a205  import_msvc_environment.ps1: PATH no longer grows past cmd's limit
+  #10  20e6bc3  run_native_runtime_smoke.ps1, xpact_native_runtime.ecf: same as #2/#7
+  #28  1ea242e  tests/xp_test_root.e: regression test for the CR loop variant
+  #32  492c6eb  run_w3c_conformance.py: NUL -> ? in results.tsv (Python 3.10)
+  #33  1799b35  student/baseline/run_baseline.ps1 -LogDir
+  Open: #41 adds tests/dotnet/XpactDllTests (new folder, nothing else changes).
+  Everything else is documentation: see reports/README.md.
 
-  #2   9eb18bd  scripts/build_native_eiffel.ps1
-       Include fallback pointed to C:\El2502E (does not exist) -> EiffelStudio 25.12 path.
-  #7   eb6fc5d  scripts/build_native_eiffel.ps1, tests/xpact_native_library.ecf
-       Default mingw C backend writes no .lnk -> build with ISE_C_COMPILER=msc_vc140,
-       remove mingw-only precompile, stop harmless stderr aborting the script.
-       Result: xpact.dll + smoke test ok, xpact_assertions.dll builds.
-  #4   3b8a205  scripts/import_msvc_environment.ps1
-       Each import grew PATH by 1,432 chars; 5th run failed "input line is too long"
-       -> skip import if MSVC already loaded, de-duplicate PATH.
-  #10  20e6bc3  scripts/run_native_runtime_smoke.ps1, tests/xpact_native_runtime.ecf
-       Same two problems as #2/#7 in the smoke script -> same fix. Both cells ok.
-
-DOCUMENTATION / WORKFLOW ONLY (no effect on the parser or tests)
-----------------------------------------------------------------
-  a17db10 cd0e1e4 f146008  student/ workspace, 10-week plan, weeks 1-2 record
-  aa8e0aa 1e699a0          an upload and its revert (no net change)
-  b7181f0 5240cfc          error report 2026-10-19 (reports/error-reports/)
-  cada501 (#5)             versioning workflow: student/VERSIONING.md, student/tools/fix.ps1
-  4a957b1 (#14)            one folder per fix: reports/issue-NNNN/
-  b631e15 df189d9 4df05be  PLAN.md updates, week 3 note, docs aligned (#16, #18, #20)
-  384f838 (#22)            this status page
-  e6d6732 (#24)            GitHub labels recorded in the repository
-  2f0d441 (#26)            B03 work (#3, PR #12, #13) put on hold
-  8850dab (#29)            W3C results, error report 2026-10-21 (see above)
-
-ON HOLD
--------
-  B03 (#3, draft PR #12) and #13: I am checking them further before asking for review.
-
-GITHUB LABELS (added 2026-10-20, #24)
--------------------------------------
-  I added 9 labels from student/github/labels.json (plus a new "workflow" label)
-  to andersoxie/xpact and labelled every issue, WITHOUT ASKING YOU FIRST - sorry.
-  Build fixes: type:finding group:B-reliable-results D2-guided P0.
-  Parser findings (#3, #13, #28): group:C-correctness D3-advanced.
-  Workflow tasks: type:task workflow. #29: type:task D2-guided P1.
-  Details: student/github/README.md. I can remove them if you prefer.
-
-HOW EVERY FIX IS DONE
----------------------
+HOW EVERY CHANGE IS DONE
+------------------------
   Issue -> branch fix/<issue>-<name> -> expected result written before testing ->
-  report with before/after logs in reports/issue-NNNN/ -> PR -> squash merge.
-  One commit per fix, revertable with git revert. Parser changes wait for review.
+  report with logs in reports/issue-NNNN/ -> pull request into student-Mass ->
+  reviewed and squash-merged by me. Never into main. Parser changes wait for
+  the parser developer's review. Issues are closed only after the result is checked.
 
 QUESTIONS FOR YOU
 -----------------
   1. Should the build fixes (#2, #7, #4, #10) go into main via a pull request?
-  2. #28: who should repair the loop variant? I can write the regression test.
-  3. Next tests (student/PLAN.md, "Next tests"): #28 regression, B02, C02, C03,
-     C10. C02/C03/C10 go through the DLL and need a small C test program. OK?
-  4. Keep the GitHub labels (see above)?
+  2. #28, #38, #39, #40 are parser repairs: who does them? I can write the
+     regression tests and verify the fixes.
+  3. Can #12 (B03, one line) be reviewed now that the DLL tests confirm it?
+  4. Labels and milestones: I added test/build/regression/investigation and
+     Week 1-10 milestones (and on 2026-10-20 the type:/group:/P labels) without
+     asking you first. Keep them, or remove them?
+  5. This week: B01/B02 (failing tests must give a nonzero exit code). Next week
+     G01 (50-100 W3C cases). Is that still the right order?

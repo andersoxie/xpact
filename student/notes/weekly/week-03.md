@@ -25,3 +25,11 @@
 - The Python runner downloads the pinned W3C ZIP itself, so `run_xmlconf_conformance.ps1` and patch 02 are no longer needed for that.
 - Chose the next five tests from the guide (PLAN.md, "Next tests"): #28 regression, B02, C02, C03, C10.
 - Blocked: `fix.ps1` stops in Windows PowerShell 5.1 (steps done by hand, see VERSIONING.md). Tests C02/C03/C10 through the DLL need a small C program first.
+
+## Update 2026-10-22
+- **Repaired the repository** against `CLAUDE.md` ([#34](https://github.com/andersoxie/xpact/issues/34)): the A02 rerun had overwritten a week 2 baseline log in the working copy (restored from git); four commits had gone to `student-Mass` without a pull request (now listed in VERSIONING.md); doc updates had been left uncommitted.
+- **GitHub set up per `CLAUDE.md`** ([#35](https://github.com/andersoxie/xpact/issues/35)): labels `test`, `build`, `regression`, `investigation`; milestones Week 1-10 on every issue. The project board still needs `gh auth refresh -s project`.
+- **Ran C02, C03 and part of C10 early** with a new C# program that calls the DLL like a C program ([#37](https://github.com/andersoxie/xpact/issues/37), [results](../../results/dll-tests-2026-10-22/README.md)): 3,360 cases on three DLLs. Three new findings: with a start handler `<root>` is accepted and end events are lost ([#38](https://github.com/andersoxie/xpact/issues/38), C01); invalid UTF-8 is accepted in all six places ([#39](https://github.com/andersoxie/xpact/issues/39), K4 is one case); a non-final chunk that ends with `<` crashes the assertions DLL ([#40](https://github.com/andersoxie/xpact/issues/40)).
+- **Confirmed B03 through the DLL** with a B03-fixed build in a separate worktree: every `/>` input crashed before, none after (evidence on [#3](https://github.com/andersoxie/xpact/issues/3)). The C smoke test still crashes (K3), so B03 is not its only cause.
+- Two problems in the new program itself were found and fixed before committing (cut-off traces; crashes reported as timeouts).
+- **Blocked / waiting:** pull requests #36 → #41 → #42 → #44 wait for review and merge, in that order. B01/B02 are still to do this week.

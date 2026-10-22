@@ -89,6 +89,24 @@ git push origin --delete fix/29-w3c-assertions
 git branch -D fix/29-w3c-assertions
 ```
 
+## Who merges, and pull requests that build on each other
+
+- **Claude opens pull requests but does not merge them.** The student reviews
+  the diff and the test evidence, then merges (`gh pr merge <n> --squash` or
+  the button on GitHub). This is the review step of `CLAUDE.md` ("Review the
+  diff before committing or merging").
+- **Never into `main`.** Every pull request has the base `student-Mass`, or
+  another `fix/...` branch (below). `main` is the teacher's.
+- **Stacked pull requests.** When a second change needs files from a first
+  one that is not merged yet, its branch starts from the first branch, and its
+  pull request uses that branch as **base**, so the diff shows only the second
+  change. Merge them **in order**. After the first is squash-merged and its
+  branch deleted, GitHub moves the next one onto `student-Mass` by itself.
+  Example, 2026-10-22: #36 → #41 → #42 → #44.
+- After a merge, check the result on `student-Mass`, then close the issue by
+  hand with "Fixed in `<sha>` (PR #N)", and fill in the commit in
+  [`reports/README.md`](../reports/README.md).
+
 ## Reverting a fix
 
 ```powershell

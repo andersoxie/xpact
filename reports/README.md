@@ -4,7 +4,12 @@ Every fix on `student-Mass` has one folder here, named after its GitHub issue
 and padded to four digits so the folders sort by number. Each folder holds
 `report.md` (cause, change, `## Verification`, how to revert) and the logs and
 test scripts that back it up. The rules are in
-[`student/VERSIONING.md`](../student/VERSIONING.md).
+[`student/VERSIONING.md`](../student/VERSIONING.md) and [`CLAUDE.md`](../CLAUDE.md).
+
+> **Updated 2026-10-22.** 20 fixes and tasks · 4 pull requests
+> open (🟡) · open problems are listed in
+> [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
+> Test results that are not a fix are in [`student/results/`](../student/results/README.md).
 
 ## Fixes
 
@@ -26,13 +31,23 @@ test scripts that back it up. The rules are in
 | [#29](https://github.com/andersoxie/xpact/issues/29) | W3C suite with assertions off and on: results, error report, finding [#28](https://github.com/andersoxie/xpact/issues/28) | [#30](https://github.com/andersoxie/xpact/pull/30) | `8850dab` | [issue-0029](issue-0029/report.md) |
 | [#32](https://github.com/andersoxie/xpact/issues/32) | Python harness test passes on Python 3.10: NUL becomes `?` in `results.tsv` | - (committed on `student-Mass` directly, see #34) | `492c6eb` | [issue-0032](issue-0032/report.md) |
 | [#33](https://github.com/andersoxie/xpact/issues/33) | A02: week 2 baseline rerun in the git clone (`run_baseline.ps1 -LogDir`), setup guide | - (committed on `student-Mass` directly, see #34) | `1799b35`, `42d6b40` | [A02-baseline](../student/results/A02-baseline/README.md) |
-| [#34](https://github.com/andersoxie/xpact/issues/34) | Repair the repository state of 2026-10-21: restored baseline log, direct pushes recorded, uncommitted docs committed, stale branch deleted | (this row is added by its own pull request) | | [issue-0034](issue-0034/report.md) |
+| 🟡 [#34](https://github.com/andersoxie/xpact/issues/34) | Repair the repository state of 2026-10-21: restored baseline log, direct pushes recorded, uncommitted docs committed, stale branch deleted | [#36](https://github.com/andersoxie/xpact/pull/36) (open) | | [issue-0034](issue-0034/report.md) |
+| 🟡 [#35](https://github.com/andersoxie/xpact/issues/35) | GitHub labels (`test`, `build`, `regression`, `investigation`) and milestones Week 1-10 from `CLAUDE.md`, recorded in `student/github/` | [#42](https://github.com/andersoxie/xpact/pull/42) (open) | | [issue-0035](issue-0035/report.md) |
+| 🟡 [#37](https://github.com/andersoxie/xpact/issues/37) | C# test program for the DLL (C02, C03, C10 part): 3,360 cases on three DLLs, findings #38, #39, #40 | [#41](https://github.com/andersoxie/xpact/pull/41) (open) | | [issue-0037](issue-0037/report.md), [results](../student/results/dll-tests-2026-10-22/README.md) |
+| 🟡 [#43](https://github.com/andersoxie/xpact/issues/43) | Student docs brought up to date (2026-10-22) in the `CLAUDE.md` layout | [#44](https://github.com/andersoxie/xpact/pull/44) (open) | | (the pull request) |
+
+🟡 = pull request open: fill in the commit after the squash merge.
+Merge order: #36 → #41 → #42 → #44.
 
 On hold ([#26](https://github.com/andersoxie/xpact/issues/26)):
 [#3](https://github.com/andersoxie/xpact/issues/3) (B03 loop variant, fix in
 draft pull request [#12](https://github.com/andersoxie/xpact/pull/12)) and
 [#13](https://github.com/andersoxie/xpact/issues/13) (GC critical section
 swallows exceptions), being checked further before asking for review.
+*2026-10-22:* new evidence for both from the DLL tests (#37), in comments on
+[#3](https://github.com/andersoxie/xpact/issues/3) and
+[#13](https://github.com/andersoxie/xpact/issues/13): with only the B03 change,
+no `/>` input crashes the assertions DLL any more.
 
 ## Error reports
 

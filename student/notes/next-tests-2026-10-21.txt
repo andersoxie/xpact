@@ -1,0 +1,152 @@
+NOTE (2026-10-22): a dated record, written 2026-10-21 in the repository root as
+next-tests.txt. Where these tests stand now: student/PLAN.md, "Next".
+
+XPACT - TESTS MISSING AND THE 5 TESTS TO DO NEXT
+================================================
+Date: 2026-10-21 (week 3)
+Branch: student-Mass @ 2f0d441
+Compared against: docs/xpact-student-introduction.md (ten week plan, task
+register, "A first test matrix", "Suggested student selection")
+
+
+1. WHAT IS DONE
+---------------
+- A01 orientation: done (#18).
+- Baseline 2026-10-14 (outside git): event traces of 7 inputs, test matrix in
+  3 lanes, xmlconf run, native smoke tests. See student/baseline/BASELINE.md.
+  A02 (rerun the baseline in the git clone) is still open.
+- B03 root cause found (#3, fix in draft PR #12) and GC finding (#13). On hold (#26).
+- 2026-10-21: W3C suite run with the Python runner (see section 4).
+
+
+2. WHAT THE GUIDE ASKS FOR THAT IS NOT TESTED YET
+-------------------------------------------------
+Guide asks for                                          Status
+------------------------------------------------------  ---------------------------------------
+Failing test must give a nonzero exit code (B01/B02)    Not started (week 3 = current week)
+First test matrix through the native API (XML_Parse)    Only tested in Eiffel, without
+  with different callbacks (C02)                          callback variations
+Same inputs split into chunks / every byte (C03)        Not started
+Malformed UTF-8 in text, names, attributes, comments,   Only 1 case (C3 28 in text, ACCEPTED,
+  PI, CDATA, DTD (C10)                                    should reject - K4)
+50-100 reviewed W3C cases (G01)                         Full suite run, no reviewed subset
+xpact vs Expat comparison (G03)                         Not started
+Which DLL the tests actually load (A04)                 Not started
+
+
+3. THE 5 TESTS TO DO NEXT (in this order)
+-----------------------------------------
+
+TEST 1 - Regression test for the CR crash  (new finding, small, blocks the rest)
+  Input (byte-exact, 9 bytes):  3C 72 3E 0D 0A 3C 2F 72 3E   = <r> CR LF </r>
+  Expected: ACCEPT, with assertions on and off.
+  Actual (verified 2026-10-21):
+    file           build                          result
+    LF only        xpact_benchmarks (no assert.)  ACCEPT, exit 0
+    LF only        xpact_benchmarks_assertions    ACCEPT, exit 0
+    CR LF          xpact_benchmarks (no assert.)  ACCEPT, exit 0
+    CR LF          xpact_benchmarks_assertions    CRASH, exit 1:
+                   XP_PARSER normalized_input @8, a_input.count - i + 1:
+                   "Non-decreasing loop variant or negative value reached."
+  Cause: in XP_PARSER.normalized_input (src/xp_parser.e:4440), when the first
+    loop finds a CR it sets l_needs_copy := True but does not advance i. The
+    loop still ends correctly, but the loop variant did not decrease in that
+    last round, so with assertions on Eiffel stops the program.
+  Why first: every file with a CR crashes (1,357 of the 1,360 W3C crashes), so
+    it hides every other assertion failure. Same kind of bug as B03 (#3).
+  Student part: the repro, a regression test and checking the developers' fix.
+
+TEST 2 - B02: a deliberately failing meta-test  (week 3)
+  Add one test that must fail. Run scripts/run_eiffel_test_matrix.ps1 in every
+  lane (workbench, finalized, finalized -keep).
+  Expected: nonzero exit code in every lane.
+  Proves the framework reports failures at all. Also covers K2: the finalized
+  lane without -keep reports "ok" because no assertions are compiled in.
+
+TEST 3 - C02: the guide's "first test matrix" through the native API
+  Inputs:   <root/>   <root>   <root><child></root>   <root/>junk
+  Callbacks: none, start only, end only, start+end, character data, default handler.
+  Expected: only <root/> is accepted; the others are rejected.
+  The guide says a June DLL accepted <root> when a start handler was set
+  (C01 shortcut). Nobody has retested that on a current build.
+
+TEST 4 - C03: the same inputs split at every byte position
+  Feed each input from test 3 in chunks: every split position, final and
+  non-final calls. Compare status, error code and position with Expat 2.8.1.
+  Start from scripts/run_chunked_crc_harness.ps1 and
+  tests/native/xpact_chunked_crc.c (already exist).
+
+TEST 5 - C10 (part): malformed UTF-8 in every XML context
+  Byte-exact fixtures (store as files, never as copied text):
+    C3 28        bad continuation byte
+    C0 AF        overlong encoding
+    ED A0 80     surrogate
+    F4 90 80 80  above U+10FFFF
+  Put each in: text, attribute value, element name, comment, PI, CDATA.
+  Also split each sequence across two chunks.
+  Expected: always REJECT. Text already accepts C3 28 (K4); this maps out how
+  big the problem is.
+
+After these: choose 50-100 W3C cases (G01) from results.tsv (passes and
+failures, both builds), then run them against Expat (G03,
+scripts/run_libexpat_adapter.ps1). That is week 4-7 work.
+
+Order: 1 first (blocks assertion testing). 2 next (week 3, the supervisor
+expects it). 3-5 are week 5 (C02/C03/C10); the inputs from 3 are reused in 4.
+
+
+4. W3C CONFORMANCE RUN, 2026-10-21
+----------------------------------
+Suite:   https://www.w3.org/XML/Test/xmlts20130923.zip
+         SHA-256 f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb (verified)
+Runner:  scripts/run_w3c_conformance.py (unchanged), Python 3.15.0 (uv)
+Profile: XML 1.0 5th ed., namespaces unless NAMESPACE=no, nonvalidating,
+         no external entities, binary accept/reject verdicts.
+Builds:  benchmarks/xpact_benchmarks.ecf, ec -finalize (+ -keep for assertions)
+           Finalized           = target xpact_benchmarks             (assertions off)
+           FinalizedAssertions = target xpact_benchmarks_assertions  (assertions on)
+
+Command:
+  python scripts\run_w3c_conformance.py ^
+    --engine "Finalized=EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks.exe" ^
+    --engine "FinalizedAssertions=EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks.exe" ^
+    --timeout 10
+
+Results (2,585 catalog cases, 1,727 applicable, 858 skipped with a reason):
+  Build                 Passed  Failed  Crashed  Skipped
+  Finalized              1,491     236        0      858
+  FinalizedAssertions      270      97    1,360      858
+
+Finalized failures (236):
+  220  not-wf (malformed) documents ACCEPTED - should be rejected
+   16  well-formed documents REJECTED (7 valid + 9 invalid; a nonvalidating
+       parser must accept both)
+  By collection: eduni 72, ibm 59, oasis 43, xmltest 40, sun 22
+
+FinalizedAssertions crashes (1,360):
+  1,357  XP_PARSER.normalized_input loop variant (the CR bug, test 1).
+         All 1,357 files contain a CR byte; no file without CR crashes there.
+      2  empty (0-byte) test files not-wf-sa-050 and o-p39fail3: exit 2,
+         "conformance file read failed" (the Finalized build rejects them
+         correctly; a problem in the benchmark program, not the parser)
+      1  rmt-e3e-12: XP_PARSER.parse_attlist_default_value loop invariant
+         index_in_bounds violated (one of the crash sites in the 2026-10-14
+         finding, draft 21)
+
+Notes:
+- "0 crashed" for Finalized does NOT mean the 53 crashes from 2026-10-14 are
+  fixed: with assertions off the contracts are not checked. Draft 21 can only
+  be rechecked after the CR bug is fixed.
+- A first combined attempt was discarded: something outside the session
+  rebuilt EIFGENs/xpact_benchmarks (W_code and F_code) at 17:34 during the run,
+  so all Finalized cases failed with "file not found". The numbers above are
+  from the clean rerun; Finalized matches the earlier single run exactly.
+- xpact.exe (xpact.ecf) has assertions on but only supports --parse-file, not
+  --conformance-file, so the Python runner cannot use it.
+
+Reports (build/ is gitignored, not in the repository):
+  build\benchmarks\w3c-xml-conformance\summary.md
+  build\benchmarks\w3c-xml-conformance\summary.json
+  build\benchmarks\w3c-xml-conformance\results.tsv   (one row per case and build)
+  build\benchmarks\w3c-xml-conformance\junit.xml
+Cached suite: build\validation-corpora\w3c-xml-20130923\
