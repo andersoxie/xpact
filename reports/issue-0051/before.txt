@@ -1,0 +1,8 @@
+cmd.exe : 'vswhere.exe' is not recognized as an internal or external command,
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\import_msvc_environment.ps1:32 char:21
++ $EnvironmentLines = & cmd.exe /s /c "`"$VcVars`" >nul && set"
++                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ('vswhere.exe' i...ternal command,:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+EXIT STATUS: 1

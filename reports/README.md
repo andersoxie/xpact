@@ -36,6 +36,7 @@ test scripts that back it up. The rules are in
 | [#37](https://github.com/andersoxie/xpact/issues/37) | C# test program for the DLL (C02, C03, C10 part): 3,360 cases on three DLLs, findings #38, #39, #40 | [#41](https://github.com/andersoxie/xpact/pull/41) | `79f2a29` | [issue-0037](issue-0037/report.md), [results](../student/results/dll-tests-2026-10-22/README.md) |
 | [#43](https://github.com/andersoxie/xpact/issues/43) | Student docs brought up to date (2026-10-22) in the `CLAUDE.md` layout | [#44](https://github.com/andersoxie/xpact/pull/44) | see `git log --grep "(#44)"` | (the pull request) |
 | [#48](https://github.com/andersoxie/xpact/issues/48) | Finalized test lanes compile with `-keep`, so the assertions-on lane checks assertions | [#49](https://github.com/andersoxie/xpact/pull/49) | `ccd30ab` | [issue-0048](issue-0048/report.md) |
+| [#51](https://github.com/andersoxie/xpact/issues/51) | `import_msvc_environment.ps1` puts the VS Installer folder (`vswhere.exe`) on `PATH` for `vcvars64.bat` | (this pull request) | (after merge) | [issue-0051](issue-0051/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 

@@ -1,0 +1,7 @@
+run 1: Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+run 1: PATH length 2579
+run 2: Visual Studio C++ x64 environment already loaded (18.10.3)
+run 2: PATH length 2579
+run 3: Visual Studio C++ x64 environment already loaded (18.10.3)
+run 3: PATH length 2579
+EXIT STATUS: 0

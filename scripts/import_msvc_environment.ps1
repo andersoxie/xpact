@@ -29,7 +29,11 @@ if (-not (Test-Path -LiteralPath $VcVars -PathType Leaf)) {
 	throw "vcvars64.bat not found: $VcVars"
 }
 
-$EnvironmentLines = & cmd.exe /s /c "`"$VcVars`" >nul && set"
+# vcvars64.bat calls vswhere.exe by name. Without its folder on PATH it prints
+# "'vswhere.exe' is not recognized" to stderr, which stops this script in
+# Windows PowerShell 5.1 when the output is captured.
+$VsInstaller = Split-Path -Parent $VsWhere
+$EnvironmentLines = & cmd.exe /s /c "set `"PATH=%PATH%;$VsInstaller`" && `"$VcVars`" >nul && set"
 if ($LASTEXITCODE -ne 0) {
 	throw "Failed to import Visual Studio C++ environment from $VcVars"
 }

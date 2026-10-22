@@ -41,14 +41,12 @@ From the repository root:
 
 ```powershell
 cd C:\xpact\xpact-student-Mass
-$env:Path = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer;$env:Path"
 . .\scripts\import_msvc_environment.ps1
 ```
 
-- The first line puts `vswhere.exe` on `PATH`. `vcvars64.bat` calls it by name;
-  without it, the harmless "'vswhere.exe' is not recognized" message stops the
-  script in PowerShell 5.1.
-- The second line loads the MSVC compiler (`cl`, `link`). It is needed for the
+- The import puts the Visual Studio Installer folder (`vswhere.exe`) on `PATH`
+  for `vcvars64.bat` itself (#51); it no longer has to be added by hand.
+- It loads the MSVC compiler (`cl`, `link`). It is needed for the
   **workbench** test lane: `run_eiffel_test_matrix.ps1` only loads MSVC when a
   finalized lane is selected, and with `msc_vc140` `finish_freezing` then fails
   with no explanation. Running the import twice is safe (#4).
@@ -60,7 +58,7 @@ The student project uses **assertions-enabled** builds (guide, "Your role").
 | # | Command | What it does | Expected on 2026-10-22 |
 |---|---|---|---|
 | 1 | `.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode On -BuildMode Workbench` | Compiles `tests\xpact_tests.ecf` target `xpact_tests_assertions` (workbench) and runs `xpact_tests.exe` | Fails, exit 1: the #28 regression test catches the CR bug |
-| 2 | `.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode On -BuildMode Finalized` | Same, finalized | "ok", but **no assertions are checked**: it finalizes without `-keep` (K2 in [BASELINE.md](../baseline/BASELINE.md)) |
+| 2 | `.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode On -BuildMode Finalized` | Same, finalized (with `-keep` since #48) | Fails like 1 |
 | 3 | `ec -batch -clean -finalize -keep -config tests\xpact_tests.ecf -target xpact_tests_assertions`, then `finish_freezing` in `EIFGENs\xpact_tests_assertions\F_code`, then `xpact_tests.exe` there | The finalized lane that really checks contracts | Fails like 1 |
 | 4 | `.\scripts\run_native_runtime_smoke.ps1 -AssertionMode On` | Eiffel native runtime smoke test | `xpact native runtime smoke: ok` |
 | 5 | `.\scripts\build_native_eiffel.ps1 -BuildTier Assertions` | Builds `build\native-eiffel\xpact_assertions.dll` and runs its C smoke test | DLL builds; the smoke test crashes (K3) |
@@ -90,7 +88,7 @@ A command finishing is not proof that the tests passed. Check the exit code
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `'vswhere.exe' is not recognized` and the script stops | Visual Studio Installer folder not on `PATH`; PowerShell 5.1 turns stderr into an error | Section 3, first line |
+| `'vswhere.exe' is not recognized` and the script stops | Visual Studio Installer folder not on `PATH`; PowerShell 5.1 turns stderr into an error | Fixed in #51 |
 | `finish_freezing failed for assertions-on / Workbench`, no other message | MSVC not loaded, `ISE_C_COMPILER=msc_vc140` | Section 3, second line |
 | A script stops at `ec.exe : Eiffel Compilation Manager` / `NativeCommandError` | You captured its output inside PowerShell (`*>&1`, `| Out-File`); PowerShell 5.1 then treats `ec`'s stderr as fatal | Run without redirection, or let `cmd` write the log: `cmd /c "powershell -NoProfile -File scripts\... > log.txt 2>&1"` |
 | `Expected Eiffel link response file not found` | mingw backend (no `.lnk` file) | Fixed in #7; set `ISE_C_COMPILER` (section 2) |

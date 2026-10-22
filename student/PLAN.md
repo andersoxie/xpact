@@ -59,8 +59,8 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | Build fixes are on `student-Mass`, not `main` | | (decision) | [draft 22](github/issues/22-blocker-build-fixes.md) | **supervisor decides; never merge into `main` ourselves** |
 
 **Workarounds in use (not fixes):** `fix.ps1` stops in Windows PowerShell 5.1,
-so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51));
-`vcvars64.bat` needs the Visual Studio Installer folder on `PATH` ([setup guide](report/setup-guide.md)).
+so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51)).
+(`vcvars64.bat` needing the Visual Studio Installer folder on `PATH` is fixed in [#51](https://github.com/andersoxie/xpact/issues/51).)
 
 <details>
 <summary>✅ Solved</summary>
