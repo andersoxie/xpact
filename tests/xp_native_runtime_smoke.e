@@ -30,7 +30,10 @@ feature {NONE} -- Initialization
 			assert ("Eiffel bridge released parser handle", l_bridge.active_parser_count = 0)
 			l_bridge.uninstall
 			if failed then
-				check smoke_passed: False end
+					-- Exit nonzero in every build: a `check' is only evaluated
+					-- when assertions are compiled in.
+				io.put_string ("xpact native runtime smoke: FAILED%N")
+				{EXCEPTIONS}.die (1)
 			else
 				io.put_string ("xpact native runtime smoke: ok%N")
 			end

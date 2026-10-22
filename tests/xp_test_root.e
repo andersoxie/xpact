@@ -57,7 +57,10 @@ feature {NONE} -- Initialization
 				io.put_string ("xpact Phase 1 tests: " + test_count.out + " run, " + exception_count.out + " raised an exception%N")
 			end
 			if failed then
-				check tests_passed: False end
+					-- Exit nonzero in every build: a `check' is only evaluated
+					-- when assertions are compiled in.
+				io.put_string ("xpact Phase 1 tests: FAILED%N")
+				{EXCEPTIONS}.die (1)
 			else
 				io.put_string ("xpact Phase 1 tests: ok%N")
 			end

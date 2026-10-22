@@ -1,0 +1,24 @@
+diff --git a/tests/xp_native_runtime_smoke.e b/tests/xp_native_runtime_smoke.e
+index 4545eed..068e819 100644
+--- a/tests/xp_native_runtime_smoke.e
++++ b/tests/xp_native_runtime_smoke.e
+@@ -17,6 +17,7 @@ feature {NONE} -- Initialization
+ 			l_input: C_STRING
+ 			l_status: INTEGER
+ 		do
++			assert ("B01 deliberate failure (temporary, not committed)", False)
+ 			create l_bridge.make
+ 			assert ("runtime bridge installs", l_bridge.install)
+ 			create l_encoding.make ("UTF-8")
+diff --git a/tests/xp_test_root.e b/tests/xp_test_root.e
+index 625dfe2..9e50bde 100644
+--- a/tests/xp_test_root.e
++++ b/tests/xp_test_root.e
+@@ -11,6 +11,7 @@ feature {NONE} -- Initialization
+ 
+ 	make
+ 		do
++			assert ("B01 deliberate failure (temporary, not committed)", False)
+ 			run_test ("test_well_formed_callbacks", agent test_well_formed_callbacks)
+ 			run_test ("test_mismatched_tag_is_rejected", agent test_mismatched_tag_is_rejected)
+ 			run_test ("test_depth_limit_is_enforced", agent test_depth_limit_is_enforced)
