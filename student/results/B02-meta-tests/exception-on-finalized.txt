@@ -1,0 +1,329 @@
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Visual Studio C++ x64 environment already loaded (18.10.3)
+== xpact tests: assertions-on / Finalized ==
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Degree -2: Constructing Polymorphic Table
+Degree -3: Generating Optimized Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_tests_assertions\F_code
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured mingw C compiler...
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/cp" "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/config/win64/templates/emain.template" "E1/emain.c"
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/bin/x2c.exe" E1/estructure.x E1/estructure.h
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/bin/x2c.exe" E1/eoffsets.x E1/eoffsets.h
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/windres" --preprocessor='"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/cpp.exe"' -I../../.. ../../../xpact_tests.rc -O coff -o xpact_tests.res
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" emain.o  ; fi  && cd ..
+cd E2 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Eobj2.o ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eparents.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" einit.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" ececil.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" evisib.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" enames.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eskelet.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eplug.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" esize.o  ; fi  && cd ..
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" epoly.o  ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c emain.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E2'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_E2_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c einit.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c evisib.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c eparents.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c ececil.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c enames.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/bin/x2c.exe" eskelet.x eskelet.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/bin/x2c.exe" esize.x esize.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c eplug.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c epoly.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c eskelet.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c esize.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eref.o  ; fi  && cd ..
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+cd E1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" eoption.o  ; fi  && cd ..
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:92: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:859: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:859: digit exceeds base
+c:\\program files\\eiffel software\\eiffelstudio 25.12 standard\\gcc\\win64\\mingw\\bin\\../lib/gcc/x86_64-w64-mingw32/4.4.5/include/xmmintrin.h:859: digit exceeds base
+cd C21 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj21.o ; fi  && cd ..
+cd C20 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj20.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c eref.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+cd C19 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj19.o ; fi  && cd ..
+cd C18 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj18.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c eoption.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+cd C17 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj17.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C21'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C21_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C20'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C20_c.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+cd C16 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj16.o ; fi  && cd ..
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f esize.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+cd C15 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj15.o ; fi  && cd ..
+cd C14 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj14.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C19'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C19_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C17'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C17_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C18'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C18_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C16'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C16_c.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+cd C13 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj13.o ; fi  && cd ..
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f eskelet.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C15'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C15_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C14'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C14_c.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E1'
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C13'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C13_c.c
+cd C12 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj12.o ; fi  && cd ..
+cd C11 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj11.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C11'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C11_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C12'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C12_c.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj21.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj21.o big_file_C21_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C21_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C21'
+cd C10 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj10.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C10'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C10_c.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Eobj2.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Eobj2.o big_file_E2_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj12.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj13.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj12.o big_file_C12_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj13.o big_file_C13_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C12_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C12'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+cd C9 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj9.o ; fi  && cd ..
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C13_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_E2_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C13'
+cd C8 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj8.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C9'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C9_c.c
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/E2'
+cd C7 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj7.o ; fi  && cd ..
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj16.o
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C8'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C8_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C7'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C7_c.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj16.o big_file_C16_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C16_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj14.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj14.o big_file_C14_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C16'
+cd C6 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj6.o ; fi  && cd ..
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C6'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C6_c.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj17.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C14_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj19.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj18.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj19.o big_file_C19_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj17.o big_file_C17_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj18.o big_file_C18_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C14'
+cd C5 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj5.o ; fi  && cd ..
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C5'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C5_c.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C17_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C19_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C18_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C17'
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C19'
+cd C4 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj4.o ; fi  && cd ..
+cd C3 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj3.o ; fi  && cd ..
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C18'
+cd C2 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj2.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C3'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C3_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C4'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C4_c.c
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C2'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C2_c.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj15.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj15.o big_file_C15_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C15_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C15'
+cd C1 && if [ ! -f finished ] ; then  "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/make.exe" Cobj1.o ; fi  && cd ..
+make.exe[1]: Entering directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc" -O2 -pipe -imacros eif_config.mingw.h -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/include" -I. -I"..\..\..\..\include" -I"..\..\..\..\native" -c big_file_C1_c.c
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj11.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj11.o big_file_C11_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj10.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj10.o big_file_C10_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C11_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C11'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C10_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C10'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj2.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj2.o big_file_C2_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C2_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C2'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj3.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj3.o big_file_C3_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C3_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C3'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj9.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj9.o big_file_C9_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj8.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C9_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj8.o big_file_C8_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C9'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C8_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C8'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj6.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj6.o big_file_C6_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C6_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C6'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj7.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj7.o big_file_C7_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C7_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C7'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj20.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj20.o big_file_C20_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C20_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C20'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj1.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj1.o big_file_C1_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj4.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C1_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj4.o big_file_C4_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C1'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C4_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C4'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f Cobj5.o
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/ld" -r -o Cobj5.o big_file_C5_c.o 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/touch" finished
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f big_file_C5_c.o 
+make.exe[1]: Leaving directory `/c/Users/masou/Desktop/Lia/xpact/xpactGit/EIFGENs/xpact_tests_assertions/F_code/C5'
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/msys/1.0/bin/rm" -f xpact_tests.exe
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/gcc/win64/mingw/bin/gcc"  -mconsole -o xpact_tests.exe E1/emain.o  xpact_tests.res E2/Eobj2.o E1/eparents.o  E1/einit.o  E1/ececil.o  E1/evisib.o  E1/enames.o  E1/eskelet.o  E1/eplug.o  E1/esize.o  E1/epoly.o  E1/eref.o  E1/eoption.o  C21/Cobj21.o C20/Cobj20.o C19/Cobj19.o C18/Cobj18.o C17/Cobj17.o C16/Cobj16.o C15/Cobj15.o C14/Cobj14.o C13/Cobj13.o C12/Cobj12.o C11/Cobj11.o C10/Cobj10.o C9/Cobj9.o C8/Cobj8.o C7/Cobj7.o C6/Cobj6.o C5/Cobj5.o C4/Cobj4.o C3/Cobj3.o C2/Cobj2.o C1/Cobj1.o   "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard/studio/spec/win64/lib/mingw/finalized.a" -luser32 -lws2_32 -ladvapi32 -lgdi32 -lshell32 -lmsimg32 -lcomdlg32 -luuid -lole32 -loleaut32 -lcomctl32 -lmpr -lshlwapi -lwinspool -lstdc++ 
+echo done > completed.eif
+C compilation completed
+FAIL: test_garbage_collection_suspension raised an exception
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse @10              final_finished_or_suspended: 
+<000000000364E0A8>                         Postcondition violated.       Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse @10                                           
+<000000000364E0A8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        test_garbage_collection_suspension @18
+<00000000033F3588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        run_test @6                                         
+<00000000033F3588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        make @35                                            
+<00000000033F3588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        root's creation                                     
+<00000000033F3588>                         Routine failure.              Exit
+-------------------------------------------------------------------------------
+
+xpact meta-test: XPACT_META_FAIL=exception, raising on purpose
+FAIL: test_meta_deliberate_failure raised an exception
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+ISE_EXCEPTION_MANAGER
+                    developer_raise        
+<0000000003652E98>                         Developer exception.          Fail
+-------------------------------------------------------------------------------
+ISE_EXCEPTION_MANAGER
+                    developer_raise        
+<0000000003652E98>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+ISE_EXCEPTION_MANAGER
+                    raise @11              
+<0000000003652E98>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+DEVELOPER_EXCEPTION raise @2                                            
+<00000000036FEFC8>  (From EXCEPTION)       Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        test_meta_deliberate_failure @7
+<00000000033F3588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        run_test @6                                         
+<00000000033F3588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        make @43                                            
+<00000000033F3588>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        root's creation                                     
+<00000000033F3588>                         Routine failure.              Exit
+-------------------------------------------------------------------------------
+
+xpact Phase 1 tests: 43 run, 2 raised an exception
+xpact Phase 1 tests: FAILED
+Test executable failed for assertions-on / Finalized.
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_eiffel_test_matrix.ps1:82 char:3
++         throw "Test executable failed for $AssertionLabel / $Mode."
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Test executable...on / Finalized.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Test executable failed for assertions-on / Finalized.
+ 
+EXIT STATUS: 1

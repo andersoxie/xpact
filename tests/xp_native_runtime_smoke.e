@@ -28,6 +28,11 @@ feature {NONE} -- Initialization
 			assert ("C ABI error code delegated", xml_get_error_code (l_parser) = Xml_error_none)
 			xml_parser_free (l_parser)
 			assert ("Eiffel bridge released parser handle", l_bridge.active_parser_count = 0)
+			if attached (create {EXECUTION_ENVIRONMENT}).item ("XPACT_META_FAIL") as l_mode and then not l_mode.is_empty then
+					-- B02 meta-test: any value fails the smoke test on purpose.
+				io.put_string ("xpact meta-test: XPACT_META_FAIL is set, failing on purpose%N")
+				assert ("meta-test: deliberate failure (XPACT_META_FAIL)", False)
+			end
 			l_bridge.uninstall
 			if failed then
 					-- Exit nonzero in every build: a `check' is only evaluated

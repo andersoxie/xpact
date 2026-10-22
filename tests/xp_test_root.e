@@ -53,6 +53,7 @@ feature {NONE} -- Initialization
 			run_test ("test_benchmark_publication_files", agent test_benchmark_publication_files)
 			run_test ("test_ci_test_matrix_files", agent test_ci_test_matrix_files)
 			run_test ("test_native_export_layer_files", agent test_native_export_layer_files)
+			run_test ("test_meta_deliberate_failure", agent test_meta_deliberate_failure)
 			if exception_count > 0 then
 				io.put_string ("xpact Phase 1 tests: " + test_count.out + " run, " + exception_count.out + " raised an exception%N")
 			end
@@ -1654,6 +1655,25 @@ feature {NONE} -- Tests
 		do
 			create l_memory
 			a_state.put (l_memory.collecting)
+		end
+
+feature {NONE} -- Meta-tests
+
+	test_meta_deliberate_failure
+			-- B02: fail on purpose when the environment variable XPACT_META_FAIL
+			-- is "assert" (or "1"): a failed `assert'; or "exception": an
+			-- exception from the test. Unset, nothing happens. Checks that a
+			-- failure reaches the exit status and the CI wrapper.
+		do
+			if attached (create {EXECUTION_ENVIRONMENT}).item ("XPACT_META_FAIL") as l_mode then
+				if l_mode.same_string ("assert") or l_mode.same_string ("1") then
+					io.put_string ("xpact meta-test: XPACT_META_FAIL=assert, failing on purpose%N")
+					assert ("meta-test: deliberate failure (XPACT_META_FAIL=assert)", False)
+				elseif l_mode.same_string ("exception") then
+					io.put_string ("xpact meta-test: XPACT_META_FAIL=exception, raising on purpose%N")
+					(create {DEVELOPER_EXCEPTION}).raise
+				end
+			end
 		end
 
 feature {NONE} -- Running

@@ -17,7 +17,7 @@ record of weeks 1-2. Day-to-day status of every issue: the
 |---|---|---|---|
 | 1 Setup | ✅ | Build working, A01 | [week-01](notes/weekly/week-01.md), [#18](https://github.com/andersoxie/xpact/issues/18) |
 | 2 Baseline | ✅ | Assertions baseline (2026-10-14) and its rerun in git, A02 | [BASELINE.md](baseline/BASELINE.md), [A02-baseline](results/A02-baseline/README.md) |
-| 3 Failure reporting | 🟡 | Build fixes in git ✅, W3C run ✅, #28 test ✅, repair and GitHub setup ✅ · **B01, B02 ⬜ (due Fri 2026-10-23)** | [week-03](notes/weekly/week-03.md) |
+| 3 Failure reporting | 🟡 | Build fixes in git ✅, W3C run ✅, #28 test and repair ✅, repair and GitHub setup ✅ · **B01 ✅, B02 ✅, runner continues after a failure (#60) ✅** (2026-10-22); Jenkins check of B02 open | [week-03](notes/weekly/week-03.md) |
 | 4 Input matrix | ⬜ | G01: 50-100 reviewed W3C cases | |
 | 5 Regressions | 🟡 | C02, C03, C10 (part) **run early** through the DLL: 3,360 cases, 3 new findings | [dll-tests-2026-10-22](results/dll-tests-2026-10-22/README.md) |
 | 6-10 | ⬜ | One improvement, Expat comparison, consolidate, report, handover | |
@@ -75,6 +75,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | CR in the input: `normalized_input` loop variant failed (assertions on); W3C crashes 1,360 to 47 | PR [#59](https://github.com/andersoxie/xpact/pull/59) | [#28](https://github.com/andersoxie/xpact/issues/28) |
 | The test program stopped at the first contract failure; later tests did not run | PR [#61](https://github.com/andersoxie/xpact/pull/61) | [#60](https://github.com/andersoxie/xpact/issues/60) (draft 06) |
 | Failing tests exited 0 with assertions off (`check` only), so the matrix and native smoke said ok | PR [#62](https://github.com/andersoxie/xpact/pull/62) | [#45](https://github.com/andersoxie/xpact/issues/45) (B01) |
+| No way to check that a failure still reaches the exit status (B02) | PR [#63](https://github.com/andersoxie/xpact/pull/63) | [#46](https://github.com/andersoxie/xpact/issues/46) |
 | Test matrix started outside the repository root ran a stale `xpact_tests.exe` and reported ok | PR [#58](https://github.com/andersoxie/xpact/pull/58) | [#55](https://github.com/andersoxie/xpact/issues/55) |
 | Jenkins precompile prompt: **dropped** 2026-10-22, the student decided not to pursue it | - | [draft 23](github/issues/23-finding-jenkins-precompile.md), [#56](https://github.com/andersoxie/xpact/issues/56) |
 
@@ -82,8 +83,8 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 ## ➡️ Next
 
-1. **B02** ([#46](https://github.com/andersoxie/xpact/issues/46), week 3, due Friday): one deliberately failing test; every lane of `run_eiffel_test_matrix.ps1` must exit nonzero. Expected to show K2.
-2. **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): accumulated failures give a nonzero exit code; the runner does not stop at the first failure (draft 06).
+1. ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)), **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)) and draft 06 ([#60](https://github.com/andersoxie/xpact/issues/60)) done 2026-10-22. Still to do: set `XPACT_META_FAIL=assert` on one Jenkins run and check the stage turns red.
+2. **B03** ([#3](https://github.com/andersoxie/xpact/issues/3), draft PR [#12](https://github.com/andersoxie/xpact/pull/12)): now the only failure in the assertions-on test lanes; decide whether to take it off hold.
 3. **Ask the supervisor** the questions in [`for superviser.txt`](for%20superviser.txt).
 4. **Week 4, G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds).
 5. **C02/C03/C10, remaining:** compare with Expat 2.8.1 (needs an Expat build); turn the findings into regression tests once the parser is repaired.
@@ -96,7 +97,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
 | | Test | State |
 |---|---|---|
 | ✅ | 1. CR regression (#28) | Test in `1ea242e`; parser repaired in PR [#59](https://github.com/andersoxie/xpact/pull/59), the test passes |
-| ⬜ | 2. B02 deliberately failing meta-test | next |
+| ✅ | 2. B02 deliberately failing meta-test | [#46](https://github.com/andersoxie/xpact/issues/46), `XPACT_META_FAIL` |
 | ✅ | 3. C02 through the DLL | [#37](https://github.com/andersoxie/xpact/issues/37), found #38 |
 | 🟡 | 4. C03 every split position | run in #37 (found #40); the Expat comparison is still to do |
 | ✅ | 5. C10 (part) malformed UTF-8 | run in #37, found #39 |
@@ -159,7 +160,7 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 **Activity:** Learn how the test runner reports failure. Reproduce a deliberately failing test.
 **Bring to review:** A bounded failure-reporting fix, or a precise proposal with evidence.
 - [x] [B01](https://github.com/andersoxie/xpact/issues/45) Failing tests must return a nonzero exit status: done 2026-10-22, PR [#62](https://github.com/andersoxie/xpact/pull/62) ([report](../reports/issue-0045/report.md), [logs](results/B01-nonzero-exit/README.md))
-- [ ] [B02](https://github.com/andersoxie/xpact/issues/46) Deliberately failing meta-tests
+- [x] [B02](https://github.com/andersoxie/xpact/issues/46) Deliberately failing meta-tests: done 2026-10-22, PR [#63](https://github.com/andersoxie/xpact/pull/63), `XPACT_META_FAIL` ([report](../reports/issue-0046/report.md), [results](results/B02-meta-tests/README.md)); Jenkins not checked
 - [x] Week 3 note: [week-03.md](notes/weekly/week-03.md) (written 2026-10-20, updated 2026-10-21 and 2026-10-22)
 - [x] W3C suite with the Python runner, assertions off and on: [#29](https://github.com/andersoxie/xpact/issues/29), [results/w3c-conformance-2026-10-21/](results/w3c-conformance-2026-10-21/README.md), [error report](../reports/error-reports/2026-10-21.md)
 - [x] Regression test for the CR crash: [#28](https://github.com/andersoxie/xpact/issues/28), `1ea242e`; parser repaired 2026-10-22 (PR [#59](https://github.com/andersoxie/xpact/pull/59))

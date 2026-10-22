@@ -79,7 +79,7 @@ or native, load the C compiler once per window (see the [setup guide](report/set
 
 | What | What it does |
 |---|---|
-| `scripts\run_eiffel_test_matrix.ps1` | Builds `xpact_tests` in the 4 builds and runs them. `-AssertionMode All\|Off\|On`, `-BuildMode All\|Workbench\|Finalized`. ⚠️ finalized has no `-keep` (K2); stops at the first contract failure (draft 06) |
+| `scripts\run_eiffel_test_matrix.ps1` | Builds `xpact_tests` in the 4 builds and runs them. `-AssertionMode All\|Off\|On`, `-BuildMode All\|Workbench\|Finalized`. Finalized uses `-keep` (#48), every test runs even after a contract failure (#60), a failure exits nonzero in every build (#45). Set `XPACT_META_FAIL=assert` or `exception` to make it fail on purpose (B02, #46) |
 | `scripts\run_w3c_conformance.py` | The official W3C suite (2,585 cases) against `xpact_benchmarks.exe`. Python is not on `PATH`, see [README](README.md#tools-on-this-pc-2026-10-21) |
 | `tests\dotnet\XpactDllTests` 🆕 | **Tests the DLL like a C program:** 3,360 cases, every callback set and chunking. A crash only ends one case. See its [README](../tests/dotnet/XpactDllTests/README.md) |
 
@@ -111,12 +111,12 @@ crashes in the DLL tests.
 
 | | What | Why it matters |
 |---|---|---|
-| #28 | A CR byte (Windows line ends) crashes the assertions build | 1,357 of 1,360 W3C crashes; hides the rest |
+| #28 ✅ | A CR byte (Windows line ends) crashed the assertions build | repaired 2026-10-22 (PR #59): W3C crashes with assertions on 1,360 → 47 |
 | #3 | B03: `/>` crashes the assertions build, also every `/>` through the DLL | fix ready in draft PR #12 |
 | #40 | A chunk that ends with `<` crashes the assertions DLL | every byte-by-byte test crashes |
 | #38 | With a start handler, `<root>` is **accepted** and end events are lost | wrong answers, no crash |
 | #39 | Invalid UTF-8 is **accepted** almost everywhere | wrong answers, no crash |
-| K2, 06, 07 | No `-keep` in the finalized lane; the runner stops at the first failure; the DLL smoke test crashes | the test results themselves can't be fully trusted yet |
+| 07 | The DLL smoke test crashes (K2 and 06 are fixed: #48, #60) | the DLL results can't be fully trusted yet |
 
 **Why the crashes matter so much:** they stop the run early, so they hide
 every other bug behind them. Repairs of #28, #3 and #40 come first.
@@ -125,15 +125,15 @@ every other bug behind them. Repairs of #28, #3 and #40 come first.
 
 | | Step | Why | How |
 |---|---|---|---|
-| 1 | **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)): one test that must fail (week 3, due Friday) | if a failing test still says "ok", no green result means anything | add a deliberately wrong test; run the matrix `-AssertionMode All -BuildMode All`; check `$LASTEXITCODE` after each lane. Expected: nonzero everywhere; the finalized lane will probably say "ok", which proves K2 |
-| 2 | **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): failures give a nonzero exit code | same reason | together with draft 06 |
+| 1 | ✅ **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)): one test that must fail | if a failing test still says "ok", no green result means anything | done 2026-10-22: `XPACT_META_FAIL`, every lane exits nonzero ([results](results/B02-meta-tests/README.md)) |
+| 2 | ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): failures give a nonzero exit code | same reason | done 2026-10-22 with draft 06 (#60) ([results](results/B01-nonzero-exit/README.md)) |
 | 3 | **Ask the supervisor** | decisions are theirs | [`for superviser.txt`](for%20superviser.txt), questions at the end |
 | 4 | **G01** (week 4): 50-100 W3C cases | an agreed regression set | from `results.tsv`: passes and failures, both builds |
 | 5 | **Expat comparison** (C03, C10, G03) | the error codes still need a real reference | needs an Expat 2.8.1 build |
 
 ✅ Already done of the five tests chosen on 2026-10-21: 1 (#28 regression
 test), 3 (C02), 4 (C03, xpact side), 5 (C10, xpact side), all through the
-[DLL tests](results/dll-tests-2026-10-22/README.md). Only 2 (B02) is left.
+[DLL tests](results/dll-tests-2026-10-22/README.md), and 2 (B02, #46) on 2026-10-22.
 
 ## 8. How to do one piece of work (every time)
 
