@@ -43,13 +43,13 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 
 | Problem | Seen in | Cause | Issue | Next step |
 |---|---|---|---|---|
-| B03: `direct_start_tag_attributes` loop variant at `/>` | test matrix (K1); **every `/>` input through the DLL** | ✔ fix in draft [#12](https://github.com/andersoxie/xpact/pull/12), confirmed with a DLL build | [#3](https://github.com/andersoxie/xpact/issues/3) | review #12 |
-| GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | parser developer |
-| Start handler: rest of the document not parsed, `<root>` accepted, end events lost (C01) | DLL tests, all DLLs | ❓ C01 shortcut | [#38](https://github.com/andersoxie/xpact/issues/38) | parser developer |
-| Invalid UTF-8 accepted in all six places (K4) | DLL tests: 2,106 of 2,148 | ❓ no strict decoder (C08) | [#39](https://github.com/andersoxie/xpact/issues/39) | parser developer |
-| Non-final chunk ending with `<` crashes the assertions DLL | DLL tests: 644 crashes | ✔ trigger · ❓ in the code | [#40](https://github.com/andersoxie/xpact/issues/40) | parser developer |
+| B03: `direct_start_tag_attributes` loop variant at `/>` | test matrix (K1); **every `/>` input through the DLL** | ✔ fix in draft [#12](https://github.com/andersoxie/xpact/pull/12), confirmed with a DLL build | [#3](https://github.com/andersoxie/xpact/issues/3) | ⏸ **on hold** (student, 2026-10-22); review #12 |
+| GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | ⏸ **on hold** (student, 2026-10-22); parser developer |
+| Start handler: rest of the document not parsed, `<root>` accepted, end events lost (C01) | DLL tests, all DLLs | ❓ C01 shortcut | [#38](https://github.com/andersoxie/xpact/issues/38) | ⏸ **on hold** (student, 2026-10-22); parser developer |
+| Invalid UTF-8 accepted in all six places (K4) | DLL tests: 2,106 of 2,148 | ❓ no strict decoder (C08) | [#39](https://github.com/andersoxie/xpact/issues/39) | ⏸ **on hold** (student, 2026-10-22); parser developer |
+| Non-final chunk ending with `<` crashes the assertions DLL | DLL tests: 644 crashes | ✔ trigger · ❓ in the code | [#40](https://github.com/andersoxie/xpact/issues/40) | ⏸ **on hold** (student, 2026-10-22); parser developer |
 | Assertions DLL smoke test crashes `0xC0000028` (K3) | baseline; A02; still with the B03 fix | ❔ (B03 is not the only cause) | [draft 07](github/issues/07-finding-dll-crash.md) | after #28 and #40 are repaired, rerun |
-| W3C, assertions on: 47 cases crash in DTD declaration parsing (`parse_attlist_declaration`, `parse_content_particle`, `parse_attlist_default_value`, `put_external_entity`) | W3C after the #28 repair, 2026-10-22 ([list](../reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv)) | ✔ trigger · ❓ in the code | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | was hidden behind #28 (week 2: 53); file as findings |
+| W3C, assertions on: 47 cases crash in DTD declaration parsing (`parse_attlist_declaration`, `parse_content_particle`, `parse_attlist_default_value`, `put_external_entity`) | W3C after the #28 repair, 2026-10-22 ([list](../reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv)) | ✔ trigger · ❓ in the code | [draft 21](github/issues/21-finding-xmlconf-crashes.md) | ⏸ **on hold** (student, 2026-10-22); was hidden behind #28 (week 2: 53); file as findings |
 | W3C, assertions off: 220 malformed documents accepted, 16 well-formed rejected | [W3C 2026-10-21](results/w3c-conformance-2026-10-21/README.md) | ❔ (partly #39?) | [#29](https://github.com/andersoxie/xpact/issues/29) | sort them in G01 |
 | Error codes differ from libexpat (`<root>` 5 not 3, junk 4 not 9) | DLL tests | ❔ reference values not checked | (G03) | check against Expat 2.8.1 |
 | Build fixes are on `student-Mass`, not `main` | | (decision) | [draft 22](github/issues/22-blocker-build-fixes.md) | **supervisor decides; never merge into `main` ourselves** |
@@ -84,7 +84,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 ## ➡️ Next
 
 1. ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)), **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)) and draft 06 ([#60](https://github.com/andersoxie/xpact/issues/60)) done 2026-10-22. The Jenkins check (`XPACT_META_FAIL=assert` on one Jenkins run) was dropped on 2026-10-22, not pursued; B02 is verified on the student PC only.
-2. **B03** ([#3](https://github.com/andersoxie/xpact/issues/3), draft PR [#12](https://github.com/andersoxie/xpact/pull/12)): now the only failure in the assertions-on test lanes; decide whether to take it off hold.
+2. ⏸ **On hold** (student, 2026-10-22): B03 ([#3](https://github.com/andersoxie/xpact/issues/3), draft PR [#12](https://github.com/andersoxie/xpact/pull/12)), A04, the 47 W3C crashes in DTD parsing, [#13](https://github.com/andersoxie/xpact/issues/13), [#38](https://github.com/andersoxie/xpact/issues/38), [#39](https://github.com/andersoxie/xpact/issues/39), [#40](https://github.com/andersoxie/xpact/issues/40) ([#66](https://github.com/andersoxie/xpact/issues/66)). B03 is the only failure left in the assertions-on test lanes; PR #12 is based on `20e6bc3` and needs updating to `student-Mass` before review.
 3. **Ask the supervisor** the questions in [`for superviser.txt`](for%20superviser.txt).
 4. **Week 4, G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds).
 5. **C02/C03/C10, remaining:** compare with Expat 2.8.1 (needs an Expat build); turn the findings into regression tests once the parser is repaired.
@@ -189,7 +189,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 ## Week 7 – Comparison
 **Activity:** Compare xpact and libexpat; add more applicable W3C cases as time permits.
 **Bring to review:** A table of matches, differences and untested cases.
-- [ ] [A04](github/issues/16-A04.md) Verify which library the tests load
+- [ ] [A04](github/issues/16-A04.md) Verify which library the tests load: ⏸ on hold (student, 2026-10-22, [#66](https://github.com/andersoxie/xpact/issues/66))
 - [ ] [G03](github/issues/17-G03.md) xpact vs Expat comparison across chunks
 
 ## Week 8 – Consolidate
