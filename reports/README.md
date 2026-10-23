@@ -50,6 +50,7 @@ test scripts that back it up. The rules are in
 | [#70](https://github.com/andersoxie/xpact/issues/70) | Checklist audit of every closed issue (2026-10-22): verified items ticked on GitHub; dates/commits on four pages; `student/github/README.md` issue tables to #70 | (the pull request) | see `git log --grep "Refs #70"` | [issue-0070](issue-0070/report.md) |
 | [#68](https://github.com/andersoxie/xpact/issues/68) | A01 evidence completed: checking tests linked, change-and-predict (predictions committed before the run), notes in `student/results/A01-orientation/` | (the pull request) | see `git log --grep "Refs #68"` | [issue-0068](issue-0068/report.md), [notes](../student/results/A01-orientation/README.md) |
 | [#73](https://github.com/andersoxie/xpact/issues/73) | `build_native_eiffel.ps1` and `run_native_runtime_smoke.ps1` search `ISE_EIFFEL`, `C:\El2502E` (Jenkins), 25.12 Standard (student PC), then `ec` on `PATH` | (the pull request) | see `git log --grep "Refs #73"` | [issue-0073](issue-0073/report.md), [Jenkins log](issue-0073/jenkins-log-2026-10-23.txt) |
+| [#74](https://github.com/andersoxie/xpact/issues/74) | `build_native_eiffel.ps1` and `run_native_runtime_smoke.ps1` keep an existing MSVC backend (`msc*`) instead of always forcing `msc_vc140` | (the pull request) | see `git log --grep "Refs #74"` | [issue-0074](issue-0074/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 

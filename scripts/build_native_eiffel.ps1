@@ -131,7 +131,11 @@ Compile-CObject (Join-Path $RepoRoot "native\xpact_eiffel_dllmain.c") $DllMainOb
 # The plain "msc" backend does not link with Visual Studio 18 (unresolved
 # __iob_func, _set_output_format), so use "msc_vc140".
 $OldCompiler = $env:ISE_C_COMPILER
-$env:ISE_C_COMPILER = "msc_vc140"
+# Keep an MSVC backend the machine already selects (for example "msc" on the
+# Jenkins machine); switch only an unset or non-MSVC backend to "msc_vc140".
+if ($OldCompiler -notlike "msc*") {
+	$env:ISE_C_COMPILER = "msc_vc140"
+}
 try {
 	$SavedErrorActionPreference = $ErrorActionPreference
 	$ErrorActionPreference = "Continue"

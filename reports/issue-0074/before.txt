@@ -1,0 +1,14 @@
+﻿# before the fix, branch fix/74-keep-msvc-backend @ 82ad4cb (= student-Mass)
+# powershell -NoProfile -File reports\issue-0074\test-compiler-choice.ps1
+== scripts\build_native_eiffel.ps1
+  PASS  start (unset)    expected msc_vc140  actual msc_vc140
+  PASS  start mingw      expected msc_vc140  actual msc_vc140
+  FAIL  start msc        expected msc        actual msc_vc140
+  PASS  start msc_vc140  expected msc_vc140  actual msc_vc140
+== scripts\run_native_runtime_smoke.ps1
+  PASS  start (unset)    expected msc_vc140  actual msc_vc140
+  PASS  start mingw      expected msc_vc140  actual msc_vc140
+  FAIL  start msc        expected msc        actual msc_vc140
+  PASS  start msc_vc140  expected msc_vc140  actual msc_vc140
+2 failure(s)
+# exit code: 1
