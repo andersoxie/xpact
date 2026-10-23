@@ -1,0 +1,48 @@
+﻿# after the fix (working tree of fix/73-eiffel-include-fallback)
+# powershell -NoProfile -File reports\issue-0073\test-get-iseinclude.ps1
+== scripts\build_native_eiffel.ps1
+  PASS  1 Jenkins: no ISE_EIFFEL, only C:\El2502E, no ec on PATH
+        expected: <tmp>\El2502E\studio\spec\win64\include
+        actual:   <tmp>\El2502E\studio\spec\win64\include
+  PASS  2 Student: no ISE_EIFFEL, only 25.12 Standard, no ec on PATH
+        expected: <tmp>\Studio2512\studio\spec\win64\include
+        actual:   <tmp>\Studio2512\studio\spec\win64\include
+  PASS  3 ISE_EIFFEL valid wins over both installs
+        expected: <tmp>\IseEiffel\studio\spec\win64\include
+        actual:   <tmp>\IseEiffel\studio\spec\win64\include
+  PASS  4 ISE_EIFFEL without include folder is skipped
+        expected: <tmp>\El2502E\studio\spec\win64\include
+        actual:   <tmp>\El2502E\studio\spec\win64\include
+  PASS  5 Both installs: C:\El2502E comes first
+        expected: <tmp>\El2502E\studio\spec\win64\include
+        actual:   <tmp>\El2502E\studio\spec\win64\include
+  PASS  6 No known install, ec on PATH
+        expected: C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\include
+        actual:   C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\include
+  PASS  7 Nothing at all: clear error
+        expected: (error)
+        actual:   (error) Cannot find Eiffel runtime include directory. Searched: <tmp>\El2502E\studio\spec\win64\include; <tmp>\Studio2512\studio\spec\win64\include
+== scripts\run_native_runtime_smoke.ps1
+  PASS  1 Jenkins: no ISE_EIFFEL, only C:\El2502E, no ec on PATH
+        expected: <tmp>\El2502E\studio\spec\win64\include
+        actual:   <tmp>\El2502E\studio\spec\win64\include
+  PASS  2 Student: no ISE_EIFFEL, only 25.12 Standard, no ec on PATH
+        expected: <tmp>\Studio2512\studio\spec\win64\include
+        actual:   <tmp>\Studio2512\studio\spec\win64\include
+  PASS  3 ISE_EIFFEL valid wins over both installs
+        expected: <tmp>\IseEiffel\studio\spec\win64\include
+        actual:   <tmp>\IseEiffel\studio\spec\win64\include
+  PASS  4 ISE_EIFFEL without include folder is skipped
+        expected: <tmp>\El2502E\studio\spec\win64\include
+        actual:   <tmp>\El2502E\studio\spec\win64\include
+  PASS  5 Both installs: C:\El2502E comes first
+        expected: <tmp>\El2502E\studio\spec\win64\include
+        actual:   <tmp>\El2502E\studio\spec\win64\include
+  PASS  6 No known install, ec on PATH
+        expected: C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\include
+        actual:   C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\include
+  PASS  7 Nothing at all: clear error
+        expected: (error)
+        actual:   (error) Cannot find Eiffel runtime include directory. Searched: <tmp>\El2502E\studio\spec\win64\include; <tmp>\Studio2512\studio\spec\win64\include
+0 failure(s)
+# exit code: 0
