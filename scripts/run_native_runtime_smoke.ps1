@@ -31,17 +31,29 @@ function Get-VcVars {
 }
 
 function Get-IseInclude {
+	# Search order: ISE_EIFFEL, the known installs (C:\El2502E is EiffelStudio
+	# 25.02 Enterprise on the Jenkins machine, 25.12 Standard is the student
+	# PC), then the EiffelStudio whose ec.exe is on PATH
+	# (<root>\studio\spec\win64\bin\ec.exe).
+	$Roots = @()
 	if (-not [string]::IsNullOrWhiteSpace($env:ISE_EIFFEL)) {
-		$Candidate = Join-Path $env:ISE_EIFFEL "studio\spec\win64\include"
+		$Roots += $env:ISE_EIFFEL
+	}
+	$Roots += "C:\El2502E"
+	$Roots += "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard"
+	$Ec = Get-Command ec -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+	if ($Ec) {
+		$Roots += Join-Path (Split-Path -Parent $Ec.Source) "..\..\..\.."
+	}
+	$Searched = @()
+	foreach ($Root in $Roots) {
+		$Candidate = Join-Path $Root "studio\spec\win64\include"
 		if (Test-Path -LiteralPath $Candidate -PathType Container) {
-			return $Candidate
+			return (Resolve-Path -LiteralPath $Candidate).Path
 		}
+		$Searched += $Candidate
 	}
-	$Fallback = "C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\include"
-	if (Test-Path -LiteralPath $Fallback -PathType Container) {
-		return $Fallback
-	}
-	throw "Cannot find Eiffel runtime include directory."
+	throw "Cannot find Eiffel runtime include directory. Searched: $($Searched -join '; ')"
 }
 
 # Runs a native command without letting harmless stderr output (such as the

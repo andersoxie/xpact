@@ -1,0 +1,238 @@
+# Jenkins console output, job "xpact", ci/Jenkinsfile.windows-phase1, main @ 9e1747d, 2026-10-23
+# Run on the supervisor's Jenkins machine; pasted by the student into the session, saved unchanged below.
+
+Startades av användaren admin
+  Obtained ci/Jenkinsfile.windows-phase1 from git https://github.com/andersoxie/xpact
+  [Pipeline] Start of Pipeline
+  [Pipeline] node
+  Running on Jenkins in C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact
+  [Pipeline] {
+  [Pipeline] stage
+  [Pipeline] { (Declarative: Checkout SCM)
+  [Pipeline] checkout
+  Selected Git installation does not exist. Using Default
+  The recommended git tool is: NONE
+  using credential banana_quality
+   > git.exe rev-parse --resolve-git-dir C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\.git # timeout=10
+  Fetching changes from the remote Git repository
+   > git.exe config remote.origin.url https://github.com/andersoxie/xpact # timeout=10
+  Fetching upstream changes from https://github.com/andersoxie/xpact
+   > git.exe --version # timeout=10
+   > git --version # 'git version 2.43.0.windows.1'
+  using GIT_ASKPASS to set credentials Banana quality from github (this is working but have an expiration date of 2027 02 02)
+   > git.exe fetch --tags --force --progress -- https://github.com/andersoxie/xpact +refs/heads/*:refs/remotes/origin/* # timeout=10
+   > git.exe rev-parse "refs/remotes/origin/main^{commit}" # timeout=10
+  Checking out Revision 9e1747dd05ce5e463e8c5cedd277792aa529a27e (refs/remotes/origin/main)
+   > git.exe config core.sparsecheckout # timeout=10
+   > git.exe checkout -f 9e1747dd05ce5e463e8c5cedd277792aa529a27e # timeout=10
+  Commit message: "Merge pull request #72 from andersoxie/student-Mass"
+   > git.exe rev-list --no-walk fee611a30f2e2572bf27db24a3136e270d48def5 # timeout=10
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] withEnv
+  [Pipeline] {
+  [Pipeline] withEnv
+  [Pipeline] {
+  [Pipeline] timestamps
+  [Pipeline] {
+  [Pipeline] stage
+  [Pipeline] { (Tool Versions)
+  [Pipeline] powershell
+08:27:32  Loaded Visual Studio C++ x64 environment from C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+08:27:32  ISE EiffelStudio version 25.02.9.8723 Enterprise Edition - win64
+08:27:32  powershell.exe : Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64
+08:27:32  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-daa9eb1b\powershellWrapper.ps1:3 char:1
+08:27:32  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+08:27:32  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+08:27:32      + CategoryInfo          : NotSpecified: (Microsoft (R) C...4.35229 for x64:String) [], RemoteException
+08:27:32      + FullyQualifiedErrorId : NativeCommandError
+08:27:32
+08:27:32  Copyright (C) Microsoft Corporation.  All rights reserved.
+08:27:32
+08:27:32  usage: cl [ option... ] filename... [ /link linkoption... ]
+08:27:32  cmake version 4.3.3
+08:27:32
+08:27:32  CMake suite maintained and supported by Kitware (kitware.com/cmake).
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Eiffel Tests)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+08:27:34  powershell.exe : Eiffel Compilation Manager
+08:27:34  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-9734fd35\powershellWrapper.ps1:3 char:1
+08:27:34  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+08:27:34  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+08:27:34      + CategoryInfo          : NotSpecified: (Eiffel Compilation Manager:String) [], RemoteException
+08:27:34      + FullyQualifiedErrorId : NativeCommandError
+08:27:34
+08:27:34  Version 25.02.9.8723 Enterprise Edition - win64
+08:27:34
+08:27:34  Degree 6: Examining System
+08:27:34  Degree 5: Parsing Classes
+08:27:34  Degree 4: Analyzing Inheritance
+08:27:34  Degree 3: Checking Types
+08:27:35  Degree 2: Generating Byte Code
+08:27:35  Degree 1: Generating Metadata
+08:27:35  Melting System Changes
+08:27:35  System Recompiled.
+  [Pipeline] writeFile
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+08:27:35  Recording test results
+08:27:35  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (SonarQube analysis)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] catchError
+  [Pipeline] {
+  [Pipeline] tool
+  [Pipeline] withSonarQubeEnv
+08:27:36  Injecting SonarQube environment variables using the configuration: Sonar
+  [Pipeline] {
+  [Pipeline] withEnv
+  [Pipeline] {
+  [Pipeline] powershell
+08:27:38
+08:27:38  sonar-project.properties:2:sonar.projectKey=xpact
+08:27:38  08:27:38.456 INFO  Scanner configuration file: C:\Users\ander\AppData\Local\Jenkins\.jenkins\tools\hudson.plugins.sonar.SonarRunnerInstallation\Sonar\bin\..\conf\sonar-scanner.properties
+08:27:38  08:27:38.462 INFO  Project root configuration file: C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\sonar-project.properties
+08:27:38  08:27:38.477 INFO  SonarScanner CLI 8.0.1.6346
+08:27:38  08:27:38.480 INFO  Windows 11 10.0 amd64
+08:27:41  powershell.exe : 08:27:41.410 ERROR Failed to query server version: GET https://sonarqube.bsharp.se/api/v2/analysis/version failed with HTTP 401 Unauthorized. Please check the property sonar.t
+08:27:41  oken or the environment variable SONAR_TOKEN.
+08:27:41  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-8b0ea103\powershellWrapper.ps1:3 char:1
+08:27:41  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+08:27:41  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+08:27:41      + CategoryInfo          : NotSpecified: (08:27:41.410 ER...le SONAR_TOKEN.:String) [], RemoteException
+08:27:41      + FullyQualifiedErrorId : NativeCommandError
+08:27:41
+08:27:41  08:27:41.410 INFO  EXECUTION FAILURE
+08:27:41  08:27:41.411 INFO  Total time: 2.987s
+08:27:41  SonarQube analysis failed with exit code 1
+08:27:41  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-8b0ea103\powershellScript.ps1:9 char:46
+08:27:41  + ... DE -ne 0) { throw "SonarQube analysis failed with exit code $LASTEXIT ...
+08:27:41  +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+08:27:41      + CategoryInfo          : OperationStopped: (SonarQube analy...ith exit code 1:String) [], RuntimeException
+08:27:41      + FullyQualifiedErrorId : SonarQube analysis failed with exit code 1
+08:27:41
+  [Pipeline] }
+  [Pipeline] // withEnv
+  [Pipeline] }
+08:27:44  WARN: Unable to locate 'report-task.txt' in the workspace. Did the SonarScanner succeed?
+  [Pipeline] // withSonarQubeEnv
+  [Pipeline] }
+08:27:44  ERROR: script returned exit code 1
+08:27:44  Setting overall build result to UNSTABLE
+  [Pipeline] // catchError
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Build Eiffel-Backed DLL)
+  [Pipeline] powershell
+08:27:47  Loaded Visual Studio C++ x64 environment from C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+08:27:47  powershell.exe : Cannot find Eiffel runtime include directory.
+08:27:47  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-f03159ea\powershellWrapper.ps1:3 char:1
+08:27:47  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+08:27:47  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+08:27:47      + CategoryInfo          : NotSpecified: (Cannot find Eif...lude directory.:String) [], RemoteException
+08:27:47      + FullyQualifiedErrorId : NativeCommandError
+08:27:47
+08:27:47  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\scripts\build_native_eiffel.ps1:46 char:2
+08:27:47  +     throw "Cannot find Eiffel runtime include directory."
+08:27:47  +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+08:27:47      + CategoryInfo          : OperationStopped: (Cannot find Eif...lude directory.:String) [], RuntimeException
+08:27:47      + FullyQualifiedErrorId : Cannot find Eiffel runtime include directory.
+08:27:47
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Native ABI Smoke)
+  Stage "Native ABI Smoke" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Chunked CRC Corpus)
+  Stage "Chunked CRC Corpus" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Incremental Shim Audit)
+  Stage "Incremental Shim Audit" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (libexpat Manifest)
+  Stage "libexpat Manifest" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (libexpat Native Suite)
+  Stage "libexpat Native Suite" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Contributed Examples)
+  Stage "Contributed Examples" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Package Windows Release)
+  Stage "Package Windows Release" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Benchmarks)
+  Stage "Benchmarks" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (CPython Baseline)
+  Stage "CPython Baseline" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (CPython xpact Replacement)
+  Stage "CPython xpact Replacement" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Declarative: Post Actions)
+  [Pipeline] archiveArtifacts
+08:27:49  Arkivera artefakter
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] }
+  [Pipeline] // timestamps
+  [Pipeline] }
+  [Pipeline] // withEnv
+  [Pipeline] }
+  [Pipeline] // withEnv
+  [Pipeline] }
+  [Pipeline] // node
+  [Pipeline] End of Pipeline
+  ERROR: script returned exit code 1
+  Finished: FAILURE
