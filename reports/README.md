@@ -49,6 +49,7 @@ test scripts that back it up. The rules are in
 | [#66](https://github.com/andersoxie/xpact/issues/66) | Items put on hold on 2026-10-22 recorded in `student/PLAN.md` (B03/#12, A04, 47 DTD crashes, #13, #38-#40) | (the pull request) | see `git log --grep "Refs #66"` | (the pull request) |
 | [#70](https://github.com/andersoxie/xpact/issues/70) | Checklist audit of every closed issue (2026-10-22): verified items ticked on GitHub; dates/commits on four pages; `student/github/README.md` issue tables to #70 | (the pull request) | see `git log --grep "Refs #70"` | [issue-0070](issue-0070/report.md) |
 | [#68](https://github.com/andersoxie/xpact/issues/68) | A01 evidence completed: checking tests linked, change-and-predict (predictions committed before the run), notes in `student/results/A01-orientation/` | (the pull request) | see `git log --grep "Refs #68"` | [issue-0068](issue-0068/report.md), [notes](../student/results/A01-orientation/README.md) |
+| [#74](https://github.com/andersoxie/xpact/issues/74) | `build_native_eiffel.ps1` and `run_native_runtime_smoke.ps1` keep an existing MSVC backend (`msc*`) instead of always forcing `msc_vc140` | (the pull request) | see `git log --grep "Refs #74"` | [issue-0074](issue-0074/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 

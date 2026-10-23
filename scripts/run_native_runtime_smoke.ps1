@@ -99,7 +99,11 @@ function Selected-RuntimeTargets {
 # linked with the MSVC backend too; the machine's default mingw backend links
 # with gcc/ld, which cannot resolve those symbols.
 $OldCompiler = $env:ISE_C_COMPILER
-$env:ISE_C_COMPILER = "msc_vc140"
+# Keep an MSVC backend the machine already selects (for example "msc" on the
+# Jenkins machine); switch only an unset or non-MSVC backend to "msc_vc140".
+if ($OldCompiler -notlike "msc*") {
+	$env:ISE_C_COMPILER = "msc_vc140"
+}
 try {
 	foreach ($RuntimeTarget in Selected-RuntimeTargets) {
 		Write-Host "== native runtime smoke: $($RuntimeTarget.Label) =="
