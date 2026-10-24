@@ -15,6 +15,9 @@ feature {NONE} -- Initialization
 			run_test ("test_mismatched_tag_is_rejected", agent test_mismatched_tag_is_rejected)
 			run_test ("test_depth_limit_is_enforced", agent test_depth_limit_is_enforced)
 			run_test ("test_comments_and_cdata", agent test_comments_and_cdata)
+			run_test ("test_markup_dispatch_prefix_diagnostics", agent test_markup_dispatch_prefix_diagnostics)
+			run_test ("test_markup_dispatch_reuse_and_callbacks", agent test_markup_dispatch_reuse_and_callbacks)
+			run_test ("test_markup_dispatch_callback_positions", agent test_markup_dispatch_callback_positions)
 			run_test ("test_xml_declaration_callbacks", agent test_xml_declaration_callbacks)
 			run_test ("test_attlist_declaration_callbacks", agent test_attlist_declaration_callbacks)
 			run_test ("test_attlist_default_attributes", agent test_attlist_default_attributes)
@@ -171,6 +174,116 @@ feature {NONE} -- Tests
 				i := i + 1
 			end
 			assert ("DTD default tokens emitted", l_default_text.same_string ("<!DOCTYPE doc [%N<!ENTITY e SYSTEM 'http://example.org/e'>%N<!NOTATION n SYSTEM 'http://example.org/n'>%N<!ELEMENT doc EMPTY>%N<!ATTLIST doc a CDATA #IMPLIED>%N<?pi in dtd?>%N<!--comment in dtd-->%N]><doc/>"))
+		end
+
+	test_markup_dispatch_prefix_diagnostics
+			-- A short markup prefix must keep the original diagnostic and position.
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert_markup_dispatch_error (l_parser, "<", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<root><", "unterminated declaration", 6, 1, 6)
+			assert_markup_dispatch_error (l_parser, "<!", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![CD", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<!DOC", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "</", "invalid end tag name", 2, 1, 2)
+			assert_markup_dispatch_error (l_parser, "<?", "unterminated processing instruction", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<!unknown>", "invalid declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![Q", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![CDQ", "invalid declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<!DOCTYPX", "invalid declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<root></", "invalid end tag name", 8, 1, 8)
+			assert_markup_dispatch_error (l_parser, "<root>%N<", "unterminated declaration", 7, 2, 0)
+		end
+
+	test_markup_dispatch_reuse_and_callbacks
+			-- Failed, declaration-rich and unrelated documents must not share parse state.
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_document: STRING_8
+		do
+			create l_handler.make
+			l_handler.enable_doctype_events
+			create l_parser.make (l_handler)
+			assert ("partial markup after root rejected", not l_parser.parse ("<root><"))
+			assert ("partial markup retains only completed start callback", l_handler.events.count = 1 and then l_handler.events.i_th (1).same_string ("start:root:0"))
+			assert ("partial markup error position", l_parser.last_error.same_string ("unterminated declaration") and then l_parser.current_byte_index = 6)
+
+			l_handler.events.wipe_out
+			l_document := "<!DOCTYPE root [<!ENTITY e 'ok'>]><?pi yes?><root><!--note--><![CDATA[raw<]]>&e;<empty/></root>"
+			assert ("reused parser accepts every markup dispatch kind", l_parser.parse (l_document))
+			assert ("successful reparse clears earlier error", not l_parser.has_error and then l_parser.last_error.is_empty)
+			assert ("mixed markup callback count", l_handler.events.count = 12)
+			if l_handler.events.count = 12 then
+				assert ("mixed markup doctype start", l_handler.events.i_th (1).same_string ("start-doctype:root:::1"))
+				assert ("mixed markup doctype end", l_handler.events.i_th (2).same_string ("end-doctype"))
+				assert ("mixed markup PI", l_handler.events.i_th (3).same_string ("pi:pi:yes"))
+				assert ("mixed markup root start", l_handler.events.i_th (4).same_string ("start:root:0"))
+				assert ("mixed markup comment", l_handler.events.i_th (5).same_string ("comment:note"))
+				assert ("mixed markup CDATA start", l_handler.events.i_th (6).same_string ("start-cdata"))
+				assert ("mixed markup CDATA text", l_handler.events.i_th (7).same_string ("text:raw<"))
+				assert ("mixed markup CDATA end", l_handler.events.i_th (8).same_string ("end-cdata"))
+				assert ("mixed markup entity text", l_handler.events.i_th (9).same_string ("text:ok"))
+				assert ("mixed markup empty start", l_handler.events.i_th (10).same_string ("start:empty:0"))
+				assert ("mixed markup empty end", l_handler.events.i_th (11).same_string ("end:empty"))
+				assert ("mixed markup root end", l_handler.events.i_th (12).same_string ("end:root"))
+			end
+			assert ("successful reparse completes positions", l_parser.current_line_number = 1 and then l_parser.current_column_number = l_document.count and then l_parser.current_byte_index = l_document.count and then l_parser.current_byte_count = 0)
+
+			l_handler.events.wipe_out
+			assert ("next document cannot reuse earlier entity", not l_parser.parse ("<root>&e;</root>"))
+			assert ("earlier DTD state removed", l_parser.last_error.same_string ("undefined entity"))
+			assert ("failed entity emits no stale declaration callbacks", l_handler.events.count = 1 and then l_handler.events.i_th (1).same_string ("start:root:0"))
+			l_handler.events.wipe_out
+			assert ("parser recovers again with unrelated root", l_parser.parse ("<fresh/>"))
+			assert ("unrelated document has only fresh callbacks", l_handler.events.count = 2 and then l_handler.events.i_th (1).same_string ("start:fresh:0") and then l_handler.events.i_th (2).same_string ("end:fresh"))
+			assert ("unrelated document clears diagnostics and positions", l_parser.last_error.is_empty and then l_parser.current_byte_index = 8 and then l_parser.current_line_number = 1 and then l_parser.current_column_number = 8)
+			l_handler.events.wipe_out
+			assert ("reused parser rejects a subsequent mismatched end", not l_parser.parse ("<fresh></wrong>"))
+			assert ("subsequent mismatch diagnostic and position", l_parser.last_error.same_string ("mismatched end tag") and then l_parser.current_byte_index = 9 and then l_parser.current_line_number = 1 and then l_parser.current_column_number = 9)
+			assert ("subsequent mismatch has only its start callback", l_handler.events.count = 1 and then l_handler.events.i_th (1).same_string ("start:fresh:0"))
+		end
+
+	test_markup_dispatch_callback_positions
+			-- Declaration dispatch must preserve positions seen by later tag/text callbacks.
+		local
+			l_handler: XP_POSITION_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_handler.set_parser (l_parser)
+			assert ("positioned mixed markup parses", l_parser.parse ("<!DOCTYPE root>%N<?work now?>%N<root>%N<!--note--><![CDATA[text]]><child/>%N</root>"))
+			assert ("positioned mixed markup callback count", l_handler.events.count = 5)
+			if l_handler.events.count = 5 then
+				assert ("root position after doctype and PI", l_handler.events.i_th (1).same_string ("start:root:3:0:29:0"))
+				assert ("CDATA text position after comment", l_handler.events.i_th (2).same_string ("text:text:4:20:56:4"))
+				assert ("child start position after CDATA", l_handler.events.i_th (3).same_string ("start:child:4:27:63:0"))
+				assert ("child end position after empty tag", l_handler.events.i_th (4).same_string ("end:child:4:35:71:0"))
+				assert ("root end position on final line", l_handler.events.i_th (5).same_string ("end:root:5:0:72:0"))
+			end
+		end
+
+	assert_markup_dispatch_error (a_parser: XP_PARSER; a_input, a_message: READABLE_STRING_8; a_index, a_line, a_column: INTEGER)
+			-- Verify a reused parser reports this exact rejected prefix, including its position.
+		require
+			parser_attached: a_parser /= Void
+			input_attached: a_input /= Void
+			message_attached: a_message /= Void
+		local
+			l_label: STRING_8
+		do
+			create l_label.make_from_string ("markup prefix ")
+			l_label.append (a_input)
+			assert (l_label + " rejected", not a_parser.parse (a_input))
+			assert (l_label + " diagnostic", a_parser.has_error and then a_parser.last_error.same_string (a_message))
+			assert (l_label + " byte position", a_parser.current_byte_index = a_index and then a_parser.current_byte_count = 0)
+			assert (l_label + " line and column", a_parser.current_line_number = a_line and then a_parser.current_column_number = a_column)
 		end
 
 	test_xml_declaration_callbacks

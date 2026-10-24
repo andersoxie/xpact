@@ -1029,21 +1029,22 @@ feature {NONE} -- Markup parsing
 			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
 			starts_markup: a_input.item (a_start_index) = '<'
 		do
-			if has_at (a_input, a_start_index, "</") then
+				-- Private once markers are read-only and never retain document input.
+			if has_at (a_input, a_start_index, once "</") then
 				Result := parse_end_tag (a_input, a_start_index)
-			elseif has_at (a_input, a_start_index, "<!--") then
+			elseif has_at (a_input, a_start_index, once "<!--") then
 				Result := parse_comment (a_input, a_start_index)
-			elseif has_at (a_input, a_start_index, "<![CDATA[") then
+			elseif has_at (a_input, a_start_index, once "<![CDATA[") then
 				Result := parse_cdata (a_input, a_start_index)
-			elseif has_at (a_input, a_start_index, "<?") then
+			elseif has_at (a_input, a_start_index, once "<?") then
 				Result := parse_processing_instruction (a_input, a_start_index)
-			elseif has_at (a_input, a_start_index, "<!DOCTYPE") then
+			elseif has_at (a_input, a_start_index, once "<!DOCTYPE") then
 				Result := parse_doctype (a_input, a_start_index)
-			elseif is_incomplete_marker_at_end (a_input, a_start_index, "<![CDATA[") or else is_incomplete_marker_at_end (a_input, a_start_index, "<!DOCTYPE") then
+			elseif is_incomplete_marker_at_end (a_input, a_start_index, once "<![CDATA[") or else is_incomplete_marker_at_end (a_input, a_start_index, once "<!DOCTYPE") then
 				set_error ("unterminated declaration")
 				Result := a_input.count + 1
-			elseif has_at (a_input, a_start_index, "<!") then
-				if has_at (a_input, a_start_index, "<![") and then not has_at (a_input, a_start_index, "<![CD") then
+			elseif has_at (a_input, a_start_index, once "<!") then
+				if has_at (a_input, a_start_index, once "<![") and then not has_at (a_input, a_start_index, once "<![CD") then
 					set_error ("unterminated declaration")
 				else
 					set_error ("invalid declaration")

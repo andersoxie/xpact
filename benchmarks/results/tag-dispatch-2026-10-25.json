@@ -1,0 +1,737 @@
+{
+  "baseline_commit": "3a5551dcf30c25fe306daa0d2eb5481054030531",
+  "candidate_change": "Reuse ten once manifest markers in XP_PARSER.parse_markup; retain original dispatch branches.",
+  "eiffelstudio": "25.02.9.8723 (both platforms)",
+  "toolchains": {
+    "msvc": {
+      "version": "19.44.35229",
+      "optimization": "generated -Ox"
+    },
+    "gcc": {
+      "version": "Ubuntu 9.4.0-1ubuntu1~20.04.2",
+      "optimization": "generated -O3 -pipe -fPIC -D_GNU_SOURCE -m64"
+    }
+  },
+  "measurement_local_dates": [
+    "2026-10-24",
+    "2026-10-25"
+  ],
+  "timezone": "Europe/Stockholm",
+  "same_physical_computer": true,
+  "source_sha256": {
+    "src/xp_parser.e": "147c357c5803e3932a1c24e54682bc0361e8c318cb04e952d7a8e9035b79aec7",
+    "benchmarks/xpact_benchmarks.ecf": "1439345697da11745a8bc9c39e2763c12c92a033c5549acf32fa97d8efec48d6",
+    "benchmarks/xp_benchmark_root.e": "9039b90c8a8af3cc4d72f373d02cbcf60d1f12925a9d43962e78bf40f2df2592"
+  },
+  "baseline_parser_sha256": "3507cdc8623dae6475801a84d05d2d145ead7b67c43538a4d46a8a9058669f0e",
+  "text_heavy_median_regression_budget_percent": 2,
+  "runs": {
+    "msvc": {
+      "assertions": "discarded",
+      "raw_pairs": "tag-dispatch-msvc-2026-10-25.tsv",
+      "raw_pairs_sha256": "2710483fd1c91898707157802e36374f005a21560f322bf3b6a4e333197df437",
+      "metadata": {
+        "started_utc": "2026-10-24T21:57:24.769108+00:00",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.14.0",
+        "executables": {
+          "A": {
+            "path": "build/tag-dispatch-refinement/projects/baseline/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks.exe",
+            "sha256": "604dc5ca78d570179829105ee748764d1999af413996e249e966385e42211e75"
+          },
+          "B": {
+            "path": "build/tag-dispatch-refinement/projects/candidate/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks.exe",
+            "sha256": "c33497e7006f372d37bfd6ef225f84618a04de2127cae8229082377f05d18632"
+          }
+        },
+        "warmups": 2,
+        "pairs": 6,
+        "min_sample_seconds": 1.0,
+        "method": "sequential native process wall time; alternating AB/BA pairs; speed ratio = baseline time / candidate time",
+        "workloads": [
+          {
+            "name": "catalog",
+            "path": null,
+            "document_bytes": 2611,
+            "initial_iterations": 10000,
+            "sha256": null
+          },
+          {
+            "name": "text",
+            "path": "build/tag-dispatch-refinement/final-msvc/fixtures/text.xml",
+            "document_bytes": 110013,
+            "initial_iterations": 1000,
+            "sha256": "6eac4c7fed3723a0e1cf083a643c27ef303c38846f7279b05094212b63aff283"
+          },
+          {
+            "name": "attributes",
+            "path": "build/tag-dispatch-refinement/final-msvc/fixtures/attributes.xml",
+            "document_bytes": 12153,
+            "initial_iterations": 1000,
+            "sha256": "b3a2834f979c316f496b30b13412754d4bbfff3b3b61fa9a76edc8e853cc2abd"
+          },
+          {
+            "name": "file-1:pubmed26n1380-first-records-512k.xml",
+            "path": "build/large-xml-corpus/pubmed26n1380-first-records-512k.xml",
+            "document_bytes": 504561,
+            "initial_iterations": 1,
+            "sha256": "d2a410bd3702ad4cfb840bf008e564139f34e48a61bc158a39f05df20c11248c"
+          },
+          {
+            "name": "file-2:xmlns-mandarin-stylesheet.xsl",
+            "path": "build/comparison/Xpact-core/tools/data/xmlns-mandarin-stylesheet.xsl",
+            "document_bytes": 247773,
+            "initial_iterations": 1,
+            "sha256": "a6c4ea09be517466bad7a2ccdcadc7bdaf9b1265fef469e9fa3051b0fc9015d2"
+          },
+          {
+            "name": "file-3:DT-Legislation.xml",
+            "path": "build/comparison/Xpact-core/tools/data/DT-Legislation.xml",
+            "document_bytes": 428893,
+            "initial_iterations": 1,
+            "sha256": "4d19ff6b21c98886d76501885913cdfaeab6a7ece49e9c7a7a68d4c84f34ae9a"
+          }
+        ]
+      },
+      "calibration": [
+        {
+          "Workload": "catalog",
+          "Iterations": 10000,
+          "BaselineElapsedMs": 1838.9654000056908,
+          "CandidateElapsedMs": 1395.4868000000715
+        },
+        {
+          "Workload": "text",
+          "Iterations": 1000,
+          "BaselineElapsedMs": 2008.020400069654,
+          "CandidateElapsedMs": 2053.6103999475017
+        },
+        {
+          "Workload": "attributes",
+          "Iterations": 1000,
+          "BaselineElapsedMs": 1070.8906999789178,
+          "CandidateElapsedMs": 1087.1410999679938
+        },
+        {
+          "Workload": "file-1:pubmed26n1380-first-records-512k.xml",
+          "Iterations": 1,
+          "BaselineElapsedMs": 6358.032100019045,
+          "CandidateElapsedMs": 6470.688299974427
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 1,
+          "BaselineElapsedMs": 36.96259995922446,
+          "CandidateElapsedMs": 31.625400064513087
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 2,
+          "BaselineElapsedMs": 43.43910003080964,
+          "CandidateElapsedMs": 41.36670008301735
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 4,
+          "BaselineElapsedMs": 61.853599967435,
+          "CandidateElapsedMs": 54.88259997218847
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 8,
+          "BaselineElapsedMs": 103.01670001354069,
+          "CandidateElapsedMs": 95.98610003013164
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 16,
+          "BaselineElapsedMs": 195.97470003645867,
+          "CandidateElapsedMs": 162.7373999217525
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 32,
+          "BaselineElapsedMs": 319.60170005913824,
+          "CandidateElapsedMs": 276.49019996169955
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 64,
+          "BaselineElapsedMs": 631.4622999634594,
+          "CandidateElapsedMs": 529.5610000612214
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 128,
+          "BaselineElapsedMs": 1215.8515000483021,
+          "CandidateElapsedMs": 1037.8639000700787
+        },
+        {
+          "Workload": "file-3:DT-Legislation.xml",
+          "Iterations": 1,
+          "BaselineElapsedMs": 2557.3077000444755,
+          "CandidateElapsedMs": 2578.081400017254
+        }
+      ],
+      "summary": [
+        {
+          "workload": "catalog",
+          "pairs": 6,
+          "iterations": 10000,
+          "document_bytes": 2611,
+          "median_candidate_speed_ratio": 1.3125318510776713,
+          "min_candidate_speed_ratio": 1.2972501632753743,
+          "max_candidate_speed_ratio": 1.337673468627614,
+          "median_baseline_ms": 1831.6377999726683,
+          "median_candidate_ms": 1395.332500047516,
+          "min_baseline_ms": 1819.838700001128,
+          "max_baseline_ms": 1858.0341999186203,
+          "min_candidate_ms": 1385.3164000902325,
+          "max_candidate_ms": 1404.813400004059
+        },
+        {
+          "workload": "text",
+          "pairs": 6,
+          "iterations": 1000,
+          "document_bytes": 110013,
+          "median_candidate_speed_ratio": 0.9928954835790713,
+          "min_candidate_speed_ratio": 0.9434347802971631,
+          "max_candidate_speed_ratio": 1.0102767251004512,
+          "median_baseline_ms": 2000.372399983462,
+          "median_candidate_ms": 2012.1610999922268,
+          "min_baseline_ms": 1985.6319000246003,
+          "max_baseline_ms": 2037.9489000188187,
+          "min_candidate_ms": 2001.1369000421837,
+          "max_candidate_ms": 2122.685999958776
+        },
+        {
+          "workload": "attributes",
+          "pairs": 6,
+          "iterations": 1000,
+          "document_bytes": 12153,
+          "median_candidate_speed_ratio": 1.0061415707981596,
+          "min_candidate_speed_ratio": 1.0006588448990206,
+          "max_candidate_speed_ratio": 1.052700839444766,
+          "median_baseline_ms": 1069.4628500496037,
+          "median_candidate_ms": 1062.5647499691695,
+          "min_baseline_ms": 1061.952400021255,
+          "max_baseline_ms": 1116.3385000545532,
+          "min_candidate_ms": 1059.8386999918148,
+          "max_candidate_ms": 1063.6730999685824
+        },
+        {
+          "workload": "file-1:pubmed26n1380-first-records-512k.xml",
+          "pairs": 6,
+          "iterations": 1,
+          "document_bytes": 504561,
+          "median_candidate_speed_ratio": 0.9848608896351354,
+          "min_candidate_speed_ratio": 0.959209129679943,
+          "max_candidate_speed_ratio": 1.0055540212361518,
+          "median_baseline_ms": 6368.169299967121,
+          "median_candidate_ms": 6456.727750017308,
+          "min_baseline_ms": 6313.140399986878,
+          "max_baseline_ms": 6427.048000041395,
+          "min_candidate_ms": 6391.5492000523955,
+          "max_candidate_ms": 6581.609999993816
+        },
+        {
+          "workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "pairs": 6,
+          "iterations": 128,
+          "document_bytes": 247773,
+          "median_candidate_speed_ratio": 1.1352170248906166,
+          "min_candidate_speed_ratio": 1.0982695274781007,
+          "max_candidate_speed_ratio": 1.1914262774355275,
+          "median_baseline_ms": 1208.4580500377342,
+          "median_candidate_ms": 1062.2564500081353,
+          "min_baseline_ms": 1202.018199954182,
+          "max_baseline_ms": 1240.504699992016,
+          "min_candidate_ms": 1036.3666999619454,
+          "max_candidate_ms": 1100.6992999464273
+        },
+        {
+          "workload": "file-3:DT-Legislation.xml",
+          "pairs": 6,
+          "iterations": 1,
+          "document_bytes": 428893,
+          "median_candidate_speed_ratio": 0.9969276934064933,
+          "min_candidate_speed_ratio": 0.9812820614549472,
+          "max_candidate_speed_ratio": 1.0139870811340232,
+          "median_baseline_ms": 2558.5885500186123,
+          "median_candidate_ms": 2569.163300038781,
+          "min_baseline_ms": 2551.8655000487342,
+          "max_baseline_ms": 2602.6193998986855,
+          "min_candidate_ms": 2550.6623999681324,
+          "max_candidate_ms": 2603.400999912992
+        }
+      ]
+    },
+    "gcc": {
+      "assertions": "discarded",
+      "raw_pairs": "tag-dispatch-gcc-2026-10-25.tsv",
+      "raw_pairs_sha256": "9d114548a9b6db6252baf3dd7b3c6a27843d86a3e3da4ec06926de525ad1bedc",
+      "metadata": {
+        "started_utc": "2026-10-24T22:03:23.363296+00:00",
+        "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.29",
+        "python": "3.8.10",
+        "executables": {
+          "A": {
+            "path": "build/tag-dispatch-refinement/linux/baseline/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks",
+            "sha256": "5387255c22281256f8f83179a31e1e3537ef369a154ff78975e0fb598df37a3d"
+          },
+          "B": {
+            "path": "build/tag-dispatch-refinement/linux/candidate/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks",
+            "sha256": "7073760f75d3c811ef39adaea1fa0a2f53aed4648534095d8fbdb5cb785b93fa"
+          }
+        },
+        "warmups": 2,
+        "pairs": 6,
+        "min_sample_seconds": 1.0,
+        "method": "sequential native process wall time; alternating AB/BA pairs; speed ratio = baseline time / candidate time",
+        "workloads": [
+          {
+            "name": "catalog",
+            "path": null,
+            "document_bytes": 2611,
+            "initial_iterations": 10000,
+            "sha256": null
+          },
+          {
+            "name": "text",
+            "path": "build/tag-dispatch-refinement/final-gcc/fixtures/text.xml",
+            "document_bytes": 110013,
+            "initial_iterations": 1000,
+            "sha256": "6eac4c7fed3723a0e1cf083a643c27ef303c38846f7279b05094212b63aff283"
+          },
+          {
+            "name": "attributes",
+            "path": "build/tag-dispatch-refinement/final-gcc/fixtures/attributes.xml",
+            "document_bytes": 12153,
+            "initial_iterations": 1000,
+            "sha256": "b3a2834f979c316f496b30b13412754d4bbfff3b3b61fa9a76edc8e853cc2abd"
+          },
+          {
+            "name": "file-1:pubmed26n1380-first-records-512k.xml",
+            "path": "build/large-xml-corpus/pubmed26n1380-first-records-512k.xml",
+            "document_bytes": 504561,
+            "initial_iterations": 1,
+            "sha256": "d2a410bd3702ad4cfb840bf008e564139f34e48a61bc158a39f05df20c11248c"
+          },
+          {
+            "name": "file-2:xmlns-mandarin-stylesheet.xsl",
+            "path": "build/comparison/Xpact-core/tools/data/xmlns-mandarin-stylesheet.xsl",
+            "document_bytes": 247773,
+            "initial_iterations": 1,
+            "sha256": "a6c4ea09be517466bad7a2ccdcadc7bdaf9b1265fef469e9fa3051b0fc9015d2"
+          },
+          {
+            "name": "file-3:DT-Legislation.xml",
+            "path": "build/comparison/Xpact-core/tools/data/DT-Legislation.xml",
+            "document_bytes": 428893,
+            "initial_iterations": 1,
+            "sha256": "4d19ff6b21c98886d76501885913cdfaeab6a7ece49e9c7a7a68d4c84f34ae9a"
+          }
+        ]
+      },
+      "calibration": [
+        {
+          "Workload": "catalog",
+          "Iterations": 10000,
+          "BaselineElapsedMs": 2058.709537028335,
+          "CandidateElapsedMs": 1505.6442730128765
+        },
+        {
+          "Workload": "text",
+          "Iterations": 1000,
+          "BaselineElapsedMs": 2474.1395349847153,
+          "CandidateElapsedMs": 2427.926930016838
+        },
+        {
+          "Workload": "attributes",
+          "Iterations": 1000,
+          "BaselineElapsedMs": 1297.4259631009772,
+          "CandidateElapsedMs": 1304.1834760224447
+        },
+        {
+          "Workload": "file-1:pubmed26n1380-first-records-512k.xml",
+          "Iterations": 1,
+          "BaselineElapsedMs": 7105.683951056562,
+          "CandidateElapsedMs": 7077.893817098811
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 1,
+          "BaselineElapsedMs": 69.2218579351902,
+          "CandidateElapsedMs": 54.10811700858176
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 2,
+          "BaselineElapsedMs": 72.71183701232076,
+          "CandidateElapsedMs": 60.77405402902514
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 4,
+          "BaselineElapsedMs": 101.84209397993982,
+          "CandidateElapsedMs": 90.11242899578065
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 8,
+          "BaselineElapsedMs": 147.0569249941036,
+          "CandidateElapsedMs": 139.06019506976008
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 16,
+          "BaselineElapsedMs": 260.63059200532734,
+          "CandidateElapsedMs": 242.7509289700538
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 32,
+          "BaselineElapsedMs": 465.2976170182228,
+          "CandidateElapsedMs": 413.4379659080878
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 64,
+          "BaselineElapsedMs": 849.2580349557102,
+          "CandidateElapsedMs": 811.1709329532459
+        },
+        {
+          "Workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "Iterations": 128,
+          "BaselineElapsedMs": 1656.2049130443484,
+          "CandidateElapsedMs": 1504.020450054668
+        },
+        {
+          "Workload": "file-3:DT-Legislation.xml",
+          "Iterations": 1,
+          "BaselineElapsedMs": 2973.8297279691324,
+          "CandidateElapsedMs": 2948.630809900351
+        }
+      ],
+      "summary": [
+        {
+          "workload": "catalog",
+          "pairs": 6,
+          "iterations": 10000,
+          "document_bytes": 2611,
+          "median_candidate_speed_ratio": 1.2963357006852925,
+          "min_candidate_speed_ratio": 1.2464871756842302,
+          "max_candidate_speed_ratio": 1.3256120099590145,
+          "median_baseline_ms": 1977.3655834724195,
+          "median_candidate_ms": 1536.1554984701797,
+          "min_baseline_ms": 1945.4776040511206,
+          "max_baseline_ms": 2040.179978008382,
+          "min_candidate_ms": 1502.5713859358802,
+          "max_candidate_ms": 1574.7490469366312
+        },
+        {
+          "workload": "text",
+          "pairs": 6,
+          "iterations": 1000,
+          "document_bytes": 110013,
+          "median_candidate_speed_ratio": 1.0026249002070493,
+          "min_candidate_speed_ratio": 0.9797742311052895,
+          "max_candidate_speed_ratio": 1.2122187887520877,
+          "median_baseline_ms": 2452.2371539496817,
+          "median_candidate_ms": 2465.94023949001,
+          "min_baseline_ms": 2426.8990450073034,
+          "max_baseline_ms": 2957.342665991746,
+          "min_candidate_ms": 2429.7037990763783,
+          "max_candidate_ms": 2759.185799048282
+        },
+        {
+          "workload": "attributes",
+          "pairs": 6,
+          "iterations": 1000,
+          "document_bytes": 12153,
+          "median_candidate_speed_ratio": 1.0012575387538116,
+          "min_candidate_speed_ratio": 0.7611382747007258,
+          "max_candidate_speed_ratio": 1.050941319974051,
+          "median_baseline_ms": 1286.0138674732298,
+          "median_candidate_ms": 1281.0675669461489,
+          "min_baseline_ms": 1281.9956720340997,
+          "max_baseline_ms": 1337.5693690031767,
+          "min_candidate_ms": 1272.7345890598372,
+          "max_candidate_ms": 1691.0747149959207
+        },
+        {
+          "workload": "file-1:pubmed26n1380-first-records-512k.xml",
+          "pairs": 6,
+          "iterations": 1,
+          "document_bytes": 504561,
+          "median_candidate_speed_ratio": 1.0076333725821796,
+          "min_candidate_speed_ratio": 0.9939918989514381,
+          "max_candidate_speed_ratio": 1.0134779012714776,
+          "median_baseline_ms": 7103.697134007234,
+          "median_candidate_ms": 7053.0398190021515,
+          "min_baseline_ms": 7065.107090049423,
+          "max_baseline_ms": 7125.990152009763,
+          "min_candidate_ms": 7028.491599019617,
+          "max_candidate_ms": 7107.811540015973
+        },
+        {
+          "workload": "file-2:xmlns-mandarin-stylesheet.xsl",
+          "pairs": 6,
+          "iterations": 128,
+          "document_bytes": 247773,
+          "median_candidate_speed_ratio": 1.0895634209150926,
+          "min_candidate_speed_ratio": 1.021361325351449,
+          "max_candidate_speed_ratio": 1.1445010249639926,
+          "median_baseline_ms": 1677.2631324711256,
+          "median_candidate_ms": 1537.0363020338118,
+          "min_baseline_ms": 1651.418713037856,
+          "max_baseline_ms": 1754.6142099890858,
+          "min_candidate_ms": 1489.5167449722067,
+          "max_candidate_ms": 1616.8800130253658
+        },
+        {
+          "workload": "file-3:DT-Legislation.xml",
+          "pairs": 6,
+          "iterations": 1,
+          "document_bytes": 428893,
+          "median_candidate_speed_ratio": 1.0033333299103169,
+          "min_candidate_speed_ratio": 0.979827296452626,
+          "max_candidate_speed_ratio": 1.0220459252688454,
+          "median_baseline_ms": 2965.454372984823,
+          "median_candidate_ms": 2960.329360968899,
+          "min_baseline_ms": 2930.19451899454,
+          "max_baseline_ms": 3009.812969947234,
+          "min_candidate_ms": 2928.739243070595,
+          "max_candidate_ms": 3005.728054093197
+        }
+      ]
+    },
+    "msvc-assertions": {
+      "assertions": "enabled",
+      "raw_pairs": "tag-dispatch-msvc-assertions-2026-10-25.tsv",
+      "raw_pairs_sha256": "ff65756e61f1cb357378c207d0e8d0e2ff8878608f32743e5cbef4d1f5b5f58c",
+      "metadata": {
+        "started_utc": "2026-10-24T22:10:19.785759+00:00",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "python": "3.14.0",
+        "executables": {
+          "A": {
+            "path": "build/tag-dispatch-refinement/projects/baseline/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks.exe",
+            "sha256": "71a8a5c0acb7e3aec220f1df3f9b730eeb6937fd94e4b470ee1a97c8376646f2"
+          },
+          "B": {
+            "path": "build/tag-dispatch-refinement/projects/candidate/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks.exe",
+            "sha256": "8a45841a44b44a8bf7ea01bd46f10b11f2217864525d9e5e286c0287aacbbd01"
+          }
+        },
+        "warmups": 2,
+        "pairs": 6,
+        "min_sample_seconds": 1.0,
+        "method": "sequential native process wall time; alternating AB/BA pairs; speed ratio = baseline time / candidate time",
+        "workloads": [
+          {
+            "name": "catalog",
+            "path": null,
+            "document_bytes": 2611,
+            "initial_iterations": 1000,
+            "sha256": null
+          }
+        ]
+      },
+      "calibration": [
+        {
+          "Workload": "catalog",
+          "Iterations": 1000,
+          "BaselineElapsedMs": 1707.7848999761045,
+          "CandidateElapsedMs": 1606.207299977541
+        }
+      ],
+      "summary": [
+        {
+          "workload": "catalog",
+          "pairs": 6,
+          "iterations": 1000,
+          "document_bytes": 2611,
+          "median_candidate_speed_ratio": 1.0672101182503488,
+          "min_candidate_speed_ratio": 1.0411139419515454,
+          "max_candidate_speed_ratio": 1.0879763264251814,
+          "median_baseline_ms": 1711.4257999928668,
+          "median_candidate_ms": 1603.4751000115648,
+          "min_baseline_ms": 1703.9396000327542,
+          "max_baseline_ms": 1746.9352999469265,
+          "min_candidate_ms": 1594.8617999674752,
+          "max_candidate_ms": 1643.471699906513
+        }
+      ]
+    },
+    "gcc-assertions": {
+      "assertions": "enabled",
+      "raw_pairs": "tag-dispatch-gcc-assertions-2026-10-25.tsv",
+      "raw_pairs_sha256": "776b00e7b65b1609e116d5761447bedd6e40d21313f99cb26a79365aa54cade8",
+      "metadata": {
+        "started_utc": "2026-10-24T22:12:22.856097+00:00",
+        "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.29",
+        "python": "3.8.10",
+        "executables": {
+          "A": {
+            "path": "build/tag-dispatch-refinement/linux/baseline/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks",
+            "sha256": "c34fd8b8f7b8dcbecd729e87b20b97c5386d44d18297a10f993d6808b0a8e3c9"
+          },
+          "B": {
+            "path": "build/tag-dispatch-refinement/linux/candidate/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks",
+            "sha256": "444a8dd1896d9512af61d242c4a8c553e036d2eb10610854a8049b5c209ec9f0"
+          }
+        },
+        "warmups": 2,
+        "pairs": 6,
+        "min_sample_seconds": 1.0,
+        "method": "sequential native process wall time; alternating AB/BA pairs; speed ratio = baseline time / candidate time",
+        "workloads": [
+          {
+            "name": "catalog",
+            "path": null,
+            "document_bytes": 2611,
+            "initial_iterations": 1000,
+            "sha256": null
+          }
+        ]
+      },
+      "calibration": [
+        {
+          "Workload": "catalog",
+          "Iterations": 1000,
+          "BaselineElapsedMs": 1767.9319949820638,
+          "CandidateElapsedMs": 1623.8839710131288
+        }
+      ],
+      "summary": [
+        {
+          "workload": "catalog",
+          "pairs": 6,
+          "iterations": 1000,
+          "document_bytes": 2611,
+          "median_candidate_speed_ratio": 1.040911575538883,
+          "min_candidate_speed_ratio": 1.013876580672701,
+          "max_candidate_speed_ratio": 1.051963608673999,
+          "median_baseline_ms": 1738.4591504815035,
+          "median_candidate_ms": 1672.3607934545726,
+          "min_baseline_ms": 1707.8621670370921,
+          "max_baseline_ms": 1764.302680036053,
+          "min_candidate_ms": 1631.7078210413456,
+          "max_candidate_ms": 1740.1552749797702
+        }
+      ]
+    }
+  },
+  "correctness_differential": {
+    "candidate": "candidate",
+    "profile": "XML 1.0 fifth edition; namespaces unless NAMESPACE=no; nonvalidating; no external entities; binary verdicts only",
+    "interpretation": "Unchanged outcomes, not a claim of full conformance; baseline gaps are retained.",
+    "engines": [
+      {
+        "build": "Finalized",
+        "dataset": "directed",
+        "total": 40,
+        "executed": 40,
+        "skipped": 0,
+        "matches": 40,
+        "all_case_matches": 40,
+        "differences": 0,
+        "baseline_passed": 40,
+        "baseline_failed": 0,
+        "baseline_errors": 0,
+        "baseline_failure_categories": {},
+        "diagnostic_only_differences": 0,
+        "executables": {
+          "baseline": {
+            "path": "build/tag-dispatch-refinement/projects/baseline/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks.exe",
+            "sha256": "604dc5ca78d570179829105ee748764d1999af413996e249e966385e42211e75"
+          },
+          "candidate": {
+            "path": "build/tag-dispatch-refinement/projects/candidate/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks.exe",
+            "sha256": "c33497e7006f372d37bfd6ef225f84618a04de2127cae8229082377f05d18632"
+          }
+        }
+      },
+      {
+        "build": "Finalized",
+        "dataset": "w3c",
+        "total": 2585,
+        "executed": 1727,
+        "skipped": 858,
+        "matches": 1727,
+        "all_case_matches": 2585,
+        "differences": 0,
+        "baseline_passed": 1727,
+        "baseline_failed": 0,
+        "baseline_errors": 0,
+        "baseline_failure_categories": {},
+        "diagnostic_only_differences": 0,
+        "executables": {
+          "baseline": {
+            "path": "build/tag-dispatch-refinement/projects/baseline/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks.exe",
+            "sha256": "604dc5ca78d570179829105ee748764d1999af413996e249e966385e42211e75"
+          },
+          "candidate": {
+            "path": "build/tag-dispatch-refinement/projects/candidate/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks.exe",
+            "sha256": "c33497e7006f372d37bfd6ef225f84618a04de2127cae8229082377f05d18632"
+          }
+        }
+      },
+      {
+        "build": "FinalizedAssertions",
+        "dataset": "directed",
+        "total": 40,
+        "executed": 40,
+        "skipped": 0,
+        "matches": 40,
+        "all_case_matches": 40,
+        "differences": 0,
+        "baseline_passed": 40,
+        "baseline_failed": 0,
+        "baseline_errors": 0,
+        "baseline_failure_categories": {},
+        "diagnostic_only_differences": 0,
+        "executables": {
+          "baseline": {
+            "path": "build/tag-dispatch-refinement/projects/baseline/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks.exe",
+            "sha256": "71a8a5c0acb7e3aec220f1df3f9b730eeb6937fd94e4b470ee1a97c8376646f2"
+          },
+          "candidate": {
+            "path": "build/tag-dispatch-refinement/projects/candidate/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks.exe",
+            "sha256": "8a45841a44b44a8bf7ea01bd46f10b11f2217864525d9e5e286c0287aacbbd01"
+          }
+        }
+      },
+      {
+        "build": "FinalizedAssertions",
+        "dataset": "w3c",
+        "total": 2585,
+        "executed": 1727,
+        "skipped": 858,
+        "matches": 1727,
+        "all_case_matches": 2585,
+        "differences": 0,
+        "baseline_passed": 1727,
+        "baseline_failed": 0,
+        "baseline_errors": 0,
+        "baseline_failure_categories": {},
+        "diagnostic_only_differences": 0,
+        "executables": {
+          "baseline": {
+            "path": "build/tag-dispatch-refinement/projects/baseline/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks.exe",
+            "sha256": "71a8a5c0acb7e3aec220f1df3f9b730eeb6937fd94e4b470ee1a97c8376646f2"
+          },
+          "candidate": {
+            "path": "build/tag-dispatch-refinement/projects/candidate/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks.exe",
+            "sha256": "8a45841a44b44a8bf7ea01bd46f10b11f2217864525d9e5e286c0287aacbbd01"
+          }
+        }
+      }
+    ]
+  },
+  "source_hash_format": "SHA-256 of UTF-8 text with LF newlines",
+  "raw_pairs_hash_format": "SHA-256 of UTF-8 text with LF newlines",
+  "measurement_driver_sha256": "d894dbbf0d706aa3a8525cb56bfbd845e9bb04422ffbfd877b106f3463a8cf3c",
+  "driver_changes_after_measurement": "Added input/output alias preflight; calibration, sampling and report calculations unchanged."
+}

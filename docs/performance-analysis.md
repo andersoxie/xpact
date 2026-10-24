@@ -1,5 +1,10 @@
 # Performance Analysis
 
+The [2026-10-25 tag-dispatch comparison](tag-dispatch-performance.md) measures
+the marker-reuse refinement against fresh baseline builds on both MSVC and
+WSL2 GCC, including text-heavy and real XML inputs. The tables below retain
+the earlier measurements and their original context.
+
 This note explains the current performance gap between xpact and libexpat based
 on the Windows Phase 1 benchmark in `docs/benchmarks.md`.
 
