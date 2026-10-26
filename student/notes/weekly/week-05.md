@@ -25,6 +25,10 @@
 - The libexpat error codes written in the test catalog on 2026-10-22 are all
   what Expat 2.8.1 really returns.
 
+- [x] Gave the last three problems without an issue their own issue:
+  [#130](https://github.com/andersoxie/xpact/issues/130) (Jenkins "Eiffel Tests" prints no result), [#131](https://github.com/andersoxie/xpact/issues/131) (SonarQube 401);
+  [#132](https://github.com/andersoxie/xpact/issues/132) removed the old runner copy (Python tests 178 OK before and after).
+
 ## Blocked
 - Nothing for C03 and C10. The supervisor review of what is realistic: the
   student decided to skip it.

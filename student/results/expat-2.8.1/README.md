@@ -18,11 +18,11 @@
 
 | Issue | What is different | Cases | Cause |
 |---|---|---|---|
-| [#122](https://github.com/andersoxie/xpact/issues/122) | Malformed UTF-8: xpact reports the error at **1:0**, Expat at the bad byte (e.g. 1:3) | 3,096 | ❔ suspected: whole input checked before tokenizing |
-| [#123](https://github.com/andersoxie/xpact/issues/123) | Malformed UTF-8: xpact gives **no events** before the error, Expat gives e.g. `start:r` | 598 | ❔ suspected: same place as #122 |
+| [#122](https://github.com/andersoxie/xpact/issues/122) | Malformed UTF-8: xpact reports the error at **1:0**, Expat at the bad byte (e.g. 1:3) | 3,096 | ❓ suspected: whole input checked before tokenizing |
+| [#123](https://github.com/andersoxie/xpact/issues/123) | Malformed UTF-8: xpact gives **no events** before the error, Expat gives e.g. `start:r` | 598 | ❓ suspected: same place as #122 |
 | [#124](https://github.com/andersoxie/xpact/issues/124) | `<root/>junk`: error **4** instead of **9**; column 7-10 depending on callbacks and chunks (Expat: always 7) | 72 | ❔ unknown |
 | [#125](https://github.com/andersoxie/xpact/issues/125) | Default handler gets the mismatched `</root>` before the error | 21 | ❔ unknown |
-| [#126](https://github.com/andersoxie/xpact/issues/126) | Default handler gets LF where the document has CR / CR LF (Expat passes raw text) | 38 | ❔ suspected: fed from the normalized input |
+| [#126](https://github.com/andersoxie/xpact/issues/126) | Default handler gets LF where the document has CR / CR LF (Expat passes raw text) | 38 | ❓ suspected: fed from the normalized input |
 
 Not counted as differences:
 
