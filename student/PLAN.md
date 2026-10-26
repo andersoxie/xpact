@@ -208,7 +208,7 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 **Activity:** Design small regressions and select 50–100 applicable W3C XML cases with the supervisor.
 **Bring to review:** An input matrix with reviewed expected outcomes.
 - [ ] [G01](github/issues/11-G01.md) Corpus manifest and 50–100 reviewed W3C cases
-- [ ] [Fix xmlconf verdict rules](github/issues/12-xmlconf-verdicts.md)
+- [x] [Fix xmlconf verdict rules](github/issues/12-xmlconf-verdicts.md): done 2026-10-26 ([#117](https://github.com/andersoxie/xpact/issues/117)): the old PowerShell runner (never in git) is superseded by `run_w3c_conformance.py`; its 2026-10-14 results re-scored: 676 of 854 "failures" were wrong rules, the 233 real problems all pass today ([results](results/xmlconf-verdicts/README.md))
 
 ## Week 5 – Regressions
 **Activity:** Run the selected small inputs with different callbacks and chunk boundaries.
