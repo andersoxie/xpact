@@ -1,6 +1,6 @@
 # The whole project in plain words
 
-> **Updated 2026-10-22 (week 3).** Read sections 1-3 once. After that you
+> **Updated 2026-10-26 (week 4).** Read sections 1-3 once. After that you
 > mostly need [section 7, what to do next](#7-what-you-do-next). The live
 > status is in [PLAN.md](PLAN.md); this page explains how it all fits.
 > ✅ works · 🔴 broken · 🟡 waiting
@@ -103,23 +103,30 @@ steps by hand, [VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51)).
 
 ## 6. What works and what is broken
 
-✅ **Works:** everything builds on this PC; the main tests with assertions
-off; the W3C suite with assertions off (1,491 of 1,727); `xpact.dll` never
-crashes in the DLL tests.
+✅ **Works** (checked 2026-10-26 on `student-Mass` @ `e8c5cb3`, MSVC, assertions on and off,
+[report](../reports/issue-0110/report.md)):
 
-🔴 **Broken** (the full list with causes is in [PLAN.md, Known problems](PLAN.md#-known-problems-living-list)):
+| What | Result |
+|---|---|
+| Eiffel test matrix, 4 lanes | all `xpact Phase 1 tests: ok` |
+| Both DLLs and their smoke tests | ok (the old smoke crash, draft 07 / K3, is gone) |
+| C# DLL tests | 3,360 / 3,360 on both DLLs, 0 crashes |
+| W3C suite, both finalized builds | 1,727 / 1,727 |
+| Python tests (3.14, long paths on) | 178 OK |
+
+Fixed since 2026-10-22: #28 (CR), #3 (B03, `/>`), #38 (start handler), #39 (invalid UTF-8),
+#40 (chunk ending with `<`), the DLL smoke crash and the 47 W3C crashes (#79, PR #80).
+
+🟡 **Waiting** (the full list is in [PLAN.md, Known problems](PLAN.md#-known-problems-living-list)):
 
 | | What | Why it matters |
 |---|---|---|
-| #28 ✅ | A CR byte (Windows line ends) crashed the assertions build | repaired 2026-10-22 (PR #59): W3C crashes with assertions on 1,360 → 47 |
-| #3 | B03: `/>` crashes the assertions build, also every `/>` through the DLL | fix ready in draft PR #12 |
-| #40 | A chunk that ends with `<` crashes the assertions DLL | every byte-by-byte test crashes |
-| #38 | With a start handler, `<root>` is **accepted** and end events are lost | wrong answers, no crash |
-| #39 | Invalid UTF-8 is **accepted** almost everywhere | wrong answers, no crash |
-| 07 | The DLL smoke test crashes (K2 and 06 are fixed: #48, #60) | the DLL results can't be fully trusted yet |
+| #73, #74, #79 | Fixed on the student PC, not yet confirmed on Jenkins | Jenkins is the supervisor's reference |
+| #13 | The GC wrapper swallows exceptions (on hold) | an error inside it shows up as a different error |
+| - | Jenkins "Eiffel Tests" turns green without printing a result | a green stage there proves nothing yet |
 
-**Why the crashes matter so much:** they stop the run early, so they hide
-every other bug behind them. Repairs of #28, #3 and #40 come first.
+**Why the crashes mattered so much:** they stopped the run early and hid every other
+bug behind them. With them gone, every test above now runs to the end.
 
 ## 7. What you do next
 
@@ -128,7 +135,7 @@ every other bug behind them. Repairs of #28, #3 and #40 come first.
 | 1 | ✅ **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)): one test that must fail | if a failing test still says "ok", no green result means anything | done 2026-10-22: `XPACT_META_FAIL`, every lane exits nonzero ([results](results/B02-meta-tests/README.md)) |
 | 2 | ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): failures give a nonzero exit code | same reason | done 2026-10-22 with draft 06 (#60) ([results](results/B01-nonzero-exit/README.md)) |
 | 3 | **Ask the supervisor** | decisions are theirs | [`for superviser.txt`](for%20superviser.txt), questions at the end |
-| 4 | **G01** (week 4): 50-100 W3C cases | an agreed regression set | from `results.tsv`: passes and failures, both builds |
+| 4 | **G01** (week 4): 50-100 W3C cases | an agreed regression set | from `results.tsv`: passes and failures, both builds. Not started (2026-10-26) |
 | 5 | **Expat comparison** (C03, C10, G03) | the error codes still need a real reference | needs an Expat 2.8.1 build |
 
 ✅ Already done of the five tests chosen on 2026-10-21: 1 (#28 regression

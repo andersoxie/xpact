@@ -5,9 +5,9 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-> **Updated 2026-10-22 (week 3)** · describes `student-Mass` @ `76ac272`.
-> Weeks 1-3 ✅ · B03 (#3) and parser findings #13, #38, #39, #40 ⏸ on hold ·
-> A01 evidence completed in #68 (pull request #69).
+> **Updated 2026-10-26 (week 4)** · describes `student-Mass` @ `97795fb`, 0 behind `main`.
+> Weeks 1-3 ✅ · every build and test passes with assertions on (#104, #110) ·
+> #3, #38, #39, #40 fixed and closed · waiting for a Jenkins rerun (#73, #74, #79) · #13 ⏸ on hold.
 
 ## Start here
 
@@ -25,7 +25,7 @@ folder, so it stays separate from the parser code. The plan, the task register
 |---|---|
 | Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
 | Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
-| The newest test results (DLL, 3,360 cases) | [`results/dll-tests-2026-10-22/`](results/dll-tests-2026-10-22/README.md) |
+| The newest test results (everything, 2026-10-26) | [`../reports/issue-0110/`](../reports/issue-0110/report.md) (merged code, MSVC); first DLL run: [`results/dll-tests-2026-10-22/`](results/dll-tests-2026-10-22/README.md) |
 | A one-page status for the supervisor | [`for superviser.txt`](for%20superviser.txt) |
 | Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
 | What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |

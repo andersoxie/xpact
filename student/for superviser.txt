@@ -1,82 +1,59 @@
-STATUS FOR SUPERVISOR - 2026-10-22 (week 3)
-student-Mass after #36, #41, #42, #44 (28 commits ahead of main; main untouched)
+STATUS FOR SUPERVISOR - 2026-10-26 (week 4)
+student-Mass @ 97795fb, 0 commits behind main @ de01371 (main untouched by the student)
 Repo: github.com/andersoxie/xpact   Plan + known problems: student/PLAN.md   Index: reports/README.md
+(The 2026-10-22 version of this page is in the git history.)
 
 IN ONE LINE
 -----------
-  Three new parser findings through the DLL (#38, #39, #40), B03 confirmed as the
-  cause of every "/>" crash in the DLL, and the repository tidied up. No parser
-  code changed on student-Mass.
+  Everything builds and every test passes on the student PC with assertions on:
+  Eiffel matrix 4/4, C# DLL tests 3,360/3,360 on both DLLs, W3C 1,727/1,727 in
+  both finalized builds, 178 Python tests. Waiting for a Jenkins rerun.
 
-NEW SINCE 2026-10-21
---------------------
-  [x] #37  C# program tests/dotnet/XpactDllTests: calls the DLL like a C program
-           (XML_Parse + handlers). 3,360 cases = C02 inputs, CR inputs, bad UTF-8
-           in 6 places (C10) x 6 callback sets x every chunking (C03).
-                                         pass   fail  crash
-             xpact_assertions.dll         637  1,394  1,329
-             same + only the B03 line     928  1,760    672
-             xpact.dll (assertions off) 1,200  2,160      0
-           Results: student/results/dll-tests-2026-10-22/      (PR #41, 79f2a29)
+DONE SINCE 2026-10-22
+---------------------
+  [x] #80  Parser conformance repair (strict UTF-8, UTF-16, names, DTD
+           declarations, DLL start-tag shortcut): fixes #38, #39, #40, K3 and the
+           47 W3C crashes. Merged by you into main (366460d).
+  [x] #12  B03 (one line), merged by you. #3 verified and closed 2026-10-26.
+  [x] #75  Jenkins DLL build: our #2/#10 fixes had replaced your C:\El2502E
+           fallback; both paths are searched now (#73).
+  [x] #103, #111  main (your #82-#101) merged into student-Mass, no conflicts.
+  [x] #104 Full check of the merged code, all with assertions on   (PR #105)
+  [x] #110 Same checks after #101 (parser performance), built with MSVC: all pass
+  [x] #113 Student PC set up like yours where possible: ISE_C_COMPILER=msc_vc140
+           (it had disappeared, so the matrix and W3C had been built with MinGW),
+           Python 3.14.0, git and Windows long paths on. Still different on
+           purpose: EiffelStudio 25.12 Standard (yours 25.02.9.8723 Enterprise)
+           and MSVC 19.51 (yours 19.44.35229).                    (PR #114)
+  [x] #106, #108  Weeks 2-3 closed out; the 6 missing labels created; project
+           board brought up to date.
+  Every item: issue -> branch -> expected result written first -> report with
+  logs in reports/issue-NNNN/ -> pull request into student-Mass.
 
-  New findings (each with command, expected/actual, logs, cause marked):
-  [ ] #38  Start handler set: <root> and <root><child></root> are ACCEPTED, and
-           the end event of <root></root> is lost. The C01 shortcut is still
-           there, on every DLL.                         cause: suspected (C01)
-  [ ] #39  Invalid UTF-8 (C3 28, C0 AF, ED A0 80, F4 90 80 80) accepted in text,
-           attributes, names, comments, PIs, CDATA: 2,106 of 2,148 cases.
-           K4 is one case of it.                        cause: suspected (C08)
-  [ ] #40  A non-final XML_Parse chunk that ends with "<" crashes the assertions
-           DLL (find_markup_declaration_end, index_in_bounds). Every byte-by-byte
-           run crashes.                     trigger confirmed, code suspected
-
-  Evidence added to existing issues:
-  [ ] #3   B03 crashes the assertions DLL on every "/>" input, <root/> included.
-           With only the B03 line (draft PR #12) none of them crash. Supports
-           reviewing #12. The DLL smoke test (K3) still crashes, so B03 is not
-           its only cause.
-  [ ] #28  The CR crash also happens through the DLL when no callbacks are set.
-           Regression test committed (1ea242e); parser not repaired.
-
-  Housekeeping (per CLAUDE.md, the student's working rules):
-  [x] #34  Repaired the repository state of 2026-10-21: a week 2 baseline log had
-           been overwritten in the working copy (restored), FOUR COMMITS WERE
-           PUSHED TO student-Mass WITHOUT A PULL REQUEST (1ea242e, 492c6eb,
-           1799b35, 42d6b40 - listed in VERSIONING.md, not rewritten), and doc
-           updates had been left uncommitted.                (PR #36, 6e2278e)
-  [x] #35  On andersoxie/xpact: labels test, build, regression, investigation
-           and milestones "Week 1" ... "Week 10" on every issue.  (PR #42, c01f743)
-  [x] #43  All student docs brought up to date.               (PR #44)
-  [x] #32  Python harness tests pass on Python 3.10 (492c6eb).
-  [x] #33  A02: week 2 baseline rerun in the git clone (1799b35, 42d6b40).
-
-CODE CHANGES ON student-Mass (build scripts, ECFs, one test; no parser code)
---------------------------------------------------------------------------
-  #2   9eb18bd  build_native_eiffel.ps1: Eiffel runtime include fallback path
-  #7   eb6fc5d  build_native_eiffel.ps1, xpact_native_library.ecf: msc_vc140 backend
-  #4   3b8a205  import_msvc_environment.ps1: PATH no longer grows past cmd's limit
-  #10  20e6bc3  run_native_runtime_smoke.ps1, xpact_native_runtime.ecf: same as #2/#7
-  #28  1ea242e  tests/xp_test_root.e: regression test for the CR loop variant
-  #32  492c6eb  run_w3c_conformance.py: NUL -> ? in results.tsv (Python 3.10)
-  #33  1799b35  student/baseline/run_baseline.ps1 -LogDir
-  #37  79f2a29  tests/dotnet/XpactDllTests: new folder, nothing else changes
-  Everything else is documentation: see reports/README.md.
-
-HOW EVERY CHANGE IS DONE
-------------------------
-  Issue -> branch fix/<issue>-<name> -> expected result written before testing ->
-  report with logs in reports/issue-NNNN/ -> pull request into student-Mass ->
-  reviewed and squash-merged by me. Never into main. Parser changes wait for
-  the parser developer's review. Issues are closed only after the result is checked.
+ANSWERED SINCE 2026-10-22 (thank you)
+------------------------------------
+  - Build fixes into main: you merged student-Mass into main (#72, #78).
+  - #12 (B03): merged.
+  - Parser repairs #28, #38, #39, #40: done in #59 and #80, merged.
+  - Labels: kept. The student created the last 6 from labels.json on 2026-10-26
+    (group:A-orientation, group:F-core, group:G-verification, D1-beginner,
+    D4-expert, type:blocker). Tell me if any should go.
 
 QUESTIONS FOR YOU
 -----------------
-  1. Should the build fixes (#2, #7, #4, #10) go into main via a pull request?
-  2. #28, #38, #39, #40 are parser repairs: who does them? I can write the
-     regression tests and verify the fixes.
-  3. Can #12 (B03, one line) be reviewed now that the DLL tests confirm it?
-  4. Labels and milestones: I added test/build/regression/investigation and
-     Week 1-10 milestones (and on 2026-10-20 the type:/group:/P labels) without
-     asking you first. Keep them, or remove them?
-  5. This week: B01/B02 (failing tests must give a nonzero exit code). Next week
-     G01 (50-100 W3C cases). Is that still the right order?
+  1. Jenkins rerun: please run the xpact job once on main after merging
+     student-Mass, so #73 (DLL include path), #74 (PR #76, keep your MSVC
+     backend - still to merge) and #79 (W3C/DLL repair) can be confirmed and
+     closed.
+  2. Which ISE_C_COMPILER does Jenkins use (msc or msc_vc140)? Are the version
+     differences above acceptable, or should the student match 25.02 / VS 2022
+     exactly? (25.02.9.8723 is not published; Enterprise needs a licence.)
+  3. Week 2 decision, still open: the one main improvement and the small input
+     set. Proposal: G01 (50-100 W3C cases with written expectations) as the
+     input set; the improvement to be agreed.
+  4. Jenkins "Eiffel Tests" turns green without printing a test result: the
+     stage runs ec without finish_freezing, and on the student PC that ran a
+     stale xpact_tests.exe that printed nothing and exited 0. File it?
+  5. SonarQube on Jenkins answers HTTP 401: the token needs renewing (yours).
+  6. tests/python/run_w3c_conformance.py is an old copy of the runner that
+     nothing uses (added by the student in #29). Remove it?
