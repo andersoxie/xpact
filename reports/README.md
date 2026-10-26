@@ -54,6 +54,7 @@ test scripts that back it up. The rules are in
 | [#90](https://github.com/andersoxie/xpact/issues/90) | Follow-up: quote the email recipient default so both Jenkinsfiles compile as Declarative Pipeline | (the pull request) | see `git log --grep "Fix Declarative email parameter defaults"` | [issue-0090](issue-0090/report.md) |
 | [#104](https://github.com/andersoxie/xpact/issues/104) | Full check of `student-Mass` @ `41731c8` after the sync with `main`: every build and test passes with assertions on; #3, #39, #40 verified; Python test problems traced to Python 3.10 and long paths; `student/PLAN.md` brought up to date | (the pull request) | see `git log --grep "Refs #104"` | [issue-0104](issue-0104/report.md), [logs](issue-0104/logs/) |
 | [#106](https://github.com/andersoxie/xpact/issues/106) | Weeks 2-3 in `student/PLAN.md`: K3 and the W3C crashes ticked as fixed (evidence from #104), #46 ticked as dropped; three items left open with the reason (supervisor decision, 6 labels, project board scope) | (the pull request) | see `git log --grep "Refs #106"` | [issue-0106](issue-0106/report.md) |
+| [#108](https://github.com/andersoxie/xpact/issues/108) | The 6 missing labels created (#35), all 21 match `labels.json`; project board brought up to date (16 issues added, 9 statuses corrected) | (the pull request) | see `git log --grep "Refs #108"` | [issue-0108](issue-0108/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 
