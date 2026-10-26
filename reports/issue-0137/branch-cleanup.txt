@@ -1,0 +1,37 @@
+Branch cleanup on andersoxie/xpact, 2026-10-26 21:54
+before: main=de01371 student-Mass=7cf5a94
+deleted fix/121-expat-comparison (tip cb636ee, PR #127 MERGED->student-Mass)
+deleted fix/128-final-input-regressions (tip 0011132, PR #129 MERGED->student-Mass)
+deleted fix/132-remove-old-runner-copy (tip 4c52fde, PR #133 MERGED->student-Mass)
+deleted fix/134-docs-week5 (tip 3bf4630, PR #135 MERGED->student-Mass)
+deleted fix/73-jenkins-verified (tip ce44b6c, PR #136 MERGED->student-Mass)
+deleted fix/74-keep-msvc-backend (tip 1d325d2, PR #76 MERGED->student-Mass)
+deleted docs/week-03-report (tip fc7d7c0, PR #77 MERGED->student-Mass)
+deleted fix/68-a01-evidence (tip 0d4fe00, PR #69 MERGED->student-Mass)
+deleted fix/70-audit-doc-gaps (tip 9369cea, PR #71 MERGED->student-Mass)
+deleted fix/3-start-tag-loop-variant (tip 26723a9, PR #12 MERGED->student-Mass)
+deleted fix/w3c-known-failures (tip 0b2b539, PR #80 MERGED->main)
+after: main=de01371 student-Mass=7cf5a94
+remaining branches: origin codex/fix-email-parameter-default codex/fix-jenkins-merge-braces codex/fix-libexpat-adapter-output-path codex/fix-libexpat-native-parity codex/fix-libexpat-native-suite-gate codex/isolate-libexpat-native-tests codex/jenkins-email-notifications codex/optimize-tag-dispatch codex/pin-xpact-core codex/profile-parser-bottlenecks codex/w3c-xml-conformance-benchmarks codex/wsl-benchmark-defaults codex/wsl-eiffel-benchmarks main student-Mass 
+
+Local clone (xpactGit), student-test checked first: 0 commits outside student-Mass
+deleted local fix/104-check-2026-10-26 (tip e578f07)
+deleted local fix/106-week-2-3-items (tip 3aec823)
+deleted local fix/108-labels-and-board (tip c4154d2)
+deleted local fix/110-sync-tests (tip 4c2d8c3)
+deleted local fix/113-pc-environment (tip 2fcd145)
+deleted local fix/115-docs-2026-10-26 (tip 296a79a)
+deleted local fix/117-xmlconf-verdicts (tip 764b0dc)
+deleted local fix/118-g01-corpus (tip e98ec4f)
+deleted local fix/121-expat-comparison (tip cb636ee)
+deleted local fix/128-final-input-regressions (tip 0011132)
+deleted local fix/132-remove-old-runner-copy (tip 4c52fde)
+deleted local fix/134-docs-week5 (tip 3bf4630)
+deleted local fix/3-start-tag-loop-variant (tip 04d4f28)
+deleted local fix/68-a01-evidence (tip 0d4fe00)
+deleted local fix/70-audit-doc-gaps (tip 9ba973f)
+deleted local fix/73-eiffel-include-fallback (tip 7c3a8fe)
+deleted local fix/73-jenkins-verified (tip ce44b6c)
+deleted local fix/74-keep-msvc-backend (tip 1d325d2)
+deleted local fix/w3c-known-failures (tip 0b2b539)
+deleted local student-test (tip f98796f)

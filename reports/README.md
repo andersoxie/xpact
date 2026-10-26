@@ -6,8 +6,8 @@ and padded to four digits so the folders sort by number. Each folder holds
 test scripts that back it up. The rules are in
 [`student/VERSIONING.md`](../student/VERSIONING.md) and [`CLAUDE.md`](../CLAUDE.md).
 
-> **Updated 2026-10-26** (`student-Mass` @ `e847813`). 48 fixes, tasks and checks below;
-> PR #76 (#74) is open; #74, #79 wait for a Jenkins rerun (#73 verified on Jenkins, closed 2026-10-26)
+> **Updated 2026-10-26** (`student-Mass` @ `7cf5a94`). 49 fixes, tasks and checks below;
+> No pull request open; #74, #79 wait for a Jenkins run (#73 verified on Jenkins, closed 2026-10-26)
 > · open problems are listed in
 > [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
 > Test results that are not a fix are in [`student/results/`](../student/results/README.md).
@@ -51,7 +51,7 @@ test scripts that back it up. The rules are in
 | [#70](https://github.com/andersoxie/xpact/issues/70) | Checklist audit of every closed issue (2026-10-22): verified items ticked on GitHub; dates/commits on four pages; `student/github/README.md` issue tables to #70 | (the pull request) | see `git log --grep "Refs #70"` | [issue-0070](issue-0070/report.md) |
 | [#68](https://github.com/andersoxie/xpact/issues/68) | A01 evidence completed: checking tests linked, change-and-predict (predictions committed before the run), notes in `student/results/A01-orientation/` | (the pull request) | see `git log --grep "Refs #68"` | [issue-0068](issue-0068/report.md), [notes](../student/results/A01-orientation/README.md) |
 | [#73](https://github.com/andersoxie/xpact/issues/73) | `build_native_eiffel.ps1` and `run_native_runtime_smoke.ps1` search `ISE_EIFFEL`, `C:\El2502E` (Jenkins), 25.12 Standard (student PC), then `ec` on `PATH` | (the pull request) | see `git log --grep "Refs #73"` | [issue-0073](issue-0073/report.md), [Jenkins log](issue-0073/jenkins-log-2026-10-23.txt) |
-| [#74](https://github.com/andersoxie/xpact/issues/74) | `build_native_eiffel.ps1` and `run_native_runtime_smoke.ps1` keep an existing MSVC backend (`msc*`) instead of always forcing `msc_vc140` | (the pull request) | see `git log --grep "Refs #74"` | [issue-0074](issue-0074/report.md) |
+| [#74](https://github.com/andersoxie/xpact/issues/74) | `build_native_eiffel.ps1` and `run_native_runtime_smoke.ps1` keep an existing MSVC backend (`msc*`) instead of always forcing `msc_vc140` | [#76](https://github.com/andersoxie/xpact/pull/76) | `7cf5a94` | [issue-0074](issue-0074/report.md) |
 | [#79](https://github.com/andersoxie/xpact/issues/79) | Parser conformance: strict UTF-8, UTF-16, names, DTD declarations, loop progress; #38, #39, #40 and K3 in the DLL; W3C known-failures list (empty) | (the pull request) | see `git log --grep "Refs #79"` | [issue-0079](issue-0079/report.md), [Jenkins log before](issue-0079/jenkins-log-cf12dee-before.txt) |
 | [#90](https://github.com/andersoxie/xpact/issues/90) | Follow-up: quote the email recipient default so both Jenkinsfiles compile as Declarative Pipeline | (the pull request) | see `git log --grep "Fix Declarative email parameter defaults"` | [issue-0090](issue-0090/report.md) |
 | [#104](https://github.com/andersoxie/xpact/issues/104) | Full check of `student-Mass` @ `41731c8` after the sync with `main`: every build and test passes with assertions on; #3, #39, #40 verified; Python test problems traced to Python 3.10 and long paths; `student/PLAN.md` brought up to date | (the pull request) | see `git log --grep "Refs #104"` | [issue-0104](issue-0104/report.md), [logs](issue-0104/logs/) |
@@ -65,7 +65,8 @@ test scripts that back it up. The rules are in
 | [#121](https://github.com/andersoxie/xpact/issues/121) | C03/C10: the DLL tests run on Expat 2.8.1's own `libexpat.dll` and compared case by case: 4,308/4,308 same verdicts; 5 findings (#122-#126); `80` and `FF` inputs added | [#127](https://github.com/andersoxie/xpact/pull/127) | `ed3febc` | [issue-0121](issue-0121/report.md), [results](../student/results/expat-2.8.1/README.md) |
 | [#128](https://github.com/andersoxie/xpact/issues/128) | C02: the #38, #39, #40 inputs as permanent tests in the DLL smoke test and the Eiffel suite; with the #38 or #40 fix undone they fail | [#129](https://github.com/andersoxie/xpact/pull/129) | `508d9c5` | [issue-0128](issue-0128/report.md), [results](../student/results/C02-final-input/README.md) |
 | [#132](https://github.com/andersoxie/xpact/issues/132) | Removed the unused old copy `tests/python/run_w3c_conformance.py`; Python tests 178 OK before and after | [#133](https://github.com/andersoxie/xpact/pull/133) | `e847813` | [issue-0132](issue-0132/report.md) |
-| [#134](https://github.com/andersoxie/xpact/issues/134) | Docs after week 5: merge commits, #130/#131 linked, cause icons corrected (suspected = ❓) | (the pull request) | see `git log --grep "Refs #134"` | [issue-0134](issue-0134/report.md) |
+| [#134](https://github.com/andersoxie/xpact/issues/134) | Docs after week 5: merge commits, #130/#131 linked, cause icons corrected (suspected = ❓) | [#135](https://github.com/andersoxie/xpact/pull/135) | `77899f4` | [issue-0134](issue-0134/report.md) |
+| [#137](https://github.com/andersoxie/xpact/issues/137) | PR #76 (#74) retested and merged; 11 merged branches deleted on GitHub and on the mass-xpact copy, 20 local | (the pull request) | see `git log --grep "Refs #137"` | [issue-0137](issue-0137/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 
