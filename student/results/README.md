@@ -22,6 +22,7 @@ folder from the fix's report.
 | [`expat-2.8.1/`](expat-2.8.1/README.md) | 2026-10-26 | xpact vs Expat 2.8.1 through the C API: 4,308 cases on Expat's `libexpat.dll` and both xpact DLLs; all verdicts the same; 5 findings | [#121](https://github.com/andersoxie/xpact/issues/121) · [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) |
 | [`C03-chunks/`](C03-chunks/README.md) | 2026-10-26 | C03: chunking vs Expat; 6 byte-exact fixtures | [#121](https://github.com/andersoxie/xpact/issues/121) |
 | [`C10-utf8/`](C10-utf8/README.md) | 2026-10-26 | C10 (part): malformed UTF-8 vs Expat; 42 byte-exact fixtures | [#121](https://github.com/andersoxie/xpact/issues/121) |
+| [`C02-final-input/`](C02-final-input/README.md) | 2026-10-26 | C02: the #38-#40 inputs as permanent tests (DLL smoke test, Eiffel suite); proven to fail with the fixes undone | [#128](https://github.com/andersoxie/xpact/issues/128) |
 | [`G01-corpus/`](G01-corpus/README.md) | 2026-10-26 | G01: corpus manifest of 93 W3C cases (83 counted, 10 marked), with hashes, dependencies and reviewed expected outcomes; all pass today | [#118](https://github.com/andersoxie/xpact/issues/118) |
 
 Add a row for every new folder.

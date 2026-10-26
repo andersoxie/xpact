@@ -76,6 +76,7 @@ feature {NONE} -- Initialization
 			run_test ("test_benchmark_publication_files", agent test_benchmark_publication_files)
 			run_test ("test_ci_test_matrix_files", agent test_ci_test_matrix_files)
 			run_test ("test_native_export_layer_files", agent test_native_export_layer_files)
+			run_test ("test_final_input_regressions", agent test_final_input_regressions)
 			run_test ("test_meta_deliberate_failure", agent test_meta_deliberate_failure)
 			if exception_count > 0 then
 				io.put_string ("xpact Phase 1 tests: " + test_count.out + " run, " + exception_count.out + " raised an exception%N")
@@ -2609,6 +2610,82 @@ feature {NONE} -- Tests
 		do
 			create l_memory
 			a_state.put (l_memory.collecting)
+		end
+
+	test_final_input_regressions
+			-- C02 inputs and malformed UTF-8, whole, split at every byte and byte by byte (#128).
+			-- Reproductions of #39 (bad UTF-8 accepted) and #40 (non-final `<' broke an invariant).
+			-- #38 needs a C start handler; it is checked in tests\native\xpact_eiffel_dll_smoke.c.
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+			l_cases: ARRAYED_LIST [TUPLE [label: STRING_8; input: STRING_8; accepted: BOOLEAN]]
+			l_sequences: ARRAY [STRING_8]
+			l_befores: ARRAY [STRING_8]
+			l_afters: ARRAY [STRING_8]
+			i, j: INTEGER
+		do
+			create l_cases.make (50)
+			l_cases.extend (["<root/>", "<root/>", True])
+			l_cases.extend (["<root></root>", "<root></root>", True])
+			l_cases.extend (["<root>hi</root>", "<root>hi</root>", True])
+			l_cases.extend (["empty", "", False])
+			l_cases.extend (["<root>", "<root>", False])
+			l_cases.extend (["<root><child></root>", "<root><child></root>", False])
+			l_cases.extend (["<root/>junk", "<root/>junk", False])
+				-- The first sequence is a valid e acute; the others are C3 28, C0 AF, ED A0 80, F4 90 80 80, 80, FF.
+			l_sequences := << "%/195/%/169/", "%/195/(", "%/192/%/175/", "%/237/%/160/%/128/", "%/244/%/144/%/128/%/128/", "%/128/", "%/255/" >>
+			l_befores := << "<r>", "<r a='", "<r", "<r><!--", "<r><?pi ", "<r><![CDATA[" >>
+			l_afters := << "</r>", "'/>", "/>", "--></r>", "?></r>", "]]></r>" >>
+			from i := 1 until i > l_sequences.count loop
+				from j := 1 until j > l_befores.count loop
+					l_cases.extend (["utf8 sequence " + i.out + " in place " + j.out, l_befores [j] + l_sequences [i] + l_afters [j], i = 1])
+					j := j + 1
+				end
+				i := i + 1
+			end
+
+			create l_handler.make
+			create l_parser.make (l_handler)
+			across l_cases as l_case loop
+				assert ("final input verdict: " + l_case.item.label, l_parser.parse (l_case.item.input) = l_case.item.accepted)
+				from j := 0 until j > l_case.item.input.count loop
+					assert ("native final input verdict: " + l_case.item.label + ", split " + j.out,
+						native_final_input_accepted (l_case.item.input, j) = l_case.item.accepted)
+					j := j + 1
+				end
+			end
+		end
+
+	native_final_input_accepted (a_input: STRING_8; a_split: INTEGER): BOOLEAN
+			-- Does a new native parser accept `a_input' whole (`a_split' 0), as bytes 1 .. `a_split'
+			-- non-final plus the rest final, or one non-final call per byte then an empty final call
+			-- (`a_split' = count)?
+		require
+			input_attached: a_input /= Void
+			valid_split: a_split >= 0 and a_split <= a_input.count
+		local
+			l_native: XP_NATIVE_PARSER
+			i: INTEGER
+		do
+			create l_native.make
+			if a_split = 0 then
+				Result := l_native.parse (a_input, True) = l_native.Xml_status_ok
+			elseif a_split < a_input.count then
+				Result := l_native.parse (a_input.substring (1, a_split), False) = l_native.Xml_status_ok
+					and then l_native.parse (a_input.substring (a_split + 1, a_input.count), True) = l_native.Xml_status_ok
+			else
+				from
+					Result := True
+					i := 1
+				until
+					not Result or i > a_input.count
+				loop
+					Result := l_native.parse (a_input.substring (i, i), False) = l_native.Xml_status_ok
+					i := i + 1
+				end
+				Result := Result and then l_native.parse ("", True) = l_native.Xml_status_ok
+			end
 		end
 
 feature {NONE} -- Meta-tests

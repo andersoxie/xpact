@@ -11,6 +11,7 @@
 - [x] Added the two missing C10 inputs, a lone `80` and `FF`: 4,308 cases now.
 - [x] Compared every case: verdict, error code, position, failing call, events
   ([results](../../results/expat-2.8.1/README.md)).
+- [x] Added the C02 inputs as tests in the DLL smoke test and the Eiffel suite ([#128](https://github.com/andersoxie/xpact/issues/128)).
 
 ## What the evidence shows
 - **xpact and Expat agree on every verdict**: 4,308 / 4,308, whole and at every
@@ -31,4 +32,4 @@
 ## Next
 - [x] C03 compared with Expat ([results](../../results/C03-chunks/README.md)).
 - [x] C10 (part) compared with Expat ([results](../../results/C10-utf8/README.md)).
-- [ ] C02: make the #38, #39, #40 reproductions permanent regression tests.
+- [x] C02: the #38, #39, #40 reproductions are permanent regression tests ([#128](https://github.com/andersoxie/xpact/issues/128), [results](../../results/C02-final-input/README.md)); they fail when the fixes are undone.

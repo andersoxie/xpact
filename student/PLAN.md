@@ -1,6 +1,6 @@
 # 10-week plan
 
-> **Last updated:** 2026-10-26 (week 4) · describes `student-Mass` @ `97795fb`, **0 commits behind `main`** @ `de01371` ([#110](https://github.com/andersoxie/xpact/issues/110)); full check [#104](https://github.com/andersoxie/xpact/issues/104), PC setup [#113](https://github.com/andersoxie/xpact/issues/113)
+> **Last updated:** 2026-10-26 (week 5 work done early) · describes `student-Mass` @ `ed3febc`, **0 commits behind `main`** @ `de01371` ([#110](https://github.com/andersoxie/xpact/issues/110)); full check [#104](https://github.com/andersoxie/xpact/issues/104), PC setup [#113](https://github.com/andersoxie/xpact/issues/113)
 > · ✅ done · 🟡 in progress / waiting · ⬜ not started · 🔴 open problem
 
 The plan comes from [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md)
@@ -19,7 +19,7 @@ record of weeks 1-2. Day-to-day status of every issue: the
 | 2 Baseline | ✅ | Assertions baseline (2026-10-14) and its rerun in git, A02 | [BASELINE.md](baseline/BASELINE.md), [A02-baseline](results/A02-baseline/README.md) |
 | 3 Failure reporting | ✅ | Build fixes in git ✅, W3C run ✅, #28 test and repair ✅, repair and GitHub setup ✅ · **B01 ✅, B02 ✅, runner continues after a failure (#60) ✅** (2026-10-22); Jenkins check of B02 dropped (2026-10-22, not pursued) | [week-03](notes/weekly/week-03.md) |
 | 4 Input matrix | 🟡 | Started 2026-10-26: full check of the merged code ✅, `main` synced (#110) ✅, PC set up like the supervisor's (#113) ✅, weeks 2-3 closed out ✅ · **G01 ✅** 93 reviewed W3C cases ([#118](https://github.com/andersoxie/xpact/issues/118)) · xmlconf verdicts ✅ ([#117](https://github.com/andersoxie/xpact/issues/117)) | [week-04](notes/weekly/week-04.md) |
-| 5 Regressions | 🟡 | C02, C03, C10 (part) **run early** through the DLL: 3,360 cases, 3 findings (#38, #39, #40), **all fixed in #80** · **C03 ✅, C10 ✅ compared with Expat 2.8.1** ([#121](https://github.com/andersoxie/xpact/issues/121), 2026-10-26): 4,308/4,308 same verdicts, 5 findings (#122-#126) · C02 regressions still to add | [expat-2.8.1](results/expat-2.8.1/README.md), [dll-tests-2026-10-22](results/dll-tests-2026-10-22/README.md) |
+| 5 Regressions | ✅ | C02, C03, C10 (part) run through the DLL (3 findings #38-#40, fixed in #80) · **C03 ✅, C10 ✅ compared with Expat 2.8.1** ([#121](https://github.com/andersoxie/xpact/issues/121)): 4,308/4,308 same verdicts, 5 findings (#122-#126) · **C02 ✅ regressions in the smoke test and the Eiffel suite** ([#128](https://github.com/andersoxie/xpact/issues/128)) · review with the supervisor skipped by the student | [expat-2.8.1](results/expat-2.8.1/README.md), [C02-final-input](results/C02-final-input/README.md), [week-05](notes/weekly/week-05.md) |
 | 6-10 | ⬜ | One improvement, Expat comparison, consolidate, report, handover | |
 
 ## ✅ Merged since 2026-10-22
@@ -121,7 +121,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 2. 🟡 **Waiting for the supervisor:** a Jenkins rerun for [#73](https://github.com/andersoxie/xpact/issues/73), [#74](https://github.com/andersoxie/xpact/issues/74) (PR [#76](https://github.com/andersoxie/xpact/pull/76) to merge) and [#79](https://github.com/andersoxie/xpact/issues/79); the week 2 decision (main improvement and input set); the questions in [`for superviser.txt`](for%20superviser.txt).
 3. ✅ **Week 4, G01** ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 W3C cases in [`results/G01-corpus/`](results/G01-corpus/README.md); the xmlconf verdict rules done too ([#117](https://github.com/andersoxie/xpact/issues/117)).
 4. **W3C skips:** 247 cases per build need external entities (resolver off in the runner); test them with local-only resolution.
-5. **C02, remaining:** turn the #38-#40 inputs into regression tests. ✅ C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); its 5 findings (#122-#126) are open.
+5. ✅ **Week 5 done 2026-10-26:** C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); C02 regressions ([#128](https://github.com/andersoxie/xpact/issues/128)). Open from it: findings [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) (parser work).
 6. **Problems without an issue yet** (Known problems): Jenkins "Eiffel Tests" without output, SonarQube 401, the old runner copy in `tests/python/`.
 7. ⏸ Still on hold: [#13](https://github.com/andersoxie/xpact/issues/13) (GC wrapper swallows exceptions), A04.
 
@@ -218,10 +218,10 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 **Activity:** Run the selected small inputs with different callbacks and chunk boundaries.
 **Bring to review:** Repeatable regressions and small bug reproductions.
 Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/andersoxie/xpact/issues/37), [results](results/dll-tests-2026-10-22/README.md)): 3,360 cases on three DLLs.
-- [x] [C02](github/issues/13-C02.md) Malformed final-input cases with all six callback sets: run; found [#38](https://github.com/andersoxie/xpact/issues/38) (C01 shortcut). Regressions in the Eiffel suite still to add once repaired
+- [x] [C02](github/issues/13-C02.md) Malformed final-input cases with all six callback sets: run; found [#38](https://github.com/andersoxie/xpact/issues/38) (C01 shortcut). **Regressions added** 2026-10-26 ([#128](https://github.com/andersoxie/xpact/issues/128), [results](results/C02-final-input/README.md)): DLL smoke test + Eiffel suite; with the #38 or #40 fix undone they fail
 - [x] [C03](github/issues/14-C03.md) Chunk boundaries: every split and byte by byte run, found [#40](https://github.com/andersoxie/xpact/issues/40) (fixed in #80, verified 2026-10-26); **compared with Expat 2.8.1** 2026-10-26 ([#121](https://github.com/andersoxie/xpact/issues/121), [results](results/C03-chunks/README.md)): same verdicts and codes at every split; xpact's position moves for `<root/>junk` only ([#124](https://github.com/andersoxie/xpact/issues/124))
 - [x] [C10 (part)](github/issues/15-C10.md) Malformed UTF-8 in six places, whole and split: run; found [#39](https://github.com/andersoxie/xpact/issues/39) (fixed in #80, verified 2026-10-26). **Compared with Expat 2.8.1** 2026-10-26, `80` and `FF` added ([#121](https://github.com/andersoxie/xpact/issues/121), [results](results/C10-utf8/README.md)): all 3,606 verdicts agree; position and events differ ([#122](https://github.com/andersoxie/xpact/issues/122), [#123](https://github.com/andersoxie/xpact/issues/123))
-- [ ] **Decision:** review with the supervisor what can realistically be completed
+- [x] **Decision:** review with the supervisor what can realistically be completed: **skipped by the student** (2026-10-26); everything planned for week 5 was completed
 
 ## Week 6 – One improvement
 **Activity:** Pair on one manageable test-framework or verification-script improvement.
