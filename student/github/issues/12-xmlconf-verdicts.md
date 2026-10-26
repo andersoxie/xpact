@@ -29,4 +29,8 @@ are the numbers to compare this runner with after the fix.
 - [x] `invalid` -> expected ACCEPT; `error` -> no required verdict (reported, not counted as a failure): done by the Python runner (#29); `run_xmlconf_conformance.ps1` itself was not changed
 - [x] Cases that need external entities or XML 1.1 are skipped and counted separately: Python runner, 858 skipped with a reason (#29)
 - [x] Totals reconcile: passed + failed + skipped = cases: 1,491 + 236 + 0 errors + 858 = 2,585 (#29, `student/results/w3c-conformance-2026-10-21/summary.md`)
-- [ ] Before/after summary compared with the Python runner in `student/results/xmlconf-verdicts/`
+- [x] Before/after summary compared with the Python runner in `student/results/xmlconf-verdicts/`: done 2026-10-26 ([#117](https://github.com/andersoxie/xpact/issues/117)). The same 2,168 observations: 854 fail under the old rules, 186 fail + 47 crash under the runner's rules; 676 of the 854 were wrong rules; all 233 real problems pass today
+
+## Resolved 2026-10-26
+
+`scripts/run_xmlconf_conformance.ps1` never entered git; it is **superseded** by `scripts/run_w3c_conformance.py`, which already applies these rules (#29) and is the runner Jenkins uses. It is not revived. Comparison: [`student/results/xmlconf-verdicts/`](../../results/xmlconf-verdicts/README.md) ([#117](https://github.com/andersoxie/xpact/issues/117)).

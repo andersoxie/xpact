@@ -15,7 +15,7 @@ parser directly. They never go through the C bridge, the chunk handling in
 |---|---|---|---|
 | `c02` | C02 | The guide's first test matrix: `<root/>`, `<root></root>`, `<root>hi</root>`, empty input, `<root>`, `<root><child></root>`, `<root/>junk` | Only the first three are accepted |
 | `cr` | #28 | CR LF, lone CR, CR after the root, CR in an attribute | Accepted; character data is a single LF |
-| `utf8` | C10 (part) | `C3 28`, `C0 AF`, `ED A0 80`, `F4 90 80 80` in text, attribute, element name, comment, PI and CDATA; plus valid `C3 A9` (é) as a control | Bad sequences rejected; é accepted |
+| `utf8` | C10 (part) | `C3 28`, `C0 AF`, `ED A0 80`, `F4 90 80 80`, a lone `80`, `FF` in text, attribute, element name, comment, PI and CDATA; plus valid `C3 A9` (é) as a control | Bad sequences rejected; é accepted |
 
 Every input runs with each callback set from C02 (`none`, `start`, `end`,
 `start+end`, `chardata`, `default`) and each chunking from C03:
@@ -24,11 +24,13 @@ Every input runs with each callback set from C02 (`none`, `start`, `end`,
 - `split@k`: bytes `[0,k)` non-final, then the rest final, for every `k`;
 - `bytes`: one non-final call per byte, then an empty final call.
 
-That is 3,360 cases. A case **passes** when the verdict is right (accepted
+That is 4,308 cases (3,360 before `80` and `FF` were added, #121). A case **passes** when the verdict is right (accepted
 or rejected) and, for an accepted document, the start/end events and the
 joined character data are right. The error code is **not** judged: the
-summary lists it next to libexpat's code for the same input, to be confirmed
-against Expat 2.8.1 in G03.
+summary lists it next to libexpat's code for the same input. Those codes were
+checked against Expat 2.8.1 in #121: every one is what Expat returns. To compare
+with Expat itself, run the program on Expat's `libexpat.dll` (`--dll`) and use
+`student/results/expat-2.8.1/compare.py`.
 
 ## Crashes
 

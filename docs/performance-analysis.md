@@ -1,5 +1,23 @@
 # Performance Analysis
 
+The [PubMed DOCTYPE follow-up](pubmed-doctype-performance.md) compares the
+remaining core architecture differences and measures the bounded no-op
+slice-path change. Earlier reports retain their original measurements.
+
+The [PubMed text-position follow-up](pubmed-position-performance.md) records
+the next profile, allocation-free position batching and the latest direct
+core comparison. Older reports below retain their original provenance.
+
+The [PubMed character-data follow-up](pubmed-character-data-performance.md)
+profiles the remaining gap and removes repeated close-marker construction.
+It records a further 62.3% PubMed throughput improvement and the fresh core
+comparison. Earlier reports below preserve their own measurements.
+
+The [2026-10-26 parser profiling and optimization report](parser-profile-performance.md)
+records the latest measured position, duplicate-attribute and normalization work,
+with fresh before/after measurements and a six-workload comparison to pinned
+Xpact-core. The older measurements below retain their original context.
+
 The [2026-10-25 tag-dispatch comparison](tag-dispatch-performance.md) measures
 the marker-reuse refinement against fresh baseline builds on both MSVC and
 WSL2 GCC, including text-heavy and real XML inputs. The tables below retain

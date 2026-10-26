@@ -1,0 +1,103 @@
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+== xpact tests: assertions-on / Workbench ==
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Freezing System Changes
+Degree -1: Generating Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_tests_assertions\W_code
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+big_file_C2_c.c
+eoption.c
+big_file_C1_c.c
+epattern.c
+efrozen.c
+ecall.c
+eplug.c
+eskelet.c
+enames.c
+evisib.c
+ececil.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+Microsoft (R) Incremental Linker Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_tests.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\wkbench.lib" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB "c:\users\masou\documents\eiffel user files\25.12\precomp\spec\win64\EIFGENs\base-safe\W_code\msc_vc140\precomp.lib" 
+xpact_tests.res 
+E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj E1\enames.obj 
+E1\eskelet.obj E1\eplug.obj E1\ecall.obj E1\efrozen.obj E1\epattern.obj 
+E1\eoption.obj C2\Cobj2.lib C1\Cobj1.lib 
+C compilation completed
+FAIL: test_final_input_regressions raised an exception
+-------------------------------------------------------------------------------
+Class / Object      Routine                Nature of exception           Effect
+-------------------------------------------------------------------------------
+XP_PARSER           find_markup_declaration_end @4
+                                           index_in_bounds:
+<000001FB19E24298>                         Loop invariant violated.      Fail
+-------------------------------------------------------------------------------
+XP_PARSER           find_markup_declaration_end @4
+<000001FB19E24298>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_PARSER           is_incomplete_markup_prefix @12
+<000001FB19E24298>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_PARSER           parse_prefix @14                                    
+<000001FB19E24298>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse_with_current_gc_policy @99
+<000001FB19E23778>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_NATIVE_PARSER    parse @7                                            
+<000001FB19E23778>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        native_final_input_accepted @7
+<000001FB1A5A4278>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        test_final_input_regressions @25
+<000001FB1A5A4278>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+PROCEDURE           fast_call                                           
+<000001FB19DC51E8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+PROCEDURE           call @3                                             
+<000001FB19DC51E8>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        run_test @6                                         
+<000001FB1A5A4278>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        make @66                                            
+<000001FB1A5A4278>                         Routine failure.              Fail
+-------------------------------------------------------------------------------
+XP_TEST_ROOT        root's creation                                     
+<000001FB1A5A4278>                         Routine failure.              Exit
+-------------------------------------------------------------------------------
+
+xpact Phase 1 tests: 67 run, 1 raised an exception
+xpact Phase 1 tests: FAILED
+Test executable failed for assertions-on / Workbench.
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_eiffel_test_matrix.ps1:82 char:3
++         throw "Test executable failed for $AssertionLabel / $Mode."
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Test executable...on / Workbench.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Test executable failed for assertions-on / Workbench.
+ 

@@ -1,0 +1,8 @@
+﻿step	exit	seconds
+1-matrix	0	85
+2-dll-production	0	41
+3-dll-assertions	0	39
+4-dll-tests-assertions	0	5
+5-dll-tests-production	0	1
+6-benchmarks-w3c	0	157
+7-python-3.14	1	30

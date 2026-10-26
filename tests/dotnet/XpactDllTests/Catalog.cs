@@ -74,6 +74,8 @@ internal static class Catalog
             ("overlong", new byte[] { 0xC0, 0xAF }, false, "overlong encoding of '/'"),
             ("surrogate", new byte[] { 0xED, 0xA0, 0x80 }, false, "UTF-16 surrogate U+D800"),
             ("above-10ffff", new byte[] { 0xF4, 0x90, 0x80, 0x80 }, false, "code point above U+10FFFF"),
+            ("lone-continuation", new byte[] { 0x80 }, false, "continuation byte without a lead byte"),
+            ("ff", new byte[] { 0xFF }, false, "byte FF, never valid in UTF-8"),
         };
         var contexts = new (string Name, string Before, string After)[]
         {

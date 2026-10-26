@@ -1752,6 +1752,46 @@ check_unfinished_root_space_lifecycle(void) {
 }
 
 static int
+check_split_character_data_close_marker(void) {
+	XML_Parser parser = XML_ParserCreate(NULL);
+	int valid;
+	if (!check(parser != NULL, "split character-data close marker parser created")) return 0;
+	g_general_entity_len = 0;
+	g_general_entity_text[0] = '\0';
+	g_general_entity_failed = 0;
+	XML_SetCharacterDataHandler(parser, general_entity_text_handler);
+	valid = check(smoke_parse_string(parser, "<r>text]", XML_FALSE) == XML_STATUS_OK,
+		"first close-marker bracket accepted as non-final text")
+		&& check(smoke_parse_string(parser, "]", XML_FALSE) == XML_STATUS_OK,
+			"second close-marker bracket accepted as non-final text")
+		&& check(smoke_parse_string(parser, ">tail</r>", XML_TRUE) == XML_STATUS_ERROR
+			&& XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN,
+			"literal close marker split across three chunks rejected")
+		&& check(XML_ParserReset(parser, NULL), "split close-marker failure resets");
+	if (valid) {
+		g_general_entity_len = 0;
+		g_general_entity_text[0] = '\0';
+		g_general_entity_failed = 0;
+		XML_SetCharacterDataHandler(parser, general_entity_text_handler);
+		valid = check(smoke_parse_string(parser, "<r>text]]", XML_FALSE) == XML_STATUS_OK
+			&& smoke_parse_string(parser, "&gt;</r>", XML_TRUE) == XML_STATUS_OK,
+			"reset parser accepts escaped greater-than after trailing brackets")
+			&& check(!g_general_entity_failed && strcmp(g_general_entity_text, "text]]>") == 0,
+				"escaped split text delivered once without loss")
+			&& check(XML_ParserReset(parser, NULL), "escaped split completion resets");
+	}
+	if (valid) {
+		valid = check(smoke_parse_string(parser, "<r>text]", XML_FALSE) == XML_STATUS_OK
+			&& smoke_parse_string(parser, "]", XML_FALSE) == XML_STATUS_OK
+			&& smoke_parse_string(parser, ">tail</r>", XML_TRUE) == XML_STATUS_ERROR
+			&& XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN,
+			"split marker is rejected again after failure and successful recovery");
+	}
+	XML_ParserFree(parser);
+	return valid;
+}
+
+static int
 check_one_byte_declaration_and_dtd(void) {
 	const char *input = "<?xml version=\"1.0\"?>\n<!DOCTYPE doc [\n<!ENTITY en \"x\">\n]>\n<doc/>";
 	XML_Parser parser = XML_ParserCreate(NULL);
@@ -1981,6 +2021,158 @@ check_cached_dtd_default_attribute_lifecycle(void) {
 		}
 	}
 	XML_ParserFree(parser);
+	return 1;
+}
+
+/* C02 final-input regressions (#128): the inputs that found #38, #39 and #40
+   through the C API (#37), with each callback set, whole, split at every byte
+   and byte by byte. */
+
+#define FINAL_INPUT_START 1
+#define FINAL_INPUT_END 2
+#define FINAL_INPUT_TEXT 4
+#define FINAL_INPUT_DEFAULT 8
+
+typedef struct FinalInputState {
+	int start_count;
+	int end_count;
+} FinalInputState;
+
+typedef struct FinalInputCase {
+	const char *label;
+	const char *input;
+	enum XML_Error expected;
+	int check_code;
+} FinalInputCase;
+
+static void XMLCALL
+final_input_start(void *userData, const XML_Char *name, const XML_Char **atts) {
+	(void)name;
+	(void)atts;
+	((FinalInputState *)userData)->start_count++;
+}
+
+static void XMLCALL
+final_input_end(void *userData, const XML_Char *name) {
+	(void)name;
+	((FinalInputState *)userData)->end_count++;
+}
+
+static void XMLCALL
+final_input_text(void *userData, const XML_Char *s, int len) {
+	(void)userData;
+	(void)s;
+	(void)len;
+}
+
+/* Parse `input' whole (split 0), as [0, split) non-final plus the rest final,
+   or one non-final call per byte then an empty final call (split = length). */
+static enum XML_Error
+parse_final_input(const char *input, size_t length, size_t split, int handlers, FinalInputState *state) {
+	XML_Parser parser = XML_ParserCreate(NULL);
+	enum XML_Error error = XML_ERROR_NONE;
+	size_t index;
+	state->start_count = 0;
+	state->end_count = 0;
+	if (parser == NULL) return XML_ERROR_NO_MEMORY;
+	XML_SetUserData(parser, state);
+	if (handlers & FINAL_INPUT_START) XML_SetStartElementHandler(parser, final_input_start);
+	if (handlers & FINAL_INPUT_END) XML_SetEndElementHandler(parser, final_input_end);
+	if (handlers & FINAL_INPUT_TEXT) XML_SetCharacterDataHandler(parser, final_input_text);
+	if (handlers & FINAL_INPUT_DEFAULT) XML_SetDefaultHandler(parser, final_input_text);
+	if (split == 0) {
+		if (XML_Parse(parser, input, (int)length, XML_TRUE) != XML_STATUS_OK) error = XML_GetErrorCode(parser);
+	} else if (split < length) {
+		if (XML_Parse(parser, input, (int)split, XML_FALSE) != XML_STATUS_OK
+			|| XML_Parse(parser, input + split, (int)(length - split), XML_TRUE) != XML_STATUS_OK) {
+			error = XML_GetErrorCode(parser);
+		}
+	} else {
+		for (index = 0; index < length && error == XML_ERROR_NONE; ++index) {
+			if (XML_Parse(parser, input + index, 1, XML_FALSE) != XML_STATUS_OK) error = XML_GetErrorCode(parser);
+		}
+		if (error == XML_ERROR_NONE && XML_Parse(parser, "", 0, XML_TRUE) != XML_STATUS_OK) {
+			error = XML_GetErrorCode(parser);
+		}
+	}
+	XML_ParserFree(parser);
+	return error;
+}
+
+static int
+check_final_input_case(const FinalInputCase *item) {
+	static const int handler_sets[] = {
+		0, FINAL_INPUT_START, FINAL_INPUT_END, FINAL_INPUT_START | FINAL_INPUT_END,
+		FINAL_INPUT_TEXT, FINAL_INPUT_DEFAULT
+	};
+	size_t length = strlen(item->input);
+	size_t set_index;
+	size_t split;
+	for (set_index = 0; set_index < sizeof(handler_sets) / sizeof(handler_sets[0]); ++set_index) {
+		int handlers = handler_sets[set_index];
+		for (split = 0; split <= length; ++split) {
+			FinalInputState state;
+			enum XML_Error error = parse_final_input(item->input, length, split, handlers, &state);
+			int accepted = error == XML_ERROR_NONE;
+			int expect_accept = item->expected == XML_ERROR_NONE;
+			int valid = accepted == expect_accept
+				&& (accepted || !item->check_code || error == item->expected)
+				&& (!accepted || !(handlers & FINAL_INPUT_START) || state.start_count == 1)
+				&& (!accepted || !(handlers & FINAL_INPUT_END) || state.end_count == 1);
+			if (!valid) {
+				fprintf(
+					stderr,
+					"FAIL: final input %s, handlers %d, split %u of %u: error %d, expected %d; starts %d, ends %d\n",
+					item->label, handlers, (unsigned)split, (unsigned)length,
+					(int)error, (int)item->expected, state.start_count, state.end_count
+				);
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+static int
+check_final_input_regressions(void) {
+	/* #38: a start handler made `<root>' and `<root><child></root>' accepted and
+	   lost the end event of `<root></root>'. #40: a non-final chunk ending with
+	   `<' crashed the assertions DLL. The code of `<root/>junk' is not checked
+	   (xpact 4, Expat 9: #124). */
+	static const FinalInputCase c02_cases[] = {
+		{"<root/>", "<root/>", XML_ERROR_NONE, 1},
+		{"<root></root>", "<root></root>", XML_ERROR_NONE, 1},
+		{"<root>hi</root>", "<root>hi</root>", XML_ERROR_NONE, 1},
+		{"empty", "", XML_ERROR_NO_ELEMENTS, 1},
+		{"<root>", "<root>", XML_ERROR_NO_ELEMENTS, 1},
+		{"<root><child></root>", "<root><child></root>", XML_ERROR_TAG_MISMATCH, 1},
+		{"<root/>junk", "<root/>junk", XML_ERROR_JUNK_AFTER_DOC_ELEMENT, 0},
+	};
+	/* #39: malformed UTF-8 was accepted. "\xC3\xA9" (e acute) must stay accepted. */
+	static const char *const utf8_sequences[] = {
+		"\xC3\xA9", "\xC3(", "\xC0\xAF", "\xED\xA0\x80", "\xF4\x90\x80\x80", "\x80", "\xFF"
+	};
+	static const char *const utf8_places[][2] = {
+		{"<r>", "</r>"}, {"<r a='", "'/>"}, {"<r", "/>"}, {"<r><!--", "--></r>"},
+		{"<r><?pi ", "?></r>"}, {"<r><![CDATA[", "]]></r>"}
+	};
+	size_t index;
+	size_t place;
+	char input[64];
+	FinalInputCase utf8_case;
+	for (index = 0; index < sizeof(c02_cases) / sizeof(c02_cases[0]); ++index) {
+		if (!check_final_input_case(&c02_cases[index])) return 0;
+	}
+	for (index = 0; index < sizeof(utf8_sequences) / sizeof(utf8_sequences[0]); ++index) {
+		for (place = 0; place < sizeof(utf8_places) / sizeof(utf8_places[0]); ++place) {
+			snprintf(input, sizeof(input), "%s%s%s", utf8_places[place][0], utf8_sequences[index], utf8_places[place][1]);
+			utf8_case.label = input;
+			utf8_case.input = input;
+			utf8_case.expected = index == 0 ? XML_ERROR_NONE : XML_ERROR_INVALID_TOKEN;
+			utf8_case.check_code = 1;
+			if (!check_final_input_case(&utf8_case)) return 0;
+		}
+	}
 	return 1;
 }
 
@@ -3898,10 +4090,12 @@ main(void) {
 	if (!check_null_context_parameter_child()) return 1;
 	if (!check_reset_encoding_lifecycle()) return 1;
 	if (!check_unfinished_root_space_lifecycle()) return 1;
+	if (!check_split_character_data_close_marker()) return 1;
 	if (!check_one_byte_declaration_and_dtd()) return 1;
 	if (!check_one_byte_start_positions()) return 1;
 	if (!check_parameter_child_survives_parent_replay()) return 1;
 	if (!check_cached_dtd_default_attribute_lifecycle()) return 1;
+	if (!check_final_input_regressions()) return 1;
 	puts("xpact Eiffel DLL smoke: ok");
 	return 0;
 }

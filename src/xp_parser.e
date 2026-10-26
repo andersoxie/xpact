@@ -1271,6 +1271,7 @@ feature {NONE} -- Markup parsing
 			l_first_name_end: INTEGER
 			l_name_starts: detachable ARRAYED_LIST [INTEGER]
 			l_name_ends: detachable ARRAYED_LIST [INTEGER]
+			l_name_set: detachable XP_ATTRIBUTE_NAME_RANGE_SET
 			l_unsupported: BOOLEAN
 			l_duplicate: BOOLEAN
 		do
@@ -1295,14 +1296,24 @@ feature {NONE} -- Markup parsing
 							l_first_name_start := last_attribute_name_start
 							l_first_name_end := last_attribute_name_end
 						else
-							l_duplicate := input_ranges_same (a_input, last_attribute_name_start, last_attribute_name_end, l_first_name_start, l_first_name_end)
-							if not l_duplicate and then attached l_name_starts as l_attached_starts and then attached l_name_ends as l_attached_ends then
-								l_duplicate := has_attribute_name_range (a_input, last_attribute_name_start, last_attribute_name_end, l_attached_starts, l_attached_ends)
+							if attached l_name_set as l_attached_set then
+								l_duplicate := l_attached_set.has_or_insert (a_input, last_attribute_name_start, last_attribute_name_end)
+							elseif l_count = 16 and then attached l_name_starts as l_attached_starts and then attached l_name_ends as l_attached_ends then
+								create l_name_set.make (a_input, l_first_name_start, l_first_name_end, l_attached_starts, l_attached_ends)
+								l_duplicate := l_name_set.has_or_insert (a_input, last_attribute_name_start, last_attribute_name_end)
+								-- The table now owns only integer metadata; the small lists can be released.
+								l_name_starts := Void
+								l_name_ends := Void
+							else
+								l_duplicate := input_ranges_same (a_input, last_attribute_name_start, last_attribute_name_end, l_first_name_start, l_first_name_end)
+								if not l_duplicate and then attached l_name_starts as l_attached_starts and then attached l_name_ends as l_attached_ends then
+									l_duplicate := has_attribute_name_range (a_input, last_attribute_name_start, last_attribute_name_end, l_attached_starts, l_attached_ends)
+								end
 							end
 							if l_duplicate then
 								set_error ("duplicate attribute")
 								i := a_input.count + 1
-							else
+							elseif l_name_set = Void then
 								if not attached l_name_starts then
 									create l_name_starts.make (4)
 									create l_name_ends.make (4)
@@ -2127,6 +2138,7 @@ feature {NONE} -- Character data and references
 			l_literal_default: BOOLEAN
 			l_default_start, l_default_end, l_reference_end: INTEGER
 			l_all_space: BOOLEAN
+			l_pending_literal_position: INTEGER
 		do
 			l_materialize_text := handler.wants_character_data_events or else handler.wants_default_events or else handler.wants_automatic_character_data_default
 			l_literal_default := handler.wants_automatic_character_data_default and then handler.wants_literal_character_data_default
@@ -2148,12 +2160,18 @@ feature {NONE} -- Character data and references
 				until
 					i > a_input.count or has_error or is_suspended or else a_input.item (i) = '<'
 				loop
-					note_position (i)
 					c := a_input.item (i)
-					if has_at (a_input, i, "]]>") then
+					if c = ']' then
+						note_position (i)
+						l_pending_literal_position := 0
+					end
+					-- The fixed marker is read-only; ordinary bytes need no prefix check.
+					if c = ']' and then has_at (a_input, i, once "]]>") then
 						set_error ("CDATA close marker in character data")
 						i := a_input.count + 1
 					elseif c = '&' then
+						note_position (i)
+						l_pending_literal_position := 0
 						if element_stack.count = 0 and then not parsing_external_entity then
 							set_error ("entity reference outside document element")
 							i := a_input.count + 1
@@ -2178,10 +2196,14 @@ feature {NONE} -- Character data and references
 								l_default_end := i - 1
 							end
 						end
-					elseif is_incomplete_utf8_sequence_at (a_input, i) then
+					elseif c.code >= 128 and then is_incomplete_utf8_sequence_at (a_input, i) then
+						note_position (i)
+						l_pending_literal_position := 0
 						set_error ("partial character")
 						i := a_input.count + 1
 					elseif not is_xml_character_code (c.code) then
+						note_position (i)
+						l_pending_literal_position := 0
 						set_error ("invalid XML character")
 						i := a_input.count + 1
 					else
@@ -2189,13 +2211,22 @@ feature {NONE} -- Character data and references
 							l_all_space := is_xml_space (c)
 						end
 						if attached l_text as l_attached_text then
+							-- Appending may allocate; preserve its exception-time position.
+							note_position (i)
+							l_pending_literal_position := 0
 							l_attached_text.append_character (c)
+						else
+							l_pending_literal_position := i
 						end
 						i := i + 1
 						l_default_end := i - 1
 					end
 				variant
 					a_input.count - i + 1
+				end
+				if l_pending_literal_position > 0 then
+					-- Included entity text has no surrounding position commit.
+					note_position (l_pending_literal_position)
 				end
 				if not has_error and not is_suspended then
 					if element_stack.count = 0 and then not parsing_external_entity then
@@ -2273,7 +2304,7 @@ feature {NONE} -- Character data and references
 				if c = '&' then
 					l_fallback := True
 					i := a_input.count + 1
-				elseif c = ']' and then has_at (a_input, i, "]]>") then
+				elseif c = ']' and then has_at (a_input, i, once "]]>") then
 					note_position (i)
 					set_error ("CDATA close marker in character data")
 					i := a_input.count + 1
@@ -2294,7 +2325,7 @@ feature {NONE} -- Character data and references
 					note_position (i)
 					set_error ("invalid XML character")
 					i := a_input.count + 1
-				elseif is_incomplete_utf8_sequence_at (a_input, i) then
+				elseif c.code >= 128 and then is_incomplete_utf8_sequence_at (a_input, i) then
 					note_position (i)
 					set_error ("partial character")
 					i := a_input.count + 1
@@ -2345,6 +2376,7 @@ feature {NONE} -- Character data and references
 			l_literal_default: BOOLEAN
 			l_default_start, l_default_end, l_reference_end: INTEGER
 			l_all_space: BOOLEAN
+			l_pending_literal_position: INTEGER
 			l_done: BOOLEAN
 		do
 			l_materialize_text := handler.wants_character_data_events or else handler.wants_default_events or else handler.wants_automatic_character_data_default
@@ -2362,12 +2394,17 @@ feature {NONE} -- Character data and references
 			until
 				i > a_input.count or l_done or has_error or is_suspended or else a_input.item (i) = '<'
 			loop
-				note_position (i)
 				c := a_input.item (i)
-				if has_at (a_input, i, "]]>") then
+				if c = ']' then
+					note_position (i)
+					l_pending_literal_position := 0
+				end
+				if c = ']' and then has_at (a_input, i, once "]]>") then
 					set_error ("CDATA close marker in character data")
 					i := a_input.count + 1
 				elseif c = '&' then
+					note_position (i)
+					l_pending_literal_position := 0
 					if find_character (a_input, ';', i + 1) = 0 then
 						l_done := True
 						i := a_input.count + 1
@@ -2392,10 +2429,14 @@ feature {NONE} -- Character data and references
 							l_default_end := i - 1
 						end
 					end
-				elseif is_incomplete_utf8_sequence_at (a_input, i) then
+				elseif c.code >= 128 and then is_incomplete_utf8_sequence_at (a_input, i) then
+					note_position (i)
+					l_pending_literal_position := 0
 					l_done := True
 					i := a_input.count + 1
 				elseif not is_xml_character_code (c.code) then
+					note_position (i)
+					l_pending_literal_position := 0
 					set_error ("invalid XML character")
 					i := a_input.count + 1
 				else
@@ -2403,13 +2444,22 @@ feature {NONE} -- Character data and references
 						l_all_space := is_xml_space (c)
 					end
 					if attached l_text as l_attached_text then
+						-- Appending may allocate; preserve its exception-time position.
+						note_position (i)
+						l_pending_literal_position := 0
 						l_attached_text.append_character (c)
+					else
+						l_pending_literal_position := i
 					end
 					i := i + 1
 					l_default_end := i - 1
 				end
 			variant
 				a_input.count - i + 1
+			end
+			if l_pending_literal_position > 0 then
+				-- Included entity text has no surrounding position commit.
+				note_position (l_pending_literal_position)
 			end
 			if not has_error and not is_suspended then
 				if element_stack.count = 0 and then not parsing_external_entity then
@@ -5186,7 +5236,14 @@ feature {NONE} -- Event dispatch
 				and then not handler.wants_automatic_character_data_default
 				and then not handler.wants_default_events
 				and then not use_foreign_dtd
-				and then doctype_name.is_empty
+				-- A DOCTYPE alone needs no materialization for a pure no-op sink.
+				-- Keep callbacks, raw replacement buffers and larger attribute limits
+				-- on their existing path, including ownership and diagnostic behavior.
+				and then (doctype_name.is_empty or else
+					(handler.generating_type.type_id = ({detachable XP_NULL_EVENT_HANDLER}).type_id
+					and then external_entity_resolver = Void
+					and then entity_stack.is_empty
+					and then max_attribute_count <= Default_max_attribute_count))
 				and then attribute_decl_table.count = 0
 				and then element_slice_stack.count = element_stack.count
 		end
@@ -5987,7 +6044,7 @@ feature {NONE} -- Scanning
 						l_needs_copy := True
 						i := i + 1
 					elseif c.code < 128 then
-						if is_xml_character_code (c.code) then
+						if c.code >= 32 or else c = '%T' or else c = '%N' then
 							i := i + 1
 						else
 							set_error ("invalid XML character")
@@ -6037,7 +6094,7 @@ feature {NONE} -- Scanning
 							i := i + 1
 						end
 					elseif c.code < 128 then
-						if is_xml_character_code (c.code) then
+						if c.code >= 32 or else c = '%T' or else c = '%N' then
 							Result.append_character (c)
 							i := i + 1
 						else
@@ -7624,8 +7681,10 @@ feature {NONE} -- State
 				if lazy_position_accounting then
 					current_position_index := l_index
 				else
-					if current_position_index <= 0 or else l_index < current_position_index then
+					if current_position_index <= 0 then
 						recompute_position_from_start (l_index)
+					elseif l_index < current_position_index then
+						retreat_position_to (l_index)
 					else
 						advance_position_to (l_index)
 					end
@@ -7698,6 +7757,50 @@ feature {NONE} -- State
 				i := i + 1
 			variant
 				a_index - i
+			end
+		ensure
+			line_positive: current_line_number >= 1
+			column_non_negative: current_column_number >= 0
+		end
+
+	retreat_position_to (a_index: INTEGER)
+			-- Move line and column counters backwards without rescanning the document prefix.
+		require
+			index_in_bounds: a_index >= 1 and a_index <= position_input.count + 1
+			backward: current_position_index > a_index
+			current_index_in_bounds: current_position_index <= position_input.count + 1
+			eager_positions: not lazy_position_accounting
+		local
+			i: INTEGER
+			l_distance: INTEGER
+			l_newlines: INTEGER
+		do
+			l_distance := current_position_index - a_index
+			if l_distance <= current_column_number then
+					-- The target is at or after the start of the current line.
+				current_column_number := current_column_number - l_distance
+			else
+				from
+					i := current_position_index - 1
+				invariant
+					index_in_bounds: i >= a_index - 1 and i < current_position_index
+					newlines_non_negative: l_newlines >= 0
+				until
+					i < a_index
+				loop
+					if position_input.item (i) = '%N' then
+						l_newlines := l_newlines + 1
+					end
+					i := i - 1
+				variant
+					i - a_index + 1
+				end
+				current_line_number := current_line_number - l_newlines
+				if a_index = 1 then
+					current_column_number := 0
+				else
+					current_column_number := a_index - 1 - position_input.last_index_of ('%N', a_index - 1)
+				end
 			end
 		ensure
 			line_positive: current_line_number >= 1

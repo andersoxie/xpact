@@ -1,6 +1,6 @@
 # GitHub setup
 
-> **Last updated:** 2026-10-22 · describes `student-Mass` @ `76ac272`
+> **Last updated:** 2026-10-26 · describes `student-Mass` @ `a39362a` (labels and board checked on GitHub, [#108](https://github.com/andersoxie/xpact/issues/108))
 
 How the work is tracked on [andersoxie/xpact](https://github.com/andersoxie/xpact):
 **one issue per problem or task**, labels to sort them, one milestone per
@@ -9,7 +9,7 @@ project week, and a pull request into `student-Mass` for every change
 
 | | What | State (2026-10-22) |
 |---|---|---|
-| ✅ | Labels | 21, listed in [`labels.json`](labels.json); all on GitHub except 6 (see below) |
+| ✅ | Labels | 21, listed in [`labels.json`](labels.json); **all 21 on GitHub** with the same colour and description (the last 6 created 2026-10-26, [#108](https://github.com/andersoxie/xpact/issues/108)) |
 | ✅ | Milestones | `Week 1 - Setup` … `Week 10 - Handover`, in [`milestones.json`](milestones.json), all on GitHub |
 | ✅ | Issues | #2-#70 on GitHub, each with a milestone and labels; drafts for the rest in [`issues/`](issues/) |
 | ✅ | Project board | [xpact student work (Mass)](https://github.com/users/CodTanium/projects/3): Todo → In progress → In review → Done, every issue on it ([below](#project-board)) |
@@ -39,9 +39,13 @@ Two kinds, used together on every issue.
 | `P0` / `P1` | Must be solved first / after P0 |
 | `workflow` | Versioning, reports and plan updates (not a project finding) |
 
-Not on GitHub yet: `group:A-orientation`, `group:F-core`,
-`group:G-verification`, `D1-beginner`, `D4-expert`, `type:blocker`. The issue
-templates add `type:finding` or `type:task` by themselves; add the others by hand.
+All 21 are on GitHub. `group:A-orientation`, `group:F-core`,
+`group:G-verification`, `D1-beginner`, `D4-expert` and `type:blocker` were
+created on 2026-10-26 ([#108](https://github.com/andersoxie/xpact/issues/108), authorized by the student). GitHub's
+7 default labels (`duplicate`, `enhancement`, `good first issue`, `help wanted`,
+`invalid`, `question`, `wontfix`) are also there; no issue or pull request uses
+them, and they are not in `labels.json`. The issue templates add `type:finding`
+or `type:task` by themselves; add the others by hand.
 
 ## Milestones and issues
 
@@ -86,12 +90,12 @@ Issues created outside the drafts: #2, #4, #7, #10, #13, #28, #38, #39, #40,
 created 2026-10-22 ([#35](https://github.com/andersoxie/xpact/issues/35)), with
 the columns `CLAUDE.md` asks for:
 
-| Status | Means | Issues in this state on 2026-10-22 (from the issue state; the board itself was not read, see below) |
+| Status | Means | On the board, checked 2026-10-26 ([#108](https://github.com/andersoxie/xpact/issues/108)) |
 |---|---|---|
-| ⬜ Todo | Not started | #13, #38, #39, #40 (parser repairs, ⏸ on hold) |
+| ⬜ Todo | Not started | #13 (⏸ on hold) |
 | 🟡 In progress | Being worked on | |
-| 🔵 In review | Pull request open, or waiting for the parser developer | #3 and its draft PR #12 (⏸ on hold) · #68 (PR #69) · #70 (this change) |
-| ✅ Done | Merged **and** the result verified | the closed issues; their "Done when" lists were checked on 2026-10-22 ([#70](https://github.com/andersoxie/xpact/issues/70)) |
+| 🔵 In review | Pull request open, or waiting for the parser developer or Jenkins | #73, #74 (PR #76), #79: waiting for a Jenkins rerun |
+| ✅ Done | Merged **and** the result verified | every closed student issue, plus the merged PRs #12 and #47 (41 items) |
 
 An issue goes to `Done` only after its result is checked (`CLAUDE.md`: never
 close an issue just because the code changed).
@@ -100,9 +104,11 @@ close an issue just because the code changed).
   `andersoxie/xpact` (GitHub only links a project to a repository of the same
   owner), so it does not show in the repository's Projects tab. Issues of
   the repository can be added to it all the same.
-- The `gh` login on this PC has no `read:project` scope, so the board was
-  not read on 2026-10-22; whether #64, #68 and #70 are on it is **unknown**.
-  `gh auth refresh -s read:project,project` adds the scope.
+- The `gh` login has the `project` scope since 2026-10-26 (`gh auth refresh -s read:project,project`).
+  That day the board was read and brought up to date ([#108](https://github.com/andersoxie/xpact/issues/108)): 16 student
+  issues were missing (#48-#106), 7 closed issues were still in Todo or In review,
+  and the merged PRs #12 and #47 were still in In review. The supervisor's own
+  issues (#88, #90, #93) are not on this student board.
 - A new issue does not land on the board by itself. Add it with
   `gh project item-add 3 --owner CodTanium --url <issue url>`, or from the
   issue page (**Projects** → *xpact student work (Mass)*).
@@ -133,6 +139,5 @@ cd C:\xpact\xpact-student-Mass
 ```
 
 Running it again: labels are created with `--force`, so existing ones are set
-to the colour and description in `labels.json` and the 6 missing ones **are
-created** (ask first). A milestone that exists is skipped, and so is a draft
+to the colour and description in `labels.json` (all 21 exist since 2026-10-26). A milestone that exists is skipped, and so is a draft
 whose title **exactly** matches an existing issue.

@@ -29,3 +29,7 @@ but it has no contracts compiled in. Recheck this finding after #28 is fixed.
 1. Reproduce and minimize one case per crash site (student work: fixtures and reproductions).
 2. Report crashes separately in the runner (B04).
 3. Discuss the parser repairs with the developers; this links to A05 (contract failures must not continue as success) and C01/C09.
+
+## Resolved 2026-10-26
+
+Fixed in PR [#80](https://github.com/andersoxie/xpact/pull/80) (issue [#79](https://github.com/andersoxie/xpact/issues/79)). Verified in [#104](https://github.com/andersoxie/xpact/issues/104) on `student-Mass` @ `41731c8`: `.\scriptsun_benchmarks.ps1 -EiffelBuild Finalized,FinalizedAssertions` → `FinalizedAssertions` (all assertions on, `-keep`): 1,727 passed, 0 failed, 0 errors; no crash in the log ([log](../../../reports/issue-0104/logs/12-benchmarks-w3c.txt)). Rerun the same day with `ISE_C_COMPILER=msc_vc140`: same result. The original command, `scriptsun_xmlconf_conformance.ps1` with the workbench `xpact.exe`, is no longer in the repository, so the check used the current runner `scripts/run_w3c_conformance.py`. Not filed as a separate issue; tracked through #79.

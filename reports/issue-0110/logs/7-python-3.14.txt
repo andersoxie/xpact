@@ -1,0 +1,546 @@
+﻿# 2026-10-26T17:42:51  C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks  ISE_C_COMPILER=msc_vc140
+# python --version; python -m unittest discover -s tests/python
+
+Python 3.14.0
+......................................................................................F.........EEEEEEEFE..EEEEE..Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\xpact-subject-summary-tests\tmpfnngoeo3\w3c\xpact-junit.xml)
+Cannot publish own xpact summary: 'int' object has no attribute 'get'
+Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\xpact-subject-summary-tests\tmpfnngoeo3\w3c\xpact-junit.xml)
+........Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\xpact-subject-summary-tests\tmpd5qbha03\w3c\xpact-junit.xml)
+........sssssss.........................................Measuring fixture...
+.
+======================================================================
+ERROR: test_assume_unchanged_cannot_hide_modified_working_tree_bytes (test_implementation_builds.PinnedDependencyTests.test_assume_unchanged_cannot_hide_modified_working_tree_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\21\\ac306b6a6f5ff9d8720bb89f404300cdea311a', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\21\\ac306b6a6f5ff9d8720bb89f404300cdea311a", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 204, in test_assume_unchanged_cannot_hide_modified_working_tree_bytes
+    self.prepare()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\21\\ac306b6a6f5ff9d8720bb89f404300cdea311a', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\21\\ac306b6a6f5ff9d8720bb89f404300cdea311a", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-l4mehbgp\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-ccrwsul1\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_concurrent_invalid_winner_is_rejected_and_remains_owned_by_winner (test_implementation_builds.PinnedDependencyTests.test_concurrent_invalid_winner_is_rejected_and_remains_owned_by_winner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 316, in test_concurrent_invalid_winner_is_rejected_and_remains_owned_by_winner
+    self.assertEqual((self.destination / "keep.txt").read_bytes(),
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py", line 782, in read_bytes
+    with self.open(mode='rb', buffering=0) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py", line 776, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-gen7_hr2\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\8b2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb\\keep.txt"
+
+======================================================================
+ERROR: test_concurrent_valid_winner_is_verified_and_loser_stage_is_released (test_implementation_builds.PinnedDependencyTests.test_concurrent_valid_winner_is_verified_and_loser_stage_is_released)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 301, in test_concurrent_valid_winner_is_verified_and_loser_stage_is_released
+    result = self.prepare()
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-jbi1s_b3\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-a0q631ab\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_dirty_checkout_is_rejected_without_repair_and_clean_reuse_recovers (test_implementation_builds.PinnedDependencyTests.test_dirty_checkout_is_rejected_without_repair_and_clean_reuse_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 192, in test_dirty_checkout_is_rejected_without_repair_and_clean_reuse_recovers
+    clean = self.prepare()
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\8b\\2c8aa8015bdaa58a4ed6b9acfee3b7222bc5fb", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-md8idbn1\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-jo6t7yob\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_fetch_failure_cleans_only_own_stage_then_retry_publishes_verified_source (test_implementation_builds.PinnedDependencyTests.test_fetch_failure_cleans_only_own_stage_then_retry_publishes_verified_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 188, in test_fetch_failure_cleans_only_own_stage_then_retry_publishes_verified_source
+    self.assertEqual(self.prepare()["revision"], self.revision)
+                     ~~~~~~~~~~~~^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-435c349q\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-boqacjb6\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_git_replace_cannot_make_alternative_source_look_like_the_pinned_commit (test_implementation_builds.PinnedDependencyTests.test_git_replace_cannot_make_alternative_source_look_like_the_pinned_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 246, in test_git_replace_cannot_make_alternative_source_look_like_the_pinned_commit
+    self.prepare()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-c05qj57p\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-2xkc6xhk\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_inherited_git_path_overrides_cannot_redirect_checkout_verification (test_implementation_builds.PinnedDependencyTests.test_inherited_git_path_overrides_cannot_redirect_checkout_verification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 261, in test_inherited_git_path_overrides_cannot_redirect_checkout_verification
+    original = self.prepare()
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\c1\\5a8622560eb4b13da5c71baab8e7bf738d65d9", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-uesga2yc\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-oyf5qbwt\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_long_checkout_path_preserves_verification_and_dirty_recovery (test_implementation_builds.PinnedDependencyTests.test_long_checkout_path_preserves_verification_and_dirty_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 693, in _rmtree_unsafe
+    os.rmdir(fullname)
+    ~~~~~~~~^^^^^^^^^^
+OSError: [WinError 145] The directory is not empty: 'C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-x8w932y2\\jenkins workspacexx\\build\\dependencies\\xpact-core\\dfb5bd9a2c806c2c52b5bd23a3ca3af5eea000cf\\.git\\objects\\31'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 41, in remove_fixture
+    shutil.rmtree(path, onerror=writable_retry)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 852, in rmtree
+    _rmtree_impl(path, dir_fd, onexc)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 697, in _rmtree_unsafe
+    onexc(os.rmdir, fullname, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 850, in onexc
+    return onerror(func, path, exc_info)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 40, in writable_retry
+    function(name)
+    ~~~~~~~~^^^^^^
+OSError: [WinError 145] The directory is not empty: 'C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-x8w932y2\\jenkins workspacexx\\build\\dependencies\\xpact-core\\dfb5bd9a2c806c2c52b5bd23a3ca3af5eea000cf\\.git\\objects\\31'
+
+======================================================================
+ERROR: test_preparation_then_offline_reuse_verifies_original_identity_without_fetching (test_implementation_builds.PinnedDependencyTests.test_preparation_then_offline_reuse_verifies_original_identity_without_fetching)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 114, in test_preparation_then_offline_reuse_verifies_original_identity_without_fetching
+    first = self.prepare()
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-18716mgh\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-vo_jdd4v\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_publication_failure_releases_own_staging_and_allows_retry (test_implementation_builds.PinnedDependencyTests.test_publication_failure_releases_own_staging_and_allows_retry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 293, in test_publication_failure_releases_own_staging_and_allows_retry
+    self.assertEqual(self.prepare()["revision"], self.revision)
+                     ~~~~~~~~~~~~^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\04\\75cfe4b3d22b0f5ebe7f8e1cc1c086947a7741", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-4hwqe6g5\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-1anl8grl\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_untracked_and_ignored_files_are_each_rejected_and_preserved (test_implementation_builds.PinnedDependencyTests.test_untracked_and_ignored_files_are_each_rejected_and_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 214, in test_untracked_and_ignored_files_are_each_rejected_and_preserved
+    self.prepare()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-2rwb2kf6\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-5ntxyzgx\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_wrong_head_is_rejected_without_resetting_new_commit (test_implementation_builds.PinnedDependencyTests.test_wrong_head_is_rejected_without_resetting_new_commit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 234, in test_wrong_head_is_rejected_without_resetting_new_commit
+    self.prepare()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-lcy6e64g\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-z6cioh4u\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+ERROR: test_wrong_origin_is_rejected_without_overwriting_it (test_implementation_builds.PinnedDependencyTests.test_wrong_origin_is_rejected_without_overwriting_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 178, in prepare_dependency
+    run_git(["fetch", "--no-tags", "--depth=1", "origin", lock["revision"]], staging)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1175, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1179, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\unittest\mock.py", line 1240, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 99, in local_transport
+    shutil.copytree(self.repository / ".git/objects", Path(cwd) / ".git/objects",
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    dirs_exist_ok=True)
+                    ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 654, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+                     ignore=ignore, copy_function=copy_function,
+                     ignore_dangling_symlinks=ignore_dangling_symlinks,
+                     dirs_exist_ok=dirs_exist_ok)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\shutil.py", line 608, in _copytree
+    raise Error(errors)
+shutil.Error: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 226, in test_wrong_origin_is_rejected_without_overwriting_it
+    self.prepare()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 108, in prepare
+    return dependency.prepare_dependency(self.project, offline=offline)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\scripts\prepare_xpact_core.py", line 193, in prepare_dependency
+    raise DependencyError(f"Cannot prepare pinned Xpact-core: {exc}") from exc
+prepare_xpact_core.DependencyError: Cannot prepare pinned Xpact-core: [('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\31\\c6559ce28ec138366d09ffd6e851bb1da3be10", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\8f\\2e8293123a6272de603f6df9601aa04c3de8a7", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\b9\\31d8994360be5307ae7a25004f6ea3f9884683", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\e3\\5dcf0f9ff6fa443e1749ad89a570c4565749f0", '[WinError 3] The system cannot find the path specified'), ('C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\local upstream with spaces\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761', "C:\\Users\\masou\\Desktop\\Lia\\xpact3.0\\xpact-codex-w3c-xml-conformance-benchmarks\\build\\implementation-build-tests\\run-tntvkwpr\\consumer with spaces and 'quotes'\\build\\dependencies\\xpact-core\\.prepare-12z8kbvs\\.git\\objects\\fa\\df2913150525d9a3e5b5edc0a45fa2db60f761", '[WinError 3] The system cannot find the path specified')]
+
+======================================================================
+FAIL: test_main_keeps_other_backend_result_after_failure_and_next_run_preserves_evidence (test_implementation_builds.IsolatedBuildTests.test_main_keeps_other_backend_result_after_failure_and_next_run_preserves_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 692, in test_main_keeps_other_backend_result_after_failure_and_next_run_preserves_evidence
+    self.assertEqual([row["status"] for row in failed["results"]], ["failed", "verified"])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['failed', 'failed'] != ['failed', 'verified']
+
+First differing element 1:
+'failed'
+'verified'
+
+- ['failed', 'failed']
+?              - -
+
++ ['failed', 'verified']
+?             ++++
+
+
+======================================================================
+FAIL: test_long_checkout_path_preserves_verification_and_dirty_recovery (test_implementation_builds.PinnedDependencyTests.test_long_checkout_path_preserves_verification_and_dirty_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\tests\python\test_implementation_builds.py", line 151, in test_long_checkout_path_preserves_verification_and_dirty_recovery
+    self.assertTrue(loose_object.is_file())
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 178 tests in 28.204s
+
+FAILED (failures=2, errors=13, skipped=7)
+
+# exit code: 1

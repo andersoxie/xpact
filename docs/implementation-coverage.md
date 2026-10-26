@@ -153,10 +153,9 @@ parser pass/fail outcomes.
 - The direct benchmark's file path uses a text-file reader, whereas its
   conformance path uses raw bytes. Establish identical input-byte handling
   before comparing file workloads with core.
-- `tests/python/run_w3c_conformance.py` is an older standalone duplicate of the
-  canonical `scripts/run_w3c_conformance.py`; current entry points use the latter.
-  Do not route a backend through the duplicate and lose engine-specific
-  known-failure handling.
+- The older standalone duplicate `tests/python/run_w3c_conformance.py` was
+  removed in #132; `scripts/run_w3c_conformance.py` is the only W3C runner, with
+  the engine-specific known-failure handling.
 - The .NET harness has no `XML_ParseBuffer`, namespaces or stop/resume cases;
   its calls stay on the thread that loaded the DLL. Its crash isolation is not
   evidence of native cross-thread safety or coverage of all callback APIs.
