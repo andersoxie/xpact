@@ -1,0 +1,46 @@
+.......................................................................................................FE.........Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\xpact-subject-summary-tests\tmp7rvt_2uc\w3c\xpact-junit.xml)
+Cannot publish own xpact summary: 'int' object has no attribute 'get'
+Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\xpact-subject-summary-tests\tmp7rvt_2uc\w3c\xpact-junit.xml)
+........Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\xpact-subject-summary-tests\tmpw15qeg6p\w3c\xpact-junit.xml)
+........sssssss.........................................Measuring fixture...
+.
+======================================================================
+ERROR: test_long_checkout_path_preserves_verification_and_dirty_recovery (test_implementation_builds.PinnedDependencyTests.test_long_checkout_path_preserves_verification_and_dirty_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 617, in _rmtree_unsafe
+    os.rmdir(fullname)
+    ~~~~~~~~^^^^^^^^^^
+OSError: [WinError 145] The directory is not empty: 'C:\\Users\\masou\\Desktop\\Lia\\xpact\\xpactGit\\build\\implementation-build-tests\\run-rer3x6sy\\jenkins workspacexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\build\\dependencies\\xpact-core\\9809a8713e40498d39d127e1c524ec066bebb576\\.git\\objects\\31'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\tests\python\test_implementation_builds.py", line 41, in remove_fixture
+    shutil.rmtree(path, onerror=writable_retry)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 790, in rmtree
+    return _rmtree_unsafe(path, onexc)
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 621, in _rmtree_unsafe
+    onexc(os.rmdir, fullname, err)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python313\Lib\shutil.py", line 754, in onexc
+    return onerror(func, path, exc_info)
+  File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\tests\python\test_implementation_builds.py", line 40, in writable_retry
+    function(name)
+    ~~~~~~~~^^^^^^
+OSError: [WinError 145] The directory is not empty: 'C:\\Users\\masou\\Desktop\\Lia\\xpact\\xpactGit\\build\\implementation-build-tests\\run-rer3x6sy\\jenkins workspacexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\\build\\dependencies\\xpact-core\\9809a8713e40498d39d127e1c524ec066bebb576\\.git\\objects\\31'
+
+======================================================================
+FAIL: test_long_checkout_path_preserves_verification_and_dirty_recovery (test_implementation_builds.PinnedDependencyTests.test_long_checkout_path_preserves_verification_and_dirty_recovery)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\tests\python\test_implementation_builds.py", line 151, in test_long_checkout_path_preserves_verification_and_dirty_recovery
+    self.assertTrue(loose_object.is_file())
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 178 tests in 22.355s
+
+FAILED (failures=1, errors=1, skipped=7)

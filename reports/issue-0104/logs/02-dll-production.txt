@@ -1,0 +1,81 @@
+﻿# 2026-10-26T12:55:44  C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks
+# . .\scripts\import_msvc_environment.ps1; .\scripts\build_native_eiffel.ps1
+
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Visual Studio C++ x64 environment already loaded (18.10.3)
+xpact_native.c
+xpact_eiffel_runtime_bridge.c
+xpact_eiffel_dllmain.c
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Degree -2: Constructing Polymorphic Table
+Degree -3: Generating Optimized Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\EIFGENs\xpact_native_library\F_code
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+big_file_C10_c.c
+big_file_C11_c.c
+big_file_C15_c.c
+big_file_C16_c.c
+big_file_E2_c.c
+eoption.c
+big_file_C9_c.c
+big_file_C8_c.c
+big_file_C12_c.c
+big_file_C17_c.c
+big_file_C13_c.c
+big_file_C14_c.c
+eref.c
+epoly.c
+esize.c
+big_file_C7_c.c
+eplug.c
+big_file_C5_c.c
+big_file_C3_c.c
+big_file_C6_c.c
+big_file_C4_c.c
+big_file_C2_c.c
+big_file_C1_c.c
+eskelet.c
+enames.c
+evisib.c
+ececil.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+Microsoft (R) Incremental Linker Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+xpact_native_library.res 
+E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+E1\eref.obj E1\eoption.obj C17\Cobj17.lib C16\Cobj16.lib C15\Cobj15.lib 
+C14\Cobj14.lib C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib 
+C9\Cobj9.lib C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib 
+C4\Cobj4.lib C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+   Creating library xpact_native_library.lib and object xpact_native_library.exp
+C compilation completed
+   Creating library C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\native-eiffel\xpact.lib and object C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\native-eiffel\xpact.exp
+Built C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\native-eiffel\xpact.dll (Production)
+xpact_eiffel_dll_smoke.c
+xpact Eiffel DLL smoke: ok
+
+# exit code: 0

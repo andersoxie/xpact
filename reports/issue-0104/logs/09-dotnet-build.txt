@@ -1,0 +1,14 @@
+﻿# 2026-10-26T12:58:01  C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks
+# dotnet build tests\dotnet\XpactDllTests -c Release
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  XpactDllTests -> C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\dotnet\XpactDllTests\bin\Release\net10.0\XpactDllTests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.49
+
+# exit code: 0

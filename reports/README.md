@@ -53,6 +53,7 @@ test scripts that back it up. The rules are in
 | [#74](https://github.com/andersoxie/xpact/issues/74) | `build_native_eiffel.ps1` and `run_native_runtime_smoke.ps1` keep an existing MSVC backend (`msc*`) instead of always forcing `msc_vc140` | (the pull request) | see `git log --grep "Refs #74"` | [issue-0074](issue-0074/report.md) |
 | [#79](https://github.com/andersoxie/xpact/issues/79) | Parser conformance: strict UTF-8, UTF-16, names, DTD declarations, loop progress; #38, #39, #40 and K3 in the DLL; W3C known-failures list (empty) | (the pull request) | see `git log --grep "Refs #79"` | [issue-0079](issue-0079/report.md), [Jenkins log before](issue-0079/jenkins-log-cf12dee-before.txt) |
 | [#90](https://github.com/andersoxie/xpact/issues/90) | Follow-up: quote the email recipient default so both Jenkinsfiles compile as Declarative Pipeline | (the pull request) | see `git log --grep "Fix Declarative email parameter defaults"` | [issue-0090](issue-0090/report.md) |
+| [#104](https://github.com/andersoxie/xpact/issues/104) | Full check of `student-Mass` @ `41731c8` after the sync with `main`: every build and test passes with assertions on; #3, #39, #40 verified; Python test problems traced to Python 3.10 and long paths; `student/PLAN.md` brought up to date | (the pull request) | see `git log --grep "Refs #104"` | [issue-0104](issue-0104/report.md), [logs](issue-0104/logs/) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 

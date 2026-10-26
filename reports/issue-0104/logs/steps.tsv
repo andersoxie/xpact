@@ -1,0 +1,13 @@
+﻿step	exit	seconds
+01-python-unit-tests	1	15
+02-dll-production	0	32
+03-dll-assertions	0	29
+04-native-abi-tests	0	4
+05-native-runtime-smoke	0	30
+06-chunked-crc-corpus	0	14
+07-incremental-shim-audit	0	3
+08-contributed-examples	0	25
+09-dotnet-build	0	3
+10-dll-tests-assertions	0	1
+11-dll-tests-production	0	1
+12-benchmarks-w3c	0	144
