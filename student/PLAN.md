@@ -46,6 +46,8 @@ record of weeks 1-2. Day-to-day status of every issue: the
 | Old runner copy `tests/python/run_w3c_conformance.py` removed | [#133](https://github.com/andersoxie/xpact/pull/133) | [#132](https://github.com/andersoxie/xpact/issues/132) ✅ |
 | Student docs after week 5 | [#135](https://github.com/andersoxie/xpact/pull/135) | [#134](https://github.com/andersoxie/xpact/issues/134) ✅ |
 | #73 verified on Jenkins (log of `cf12dee`), closed | [#136](https://github.com/andersoxie/xpact/pull/136) | [#73](https://github.com/andersoxie/xpact/issues/73) ✅ |
+| `-SkipSmoke` removed: assertions DLL smoke back on in both Jenkinsfiles and the release script | [#144](https://github.com/andersoxie/xpact/pull/144) | [#142](https://github.com/andersoxie/xpact/issues/142) 🟡 Jenkins run |
+| 7 skipped native Python tests now run (CMake bundled with Visual Studio found); 178 run, 0 skipped | the pull request | [#143](https://github.com/andersoxie/xpact/issues/143) |
 | Keep the machine's MSVC backend in the native build scripts; retested 2026-10-26 | [#76](https://github.com/andersoxie/xpact/pull/76) (`7cf5a94`) | [#74](https://github.com/andersoxie/xpact/issues/74) 🟡 Jenkins run |
 | Merged branches deleted (11 on GitHub, 20 local), PR #76 finished | [#138](https://github.com/andersoxie/xpact/pull/138) | [#137](https://github.com/andersoxie/xpact/issues/137) ✅ |
 | Script for the supervisor: collects the information for the open dual-implementation steps and #74/#79 | (the pull request) | [#140](https://github.com/andersoxie/xpact/issues/140) |

@@ -24,6 +24,17 @@ if CMAKE is None:
     fallback = Path(os.environ.get("ProgramFiles", "C:/Program Files")) / "CMake/bin/cmake.exe"
     if fallback.is_file():
         CMAKE = str(fallback)
+if CMAKE is None and os.name == "nt":
+    # Visual Studio ships its own CMake next to the C++ tools.
+    vswhere = Path(os.environ.get("ProgramFiles(x86)", "C:/Program Files (x86)")) / "Microsoft Visual Studio/Installer/vswhere.exe"
+    if vswhere.is_file():
+        found = subprocess.run(
+            [str(vswhere), "-latest", "-products", "*", "-requires",
+             "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+             "-find", "Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe"],
+            capture_output=True, text=True, timeout=15).stdout.splitlines()
+        if found:
+            CMAKE = found[0].strip()
 HARNESS = REPO / "adapters/libexpat/xpact_isolated_runtests.c"
 
 MINICHECK = r"""
