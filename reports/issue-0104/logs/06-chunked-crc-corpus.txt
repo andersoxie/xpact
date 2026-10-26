@@ -1,0 +1,23 @@
+﻿# 2026-10-26T12:57:19  C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks
+# . .\scripts\import_msvc_environment.ps1; .\scripts\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All -SkipBuild
+
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+xpact_chunked_crc.c
+chunked CRC harness ok: xpact, direct, semantic 44f3c07b
+chunked CRC harness ok: xpact, direct, semantic 405e0d08
+chunked CRC harness ok: xpact, direct, semantic a4b8a812
+chunked CRC harness ok: xpact, direct, semantic 2683e278
+chunked CRC harness ok: xpact, direct, semantic 44ff661d
+chunked CRC harness ok: xpact, direct, semantic 95bb2fa4
+chunked CRC harness ok: xpact, direct, semantic 3ce36398
+chunked CRC harness ok: xpact, buffer, semantic 44f3c07b
+chunked CRC harness ok: xpact, buffer, semantic 405e0d08
+chunked CRC harness ok: xpact, buffer, semantic a4b8a812
+chunked CRC harness ok: xpact, buffer, semantic 2683e278
+chunked CRC harness ok: xpact, buffer, semantic 44ff661d
+chunked CRC harness ok: xpact, buffer, semantic 95bb2fa4
+chunked CRC harness ok: xpact, buffer, semantic 3ce36398
+Chunked CRC rows written to C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\chunked-crc\chunked-crc-results.tsv
+Chunked CRC corpus completed for 7 documents.
+
+# exit code: 0

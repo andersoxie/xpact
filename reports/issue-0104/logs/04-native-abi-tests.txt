@@ -1,0 +1,13 @@
+﻿# 2026-10-26T12:56:45  C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks
+# . .\scripts\import_msvc_environment.ps1; .\scripts\run_native_abi_tests.ps1 -Target Windows
+
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+xpact_native.c
+   Creating library C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\native\xpact.lib and object C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\native\xpact.exp
+Built C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\native\xpact.dll
+xpact_abi_smoke.c
+xpact_bridge_smoke.c
+xpact public ABI smoke: ok
+xpact bridge ABI smoke: ok
+
+# exit code: 0

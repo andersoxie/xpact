@@ -1,0 +1,15 @@
+﻿# 2026-10-26T12:57:34  C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks
+# . .\scripts\import_msvc_environment.ps1; .\scripts\run_incremental_shim_audit.ps1 -SkipBuild
+
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+xpact_incremental_shim_audit.c
+case	classification	result	detail
+plain_start_nonfinal	passes	observed	status=OK start_after_first=1 parsing=PARSING final=0
+parse_buffer_plain_start_nonfinal	passes	observed	status=OK start_after_first=1 parsing=PARSING final=0
+attributed_start_nonfinal	passes	observed	first_status=OK start_after_first=1 final_status=OK start_total=1 end_total=1
+attributed_start_nonfinal_without_reparse_deferral	passes	observed	configured=1 status=OK start_after_first=1
+input_context_uses_bounded_window	passes	observed	statuses=OK/OK/OK text_bytes=4096 max_context_size=1024 max_context_offset=5
+suspend_resume_replay	passes	observed	parse=SUSPENDED suspended_parsing=SUSPENDED resume=OK text_bytes=6 text_callbacks=2
+Incremental shim audit rows written to C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\incremental-shim-audit\incremental-shim-audit.tsv
+
+# exit code: 0
