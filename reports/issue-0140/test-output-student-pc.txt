@@ -1,0 +1,237 @@
+﻿xpact supervisor information (issue #140)
+Collected: 2026-10-26 22:25:56 +01:00
+Script:    C:\Users\masou\Desktop\Lia\xpact\xpactGit\student\tools\collect-supervisor-info.ps1
+Options:   MaxBuilds=3 LargeXml=2 RunDualLanes=True
+
+==============================================================================
+1. Machine and tools (#74, step 1)
+==============================================================================
+Windows:    Microsoft Windows NT 10.0.26300.0
+PowerShell: 5.1.26100.9711
+ISE_EIFFEL      Process=  User=  Machine=
+ISE_PLATFORM    Process=  User=  Machine=
+ISE_C_COMPILER  Process=  User=msc_vc140  Machine=
+ISE_LIBRARY     Process=  User=  Machine=
+ec              C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\ec.exe
+finish_freezing C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\finish_freezing.exe
+cl              (not on PATH)
+python          C:\Users\masou\AppData\Local\Programs\Python\Python310\python.exe
+py              C:\windows\py.exe
+git             C:\Program Files\Git\mingw64\bin\git.exe
+dotnet          C:\Program Files\dotnet\dotnet.exe
+cmake           (not on PATH)
+wsl             C:\windows\system32\wsl.exe
+--- ec -version
+    ISE EiffelStudio version 25.12.9.8922 - win64
+--- py -0
+     -V:3.14 *        Python 3.14 (64-bit)
+     -V:3.13          Python 3.13 (64-bit)
+     -V:3.10          Python 3.10 (64-bit)
+--- python --version
+    Python 3.10.6
+--- git --version
+    git version 2.55.0.windows.3
+--- dotnet --list-sdks
+    10.0.302 [C:\Program Files\dotnet\sdk]
+--- vswhere (installations)
+    Visual Studio Locator version 3.1.7+f39851e70f [query version 4.8.41.48107]
+    Copyright (C) Microsoft Corporation. All rights reserved.
+    
+    displayName: Visual Studio Community 2026
+--- vswhere (installation paths)
+    C:\Program Files\Microsoft Visual Studio\18\Community
+
+==============================================================================
+2. Repository
+==============================================================================
+Path: C:\Users\masou\Desktop\Lia\xpact\xpactGit
+--- branch and commit
+    d2f98a999e174a00cd0269d9105d5cc2e49b0386 2026-10-26 21:56:30 +0100 Record PR #76 merged and the branch cleanup (#138)
+    fix/140-supervisor-info-script
+--- local changes (count)
+    2
+--- remotes
+    mine	https://github.com/CodTanium/mass-xpact.git (fetch)
+    mine	https://github.com/CodTanium/mass-xpact.git (push)
+    origin	https://github.com/andersoxie/xpact.git (fetch)
+    origin	https://github.com/andersoxie/xpact.git (push)
+--- student-Mass in this checkout?
+    d2f98a9 Record PR #76 merged and the branch cleanup (#138)
+
+==============================================================================
+3. Pinned Xpact-core checkout (steps 1, 4, 6)
+==============================================================================
+--- file: C:\Users\masou\Desktop\Lia\xpact\xpactGit\dependencies\xpact-core.json
+    {
+      "schema_version": 1,
+      "repository": "https://github.com/andersoxie/Xpact-core.git",
+      "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+      "library": "library/xpact-core.ecf",
+      "required_paths": [
+        "library/xpact-core.ecf",
+        "library/source/parse/xt_xml_parser_base.e",
+        "library/source/parse/support/xt_parser_data.e",
+        "contrib/xpact/include/xpact.h",
+        "contrib/xpact/include/xpact_private.h",
+        "C-tools/shift_jis_subset/include/shift_jis_subset.h",
+        "C-tools/shift_jis_subset/src/shift_jis_subset.c",
+        "contrib/Eiffel-Loop"
+      ],
+      "dependencies": [
+        "EiffelStudio Base, Base Extension, Time and bundled zlib libraries",
+        "Eiffel-Loop subset vendored in this pinned checkout",
+        "Vendored Shift-JIS subset C source and header; compiled to an isolated MSVC object on Windows"
+      ]
+    }
+    (no cached checkout at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dependencies\xpact-core)
+
+==============================================================================
+4. Local dual-implementation runs (steps 7-9)
+==============================================================================
+run: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-catalog\20261026T212538Z-71862b1c5205  (2026-10-26 22:25)
+--- file: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-catalog\20261026T212538Z-71862b1c5205\run.json
+    {
+      "schema_version": 1,
+      "status": "failed",
+      "lane": "catalog-finalized-assertions-off",
+      "builds": [],
+      "error": "module 'hashlib' has no attribute 'file_digest'"
+    }
+run: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-w3c\20261026T212540Z-8b5327caf57f  (2026-10-26 22:25)
+--- file: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-w3c\20261026T212540Z-8b5327caf57f\run.json
+    {
+      "schema_version": 1,
+      "status": "failed",
+      "lane": "w3c-finalized-assertions-off",
+      "builds": [],
+      "error": "module 'hashlib' has no attribute 'file_digest'"
+    }
+    (no runs matching dual-ci-* in C:\Users\masou\Desktop\Lia\xpact\xpactGit\build)
+--- newest files in benchmarks\results
+    2026-10-26 21:50         985  pubmed-position-screen-step-2026-10-26.tsv
+    2026-10-26 21:50         978  pubmed-position-screen-combined-clean-2026-10-26.tsv
+    2026-10-26 21:50         981  pubmed-position-screen-batch-clean-2026-10-26.tsv
+    2026-10-26 21:50         982  pubmed-position-screen-batch-excluded-2026-10-26.tsv
+    2026-10-26 21:50         980  pubmed-position-screen-ascii-2026-10-26.tsv
+    2026-10-26 21:50        4861  pubmed-position-regression-comparison-2026-10-26.tsv
+    2026-10-26 21:50         993  pubmed-doctype-screen-doctype-final-2026-10-26.tsv
+    2026-10-26 21:50        1056  pubmed-position-pubmed-core-comparison-2026-10-26.tsv
+    2026-10-26 21:50      470464  pubmed-position-2026-10-26.json
+    2026-10-26 21:50         988  pubmed-doctype-screen-inactive-attached-type-2026-10-26.tsv
+    2026-10-26 21:50        4854  pubmed-doctype-regression-comparison-2026-10-26.tsv
+    2026-10-26 21:50        1062  pubmed-doctype-pubmed-core-comparison-2026-10-26.tsv
+
+==============================================================================
+5. Jenkins (Jenkins run, #74, #79, #130, #131)
+==============================================================================
+Jenkins home: C:\Users\masou\AppData\Local\Temp\claude\c--Users-masou-Desktop-Lia-xpact3-0-xpact-codex-w3c-xml-conformance-benchmarks\6d319149-a1be-498d-9441-6c2b8152400c\scratchpad\w5\fakejenkins
+xpact jobs: xpact
+
+### job xpact, build 42
+result: FAILURE
+timestamp: 2025-10-26 15:30
+duration: 123456
+commit: cf12dee00000000000000000000000000000abcd
+log lines: 5
+key lines (line number: text):
+  2: [Pipeline] { (Build Eiffel-Backed DLL)
+  3: xpact Eiffel DLL smoke: ok
+  4: mail to <email> failed
+  5: Finished: FAILURE
+last 40 lines:
+  Started by admin
+  [Pipeline] { (Build Eiffel-Backed DLL)
+  xpact Eiffel DLL smoke: ok
+  mail to <email> failed
+  Finished: FAILURE
+--- file: C:\Users\masou\AppData\Local\Temp\claude\c--Users-masou-Desktop-Lia-xpact3-0-xpact-codex-w3c-xml-conformance-benchmarks\6d319149-a1be-498d-9441-6c2b8152400c\scratchpad\w5\fakejenkins\jobs\xpact\builds\42\archive\build\dual-ci-42-1\run.json
+    {"status":"complete"}
+
+==============================================================================
+6. WSL (step 7)
+==============================================================================
+--- wsl -l -v
+    The Windows Subsystem for Linux is not installed. You can install by running 'wsl.exe --install'.
+    
+    For more information please visit https://aka.ms/wslinstall
+    (no WSL distribution; EiffelStudio check skipped)
+
+==============================================================================
+7. Large XML corpora (step 7)
+==============================================================================
+C:\Users\masou\AppData\Local\Temp\claude\c--Users-masou-Desktop-Lia-xpact3-0-xpact-codex-w3c-xml-conformance-benchmarks\6d319149-a1be-498d-9441-6c2b8152400c\scratchpad\w5\big.xml  25 bytes  sha256 8ccf2da99a5f94344495904736c1d3450d6c4ce6626ab32f9875127291fe6504
+    (not found: C:\Users\masou\AppData\Local\Temp\claude\c--Users-masou-Desktop-Lia-xpact3-0-xpact-codex-w3c-xml-conformance-benchmarks\6d319149-a1be-498d-9441-6c2b8152400c\scratchpad\w5\missing.xml)
+    (not found: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\large-xml-benchmarks)
+
+==============================================================================
+8. Dual lanes run now (-RunDualLanes, step 9 baseline)
+==============================================================================
+--- run_dual_catalog.ps1 -Offline (started 22:25:56)
+    exit code: 1
+    Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+    Dual catalog results: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-catalog\20261026T212558Z-7f2f1ae772b6
+    Traceback (most recent call last):
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_catalog.py", line 259, in <module>
+        sys.exit(main())
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_catalog.py", line 248, in main
+        run_lane(root, run, offline=args.offline, iterations=args.iterations, pairs=args.pairs,
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_catalog.py", line 167, in run_lane
+        tools, environment, compiler_metadata = builds.toolchain()
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\build_implementations.py", line 130, in toolchain
+        dependencies.append({"path": str(path), "sha256": file_sha256(path)})
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\build_implementations.py", line 46, in file_sha256
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+    AttributeError: module 'hashlib' has no attribute 'file_digest'
+    Dual catalog failed. See the run.json and logs printed above.
+    At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_catalog.ps1:19 char:28
+    + ... DE -ne 0) { throw "Dual catalog failed. See the run.json and logs pri ...
+    +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        + CategoryInfo          : OperationStopped: (Dual catalog fa... printed above.:String) [], RuntimeException
+        + FullyQualifiedErrorId : Dual catalog failed. See the run.json and logs printed above.
+--- run_dual_w3c.ps1 -Offline (started 22:25:58)
+    exit code: 1
+    Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+    Dual W3C results: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-w3c\20261026T212600Z-f8fecaddee29
+    Traceback (most recent call last):
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_w3c.py", line 350, in <module>
+        sys.exit(main())
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_w3c.py", line 341, in main
+        report = run_lane(root, run, suite_dir=args.suite_dir, offline=args.offline, timeout_seconds=args.timeout)
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_w3c.py", line 226, in run_lane
+        before = suite_snapshot(suite)
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_w3c.py", line 108, in suite_snapshot
+        files[path.relative_to(root).as_posix()] = builds.file_sha256(path)
+      File "C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\build_implementations.py", line 46, in file_sha256
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+    AttributeError: module 'hashlib' has no attribute 'file_digest'
+    Dual W3C returned 1. Parser gaps (exit 1) and incomplete infrastructure (exit 2) are recorded in the printed run 
+    directory.
+    At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_dual_w3c.ps1:16 char:5
+    +     throw "Dual W3C returned $LASTEXITCODE. Parser gaps (exit 1) and  ...
+    +     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        + CategoryInfo          : OperationStopped: (Dual W3C return... run directory.:String) [], RuntimeException
+        + FullyQualifiedErrorId : Dual W3C returned 1. Parser gaps (exit 1) and incomplete infrastructure (exit 2) are rec 
+       orded in the printed run directory.
+run: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-catalog\20261026T212558Z-7f2f1ae772b6  (2026-10-26 22:25)
+--- file: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-catalog\20261026T212558Z-7f2f1ae772b6\run.json
+    {
+      "schema_version": 1,
+      "status": "failed",
+      "lane": "catalog-finalized-assertions-off",
+      "builds": [],
+      "error": "module 'hashlib' has no attribute 'file_digest'"
+    }
+run: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-w3c\20261026T212600Z-f8fecaddee29  (2026-10-26 22:26)
+--- file: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\dual-w3c\20261026T212600Z-f8fecaddee29\run.json
+    {
+      "schema_version": 1,
+      "status": "failed",
+      "lane": "w3c-finalized-assertions-off",
+      "builds": [],
+      "error": "module 'hashlib' has no attribute 'file_digest'"
+    }
+
+==============================================================================
+End
+==============================================================================
+Lines: 237. Send this file to the student.

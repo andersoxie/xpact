@@ -1,0 +1,5 @@
+Started by admin
+[8mha:AAAA[0m[Pipeline] { (Build Eiffel-Backed DLL)
+xpact Eiffel DLL smoke: ok
+mail to anders.test@example.com failed
+Finished: FAILURE

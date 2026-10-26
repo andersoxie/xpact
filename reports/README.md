@@ -6,7 +6,7 @@ and padded to four digits so the folders sort by number. Each folder holds
 test scripts that back it up. The rules are in
 [`student/VERSIONING.md`](../student/VERSIONING.md) and [`CLAUDE.md`](../CLAUDE.md).
 
-> **Updated 2026-10-26** (`student-Mass` @ `7cf5a94`). 49 fixes, tasks and checks below;
+> **Updated 2026-10-26** (`student-Mass` @ `d2f98a9`). 50 fixes, tasks and checks below;
 > No pull request open; #74, #79 wait for a Jenkins run (#73 verified on Jenkins, closed 2026-10-26)
 > · open problems are listed in
 > [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
@@ -66,7 +66,8 @@ test scripts that back it up. The rules are in
 | [#128](https://github.com/andersoxie/xpact/issues/128) | C02: the #38, #39, #40 inputs as permanent tests in the DLL smoke test and the Eiffel suite; with the #38 or #40 fix undone they fail | [#129](https://github.com/andersoxie/xpact/pull/129) | `508d9c5` | [issue-0128](issue-0128/report.md), [results](../student/results/C02-final-input/README.md) |
 | [#132](https://github.com/andersoxie/xpact/issues/132) | Removed the unused old copy `tests/python/run_w3c_conformance.py`; Python tests 178 OK before and after | [#133](https://github.com/andersoxie/xpact/pull/133) | `e847813` | [issue-0132](issue-0132/report.md) |
 | [#134](https://github.com/andersoxie/xpact/issues/134) | Docs after week 5: merge commits, #130/#131 linked, cause icons corrected (suspected = ❓) | [#135](https://github.com/andersoxie/xpact/pull/135) | `77899f4` | [issue-0134](issue-0134/report.md) |
-| [#137](https://github.com/andersoxie/xpact/issues/137) | PR #76 (#74) retested and merged; 11 merged branches deleted on GitHub and on the mass-xpact copy, 20 local | (the pull request) | see `git log --grep "Refs #137"` | [issue-0137](issue-0137/report.md) |
+| [#137](https://github.com/andersoxie/xpact/issues/137) | PR #76 (#74) retested and merged; 11 merged branches deleted on GitHub and on the mass-xpact copy, 20 local | [#138](https://github.com/andersoxie/xpact/pull/138) | `d2f98a9` | [issue-0137](issue-0137/report.md) |
+| [#140](https://github.com/andersoxie/xpact/issues/140) | `student/tools/collect-supervisor-info.ps1`: one read-only command for the supervisor that collects tools, Jenkins builds, dual-lane runs, WSL and large-XML information into one .txt | (the pull request) | see `git log --grep "Refs #140"` | [issue-0140](issue-0140/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 

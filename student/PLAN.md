@@ -47,7 +47,8 @@ record of weeks 1-2. Day-to-day status of every issue: the
 | Student docs after week 5 | [#135](https://github.com/andersoxie/xpact/pull/135) | [#134](https://github.com/andersoxie/xpact/issues/134) ✅ |
 | #73 verified on Jenkins (log of `cf12dee`), closed | [#136](https://github.com/andersoxie/xpact/pull/136) | [#73](https://github.com/andersoxie/xpact/issues/73) ✅ |
 | Keep the machine's MSVC backend in the native build scripts; retested 2026-10-26 | [#76](https://github.com/andersoxie/xpact/pull/76) (`7cf5a94`) | [#74](https://github.com/andersoxie/xpact/issues/74) 🟡 Jenkins run |
-| Merged branches deleted (11 on GitHub, 20 local), PR #76 finished | (the pull request) | [#137](https://github.com/andersoxie/xpact/issues/137) |
+| Merged branches deleted (11 on GitHub, 20 local), PR #76 finished | [#138](https://github.com/andersoxie/xpact/pull/138) | [#137](https://github.com/andersoxie/xpact/issues/137) ✅ |
+| Script for the supervisor: collects the information for the open dual-implementation steps and #74/#79 | (the pull request) | [#140](https://github.com/andersoxie/xpact/issues/140) |
 
 No pull request of ours is open. Branches left on andersoxie/xpact: `main`, `student-Mass` and the supervisor's `codex/*`.
 
@@ -133,7 +134,8 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 4. **W3C skips:** 247 cases per build need external entities (resolver off in the runner); test them with local-only resolution.
 5. ✅ **Week 5 done 2026-10-26:** C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); C02 regressions ([#128](https://github.com/andersoxie/xpact/issues/128)). Open from it: findings [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) (parser work).
 6. ✅ Every known problem has an issue now (2026-10-26): Jenkins "Eiffel Tests" without output [#130](https://github.com/andersoxie/xpact/issues/130), SonarQube 401 [#131](https://github.com/andersoxie/xpact/issues/131) (both need the supervisor); the old runner copy removed ([#132](https://github.com/andersoxie/xpact/issues/132)).
-7. ⏸ Still on hold: [#13](https://github.com/andersoxie/xpact/issues/13) (GC wrapper swallows exceptions), A04.
+7. 🟡 **Supervisor's dual-implementation plan** (`newUpdates.txt`): steps 1-2 and the catalog and W3C lanes are done on `main`. For steps 3-9, Jenkins, #74 and #79, the supervisor can run `student\tools\collect-supervisor-info.ps1` ([#140](https://github.com/andersoxie/xpact/issues/140)) and send back the `.txt`.
+8. ⏸ Still on hold: [#13](https://github.com/andersoxie/xpact/issues/13) (GC wrapper swallows exceptions), A04.
 
 <details>
 <summary>The five tests chosen on 2026-10-21 and where they stand</summary>
