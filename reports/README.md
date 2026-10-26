@@ -56,6 +56,7 @@ test scripts that back it up. The rules are in
 | [#106](https://github.com/andersoxie/xpact/issues/106) | Weeks 2-3 in `student/PLAN.md`: K3 and the W3C crashes ticked as fixed (evidence from #104), #46 ticked as dropped; three items left open with the reason (supervisor decision, 6 labels, project board scope) | (the pull request) | see `git log --grep "Refs #106"` | [issue-0106](issue-0106/report.md) |
 | [#108](https://github.com/andersoxie/xpact/issues/108) | The 6 missing labels created (#35), all 21 match `labels.json`; project board brought up to date (16 issues added, 9 statuses corrected) | (the pull request) | see `git log --grep "Refs #108"` | [issue-0108](issue-0108/report.md) |
 | [#110](https://github.com/andersoxie/xpact/issues/110) | `student-Mass` synced with `main` after the supervisor's #101 (0 behind); tests on the merged code with MSVC: matrix 4/4, DLL tests 3,360/3,360 on both DLLs, W3C 1,727/1,727 in both builds | [#111](https://github.com/andersoxie/xpact/pull/111) (merge commit) | `e8c5cb3` | [issue-0110](issue-0110/report.md), [logs](issue-0110/logs/) |
+| [#113](https://github.com/andersoxie/xpact/issues/113) | Student PC brought closer to the supervisor's: MSVC backend, Python 3.14, git and Windows long paths; matrix and W3C with MSVC pass, all 178 Python tests pass; remaining version differences recorded | (the pull request) | see `git log --grep "Refs #113"` | [issue-0113](issue-0113/report.md), [logs](issue-0113/logs/) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 

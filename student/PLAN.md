@@ -63,8 +63,6 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | **Jenkins** DLL build: `Cannot find Eiffel runtime include directory`; all later stages skipped | Jenkins on `main` @ `9e1747d`, 2026-10-23 ([log](../reports/issue-0073/jenkins-log-2026-10-23.txt)) | ✔ our #2/#10 fixes replaced the Jenkins fallback `C:\El2502E` | [#73](https://github.com/andersoxie/xpact/issues/73) | fixed on `student-Mass` (both paths searched); **Jenkins rerun by the supervisor** |
 | Native build scripts always force `ISE_C_COMPILER=msc_vc140`, overriding a machine's own MSVC backend | check of all student build changes against Jenkins, 2026-10-23 | ✔ in the code · ❔ whether it breaks Jenkins | [#74](https://github.com/andersoxie/xpact/issues/74) | fixed on `student-Mass` (an existing `msc*` value is kept); Jenkins rerun |
 | GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | ⏸ **on hold** (student, 2026-10-22); parser developer |
-| Python tests fail with Python 3.10: `hashlib.file_digest` (3.11+) in the supervisor's new scripts; the setup guide says 3.10 works | [#104 check](../reports/issue-0104/report.md): 102 of 178 fail | ✔ | (no issue yet) | decide with the supervisor: require 3.11+ or avoid `file_digest` |
-| `test_implementation_builds.py`: 13 tests fail in the deep `xpact3.0` folder, 1 everywhere on the student PC | [#104 check](../reports/issue-0104/report.md) | ✔ path over 260 characters · ❓ the last one needs Windows long paths | (no issue yet) | use the clone, or enable long paths (administrator) |
 | Jenkins "Eiffel Tests" turns green without printing a test result | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt); stage unchanged on 2026-10-26 | ✔ on the student PC (stale exe) · ❓ on Jenkins | (no issue yet) | supervisor's pipeline |
 | SonarQube `HTTP 401` on Jenkins | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt) | ✔ server token | (no issue yet) | supervisor renews the token |
 | `tests/python/run_w3c_conformance.py` is an old copy (361 vs 459 lines), used by nothing | [#104 check](../reports/issue-0104/report.md) | ✔ | (no issue yet) | remove it |
@@ -102,6 +100,9 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | W3C, assertions on: 47 cases crashed in DTD declaration parsing | PR [#80](https://github.com/andersoxie/xpact/pull/80); W3C 1,727/1,727 on 2026-10-26 | [#79](https://github.com/andersoxie/xpact/issues/79), draft 21 |
 | W3C, assertions off: 220 malformed accepted, 16 well-formed rejected | PR [#80](https://github.com/andersoxie/xpact/pull/80); W3C 1,727/1,727 on 2026-10-26 | [#79](https://github.com/andersoxie/xpact/issues/79), [#29](https://github.com/andersoxie/xpact/issues/29) |
 | Build fixes were on `student-Mass`, not `main` | the supervisor merged `student-Mass` into `main` (#72, #78) | draft 22 |
+| Python tests failed with Python 3.10 (`hashlib.file_digest` is 3.11+) | Python 3.14.0 installed and made the default; setup guide says 3.11+ ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
+| `test_implementation_builds.py`: 15 problems from paths over 260 characters | Windows `LongPathsEnabled = 1` and git `core.longpaths true`; all 178 Python tests pass ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
+| Test matrix and W3C built with MinGW gcc because `ISE_C_COMPILER` had disappeared | `ISE_C_COMPILER=msc_vc140` set again; matrix 4/4 and W3C 1,727/1,727 with MSVC ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
 
 </details>
 

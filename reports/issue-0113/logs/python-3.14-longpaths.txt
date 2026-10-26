@@ -1,0 +1,11 @@
+Python 3.14.0
+.................................................................................................................Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\xpact-subject-summary-tests\tmpv1om2f3o\w3c\xpact-junit.xml)
+Cannot publish own xpact summary: 'int' object has no attribute 'get'
+Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\xpact-subject-summary-tests\tmpv1om2f3o\w3c\xpact-junit.xml)
+........Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\build\xpact-subject-summary-tests\tmpe05m32jh\w3c\xpact-junit.xml)
+........sssssss.........................................Measuring fixture...
+.
+----------------------------------------------------------------------
+Ran 178 tests in 33.268s
+
+OK (skipped=7)
