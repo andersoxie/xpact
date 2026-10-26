@@ -963,7 +963,7 @@ pipeline {
             powershell '''
               $ErrorActionPreference = "Stop"
               .\\scripts\\build_native_eiffel.ps1
-              .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions -SkipSmoke
+              .\\scripts\\build_native_eiffel.ps1 -BuildTier Assertions
             '''
           }
           runWithJenkinsTestResult('xpact Windows native tests', 'runtime smoke') {
@@ -1060,7 +1060,7 @@ pipeline {
             runWithJenkinsTestResult('libexpat adapter', 'manifest and parity expansion') {
               powershell '''
                 $ErrorActionPreference = "Stop"
-                .\\scripts\\build_native_eiffel.ps1 -SkipSmoke
+                .\\scripts\\build_native_eiffel.ps1
                 .\\scripts\\run_libexpat_adapter.ps1 `
                   -Mode Manifest `
                   -ExpatSourceDir "${env:EXPAT_SOURCE_DIR}" `
