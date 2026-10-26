@@ -78,6 +78,27 @@ Same for both scripts. Logs: [before.txt](before.txt) (2 failures, exit 1), [aft
   `msc_vc140`). Only the selection logic is tested for `msc`.
 - Independent of #73; both touch the same two scripts in different places.
 
+## 6. Retest before merging (2026-10-26, #137)
+
+The branch was brought up to `student-Mass` @ `f9822b6` (merge `d64f196`, no
+conflicts). On top of `student-Mass` the PR changes only the two
+assignments and this folder. Student PC, MSVC 19.51, EiffelStudio 25.12.
+
+| # | Command | Actual | |
+|---|---|---|---|
+| 1 | `powershell -File reports\issue-0074	est-compiler-choice.ps1` | 8 PASS, `0 failure(s)` ([log](retest-2026-10-26-compiler-choice.txt)) | ✅ |
+| 2 | `scriptsuild_native_eiffel.ps1 -BuildTier Production` | `xpact Eiffel DLL smoke: ok` ([log](retest-2026-10-26-build-Production.txt)) | ✅ |
+| 3 | `scriptsuild_native_eiffel.ps1 -BuildTier Assertions` | `xpact Eiffel DLL smoke: ok` ([log](retest-2026-10-26-build-Assertions.txt)) | ✅ |
+| 4 | `scriptsun_native_runtime_smoke.ps1` | `xpact native runtime smoke: ok` twice, `msc_vc140` ([log](retest-2026-10-26-runtime-smoke.txt)) | ✅ |
+| 5 | `set ISE_C_COMPILER=msc_vc140` + `scriptsun_eiffel_test_matrix.ps1` | 4 × `Phase 1 tests: ok`, 0 MinGW lines ([log](retest-2026-10-26-eiffel-matrix.txt)) | ✅ |
+
+**What Jenkins showed meanwhile:** the run on `main` @ `cf12dee` (2026-10-23,
+*without* this change, so with `msc_vc140` forced) built both DLLs with
+`C:\El2502E\studio\spec\win64\lib\msc_vc140inalized.lib`
+([log](../issue-0079/jenkins-log-cf12dee-before.txt), lines 204-292). So the
+forced backend works on Jenkins today; the risk this fix removes was not
+seen there. #74 stays open until a Jenkins run with this change passes.
+
 ## How to revert
 
 ```powershell

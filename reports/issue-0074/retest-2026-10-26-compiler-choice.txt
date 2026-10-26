@@ -1,0 +1,11 @@
+== scripts\build_native_eiffel.ps1
+  PASS  start (unset)    expected msc_vc140  actual msc_vc140
+  PASS  start mingw      expected msc_vc140  actual msc_vc140
+  PASS  start msc        expected msc        actual msc
+  PASS  start msc_vc140  expected msc_vc140  actual msc_vc140
+== scripts\run_native_runtime_smoke.ps1
+  PASS  start (unset)    expected msc_vc140  actual msc_vc140
+  PASS  start mingw      expected msc_vc140  actual msc_vc140
+  PASS  start msc        expected msc        actual msc
+  PASS  start msc_vc140  expected msc_vc140  actual msc_vc140
+0 failure(s)
