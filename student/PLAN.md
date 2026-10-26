@@ -70,7 +70,6 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | ⏸ **on hold** (student, 2026-10-22); parser developer |
 | Jenkins "Eiffel Tests" turns green without printing a test result | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt); stage unchanged on 2026-10-26 | ✔ on the student PC (stale exe) · ❓ on Jenkins | (no issue yet) | supervisor's pipeline |
 | SonarQube `HTTP 401` on Jenkins | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt) | ✔ server token | (no issue yet) | supervisor renews the token |
-| `tests/python/run_w3c_conformance.py` is an old copy (361 vs 459 lines), used by nothing | [#104 check](../reports/issue-0104/report.md) | ✔ | (no issue yet) | remove it |
 | Malformed UTF-8: error position 1:0, not the bad byte | Expat comparison, 2026-10-26 | ❔ suspected: whole input checked before tokenizing | [#122](https://github.com/andersoxie/xpact/issues/122) | parser developer (C08) |
 | Malformed UTF-8: no events before the error | Expat comparison | ❔ suspected: same place as #122 | [#123](https://github.com/andersoxie/xpact/issues/123) | parser developer |
 | `<root/>junk`: error 4, not 9; position moves with callbacks and chunks | Expat comparison | ❔ unknown | [#124](https://github.com/andersoxie/xpact/issues/124) | investigate |
@@ -112,6 +111,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | Python tests failed with Python 3.10 (`hashlib.file_digest` is 3.11+) | Python 3.14.0 installed and made the default; setup guide says 3.11+ ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
 | `test_implementation_builds.py`: 15 problems from paths over 260 characters | Windows `LongPathsEnabled = 1` and git `core.longpaths true`; all 178 Python tests pass ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
 | Test matrix and W3C built with MinGW gcc because `ISE_C_COMPILER` had disappeared | `ISE_C_COMPILER=msc_vc140` set again; matrix 4/4 and W3C 1,727/1,727 with MSVC ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
+| `tests/python/run_w3c_conformance.py`: an old copy of the runner (361 vs 459 lines), used by nothing | Removed; Python tests 178 OK before and after ([report](../reports/issue-0132/report.md)) | [#132](https://github.com/andersoxie/xpact/issues/132) |
 
 </details>
 

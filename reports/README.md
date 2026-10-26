@@ -63,6 +63,7 @@ test scripts that back it up. The rules are in
 | [#118](https://github.com/andersoxie/xpact/issues/118) | G01: corpus manifest of 93 W3C cases (83 counted, 10 marked) with hashes, dependencies and reviewed expected outcomes; `--check` for other machines; selected by the student, not reviewed by the supervisor | (the pull request) | see `git log --grep "Refs #118"` | [issue-0118](issue-0118/report.md), [results](../student/results/G01-corpus/README.md) |
 | [#121](https://github.com/andersoxie/xpact/issues/121) | C03/C10: the DLL tests run on Expat 2.8.1's own `libexpat.dll` and compared case by case: 4,308/4,308 same verdicts; 5 findings (#122-#126); `80` and `FF` inputs added | [#127](https://github.com/andersoxie/xpact/pull/127) | `ed3febc` | [issue-0121](issue-0121/report.md), [results](../student/results/expat-2.8.1/README.md) |
 | [#128](https://github.com/andersoxie/xpact/issues/128) | C02: the #38, #39, #40 inputs as permanent tests in the DLL smoke test and the Eiffel suite; with the #38 or #40 fix undone they fail | (the pull request) | see `git log --grep "Refs #128"` | [issue-0128](issue-0128/report.md), [results](../student/results/C02-final-input/README.md) |
+| [#132](https://github.com/andersoxie/xpact/issues/132) | Removed the unused old copy `tests/python/run_w3c_conformance.py`; Python tests 178 OK before and after | (the pull request) | see `git log --grep "Refs #132"` | [issue-0132](issue-0132/report.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 
