@@ -28,6 +28,8 @@
 - Week 2 decision on the main improvement: supervisor.
 
 ## Next (rest of week 4)
-- [ ] G01: choose 50-100 W3C cases (passes and failures, both builds), with
-  source and expected result for each.
+- [x] G01: 93 W3C cases with source, hash and reviewed expected result
+  ([#118](https://github.com/andersoxie/xpact/issues/118), [results](../../results/G01-corpus/README.md)).
+- [x] xmlconf verdict rules: 676 of the old 854 "failures" were wrong rules
+  ([#117](https://github.com/andersoxie/xpact/issues/117), [results](../../results/xmlconf-verdicts/README.md)).
 - [ ] Ask the questions in [`for superviser.txt`](../../for%20superviser.txt).

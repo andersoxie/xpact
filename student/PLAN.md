@@ -18,7 +18,7 @@ record of weeks 1-2. Day-to-day status of every issue: the
 | 1 Setup | ✅ | Build working, A01 | [week-01](notes/weekly/week-01.md), [#18](https://github.com/andersoxie/xpact/issues/18) |
 | 2 Baseline | ✅ | Assertions baseline (2026-10-14) and its rerun in git, A02 | [BASELINE.md](baseline/BASELINE.md), [A02-baseline](results/A02-baseline/README.md) |
 | 3 Failure reporting | ✅ | Build fixes in git ✅, W3C run ✅, #28 test and repair ✅, repair and GitHub setup ✅ · **B01 ✅, B02 ✅, runner continues after a failure (#60) ✅** (2026-10-22); Jenkins check of B02 dropped (2026-10-22, not pursued) | [week-03](notes/weekly/week-03.md) |
-| 4 Input matrix | 🟡 | Started 2026-10-26: full check of the merged code ✅, `main` synced (#110) ✅, PC set up like the supervisor's (#113) ✅, weeks 2-3 closed out ✅ · **G01 (50-100 reviewed W3C cases) not started** | [week-04](notes/weekly/week-04.md) |
+| 4 Input matrix | 🟡 | Started 2026-10-26: full check of the merged code ✅, `main` synced (#110) ✅, PC set up like the supervisor's (#113) ✅, weeks 2-3 closed out ✅ · **G01 ✅** 93 reviewed W3C cases ([#118](https://github.com/andersoxie/xpact/issues/118)) · xmlconf verdicts ✅ ([#117](https://github.com/andersoxie/xpact/issues/117)) | [week-04](notes/weekly/week-04.md) |
 | 5 Regressions | 🟡 | C02, C03, C10 (part) **run early** through the DLL: 3,360 cases, 3 findings (#38, #39, #40), **all fixed in #80**; rerun 2026-10-26: 3,360/3,360 on both DLLs. Expat comparison still to do | [dll-tests-2026-10-22](results/dll-tests-2026-10-22/README.md), [#104 check](../reports/issue-0104/report.md) |
 | 6-10 | ⬜ | One improvement, Expat comparison, consolidate, report, handover | |
 
@@ -115,7 +115,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 1. ✅ **Done 2026-10-26:** full check ([#104](https://github.com/andersoxie/xpact/issues/104)), weeks 2-3 closed out ([#106](https://github.com/andersoxie/xpact/issues/106), [#108](https://github.com/andersoxie/xpact/issues/108)), `main` synced ([#110](https://github.com/andersoxie/xpact/issues/110)), PC set up like the supervisor's ([#113](https://github.com/andersoxie/xpact/issues/113)). Every build and test passes with assertions on, with MSVC.
 2. 🟡 **Waiting for the supervisor:** a Jenkins rerun for [#73](https://github.com/andersoxie/xpact/issues/73), [#74](https://github.com/andersoxie/xpact/issues/74) (PR [#76](https://github.com/andersoxie/xpact/pull/76) to merge) and [#79](https://github.com/andersoxie/xpact/issues/79); the week 2 decision (main improvement and input set); the questions in [`for superviser.txt`](for%20superviser.txt).
-3. **Week 4, G01:** choose 50-100 W3C cases (passes and failures, both builds) with written expected outcomes.
+3. ✅ **Week 4, G01** ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 W3C cases in [`results/G01-corpus/`](results/G01-corpus/README.md); the xmlconf verdict rules done too ([#117](https://github.com/andersoxie/xpact/issues/117)).
 4. **W3C skips:** 247 cases per build need external entities (resolver off in the runner); test them with local-only resolution.
 5. **C02/C03/C10, remaining:** compare with Expat 2.8.1 (needs an Expat build); turn the #38-#40 inputs into regression tests.
 6. **Problems without an issue yet** (Known problems): Jenkins "Eiffel Tests" without output, SonarQube 401, the old runner copy in `tests/python/`.
@@ -207,7 +207,7 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 ## Week 4 – Input matrix
 **Activity:** Design small regressions and select 50–100 applicable W3C XML cases with the supervisor.
 **Bring to review:** An input matrix with reviewed expected outcomes.
-- [ ] [G01](github/issues/11-G01.md) Corpus manifest and 50–100 reviewed W3C cases
+- [x] [G01](github/issues/11-G01.md) Corpus manifest and 50–100 reviewed W3C cases: done 2026-10-26 ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 cases, 83 counted (46 accept, 37 reject), 10 marked; all pass today in both builds; selected by the student, not reviewed by the supervisor ([results](results/G01-corpus/README.md))
 - [x] [Fix xmlconf verdict rules](github/issues/12-xmlconf-verdicts.md): done 2026-10-26 ([#117](https://github.com/andersoxie/xpact/issues/117)): the old PowerShell runner (never in git) is superseded by `run_w3c_conformance.py`; its 2026-10-14 results re-scored: 676 of 854 "failures" were wrong rules, the 233 real problems all pass today ([results](results/xmlconf-verdicts/README.md))
 
 ## Week 5 – Regressions
