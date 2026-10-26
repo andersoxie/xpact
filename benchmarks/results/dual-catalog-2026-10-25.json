@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "run_id": "20261025T145433Z-2da55487fe38",
+  "lane": "catalog-finalized-assertions-off",
+  "input": {
+    "name": "catalog-100-items",
+    "bytes": 2611,
+    "sha256": "edf9b7324f57190602061e9cb16c4641921e623ff8654e134f2b5dbb734b7685"
+  },
+  "method": "Sequential native Windows process wall time; alternating AB/BA pairs; common iteration calibration; two untimed warmups; six measured pairs. Ratio is xpact time / core time.",
+  "scope": "Finalized assertions-discarded catalog only; parser reused; no-op handlers; no caller GC suspension. Core internal GC suspension/full collection and adapter/reset overhead remain timed. Directed gate is not general XML parity.",
+  "implementations": {
+    "xpact": {
+      "repository": "https://github.com/andersoxie/xpact.git",
+      "revision": "0e45967f3cb7b866387d9a38dcf7049a59f7086e",
+      "source_sha256": "4ca3e045a35a74b64d890cdaf972c184ab9fdd43f8e6209b929bb40a1ff5ae42",
+      "worktree_dirty": true,
+      "build_inputs_sha256": "4ca3e045a35a74b64d890cdaf972c184ab9fdd43f8e6209b929bb40a1ff5ae42",
+      "executable_sha256": "8eebb3e421f42f8d0b0379424166404daffe3f9f9d80bc5e2836be0e55ac15e1",
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "gc_policy": "normal",
+      "eiffel_version": "ISE EiffelStudio version 25.02.9.8723 Enterprise Edition - win64",
+      "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+      "generated_makefile": {
+        "CC": "cl",
+        "CPP": "cl",
+        "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+        "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+        "EIFLIB": "\"C:\\El2502E\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+      }
+    },
+    "xpact-core": {
+      "repository": "https://github.com/andersoxie/Xpact-core.git",
+      "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+      "source_sha256": "37f5500ee21e8d392c95a4b68f97f173a3a4e82be411e5ac10e31700ae17de39",
+      "worktree_dirty": false,
+      "build_inputs_sha256": "713b8005faffca4eb0f98e6aa54f781949a1bcb46ea5bae11d03b0b0da3ac9b2",
+      "executable_sha256": "96dc0928d2127a32db5078893caa41e9862ba7a0469682c2ca810ca68c8b11e2",
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "gc_policy": "core-managed-off-full-collect",
+      "eiffel_version": "ISE EiffelStudio version 25.02.9.8723 Enterprise Edition - win64",
+      "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+      "generated_makefile": {
+        "CC": "cl",
+        "CPP": "cl",
+        "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+        "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+        "EIFLIB": "\"C:\\El2502E\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+      }
+    }
+  },
+  "qualification": [
+    {
+      "implementation": "xpact",
+      "assertions": true,
+      "configuration": "finalized/assertions-on/msvc-x64",
+      "build_inputs_sha256": "4ca3e045a35a74b64d890cdaf972c184ab9fdd43f8e6209b929bb40a1ff5ae42",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": true,
+      "configuration": "finalized/assertions-on/msvc-x64",
+      "build_inputs_sha256": "713b8005faffca4eb0f98e6aa54f781949a1bcb46ea5bae11d03b0b0da3ac9b2",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact",
+      "assertions": false,
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "build_inputs_sha256": "4ca3e045a35a74b64d890cdaf972c184ab9fdd43f8e6209b929bb40a1ff5ae42",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": false,
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "build_inputs_sha256": "713b8005faffca4eb0f98e6aa54f781949a1bcb46ea5bae11d03b0b0da3ac9b2",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    }
+  ],
+  "measurement_metadata": {
+    "started_utc": "2026-10-25T14:55:59.305535+00:00",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.14.0",
+    "warmups": 2,
+    "pairs": 6,
+    "min_sample_seconds": 1.0,
+    "method": "sequential native process wall time; alternating AB/BA pairs; speed ratio = baseline time / candidate time",
+    "workloads": [
+      {
+        "name": "catalog",
+        "path": null,
+        "document_bytes": 2611,
+        "initial_iterations": 1000,
+        "sha256": null
+      }
+    ]
+  },
+  "calibration": [
+    {
+      "Workload": "catalog",
+      "Iterations": 1000,
+      "BaselineElapsedMs": 155.24930000174209,
+      "CandidateElapsedMs": 68.19180000093183
+    },
+    {
+      "Workload": "catalog",
+      "Iterations": 2000,
+      "BaselineElapsedMs": 293.7344000019948,
+      "CandidateElapsedMs": 125.09229999704985
+    },
+    {
+      "Workload": "catalog",
+      "Iterations": 4000,
+      "BaselineElapsedMs": 569.6009000021149,
+      "CandidateElapsedMs": 240.51089999920805
+    },
+    {
+      "Workload": "catalog",
+      "Iterations": 8000,
+      "BaselineElapsedMs": 1121.7366000018956,
+      "CandidateElapsedMs": 463.2617000024766
+    },
+    {
+      "Workload": "catalog",
+      "Iterations": 16000,
+      "BaselineElapsedMs": 2226.769200002309,
+      "CandidateElapsedMs": 903.8341999985278
+    },
+    {
+      "Workload": "catalog",
+      "Iterations": 32000,
+      "BaselineElapsedMs": 4482.824300001084,
+      "CandidateElapsedMs": 1806.0294999995676
+    }
+  ],
+  "results": [
+    {
+      "Workload": "catalog",
+      "Pair": 1,
+      "Order": "AB",
+      "Iterations": 32000,
+      "DocumentBytes": 2611,
+      "BaselineElapsedMs": 4476.813599998422,
+      "CandidateElapsedMs": 1807.8091999996104,
+      "BaselineMiBPerSecond": 17.798685315913772,
+      "CandidateMiBPerSecond": 44.07622025841675,
+      "CandidateSpeedRatio": 2.4763750510835916
+    },
+    {
+      "Workload": "catalog",
+      "Pair": 2,
+      "Order": "BA",
+      "Iterations": 32000,
+      "DocumentBytes": 2611,
+      "BaselineElapsedMs": 4508.816099998512,
+      "CandidateElapsedMs": 1811.624000001757,
+      "BaselineMiBPerSecond": 17.67235449775858,
+      "CandidateMiBPerSecond": 43.9834074202471,
+      "CandidateSpeedRatio": 2.488825550994102
+    },
+    {
+      "Workload": "catalog",
+      "Pair": 3,
+      "Order": "AB",
+      "Iterations": 32000,
+      "DocumentBytes": 2611,
+      "BaselineElapsedMs": 4453.337300001294,
+      "CandidateElapsedMs": 1819.2817000017385,
+      "BaselineMiBPerSecond": 17.892513213484154,
+      "CandidateMiBPerSecond": 43.798272958112456,
+      "CandidateSpeedRatio": 2.447854722002117
+    },
+    {
+      "Workload": "catalog",
+      "Pair": 4,
+      "Order": "BA",
+      "Iterations": 32000,
+      "DocumentBytes": 2611,
+      "BaselineElapsedMs": 4462.219699998968,
+      "CandidateElapsedMs": 1796.8709999986459,
+      "BaselineMiBPerSecond": 17.856896755754413,
+      "CandidateMiBPerSecond": 44.34452806263502,
+      "CandidateSpeedRatio": 2.4833277959309994
+    },
+    {
+      "Workload": "catalog",
+      "Pair": 5,
+      "Order": "AB",
+      "Iterations": 32000,
+      "DocumentBytes": 2611,
+      "BaselineElapsedMs": 4430.133699999715,
+      "CandidateElapsedMs": 1788.8901999976952,
+      "BaselineMiBPerSecond": 17.98622838050692,
+      "CandidateMiBPerSecond": 44.54236290437371,
+      "CandidateSpeedRatio": 2.4764704396085477
+    },
+    {
+      "Workload": "catalog",
+      "Pair": 6,
+      "Order": "BA",
+      "Iterations": 32000,
+      "DocumentBytes": 2611,
+      "BaselineElapsedMs": 4454.459000000497,
+      "CandidateElapsedMs": 1895.1342000000295,
+      "BaselineMiBPerSecond": 17.88800760863802,
+      "CandidateMiBPerSecond": 42.045252776491374,
+      "CandidateSpeedRatio": 2.3504715391661595
+    }
+  ],
+  "summary": [
+    {
+      "workload": "catalog",
+      "pairs": 6,
+      "iterations": 32000,
+      "document_bytes": 2611,
+      "median_candidate_speed_ratio": 2.4764227453460697,
+      "min_candidate_speed_ratio": 2.3504715391661595,
+      "max_candidate_speed_ratio": 2.488825550994102,
+      "median_baseline_ms": 4458.339349999733,
+      "median_candidate_ms": 1809.7166000006837,
+      "min_baseline_ms": 4430.133699999715,
+      "max_baseline_ms": 4508.816099998512,
+      "min_candidate_ms": 1788.8901999976952,
+      "max_candidate_ms": 1895.1342000000295
+    }
+  ]
+}

@@ -51,7 +51,7 @@ main(void) {
 	if (!check(version.minor == XML_MINOR_VERSION, "minor version matches header")) return 1;
 	if (!check(version.micro == XML_MICRO_VERSION, "micro version matches header")) return 1;
 	if (!check(version_text != NULL, "version string returned")) return 1;
-	if (!check(strstr(version_text, "xpact-eiffel-bridge") != NULL, "bridge version reported")) return 1;
+	if (!check(strcmp(version_text, "expat_2.8.1") == 0, "Expat-compatible version reported")) return 1;
 
 	parser = XML_ParserCreate(NULL);
 	if (!check(parser != NULL, "parser created without installed bridge")) return 1;

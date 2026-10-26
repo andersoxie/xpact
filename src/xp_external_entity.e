@@ -16,7 +16,6 @@ feature {NONE} -- Initialization
 			name_not_empty: not a_name.is_empty
 			public_id_attached: a_public_id /= Void
 			system_id_attached: a_system_id /= Void
-			system_id_not_empty: not a_system_id.is_empty
 			notation_name_attached: a_notation_name /= Void
 			unparsed_only_for_general: a_is_unparsed implies not a_is_parameter
 		do
@@ -60,7 +59,6 @@ invariant
 	name_not_empty: not name.is_empty
 	public_id_attached: public_id /= Void
 	system_id_attached: system_id /= Void
-	system_id_not_empty: not system_id.is_empty
 	notation_name_attached: notation_name /= Void
 	unparsed_only_for_general: is_unparsed implies not is_parameter
 

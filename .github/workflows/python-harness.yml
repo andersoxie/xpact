@@ -1,4 +1,4 @@
-# Runs the W3C harness unit tests, which need no EiffelStudio, on every pull
+# Runs W3C and benchmark harness unit tests, which need no EiffelStudio, on every pull
 # request. The full Eiffel build runs in Jenkins on a Windows PC instead.
 name: Python harness tests
 
@@ -21,3 +21,7 @@ jobs:
           # 3.11 or newer: on 3.10 the csv module cannot write NUL (see the Python 3.10 finding).
           python-version: "3.12"
       - run: python -m unittest discover -s tests/python -p test_w3c_conformance.py -v
+      - run: python -m unittest discover -s tests/python -p test_wsl_benchmarks.py -v
+      - run: python -m unittest discover -s tests/python -p test_compare_eiffel_benchmarks.py -v
+      - run: python -m unittest discover -s tests/python -p test_implementation_builds.py -v
+      - run: python -m unittest discover -s tests/python -p test_dual_catalog.py -v

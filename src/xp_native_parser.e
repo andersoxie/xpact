@@ -4,6 +4,9 @@ note
 class
 	XP_NATIVE_PARSER
 
+inherit
+	XP_LIMITS
+
 create
 	make
 
@@ -12,7 +15,14 @@ feature {NONE} -- Initialization
 	make
 		do
 			create handler.make
-			create parser.make (handler)
+				-- A native DTD may occupy the existing input budget. Keep the
+				-- input, element-depth and attribute-count ceilings unchanged.
+			create parser.make_with_limits (handler, Default_max_input_bytes, Default_max_element_depth, Default_max_attribute_count, Default_max_input_bytes)
+			handler.set_external_entity_replay_target (parser)
+			parser.set_max_name_length (524288)
+			parser.set_legacy_name_character_ranges (True)
+				-- `decoded_input' converts UTF-16 and Latin-1 to UTF-8 before parsing.
+			parser.set_input_is_utf8 (True)
 			parser.set_external_entity_resolver (handler)
 			configure_external_entity_policy
 			create input_buffer.make_empty
@@ -35,6 +45,8 @@ feature -- Expat-compatible constants
 	Xml_status_ok: INTEGER = 1
 
 	Xml_status_suspended: INTEGER = 2
+
+	Xml_error_no_memory: INTEGER = 1
 
 	Xml_initialized: INTEGER = 0
 
@@ -188,6 +200,21 @@ feature -- Access
 	delivered_callback_count: INTEGER
 			-- Number of native callbacks already delivered from `input_buffer'.
 
+	plain_ascii_text_prefix: BOOLEAN
+			-- Does the parsed prefix end in an open plain root with no observers?
+
+	plain_ascii_text_unparsed_count: INTEGER
+			-- Validated ASCII text appended since that grammar checkpoint.
+
+	plain_ascii_start_tag_prefix: BOOLEAN
+			-- Does the validated prefix end with literal spaces after an unfinished root name?
+
+	plain_ascii_start_tag_unparsed_count: INTEGER
+			-- Literal spaces appended since that unfinished-token checkpoint.
+
+	plain_ascii_start_tag_name_length: INTEGER
+			-- Checked root-name byte length at that checkpoint.
+
 	deferred_reparse_start_index: INTEGER
 			-- Start index of the token currently delayed by reparse deferral.
 
@@ -202,6 +229,21 @@ feature -- Access
 
 	deferred_reparse_scan_quote: CHARACTER_8
 			-- Quote that ends the current delayed start-tag attribute value.
+
+	doctype_prefix_scan_index: INTEGER
+			-- Next byte to inspect in an initial incomplete DOCTYPE.
+
+	doctype_prefix_depth: INTEGER
+			-- Internal subset bracket depth in the initial DOCTYPE.
+
+	doctype_prefix_quote: CHARACTER_8
+			-- Active literal quote in the initial DOCTYPE, or NUL.
+
+	doctype_prefix_in_comment: BOOLEAN
+			-- Is the initial DOCTYPE scan inside a comment?
+
+	doctype_prefix_complete: BOOLEAN
+			-- Has the initial DOCTYPE terminator been seen?
 
 	ready_plain_start_tag_start_index: INTEGER
 			-- Start index of a completed plain start tag that can be emitted directly.
@@ -249,7 +291,7 @@ feature -- Access
 	current_column_number: INTEGER
 			-- Current 0-based XML column number.
 		do
-			Result := parser.current_column_number
+			Result := parser.current_column_number + plain_ascii_text_unparsed_count + plain_ascii_start_tag_unparsed_count
 		ensure
 			column_non_negative: Result >= 0
 		end
@@ -257,7 +299,7 @@ feature -- Access
 	current_byte_index: INTEGER
 			-- Current 0-based byte index, or -1 before parsing starts.
 		do
-			Result := parser.current_byte_index
+			Result := parser.current_byte_index + plain_ascii_text_unparsed_count + plain_ascii_start_tag_unparsed_count
 		ensure
 			valid_before_or_after_start: Result >= -1
 		end
@@ -572,6 +614,7 @@ feature -- Element change
 			child_attached: a_child /= Void
 		do
 			parser.merge_entity_context_from (a_child.parser)
+			handler.record_external_entity_context_from (a_child.parser)
 			Result := True
 		ensure
 			merged: Result
@@ -661,7 +704,7 @@ feature -- Element change
 		end
 
 	reset: BOOLEAN
-			-- Reset parser state while preserving callback registrations.
+			-- Reset parser state and callbacks, preserving its native handle.
 		do
 			input_buffer.wipe_out
 			delivered_callback_count := 0
@@ -670,6 +713,8 @@ feature -- Element change
 			deferred_reparse_scan_index := 0
 			deferred_reparse_scan_in_quote := False
 			deferred_reparse_scan_quote := '%U'
+			clear_doctype_prefix_scan
+			clear_plain_ascii_text_prefix
 			ready_plain_start_tag_start_index := 0
 			ready_plain_start_tag_end_index := 0
 			accounting_direct_count := 0
@@ -679,6 +724,8 @@ feature -- Element change
 			context_buffer := Void
 			handler.reset_events
 			handler.finish_successful_parse_callbacks
+			parser.clear_cached_doctype
+			handler.reset_callback_registrations
 			last_error_code := Xml_error_none
 			parsing_status := Xml_initialized
 			final_buffer := False
@@ -756,6 +803,7 @@ feature -- Parsing
 			final_finished_or_suspended: a_is_final implies (parsing_status = Xml_finished or parsing_status = Xml_suspended)
 			success_non_final_parsing: Result = Xml_status_ok and not a_is_final implies parsing_status = Xml_parsing
 			final_recorded: final_buffer = a_is_final
+			no_input_after_memory_failure: Result = Xml_status_error and last_error_code = Xml_error_no_memory implies input_buffer.is_empty
 		end
 
 feature {NONE} -- Parsing implementation
@@ -772,12 +820,24 @@ feature {NONE} -- Parsing implementation
 			l_defer_callbacks: BOOLEAN
 			l_direct_callback_count: INTEGER
 			l_ready_end: INTEGER
+			l_direct_end: INTEGER
+			l_pending_start: INTEGER
+			l_plain_start_name_length: INTEGER
+			l_invalid_plain_start_suffix: BOOLEAN
+			l_use_cached_doctype: BOOLEAN
 		do
 			final_buffer := a_is_final
 			accounting_direct_count := accounting_direct_count + a_input.count
-			if has_unsupported_explicit_encoding and then explicit_encoding_overrides_declaration and then not native_unknown_encoding_handler_available then
+			if a_input.count > parser.max_input_bytes - input_buffer.count then
+				last_error_code := Xml_error_no_memory
+				parsing_status := Xml_finished
+				input_buffer.wipe_out
+				clear_terminal_replay_state
+				Result := Xml_status_error
+			elseif has_unsupported_explicit_encoding and then explicit_encoding_overrides_declaration and then not native_unknown_encoding_handler_available then
 				last_error_code := Xml_error_unknown_encoding
 				parsing_status := Xml_finished
+				clear_terminal_replay_state
 				Result := Xml_status_error
 			else
 				input_buffer.append (a_input)
@@ -785,13 +845,31 @@ feature {NONE} -- Parsing implementation
 					last_error_code := Xml_error_amplification_limit_breach
 					parsing_status := Xml_finished
 					input_buffer.wipe_out
-					delivered_callback_count := 0
+					clear_terminal_replay_state
 					Result := Xml_status_error
 				elseif not a_is_final and then has_partial_encoding_signature_prefix (input_buffer) then
 					last_error_code := Xml_error_none
 					parsing_status := Xml_parsing
 					Result := Xml_status_ok
+				elseif not a_is_final and then can_append_plain_start_tag_spaces (a_input) then
+					plain_ascii_start_tag_unparsed_count := plain_ascii_start_tag_unparsed_count + a_input.count
+					last_error_code := Xml_error_none
+					parsing_status := Xml_parsing
+					Result := Xml_status_ok
+				elseif not a_is_final and then can_append_plain_ascii_text (a_input) then
+					plain_ascii_text_unparsed_count := plain_ascii_text_unparsed_count + a_input.count
+					last_error_code := Xml_error_none
+					parsing_status := Xml_parsing
+					Result := Xml_status_ok
+				elseif not a_is_final and then should_wait_for_doctype_prefix (input_buffer) then
+						-- parse_prefix cannot consume an unfinished DOCTYPE. Scan its
+						-- new bytes once instead of reparsing an ever-growing subset.
+					last_error_code := Xml_error_none
+					parsing_status := Xml_parsing
+					Result := Xml_status_ok
 				else
+					l_invalid_plain_start_suffix := plain_ascii_start_tag_prefix and then not native_reparse_deferral_enabled (native_parser_handle) and then starts_with_left_angle_after_spaces (a_input)
+					clear_plain_ascii_text_prefix
 					parsing_status := Xml_parsing
 					handler.reset_events
 					if namespace_mode then
@@ -799,9 +877,20 @@ feature {NONE} -- Parsing implementation
 					end
 					l_input := decoded_input (input_buffer)
 					if l_input = Void then
-						Result := Xml_status_error
+						if not a_is_final and then last_error_code = Xml_error_partial_char then
+								-- Unknown encodings can end inside a converter sequence.
+								-- Retain the bytes and previously delivered callback count.
+							last_error_code := Xml_error_none
+							Result := Xml_status_ok
+						else
+							Result := Xml_status_error
+						end
 					else
-						l_defer_callbacks := should_defer_reparse_callbacks (l_input, a_is_final)
+						l_use_cached_doctype := not is_external_entity_parser and then doctype_prefix_complete and then can_buffer_doctype_prefix and then l_input.count = input_buffer.count
+						if not l_use_cached_doctype then
+							parser.clear_cached_doctype
+						end
+						l_defer_callbacks := should_defer_reparse_callbacks (l_input, a_is_final, a_input.count)
 						if l_defer_callbacks and then deferred_reparse_start_index > 1 then
 							l_parse_input := l_input.substring (1, deferred_reparse_start_index - 1)
 							l_context_input := input_buffer.substring (1, deferred_reparse_start_index - 1)
@@ -813,8 +902,11 @@ feature {NONE} -- Parsing implementation
 							l_context_input := input_buffer
 						end
 						handler.prepare_callback_replay (delivered_callback_count)
+							-- The direct start-tag shortcut only serves non-final input, which is parsed
+							-- again by later calls; a final call must parse all of the input (C01, #38).
 						if
-							not l_defer_callbacks
+							not a_is_final
+							and then not l_defer_callbacks
 							and then ready_plain_start_tag_start_index = 0
 							and then delivered_callback_count = 0
 							and then l_input.count > 0
@@ -832,10 +924,12 @@ feature {NONE} -- Parsing implementation
 							context_source_buffer.wipe_out
 						end
 						context_buffer := Void
-						if can_emit_ready_plain_start_tag_directly then
+						if not a_is_final and then can_emit_ready_plain_start_tag_directly and then ready_plain_start_tag_end_index = l_input.count then
+							l_direct_end := ready_plain_start_tag_end_index
 							l_ok := emit_ready_plain_start_tag_directly (l_input)
 							if l_ok then
 								l_direct_callback_count := 1
+								native_consume_input_prefix (native_parser_handle, (input_buffer.count - l_direct_end).max (0))
 							end
 						end
 						if l_direct_callback_count = 0 then
@@ -859,10 +953,12 @@ feature {NONE} -- Parsing implementation
 								if a_is_final then
 									l_ok := parser.parse_external_entity (l_parse_input)
 								else
-									l_ok := True
+									l_ok := parser.parse_external_entity_prefix (l_parse_input)
 								end
 							else
-								if a_is_final then
+								if l_use_cached_doctype then
+									l_ok := parser.parse_with_cached_doctype (l_parse_input, a_is_final)
+								elseif a_is_final or l_invalid_plain_start_suffix then
 									l_ok := parser.parse (l_parse_input)
 								else
 									l_ok := parser.parse_prefix (l_parse_input)
@@ -897,13 +993,37 @@ feature {NONE} -- Parsing implementation
 							delivered_callback_count := handler.callback_sequence_count
 						end
 						accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
+						if not l_defer_callbacks and then l_direct_callback_count = 0 and then attached l_input as l_consumed_input then
+							l_pending_start := parser.incomplete_markup_prefix_start (l_consumed_input)
+							if l_pending_start = 0 then
+								native_consume_input_prefix (native_parser_handle, 0)
+							else
+								native_consume_input_prefix (native_parser_handle, l_consumed_input.count - l_pending_start + 1)
+							end
+							if l_pending_start = 1 and then not is_external_entity_parser and then not handler.diagnostic_events_enabled and then l_consumed_input.count = input_buffer.count then
+								l_plain_start_name_length := plain_unclosed_start_tag_name_length (l_consumed_input)
+								if l_plain_start_name_length > 0 then
+									plain_ascii_start_tag_prefix := True
+									plain_ascii_start_tag_name_length := l_plain_start_name_length
+								end
+							end
+						end
+						if not is_external_entity_parser and then not handler.diagnostic_events_enabled and then
+							not handler.has_observable_native_callbacks and then attached l_input as l_complete_input and then
+							l_complete_input.count > 0 and then is_plain_completed_start_tag (l_complete_input, 1, l_complete_input.count)
+						then
+							plain_ascii_text_prefix := True
+						end
 			else
 				if Result = Xml_status_ok then
 					accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
 				end
 				handler.finish_successful_parse_callbacks
+				parser.clear_cached_doctype
 				parsing_status := Xml_finished
 				input_buffer.wipe_out
+				clear_doctype_prefix_scan
+				clear_plain_ascii_text_prefix
 				context_source_buffer.wipe_out
 				context_buffer := Void
 				delivered_callback_count := 0
@@ -918,6 +1038,33 @@ feature {NONE} -- Parsing implementation
 			final_finished_or_suspended: a_is_final implies (parsing_status = Xml_finished or parsing_status = Xml_suspended)
 			success_non_final_parsing: Result = Xml_status_ok and not a_is_final implies parsing_status = Xml_parsing
 			final_recorded: final_buffer = a_is_final
+			no_input_after_memory_failure: Result = Xml_status_error and last_error_code = Xml_error_no_memory implies input_buffer.is_empty
+		end
+
+	clear_terminal_replay_state
+			-- Release callback replay storage without changing the parser's error position.
+		do
+			create context_source_buffer.make_empty
+			context_buffer := Void
+			delivered_callback_count := 0
+			handler.prepare_callback_replay (0)
+			handler.finish_successful_parse_callbacks
+			parser.clear_cached_doctype
+			clear_doctype_prefix_scan
+			clear_deferred_reparse
+			clear_plain_ascii_text_prefix
+			ready_plain_start_tag_start_index := 0
+			ready_plain_start_tag_end_index := 0
+		ensure
+			no_context_source: context_source_buffer.is_empty
+			no_context_copy: context_buffer = Void
+			no_delivered_callbacks: delivered_callback_count = 0
+			no_callbacks_seen: handler.callback_sequence_count = 0
+			no_delivered_text_lengths: handler.delivered_character_data_lengths.is_empty
+			no_deferred_token: deferred_reparse_start_index = 0 and deferred_reparse_end_index = 0
+			no_ready_start_tag: ready_plain_start_tag_start_index = 0 and ready_plain_start_tag_end_index = 0
+			no_ascii_checkpoint: not plain_ascii_text_prefix and plain_ascii_text_unparsed_count = 0
+			no_start_tag_checkpoint: not plain_ascii_start_tag_prefix and plain_ascii_start_tag_unparsed_count = 0 and plain_ascii_start_tag_name_length = 0
 		end
 
 	parse_status_into_cell (a_input: READABLE_STRING_8; a_is_final: BOOLEAN; a_result: CELL [INTEGER])
@@ -983,17 +1130,179 @@ feature -- Parsing
 
 feature {NONE} -- Encoding
 
+	clear_doctype_prefix_scan
+			-- Forget the append-only initial DOCTYPE scan on reset or completion.
+		do
+			doctype_prefix_scan_index := 0
+			doctype_prefix_depth := 0
+			doctype_prefix_quote := '%U'
+			doctype_prefix_in_comment := False
+			doctype_prefix_complete := False
+		end
+
+	should_wait_for_doctype_prefix (a_input: READABLE_STRING_8): BOOLEAN
+			-- Is an initial DOCTYPE incomplete? Inspect only newly appended bytes.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			c: CHARACTER_8
+			l_wait: BOOLEAN
+		do
+			if not doctype_prefix_complete and then not is_external_entity_parser and then
+				can_buffer_doctype_prefix and then has_initial_doctype (a_input)
+			then
+				if doctype_prefix_scan_index = 0 then
+					doctype_prefix_scan_index := 10
+				end
+				from
+					i := doctype_prefix_scan_index
+				until
+					i > a_input.count or doctype_prefix_complete or l_wait
+				loop
+					c := a_input.item (i)
+					if doctype_prefix_in_comment then
+						if c = '-' then
+							if i + 2 <= a_input.count then
+								if a_input.substring (i, i + 2).same_string ("-->") then
+									doctype_prefix_in_comment := False
+									i := i + 2
+								end
+							else
+								l_wait := True
+							end
+						end
+					elseif doctype_prefix_quote /= '%U' then
+						if c = doctype_prefix_quote then
+							doctype_prefix_quote := '%U'
+						end
+					elseif c = '%'' or c = '%"' then
+						doctype_prefix_quote := c
+					elseif c = '<' then
+						if i + 3 <= a_input.count then
+							if a_input.substring (i, i + 3).same_string ("<!--") then
+								doctype_prefix_in_comment := True
+								i := i + 3
+							end
+						else
+							l_wait := True
+						end
+					elseif c = '[' then
+						doctype_prefix_depth := doctype_prefix_depth + 1
+					elseif c = ']' and then doctype_prefix_depth > 0 then
+						doctype_prefix_depth := doctype_prefix_depth - 1
+					elseif c = '>' and then doctype_prefix_depth = 0 then
+						doctype_prefix_complete := True
+					end
+					if not l_wait then
+						i := i + 1
+					end
+				end
+				doctype_prefix_scan_index := i
+				Result := not doctype_prefix_complete
+			end
+		end
+
+	can_buffer_doctype_prefix: BOOLEAN
+			-- Can an unfinished initial DOCTYPE be buffered without suppressing events?
+		do
+			Result := not handler.diagnostic_events_enabled
+				and then handler.default_callback = default_pointer
+				and then handler.start_doctype_decl_callback = default_pointer
+				and then handler.end_doctype_decl_callback = default_pointer
+				and then handler.element_decl_callback = default_pointer
+				and then handler.attlist_decl_callback = default_pointer
+				and then handler.entity_decl_callback = default_pointer
+				and then handler.unparsed_entity_decl_callback = default_pointer
+				and then handler.notation_decl_callback = default_pointer
+				and then handler.external_entity_ref_callback = default_pointer
+				and then handler.skipped_entity_callback = default_pointer
+				and then handler.not_standalone_callback = default_pointer
+				and then handler.comment_callback = default_pointer
+				and then handler.processing_instruction_callback = default_pointer
+		end
+
+	has_initial_doctype (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does the byte buffer start with the ASCII DOCTYPE opener?
+		do
+			Result := a_input.count >= 9
+				and then a_input.item (1) = '<' and then a_input.item (2) = '!'
+				and then a_input.item (3) = 'D' and then a_input.item (4) = 'O'
+				and then a_input.item (5) = 'C' and then a_input.item (6) = 'T'
+				and then a_input.item (7) = 'Y' and then a_input.item (8) = 'P'
+				and then a_input.item (9) = 'E'
+		end
+
 	has_partial_encoding_signature_prefix (a_input: READABLE_STRING_8): BOOLEAN
 			-- Does `a_input' end inside an initial encoding signature that needs more bytes?
 		require
 			input_attached: a_input /= Void
 		do
 			Result :=
-				(a_input.count = 1 and then (a_input.item (1).code = 239 or else a_input.item (1).code = 254 or else a_input.item (1).code = 255))
+				(a_input.count = 1 and then (explicit_encoding_is_utf16 or else explicit_encoding_is_utf16le or else explicit_encoding_is_utf16be or else a_input.item (1).code = 0 or else a_input.item (1) = '<' or else a_input.item (1).code = 239 or else a_input.item (1).code = 254 or else a_input.item (1).code = 255))
 				or else (a_input.count = 2 and then a_input.item (1).code = 239 and then a_input.item (2).code = 187)
 		end
 
-	should_defer_reparse_callbacks (a_input: READABLE_STRING_8; a_is_final: BOOLEAN): BOOLEAN
+	complete_encoded_prefix_count (a_input: READABLE_STRING_8): INTEGER
+			-- Bytes preceding a non-final trailing partial encoded character.
+		require
+			input_attached: a_input /= Void
+		local
+			l_utf16: BOOLEAN
+			l_little_endian: BOOLEAN
+			l_unit: INTEGER
+			l_index: INTEGER
+			l_lead: INTEGER
+			l_needed: INTEGER
+			l_declared_encoding: detachable STRING_8
+			l_utf8: BOOLEAN
+		do
+			Result := a_input.count
+			l_little_endian := has_utf16le_signature (a_input) or else explicit_encoding_is_utf16le
+			l_utf16 := l_little_endian or else has_utf16be_signature (a_input) or else explicit_encoding_is_utf16be or else explicit_encoding_is_utf16
+			if l_utf16 then
+				Result := a_input.count - (a_input.count \\ 2)
+				if Result >= 2 then
+					l_unit := utf16_unit_at (a_input, Result - 1, l_little_endian)
+					if l_unit >= 55296 and then l_unit <= 56319 then
+						Result := Result - 2
+					end
+				end
+			elseif not a_input.is_empty then
+				l_declared_encoding := declared_xml_encoding (a_input)
+				if explicit_encoding_overrides_declaration and then attached explicit_encoding as l_encoding then
+					l_utf8 := is_utf8_encoding_name (l_encoding)
+				elseif attached l_declared_encoding as l_encoding then
+					l_utf8 := is_utf8_encoding_name (l_encoding)
+				elseif attached explicit_encoding as l_encoding then
+					l_utf8 := is_utf8_encoding_name (l_encoding)
+				else
+					l_utf8 := True
+				end
+				if l_utf8 then
+					from
+						l_index := a_input.count
+					until
+						l_index <= 1 or else a_input.item (l_index).code < 128 or else a_input.item (l_index).code >= 192
+					loop
+						l_index := l_index - 1
+					end
+					l_lead := a_input.item (l_index).code
+					if l_lead >= 194 and then l_lead <= 223 then
+						l_needed := 2
+					elseif l_lead >= 224 and then l_lead <= 239 then
+						l_needed := 3
+					elseif l_lead >= 240 and then l_lead <= 244 then
+						l_needed := 4
+					end
+					if l_needed > 0 and then a_input.count - l_index + 1 < l_needed then
+						Result := l_index - 1
+					end
+				end
+			end
+		end
+
+	should_defer_reparse_callbacks (a_input: READABLE_STRING_8; a_is_final: BOOLEAN; a_recent_count: INTEGER): BOOLEAN
 			-- Should callbacks newly discovered by reparsing `a_input' remain hidden for now?
 		require
 			input_attached: a_input /= Void
@@ -1009,7 +1318,7 @@ feature {NONE} -- Encoding
 				clear_deferred_reparse
 			else
 				if deferred_reparse_start_index = 0 then
-					if delivered_callback_count = 0 and then a_input.count > 0 and then is_deferred_start_tag_prefix (a_input, 1) then
+					if delivered_callback_count = 0 and then a_input.count > 0 and then is_deferred_start_tag_prefix (a_input, 1) and then parser.markup_prefix_end (a_input, 1) = 0 then
 						deferred_reparse_start_index := 1
 					else
 						l_start := parser.incomplete_markup_prefix_start (a_input)
@@ -1030,7 +1339,7 @@ feature {NONE} -- Encoding
 					elseif is_deferred_start_tag_prefix (a_input, deferred_reparse_start_index) then
 						l_end := incremental_deferred_start_tag_end (a_input)
 					else
-						l_end := parser.markup_prefix_end (a_input, deferred_reparse_start_index)
+						l_end := incremental_deferred_markup_end (a_input)
 					end
 					if l_end = 0 then
 						Result := True
@@ -1045,7 +1354,7 @@ feature {NONE} -- Encoding
 						else
 							l_token_length := deferred_reparse_end_index - deferred_reparse_start_index + 1
 							l_bytes_after_token := a_input.count - deferred_reparse_end_index
-							if l_bytes_after_token < l_token_length then
+							if l_bytes_after_token < l_token_length and then not (a_recent_count > 0 and then native_buffer_spare_capacity (native_parser_handle) < a_recent_count) then
 								Result := True
 							else
 								clear_deferred_reparse
@@ -1053,6 +1362,121 @@ feature {NONE} -- Encoding
 						end
 					end
 				end
+			end
+		end
+
+	clear_plain_ascii_text_prefix
+			-- Forget validated ASCII text and unfinished-root checkpoints.
+		do
+			plain_ascii_text_prefix := False
+			plain_ascii_text_unparsed_count := 0
+			plain_ascii_start_tag_prefix := False
+			plain_ascii_start_tag_unparsed_count := 0
+			plain_ascii_start_tag_name_length := 0
+		end
+
+	can_append_plain_start_tag_spaces (a_input: READABLE_STRING_8): BOOLEAN
+			-- Can new literal spaces extend a validated unfinished root token?
+		local
+			i: INTEGER
+		do
+			if plain_ascii_start_tag_prefix and then not handler.diagnostic_events_enabled and then
+				plain_ascii_start_tag_name_length <= parser.max_name_length and then input_buffer.count <= parser.max_token_length
+			then
+				Result := True
+				from i := 1 until i > a_input.count or not Result loop
+					Result := a_input.item (i) = ' '
+					i := i + 1
+				end
+			end
+		end
+
+	starts_with_left_angle_after_spaces (a_input: READABLE_STRING_8): BOOLEAN
+			-- Is the next byte after already validated spaces an invalid attribute opener?
+		local
+			i: INTEGER
+		do
+			from i := 1 until i > a_input.count or else a_input.item (i) /= ' ' loop
+				i := i + 1
+			end
+			Result := i <= a_input.count and then a_input.item (i) = '<'
+		end
+
+	plain_unclosed_start_tag_name_length (a_input: READABLE_STRING_8): INTEGER
+			-- Checked ASCII name length when only literal spaces follow it, without a closing bracket.
+		local
+			i: INTEGER
+			l_name_length: INTEGER
+			l_attributes: XP_ATTRIBUTES
+			l_valid: BOOLEAN
+		do
+			if a_input.count >= 3 and then a_input.item (1) = '<' and then a_input.item (2).code < 128 then
+				create l_attributes.make
+				if l_attributes.is_name_start_character (a_input.item (2)) then
+					from i := 3 until i > a_input.count or else a_input.item (i).code >= 128 or else not l_attributes.is_name_character (a_input.item (i)) loop
+						i := i + 1
+					end
+					l_name_length := i - 2
+					if l_name_length <= parser.max_name_length and then i <= a_input.count and then a_input.item (i) = ' ' then
+						l_valid := True
+						from until i > a_input.count or not l_valid loop
+							l_valid := a_input.item (i) = ' '
+							i := i + 1
+						end
+						if l_valid then
+							Result := l_name_length
+						end
+					end
+				end
+			end
+		ensure
+			within_name_limit: Result >= 0 and Result <= parser.max_name_length
+		end
+
+	can_append_plain_ascii_text (a_input: READABLE_STRING_8): BOOLEAN
+			-- Can new bytes advance a known text state without replaying old bytes?
+		local
+			i: INTEGER
+			c: CHARACTER_8
+		do
+			if plain_ascii_text_prefix and then not handler.diagnostic_events_enabled and then not handler.has_observable_native_callbacks then
+				Result := True
+				from i := 1 until i > a_input.count or not Result loop
+					c := a_input.item (i)
+					Result := c.code >= 32 and then c.code <= 126 and then c /= '<' and then c /= '&' and then c /= ']'
+					i := i + 1
+				end
+			end
+		end
+
+	incremental_deferred_markup_end (a_input: READABLE_STRING_8): INTEGER
+			-- Find comment/CDATA/PI terminators without rescanning their old bodies.
+		local
+			l_start: INTEGER
+			l_content_start: INTEGER
+			l_found: INTEGER
+			l_terminator: detachable STRING_8
+		do
+			l_start := deferred_reparse_start_index
+			if l_start + 3 <= a_input.count and then a_input.substring (l_start, l_start + 3).same_string ("<!--") then
+				l_content_start := l_start + 4
+				l_terminator := "-->"
+			elseif l_start + 8 <= a_input.count and then a_input.substring (l_start, l_start + 8).same_string ("<![CDATA[") then
+				l_content_start := l_start + 9
+				l_terminator := "]]>"
+			elseif l_start + 1 <= a_input.count and then a_input.substring (l_start, l_start + 1).same_string ("<?") then
+				l_content_start := l_start + 2
+				l_terminator := "?>"
+			end
+			if attached l_terminator as l_end_marker then
+				l_found := a_input.substring_index (l_end_marker, deferred_reparse_scan_index.max (l_content_start))
+				if l_found > 0 then
+					Result := l_found + l_end_marker.count - 1
+				else
+					deferred_reparse_scan_index := (a_input.count - l_end_marker.count + 2).max (l_content_start)
+				end
+			else
+				Result := parser.markup_prefix_end (a_input, l_start)
 			end
 		end
 
@@ -1082,6 +1506,9 @@ feature {NONE} -- Encoding
 				and then ready_plain_start_tag_end_index >= ready_plain_start_tag_start_index
 				and then not namespace_mode
 				and then not is_external_entity_parser
+				and then not parser.has_document_type
+				and then not use_foreign_dtd
+				and then native_reparse_deferral_enabled (native_parser_handle)
 				and then native_has_start_element_handler (native_parser_handle)
 				and then not native_has_character_or_default_handler (native_parser_handle)
 		end
@@ -1115,8 +1542,7 @@ feature {NONE} -- Encoding
 			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
 			valid_end: a_end_index >= a_start_index and a_end_index <= a_input.count
 		do
-			Result := attached direct_start_tag_name (a_input, a_start_index, a_end_index)
-				and then attached direct_start_tag_attributes (a_input, a_start_index, a_end_index)
+			Result := is_plain_completed_start_tag (a_input, a_start_index, a_end_index)
 		end
 
 	direct_start_tag_name (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): detachable STRING_8
@@ -1151,7 +1577,9 @@ feature {NONE} -- Encoding
 					variant
 						a_end_index - i
 					end
+					if i - l_name_start <= parser.max_name_length then
 					create Result.make_from_string (a_input.substring (l_name_start, i - 1))
+					end
 				end
 			end
 		end
@@ -1345,16 +1773,17 @@ feature {NONE} -- Encoding
 			then
 				create l_attributes.make
 				i := a_start_index + 1
-				if l_attributes.is_name_start_character (a_input.item (i)) then
+				if a_input.item (i).code < 128 and then l_attributes.is_name_start_character (a_input.item (i)) then
 					from
 						i := i + 1
 					until
-						i > a_end_index or else not l_attributes.is_name_character (a_input.item (i))
+						i > a_end_index or else a_input.item (i).code >= 128 or else not l_attributes.is_name_character (a_input.item (i))
 					loop
 						i := i + 1
 					variant
 						a_end_index - i + 1
 					end
+					if i - a_start_index - 1 <= parser.max_name_length then
 					from
 					until
 						i > a_end_index or else not is_reparse_tag_space (a_input.item (i))
@@ -1363,10 +1792,8 @@ feature {NONE} -- Encoding
 					variant
 						a_end_index - i + 1
 					end
-					if i <= a_end_index and then a_input.item (i) = '/' then
-						i := i + 1
-					end
 					Result := i = a_end_index and then a_input.item (i) = '>'
+					end
 				end
 			end
 		end
@@ -1412,36 +1839,45 @@ feature {NONE} -- Encoding
 		require
 			input_attached: a_input /= Void
 		local
+			l_source: READABLE_STRING_8
+			l_complete_count: INTEGER
 			l_declared_encoding: detachable STRING_8
 		do
+			l_source := a_input
+			if not final_buffer then
+				l_complete_count := complete_encoded_prefix_count (a_input)
+				if l_complete_count < a_input.count then
+					l_source := a_input.substring (1, l_complete_count)
+				end
+			end
 			if explicit_encoding_overrides_declaration and then attached explicit_encoding as l_explicit_encoding then
-				Result := decoded_input_with_encoding (a_input, l_explicit_encoding)
-			elseif has_utf16le_signature (a_input) then
-				Result := decoded_utf16_input (a_input, True)
-			elseif has_utf16be_signature (a_input) then
-				Result := decoded_utf16_input (a_input, False)
+				Result := decoded_input_with_encoding (l_source, l_explicit_encoding)
+			elseif has_utf16le_signature (l_source) then
+				Result := decoded_utf16_input (l_source, True)
+			elseif has_utf16be_signature (l_source) then
+				Result := decoded_utf16_input (l_source, False)
 			else
-				l_declared_encoding := declared_xml_encoding (a_input)
+				l_declared_encoding := declared_xml_encoding (l_source)
 				if explicit_encoding_is_utf16 or else attached l_declared_encoding as l_encoding and then is_utf16_encoding_name (l_encoding) then
 					last_error_code := Xml_error_incorrect_encoding
 				elseif attached l_declared_encoding as l_encoding then
 					if is_latin1_encoding_name (l_encoding) then
-						Result := decoded_latin1_input (a_input)
+						Result := decoded_latin1_input (l_source)
 					elseif is_ascii_encoding_name (l_encoding) then
-						Result := decoded_ascii_input (a_input)
+						Result := decoded_ascii_input (l_source)
 					elseif is_utf8_encoding_name (l_encoding) then
-						Result := same_or_copied_input (a_input)
+						Result := same_or_copied_input (l_source)
 					elseif native_unknown_encoding_handler_available then
-						Result := decoded_unknown_encoding_input (a_input, l_encoding)
+						Result := decoded_unknown_encoding_input (l_source, l_encoding)
 					else
 						last_error_code := Xml_error_unknown_encoding
 					end
-				elseif has_utf16_declaration_in_utf8_input (a_input) then
+				elseif has_utf16_declaration_in_utf8_input (l_source) then
 					last_error_code := Xml_error_incorrect_encoding
 				elseif attached explicit_encoding as l_initial_encoding then
-					Result := decoded_input_with_encoding (a_input, l_initial_encoding)
+					Result := decoded_input_with_encoding (l_source, l_initial_encoding)
 				else
-					Result := same_or_copied_input (a_input)
+					Result := same_or_copied_input (l_source)
 				end
 			end
 		end
@@ -1503,7 +1939,7 @@ feature {NONE} -- Encoding
 			l_quote: CHARACTER_8
 			l_start: INTEGER
 		do
-			if a_input.count >= 5 and then a_input.substring (1, 5).same_string ("<?xml") then
+			if has_initial_xml_declaration (a_input) then
 				l_end := a_input.substring_index ("?>", 1)
 				if l_end = 0 then
 					l_end := a_input.count
@@ -1542,6 +1978,16 @@ feature {NONE} -- Encoding
 					end
 				end
 			end
+		end
+
+	has_initial_xml_declaration (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does input begin with an XML/text declaration rather than another PI?
+		do
+			Result := a_input.count >= 5
+				and then a_input.item (1) = '<' and then a_input.item (2) = '?'
+				and then a_input.item (3) = 'x' and then a_input.item (4) = 'm'
+				and then a_input.item (5) = 'l'
+				and then (a_input.count = 5 or else is_xml_space (a_input.item (6)))
 		end
 
 	decoded_unknown_encoding_input (a_input, a_encoding: READABLE_STRING_8): detachable STRING_8
@@ -1672,11 +2118,13 @@ feature {NONE} -- Encoding
 						if i + 3 > a_input.count then
 							last_error_code := Xml_error_partial_char
 							Result := Void
+							i := a_input.count + 1
 						else
 							l_low := utf16_unit_at (a_input, i + 2, a_little_endian)
 							if l_low < 56320 or else l_low > 57343 then
 								last_error_code := Xml_error_invalid_token
 								Result := Void
+								i := a_input.count + 1
 							else
 								l_code := 65536 + ((l_unit - 55296) * 1024) + (l_low - 56320)
 								append_utf8_codepoint (Result, l_code)
@@ -1686,6 +2134,7 @@ feature {NONE} -- Encoding
 					elseif l_unit >= 56320 and then l_unit <= 57343 then
 						last_error_code := Xml_error_invalid_token
 						Result := Void
+						i := a_input.count + 1
 					else
 						append_utf8_codepoint (Result, l_unit)
 						i := i + 2
@@ -1723,10 +2172,12 @@ feature {NONE} -- Encoding
 				elseif l_unit >= 55296 and then l_unit <= 56319 then
 					if i + 3 > l_limit then
 						Result := Void
+						i := l_limit + 1
 					else
 						l_low := utf16_unit_at (a_input, i + 2, a_little_endian)
 						if l_low < 56320 or else l_low > 57343 then
 							Result := Void
+							i := l_limit + 1
 						else
 							l_code := 65536 + ((l_unit - 55296) * 1024) + (l_low - 56320)
 							append_utf8_codepoint (Result, l_code)
@@ -1735,6 +2186,7 @@ feature {NONE} -- Encoding
 					end
 				elseif l_unit >= 56320 and then l_unit <= 57343 then
 					Result := Void
+					i := l_limit + 1
 				else
 					append_utf8_codepoint (Result, l_unit)
 					i := i + 2
@@ -1829,6 +2281,7 @@ feature {NONE} -- Encoding
 		do
 			Result :=
 				(a_input.count >= 2 and then a_input.item (1).code = 255 and then a_input.item (2).code = 254)
+				or else (a_input.count >= 2 and then (a_input.item (1) = '<' or else is_xml_space (a_input.item (1))) and then a_input.item (2).code = 0)
 				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3) = '?' and then a_input.item (4).code = 0)
 				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3) = '!' and then a_input.item (4).code = 0)
 				or else (a_input.count >= 4 and then a_input.item (1) = '<' and then a_input.item (2).code = 0 and then a_input.item (3).is_alpha and then a_input.item (4).code = 0)
@@ -1841,6 +2294,7 @@ feature {NONE} -- Encoding
 		do
 			Result :=
 				(a_input.count >= 2 and then a_input.item (1).code = 254 and then a_input.item (2).code = 255)
+				or else (a_input.count >= 2 and then a_input.item (1).code = 0 and then (a_input.item (2) = '<' or else is_xml_space (a_input.item (2))))
 				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4) = '?')
 				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4) = '!')
 				or else (a_input.count >= 4 and then a_input.item (1).code = 0 and then a_input.item (2) = '<' and then a_input.item (3).code = 0 and then a_input.item (4).is_alpha)
@@ -1852,8 +2306,7 @@ feature {NONE} -- Encoding
 			input_attached: a_input /= Void
 		do
 			Result :=
-				a_input.count >= 5
-				and then a_input.substring (1, 5).same_string ("<?xml")
+				has_initial_xml_declaration (a_input)
 				and then (
 					a_input.has_substring ("encoding='utf-16'")
 					or else a_input.has_substring ("encoding=%"utf-16%"")
@@ -2067,7 +2520,7 @@ feature {NONE} -- Error mapping
 		require
 			error_attached: a_error /= Void
 		do
-			if a_error.same_string ("missing document element") then
+			if a_error.same_string ("missing document element") or else a_error.same_string ("unclosed element") then
 				Result := Xml_error_no_elements
 			elseif a_error.same_string ("mismatched end tag") then
 				Result := Xml_error_tag_mismatch
@@ -2085,7 +2538,10 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_bad_char_ref
 			elseif a_error.same_string ("unterminated CDATA section") then
 				Result := Xml_error_unclosed_cdata_section
-			elseif a_error.has_substring ("external entity") then
+			elseif a_error.same_string ("external entity not loaded")
+				or else a_error.same_string ("external entity resolver missing")
+				or else a_error.same_string ("external entity not resolved")
+			then
 				Result := Xml_error_external_entity_handling
 			elseif a_error.same_string ("not standalone") then
 				Result := Xml_error_not_standalone
@@ -2109,6 +2565,18 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_reserved_prefix_xmlns
 			elseif a_error.same_string ("reserved namespace URI") then
 				Result := Xml_error_reserved_namespace_uri
+			elseif a_error.same_string ("left angle bracket in attribute value")
+				or else a_error.same_string ("left angle bracket in attlist default")
+				or else a_error.same_string ("left angle bracket in entity replacement text")
+				or else a_error.same_string ("CDATA close marker in character data")
+			then
+				Result := Xml_error_invalid_token
+			elseif a_error.same_string ("invalid external entity declaration")
+				or else a_error.same_string ("unexpected external entity declaration content")
+			then
+				Result := Xml_error_syntax
+			elseif a_error.same_string ("unsupported declaration") then
+				Result := Xml_error_invalid_token
 			elseif a_error.has_substring ("unterminated") or else a_error.has_substring ("unclosed") then
 				Result := Xml_error_unclosed_token
 			elseif a_error.same_string ("partial character") then
@@ -2169,6 +2637,22 @@ feature {NONE} -- Native helpers
 			"C inline use %"xpact_native_private.h%""
 		alias
 			"return $a_parser != 0 && ((struct XML_ParserStruct *) $a_parser)->reparseDeferralEnabled ? EIF_TRUE : EIF_FALSE;"
+		end
+
+	native_buffer_spare_capacity (a_parser: POINTER): INTEGER
+			-- Unused C input-buffer bytes before another growth would be needed.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"return $a_parser != 0 ? (EIF_INTEGER) (((XML_Parser) $a_parser)->bufferCapacity - ((XML_Parser) $a_parser)->bufferLength) : 0;"
+		end
+
+	native_consume_input_prefix (a_parser: POINTER; a_pending_bytes: INTEGER)
+			-- Retain pending token bytes and bounded context in the C staging buffer.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"xp_consume_input_prefix((XML_Parser) $a_parser, (int) $a_pending_bytes);"
 		end
 
 	native_has_start_element_handler (a_parser: POINTER): BOOLEAN

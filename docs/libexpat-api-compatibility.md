@@ -58,6 +58,15 @@ contract-tested manifest of the public names.
 
 ## Implemented Behind The Surface
 
+The native parser accepts names up to 512 KiB and tokens up to its existing
+10 MiB input budget, including the large upstream DTD and name fixtures. Its
+document depth limit of 256, attribute limit of 1,024, and 8 MiB entity expansion
+budget remain in place. Entity aliases use an iterative walk with cycle checks;
+each link counts toward that budget, and nested body expansion retains its depth
+limit of 32. The generic Eiffel parser keeps its 4,096-byte name
+ceiling, 1 MiB token ceiling, and XML 1.0 fifth-edition name rules; the native
+adapter uses Expat's older name ranges.
+
 The Eiffel parser core currently implements the behavior needed by the covered
 streaming path: parser reset semantics, start/end element callbacks, character
 data, XML 1.0 tokenization, XML declaration callbacks/diagnostics, DTD

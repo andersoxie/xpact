@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 static const XPACT_EiffelBridge *xp_bridge;
 
@@ -58,12 +59,65 @@ static void xp_set_error(XML_Parser parser, enum XML_Error code) {
 	}
 }
 
+static enum XML_Error xp_parse_error(XML_Parser parser) {
+	enum XML_Error error = XML_ERROR_NONE;
+	if (parser->bridge != NULL && parser->bridge->get_error_code != NULL && parser->eiffelParser != NULL) {
+		error = parser->bridge->get_error_code(parser->bridge->context, parser->eiffelParser);
+	}
+	if (error == XML_ERROR_NONE) {
+		error = parser->errorCode;
+	}
+	return error != XML_ERROR_NONE ? error : XML_ERROR_UNEXPECTED_STATE;
+}
+
 static void xp_clear_stop_state(XML_Parser parser) {
 	if (parser != NULL) {
 		parser->stopRequested = XML_FALSE;
 		parser->stopResumable = XML_FALSE;
 		parser->stopCallbackKind = XPACT_CALLBACK_NONE;
 	}
+}
+
+static char *xp_input_buffer(XML_Parser parser, int len, const char *input, XML_Bool commit) {
+	const int maximumCapacity = INT_MAX / 2 + 1;
+	int capacity;
+	int required;
+	char *resized;
+	char *destination;
+	if (len < 0 || len > maximumCapacity - parser->bufferLength) {
+		xp_set_error(parser, XML_ERROR_NO_MEMORY);
+		return NULL;
+	}
+	required = parser->bufferLength + len;
+	if (parser->buffer == NULL || required > parser->bufferCapacity) {
+		capacity = parser->bufferCapacity > 0 ? parser->bufferCapacity : 1024;
+		while (capacity < required) {
+			capacity *= 2;
+		}
+		resized = (char *)xp_malloc(parser, (size_t)capacity);
+		if (resized == NULL) {
+			xp_set_error(parser, XML_ERROR_NO_MEMORY);
+			return NULL;
+		}
+		if (parser->bufferLength > 0) {
+			memcpy(resized, parser->buffer, (size_t)parser->bufferLength);
+		}
+		/* Input may alias the old buffer. Commit it before releasing that
+		 * allocation, then pass the new stable slice across the Eiffel ABI. */
+		if (commit && len > 0) {
+			memmove(resized + parser->bufferLength, input, (size_t)len);
+		}
+		xp_free(parser, parser->buffer);
+		parser->buffer = resized;
+		parser->bufferCapacity = capacity;
+	} else if (commit && len > 0) {
+		memmove(parser->buffer + parser->bufferLength, input, (size_t)len);
+	}
+	destination = parser->buffer + parser->bufferLength;
+	if (commit) {
+		parser->bufferLength = required;
+	}
+	return destination;
 }
 
 static XML_Bool xp_has_valid_bridge(const XPACT_EiffelBridge *bridge) {
@@ -227,32 +281,40 @@ XML_ParserCreate_MM(
 
 XML_Bool XMLCALL
 XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
-	if (parser == NULL) {
+	XML_Parser saved;
+	struct XML_ParserStruct retained;
+	if (parser == NULL || parser->parentParser != NULL) {
 		return XML_FALSE;
 	}
-	parser->errorCode = XML_ERROR_NONE;
-	parser->parsing = XML_INITIALIZED;
-	parser->finalBuffer = XML_FALSE;
-	parser->paramEntityParsing = XML_PARAM_ENTITY_PARSING_NEVER;
-	parser->useForeignDTD = XML_FALSE;
-	parser->parentParser = NULL;
-	parser->nextExternalEntityIsParameter = XML_FALSE;
-	parser->nextExternalEntityIsParameterLiteral = XML_FALSE;
-	parser->externalEntityIsParameter = XML_FALSE;
-	parser->externalEntityIsParameterLiteral = XML_FALSE;
-	parser->externalChildParseCount = 0;
-	parser->lastExternalChildDirectCount = 0;
-	parser->lastExternalChildIndirectCount = 0;
-	parser->returnNsTriplet = XML_FALSE;
-	parser->hasBillionLaughsMaximumAmplification = XML_FALSE;
-	parser->hasBillionLaughsActivationThreshold = XML_FALSE;
-	xp_clear_stop_state(parser);
 	if (parser->bridge != NULL && parser->bridge->parser_reset != NULL && parser->eiffelParser != NULL) {
 		XML_Bool result = parser->bridge->parser_reset(parser->bridge->context, parser->eiffelParser, encoding);
-		if (result == XML_TRUE && parser->bridge->set_native_parser_handle != NULL) {
+		if (result != XML_TRUE) {
+			return XML_FALSE;
+		}
+		/* Reset handlers and document state, retaining parser configuration and
+		 * allocated input storage. Unknown-encoding registration survives reset
+		 * in Expat, unlike the other callback slots and user data. */
+		retained = *parser;
+		xp_free(parser, parser->base);
+		memset(parser, 0, sizeof(*parser));
+		saved = &retained;
+		parser->memory = saved->memory;
+		parser->hasCustomMemory = saved->hasCustomMemory;
+		parser->bridge = saved->bridge;
+		parser->eiffelParser = saved->eiffelParser;
+		parser->buffer = saved->buffer;
+		parser->bufferCapacity = saved->bufferCapacity;
+		parser->hasNamespaceSeparator = saved->hasNamespaceSeparator;
+		parser->namespaceSeparator = saved->namespaceSeparator;
+		parser->returnNsTriplet = saved->returnNsTriplet;
+		parser->unknownEncodingHandler = saved->unknownEncodingHandler;
+		parser->unknownEncodingHandlerData = saved->unknownEncodingHandlerData;
+		parser->reparseDeferralEnabled = XML_TRUE;
+		parser->parsing = XML_INITIALIZED;
+		if (parser->bridge->set_native_parser_handle != NULL) {
 			parser->bridge->set_native_parser_handle(parser->bridge->context, parser->eiffelParser, parser);
 		}
-		return result;
+		return XML_TRUE;
 	}
 	parser->errorCode = XML_ERROR_NOT_STARTED;
 	return XML_FALSE;
@@ -706,7 +768,7 @@ XML_GetAttributeInfo(XML_Parser parser) {
 enum XML_Status XMLCALL
 XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 	enum XML_Status status;
-	char *resized;
+	const char *input;
 	if (parser == NULL || len < 0 || (s == NULL && len > 0)) {
 		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
 		return XML_STATUS_ERROR;
@@ -715,33 +777,40 @@ XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 		xp_set_error(parser, XML_ERROR_SUSPENDED);
 		return XML_STATUS_ERROR;
 	}
+	if (parser->parsing == XML_FINISHED) {
+		xp_set_error(parser, XML_ERROR_FINISHED);
+		return XML_STATUS_ERROR;
+	}
+	if (parser->parseErrorCode != XML_ERROR_NONE) {
+		xp_set_error(parser, parser->parseErrorCode);
+		return XML_STATUS_ERROR;
+	}
 	if (parser->bridge == NULL || parser->bridge->parse == NULL || parser->eiffelParser == NULL) {
 		parser->errorCode = XML_ERROR_NOT_STARTED;
 		parser->parsing = XML_FINISHED;
 		parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
 		return XML_STATUS_ERROR;
 	}
-	if (parser->hasCustomMemory && parser->bufferCapacity < 65536) {
-		resized = (char *)xp_realloc(parser, parser->buffer, 65536u);
-		if (resized == NULL) {
-			parser->errorCode = XML_ERROR_NO_MEMORY;
-			parser->parsing = XML_FINISHED;
-			parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
-			return XML_STATUS_ERROR;
-		}
-		parser->buffer = resized;
-		parser->bufferCapacity = 65536;
+	input = xp_input_buffer(parser, len, s, XML_TRUE);
+	if (input == NULL) {
+		return XML_STATUS_ERROR;
 	}
 	parser->errorCode = XML_ERROR_NONE;
 	xp_clear_stop_state(parser);
 	parser->parsing = XML_PARSING;
-	status = parser->bridge->parse(parser->bridge->context, parser->eiffelParser, s, len, isFinal);
+	status = parser->bridge->parse(parser->bridge->context, parser->eiffelParser, input, len, isFinal);
 	status = xp_finish_external_child_parse(parser, status, len, isFinal);
 	if (status == XML_STATUS_SUSPENDED) {
+		parser->errorCode = XML_ERROR_NONE;
 		parser->parsing = XML_SUSPENDED;
+	} else if (status == XML_STATUS_ERROR) {
+		parser->parseErrorCode = xp_parse_error(parser);
+		parser->errorCode = parser->parseErrorCode;
 	} else if (status == XML_STATUS_OK && !isFinal) {
+		parser->errorCode = XML_ERROR_NONE;
 		parser->parsing = XML_PARSING;
 	} else {
+		parser->errorCode = XML_ERROR_NONE;
 		parser->parsing = XML_FINISHED;
 	}
 	parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
@@ -750,29 +819,20 @@ XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {
 
 void *XMLCALL
 XML_GetBuffer(XML_Parser parser, int len) {
-	char *resized;
 	if (parser == NULL || len < 0) {
-		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
+		xp_set_error(parser, XML_ERROR_NO_MEMORY);
 		return NULL;
 	}
-	if (parser->bridge != NULL && parser->bridge->get_buffer != NULL && parser->eiffelParser != NULL) {
-		return parser->bridge->get_buffer(parser->bridge->context, parser->eiffelParser, len);
+	if (parser->parsing == XML_SUSPENDED || parser->parsing == XML_FINISHED) {
+		xp_set_error(parser, parser->parsing == XML_SUSPENDED ? XML_ERROR_SUSPENDED : XML_ERROR_FINISHED);
+		return NULL;
 	}
-	if (len > parser->bufferCapacity) {
-		resized = (char *)xp_realloc(parser, parser->buffer, (size_t)len);
-		if (resized == NULL) {
-			parser->errorCode = XML_ERROR_NO_MEMORY;
-			return NULL;
-		}
-		parser->buffer = resized;
-		parser->bufferCapacity = len;
-	}
-	return parser->buffer;
+	return xp_input_buffer(parser, len, NULL, XML_FALSE);
 }
 
 enum XML_Status XMLCALL
 XML_ParseBuffer(XML_Parser parser, int len, int isFinal) {
-	enum XML_Status status;
+	static const char empty_input[] = "";
 	if (parser == NULL || len < 0) {
 		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
 		return XML_STATUS_ERROR;
@@ -781,23 +841,25 @@ XML_ParseBuffer(XML_Parser parser, int len, int isFinal) {
 		xp_set_error(parser, XML_ERROR_SUSPENDED);
 		return XML_STATUS_ERROR;
 	}
-	if (parser->bridge != NULL && parser->bridge->parse_buffer != NULL && parser->eiffelParser != NULL) {
-		parser->errorCode = XML_ERROR_NONE;
-		xp_clear_stop_state(parser);
-		parser->parsing = XML_PARSING;
-		status = parser->bridge->parse_buffer(parser->bridge->context, parser->eiffelParser, len, isFinal);
-		status = xp_finish_external_child_parse(parser, status, len, isFinal);
-		if (status == XML_STATUS_SUSPENDED) {
-			parser->parsing = XML_SUSPENDED;
-		} else if (status == XML_STATUS_OK && !isFinal) {
-			parser->parsing = XML_PARSING;
-		} else {
-			parser->parsing = XML_FINISHED;
-		}
-		parser->finalBuffer = isFinal ? XML_TRUE : XML_FALSE;
-		return status;
+	if (parser->parsing == XML_FINISHED) {
+		xp_set_error(parser, XML_ERROR_FINISHED);
+		return XML_STATUS_ERROR;
 	}
-	return XML_Parse(parser, parser->buffer, len, isFinal);
+	if (parser->buffer == NULL) {
+		/* XML_Parse already retains its bytes in Eiffel-owned input state.
+		 * A zero-length ParseBuffer can finish that input without acquiring
+		 * a separate writable C buffer first. */
+		if (len == 0 && parser->parsing == XML_PARSING) {
+			return XML_Parse(parser, empty_input, 0, isFinal);
+		}
+		xp_set_error(parser, XML_ERROR_NO_BUFFER);
+		return XML_STATUS_ERROR;
+	}
+	if (len > parser->bufferCapacity - parser->bufferLength) {
+		xp_set_error(parser, XML_ERROR_INVALID_ARGUMENT);
+		return XML_STATUS_ERROR;
+	}
+	return XML_Parse(parser, parser->buffer + parser->bufferLength, len, isFinal);
 }
 
 enum XML_Status XMLCALL
@@ -880,10 +942,16 @@ XML_ResumeParser(XML_Parser parser) {
 	);
 	status = xp_finish_external_child_parse(parser, status, 0, parser->finalBuffer);
 	if (status == XML_STATUS_SUSPENDED) {
+		parser->errorCode = XML_ERROR_NONE;
 		parser->parsing = XML_SUSPENDED;
+	} else if (status == XML_STATUS_ERROR) {
+		parser->parseErrorCode = xp_parse_error(parser);
+		parser->errorCode = parser->parseErrorCode;
 	} else if (status == XML_STATUS_OK && !parser->finalBuffer) {
+		parser->errorCode = XML_ERROR_NONE;
 		parser->parsing = XML_PARSING;
 	} else {
+		parser->errorCode = XML_ERROR_NONE;
 		parser->parsing = XML_FINISHED;
 	}
 	return status;
@@ -892,15 +960,6 @@ XML_ResumeParser(XML_Parser parser) {
 void XMLCALL
 XML_GetParsingStatus(XML_Parser parser, XML_ParsingStatus *status) {
 	if (status == NULL) {
-		return;
-	}
-	if (
-		parser != NULL
-		&& parser->bridge != NULL
-		&& parser->bridge->get_parsing_status != NULL
-		&& parser->eiffelParser != NULL
-	) {
-		parser->bridge->get_parsing_status(parser->bridge->context, parser->eiffelParser, status);
 		return;
 	}
 	status->parsing = parser != NULL ? parser->parsing : XML_INITIALIZED;
@@ -917,7 +976,11 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 		xp_set_error(parser, XML_ERROR_NOT_STARTED);
 		return NULL;
 	}
-	child = XML_ParserCreate_MM(encoding, parser->hasCustomMemory ? &parser->memory : NULL, NULL);
+	child = XML_ParserCreate_MM(
+		encoding,
+		parser->hasCustomMemory ? &parser->memory : NULL,
+		parser->hasNamespaceSeparator ? &parser->namespaceSeparator : NULL
+	);
 	if (child == NULL) {
 		xp_set_error(parser, XML_ERROR_NO_MEMORY);
 		return NULL;
@@ -939,7 +1002,8 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 	child->hasBillionLaughsActivationThreshold = parser->hasBillionLaughsActivationThreshold;
 	child->billionLaughsActivationThresholdBytes = parser->billionLaughsActivationThresholdBytes;
 	child->reparseDeferralEnabled = parser->reparseDeferralEnabled;
-	child->externalEntityIsParameter = parser->nextExternalEntityIsParameter;
+	child->returnNsTriplet = parser->returnNsTriplet;
+	child->externalEntityIsParameter = context == NULL || parser->nextExternalEntityIsParameter;
 	child->externalEntityIsParameterLiteral = parser->nextExternalEntityIsParameterLiteral;
 	parser->nextExternalEntityIsParameter = XML_FALSE;
 	parser->nextExternalEntityIsParameterLiteral = XML_FALSE;
@@ -1012,6 +1076,7 @@ XML_ExternalEntityParserCreate(XML_Parser parser, const XML_Char *context, const
 		XML_SetExternalEntityRefHandlerArg(child, parser->externalEntityRefArg);
 	}
 	XML_SetSkippedEntityHandler(child, parser->skippedEntityHandler);
+	XML_SetNamespaceDeclHandler(child, parser->startNamespaceDeclHandler, parser->endNamespaceDeclHandler);
 	if (parser->base != NULL) {
 		(void)XML_SetBase(child, parser->base);
 	}
@@ -1235,7 +1300,7 @@ XML_ErrorString(enum XML_Error code) {
 
 const XML_LChar *XMLCALL
 XML_ExpatVersion(void) {
-	return "expat_2.8.1-xpact-eiffel-bridge";
+	return "expat_2.8.1";
 }
 
 XML_Expat_Version XMLCALL

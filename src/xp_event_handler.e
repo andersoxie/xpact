@@ -36,6 +36,80 @@ feature -- Events
 			Result := True
 		end
 
+	wants_start_element_default: BOOLEAN
+			-- Should a start tag also be reported through the default handler?
+		do
+			Result := True
+		end
+
+	wants_end_element_default: BOOLEAN
+			-- Should an end tag also be reported through the default handler?
+		do
+			Result := True
+		end
+
+	wants_literal_character_data_default: BOOLEAN
+			-- Should automatic default character data retain literal references?
+		do
+			Result := False
+		end
+
+	wants_start_doctype_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_end_doctype_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_entity_decl_default (a_is_unparsed: BOOLEAN): BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_notation_decl_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_element_decl_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_attlist_decl_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_comment_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_xml_declaration_default: BOOLEAN
+			-- Should a validated XML declaration be reported through the default handler?
+		do
+			Result := True
+		end
+
+	wants_processing_instruction_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_start_cdata_default: BOOLEAN
+		do
+			Result := True
+		end
+
+	wants_end_cdata_default: BOOLEAN
+		do
+			Result := True
+		end
+
 	expands_internal_general_entity_references: BOOLEAN
 			-- Should internal general entity references be expanded in content?
 		do
@@ -199,7 +273,6 @@ feature -- Events
 			name_attached: a_name /= Void
 			name_not_empty: not a_name.is_empty
 			system_id_attached: a_system_id /= Void
-			system_id_not_empty: not a_system_id.is_empty
 		do
 		end
 

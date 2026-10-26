@@ -36,7 +36,6 @@ feature -- Resolution
 			name_not_empty: not a_name.is_empty
 			public_id_attached: a_public_id /= Void
 			system_id_attached: a_system_id /= Void
-			system_id_not_empty: not a_system_id.is_empty
 		deferred
 		end
 

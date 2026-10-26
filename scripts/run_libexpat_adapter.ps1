@@ -361,13 +361,62 @@ function Invoke-CMakeAdapter {
 	$BuildDir
 }
 
+function Assert-NativeSuiteResult {
+	param(
+		[string] $OutputText,
+		[int] $ExitCode,
+		[object[]] $ExpectedFailures,
+		[string] $LogPath,
+		[object[]] $ManifestRows
+	)
+	if ($OutputText -match '(?im)\*{3}\s*(Exception|Timeout|Not Run)' -or $ExitCode -notin @(0, 8)) {
+		throw "Native libexpat suite crashed or could not run (CTest exit code $ExitCode); see $LogPath."
+	}
+	# Verbose CTest prefixes each line from test 1 with "1: ".
+	$OutputText = $OutputText -replace '(?m)^\d+: ', ''
+	$Summaries = [regex]::Matches($OutputText, '(?m)^[ \t]*\d+%: Checks: (?<Checks>\d+), Failed: (?<Failed>\d+)[ \t]*\r?$')
+	if ($Summaries.Count -ne 1 -or [int]$Summaries[0].Groups['Checks'].Value -le 0) {
+		throw "Native libexpat suite did not report a complete test summary; see $LogPath."
+	}
+	$FailedCount = [int]$Summaries[0].Groups['Failed'].Value
+	$Failures = [regex]::Matches($OutputText, '(?m)^[ \t]*FAIL \[[^\]\r\n]+\]: (?<Name>[A-Za-z_][A-Za-z0-9_]*) \((?<Detail>[^\r\n]*?) at (?<Path>[^\r\n]+):\d+\)[ \t]*\r?$')
+	if ($FailedCount -gt [int]$Summaries[0].Groups['Checks'].Value -or $FailedCount -ne $Failures.Count -or (($ExitCode -eq 0) -ne ($FailedCount -eq 0))) {
+		throw "Native libexpat suite returned inconsistent or incomplete failure results; see $LogPath."
+	}
+	if ($ExitCode -eq 0) {
+		if ($ExpectedFailures.Count -gt 0) {
+			throw "Native libexpat suite passed while expected failures remain in $ExpectedFailuresFile."
+		}
+		Write-Host "Native libexpat suite passed."
+		return
+	}
+	foreach ($Failure in $Failures) {
+		$Name = $Failure.Groups['Name'].Value
+		# Assertions can be in shared helpers. The manifest identifies the
+		# source that declares the test named in minicheck's failure line.
+		$Tests = @($ManifestRows | Where-Object { $_.Name -ceq $Name })
+		if ($Tests.Count -ne 1) {
+			throw "Native libexpat suite reported an unknown or ambiguous test: $Name; see $LogPath."
+		}
+		$Source = $Tests[0].Source
+		$MatchesExpected = @($ExpectedFailures | Where-Object { $Source -like $_.Source -and $Name -like $_.Name }).Count -gt 0
+		if (-not $MatchesExpected -or $Failure.Groups['Detail'].Value -in @('during setup', 'during teardown')) {
+			throw "Native libexpat suite failed unexpectedly: $Source/$Name ($($Failure.Groups['Detail'].Value)); see $LogPath."
+		}
+	}
+	Write-Host "Native libexpat suite completed with $FailedCount expected test failures; see $LogPath."
+}
+
 function Invoke-NativeSuite {
 	param(
 		[string] $ExpatRoot,
 		[string] $OutputRoot,
 		[string] $LibraryPath,
-		[object[]] $ExpectedFailures
+		[object[]] $ExpectedFailures,
+		[object[]] $ManifestRows
 	)
+	$LogPath = Join-Path $OutputRoot "libexpat-native-suite.log"
+	"Native libexpat suite has not run: preparing native build and CMake adapter." | Set-Content -LiteralPath $LogPath -Encoding UTF8
 	if (-not $SkipNativeBuild) {
 		Invoke-CheckedCommand "powershell" @("-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "build_native.ps1"), "-Target", "Windows")
 	}
@@ -383,36 +432,33 @@ function Invoke-NativeSuite {
 	if ($null -eq $CTest) {
 		throw "Cannot run native C suite: ctest is not on PATH."
 	}
-	$LogPath = Join-Path $OutputRoot "libexpat-native-suite.log"
 	$RuntimeDir = Split-Path -Parent $ResolvedLibrary
 	$OldPath = $env:Path
 	$OldErrorActionPreference = $ErrorActionPreference
 	try {
 		$env:Path = "$RuntimeDir;$OldPath"
 		$ErrorActionPreference = "Continue"
-		$Output = & $CTest.Source --test-dir $BuildDir -C Debug --output-on-failure 2>&1
+		$Output = & $CTest.Source --test-dir $BuildDir -C Debug --verbose 2>&1 | ForEach-Object {
+			Write-Host $_
+			$_
+		}
 		$ExitCode = $LASTEXITCODE
-		($Output | Out-String).Trim() | Set-Content -LiteralPath $LogPath -Encoding UTF8
+		$OutputText = ($Output | Out-String).Trim()
+		$OutputText | Set-Content -LiteralPath $LogPath -Encoding UTF8 -ErrorAction Stop
 	} finally {
 		$env:Path = $OldPath
 		$ErrorActionPreference = $OldErrorActionPreference
 	}
 
-	if ($ExitCode -eq 0) {
-		if ($ExpectedFailures.Count -gt 0) {
-			throw "Native libexpat suite passed while expected failures remain in $ExpectedFailuresFile."
-		}
-		Write-Host "Native libexpat suite passed."
-	} elseif ($ExpectedFailures.Count -gt 0) {
-		Write-Host "Native libexpat suite failed as expected; see $LogPath and expected-failure expansion."
-	} else {
-		throw "Native libexpat suite failed unexpectedly; see $LogPath."
-	}
+	Assert-NativeSuiteResult $OutputText $ExitCode $ExpectedFailures $LogPath $ManifestRows
+	# Jenkins exits with LASTEXITCODE after running this script. Clear CTest's
+	# nonzero code only after verifying that every failure is expected.
+	$global:LASTEXITCODE = 0
 }
 
 $ExpatRoot = Resolve-ExistingDirectory $ExpatSourceDir "Expat source directory"
 $Layout = Get-ExpatLayout $ExpatRoot
-$OutputRoot = Join-Path $RepoRoot $OutputDir
+$OutputRoot = if ([System.IO.Path]::IsPathRooted($OutputDir)) { $OutputDir } else { Join-Path $RepoRoot $OutputDir }
 New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
 
 if ($Mode -eq "All" -or $Mode -eq "Manifest") {
@@ -450,5 +496,5 @@ if ($Mode -eq "NativeSuite") {
 	Write-ExpectedFailureExpansion $ManifestRows $ExpectedFailures (Join-Path $OutputRoot "libexpat-expected-failures-expanded.tsv")
 	$ParityRows = @(Read-ParityRows $ParityFile)
 	Write-ParityExpansion $ManifestRows $ParityRows (Join-Path $OutputRoot "libexpat-parity-expanded.tsv")
-	Invoke-NativeSuite $ExpatRoot $OutputRoot $XpactLibrary $ExpectedFailures
+	Invoke-NativeSuite $ExpatRoot $OutputRoot $XpactLibrary $ExpectedFailures $ManifestRows
 }

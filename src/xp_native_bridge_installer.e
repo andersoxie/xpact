@@ -53,9 +53,7 @@ feature -- Access
 		do
 			l_id := pointer_to_integer (a_handle)
 			if l_id > 0 and then live_parser_ids.has (l_id) then
-				if attached {XP_NATIVE_PARSER} eif_id_object (l_id) as l_parser then
-					Result := l_parser
-				end
+				Result := live_parser_ids.item (l_id)
 			end
 		end
 
@@ -77,7 +75,7 @@ feature -- Parser lifecycle callbacks
 				l_status := l_parser.set_initial_encoding (a_encoding)
 			end
 			l_id := eif_object_id (l_parser)
-			live_parser_ids.force (True, l_id)
+			live_parser_ids.force (l_parser, l_id)
 			Result := integer_to_pointer (l_id)
 		ensure
 			handle_returned: Result /= default_pointer
@@ -112,8 +110,8 @@ feature -- Parser lifecycle callbacks
 			l_id := pointer_to_integer (a_parser)
 			if l_id > 0 and then live_parser_ids.has (l_id) then
 				parse_buffers.remove (l_id)
-				live_parser_ids.remove (l_id)
 				eif_object_id_free (l_id)
+				live_parser_ids.remove (l_id)
 			end
 		ensure
 			parser_not_live: not attached parser_for (a_parser)
@@ -596,8 +594,9 @@ feature {NONE} -- Native helpers
 
 feature {NONE} -- Storage
 
-	live_parser_ids: HASH_TABLE [BOOLEAN, INTEGER]
-			-- Object ids that are still owned by the bridge.
+	live_parser_ids: HASH_TABLE [XP_NATIVE_PARSER, INTEGER]
+			-- Strong parser ownership until `parser_free'. Object IDs alone are
+			-- weak references in the Eiffel runtime and do not prevent collection.
 
 	parse_buffers: HASH_TABLE [MANAGED_POINTER, INTEGER]
 			-- Parse buffers keyed by parser object id.

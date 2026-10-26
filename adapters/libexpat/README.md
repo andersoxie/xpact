@@ -35,6 +35,9 @@ Outputs are written under `build\libexpat-adapter`:
 The corpus runner records accept/reject results; it does not infer conformance
 from arbitrary fixture names.
 
+Use `-OutputDir` to choose another output directory. Relative paths are resolved
+from the xpact repository root; absolute paths are used as supplied by Jenkins.
+
 ## Native C Suite With Expected Failures
 
 For the current Windows Eiffel-backed native library:
@@ -61,6 +64,46 @@ contains specific source/name patterns for the remaining red parity gaps, while
 Windows-only release scope. If the native suite passes while expected failures
 remain, the runner fails and requires the list to be updated. Internally the
 runner still configures the CMake adapter, builds the upstream `runtests`
-executable, and runs it through `ctest --output-on-failure`.
+executable, and runs it through `ctest --verbose`.
+
+On Windows 10 or later, each registered test runs in a separate child process.
+Passing tests exercise all 12 chunk-size/deferral combinations; a test stops at its
+first assertion failure. A failing callback exits the child immediately rather
+than jumping across active Eiffel frames. The parent collects each result and
+continues with a fresh process for the next test.
+
+The adapter applies the selected reparse-deferral default to every parser factory
+and successful reset. External entity parsers inherit their parent's setting.
+This makes both deferral configurations exercise the requested native behavior.
+
+Each child has a 120-second timeout, configurable with the CMake cache setting
+`XPACT_TEST_TIMEOUT_SECONDS` (1 to 3600 seconds). CTest also limits the complete
+suite to 1800 seconds. Cancelling the parent terminates its active child.
+
+An expected-failure result is accepted only when the upstream runner reports a
+complete test summary and every reported failure matches the configured
+source/name patterns. Test sources are resolved from the manifest because an
+assertion can originate in a shared helper. Crashes, incomplete runs, and
+unlisted failures fail the stage. CTest output is printed in Jenkins and saved
+to `libexpat-native-suite.log`; a validated expected-failure result returns a
+successful process status to Jenkins.
+
+Run the orchestration regression tests without building Eiffel or CMake:
+
+```powershell
+python -m unittest discover -s tests/python -p test_libexpat_adapter.py
+```
+
+Native process-isolation tests also require CMake and the Windows C toolchain:
+
+```powershell
+python -m unittest discover -s tests/python -p test_libexpat_isolation.py
+```
+
+Run all adapter regressions, including factory/reset configuration checks:
+
+```powershell
+python -m unittest discover -s tests/python -p 'test_libexpat_*.py'
+```
 
 See `docs/libexpat-parity.md` for the current Windows Phase 1 parity summary.

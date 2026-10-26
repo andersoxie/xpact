@@ -162,7 +162,8 @@ feature {NONE} -- Data
 				create Result.make_empty
 				from
 				until
-					l_file.end_of_file
+						-- An empty file is an empty document, which the parser rejects.
+					Result.count >= l_file.count or else l_file.end_of_file
 				loop
 					l_file.read_stream (65536)
 					Result.append (l_file.last_string)

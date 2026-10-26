@@ -1,3 +1,10 @@
+/* The suite's compile definitions rename API declarations to the wrappers.
+ * Read the genuine declarations here before defining those wrappers. */
+#undef XML_Parse
+#undef XML_ParserCreate
+#undef XML_ParserCreateNS
+#undef XML_ParserCreate_MM
+#undef XML_ParserReset
 #include "expat.h"
 
 #include <stddef.h>
@@ -14,6 +21,42 @@ XPACT_TestingAccountingGetCountBytesDirect(XML_Parser parser);
 
 extern unsigned long long XMLCALL
 XPACT_TestingAccountingGetCountBytesIndirect(XML_Parser parser);
+
+static XML_Parser
+xpact_adapter_apply_reparse_default(XML_Parser parser) {
+	if (parser != NULL) {
+		(void)XML_SetReparseDeferralEnabled(parser, g_reparseDeferralEnabledDefault);
+	}
+	return parser;
+}
+
+XML_Parser XMLCALL
+xpact_adapter_XML_ParserCreate(const XML_Char *encoding) {
+	return xpact_adapter_apply_reparse_default(XML_ParserCreate(encoding));
+}
+
+XML_Parser XMLCALL
+xpact_adapter_XML_ParserCreateNS(const XML_Char *encoding, XML_Char namespaceSeparator) {
+	return xpact_adapter_apply_reparse_default(XML_ParserCreateNS(encoding, namespaceSeparator));
+}
+
+XML_Parser XMLCALL
+xpact_adapter_XML_ParserCreate_MM(
+	const XML_Char *encoding,
+	const XML_Memory_Handling_Suite *memsuite,
+	const XML_Char *namespaceSeparator
+) {
+	return xpact_adapter_apply_reparse_default(XML_ParserCreate_MM(encoding, memsuite, namespaceSeparator));
+}
+
+XML_Bool XMLCALL
+xpact_adapter_XML_ParserReset(XML_Parser parser, const XML_Char *encoding) {
+	XML_Bool reset = XML_ParserReset(parser, encoding);
+	if (reset) {
+		(void)xpact_adapter_apply_reparse_default(parser);
+	}
+	return reset;
+}
 
 enum XML_Status XMLCALL
 xpact_adapter_XML_Parse(XML_Parser parser, const char *s, int len, int isFinal) {

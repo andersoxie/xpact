@@ -20,7 +20,7 @@ The adapter expands those rows against an upstream Expat 2.8.1 checkout:
 The current upstream manifest has 399 `START_TEST(...)` entries. The explicit
 expected-failure patterns expand to 86 named upstream tests in the downloaded
 R_2_8_1 sources used for this checkpoint. All 86 are C allocator
-failure-injection rows that are intentionally skipped for the Eiffel release
+failure-injection rows that are recorded as expected failures for the Eiffel release
 scope because Eiffel parser storage is not a caller-managed allocation
 contract.
 
@@ -220,13 +220,53 @@ The Windows release has green evidence for:
 
 The remaining red rows are allocator-injection rows, not a suite-wide failure:
 
-- C allocator hook failure-injection tests, which are skipped for the current
+- C allocator hook failure-injection tests, which are expected to fail for the current
   Eiffel release scope because they exercise libexpat's manual allocation
   contract rather than Eiffel-owned parser storage.
 
 ## Native Suite
 
 The upstream native C suite now configures, builds, links, and launches against
-the Windows Eiffel-backed `xpact.dll` through `adapters/libexpat`. It currently
-fails inside the remaining expected-failure surface, and the run log is written
-to `libexpat-native-suite.log` beside the manifest expansion.
+the Windows Eiffel-backed `xpact.dll` through `adapters/libexpat`. The run log is
+written to `libexpat-native-suite.log` beside the manifest expansion and printed
+in Jenkins. Only a completed run whose observed failures all match the expected
+patterns is accepted. An expanded expected-failure list alone does not establish
+that a failed run is expected.
+
+Jenkins builds 67 and 68 crashed with an access violation before completing the
+suite. Diagnostic sequences implicated minicheck's `longjmp` from failing C
+callbacks across active Eiffel frames. The Windows adapter now runs each named
+test in a fresh process and exits that child immediately on an assertion.
+Passing tests still exercise all 12 chunk-size/deferral combinations; failing
+tests stop at their first failure. Timeouts and actual child crashes remain
+fatal suite results, and cancellation releases the active child through a
+Windows job.
+
+With the Jenkins workspace library, `test_invalid_foreign_dtd` followed by
+`test_attributes` now completes with one assertion failure and one pass instead
+of corrupting the following test's GC state. A 399-test diagnostic sweep with a
+deliberately short five-second child limit completed in 87 seconds: 267 passed,
+121 reported assertions, and 11 timed out, with no process exceptions. That
+short limit is diagnostic evidence, not the configured 120-second release gate.
+
+The 2026-10-24 full release-gate run against the rebuilt Windows DLL completed
+all 399 tests in 380.9 seconds: 361 passed and 38 reported allocator-injection
+assertions covered by the existing expected-failure patterns. There were no
+unlisted failures, child crashes, or timeouts. The Windows PowerShell 5.1 adapter
+validated the completed summary and returned exit code 0. The expected-failure
+list and the 120-second child / 1800-second suite limits were unchanged.
+
+The native parser keeps its objects strongly rooted until the C handle is freed.
+Content models use one caller-owned allocation, including their name strings.
+Incremental parsing now preserves partial encoded characters, external-child
+declarations, literal default output, and callback positions across replay. A
+completed DTD can be reused when its callbacks are unobserved; source comparison,
+policy changes, reset, errors, and final completion control cache invalidation.
+External-child replay retains detached declaration deltas and releases them at
+terminal completion or reset.
+
+Additional verification for that source cohort passed all four Eiffel test
+matrix cells (52 tests each), production and assertion DLL C smoke suites,
+Windows public/bridge ABI smokes, and both W3C finalized builds (1,727 applicable
+cases each, zero failures/errors). The adapter's 13 Python regressions and the
+W3C runner's 28 Python regressions also passed.

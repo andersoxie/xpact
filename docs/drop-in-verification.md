@@ -164,7 +164,11 @@ Recommended Jenkins parameters:
   Path to the upstream Expat source tree.
 - `RUN_BENCHMARKS`
   Run benchmark publication and W3C XML conformance tests. Enabled by default
-  in both pipelines; disable it for jobs that should omit the benchmark lane.
+  in both pipelines, including the [dual catalog/W3C campaigns and plots](dual-implementation-jenkins.md);
+  disable it for jobs that should omit the benchmark lanes.
+- `DUAL_IMPLEMENTATION_OFFLINE`
+  Require cached pinned core sources and W3C input for the dual campaigns.
+  Leave disabled for fresh all-tests workspaces unless caches are provisioned.
 - `W3C_SUITE_DIRECTORY`
   Optional extracted W3C XML suite directory for offline agents. Leave empty
   to download the pinned archive and verify its checksum automatically.

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/andersoxie/Xpact-core.git",
+  "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+  "library": "library/xpact-core.ecf",
+  "required_paths": [
+    "library/xpact-core.ecf",
+    "library/source/parse/xt_xml_parser_base.e",
+    "library/source/parse/support/xt_parser_data.e",
+    "contrib/xpact/include/xpact.h",
+    "contrib/xpact/include/xpact_private.h",
+    "C-tools/shift_jis_subset/include/shift_jis_subset.h",
+    "C-tools/shift_jis_subset/src/shift_jis_subset.c",
+    "contrib/Eiffel-Loop"
+  ],
+  "dependencies": [
+    "EiffelStudio Base, Base Extension, Time and bundled zlib libraries",
+    "Eiffel-Loop subset vendored in this pinned checkout",
+    "Vendored Shift-JIS subset C source and header; compiled to an isolated MSVC object on Windows"
+  ]
+}

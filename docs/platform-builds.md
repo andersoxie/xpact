@@ -57,6 +57,12 @@ That future script should:
 
 No parser-source fork is intended for Linux.
 
+For an additional same-environment performance comparison, use
+[`scripts/run_wsl_benchmarks.ps1`](../scripts/run_wsl_benchmarks.ps1).
+It builds the Eiffel benchmark with Linux EiffelStudio/GCC and runs it
+alongside the direct libexpat C benchmark inside WSL2. See
+[WSL2 benchmark setup and interpretation](wsl-benchmarks.md).
+
 ## Eiffel .NET
 
 The .NET build should also reuse the same parser core, but it should not include

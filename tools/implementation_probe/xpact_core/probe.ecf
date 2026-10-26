@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-23-0" name="xpact_core_build_probe" uuid="49FC3A47-9FBC-4329-B2B6-C8B17F5944EC">
+  <target name="probe">
+    <root class="XPACT_CORE_PROBE_ROOT" feature="make"/>
+    <option warning="warning" is_obsolete_routine_type="true">
+      <assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+    </option>
+    <setting name="console_application" value="true"/>
+    <setting name="dead_code_removal" value="all"/>
+    <capability>
+      <concurrency support="none"/>
+      <void_safety support="all" use="all"/>
+    </capability>
+    <variable name="buffer_size" value="big"/>
+    <external_object location="$XPACT_SHIFT_JIS_OBJECT">
+      <condition><platform value="windows"/></condition>
+    </external_object>
+    <library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
+    <library name="xpact_core" location="$XPACT_CORE/library/xpact-core.ecf" readonly="true"/>
+    <cluster name="probe" location="./"/>
+    <cluster name="identity" location="$XPACT_PROBE_METADATA/"/>
+  </target>
+</system>

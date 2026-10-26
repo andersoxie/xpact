@@ -1601,6 +1601,389 @@ entity_context_text_handler(void *userData, const XML_Char *s, int len) {
 	}
 }
 
+static int
+check_default_replay_lifecycle(void) {
+	const char *input = "<doc>&lt;&gt;&amp;&quot;&apos;</doc>";
+	const char *malformed = "<doc>&lt;</wrong>";
+	int deferral;
+	for (deferral = 0; deferral <= 1; ++deferral) {
+		XML_Parser parser = XML_ParserCreate(NULL);
+		int attempt;
+		if (!check(parser != NULL, "default replay lifecycle parser created")) return 0;
+		for (attempt = 0; attempt < 4; ++attempt) {
+			const char *text = attempt == 2 ? malformed : input;
+			size_t length = strlen(text);
+			size_t index;
+			enum XML_Status status = XML_STATUS_OK;
+			if (attempt > 0 && !check(XML_ParserReset(parser, NULL), "default replay lifecycle resets parser")) {
+				XML_ParserFree(parser);
+				return 0;
+			}
+			XML_SetDefaultHandler(parser, default_handler);
+			XML_SetReparseDeferralEnabled(parser, (XML_Bool)deferral);
+			g_default_len = 0;
+			g_default_text[0] = '\0';
+			g_callback_failed = 0;
+			for (index = 0; index < length && status == XML_STATUS_OK; ++index) {
+				status = XML_Parse(parser, text + index, 1, index + 1 == length);
+			}
+			if (attempt == 2) {
+				if (!check(status == XML_STATUS_ERROR && XML_GetErrorCode(parser) == XML_ERROR_TAG_MISMATCH,
+					"default replay lifecycle records malformed end tag")) {
+					XML_ParserFree(parser);
+					return 0;
+				}
+			} else if (!check(status == XML_STATUS_OK && !g_callback_failed && strcmp(g_default_text, input) == 0,
+				"one-byte default replay survives reset and previous parse failure")) {
+				fprintf(stderr, "default replay deferral=%d attempt=%d actual='%s'\n", deferral, attempt, g_default_text);
+				XML_ParserFree(parser);
+				return 0;
+			}
+		}
+		XML_ParserFree(parser);
+	}
+	return 1;
+}
+
+static int
+check_null_context_parameter_child(void) {
+	XML_Parser parser = XML_ParserCreateNS(NULL, '|');
+	XML_Parser child;
+	const char *prefix = "<!ENTITY local ";
+	const char *suffix = "'value'>";
+	int valid;
+	if (!check(parser != NULL, "NULL-context parameter parent created")) return 0;
+	XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+	child = XML_ExternalEntityParserCreate(parser, NULL, NULL);
+	if (!check(child != NULL, "NULL-context parameter child created")) {
+		XML_ParserFree(parser);
+		return 0;
+	}
+	valid = check(XML_Parse(child, prefix, (int)strlen(prefix), XML_FALSE) == XML_STATUS_OK,
+		"NULL-context parameter child accepts non-final declaration prefix")
+		&& check(XML_Parse(child, suffix, (int)strlen(suffix), XML_TRUE) == XML_STATUS_OK,
+			"NULL-context parameter child completes split declaration");
+	XML_ParserFree(child);
+	XML_ParserFree(parser);
+	return valid;
+}
+
+static int
+check_reset_encoding_lifecycle(void) {
+	XML_Parser parser = XML_ParserCreate(NULL);
+	int valid;
+	if (!check(parser != NULL, "reset encoding lifecycle parser created")) return 0;
+	valid = check(smoke_parse_string(parser, "<doc/>", XML_TRUE) == XML_STATUS_OK,
+		"reset encoding lifecycle first document completes")
+		&& check(XML_ParserReset(parser, "xpact-unknown-encoding"),
+			"reset accepts an unsupported encoding until parse")
+		&& check(smoke_parse_string(parser, "<doc/>", XML_TRUE) == XML_STATUS_ERROR
+			&& XML_GetErrorCode(parser) == XML_ERROR_UNKNOWN_ENCODING,
+			"unsupported reset encoding fails at parse")
+		&& check(XML_ParserReset(parser, "UTF-8"),
+			"valid encoding reset releases previous parse failure")
+		&& check(smoke_parse_string(parser, "<doc/>", XML_TRUE) == XML_STATUS_OK,
+			"valid encoding reset restores parsing");
+	XML_ParserFree(parser);
+	return valid;
+}
+
+typedef struct SpaceCheckpointState {
+	int start_count;
+	int failed;
+} SpaceCheckpointState;
+
+static void XMLCALL
+space_checkpoint_start(void *userData, const XML_Char *name, const XML_Char **atts) {
+	SpaceCheckpointState *state = (SpaceCheckpointState *)userData;
+	state->start_count++;
+	if (strcmp(name, "a") != 0 || atts == NULL || atts[0] == NULL
+		|| strcmp(atts[0], "id") != 0 || atts[1] == NULL || strcmp(atts[1], "value") != 0
+		|| atts[2] != NULL) {
+		state->failed = 1;
+	}
+}
+
+static int
+check_unfinished_root_space_lifecycle(void) {
+	XML_Parser parser = XML_ParserCreate(NULL);
+	SpaceCheckpointState state = {0, 0};
+	int valid;
+	if (!check(parser != NULL, "unfinished root space lifecycle parser created")) return 0;
+	XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+	XML_SetUserData(parser, &state);
+	XML_SetStartElementHandler(parser, space_checkpoint_start);
+	valid = check(smoke_parse_string(parser, "<a ", XML_FALSE) == XML_STATUS_OK,
+		"unfinished root prefix accepted")
+		&& check(smoke_parse_string(parser, "  ", XML_FALSE) == XML_STATUS_OK,
+			"unfinished root whitespace continues prefix")
+		&& check(smoke_parse_string(parser, "", XML_FALSE) == XML_STATUS_OK,
+			"empty input preserves unfinished root prefix")
+		&& check(smoke_parse_string(parser, "<", XML_FALSE) == XML_STATUS_ERROR
+			&& XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN,
+			"invalid byte after unfinished root whitespace fails immediately")
+		&& check(state.start_count == 0, "unfinished root emits no start callback")
+		&& check(XML_ParserReset(parser, NULL), "failed unfinished root parser resets");
+	if (valid) {
+		XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+		XML_SetUserData(parser, &state);
+		XML_SetStartElementHandler(parser, space_checkpoint_start);
+		valid = check(smoke_parse_string(parser, "<a ", XML_FALSE) == XML_STATUS_OK
+			&& smoke_parse_string(parser, "  ", XML_FALSE) == XML_STATUS_OK
+			&& smoke_parse_string(parser, "id='value'/>", XML_TRUE) == XML_STATUS_OK,
+			"reset unfinished root prefix accepts completed attribute and tag")
+			&& check(state.start_count == 1 && !state.failed,
+				"completed root delivers one callback with name and attribute")
+			&& check(XML_ParserReset(parser, NULL), "completed root space parser resets");
+	}
+	if (valid) {
+		state.start_count = 0;
+		XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+		XML_SetUserData(parser, &state);
+		XML_SetStartElementHandler(parser, space_checkpoint_start);
+		valid = check(smoke_parse_string(parser, "<a ", XML_FALSE) == XML_STATUS_OK
+			&& smoke_parse_string(parser, "  ", XML_TRUE) == XML_STATUS_ERROR
+			&& XML_GetErrorCode(parser) == XML_ERROR_UNCLOSED_TOKEN,
+			"final unfinished root whitespace reports unclosed token")
+			&& check(state.start_count == 0, "reset removes completed-root checkpoint before unfinished parse");
+	}
+	XML_ParserFree(parser);
+	return valid;
+}
+
+static int
+check_one_byte_declaration_and_dtd(void) {
+	const char *input = "<?xml version=\"1.0\"?>\n<!DOCTYPE doc [\n<!ENTITY en \"x\">\n]>\n<doc/>";
+	XML_Parser parser = XML_ParserCreate(NULL);
+	size_t index;
+	size_t length = strlen(input);
+	int valid = 1;
+	if (!check(parser != NULL, "one-byte declaration and DTD parser created")) return 0;
+	XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+	XML_SetDefaultHandler(parser, default_handler);
+	g_default_len = 0;
+	g_default_text[0] = '\0';
+	g_callback_failed = 0;
+	for (index = 0; index < length; ++index) {
+		if (XML_Parse(parser, input + index, 1, index + 1 == length) != XML_STATUS_OK) {
+			fprintf(stderr, "FAIL: one-byte declaration and DTD byte %lu error %d\n",
+				(unsigned long)index, (int)XML_GetErrorCode(parser));
+			valid = 0;
+			break;
+		}
+	}
+	valid = valid && check(!g_callback_failed && strcmp(g_default_text, input) == 0,
+		"one-byte declaration and DTD preserve complete raw default text");
+	XML_ParserFree(parser);
+	return valid;
+}
+
+typedef struct RootPositionState {
+	XML_Parser parser;
+	int start_count;
+	int failed;
+} RootPositionState;
+
+static void XMLCALL
+one_byte_position_start(void *userData, const XML_Char *name, const XML_Char **atts) {
+	RootPositionState *state = (RootPositionState *)userData;
+	XML_Index expected = state->start_count == 0 ? 0 : 3;
+	const char *expected_name = state->start_count == 0 ? "r" : "child";
+	(void)atts;
+	if (state->start_count > 1 || strcmp(name, expected_name) != 0
+		|| XML_GetCurrentByteIndex(state->parser) != expected
+		|| XML_GetCurrentLineNumber(state->parser) != 1
+		|| XML_GetCurrentColumnNumber(state->parser) != (XML_Size)expected) {
+		state->failed = 1;
+	}
+	state->start_count++;
+}
+
+static int
+check_one_byte_start_positions(void) {
+	const char *input = "<r><child/></r>";
+	XML_Parser parser = XML_ParserCreate(NULL);
+	RootPositionState state = {parser, 0, 0};
+	size_t index;
+	size_t length = strlen(input);
+	int valid = 1;
+	if (!check(parser != NULL, "one-byte start-position parser created")) return 0;
+	XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+	XML_SetUserData(parser, &state);
+	XML_SetStartElementHandler(parser, one_byte_position_start);
+	for (index = 0; index < length; ++index) {
+		if (!check(XML_Parse(parser, input + index, 1, index + 1 == length) == XML_STATUS_OK,
+			"one-byte start-position document accepted")) {
+			valid = 0;
+			break;
+		}
+	}
+	valid = valid && check(state.start_count == 2 && !state.failed,
+		"one-byte root and child callbacks report original token positions");
+	XML_ParserFree(parser);
+	return valid;
+}
+
+typedef struct ParameterReplayState {
+	char child_input[64];
+	int child_length;
+	char text[16];
+	int text_length;
+	int external_count;
+	int failed;
+} ParameterReplayState;
+
+static int
+encode_parameter_replay_input(const char *input, int encoding, char *output) {
+	size_t index;
+	size_t length = strlen(input);
+	if (encoding == 0) {
+		memcpy(output, input, length);
+		return (int)length;
+	}
+	for (index = 0; index < length; ++index) {
+		output[index * 2] = encoding == 1 ? input[index] : '\0';
+		output[index * 2 + 1] = encoding == 1 ? '\0' : input[index];
+	}
+	return (int)(length * 2);
+}
+
+static void XMLCALL
+parameter_replay_text(void *userData, const XML_Char *text, int length) {
+	ParameterReplayState *state = (ParameterReplayState *)userData;
+	if (length < 0 || length >= (int)sizeof(state->text) - state->text_length) {
+		state->failed = 1;
+		return;
+	}
+	memcpy(state->text + state->text_length, text, (size_t)length);
+	state->text_length += length;
+	state->text[state->text_length] = '\0';
+}
+
+static int XMLCALL
+parameter_replay_external(XML_Parser parser, const XML_Char *context, const XML_Char *base,
+	const XML_Char *systemId, const XML_Char *publicId) {
+	ParameterReplayState *state = (ParameterReplayState *)XML_GetUserData(parser);
+	XML_Parser child;
+	enum XML_Status status;
+	(void)base;
+	state->external_count++;
+	if (systemId == NULL || strcmp(systemId, "bar.ent") != 0
+		|| publicId == NULL || strcmp(publicId, "foo") != 0) {
+		state->failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	child = XML_ExternalEntityParserCreate(parser, context, NULL);
+	if (child == NULL) {
+		state->failed = 1;
+		return XML_STATUS_ERROR;
+	}
+	status = XML_Parse(child, state->child_input, state->child_length, XML_TRUE);
+	XML_ParserFree(child);
+	if (status != XML_STATUS_OK) state->failed = 1;
+	return status == XML_STATUS_OK;
+}
+
+static int
+check_parameter_child_survives_parent_replay(void) {
+	const char *input = "<!DOCTYPE d [\n<!ENTITY % e PUBLIC 'foo' 'bar.ent'>\n%e;\n]>\n<d>&j;</d>";
+	int encoding;
+	for (encoding = 0; encoding < 3; ++encoding) {
+		char parent_input[256];
+		int parent_length = encode_parameter_replay_input(input, encoding, parent_input);
+		XML_Parser parser = XML_ParserCreate(NULL);
+		ParameterReplayState state;
+		int attempt;
+		if (!check(parser != NULL, "parameter replay parent created")) return 0;
+		for (attempt = 0; attempt < 2; ++attempt) {
+			int index;
+			if (attempt > 0 && !check(XML_ParserReset(parser, NULL), "parameter replay parent resets")) {
+				XML_ParserFree(parser);
+				return 0;
+			}
+			memset(&state, 0, sizeof(state));
+			state.child_length = encode_parameter_replay_input("<!ENTITY j 'baz'>", encoding, state.child_input);
+			XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+			XML_SetUserData(parser, &state);
+			XML_SetCharacterDataHandler(parser, parameter_replay_text);
+			XML_SetExternalEntityRefHandler(parser, parameter_replay_external);
+			XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS);
+			for (index = 0; index < parent_length; ++index) {
+				if (XML_Parse(parser, parent_input + index, 1, index + 1 == parent_length) != XML_STATUS_OK) {
+					fprintf(stderr, "FAIL: parameter replay encoding=%d attempt=%d byte=%d error=%d\n",
+						encoding, attempt, index, (int)XML_GetErrorCode(parser));
+					XML_ParserFree(parser);
+					return 0;
+				}
+			}
+			if (!check(!state.failed && state.external_count == 1 && strcmp(state.text, "baz") == 0,
+				"freed parameter child declarations survive parent replay and reset")) {
+				fprintf(stderr, "parameter replay encoding=%d attempt=%d callbacks=%d text='%s'\n",
+					encoding, attempt, state.external_count, state.text);
+				XML_ParserFree(parser);
+				return 0;
+			}
+		}
+		XML_ParserFree(parser);
+	}
+	return 1;
+}
+
+typedef struct CachedDefaultAttributeState {
+	char expected_value;
+	int start_count;
+	int failed;
+} CachedDefaultAttributeState;
+
+static void XMLCALL
+cached_default_attribute_start(void *userData, const XML_Char *name, const XML_Char **atts) {
+	CachedDefaultAttributeState *state = (CachedDefaultAttributeState *)userData;
+	state->start_count++;
+	if (strcmp(name, "d") != 0 || atts == NULL || atts[0] == NULL || strcmp(atts[0], "a") != 0
+		|| atts[1] == NULL || atts[1][0] != state->expected_value || atts[1][1] != '\0'
+		|| atts[2] != NULL) {
+		state->failed = 1;
+	}
+}
+
+static int
+check_cached_dtd_default_attribute_lifecycle(void) {
+	XML_Parser parser = XML_ParserCreate(NULL);
+	int attempt;
+	if (!check(parser != NULL, "cached DTD default-attribute parser created")) return 0;
+	for (attempt = 0; attempt < 2; ++attempt) {
+		const char *dtd = attempt == 0
+			? "<!DOCTYPE d [<!ATTLIST d a CDATA \"b\">]>"
+			: "<!DOCTYPE d [<!ATTLIST d a CDATA \"c\">]>";
+		CachedDefaultAttributeState state = {attempt == 0 ? 'b' : 'c', 0, 0};
+		int valid;
+		if (attempt > 0 && !check(XML_ParserReset(parser, NULL), "cached DTD default-attribute parser resets")) {
+			XML_ParserFree(parser);
+			return 0;
+		}
+		XML_SetReparseDeferralEnabled(parser, XML_TRUE);
+		XML_SetUserData(parser, &state);
+		XML_SetStartElementHandler(parser, cached_default_attribute_start);
+		valid = check(smoke_parse_string(parser, dtd, XML_FALSE) == XML_STATUS_OK,
+			"unobserved complete DTD prefix accepted")
+			&& check(smoke_parse_string(parser, "<d>", XML_FALSE) == XML_STATUS_OK,
+				"root after cached DTD accepted before final input")
+			&& check(state.start_count == 1 && !state.failed,
+				"non-final root callback includes cached DTD default attribute")
+			&& check(smoke_parse_string(parser, "text", XML_FALSE) == XML_STATUS_OK
+				&& smoke_parse_string(parser, "</d>", XML_TRUE) == XML_STATUS_OK,
+				"cached DTD document completes after text")
+			&& check(state.start_count == 1 && !state.failed,
+				"cached DTD replay preserves default value without duplicate callbacks");
+		if (!valid) {
+			XML_ParserFree(parser);
+			return 0;
+		}
+	}
+	XML_ParserFree(parser);
+	return 1;
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -2431,7 +2814,18 @@ main(void) {
 	status = XML_Parse(parser, doctype_input, (int)strlen(doctype_input), XML_TRUE);
 	if (!check(status == XML_STATUS_OK, "parse reached Eiffel parser for doctype check")) return 1;
 	if (!check(g_doctype_start_count == 1 && g_doctype_end_count == 1 && !g_doctype_failed, "doctype callbacks delegated")) return 1;
-	if (!check(strstr(g_default_text, "'pubname'") != NULL && strstr(g_default_text, "'test.dtd'") != NULL, "default handler receives doctype identifiers")) return 1;
+	if (!check(strcmp(g_default_text, "<!ENTITY foo 'bar'><doc>&foo;</doc>") == 0,
+		"doctype callbacks suppress default declaration while preserving unhandled DTD tokens")) return 1;
+	XML_ParserFree(parser);
+
+	parser = XML_ParserCreate("UTF-8");
+	if (!check(parser != NULL, "parser created for default-only doctype check")) return 1;
+	g_default_len = 0;
+	g_default_text[0] = '\0';
+	XML_SetDefaultHandler(parser, default_handler);
+	status = XML_Parse(parser, doctype_input, (int)strlen(doctype_input), XML_TRUE);
+	if (!check(status == XML_STATUS_OK, "default-only doctype document accepted")) return 1;
+	if (!check(strcmp(g_default_text, doctype_input) == 0, "default-only handler receives complete doctype identifiers and DTD")) return 1;
 	XML_ParserFree(parser);
 
 	parser = XML_ParserCreate("UTF-8");
@@ -2772,7 +3166,7 @@ main(void) {
 	g_foreign_dtd_ref_count = 0;
 	g_foreign_dtd_failed = 0;
 	g_foreign_dtd_text = "$";
-	g_expected_foreign_dtd_child_error = XML_ERROR_SYNTAX;
+	g_expected_foreign_dtd_child_error = XML_ERROR_INVALID_TOKEN;
 	if (!check(XML_SetParamEntityParsing(parser, XML_PARAM_ENTITY_PARSING_ALWAYS), "parameter entity parsing accepted for invalid foreign DTD")) return 1;
 	XML_SetExternalEntityRefHandler(parser, foreign_dtd_external_entity_handler);
 	if (!check(XML_UseForeignDTD(parser, XML_TRUE) == XML_ERROR_NONE, "invalid foreign DTD setting accepted")) return 1;
@@ -3500,6 +3894,14 @@ main(void) {
 		XML_ParserFree(parser);
 	}
 
+	if (!check_default_replay_lifecycle()) return 1;
+	if (!check_null_context_parameter_child()) return 1;
+	if (!check_reset_encoding_lifecycle()) return 1;
+	if (!check_unfinished_root_space_lifecycle()) return 1;
+	if (!check_one_byte_declaration_and_dtd()) return 1;
+	if (!check_one_byte_start_positions()) return 1;
+	if (!check_parameter_child_survives_parent_replay()) return 1;
+	if (!check_cached_dtd_default_attribute_lifecycle()) return 1;
 	puts("xpact Eiffel DLL smoke: ok");
 	return 0;
 }

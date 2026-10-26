@@ -1,0 +1,34 @@
+Validating Declarative syntax with installed Jenkins libraries (offline metadata only).
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.thoughtworks.xstream.converters.reflection.SunUnsafeReflectionProvider (file:/C:/Users/ander/AppData/Local/Jenkins/war/WEB-INF/lib/xstream-1.4.21.jar)
+WARNING: Please consider reporting this to the maintainers of class com.thoughtworks.xstream.converters.reflection.SunUnsafeReflectionProvider
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+PASS regression: real Declarative parser rejects the original method-call default
+PASS regression: real Declarative parser accepts the quoted GString default
+PASS metadata: real model validator rejects an unknown parameter type
+PASS Declarative validation: C:/Users/ander/.codex/worktrees/wsl-benchmark-defaults/xpact/ci/Jenkinsfile.windows-phase1
+PASS Declarative validation: C:/Users/ander/.codex/worktrees/wsl-benchmark-defaults/xpact/ci/Jenkinsfile.all-tests
+Offline Declarative parser/model validation passed; controller-specific validation remains untested.
+No Pipeline steps were executed.
+Checking notification behavior with local Pipeline and mail stubs.
+PASS Jenkinsfile.windows-phase1: recipient defaults retain a submitted value and support clearing
+PASS Jenkinsfile.windows-phase1: missing, null, empty and whitespace recipients suppress email
+PASS Jenkinsfile.windows-phase1: FAILURE sends one email with build and console links
+PASS Jenkinsfile.windows-phase1: SMTP failure preserves FAILURE
+PASS Jenkinsfile.windows-phase1: UNSTABLE sends one email with build and console links
+PASS Jenkinsfile.windows-phase1: SMTP failure preserves UNSTABLE
+PASS Jenkinsfile.windows-phase1: successful, aborted and unbuilt runs do not send
+PASS Jenkinsfile.windows-phase1: build interruption propagates through email failure handling
+PASS Jenkinsfile.windows-phase1: successive build results and recipient changes do not leak state
+PASS Jenkinsfile.windows-phase1: archive failure is visible to the final notification
+PASS Jenkinsfile.all-tests: recipient defaults retain a submitted value and support clearing
+PASS Jenkinsfile.all-tests: missing, null, empty and whitespace recipients suppress email
+PASS Jenkinsfile.all-tests: FAILURE sends one email with build and console links
+PASS Jenkinsfile.all-tests: SMTP failure preserves FAILURE
+PASS Jenkinsfile.all-tests: UNSTABLE sends one email with build and console links
+PASS Jenkinsfile.all-tests: SMTP failure preserves UNSTABLE
+PASS Jenkinsfile.all-tests: successful, aborted and unbuilt runs do not send
+PASS Jenkinsfile.all-tests: build interruption propagates through email failure handling
+PASS Jenkinsfile.all-tests: successive build results and recipient changes do not leak state
+19 email notification scenarios passed; no email was sent.
+Jenkinsfile checks passed. No Jenkins job or SMTP server was contacted.

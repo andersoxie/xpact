@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "status": "complete_with_failures",
+  "build_id": "local-20261025-integration",
+  "local_output_directory": "build/dual-ci-local-20261025T162000Z",
+  "command": ".\\scripts\\run_dual_jenkins.ps1 -OutputDirectory build/dual-ci-local-20261025T162000Z -BuildId local-20261025-integration -Offline",
+  "python_exit_code": 1,
+  "jenkins_controller_executed": false,
+  "publication": {
+    "manifest": "plots.tsv",
+    "html": "dual-implementation-plots.html",
+    "plots": 6
+  },
+  "checks": {
+    "python_tests_passed": 125,
+    "groovy_publisher_scenarios_passed": 16,
+    "pipeline_groovy_syntax": "both parsed with installed Groovy 2.4.21",
+    "embedded_powershell_blocks_parsed": 48,
+    "wrapper_powershell_syntax": "passed"
+  },
+  "plots": [
+    {
+      "csvFileName": "plot-dual-catalog-ms-per-1000-documents.csv",
+      "group": "Dual catalog",
+      "title": "Catalog finalized, assertions discarded: time per 1,000 documents",
+      "yaxis": "Median ms per 1,000 documents",
+      "source_file": "dual-catalog-ms-per-1000-documents.csv",
+      "sha256": "26c73351365d5f99723b4636560073c31bd3dc9f8afb2517e55006801f8b5b34",
+      "series": {
+        "xpact": 140.10858437501383,
+        "pinned Xpact-core": 59.55578906247183
+      }
+    },
+    {
+      "csvFileName": "plot-dual-catalog-mib-per-second.csv",
+      "group": "Dual catalog",
+      "title": "Catalog finalized, assertions discarded: throughput",
+      "yaxis": "Median MiB/s",
+      "source_file": "dual-catalog-mib-per-second.csv",
+      "sha256": "92921910563dcc6765dc0cca93f0b47e4a680019a9b95e8b8fc485c16597cc34",
+      "series": {
+        "xpact": 17.772301129533282,
+        "pinned Xpact-core": 41.81029075400747
+      }
+    },
+    {
+      "csvFileName": "plot-dual-w3c-passed.csv",
+      "group": "Dual W3C conformance",
+      "title": "W3C finalized, assertions discarded: passed",
+      "yaxis": "Cases",
+      "source_file": "dual-w3c-passed.csv",
+      "sha256": "a776f6554decdf1bc3194ec33e598e4f0ad4b37e6d7d13965f1ea989e4627877",
+      "series": {
+        "xpact": 1727.0,
+        "pinned Xpact-core": 1051.0
+      }
+    },
+    {
+      "csvFileName": "plot-dual-w3c-wrong-verdicts.csv",
+      "group": "Dual W3C conformance",
+      "title": "W3C finalized, assertions discarded: wrong verdicts",
+      "yaxis": "Cases",
+      "source_file": "dual-w3c-wrong-verdicts.csv",
+      "sha256": "11b3b83fd4fa964006470336c723cdeb416c613b6eb24b308d76f828900d8ab9",
+      "series": {
+        "xpact": 0.0,
+        "pinned Xpact-core": 662.0
+      }
+    },
+    {
+      "csvFileName": "plot-dual-w3c-errors.csv",
+      "group": "Dual W3C conformance",
+      "title": "W3C finalized, assertions discarded: process errors and timeouts",
+      "yaxis": "Cases",
+      "source_file": "dual-w3c-errors.csv",
+      "sha256": "5d7153ced513fcd577a77143367b683669ddfcbd6689b5c5a72fe2a4edbdb089",
+      "series": {
+        "xpact": 0.0,
+        "pinned Xpact-core": 14.0
+      }
+    },
+    {
+      "csvFileName": "plot-dual-w3c-excluded.csv",
+      "group": "Dual W3C conformance",
+      "title": "W3C finalized, assertions discarded: profile exclusions",
+      "yaxis": "Cases",
+      "source_file": "dual-w3c-excluded.csv",
+      "sha256": "6fb80579e7467ea2bd42a53f1e6f15c34bd96e133e2315063a0b7f4ca8da9e74",
+      "series": {
+        "xpact": 858.0,
+        "pinned Xpact-core": 858.0
+      }
+    }
+  ],
+  "lanes": {
+    "catalog": {
+      "status": "complete",
+      "lane": "catalog-finalized-assertions-off",
+      "report_sha256": "580b3ae7f4502e90aaf2981f393fa9d16b95813af7a981821b2f6bfea02163e3",
+      "implementations": {
+        "xpact": {
+          "repository": "https://github.com/andersoxie/xpact.git",
+          "revision": "0d3274f844c92c0dabc41280792900970a7b8c5d",
+          "worktree_dirty": true,
+          "source_sha256": "e9c76e769f6e87675b94fa3ba5be522e377d62548257f401715d8740baebce62",
+          "build_inputs_sha256": "e9c76e769f6e87675b94fa3ba5be522e377d62548257f401715d8740baebce62",
+          "executable_sha256": "58e2659b2fa86d9f6997f92fcb476bcf11ffe0916866fb098488af6c0d95bee0",
+          "configuration": "finalized/assertions-off/msvc-x64",
+          "gc_policy": "normal"
+        },
+        "xpact-core": {
+          "repository": "https://github.com/andersoxie/Xpact-core.git",
+          "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+          "worktree_dirty": false,
+          "source_sha256": "37f5500ee21e8d392c95a4b68f97f173a3a4e82be411e5ac10e31700ae17de39",
+          "build_inputs_sha256": "832cf3a767c79fc3ba4c7327b31565c22eba41fd39e9c7ef363cf696aa4671ce",
+          "executable_sha256": "0494109f94bba633381a0cd6ca0c5dbc7dab9cb322b98635925beeceb41b58ad",
+          "configuration": "finalized/assertions-off/msvc-x64",
+          "gc_policy": "core-managed-off-full-collect"
+        }
+      },
+      "input": {
+        "name": "catalog-100-items",
+        "bytes": 2611,
+        "sha256": "edf9b7324f57190602061e9cb16c4641921e623ff8654e134f2b5dbb734b7685"
+      },
+      "raw_pairs": [
+        {
+          "Workload": "catalog",
+          "Pair": 1,
+          "Order": "AB",
+          "Iterations": 32000,
+          "DocumentBytes": 2611,
+          "BaselineElapsedMs": 4491.666300000361,
+          "CandidateElapsedMs": 1904.4530999999552,
+          "BaselineMiBPerSecond": 17.739829978992116,
+          "CandidateMiBPerSecond": 41.83951628127617,
+          "CandidateSpeedRatio": 2.358507174579656
+        },
+        {
+          "Workload": "catalog",
+          "Pair": 2,
+          "Order": "BA",
+          "Iterations": 32000,
+          "DocumentBytes": 2611,
+          "BaselineElapsedMs": 4451.043799999752,
+          "CandidateElapsedMs": 1896.2499000008393,
+          "BaselineMiBPerSecond": 17.901732731630148,
+          "CandidateMiBPerSecond": 42.020514534682235,
+          "CandidateSpeedRatio": 2.3472875595130063
+        },
+        {
+          "Workload": "catalog",
+          "Pair": 3,
+          "Order": "AB",
+          "Iterations": 32000,
+          "DocumentBytes": 2611,
+          "BaselineElapsedMs": 4450.680199999624,
+          "CandidateElapsedMs": 1918.763099998614,
+          "BaselineMiBPerSecond": 17.903195220447817,
+          "CandidateMiBPerSecond": 41.527480116973564,
+          "CandidateSpeedRatio": 2.3195569062188235
+        },
+        {
+          "Workload": "catalog",
+          "Pair": 4,
+          "Order": "BA",
+          "Iterations": 32000,
+          "DocumentBytes": 2611,
+          "BaselineElapsedMs": 5417.273499999283,
+          "CandidateElapsedMs": 1916.9375999990734,
+          "BaselineMiBPerSecond": 14.708763824530099,
+          "CandidateMiBPerSecond": 41.567026743287585,
+          "CandidateSpeedRatio": 2.8260040911096436
+        },
+        {
+          "Workload": "catalog",
+          "Pair": 5,
+          "Order": "AB",
+          "Iterations": 32000,
+          "DocumentBytes": 2611,
+          "BaselineElapsedMs": 4475.283100000524,
+          "CandidateElapsedMs": 1907.117399998242,
+          "BaselineMiBPerSecond": 17.804772280074452,
+          "CandidateMiBPerSecond": 41.78106522673877,
+          "CandidateSpeedRatio": 2.346621712960434
+        },
+        {
+          "Workload": "catalog",
+          "Pair": 6,
+          "Order": "BA",
+          "Iterations": 32000,
+          "DocumentBytes": 2611,
+          "BaselineElapsedMs": 4684.231800001726,
+          "CandidateElapsedMs": 1893.8004999981786,
+          "BaselineMiBPerSecond": 17.010557949831956,
+          "CandidateMiBPerSecond": 42.074862945939465,
+          "CandidateSpeedRatio": 2.4734557837566475
+        }
+      ]
+    },
+    "w3c": {
+      "status": "complete_with_failures",
+      "lane": "w3c-finalized-assertions-off",
+      "report_sha256": "e2f2da49b6e46e15be3463ca3252b9b839ad71b9525652f136b148e683b9f5f1",
+      "implementations": {
+        "xpact": {
+          "repository": "https://github.com/andersoxie/xpact.git",
+          "revision": "0d3274f844c92c0dabc41280792900970a7b8c5d",
+          "worktree_dirty": true,
+          "source_sha256": "bbf903004e8db60c729cd7514492d284cc7bc45ef6f7244e49374db28166ef08",
+          "build_inputs_sha256": "bbf903004e8db60c729cd7514492d284cc7bc45ef6f7244e49374db28166ef08",
+          "executable_sha256": "a24e8519a9fdc983539b801738370cc2b1a921331d2ad03e9e6ae3d76361a380",
+          "configuration": "finalized/assertions-off/msvc-x64",
+          "gc_policy": "normal"
+        },
+        "xpact-core": {
+          "repository": "https://github.com/andersoxie/Xpact-core.git",
+          "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+          "worktree_dirty": false,
+          "source_sha256": "37f5500ee21e8d392c95a4b68f97f173a3a4e82be411e5ac10e31700ae17de39",
+          "build_inputs_sha256": "9eff966fc1e3b53bc921715336d3865249681e2f53fca6dac098a0df7a692a58",
+          "executable_sha256": "7c122cb7caf5cfc653e8375ef9614aa957fb15f08b326f9b2c68a387cff1cc82",
+          "configuration": "finalized/assertions-off/msvc-x64",
+          "gc_policy": "core-managed-off-full-collect"
+        }
+      },
+      "source": {
+        "suite_version": "20130923",
+        "source": "https://www.w3.org/XML/Test/xmlts20130923.zip",
+        "source_mode": "verified-archive",
+        "archive_sha256": "f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb",
+        "suite_sha256": "17603d9ae2b14f7d31dd2fb840a28966f2970cb11c4d88b10596ba592240a215",
+        "catalog_cases": 2585
+      },
+      "engines": [
+        {
+          "engine": "xpact",
+          "total": 2585,
+          "passed": 1727,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 858
+        },
+        {
+          "engine": "xpact-core",
+          "total": 2585,
+          "passed": 1051,
+          "failed": 662,
+          "errors": 14,
+          "skipped": 858
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "This is a local run of the shared Jenkins command; no Jenkins job was triggered.",
+    "W3C plots show correctness counts. They do not compare parser-only throughput.",
+    "Catalog measurements include reset/reuse and different internal GC behavior."
+  ],
+  "integration_files_sha256": {
+    "scripts\\run_dual_jenkins.py": "ad93e7a2b23714bcec73d1c3d35345ce0f5e0ffb916fe838f40cf2c40c3f18ce",
+    "scripts\\run_dual_jenkins.ps1": "681b8774016acc014c63710930eca6a1d383eae47ac684252807ca1e8eb09e9b",
+    "scripts\\dual_jenkins_reports.py": "d9838ad59a629f642ff3e0d47db446cd49b368688df750d34a61fee498fac664",
+    "ci\\Jenkinsfile.windows-phase1": "a2295f020afa14cc22064fc6b998cf750a51e2717217382be32fb07925712874",
+    "ci\\Jenkinsfile.all-tests": "39a4dacc4f46ed954888804ab8c49d9e32853625dd40269686c7f6b462277167"
+  }
+}

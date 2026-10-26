@@ -1,5 +1,10 @@
 # W3C XML conformance benchmarks
 
+For the same cases against both our implementation and pinned Finnian Xpact-core,
+use the [focused dual W3C lane](dual-w3c-lane.md). It runs the full applicable
+catalog with finalized assertions discarded and retains unsuppressed outcomes
+for both engines.
+
 `scripts/run_benchmarks.ps1` runs the W3C XML binary conformance tests by
 default, once for each selected Eiffel build. The default builds are
 `Finalized` and `FinalizedAssertions`; `Workbench` is also supported. The
@@ -92,8 +97,26 @@ original document bytes. Timings include process startup and the file read;
 they are not parser-only throughput measurements. A process crash, timeout,
 missing file, or inconsistent verdict is an error, never a successful
 rejection. Unexpected acceptance/rejection and harness errors return a
-nonzero status after reports have been written. There is no expected-failure
-allowlist for current parser gaps.
+nonzero status after reports have been written.
+
+### Known failures
+
+`benchmarks/w3c-known-failures.tsv` lists the parser gaps that were recorded
+on 2026-10-23 (columns `engine`, `case_id`, `status`, `category`). The category
+column records what was observed, not the cause. `run_benchmarks.ps1` passes
+the file to the runner with `--known-failures` by default
+(`-W3cKnownFailures ""` turns it off).
+
+- A listed failure or error is still reported: `junit.xml` shows it as a
+  failure marked `[known: ...]`, and `summary.md` counts it under *Known*.
+  It no longer makes the command fail.
+- Any failure or error that is not listed is *Unexpected* and fails the run.
+- A listed case that now passes, has another status, or is missing from the
+  catalog also fails the run, as a `harness` error named
+  `known-failures:<engine>:<case>`. Remove or update its row.
+
+After a parser fix, rerun with `--write-known-failures <file>`, compare the
+written file with the list, and remove the fixed rows.
 
 ## Reports and Jenkins
 
@@ -103,8 +126,8 @@ to `build/benchmarks/w3c-xml-conformance/`:
 | File | Contents |
 |---|---|
 | `results.tsv` | Per-case engine, catalog ID, path, expected and actual verdict, status, elapsed time, and diagnostic message. |
-| `summary.json` | Source/profile metadata and per-engine passed, failed, error, skipped, accepted, rejected, and timing totals. |
-| `summary.md` | Human-readable result totals. |
+| `summary.json` | Source/profile metadata and per-engine passed, failed, error, skipped, accepted, rejected, known, unexpected, and timing totals. |
+| `summary.md` | Human-readable result totals, including *Known* and *Unexpected*. |
 | `junit.xml` | Per-case success, failure, error, and skip results for Jenkins. |
 
 Both `ci/Jenkinsfile.all-tests` and `ci/Jenkinsfile.windows-phase1` include
@@ -114,7 +137,9 @@ assertion modes. Set `W3C_SUITE_DIRECTORY` to an extracted suite directory
 for an offline Jenkins agent. Keep that directory outside workspaces cleared
 by the all-tests pipeline.
 
-Unexpected conformance results fail the benchmark command. The Jenkins
+Unexpected conformance results fail the benchmark command; known failures
+make the published JUnit report show failures, which Jenkins marks as
+UNSTABLE rather than FAILURE. The Jenkins
 `post` block publishes `junit.xml` even after that failure, and the pipelines
 archive all four report files. Conformance cases are published independently
 of the existing throughput TSV-to-JUnit conversion. Previous conformance
@@ -145,6 +170,22 @@ in `XP_PARSER.normalized_input` when assertions are retained. These results
 are recorded as failures, not an expected-failure baseline. Parser fixes
 are separate work. Jenkins pipeline execution itself was not performed as
 part of this local integration check.
+
+## Known-failures baseline: 23 October 2026
+
+The Jenkins build of `main` at `cf12dee` failed at this lane with the same
+totals as a local run of the same parser code (`student-Mass` at `63f67f3`):
+
+| Build | Passed | Wrong verdict | Runtime errors | Skipped |
+|---|---:|---:|---:|---:|
+| Finalized | 1,491 | 236 | 0 | 858 |
+| FinalizedAssertions | 1,444 | 236 | 47 | 858 |
+
+Of the 236 wrong verdicts, 220 accept input that must be rejected and 16
+reject input that must be accepted; both builds fail the same cases. The 47
+runtime errors occur only with assertions retained and match the 22 October
+crash list in `reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv`.
+These 519 results form the first known-failures list.
 
 ## Upstream catalog accommodations
 

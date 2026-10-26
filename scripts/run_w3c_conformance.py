@@ -33,6 +33,7 @@ SUITE_SHA256 = "f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb
 ROOT_CATALOG_SHA256 = "a10d3fc409fc0de5ea1758d2e4fe6efcbc51df6d1942c80f299dbbe085b2fd52"
 PROFILE = "XML 1.0 fifth edition; namespaces unless NAMESPACE=no; nonvalidating; no external entities; binary verdicts only"
 REPORT_FILES = ("junit.xml", "results.tsv", "summary.json", "summary.md")
+KNOWN_FAILURE_FIELDS = ("engine", "case_id", "status", "category")
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,8 @@ class Result:
     status: str
     elapsed_ms: float = 0.0
     message: str = ""
+    known: str = ""
+    exit_code: int | None = None
 
 
 def contained_path(root: Path, candidate: Path) -> Path:
@@ -210,7 +213,8 @@ def load_catalog(suite_dir: Path) -> list[Case]:
     return cases
 
 
-def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir: Path) -> Result:
+def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir: Path,
+             *, diagnostic_dir: Path | None = None) -> Result:
     result = Result(engine, case.id, str(case.path), case.kind, case.expected, "not-run", "skipped")
     if case.skip_reason:
         result.message = case.skip_reason
@@ -223,10 +227,13 @@ def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir
     if case.namespaces:
         command.append("--namespaces")
     started = time.perf_counter()
+    stdout_bytes, stderr_bytes = b"", b""
     try:
         completed = subprocess.run(command, capture_output=True, timeout=timeout, cwd=work_dir)
-        stdout = completed.stdout.decode("utf-8", errors="replace")
-        stderr = completed.stderr.decode("utf-8", errors="replace")
+        result.exit_code = completed.returncode
+        stdout_bytes, stderr_bytes = completed.stdout, completed.stderr
+        stdout = stdout_bytes.decode("utf-8", errors="replace")
+        stderr = stderr_bytes.decode("utf-8", errors="replace")
         markers = [line for line in stdout.splitlines() if line.startswith("XPACT_CONFORMANCE\t")]
         result.message = (stdout + stderr)[-12000:].strip()
         if markers == ["XPACT_CONFORMANCE\tACCEPT"] and completed.returncode == 0:
@@ -241,14 +248,86 @@ def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir
         result.status = "passed" if result.actual == case.expected else "failed"
         if result.status == "failed":
             result.message = f"Expected {case.expected}, got {result.actual}. {case.description}\n{result.message}"
-    except subprocess.TimeoutExpired:
+    except subprocess.TimeoutExpired as error:
+        stdout_bytes, stderr_bytes = error.output or b"", error.stderr or b""
         result.status, result.actual = "error", "timeout"
         result.message = f"Parser exceeded the per-case timeout of {timeout:g} seconds"
     except OSError as error:
         result.status, result.actual, result.message = "error", "process-error", str(error)
     finally:
         result.elapsed_ms = round((time.perf_counter() - started) * 1000, 3)
+        if diagnostic_dir is not None:
+            # Persistence errors are harness errors, never parser verdicts.
+            diagnostic_dir.mkdir(parents=True, exist_ok=True)
+            (diagnostic_dir / "stdout.bin").write_bytes(stdout_bytes)
+            (diagnostic_dir / "stderr.bin").write_bytes(stderr_bytes)
+            (diagnostic_dir / "result.json").write_text(
+                json.dumps({"command": command, "result": tsv_row(result)}, indent=2) + "\n",
+                encoding="utf-8")
     return result
+
+
+def load_known_failures(path: Path) -> dict[tuple[str, str], dict[str, str]]:
+    """Read the engine/case pairs whose current failure or error is a recorded parser gap.
+
+    Lines starting with '#' are comments. Every listed result must still occur:
+    a listed case that passes, changes status, or no longer exists is reported.
+    """
+    with path.open(encoding="utf-8", newline="") as source:
+        rows = list(csv.DictReader((line for line in source if not line.startswith("#")), delimiter="\t"))
+    known: dict[tuple[str, str], dict[str, str]] = {}
+    for number, row in enumerate(rows, 1):
+        if any(not row.get(field) for field in KNOWN_FAILURE_FIELDS):
+            raise ValueError(f"Known-failures row {number} needs {', '.join(KNOWN_FAILURE_FIELDS)}: {path}")
+        if row["status"] not in {"failed", "error"}:
+            raise ValueError(f"Known-failures row {number} has status {row['status']!r}; use failed or error: {path}")
+        key = (row["engine"], row["case_id"])
+        if key in known:
+            raise ValueError(f"Duplicate known failure {key[0]} {key[1]}: {path}")
+        known[key] = row
+    return known
+
+
+def apply_known_failures(results: list[Result], known: dict[tuple[str, str], dict[str, str]]) -> list[Result]:
+    """Mark recorded parser gaps and return harness errors for stale list entries."""
+    by_key = {(row.engine, row.case_id): row for row in results}
+    engines = {row.engine for row in results}
+    stale = []
+    for key, entry in known.items():
+        if key[0] not in engines:
+            continue
+        row = by_key.get(key)
+        if row is not None and row.status == entry["status"]:
+            row.known = entry["category"]
+            continue
+        actual = row.status if row is not None else "absent from the catalog"
+        stale.append(Result("harness", f"known-failures:{key[0]}:{key[1]}", "", "", entry["status"], actual, "error",
+                            message=f"{key[0]} {key[1]} is listed as a known {entry['status']} ({entry['category']}) "
+                                    f"but is now {actual}. Update the known-failures list."))
+    return stale
+
+
+def observed_category(row: Result) -> str:
+    """Describe what was observed, not why: causes belong in the linked issues."""
+    if row.actual == "ACCEPT":
+        return "accepts input that must be rejected"
+    if row.actual == "REJECT":
+        return "rejects input that must be accepted"
+    return "timeout" if row.actual == "timeout" else "process error (crash or contract violation)"
+
+
+def write_known_failures(results: list[Result], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as target:
+        writer = csv.writer(target, delimiter="\t", lineterminator="\n")
+        writer.writerow(KNOWN_FAILURE_FIELDS)
+        for row in results:
+            if row.engine != "harness" and row.status in {"failed", "error"}:
+                writer.writerow((row.engine, row.case_id, row.status, row.known or observed_category(row)))
+
+
+def unexpected(row: Result) -> bool:
+    return row.status in {"failed", "error"} and not row.known
 
 
 def xml_text(value: str) -> str:
@@ -273,7 +352,9 @@ def write_reports(results: list[Result], output_dir: Path, metadata: dict) -> di
         summary = {"engine": engine, "total": len(rows), "passed": counts["passed"],
                    "failed": counts["failed"], "errors": counts["error"], "skipped": counts["skipped"],
                    "accepted": sum(row.actual == "ACCEPT" for row in rows),
-                   "rejected": sum(row.actual == "REJECT" for row in rows), "elapsed_ms": elapsed_ms}
+                   "rejected": sum(row.actual == "REJECT" for row in rows),
+                   "known": sum(bool(row.known) for row in rows), "unexpected": sum(map(unexpected, rows)),
+                   "elapsed_ms": elapsed_ms}
         summaries.append(summary)
         suite = ET.SubElement(suites, "testsuite", name=f"w3c-xml-{engine}", tests=str(len(rows)),
                               failures=str(counts["failed"]), errors=str(counts["error"]),
@@ -285,8 +366,9 @@ def write_reports(results: list[Result], output_dir: Path, metadata: dict) -> di
                                  name=row.case_id, time=f"{row.elapsed_ms / 1000:.6f}", file=row.path)
             if row.status in {"failed", "error", "skipped"}:
                 tag = {"failed": "failure", "error": "error", "skipped": "skipped"}[row.status]
-                detail = ET.SubElement(test, tag, message=xml_text(row.message.splitlines()[0] if row.message else row.status))
-                detail.text = xml_text(row.message)
+                text = f"[known: {row.known}] {row.message}" if row.known else row.message
+                detail = ET.SubElement(test, tag, message=xml_text(text.splitlines()[0] if text else row.status))
+                detail.text = xml_text(text)
     ET.indent(suites)
     ET.ElementTree(suites).write(output_dir / "junit.xml", encoding="utf-8", xml_declaration=True)
     with (output_dir / "results.tsv").open("w", newline="", encoding="utf-8") as target:
@@ -296,11 +378,13 @@ def write_reports(results: list[Result], output_dir: Path, metadata: dict) -> di
     report = {**metadata, "profile": PROFILE, "engines": summaries}
     (output_dir / "summary.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     lines = ["# W3C XML conformance", "", f"Source: {SUITE_URL}", "", f"Profile: {PROFILE}", "",
-             "| Engine | Cases | Passed | Failed | Errors | Skipped | Elapsed ms |",
-             "|---|---:|---:|---:|---:|---:|---:|"]
+             "| Engine | Cases | Passed | Failed | Errors | Skipped | Known | Unexpected | Elapsed ms |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for row in summaries:
-        lines.append(f"| {row['engine']} | {row['total']} | {row['passed']} | {row['failed']} | {row['errors']} | {row['skipped']} | {row['elapsed_ms']} |")
-    lines += ["", "Elapsed time includes a fresh process and file read per executed case; it is not parser-only throughput.",
+        lines.append(f"| {row['engine']} | {row['total']} | {row['passed']} | {row['failed']} | {row['errors']} | {row['skipped']} | {row['known']} | {row['unexpected']} | {row['elapsed_ms']} |")
+    lines += ["", "Known counts failures and errors listed in the known-failures file; they are still parser gaps.",
+              "Unexpected counts every other failure or error; any unexpected result fails the run.",
+              "Elapsed time includes a fresh process and file read per executed case; it is not parser-only throughput.",
               "Skipped cases are excluded from conformance results. Canonical output comparisons are not implemented.", ""]
     (output_dir / "summary.md").write_text("\n".join(lines), encoding="utf-8")
     return report
@@ -314,6 +398,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path, default=repo / "build/benchmarks/w3c-xml-conformance")
     parser.add_argument("--engine", action="append", required=True, metavar="NAME=EXE")
     parser.add_argument("--timeout", type=float, default=10.0, help="Maximum seconds per case (default: 10)")
+    parser.add_argument("--known-failures", type=Path,
+                        help="TSV of recorded parser gaps (engine, case_id, status, category); listed results do not fail the run")
+    parser.add_argument("--write-known-failures", type=Path, metavar="PATH",
+                        help="Write this run's failures and errors as a known-failures TSV for review")
     args = parser.parse_args(argv)
     if not 0 < args.timeout < float("inf"):
         parser.error("--timeout must be positive and finite")
@@ -325,7 +413,12 @@ def main(argv: list[str] | None = None) -> int:
     metadata = {"suite_version": SUITE_VERSION, "source": SUITE_URL,
                 "archive_sha256": SUITE_SHA256 if args.suite_dir is None else None,
                 "source_mode": "local-directory" if args.suite_dir else "verified-archive"}
+    known: dict[tuple[str, str], dict[str, str]] = {}
     try:
+        if args.known_failures:
+            known = load_known_failures(args.known_failures.resolve())
+            metadata["known_failures_file"] = str(args.known_failures.resolve())
+            metadata["known_failures_listed"] = len(known)
         engines: dict[str, Path] = {}
         for value in args.engine:
             name, separator, executable = value.partition("=")
@@ -351,11 +444,15 @@ def main(argv: list[str] | None = None) -> int:
                         print(f"  {engine}: {index}/{len(cases)}", flush=True)
     except (OSError, ValueError, KeyError, expat.ExpatError, zipfile.BadZipFile) as error:
         results.append(Result("harness", "suite-setup", "", "", "", "not-run", "error", message=str(error)))
+    if known and not any(row.engine == "harness" for row in results):
+        results += apply_known_failures(results, known)
+    if args.write_known_failures:
+        write_known_failures(results, args.write_known_failures.resolve())
     report = write_reports(results, output, metadata)
     for summary in report["engines"]:
         print(json.dumps(summary), flush=True)
     print(f"W3C XML reports: {output}", flush=True)
-    return 1 if any(row.status in {"failed", "error"} for row in results) else 0
+    return 1 if any(map(unexpected, results)) else 0
 
 
 if __name__ == "__main__":

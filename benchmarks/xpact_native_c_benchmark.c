@@ -182,10 +182,14 @@ parse_documents_with_reused_parser(const char *document, size_t document_length,
 			XML_ParserFree(parser);
 			return status;
 		}
-		if (i + 1 < iterations && XML_ParserReset(parser, NULL) != XML_TRUE) {
-			fputs("parser reset failed\n", stderr);
-			XML_ParserFree(parser);
-			return 1;
+		if (i + 1 < iterations) {
+			if (XML_ParserReset(parser, NULL) != XML_TRUE) {
+				fputs("parser reset failed\n", stderr);
+				XML_ParserFree(parser);
+				return 1;
+			}
+			/* Expat reset removes callback registrations. */
+			configure_parser(parser, use_callbacks);
 		}
 	}
 

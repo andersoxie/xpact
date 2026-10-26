@@ -96,8 +96,26 @@ Start here, then read:
    gap analysis and next optimization priorities.
 16. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
+17. [Jenkins email notifications](docs/jenkins-email-notifications.md) for
+   setting recipients for failed and unstable builds.
 
 ## Build And Verify
+
+For independent builds of our parser and a pinned Finnian Xpact-core revision,
+see [Pinned implementation builds](docs/implementation-builds.md). This first
+integration step provides isolated build probes and provenance; shared test
+and benchmark execution follows separately.
+
+The first complete comparison path is [the focused dual catalog lane](docs/dual-catalog-lane.md):
+`scripts/run_dual_catalog.ps1` qualifies both implementations, then measures only
+the finalized, assertion-discarded 100-item catalog configuration.
+
+The [dual W3C lane](docs/dual-w3c-lane.md), `scripts/run_dual_w3c.ps1`, runs the
+same applicable conformance cases with both implementations in that configuration
+and reports their acceptance/rejection results side by side.
+
+Both lanes are included in the main [Jenkins execution and plots](docs/dual-implementation-jenkins.md)
+when `RUN_BENCHMARKS` is enabled.
 
 Compile and run the Eiffel regression matrix, both with and without Eiffel
 runtime assertions:
@@ -162,6 +180,16 @@ Run benchmarks including the W3C XML conformance suite:
 The suite runs by default in both Jenkins benchmark pipelines. See
 [W3C conformance benchmarks](docs/w3c-xml-conformance.md) for the supported
 profile, offline setup, and detailed reports.
+
+Run the additional Eiffel/GCC comparison inside WSL2 (requires Linux
+EiffelStudio in that distribution):
+
+```powershell
+.\scripts\run_wsl_benchmarks.ps1 -Distribution Ubuntu
+```
+
+See [WSL2 Eiffel/GCC benchmarks](docs/wsl-benchmarks.md) for setup, timing
+methodology, and the optional Jenkins lane.
 
 Run opt-in large XML benchmarks with pre-decompressed real XML files:
 

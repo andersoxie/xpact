@@ -15,6 +15,9 @@ feature {NONE} -- Initialization
 			run_test ("test_mismatched_tag_is_rejected", agent test_mismatched_tag_is_rejected)
 			run_test ("test_depth_limit_is_enforced", agent test_depth_limit_is_enforced)
 			run_test ("test_comments_and_cdata", agent test_comments_and_cdata)
+			run_test ("test_markup_dispatch_prefix_diagnostics", agent test_markup_dispatch_prefix_diagnostics)
+			run_test ("test_markup_dispatch_reuse_and_callbacks", agent test_markup_dispatch_reuse_and_callbacks)
+			run_test ("test_markup_dispatch_callback_positions", agent test_markup_dispatch_callback_positions)
 			run_test ("test_xml_declaration_callbacks", agent test_xml_declaration_callbacks)
 			run_test ("test_attlist_declaration_callbacks", agent test_attlist_declaration_callbacks)
 			run_test ("test_attlist_default_attributes", agent test_attlist_default_attributes)
@@ -23,8 +26,11 @@ feature {NONE} -- Initialization
 			run_test ("test_malformed_doctype_diagnostics", agent test_malformed_doctype_diagnostics)
 			run_test ("test_entity_declaration_callbacks", agent test_entity_declaration_callbacks)
 			run_test ("test_predefined_and_numeric_entities", agent test_predefined_and_numeric_entities)
+			run_test ("test_generic_and_native_name_character_policies", agent test_generic_and_native_name_character_policies)
 			run_test ("test_internal_entity_declarations", agent test_internal_entity_declarations)
 			run_test ("test_parameter_entity_declarations", agent test_parameter_entity_declarations)
+			run_test ("test_parameter_subset_expansion_depth", agent test_parameter_subset_expansion_depth)
+			run_test ("test_cached_doctype_replay_lifecycle", agent test_cached_doctype_replay_lifecycle)
 			run_test ("test_entity_markup_expansion", agent test_entity_markup_expansion)
 			run_test ("test_async_internal_entities_are_rejected", agent test_async_internal_entities_are_rejected)
 			run_test ("test_attribute_entity_expansion", agent test_attribute_entity_expansion)
@@ -34,6 +40,9 @@ feature {NONE} -- Initialization
 			run_test ("test_external_entity_resolver_denial", agent test_external_entity_resolver_denial)
 			run_test ("test_external_parameter_entity_resolver", agent test_external_parameter_entity_resolver)
 			run_test ("test_external_subset_resolver", agent test_external_subset_resolver)
+			run_test ("test_undefined_external_parameter_literal_lifecycle", agent test_undefined_external_parameter_literal_lifecycle)
+			run_test ("test_undefined_external_parameter_between_declarations", agent test_undefined_external_parameter_between_declarations)
+			run_test ("test_standalone_external_parameter_context", agent test_standalone_external_parameter_context)
 			run_test ("test_external_policy_blocks_parameter_entities", agent test_external_policy_blocks_parameter_entities)
 			run_test ("test_token_well_formedness_errors", agent test_token_well_formedness_errors)
 			run_test ("test_document_structure", agent test_document_structure)
@@ -48,6 +57,8 @@ feature {NONE} -- Initialization
 			run_test ("test_garbage_collection_suspension", agent test_garbage_collection_suspension)
 			run_test ("test_native_eiffel_bridge_parser", agent test_native_eiffel_bridge_parser)
 			run_test ("test_native_bridge_installer", agent test_native_bridge_installer)
+			run_test ("test_native_handle_survives_collection", agent test_native_handle_survives_collection)
+			run_test ("test_native_resource_and_prefix_boundaries", agent test_native_resource_and_prefix_boundaries)
 			run_test ("test_expat_api_manifest", agent test_expat_api_manifest)
 			run_test ("test_libexpat_adapter_files", agent test_libexpat_adapter_files)
 			run_test ("test_benchmark_publication_files", agent test_benchmark_publication_files)
@@ -165,6 +176,116 @@ feature {NONE} -- Tests
 			assert ("DTD default tokens emitted", l_default_text.same_string ("<!DOCTYPE doc [%N<!ENTITY e SYSTEM 'http://example.org/e'>%N<!NOTATION n SYSTEM 'http://example.org/n'>%N<!ELEMENT doc EMPTY>%N<!ATTLIST doc a CDATA #IMPLIED>%N<?pi in dtd?>%N<!--comment in dtd-->%N]><doc/>"))
 		end
 
+	test_markup_dispatch_prefix_diagnostics
+			-- A short markup prefix must keep the original diagnostic and position.
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			assert_markup_dispatch_error (l_parser, "<", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<root><", "unterminated declaration", 6, 1, 6)
+			assert_markup_dispatch_error (l_parser, "<!", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![CD", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<!DOC", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "</", "invalid end tag name", 2, 1, 2)
+			assert_markup_dispatch_error (l_parser, "<?", "unterminated processing instruction", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<!unknown>", "invalid declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![Q", "unterminated declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<![CDQ", "invalid declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<!DOCTYPX", "invalid declaration", 0, 1, 0)
+			assert_markup_dispatch_error (l_parser, "<root></", "invalid end tag name", 8, 1, 8)
+			assert_markup_dispatch_error (l_parser, "<root>%N<", "unterminated declaration", 7, 2, 0)
+		end
+
+	test_markup_dispatch_reuse_and_callbacks
+			-- Failed, declaration-rich and unrelated documents must not share parse state.
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_document: STRING_8
+		do
+			create l_handler.make
+			l_handler.enable_doctype_events
+			create l_parser.make (l_handler)
+			assert ("partial markup after root rejected", not l_parser.parse ("<root><"))
+			assert ("partial markup retains only completed start callback", l_handler.events.count = 1 and then l_handler.events.i_th (1).same_string ("start:root:0"))
+			assert ("partial markup error position", l_parser.last_error.same_string ("unterminated declaration") and then l_parser.current_byte_index = 6)
+
+			l_handler.events.wipe_out
+			l_document := "<!DOCTYPE root [<!ENTITY e 'ok'>]><?pi yes?><root><!--note--><![CDATA[raw<]]>&e;<empty/></root>"
+			assert ("reused parser accepts every markup dispatch kind", l_parser.parse (l_document))
+			assert ("successful reparse clears earlier error", not l_parser.has_error and then l_parser.last_error.is_empty)
+			assert ("mixed markup callback count", l_handler.events.count = 12)
+			if l_handler.events.count = 12 then
+				assert ("mixed markup doctype start", l_handler.events.i_th (1).same_string ("start-doctype:root:::1"))
+				assert ("mixed markup doctype end", l_handler.events.i_th (2).same_string ("end-doctype"))
+				assert ("mixed markup PI", l_handler.events.i_th (3).same_string ("pi:pi:yes"))
+				assert ("mixed markup root start", l_handler.events.i_th (4).same_string ("start:root:0"))
+				assert ("mixed markup comment", l_handler.events.i_th (5).same_string ("comment:note"))
+				assert ("mixed markup CDATA start", l_handler.events.i_th (6).same_string ("start-cdata"))
+				assert ("mixed markup CDATA text", l_handler.events.i_th (7).same_string ("text:raw<"))
+				assert ("mixed markup CDATA end", l_handler.events.i_th (8).same_string ("end-cdata"))
+				assert ("mixed markup entity text", l_handler.events.i_th (9).same_string ("text:ok"))
+				assert ("mixed markup empty start", l_handler.events.i_th (10).same_string ("start:empty:0"))
+				assert ("mixed markup empty end", l_handler.events.i_th (11).same_string ("end:empty"))
+				assert ("mixed markup root end", l_handler.events.i_th (12).same_string ("end:root"))
+			end
+			assert ("successful reparse completes positions", l_parser.current_line_number = 1 and then l_parser.current_column_number = l_document.count and then l_parser.current_byte_index = l_document.count and then l_parser.current_byte_count = 0)
+
+			l_handler.events.wipe_out
+			assert ("next document cannot reuse earlier entity", not l_parser.parse ("<root>&e;</root>"))
+			assert ("earlier DTD state removed", l_parser.last_error.same_string ("undefined entity"))
+			assert ("failed entity emits no stale declaration callbacks", l_handler.events.count = 1 and then l_handler.events.i_th (1).same_string ("start:root:0"))
+			l_handler.events.wipe_out
+			assert ("parser recovers again with unrelated root", l_parser.parse ("<fresh/>"))
+			assert ("unrelated document has only fresh callbacks", l_handler.events.count = 2 and then l_handler.events.i_th (1).same_string ("start:fresh:0") and then l_handler.events.i_th (2).same_string ("end:fresh"))
+			assert ("unrelated document clears diagnostics and positions", l_parser.last_error.is_empty and then l_parser.current_byte_index = 8 and then l_parser.current_line_number = 1 and then l_parser.current_column_number = 8)
+			l_handler.events.wipe_out
+			assert ("reused parser rejects a subsequent mismatched end", not l_parser.parse ("<fresh></wrong>"))
+			assert ("subsequent mismatch diagnostic and position", l_parser.last_error.same_string ("mismatched end tag") and then l_parser.current_byte_index = 9 and then l_parser.current_line_number = 1 and then l_parser.current_column_number = 9)
+			assert ("subsequent mismatch has only its start callback", l_handler.events.count = 1 and then l_handler.events.i_th (1).same_string ("start:fresh:0"))
+		end
+
+	test_markup_dispatch_callback_positions
+			-- Declaration dispatch must preserve positions seen by later tag/text callbacks.
+		local
+			l_handler: XP_POSITION_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_handler.set_parser (l_parser)
+			assert ("positioned mixed markup parses", l_parser.parse ("<!DOCTYPE root>%N<?work now?>%N<root>%N<!--note--><![CDATA[text]]><child/>%N</root>"))
+			assert ("positioned mixed markup callback count", l_handler.events.count = 5)
+			if l_handler.events.count = 5 then
+				assert ("root position after doctype and PI", l_handler.events.i_th (1).same_string ("start:root:3:0:29:0"))
+				assert ("CDATA text position after comment", l_handler.events.i_th (2).same_string ("text:text:4:20:56:4"))
+				assert ("child start position after CDATA", l_handler.events.i_th (3).same_string ("start:child:4:27:63:0"))
+				assert ("child end position after empty tag", l_handler.events.i_th (4).same_string ("end:child:4:35:71:0"))
+				assert ("root end position on final line", l_handler.events.i_th (5).same_string ("end:root:5:0:72:0"))
+			end
+		end
+
+	assert_markup_dispatch_error (a_parser: XP_PARSER; a_input, a_message: READABLE_STRING_8; a_index, a_line, a_column: INTEGER)
+			-- Verify a reused parser reports this exact rejected prefix, including its position.
+		require
+			parser_attached: a_parser /= Void
+			input_attached: a_input /= Void
+			message_attached: a_message /= Void
+		local
+			l_label: STRING_8
+		do
+			create l_label.make_from_string ("markup prefix ")
+			l_label.append (a_input)
+			assert (l_label + " rejected", not a_parser.parse (a_input))
+			assert (l_label + " diagnostic", a_parser.has_error and then a_parser.last_error.same_string (a_message))
+			assert (l_label + " byte position", a_parser.current_byte_index = a_index and then a_parser.current_byte_count = 0)
+			assert (l_label + " line and column", a_parser.current_line_number = a_line and then a_parser.current_column_number = a_column)
+		end
+
 	test_xml_declaration_callbacks
 		local
 			l_handler: XP_COLLECTING_HANDLER
@@ -239,6 +360,45 @@ feature {NONE} -- Tests
 				io.put_string ("predefined error: ")
 				io.put_string (l_parser.last_error)
 				io.put_new_line
+			end
+		end
+
+
+	test_generic_and_native_name_character_policies
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser, l_child: XP_PARSER
+			l_native: XP_NATIVE_PARSER
+			l_codes: ARRAY [NATURAL_32]
+			l_name, l_document: STRING_8
+			l_status, i: INTEGER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_native.make
+			l_codes := <<{NATURAL_32} 0x901, {NATURAL_32} 0x10000>>
+			from
+				i := l_codes.lower
+			until
+				i > l_codes.upper
+			loop
+				create l_name.make_empty
+				{UTF_CONVERTER}.utf_32_code_into_utf_8_string_8 (l_codes.item (i), l_name)
+				l_document := "<" + l_name + "/>"
+				assert ("generic fifth-edition name accepted", l_parser.parse (l_document))
+				assert ("generic policy survives parse reset", l_parser.parse (l_document))
+				l_parser.set_legacy_name_character_ranges (True)
+				assert ("explicit legacy name policy rejects name", not l_parser.parse (l_document))
+				create l_child.make (l_handler)
+				l_child.import_entity_context (l_parser)
+				assert ("child inherits name policy through reset", not l_child.parse (l_document))
+				l_parser.set_legacy_name_character_ranges (False)
+				assert ("generic name policy can be restored", l_parser.parse (l_document))
+				assert ("child policy is a snapshot", not l_child.parse (l_document))
+				assert ("native reset accepts reuse", l_native.reset)
+				l_status := l_native.parse (l_document, True)
+				assert ("native Expat name policy rejects name", l_status = l_native.Xml_status_error and then l_native.last_error_code = l_native.Xml_error_invalid_token)
+				i := i + 1
 			end
 		end
 
@@ -460,6 +620,20 @@ feature {NONE} -- Tests
 			if not l_ok then
 				assert ("raw dtd content syntax", l_parser.last_error.same_string ("unexpected DTD content"))
 			end
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<doc></doc>")
+			assert ("incomplete subset rejects without assertion exception", not l_ok)
+			assert ("incomplete subset diagnostic retained", l_parser.last_error.same_string ("unterminated doctype"))
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<!ELEMENT doc EMPTY><!ENTITY %% ent1 'a%">]><doc/>")
+			assert ("incomplete entity literal rejects without assertion exception", not l_ok)
+
+			l_ok := l_parser.parse_prefix ("<!DOCTYPE doc [<!ENTITY e 'value'>]")
+			assert ("raw subset closer waits for DOCTYPE terminator", l_ok)
+			l_ok := l_parser.parse_prefix ("<?xml version='1.0'?>%N<!DOCTYPE doc [%N<!ENTITY e 'value'>%N]")
+			assert ("subset closer after XML declaration waits for terminator", l_ok)
+			assert ("final delimiter completes previously split DOCTYPE", l_parser.parse ("<?xml version='1.0'?>%N<!DOCTYPE doc [%N<!ENTITY e 'value'>%N]><doc>&e;</doc>"))
+			l_ok := l_parser.parse_prefix ("<!DOCTYPE doc [<!ENTITY %% close ']><doc/>'>%%close;")
+			assert ("entity-generated subset closer remains invalid", not l_ok and then l_parser.last_error.same_string ("invalid DTD closing delimiter"))
+
 		end
 
 	test_internal_entity_declarations
@@ -502,6 +676,91 @@ feature {NONE} -- Tests
 				io.put_string (l_parser.last_error)
 				io.put_new_line
 			end
+		end
+
+
+	test_parameter_subset_expansion_depth
+		local
+			l_handler: XP_NULL_EVENT_HANDLER
+			l_parser: XP_PARSER
+			l_document: STRING_8
+			i: INTEGER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			create l_document.make_from_string ("<!DOCTYPE doc [<!ENTITY %% p0 '<!--base-->'>")
+			from
+				i := 1
+			until
+				i > 40
+			loop
+				l_document.append ("<!ENTITY %% p")
+				l_document.append_integer (i)
+				l_document.append (" '&#37;p")
+				l_document.append_integer (i - 1)
+				l_document.append ("; '>")
+				i := i + 1
+			end
+			l_document.append ("%%p40;]><doc/>")
+			assert ("nested subset bodies retain entity depth ceiling", not l_parser.parse (l_document))
+			assert ("nested subset body reports depth error", l_parser.last_error.same_string ("entity expansion depth exceeded"))
+			l_document.replace_substring_all ("; '", ";'")
+			assert ("pure aliases use constant stack within expansion budget", l_parser.parse (l_document))
+			assert ("pure alias cycle is rejected", not l_parser.parse ("<!DOCTYPE doc [<!ENTITY %% p0 '&#37;p1;'><!ENTITY %% p1 '&#37;p0;'>%%p0;]><doc/>"))
+			assert ("pure alias cycle diagnostic", l_parser.last_error.same_string ("recursive entity reference"))
+			assert ("fresh parse restores stack after depth and cycle errors", l_parser.parse ("<!DOCTYPE doc [<!ENTITY %% p '<!--ok-->'>%%p;]><doc/>"))
+		end
+
+
+	test_cached_doctype_replay_lifecycle
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser, l_child, l_snapshot: XP_PARSER
+			l_prefix, l_other_prefix: STRING_8
+			l_error_index: INTEGER
+		do
+			create l_handler.make
+			create l_parser.make (l_handler)
+			l_prefix := "<!DOCTYPE doc [<!ENTITY e 'value'><!ATTLIST doc a CDATA 'default'>]>"
+			assert ("completed DTD can be cached explicitly", l_parser.parse_with_cached_doctype (l_prefix, False))
+			assert ("cache retains a bounded immutable source prefix", l_parser.cached_doctype_byte_count = l_prefix.count)
+			assert ("cached declarations serve first content prefix", l_parser.parse_with_cached_doctype (l_prefix + "<doc>&e;", False))
+			assert ("cached default attributes retained", l_handler.last_attribute_value.same_string ("default"))
+			assert ("first cached body charges expansion", l_parser.accounting_indirect_byte_count = 5)
+			l_handler.events.wipe_out
+			assert ("appended content can replay cached DTD", l_parser.parse_with_cached_doctype (l_prefix + "<doc>&e;again", False))
+			assert ("cached body restores expansion budget before replay", l_parser.accounting_indirect_byte_count = 5)
+			assert ("malformed late content rejects with cached declarations", not l_parser.parse_with_cached_doctype (l_prefix + "<doc>&e;</wrong>", True))
+			assert ("malformed late content diagnostic retained", l_parser.last_error.same_string ("mismatched end tag"))
+			assert ("error releases cached source", l_parser.cached_doctype_byte_count = 0)
+			l_error_index := l_parser.current_byte_index
+			l_parser.clear_cached_doctype
+			assert ("idempotent cache cleanup preserves error position", l_parser.current_byte_index = l_error_index and then l_parser.last_error.same_string ("mismatched end tag"))
+			l_other_prefix := "<!DOCTYPE doc [<!ENTITY e 'new'><!ATTLIST doc a CDATA 'newDefault'>]>"
+			assert ("fresh DTD rebuilds cache after failure", l_parser.parse_with_cached_doctype (l_other_prefix, False))
+			assert ("changed source prefix takes safe rebuild path", l_parser.parse_with_cached_doctype (l_prefix + "<doc>&e;</doc>", False))
+			assert ("changed-prefix rebuild uses matching defaults", l_handler.last_attribute_value.same_string ("default"))
+			assert ("final cached parse succeeds", l_parser.parse_with_cached_doctype (l_prefix + "<doc>&e;</doc>", True))
+			assert ("final success releases cached source", l_parser.cached_doctype_byte_count = 0)
+			assert ("cache can be rebuilt before reset", l_parser.parse_with_cached_doctype (l_prefix, False))
+			assert ("ordinary parse resets optional cache", l_parser.parse ("<fresh/>") and then l_parser.cached_doctype_byte_count = 0)
+			assert ("cache can be rebuilt before policy change", l_parser.parse_with_cached_doctype (l_prefix, False))
+			l_parser.set_legacy_name_character_ranges (True)
+			assert ("policy change releases cached source immediately", l_parser.cached_doctype_byte_count = 0)
+			assert ("disabled declaration state can be cached", l_parser.parse_with_cached_doctype ("<!DOCTYPE doc [%%missing;<!ENTITY absent 'ignored'>]>", False))
+			assert ("unread PE state survives cached body replay", l_parser.parse_with_cached_doctype ("<!DOCTYPE doc [%%missing;<!ENTITY absent 'ignored'>]><doc>&absent;</doc>", True))
+			assert ("disabled-state final parse releases cached source", l_parser.cached_doctype_byte_count = 0)
+			assert ("parent definitions prepared for detached delta", l_parser.parse ("<!DOCTYPE doc [<!ENTITY inherited 'parent'>]><doc/>"))
+			create l_child.make (l_handler)
+			l_child.import_entity_context (l_parser)
+			assert ("child adds one new declaration", l_child.parse_external_subset ("<!ENTITY added 'child'><!ENTITY inherited 'ignored'>"))
+			l_snapshot := l_child.entity_context_snapshot
+			assert ("snapshot retains only new child declaration", l_snapshot.entity_context_definition_count = 1)
+			assert ("snapshot retains no input cache", l_snapshot.cached_doctype_byte_count = 0)
+			assert ("reset child can recreate empty declaration delta", l_child.parse_external_subset ("<!ENTITY inherited 'ignored'>"))
+			assert ("inherited-only replay retains no definition records", l_child.entity_context_snapshot.entity_context_definition_count = 0)
+			assert ("detached snapshot survives child reset", l_snapshot.parse ("<doc>&added;</doc>"))
+
 		end
 
 	test_entity_markup_expansion
@@ -738,6 +997,103 @@ feature {NONE} -- Tests
 			l_ok := l_parser.parse ("<?xml version='1.0' standalone='yes'?>%N<!DOCTYPE root SYSTEM %"mem://subset%"><root>&possibly_external;</root>")
 			assert ("standalone document rejects undefined external-subset entity", not l_ok)
 			assert ("standalone undefined entity diagnostic", l_parser.last_error.same_string ("undefined entity"))
+		end
+
+
+	test_undefined_external_parameter_literal_lifecycle
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser, l_child: XP_PARSER
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			l_handler.enable_entity_decl_events
+			l_handler.enable_attlist_events
+			create l_parser.make (l_handler)
+			l_ok := l_parser.parse_external_subset ("<!ENTITY %% p 'before%%missing;after'><!ENTITY later 'ignored'><!ATTLIST doc a CDATA 'ignored'><!--kept--><?continue now?>")
+			assert ("undefined PE in external entity value is accepted", l_ok)
+			assert ("literal stops at undefined PE while comments and PI continue", l_handler.events.count = 3)
+			if l_handler.events.count = 3 then
+				assert ("current entity retains its prefix", l_handler.events.i_th (1).same_string ("entity:p:1:before:"))
+				assert ("comment follows disabled declarations", l_handler.events.i_th (2).same_string ("comment:kept"))
+				assert ("PI follows disabled declarations", l_handler.events.i_th (3).same_string ("pi:continue:now"))
+			end
+			l_handler.events.wipe_out
+			create l_child.make (l_handler)
+			l_child.import_entity_context (l_parser)
+			l_ok := l_child.parse_external_subset ("<!ENTITY inherited_late 'ignored'><!--child-->")
+			assert ("unread-PE state survives child reset and imported context", l_ok and then l_handler.events.count = 1)
+			if l_handler.events.count = 1 then
+				assert ("child still emits comments", l_handler.events.i_th (1).same_string ("comment:child"))
+			end
+			l_handler.events.wipe_out
+			l_ok := l_parser.parse ("<!DOCTYPE doc [<!ENTITY later 'restored'><!ATTLIST doc a CDATA 'value'>]><doc>&later;</doc>")
+			assert ("new parse restores declaration processing", l_ok and then l_handler.events.count = 5)
+			if l_handler.events.count = 5 then
+				assert ("entity declaration restored after reset", l_handler.events.i_th (1).same_string ("entity:later:0:restored:"))
+				assert ("attribute declaration restored after reset", l_handler.events.i_th (2).same_string ("attlist:doc:a:CDATA:value:0"))
+				assert ("restored entity expands", l_handler.events.i_th (4).same_string ("text:restored"))
+			end
+			assert ("restored attribute default applies", l_handler.last_attribute_value.same_string ("value"))
+		end
+
+	test_undefined_external_parameter_between_declarations
+		local
+			l_handler: XP_COLLECTING_HANDLER
+			l_parser: XP_PARSER
+			l_input: STRING_8
+			l_ok: BOOLEAN
+		do
+			create l_handler.make
+			l_handler.enable_entity_decl_events
+			l_handler.enable_attlist_events
+			create l_parser.make (l_handler)
+			l_input := "%%missing;<!ENTITY later 'ignored'><!ATTLIST doc a CDATA 'ignored'><!--kept--><?continue now?>"
+			l_ok := l_parser.parse_external_subset_prefix (l_input)
+			assert ("undefined PE between declarations accepts prefix", l_ok)
+			assert ("prefix keeps comment and PI after missing PE", l_handler.events.count = 2)
+			if l_handler.events.count = 2 then
+				assert ("prefix comment emitted", l_handler.events.i_th (1).same_string ("comment:kept"))
+				assert ("prefix PI emitted", l_handler.events.i_th (2).same_string ("pi:continue:now"))
+			end
+			l_handler.events.wipe_out
+			l_ok := l_parser.parse_external_subset (l_input)
+			assert ("final reparse repeats same declaration policy", l_ok and then l_handler.events.count = 2)
+			l_handler.events.wipe_out
+			l_ok := l_parser.parse_external_subset ("<!ENTITY restored 'value'><!ATTLIST doc a CDATA 'value'>")
+			assert ("fresh external subset resets disabled state", l_ok and then l_handler.events.count = 2)
+			if l_handler.events.count = 2 then
+				assert ("fresh subset entity restored", l_handler.events.i_th (1).same_string ("entity:restored:0:value:"))
+				assert ("fresh subset attribute restored", l_handler.events.i_th (2).same_string ("attlist:doc:a:CDATA:value:0"))
+			end
+		end
+
+	test_standalone_external_parameter_context
+		local
+			l_parent_handler: XP_NULL_EVENT_HANDLER
+			l_handler: XP_COLLECTING_HANDLER
+			l_parent, l_child: XP_PARSER
+			l_ok: BOOLEAN
+		do
+			create l_parent_handler.make
+			create l_parent.make (l_parent_handler)
+			l_ok := l_parent.parse ("<?xml version='1.0' standalone='yes'?><doc/>")
+			assert ("standalone parent accepted", l_ok)
+			create l_handler.make
+			l_handler.enable_entity_decl_events
+			l_handler.enable_attlist_events
+			create l_child.make (l_handler)
+			l_child.import_entity_context (l_parent)
+			l_ok := l_child.parse_external_subset ("%%missing;<!ENTITY %% p 'before%%missing;after'><!ENTITY later 'kept'><!ATTLIST doc a CDATA 'kept'>")
+			assert ("standalone external context accepts undeclared PE", l_ok)
+			assert ("standalone context keeps subsequent declarations", l_handler.events.count = 3)
+			if l_handler.events.count = 3 then
+				assert ("standalone literal keeps prefix", l_handler.events.i_th (1).same_string ("entity:p:1:before:"))
+				assert ("standalone later entity preserved", l_handler.events.i_th (2).same_string ("entity:later:0:kept:"))
+				assert ("standalone later attribute preserved", l_handler.events.i_th (3).same_string ("attlist:doc:a:CDATA:kept:0"))
+			end
+			l_ok := l_parent.parse ("<?xml version='1.0' standalone='yes'?><!DOCTYPE doc [%%missing;]><doc/>")
+			assert ("standalone internal subset still requires declared PE", not l_ok and then l_parent.last_error.same_string ("undefined entity"))
 		end
 
 	test_external_policy_blocks_parameter_entities
@@ -1364,6 +1720,71 @@ feature {NONE} -- Tests
 			assert ("native bridge installer rejects freed handle", l_status = l_installer.Xml_status_error)
 		end
 
+	test_native_handle_survives_collection
+			-- Native ownership must keep the parser live without an Eiffel client reference.
+		local
+			l_installer: XP_NATIVE_BRIDGE_INSTALLER
+			l_memory: MEMORY
+			l_handle: POINTER
+			l_input: C_STRING
+			l_status: INTEGER
+		do
+			create l_installer.make
+			create l_memory
+			l_handle := l_installer.parser_create (default_pointer, default_pointer, default_pointer)
+			l_memory.full_collect
+			assert ("native handle roots parser through collection", attached l_installer.parser_for (l_handle))
+			create l_input.make ("<root>retained</root>")
+			l_status := l_installer.parse (l_handle, l_input.item, l_input.count, True)
+			assert ("collected native handle still parses", l_status = l_installer.Xml_status_ok)
+			l_installer.parser_free (l_handle)
+			l_memory.full_collect
+			assert ("freed native handle has no retained parser", not attached l_installer.parser_for (l_handle))
+			assert ("freed native handle leaves no registry entry", l_installer.active_parser_count = 0)
+		end
+
+	test_native_resource_and_prefix_boundaries
+			-- Native compatibility keeps bounded names/input and validates fast-path boundaries.
+		local
+			l_native: XP_NATIVE_PARSER
+			l_generic: XP_PARSER
+			l_sink: XP_NULL_EVENT_HANDLER
+			l_input: STRING_8
+			l_status: INTEGER
+		do
+			create l_sink.make
+			create l_generic.make (l_sink)
+			assert ("generic XML name limit remains 4096", l_generic.max_name_length = 4096)
+			create l_native.make
+			l_native.set_diagnostic_events_enabled (False)
+			assert ("native XML names have approved bounded limit", l_native.parser.max_name_length = 524288)
+			assert ("native input budget remains 10 MiB", l_native.parser.max_input_bytes = 10485760)
+			assert ("native element depth budget retained", l_native.parser.max_element_depth = 256)
+			assert ("native attribute count budget retained", l_native.parser.max_attribute_count = 1024)
+			l_status := l_native.parse ("<r>", False)
+			assert ("plain prefix starts", l_status = l_native.Xml_status_ok)
+			l_status := l_native.parse ("abc", False)
+			assert ("plain text prefix advances", l_status = l_native.Xml_status_ok and then l_native.current_byte_index = 6 and then l_native.current_column_number = 6)
+			l_status := l_native.parse ("]]>", False)
+			assert ("plain text fast path validates markup boundary", l_status = l_native.Xml_status_error and then l_native.last_error_code = l_native.Xml_error_invalid_token)
+			assert ("reset after invalid boundary", l_native.reset)
+			l_status := l_native.parse ("<s/>", False)
+			assert ("empty element prefix parses", l_status = l_native.Xml_status_ok)
+			l_status := l_native.parse ("x", False)
+			assert ("closed root cannot arm plain text fast path", l_status = l_native.Xml_status_error)
+			assert ("reset before name limit", l_native.reset)
+			create l_input.make_filled ('a', 524289)
+			l_input.prepend_character ('<')
+			l_input.append ("/>")
+			l_status := l_native.parse (l_input, False)
+			assert ("oversized native name rejected before callbacks", l_status = l_native.Xml_status_error)
+			assert ("reset before input limit", l_native.reset)
+			create l_input.make_filled ('a', 10485761)
+			l_status := l_native.parse (l_input, False)
+			assert ("oversized native input rejected", l_status = l_native.Xml_status_error)
+			assert ("oversized native input released", l_native.input_buffer.is_empty)
+		end
+
 	test_expat_api_manifest
 		local
 			l_api: XP_EXPAT_API
@@ -1544,7 +1965,7 @@ feature {NONE} -- Tests
 			assert ("native layer exports parser create", l_source.has_substring ("XML_ParserCreate"))
 			assert ("native layer exports parse", l_source.has_substring ("XML_Parse"))
 			assert ("native layer exports handler setters", l_source.has_substring ("XML_SetElementHandler"))
-			assert ("native layer reports Eiffel bridge version", l_source.has_substring ("expat_2.8.1-xpact-eiffel-bridge"))
+			assert ("native layer reports Expat-compatible version", l_source.has_substring ("expat_2.8.1"))
 			assert ("native layer does not decode XML entities in C", not l_source.has_substring ("xp_decode_entity"))
 			assert ("native layer does not parse XML names in C", not l_source.has_substring ("xp_parse_name"))
 			l_bridge := file_text ("native\xpact_eiffel_bridge.h")

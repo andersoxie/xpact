@@ -67,20 +67,21 @@ feature -- Access
 			-- Count this node and all descendants.
 		local
 			i: INTEGER
+			l_nodes: ARRAYED_LIST [XP_CONTENT_MODEL]
 		do
-			Result := 1
+			create l_nodes.make (16)
+			l_nodes.extend (Current)
 			from
 				i := 1
-			invariant
-				index_in_bounds: i >= 1 and i <= children.count + 1
 			until
-				i > children.count
+				i > l_nodes.count
 			loop
-				Result := Result + children.i_th (i).node_count
+				across l_nodes.i_th (i).children as l_child loop
+					l_nodes.extend (l_child.item)
+				end
 				i := i + 1
-			variant
-				children.count - i + 1
 			end
+			Result := l_nodes.count
 		ensure
 			positive: Result >= 1
 		end

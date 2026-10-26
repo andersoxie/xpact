@@ -1,0 +1,390 @@
+{
+  "schema_version": 1,
+  "status": "complete_with_failures",
+  "run_id": "20261025T154254Z-45fe02bb6e8c",
+  "lane": "w3c-finalized-assertions-off",
+  "command": ".\\scripts\\run_dual_w3c.ps1 -Offline",
+  "python_exit_code": 1,
+  "profile": "XML 1.0 fifth edition; namespaces unless NAMESPACE=no; nonvalidating; no external entities; binary verdicts only",
+  "source": {
+    "suite_version": "20130923",
+    "source": "https://www.w3.org/XML/Test/xmlts20130923.zip",
+    "source_mode": "verified-archive",
+    "archive_sha256": "f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb",
+    "suite_sha256": "17603d9ae2b14f7d31dd2fb840a28966f2970cb11c4d88b10596ba592240a215",
+    "catalog_cases": 2585
+  },
+  "scope": "Full applicable catalog on finalized assertions-off direct Eiffel parsers with no-op events; both read original bytes. Assertions-on builds run directed controls only. No external resources, native DLL, .NET, event or canonical output parity claim.",
+  "method": "Each applicable case launches a fresh process; engines execute sequentially. Ten-second per-case timeout. Same catalog expectations and explicit exclusions for both. No known-failure allowlist. Elapsed times include startup and file I/O and are not parser-only throughput.",
+  "implementations": {
+    "xpact": {
+      "repository": "https://github.com/andersoxie/xpact.git",
+      "revision": "4106de4a04f1c6aaa4dad5e9fce4bfb4bd813beb",
+      "source_sha256": "bbf903004e8db60c729cd7514492d284cc7bc45ef6f7244e49374db28166ef08",
+      "worktree_dirty": true,
+      "build_inputs_sha256": "bbf903004e8db60c729cd7514492d284cc7bc45ef6f7244e49374db28166ef08",
+      "executable_sha256": "fcfbdd80fa87ea05bee24b243f385b8a1c049b0e7065e8b5fe43f85d91bd2b5e",
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "gc_policy": "normal",
+      "identity": "XPACT_W3C_IDENTITY\txpact\t4106de4a04f1c6aaa4dad5e9fce4bfb4bd813beb\tfinalized/assertions-off/msvc-x64\tnormal",
+      "eiffel_version": "ISE EiffelStudio version 25.02.9.8723 Enterprise Edition - win64",
+      "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "generated_makefile": {
+        "CC": "cl",
+        "CPP": "cl",
+        "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+        "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+        "EIFLIB": "\"C:\\El2502E\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+      },
+      "native_helpers": []
+    },
+    "xpact-core": {
+      "repository": "https://github.com/andersoxie/Xpact-core.git",
+      "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+      "source_sha256": "37f5500ee21e8d392c95a4b68f97f173a3a4e82be411e5ac10e31700ae17de39",
+      "build_inputs_sha256": "9eff966fc1e3b53bc921715336d3865249681e2f53fca6dac098a0df7a692a58",
+      "executable_sha256": "b01aa0f73d62ef5665a1da31e70d516855a4b4415e1f66fff6625d531d573811",
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "gc_policy": "core-managed-off-full-collect",
+      "identity": "XPACT_W3C_IDENTITY\txpact-core\t6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\tfinalized/assertions-off/msvc-x64\tcore-managed-off-full-collect",
+      "eiffel_version": "ISE EiffelStudio version 25.02.9.8723 Enterprise Edition - win64",
+      "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "generated_makefile": {
+        "CC": "cl",
+        "CPP": "cl",
+        "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\El2502E\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+        "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+        "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+        "EIFLIB": "\"C:\\El2502E\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+      },
+      "native_helpers": [
+        {
+          "source_sha256": "7566a71a82754b00f09bd01f6f1bceaf9f4317f91ecc88ccd02892af973110b2",
+          "object_sha256": "d0dcb1a8bdf6eca4398c21f33c692c907f087bcf89a684d07221f72a983c55e0"
+        }
+      ]
+    }
+  },
+  "qualification": [
+    {
+      "implementation": "xpact",
+      "assertions": true,
+      "status": "executed",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "PASS",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "PASS",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "PASS",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ],
+      "executable_sha256": "19994184a7196970ff1e1aa0f02014414573b6761678efe4371797b07c7c12f4",
+      "build_inputs_sha256": "bbf903004e8db60c729cd7514492d284cc7bc45ef6f7244e49374db28166ef08",
+      "configuration": "finalized/assertions-on/msvc-x64",
+      "source_revision": "4106de4a04f1c6aaa4dad5e9fce4bfb4bd813beb",
+      "identity": "XPACT_W3C_IDENTITY\txpact\t4106de4a04f1c6aaa4dad5e9fce4bfb4bd813beb\tfinalized/assertions-on/msvc-x64\tnormal"
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": true,
+      "status": "executed",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "FAIL",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "FAIL",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "FAIL",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ],
+      "executable_sha256": "6fdc65262554bde468bc823a5c57bfc12c9baf3bb12b102235d892c34ee095e5",
+      "build_inputs_sha256": "9eff966fc1e3b53bc921715336d3865249681e2f53fca6dac098a0df7a692a58",
+      "configuration": "finalized/assertions-on/msvc-x64",
+      "source_revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+      "identity": "XPACT_W3C_IDENTITY\txpact-core\t6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\tfinalized/assertions-on/msvc-x64\tcore-managed-off-full-collect"
+    },
+    {
+      "implementation": "xpact",
+      "assertions": false,
+      "status": "executed",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "PASS",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "PASS",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "PASS",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ],
+      "executable_sha256": "fcfbdd80fa87ea05bee24b243f385b8a1c049b0e7065e8b5fe43f85d91bd2b5e",
+      "build_inputs_sha256": "bbf903004e8db60c729cd7514492d284cc7bc45ef6f7244e49374db28166ef08",
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "source_revision": "4106de4a04f1c6aaa4dad5e9fce4bfb4bd813beb",
+      "identity": "XPACT_W3C_IDENTITY\txpact\t4106de4a04f1c6aaa4dad5e9fce4bfb4bd813beb\tfinalized/assertions-off/msvc-x64\tnormal"
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": false,
+      "status": "executed",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "FAIL",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "FAIL",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "FAIL",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ],
+      "executable_sha256": "b01aa0f73d62ef5665a1da31e70d516855a4b4415e1f66fff6625d531d573811",
+      "build_inputs_sha256": "9eff966fc1e3b53bc921715336d3865249681e2f53fca6dac098a0df7a692a58",
+      "configuration": "finalized/assertions-off/msvc-x64",
+      "source_revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+      "identity": "XPACT_W3C_IDENTITY\txpact-core\t6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\tfinalized/assertions-off/msvc-x64\tcore-managed-off-full-collect"
+    }
+  ],
+  "engines": [
+    {
+      "engine": "xpact",
+      "total": 2585,
+      "passed": 1727,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 858
+    },
+    {
+      "engine": "xpact-core",
+      "total": 2585,
+      "passed": 1051,
+      "failed": 662,
+      "errors": 14,
+      "skipped": 858
+    }
+  ],
+  "failure_kinds": {
+    "xpact": {
+      "false_accepts": 0,
+      "false_rejects": 0,
+      "timeouts": 0
+    },
+    "xpact-core": {
+      "false_accepts": 339,
+      "false_rejects": 323,
+      "timeouts": 14
+    }
+  },
+  "errors": [
+    {
+      "engine": "xpact-core",
+      "case_id": "not-wf-sa-055",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "o-p24fail1",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "o-p24fail2",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "o-p28fail1",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "o-p49fail1",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "o-p50fail1",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P24-ibm24n08.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P24-ibm24n09.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P25-ibm25n02.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P45-ibm45n07.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P52-ibm52n06.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P71-ibm70n01.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P71-ibm71n08.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    },
+    {
+      "engine": "xpact-core",
+      "case_id": "ibm-not-wf-P82-ibm82n07.xml",
+      "expected": "REJECT",
+      "actual": "timeout",
+      "exit_code": "",
+      "message": "Parser exceeded the per-case timeout of 10 seconds"
+    }
+  ],
+  "agreement": {
+    "same_outcome": 1909,
+    "different_outcome": 676
+  },
+  "case_comparison": {
+    "path": "dual-w3c-2026-10-25.tsv",
+    "sha256": "1e126dc3f65593a9f2618d8de8e25b958cb1b3e5a95b5f364ebf52838804e04e",
+    "rows": 2585
+  },
+  "runner_checks": {
+    "test_implementation_builds.py": 32,
+    "test_w3c_conformance.py": 28,
+    "test_dual_w3c.py": 25,
+    "test_dual_catalog.py": 14
+  },
+  "limitations": [
+    "Pinned core source unchanged; observed failures are not suppressed or fixed by this lane.",
+    "Reuse control includes namespace verdicts; its failure does not independently establish a recovery defect.",
+    "Timeouts establish no verdict within ten seconds; their internal cause remains unconfirmed.",
+    "Jenkins controller pipeline not executed; wrapper and embedded PowerShell parsed locally."
+  ],
+  "local_full_evidence": "build/dual-w3c/20261025T154254Z-45fe02bb6e8c/",
+  "notes": "Our revision is the base Git revision plus this uncommitted lane change; worktree_dirty and build input fingerprints identify the actual source snapshot."
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "validation": "Republished authenticated completed child reports from the previous real full execution; parser binaries were not rerun.",
+  "source_run": "build/dual-ci-local-20261025T162000Z",
+  "output_run": "build/dual-ci-own-summary-20261025T170000Z-retry-1",
+  "cli_exit_code": 0,
+  "comparison_status": "complete_with_failures",
+  "jenkins_subject_summary": {
+    "schema_version": 1,
+    "implementation": "xpact",
+    "status": "complete",
+    "junit": "xpact-junit.xml",
+    "summary": "xpact-summary.json",
+    "tests": 2605,
+    "passed": 1747,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 858
+  },
+  "raw_w3c_cases": 5170,
+  "raw_w3c_failures": 662,
+  "raw_w3c_errors": 14,
+  "raw_source_files_sha256": {
+    "catalog/report.json": "580b3ae7f4502e90aaf2981f393fa9d16b95813af7a981821b2f6bfea02163e3",
+    "w3c/report.json": "e2f2da49b6e46e15be3463ca3252b9b839ad71b9525652f136b148e683b9f5f1",
+    "w3c/conformance/junit.xml": "fb3b56d2ddca7709784a670fdd5e05db0521d25798fded97d19c28904869c007"
+  },
+  "plot_csv_values_unchanged": true,
+  "jenkins_controller_executed": false,
+  "checks": {
+    "python_tests_passed": 41,
+    "publisher_scenarios_passed": 22,
+    "standalone_gating_scenarios_passed": 8,
+    "windows_powershell_5_reference_only_exception_exit_code": 0,
+    "four_jenkinsfiles_groovy_syntax": "passed",
+    "embedded_powershell_blocks_parsed": 52
+  },
+  "integration_files_sha256": {
+    "scripts/run_dual_jenkins.py": "90383ace8063caf4b18f9677decccc8d0c8b0902d20c205e3a7b478526352498",
+    "scripts/run_dual_jenkins.ps1": "31ca8d283e17189228b800319840844cca515a041f33c02eb9fcb00dcb657e4f",
+    "scripts/dual_jenkins_reports.py": "bedcd782cd1982c8fe1f8088d26633655d2a4d0f56926a2b5be1b60def6f204b",
+    "scripts/jenkins_xpact_summary.py": "e4de8a6afadc0fa54327e86d821e0482ca6c696bccc75b86f3fa61a5b1a7a670",
+    "ci/Jenkinsfile.all-tests": "75d1bb0db0c7c4b22e7b602d38e526101042fd5ed0e003585e7eef10dd264d24",
+    "ci/Jenkinsfile.windows-phase1": "e30f9e6478f8963c0fc565ead67c0706c5b451b5d6caf4556fdad08a584da576",
+    "ci/Jenkinsfile.dual-catalog": "7c853b3524736d935f503fa7e65459e1d303cee0dd63f35b863e7051cf51c274",
+    "ci/Jenkinsfile.dual-w3c": "24fcf1a8e726fd22912b9af05e73abd735e271bb7c371fa887fe069584968b1e"
+  }
+}

@@ -72,10 +72,28 @@ struct XML_ParserStruct {
 	int activeCallbackKind;
 	int stopCallbackKind;
 	XML_Bool reparseDeferralEnabled;
+	enum XML_Error parseErrorCode;
+	int bufferLength;
 };
 
 #define XPACT_CALLBACK_NONE 0
 #define XPACT_CALLBACK_CHARACTER_DATA 1
+
+static XPACT_PRIVATE_UNUSED void
+xp_consume_input_prefix(XML_Parser parser, int pendingBytes) {
+	int consumed;
+	int keep;
+	if (parser == NULL || parser->buffer == NULL || pendingBytes < 0
+		|| pendingBytes > parser->bufferLength) {
+		return;
+	}
+	consumed = parser->bufferLength - pendingBytes;
+	keep = (consumed < 1024 ? consumed : 1024) + pendingBytes;
+	if (keep < parser->bufferLength) {
+		memmove(parser->buffer, parser->buffer + parser->bufferLength - keep, (size_t)keep);
+		parser->bufferLength = keep;
+	}
+}
 
 static XPACT_PRIVATE_UNUSED XML_Bool
 xp_private_append_utf8(char **buffer, int *length, int *capacity, int codepoint) {

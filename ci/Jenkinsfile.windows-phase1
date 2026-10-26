@@ -638,7 +638,7 @@ def publishBenchmarkPlots(plots) {
   }
 }
 
-def publishBenchmarkHtmlReport(reportDir, reportFiles, reportName) {
+def publishBenchmarkHtmlReport(reportDir, reportFiles, reportName, reportIncludes = '**/*') {
   try {
     publishHTML(target: [
       allowMissing: true,
@@ -646,6 +646,7 @@ def publishBenchmarkHtmlReport(reportDir, reportFiles, reportName) {
       keepAll: true,
       reportDir: reportDir,
       reportFiles: reportFiles,
+      includes: reportIncludes,
       reportName: reportName
     ])
   } catch (Throwable err) {
@@ -670,6 +671,121 @@ def publishJenkinsTestResults() {
   '''
 }
 
+def publishDualImplementationResults(outputDir, buildId) {
+  if (!outputDir || !buildId) {
+    return
+  }
+  if (!(outputDir ==~ /build\/dual-ci-[0-9]+-[0-9]+/)) {
+    error('Invalid current dual-implementation output directory')
+  }
+  if (!fileExists("${outputDir}/run.json")) {
+    echo 'No current dual-implementation campaign state was created.'
+    return
+  }
+  withEnv(["DUAL_PUBLICATION_DIR=${outputDir}", "DUAL_PUBLICATION_BUILD_ID=${buildId}"]) {
+    powershell '''
+      $ErrorActionPreference = 'Stop'
+      $State = Get-Content -LiteralPath (Join-Path $env:DUAL_PUBLICATION_DIR 'run.json') -Raw | ConvertFrom-Json
+      if ($State.build_id -cne $env:DUAL_PUBLICATION_BUILD_ID) {
+        throw 'Dual-implementation output belongs to a different Jenkins build.'
+      }
+    '''
+  }
+  try {
+    def readiness
+    withEnv(["DUAL_PUBLICATION_DIR=${outputDir}"]) {
+      readiness = powershell(returnStdout: true, script: '''
+        $ErrorActionPreference = 'Stop'
+        $State = Get-Content -LiteralPath (Join-Path $env:DUAL_PUBLICATION_DIR 'run.json') -Raw | ConvertFrom-Json
+        $PlotsReady = 0
+        if ($State.status -in @('complete', 'complete_with_failures', 'failed') -and $State.publication) {
+          if (-not (Test-Path -LiteralPath (Join-Path $env:DUAL_PUBLICATION_DIR 'plots.tsv') -PathType Leaf) -or
+              -not (Test-Path -LiteralPath (Join-Path $env:DUAL_PUBLICATION_DIR 'dual-implementation-plots.html') -PathType Leaf)) {
+            throw 'Current dual-implementation publication is incomplete.'
+          }
+          $PlotsReady = 1
+        }
+        $SubjectReady = 0
+        if ($State.status -in @('complete', 'complete_with_failures', 'failed') -and $State.subject_summary) {
+          if ($State.subject_summary.status -notin @('complete', 'complete_with_failures', 'failed') -or
+              $State.subject_summary.implementation -cne 'xpact' -or
+              $State.subject_summary.junit -cne 'xpact-junit.xml' -or
+              -not (Test-Path -LiteralPath (Join-Path $env:DUAL_PUBLICATION_DIR 'xpact-junit.xml') -PathType Leaf)) {
+            throw 'Current xpact test summary is incomplete or invalid.'
+          }
+          $SubjectReady = 1
+        }
+        Write-Output ("{0}`t{1}" -f $PlotsReady, $SubjectReady)
+      ''').trim()
+    }
+    def flags = readiness.split('\\t', -1)
+    if (flags.size() != 2 || !(flags[0] in ['0', '1']) || !(flags[1] in ['0', '1'])) {
+      error('Invalid dual-implementation publication readiness')
+    }
+    if (flags[1] == '1') {
+      // Reference-parser outcomes remain in plots/artifacts, outside Jenkins' test totals.
+      junit testResults: "${outputDir}/xpact-junit.xml", allowEmptyResults: false
+    }
+    if (flags[0] == '1') {
+      def text = readFile("${outputDir}/plots.tsv").replaceFirst(/^\uFEFF/, '')
+      def lines = text.split(/\r?\n/).findAll { it.trim().length() > 0 }
+      if (lines.isEmpty()) {
+        error('Current dual-implementation plot manifest is empty')
+      }
+      def headers = parseTsvLine(lines[0])
+      if (headers != ['sourceFile', 'csvFileName', 'group', 'title', 'yaxis']) {
+        error('Invalid dual-implementation plot manifest columns')
+      }
+      def plots = []
+      lines.drop(1).each { line ->
+        def values = parseTsvLine(line)
+        if (values.size() != headers.size()) {
+          error('Invalid dual-implementation plot manifest row')
+        }
+        def spec = [:]
+        headers.eachWithIndex { header, index -> spec[header] = values[index] }
+        if (!spec.sourceFile.startsWith("${outputDir}/") || spec.sourceFile.contains('..') ||
+            !(spec.csvFileName ==~ /[A-Za-z0-9_.-]+\.csv/)) {
+          error('Dual-implementation plot references output outside this campaign')
+        }
+        plots << spec
+      }
+      publishBenchmarkPlots(plots)
+      publishBenchmarkHtmlReport(outputDir, 'dual-implementation-plots.html', 'Dual Implementation Plots',
+                                 'dual-implementation-plots.html,*.csv,plots.tsv,run.json,xpact-summary.json,xpact-junit.xml,catalog/report.json,catalog/summary.md,w3c/report.json,w3c/summary.md')
+      linkBenchmarkReportInBuildDescription("${outputDir}/dual-implementation-plots.html", 'Dual Implementation Plots')
+    } else {
+      echo 'Dual-implementation campaign has no completed plot publication; preserving current diagnostics.'
+    }
+  } finally {
+    archiveArtifacts artifacts: "${outputDir}/**/*.json,${outputDir}/**/*.tsv,${outputDir}/**/*.csv,${outputDir}/**/*.html,${outputDir}/**/*.md,${outputDir}/**/*.xml,${outputDir}/**/*.log,${outputDir}/**/stdout.bin,${outputDir}/**/stderr.bin",
+                     excludes: "${outputDir}/**/project/**,${outputDir}/**/suite/**",
+                     allowEmptyArchive: true
+  }
+}
+
+def notifyBuildResultByEmail() {
+  def result = currentBuild.currentResult
+  if (!(result in ['FAILURE', 'UNSTABLE'])) {
+    return
+  }
+  def recipients = (params.EMAIL_RECIPIENTS ?: '').trim()
+  if (!recipients) {
+    echo 'EMAIL_RECIPIENTS is empty; skipping the build-result email.'
+    return
+  }
+  catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS', catchInterruptions: false,
+             message: 'Could not send the build-result email; preserving the original build result.') {
+    mail to: recipients,
+         subject: "${env.JOB_NAME} #${env.BUILD_NUMBER}: ${result}",
+         body: """Result: ${result}
+Build: ${env.JOB_NAME} #${env.BUILD_NUMBER}
+Build page: ${env.BUILD_URL}
+Console: ${env.BUILD_URL}console
+"""
+  }
+}
+
 pipeline {
   agent { label 'built-in' }
 
@@ -679,12 +795,28 @@ pipeline {
   }
 
   parameters {
+    string(name: 'EMAIL_RECIPIENTS',
+           defaultValue: "${(params.EMAIL_RECIPIENTS ?: '').trim()}",
+           trim: true,
+           description: 'Comma-separated email addresses for failed or unstable builds. Retained as the next build default; leave empty to disable notifications.')
     string(name: 'EXPAT_SOURCE_DIR',
            defaultValue: 'C:\\src\\libexpat-R_2_8_1\\expat',
            description: 'Path to the upstream Expat source tree. libexpat stages are marked unstable when this path does not exist.')
     booleanParam(name: 'RUN_BENCHMARKS',
                  defaultValue: true,
-                 description: 'Run same-machine benchmarks and W3C XML conformance tests.')
+                 description: 'Run same-machine benchmarks, both implementations for the finalized catalog and W3C profile, and existing W3C build tiers.')
+    booleanParam(name: 'DUAL_IMPLEMENTATION_OFFLINE',
+                 defaultValue: false,
+                 description: 'Require cached pinned Xpact-core and W3C archive for the dual lanes; W3C_SUITE_DIRECTORY may supply a local suite.')
+    booleanParam(name: 'RUN_WSL_EIFFEL_BENCHMARKS',
+                 defaultValue: true,
+                 description: 'Run separate Linux Eiffel/GCC and libexpat benchmarks inside WSL2. Requires Linux EiffelStudio.')
+    string(name: 'WSL_DISTRIBUTION',
+           defaultValue: 'Ubuntu',
+           description: 'Optional WSL2 distribution for Eiffel/GCC benchmarks. Leave empty to use the default distribution.')
+    string(name: 'WSL_EIFFEL_ENVIRONMENT',
+           defaultValue: '/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/eiffel-env.sh',
+           description: 'Linux path to a Bash environment file for WSL EiffelStudio. Leave empty to use the login environment.')
     string(name: 'W3C_SUITE_DIRECTORY',
            defaultValue: '',
            description: 'Optional prepared W3C XML suite directory for offline benchmarks. Leave empty to download the pinned, checksum-verified suite.')
@@ -851,6 +983,12 @@ pipeline {
     stage('libexpat Manifest') {
       steps {
         script {
+          runWithJenkinsTestResult('libexpat adapter', 'PowerShell runner regression tests') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              python -m unittest discover -s tests/python -p 'test_libexpat_*.py'
+            '''
+          }
           if (powershell(returnStatus: true, script: '''
             if (Test-Path -LiteralPath "${env:EXPAT_SOURCE_DIR}" -PathType Container) { exit 0 }
             exit 1
@@ -950,6 +1088,54 @@ pipeline {
       }
     }
 
+    stage('Dual Implementation Benchmarks') {
+      when { expression { return params.RUN_BENCHMARKS } }
+      options { timeout(time: 90, unit: 'MINUTES') }
+      steps {
+        script {
+          // A fresh invocation path is kept only in this build's environment.
+          env.DUAL_CI_OUTPUT = "build/dual-ci-${env.BUILD_NUMBER}-${System.currentTimeMillis()}"
+          env.DUAL_CI_BUILD_ID = env.BUILD_TAG
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            runWithJenkinsTestResult('xpact validation', 'correctness and comparison publication') {
+              def status = powershell(returnStatus: true, script: '''
+                $ErrorActionPreference = 'Stop'
+                foreach ($TestFile in @('test_implementation_builds.py', 'test_w3c_conformance.py', 'test_dual_catalog.py', 'test_dual_w3c.py', 'test_dual_jenkins_reports.py', 'test_dual_jenkins.py', 'test_jenkins_xpact_summary.py')) {
+                  python -m unittest discover -s tests/python -p $TestFile -v
+                  if ($LASTEXITCODE -ne 0) { throw "Dual-implementation runner checks failed: $TestFile" }
+                }
+                $CampaignArguments = @{
+                  OutputDirectory = $env:DUAL_CI_OUTPUT
+                  BuildId = $env:DUAL_CI_BUILD_ID
+                  Offline = ($env:DUAL_IMPLEMENTATION_OFFLINE -eq 'true')
+                }
+                if (-not [string]::IsNullOrWhiteSpace($env:W3C_SUITE_DIRECTORY)) {
+                  $CampaignArguments.SuiteDirectory = $env:W3C_SUITE_DIRECTORY
+                }
+                & './scripts/run_dual_jenkins.ps1' @CampaignArguments
+              ''')
+              if (status != 0) {
+                error("xpact validation or campaign infrastructure returned ${status}; reference-parser outcomes remain in plots and artifacts.")
+              }
+            }
+          }
+        }
+      }
+      post {
+        always {
+          script {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              try {
+                publishDualImplementationResults(env.DUAL_CI_OUTPUT, env.DUAL_CI_BUILD_ID)
+              } finally {
+                publishJenkinsTestResults()
+              }
+            }
+          }
+        }
+      }
+    }
+
     stage('Benchmarks') {
       when { expression { return params.RUN_BENCHMARKS } }
       steps {
@@ -991,6 +1177,59 @@ pipeline {
             linkBenchmarkReportInBuildDescription('build/benchmarks/benchmark-plots.html', 'Benchmark Plots')
             publishJenkinsTestResults()
           }
+        }
+      }
+    }
+
+    stage('WSL Eiffel GCC Benchmarks') {
+      when { expression { return params.RUN_WSL_EIFFEL_BENCHMARKS } }
+      steps {
+        dir('build/wsl-benchmarks') {
+          deleteDir()
+        }
+        script {
+          runWithJenkinsTestResult('xpact WSL Eiffel GCC benchmarks', 'Linux benchmark publication') {
+            powershell '''
+              $ErrorActionPreference = "Stop"
+              python -m unittest discover -s tests/python -p test_wsl_benchmarks.py
+              if ($LASTEXITCODE -ne 0) {
+                throw "WSL benchmark runner unit tests failed."
+              }
+              $BenchmarkArguments = @{}
+              if (-not [string]::IsNullOrWhiteSpace($env:WSL_DISTRIBUTION)) {
+                $BenchmarkArguments.Distribution = $env:WSL_DISTRIBUTION
+              }
+              if (-not [string]::IsNullOrWhiteSpace($env:WSL_EIFFEL_ENVIRONMENT)) {
+                $BenchmarkArguments.EiffelEnvironment = $env:WSL_EIFFEL_ENVIRONMENT
+              }
+              .\\scripts\\run_wsl_benchmarks.ps1 @BenchmarkArguments
+            '''
+          }
+        }
+      }
+      post {
+        always {
+          script {
+            writeBenchmarkJUnitReport('build/wsl-benchmarks/benchmark-results.tsv',
+                                      'xpact WSL Eiffel GCC benchmark rows',
+                                      'wsl-eiffel-gcc-benchmarks')
+            publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/wsl-benchmarks/benchmark-results.tsv',
+                                                             'wsl-eiffel-gcc-benchmarks',
+                                                             'WSL Eiffel GCC Benchmark Trends'))
+            if (fileExists('build/wsl-benchmarks/benchmark-plots.html')) {
+              publishBenchmarkHtmlReport('build/wsl-benchmarks', 'benchmark-plots.html', 'WSL Eiffel GCC Benchmark Plots')
+              linkBenchmarkReportInBuildDescription('build/wsl-benchmarks/benchmark-plots.html', 'WSL Eiffel GCC Benchmark Plots')
+            }
+            publishJenkinsTestResults()
+          }
+          archiveArtifacts artifacts: '''
+            build/wsl-benchmarks/*.tsv,
+            build/wsl-benchmarks/*.csv,
+            build/wsl-benchmarks/*.html,
+            build/wsl-benchmarks/summary.md,
+            build/wsl-benchmarks/metadata.json,
+            build/wsl-benchmarks/logs/**
+          ''', allowEmptyArchive: true
         }
       }
     }
@@ -1097,6 +1336,11 @@ pipeline {
         docs/performance-analysis.md,
         dist/*.zip
       ''', allowEmptyArchive: true
+    }
+    cleanup {
+      script {
+        notifyBuildResultByEmail()
+      }
     }
   }
 }

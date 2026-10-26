@@ -17,6 +17,20 @@ inherit
 			on_end_cdata_section,
 			wants_automatic_character_data_default,
 			wants_default_events,
+			wants_xml_declaration_default,
+			wants_start_element_default,
+			wants_end_element_default,
+			wants_literal_character_data_default,
+			wants_start_doctype_default,
+			wants_end_doctype_default,
+			wants_entity_decl_default,
+			wants_notation_decl_default,
+			wants_element_decl_default,
+			wants_attlist_decl_default,
+			wants_comment_default,
+			wants_processing_instruction_default,
+			wants_start_cdata_default,
+			wants_end_cdata_default,
 			expands_internal_general_entity_references,
 			reports_skipped_internal_general_entities,
 			requires_eager_position_accounting,
@@ -52,6 +66,9 @@ feature {NONE} -- Initialization
 		do
 			create events.make (16)
 			create delivered_character_data_lengths.make (16)
+			create delivered_default_lengths.make (16)
+			create external_entity_replay_contexts.make (8)
+			create external_entity_replay_counts.make (8)
 			current_id_attribute_index := -1
 			diagnostic_events_enabled := True
 		ensure
@@ -97,6 +114,9 @@ feature -- Access
 
 	current_default_text: detachable STRING_8
 			-- Current callback text replayable through `XML_DefaultCurrent'.
+
+	default_callback_active: BOOLEAN
+			-- Is the client already handling a default callback?
 
 	start_doctype_decl_callback: POINTER
 			-- `XML_StartDoctypeDeclHandler' callback pointer.
@@ -160,6 +180,21 @@ feature -- Access
 
 	delivered_character_data_lengths: HASH_TABLE [INTEGER, INTEGER]
 			-- Delivered character-data byte counts keyed by replay callback index.
+
+	delivered_default_lengths: HASH_TABLE [INTEGER, INTEGER]
+			-- Delivered raw default-data byte counts keyed by replay callback index.
+
+	external_entity_replay_contexts: HASH_TABLE [XP_PARSER, INTEGER]
+			-- Detached child DTD declarations keyed by the external callback ordinal.
+
+	external_entity_replay_counts: HASH_TABLE [INTEGER, INTEGER]
+			-- Replacement byte counts for callbacks that parsed a parameter child.
+
+	external_entity_replay_target: detachable XP_PARSER
+			-- Owning core parser whose reset prefix replay needs those child declarations.
+
+	active_external_entity_callback_index: INTEGER
+			-- External callback currently allowed to contribute child DTD declarations.
 
 feature -- Metrics
 
@@ -233,6 +268,78 @@ feature -- Metrics
 			-- Expat-style ID attribute name index for current start event, or -1.
 
 feature -- Element change
+
+	set_external_entity_replay_target (a_parser: XP_PARSER)
+			-- Bind declaration replay to the owning parser, without retaining a child handle.
+		do
+			external_entity_replay_target := a_parser
+		ensure
+			target_set: external_entity_replay_target = a_parser
+		end
+
+	record_external_entity_context_from (a_child: XP_PARSER)
+			-- Retain only the active callback's detached child declaration state.
+		do
+			if active_external_entity_callback_index > 0 then
+				if external_entity_replay_contexts.has (active_external_entity_callback_index) and then attached external_entity_replay_contexts.item (active_external_entity_callback_index) as l_snapshot then
+					l_snapshot.merge_entity_context_from (a_child.entity_context_snapshot)
+				else
+					external_entity_replay_contexts.force (a_child.entity_context_snapshot, active_external_entity_callback_index)
+				end
+			end
+		end
+
+	clear_external_entity_replay
+			-- Release detached child declarations at the end of a parser lifecycle.
+		do
+			external_entity_replay_contexts.wipe_out
+			external_entity_replay_counts.wipe_out
+			active_external_entity_callback_index := 0
+		ensure
+			no_contexts: external_entity_replay_contexts.is_empty
+			no_counts: external_entity_replay_counts.is_empty
+			no_active_callback: active_external_entity_callback_index = 0
+		end
+
+	reset_callback_registrations
+			-- Clear callbacks and client data after a successful XML_ParserReset.
+		do
+			clear_external_entity_replay
+			user_data := default_pointer
+			start_element_callback := default_pointer
+			end_element_callback := default_pointer
+			character_data_callback := default_pointer
+			processing_instruction_callback := default_pointer
+			xml_decl_callback := default_pointer
+			comment_callback := default_pointer
+			start_cdata_section_callback := default_pointer
+			end_cdata_section_callback := default_pointer
+			default_callback := default_pointer
+			default_expands_entities := False
+			current_default_text := Void
+			default_callback_active := False
+			start_doctype_decl_callback := default_pointer
+			end_doctype_decl_callback := default_pointer
+			not_standalone_callback := default_pointer
+			element_decl_callback := default_pointer
+			notation_decl_callback := default_pointer
+			attlist_decl_callback := default_pointer
+			entity_decl_callback := default_pointer
+			unparsed_entity_decl_callback := default_pointer
+			external_entity_ref_callback := default_pointer
+			skipped_entity_callback := default_pointer
+			start_namespace_decl_callback := default_pointer
+			end_namespace_decl_callback := default_pointer
+			external_entity_ref_arg := default_pointer
+			has_external_entity_ref_arg := False
+			last_resolution_is_external_child_parse := False
+			last_resolution_replacement_byte_count := 0
+			next_resolution_is_parameter_literal := False
+		ensure
+			no_client_data: user_data = default_pointer
+			no_character_handler: character_data_callback = default_pointer
+			no_default_handler: default_callback = default_pointer
+		end
 
 	set_user_data (a_user_data: POINTER)
 			-- Set native callback user data.
@@ -548,6 +655,76 @@ feature -- Events
 			Result := default_callback /= default_pointer
 		end
 
+	wants_xml_declaration_default: BOOLEAN
+		do
+			Result := xml_decl_callback = default_pointer
+		end
+
+	wants_start_doctype_default: BOOLEAN
+		do
+			Result := start_doctype_decl_callback = default_pointer
+		end
+
+	wants_start_element_default: BOOLEAN
+		do
+			Result := start_element_callback = default_pointer
+		end
+
+	wants_end_element_default: BOOLEAN
+		do
+			Result := end_element_callback = default_pointer
+		end
+
+	wants_literal_character_data_default: BOOLEAN
+		do
+			Result := wants_automatic_character_data_default
+		end
+
+	wants_end_doctype_default: BOOLEAN
+		do
+			Result := end_doctype_decl_callback = default_pointer
+		end
+
+	wants_entity_decl_default (a_is_unparsed: BOOLEAN): BOOLEAN
+		do
+			Result := entity_decl_callback = default_pointer and then (not a_is_unparsed or else unparsed_entity_decl_callback = default_pointer)
+		end
+
+	wants_notation_decl_default: BOOLEAN
+		do
+			Result := notation_decl_callback = default_pointer
+		end
+
+	wants_element_decl_default: BOOLEAN
+		do
+			Result := element_decl_callback = default_pointer
+		end
+
+	wants_attlist_decl_default: BOOLEAN
+		do
+			Result := attlist_decl_callback = default_pointer
+		end
+
+	wants_comment_default: BOOLEAN
+		do
+			Result := comment_callback = default_pointer
+		end
+
+	wants_processing_instruction_default: BOOLEAN
+		do
+			Result := processing_instruction_callback = default_pointer
+		end
+
+	wants_start_cdata_default: BOOLEAN
+		do
+			Result := start_cdata_section_callback = default_pointer
+		end
+
+	wants_end_cdata_default: BOOLEAN
+		do
+			Result := end_cdata_section_callback = default_pointer
+		end
+
 	expands_internal_general_entity_references: BOOLEAN
 			-- Should internal general entity references be expanded in content?
 		do
@@ -612,6 +789,9 @@ feature -- Events
 		do
 			prepare_callback_replay (0)
 			last_suspending_callback_index := 0
+			delivered_character_data_lengths.wipe_out
+			delivered_default_lengths.wipe_out
+			clear_external_entity_replay
 		ensure
 			no_callbacks_seen: callback_sequence_count = 0
 			no_suppression: callbacks_to_suppress = 0
@@ -645,6 +825,8 @@ feature -- Events
 			callbacks_to_suppress := 0
 			last_suspending_callback_index := 0
 			delivered_character_data_lengths.wipe_out
+			delivered_default_lengths.wipe_out
+			clear_external_entity_replay
 		ensure
 			no_suppression: callbacks_to_suppress = 0
 			no_suspend_point: last_suspending_callback_index = 0
@@ -1173,12 +1355,27 @@ feature -- Events
 	on_default (a_text: READABLE_STRING_8)
 		local
 			l_text: C_STRING
+			l_suppressed: BOOLEAN
+			l_already_delivered: INTEGER
+			l_pending: READABLE_STRING_8
 		do
 			if default_callback /= default_pointer and then not a_text.is_empty then
 				default_count := default_count + 1
-				if not suppress_next_callback then
-					create l_text.make (a_text)
-					call_default_callback (default_callback, user_data, l_text.item, a_text.count)
+				l_suppressed := suppress_next_callback
+				if l_suppressed and then delivered_default_lengths.has (callback_sequence_count) then
+					l_already_delivered := delivered_default_lengths.item (callback_sequence_count)
+				end
+				if not l_suppressed or else a_text.count > l_already_delivered then
+					if l_already_delivered > 0 then
+						l_pending := a_text.substring (l_already_delivered + 1, a_text.count)
+					else
+						l_pending := a_text
+					end
+					create l_text.make (l_pending)
+					default_callback_active := True
+					call_default_callback (default_callback, user_data, l_text.item, l_pending.count)
+					default_callback_active := False
+					delivered_default_lengths.force (a_text.count, callback_sequence_count)
 					record_callback_stop_if_requested
 				end
 			end
@@ -1186,9 +1383,18 @@ feature -- Events
 
 	default_current
 			-- Replay the current callback text through the default handler.
+		local
+			l_text: C_STRING
 		do
-			if attached current_default_text as l_text then
-				on_default (l_text)
+			if default_callback /= default_pointer and then not default_callback_active and then attached current_default_text as l_current and then not l_current.is_empty then
+					-- This is an explicit client action inside a delivered callback,
+					-- not another parser event to suppress on prefix replay.
+				create l_text.make (l_current)
+				default_count := default_count + 1
+				default_callback_active := True
+				call_default_callback (default_callback, user_data, l_text.item, l_current.count)
+				default_callback_active := False
+				record_callback_stop_if_requested
 			end
 		end
 
@@ -1221,12 +1427,17 @@ feature -- External entity resolution
 			l_before_external_count: INTEGER
 			l_after_external_count: INTEGER
 			l_status: INTEGER
+			l_callback_index: INTEGER
 		do
 			last_resolution_is_external_child_parse := False
 			last_resolution_replacement_byte_count := 0
 			if external_entity_ref_callback /= default_pointer then
 				external_entity_ref_count := external_entity_ref_count + 1
 				if not suppress_next_callback then
+					l_callback_index := callback_sequence_count
+					external_entity_replay_contexts.remove (l_callback_index)
+					external_entity_replay_counts.remove (l_callback_index)
+					active_external_entity_callback_index := l_callback_index
 					l_before_external_count := external_entity_parse_count (native_parser_handle)
 					create l_context.make (a_name)
 					create l_system_id.make (a_system_id)
@@ -1237,6 +1448,7 @@ feature -- External entity resolution
 					mark_next_external_entity_is_parameter (native_parser_handle, a_is_parameter)
 					mark_next_external_entity_is_parameter_literal (native_parser_handle, next_resolution_is_parameter_literal)
 					l_status := call_external_entity_ref_callback (external_entity_ref_callback, external_entity_callback_argument, l_context.item, default_pointer, l_system_id.item, l_public_pointer)
+					active_external_entity_callback_index := 0
 					mark_next_external_entity_is_parameter (native_parser_handle, False)
 					mark_next_external_entity_is_parameter_literal (native_parser_handle, False)
 					next_resolution_is_parameter_literal := False
@@ -1246,18 +1458,29 @@ feature -- External entity resolution
 						if a_is_parameter and then l_after_external_count > l_before_external_count then
 							last_resolution_is_external_child_parse := True
 							last_resolution_replacement_byte_count := last_external_child_direct_count (native_parser_handle) + last_external_child_indirect_count (native_parser_handle)
-							create Result.make_from_string ("%N")
+							external_entity_replay_counts.force (last_resolution_replacement_byte_count, l_callback_index)
+							create Result.make_empty
 						else
 							create Result.make_empty
 						end
 					end
 				else
+					if attached external_entity_replay_target as l_target and then external_entity_replay_contexts.has (callback_sequence_count) and then attached external_entity_replay_contexts.item (callback_sequence_count) as l_snapshot then
+						l_target.merge_entity_context_from (l_snapshot)
+					end
+					if external_entity_replay_counts.has (callback_sequence_count) then
+						last_resolution_is_external_child_parse := True
+						last_resolution_replacement_byte_count := external_entity_replay_counts.item (callback_sequence_count)
+					end
 					create Result.make_empty
 				end
 			else
 				on_skipped_entity (a_name, a_is_parameter)
 				create Result.make_empty
 			end
+			next_resolution_is_parameter_literal := False
+		ensure then
+			no_pending_literal: not next_resolution_is_parameter_literal
 		end
 
 feature {NONE} -- Native callback calls
@@ -1342,12 +1565,26 @@ feature {NONE} -- Native callback calls
 			l_node: XP_CONTENT_MODEL
 			l_name: C_STRING
 			l_name_pointer: POINTER
-			i: INTEGER
+			i, j, l_name_offset, l_next_child, l_first_child: INTEGER
+			l_total_size: INTEGER_64
 		do
 			create l_nodes.make (a_model.node_count)
 			append_content_model_nodes (l_nodes, a_model)
-			Result := c_malloc (l_nodes.count * content_struct_size)
+			l_total_size := l_nodes.count.to_integer_64 * content_struct_size
+			across l_nodes as l_item loop
+				if attached l_item.item.name as l_text then
+					create l_name.make (l_text)
+					a_name_strings.extend (l_name)
+					l_total_size := l_total_size + l_text.count + 1
+				end
+			end
+			if l_total_size <= 2147483647 then
+				Result := c_content_model_malloc (native_parser_handle, l_total_size.to_integer_32)
+			end
 			if Result /= default_pointer then
+				l_name_offset := l_nodes.count * content_struct_size
+				l_next_child := 1
+				j := 1
 				from
 					i := 1
 				invariant
@@ -1358,10 +1595,15 @@ feature {NONE} -- Native callback calls
 					l_node := l_nodes.i_th (i)
 					l_name_pointer := default_pointer
 					if attached l_node.name as l_attached_name then
-						create l_name.make (l_attached_name)
-						a_name_strings.extend (l_name)
-						l_name_pointer := l_name.item
+						l_name_pointer := copy_content_model_name (Result, l_name_offset, a_name_strings.i_th (j).item, l_attached_name.count)
+						l_name_offset := l_name_offset + l_attached_name.count + 1
+						j := j + 1
 					end
+					l_first_child := -1
+					if not l_node.children.is_empty then
+						l_first_child := l_next_child
+					end
+					l_next_child := l_next_child + l_node.children.count
 					put_content_model_node (
 						Result,
 						i - 1,
@@ -1369,7 +1611,7 @@ feature {NONE} -- Native callback calls
 						l_node.quantifier,
 						l_name_pointer,
 						l_node.children.count,
-						first_content_child_index (l_nodes, l_node)
+						l_first_child
 					)
 					i := i + 1
 				variant
@@ -1460,14 +1702,22 @@ feature {NONE} -- Native callback calls
 			"typedef struct { int type; int quant; char *name; unsigned int numchildren; void *children; } XPACT_EiffelContentModel; return (EIF_INTEGER) sizeof (XPACT_EiffelContentModel);"
 		end
 
-	c_malloc (a_size: INTEGER): POINTER
-			-- Allocate native memory that `XML_FreeContentModel' can release with the default allocator.
+	c_content_model_malloc (a_parser: POINTER; a_size: INTEGER): POINTER
+			-- Allocate through the same caller allocator used by XML_FreeContentModel.
 		require
 			non_negative_size: a_size >= 0
 		external
-			"C inline use <stdlib.h>"
+			"C inline use %"xpact_native_private.h%""
 		alias
-			"return (EIF_POINTER) malloc ((size_t) $a_size);"
+			"XML_Parser p = (XML_Parser) $a_parser; return (EIF_POINTER) ((p != NULL && p->hasCustomMemory && p->memory.malloc_fcn != NULL) ? p->memory.malloc_fcn((size_t) $a_size) : malloc((size_t) $a_size));"
+		end
+
+	copy_content_model_name (a_base: POINTER; a_offset: INTEGER; a_text: POINTER; a_count: INTEGER): POINTER
+			-- Copy a name into the model's owned allocation, including its terminator.
+		external
+			"C inline use <string.h>"
+		alias
+			"char *name = ((char *) $a_base) + $a_offset; memcpy(name, (const char *) $a_text, (size_t) $a_count); name[$a_count] = 0; return (EIF_POINTER) name;"
 		end
 
 	put_content_model_node (a_base: POINTER; a_index, a_type, a_quant: INTEGER; a_name: POINTER; a_numchildren, a_first_child_index: INTEGER)

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-23-0" name="xpact_core_catalog_benchmark" uuid="FE09CC28-993D-4B8E-971B-585252663647">
+  <target name="catalog">
+    <root class="DC_CATALOG_ROOT" feature="make"/>
+    <option warning="warning" is_obsolete_routine_type="true">
+      <assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+    </option>
+    <setting name="console_application" value="true"/>
+    <setting name="dead_code_removal" value="all"/>
+    <capability>
+      <concurrency support="none"/>
+      <void_safety support="all" use="all"/>
+    </capability>
+    <variable name="buffer_size" value="big"/>
+    <external_object location="$XPACT_SHIFT_JIS_OBJECT">
+      <condition><platform value="windows"/></condition>
+    </external_object>
+    <library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
+    <library name="xpact_core" location="$XPACT_CORE/library/xpact-core.ecf" readonly="true"/>
+    <cluster name="backend" location="./"/>
+    <cluster name="shared" location="../shared/"/>
+    <cluster name="identity" location="$XPACT_PROBE_METADATA/"/>
+  </target>
+  <target name="catalog_assertions" extends="catalog">
+    <option>
+      <assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+    </option>
+  </target>
+</system>

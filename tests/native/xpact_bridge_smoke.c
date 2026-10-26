@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
+#include <stdlib.h>
 
 typedef struct FakeParser {
 	int create_count;
@@ -44,6 +46,42 @@ typedef struct FakeParser {
 } FakeParser;
 
 static FakeParser fake_parser;
+static enum XML_Status fake_parse_status = XML_STATUS_OK;
+static enum XML_Error fake_parse_error = XML_ERROR_NONE;
+static int memory_live_blocks;
+static int memory_fail_next;
+
+static void *
+counted_malloc(size_t size) {
+	void *result;
+	if (memory_fail_next) {
+		memory_fail_next = 0;
+		return NULL;
+	}
+	result = malloc(size);
+	if (result != NULL) memory_live_blocks++;
+	return result;
+}
+
+static void *
+counted_realloc(void *ptr, size_t size) {
+	void *result;
+	if (memory_fail_next) {
+		memory_fail_next = 0;
+		return NULL;
+	}
+	result = realloc(ptr, size);
+	if (result != NULL && ptr == NULL) memory_live_blocks++;
+	return result;
+}
+
+static void
+counted_free(void *ptr) {
+	if (ptr != NULL) {
+		memory_live_blocks--;
+		free(ptr);
+	}
+}
 
 static void *XMLCALL
 fake_create(
@@ -204,14 +242,14 @@ fake_parse(void *context, void *parser, const char *s, int len, int isFinal) {
 		memcpy(fake->last_input, s, (size_t)len);
 		fake->last_input[len] = '\0';
 	}
-	return XML_STATUS_OK;
+	return fake_parse_status;
 }
 
 static enum XML_Error XMLCALL
 fake_error_code(void *context, void *parser) {
 	(void)context;
 	(void)parser;
-	return XML_ERROR_NONE;
+	return fake_parse_error;
 }
 
 static XML_Size XMLCALL
@@ -300,6 +338,14 @@ static int XMLCALL
 not_standalone_callback(void *userData) {
 	(void)userData;
 	return XML_STATUS_OK;
+}
+
+static int XMLCALL
+unknown_encoding_callback(void *userData, const XML_Char *name, XML_Encoding *info) {
+	(void)userData;
+	(void)name;
+	(void)info;
+	return XML_STATUS_ERROR;
 }
 
 static int
@@ -457,6 +503,149 @@ main(void) {
 
 	XML_ParserFree(parser);
 	if (!check(fake_parser.free_count == 3, "bridge free called")) return 1;
+
+	/* A failed parse remains failed until reset. Reset removes document
+	 * callbacks, but preserves the unknown-encoding registration and storage. */
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "lifecycle parser created")) return 1;
+	if (!check(XML_ParseBuffer(parser, 0, XML_FALSE) == XML_STATUS_ERROR, "ParseBuffer needs acquired storage")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_NO_BUFFER, "missing buffer error recorded")) return 1;
+	{
+		char *buffer = (char *)XML_GetBuffer(parser, 7);
+		if (!check(buffer != NULL, "native input buffer allocated")) return 1;
+		memcpy(buffer, "<root/>", 7);
+		if (!check(XML_ParseBuffer(parser, 7, XML_TRUE) == XML_STATUS_OK, "native buffer parsed through bridge")) return 1;
+		if (!check(strcmp(fake_parser.last_input, "<root/>") == 0, "buffer bytes forwarded")) return 1;
+	}
+	if (!check(XML_GetBuffer(parser, 1) == NULL, "finished parser rejects buffer request")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_FINISHED, "finished buffer request error")) return 1;
+	XML_SetUserData(parser, &marker);
+	XML_SetElementHandler(parser, start_callback, end_callback);
+	XML_SetCharacterDataHandler(parser, text_callback);
+	XML_SetUnknownEncodingHandler(parser, unknown_encoding_callback, &marker);
+	if (!check(XML_SetBase(parser, "base") == XML_STATUS_OK, "base installed before reset")) return 1;
+	if (!check(XML_ParserReset(parser, NULL) == XML_TRUE, "document reset succeeds")) return 1;
+	if (!check(parser->startElementHandler == NULL && parser->endElementHandler == NULL && parser->characterDataHandler == NULL, "reset clears callback slots")) return 1;
+	if (!check(XML_GetUserData(parser) == NULL && XML_GetBase(parser) == NULL, "reset clears user data and base")) return 1;
+	if (!check(parser->unknownEncodingHandler == unknown_encoding_callback && parser->unknownEncodingHandlerData == &marker, "reset retains unknown encoding handler")) return 1;
+	if (!check(XML_GetBuffer(parser, INT_MAX) == NULL, "overflowing buffer request rejected")) return 1;
+	if (!check(XML_GetErrorCode(parser) == XML_ERROR_NO_MEMORY, "overflow buffer error recorded")) return 1;
+	if (!check(XML_GetBuffer(parser, 16) != NULL, "buffer request recovers after rejected growth")) return 1;
+	fake_parse_status = XML_STATUS_ERROR;
+	fake_parse_error = XML_ERROR_SYNTAX;
+	if (!check(XML_Parse(parser, "<broken>", 8, XML_FALSE) == XML_STATUS_ERROR, "bridge parse failure recorded")) return 1;
+	XML_GetParsingStatus(parser, &parsing_status);
+	if (!check(parsing_status.parsing == XML_PARSING, "failed parser preserves parsing status")) return 1;
+	{
+		int calls = fake_parser.parse_count;
+		fake_parse_status = XML_STATUS_OK;
+		fake_parse_error = XML_ERROR_NONE;
+		if (!check(XML_Parse(parser, "<root/>", 7, XML_TRUE) == XML_STATUS_ERROR, "failed parser cannot restart without reset")) return 1;
+		if (!check(XML_GetErrorCode(parser) == XML_ERROR_SYNTAX && fake_parser.parse_count == calls, "retry retains first parse error")) return 1;
+	}
+	if (!check(XML_ParserReset(parser, NULL) == XML_TRUE, "reset releases parse failure")) return 1;
+	{
+		XML_Parser child = XML_ExternalEntityParserCreate(parser, "child", NULL);
+		int resets = fake_parser.reset_count;
+		if (!check(child != NULL, "lifecycle child created")) return 1;
+		if (!check(XML_Parse(child, "<child/>", 8, XML_TRUE) == XML_STATUS_OK, "child parse completes")) return 1;
+		if (!check(XML_ParserReset(child, NULL) == XML_FALSE && fake_parser.reset_count == resets, "subordinate reset rejected before bridge mutation")) return 1;
+		XML_GetParsingStatus(child, &parsing_status);
+		if (!check(parsing_status.parsing == XML_FINISHED, "subordinate remains finished after rejected reset")) return 1;
+		if (!check(XML_Parse(child, "<child/>", 8, XML_TRUE) == XML_STATUS_ERROR && XML_GetErrorCode(child) == XML_ERROR_FINISHED, "finished child rejects new input")) return 1;
+		XML_ParserFree(child);
+	}
+	XML_ParserFree(parser);
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "zero-length completion parser created")) return 1;
+	if (!check(XML_Parse(parser, "<root/>", 7, XML_FALSE) == XML_STATUS_OK, "direct non-final parse succeeds")) return 1;
+	if (!check(parser->bufferLength == 7 && memcmp(parser->buffer, "<root/>", 7) == 0, "direct input retained by native allocator")) return 1;
+	if (!check(XML_ParseBuffer(parser, 0, XML_TRUE) == XML_STATUS_OK, "empty ParseBuffer finishes direct parse")) return 1;
+	if (!check(fake_parser.last_len == 0 && fake_parser.last_is_final, "empty completion forwarded")) return 1;
+	XML_ParserFree(parser);
+	parser = XML_ParserCreate(NULL);
+	if (!check(parser != NULL, "append buffer parser created")) return 1;
+	{
+		char *buffer = (char *)XML_GetBuffer(parser, 5);
+		if (!check(buffer != NULL, "first append buffer acquired")) return 1;
+		memcpy(buffer, "<root", 5);
+		if (!check(XML_ParseBuffer(parser, 5, XML_FALSE) == XML_STATUS_OK, "first buffer range committed")) return 1;
+		buffer = (char *)XML_GetBuffer(parser, 2000);
+		if (!check(buffer != NULL && buffer == parser->buffer + 5, "grown buffer exposes append range")) return 1;
+		memcpy(buffer, "/>", 2);
+		if (!check(XML_ParseBuffer(parser, 2, XML_TRUE) == XML_STATUS_OK, "second buffer range committed")) return 1;
+		if (!check(parser->bufferLength == 7 && memcmp(parser->buffer, "<root/>", 7) == 0, "buffer growth retains prior committed input")) return 1;
+	}
+	if (!check(XML_ParserReset(parser, NULL) == XML_TRUE && parser->bufferLength == 0, "reset releases retained input length")) return 1;
+	{
+		char *buffer = (char *)XML_GetBuffer(parser, 3000);
+		if (!check(buffer != NULL, "alias input storage acquired")) return 1;
+		memset(buffer, 'x', 3000);
+		if (!check(XML_Parse(parser, buffer, 3000, XML_FALSE) == XML_STATUS_OK, "aliased input committed")) return 1;
+		if (!check(XML_Parse(parser, parser->buffer, 2000, XML_FALSE) == XML_STATUS_OK, "aliased input survives growth")) return 1;
+		if (!check(parser->bufferLength == 5000 && parser->buffer[4999] == 'x', "grown aliased input retained")) return 1;
+		xp_consume_input_prefix(parser, 500);
+		if (!check(parser->bufferLength == 1524 && parser->buffer[1523] == 'x', "consumed input releases all but context and pending suffix")) return 1;
+		xp_consume_input_prefix(parser, 5000);
+		if (!check(parser->bufferLength == 1524, "invalid pending suffix does not mutate buffer state")) return 1;
+	}
+	XML_ParserFree(parser);
+	parser = XML_ParserCreateNS(NULL, '|');
+	if (!check(parser != NULL, "NULL-context inheritance parent created")) return 1;
+	XML_SetReturnNSTriplet(parser, 1);
+	XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+	XML_SetUserData(parser, &marker);
+	XML_SetElementHandler(parser, start_callback, end_callback);
+	{
+		XML_Parser child = XML_ExternalEntityParserCreate(parser, NULL, NULL);
+		int merges = fake_parser.merge_external_entity_context_count;
+		if (!check(child != NULL, "NULL-context parameter child created")) return 1;
+		if (!check(child->externalEntityIsParameter && fake_parser.last_external_entity_is_parameter,
+			"NULL context selects parameter entity grammar")) return 1;
+		if (!check(child->namespaceSeparator == '|' && child->returnNsTriplet == 1
+			&& child->reparseDeferralEnabled == XML_FALSE && child->userData == &marker
+			&& child->startElementHandler == start_callback && child->endElementHandler == end_callback,
+			"external child inherits parent namespace callbacks and deferral")) return 1;
+		if (!check(XML_Parse(child, "<!ENTITY local ", (int)strlen("<!ENTITY local "), XML_FALSE) == XML_STATUS_OK,
+			"NULL-context parameter child accepts non-final declaration prefix")) return 1;
+		XML_GetParsingStatus(child, &parsing_status);
+		if (!check(parsing_status.parsing == XML_PARSING && !parsing_status.finalBuffer,
+			"parameter child remains parsing after non-final prefix")) return 1;
+		if (!check(XML_Parse(child, "'value'>", (int)strlen("'value'>"), XML_TRUE) == XML_STATUS_OK,
+			"NULL-context parameter child completes split declaration")) return 1;
+		if (!check(fake_parser.merge_external_entity_context_count == merges + 1,
+			"completed NULL-context declaration merges to parent")) return 1;
+		XML_ParserFree(child);
+	}
+	XML_ParserFree(parser);
+	{
+		XML_Memory_Handling_Suite memory = {counted_malloc, counted_realloc, counted_free};
+		XML_Parser child;
+		char *retained;
+		int capacity;
+		parser = XML_ParserCreate_MM(NULL, &memory, NULL);
+		if (!check(parser != NULL && memory_live_blocks > 0, "custom allocator owns parser")) return 1;
+		if (!check(XML_SetBase(parser, "base") == XML_STATUS_OK, "custom allocator owns base")) return 1;
+		if (!check(XML_Parse(parser, "<root", 5, XML_FALSE) == XML_STATUS_OK, "custom allocator retains input")) return 1;
+		retained = parser->buffer;
+		capacity = parser->bufferCapacity;
+		memory_fail_next = 1;
+		if (!check(XML_GetBuffer(parser, capacity + 1) == NULL && XML_GetErrorCode(parser) == XML_ERROR_NO_MEMORY,
+			"allocator failure rejects growth")) return 1;
+		if (!check(parser->buffer == retained && parser->bufferCapacity == capacity
+			&& parser->bufferLength == 5 && memcmp(parser->buffer, "<root", 5) == 0,
+			"allocator failure retains owned input and capacity")) return 1;
+		if (!check(XML_ParserReset(parser, NULL) && parser->buffer == retained && XML_GetBase(parser) == NULL,
+			"reset frees base and preserves reusable input allocation")) return 1;
+		child = XML_ExternalEntityParserCreate(parser, NULL, NULL);
+		if (!check(child != NULL, "custom allocator creates child")) return 1;
+		if (!check(XML_Parse(child, "<!ENTITY e 'v'>", (int)strlen("<!ENTITY e 'v'>"), XML_TRUE) == XML_STATUS_OK,
+			"custom allocator retains child input")) return 1;
+		XML_ParserFree(child);
+		if (!check(XML_ParserReset(parser, NULL), "reused custom allocator parser resets again")) return 1;
+		XML_ParserFree(parser);
+		if (!check(memory_live_blocks == 0, "parent child reset and failed growth release every C allocation")) return 1;
+	}
 	XPACT_ClearEiffelBridge();
 
 	puts("xpact bridge ABI smoke: ok");

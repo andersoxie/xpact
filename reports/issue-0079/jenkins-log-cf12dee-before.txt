@@ -1,0 +1,1232 @@
+Startades av användaren admin
+  Obtained ci/Jenkinsfile.windows-phase1 from git https://github.com/andersoxie/xpact
+  [Pipeline] Start of Pipeline
+  [Pipeline] node
+  Running on Jenkins in C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact
+  [Pipeline] {
+  [Pipeline] stage
+  [Pipeline] { (Declarative: Checkout SCM)
+  [Pipeline] checkout
+  Selected Git installation does not exist. Using Default
+  The recommended git tool is: NONE
+  using credential banana_quality
+   > git.exe rev-parse --resolve-git-dir C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\.git # timeout=10
+  Fetching changes from the remote Git repository
+   > git.exe config remote.origin.url https://github.com/andersoxie/xpact # timeout=10
+  Fetching upstream changes from https://github.com/andersoxie/xpact
+   > git.exe --version # timeout=10
+   > git --version # 'git version 2.43.0.windows.1'
+  using GIT_ASKPASS to set credentials Banana quality from github (this is working but have an expiration date of 2027 02 02)
+   > git.exe fetch --tags --force --progress -- https://github.com/andersoxie/xpact +refs/heads/*:refs/remotes/origin/* # timeout=10
+   > git.exe rev-parse "refs/remotes/origin/main^{commit}" # timeout=10
+  Checking out Revision cf12dee5150fc57ce118540526566ff902149610 (refs/remotes/origin/main)
+   > git.exe config core.sparsecheckout # timeout=10
+   > git.exe checkout -f cf12dee5150fc57ce118540526566ff902149610 # timeout=10
+  Commit message: "Merge pull request #78 from andersoxie/student-Mass"
+   > git.exe rev-list --no-walk 9e1747dd05ce5e463e8c5cedd277792aa529a27e # timeout=10
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] withEnv
+  [Pipeline] {
+  [Pipeline] withEnv
+  [Pipeline] {
+  [Pipeline] timestamps
+  [Pipeline] {
+  [Pipeline] stage
+  [Pipeline] { (Tool Versions)
+  [Pipeline] powershell
+16:33:00  Loaded Visual Studio C++ x64 environment from C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+16:33:01  ISE EiffelStudio version 25.02.9.8723 Enterprise Edition - win64
+16:33:01  powershell.exe : Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64
+16:33:01  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-39cd41f6\powershellWrapper.ps1:3 char:1
+16:33:01  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+16:33:01  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:33:01      + CategoryInfo          : NotSpecified: (Microsoft (R) C...4.35229 for x64:String) [], RemoteException
+16:33:01      + FullyQualifiedErrorId : NativeCommandError
+16:33:01   
+16:33:01  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:33:01  
+16:33:01  usage: cl [ option... ] filename... [ /link linkoption... ]
+16:33:01  cmake version 4.3.3
+16:33:01  
+16:33:01  CMake suite maintained and supported by Kitware (kitware.com/cmake).
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Eiffel Tests)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+16:33:02  powershell.exe : Eiffel Compilation Manager
+16:33:02  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-f654a98a\powershellWrapper.ps1:3 char:1
+16:33:02  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+16:33:02  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:33:02      + CategoryInfo          : NotSpecified: (Eiffel Compilation Manager:String) [], RemoteException
+16:33:02      + FullyQualifiedErrorId : NativeCommandError
+16:33:02   
+16:33:02  Version 25.02.9.8723 Enterprise Edition - win64
+16:33:02  
+16:33:02  Degree 6: Examining System
+16:33:02  System Recompiled.
+  [Pipeline] writeFile
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+16:33:02  Recording test results
+16:33:02  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (SonarQube analysis)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] catchError
+  [Pipeline] {
+  [Pipeline] tool
+  [Pipeline] withSonarQubeEnv
+16:33:03  Injecting SonarQube environment variables using the configuration: Sonar
+  [Pipeline] {
+  [Pipeline] withEnv
+  [Pipeline] {
+  [Pipeline] powershell
+16:33:05  
+16:33:05  sonar-project.properties:2:sonar.projectKey=xpact
+16:33:05  16:33:05.218 INFO  Scanner configuration file: C:\Users\ander\AppData\Local\Jenkins\.jenkins\tools\hudson.plugins.sonar.SonarRunnerInstallation\Sonar\bin\..\conf\sonar-scanner.properties
+16:33:05  16:33:05.222 INFO  Project root configuration file: C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\sonar-project.properties
+16:33:05  16:33:05.234 INFO  SonarScanner CLI 8.0.1.6346
+16:33:05  16:33:05.237 INFO  Windows 11 10.0 amd64
+16:33:07  powershell.exe : 16:33:07.714 ERROR Failed to query server version: GET https://sonarqube.bsharp.se/api/v2/analysis/version failed with HTTP 401 Unauthorized. Please check the property sonar.t
+16:33:07  oken or the environment variable SONAR_TOKEN.
+16:33:07  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-97ab6b05\powershellWrapper.ps1:3 char:1
+16:33:07  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+16:33:07  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:33:07      + CategoryInfo          : NotSpecified: (16:33:07.714 ER...le SONAR_TOKEN.:String) [], RemoteException
+16:33:07      + FullyQualifiedErrorId : NativeCommandError
+16:33:07   
+16:33:07  16:33:07.714 INFO  EXECUTION FAILURE
+16:33:07  16:33:07.715 INFO  Total time: 2.522s
+16:33:08  SonarQube analysis failed with exit code 1
+16:33:08  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-97ab6b05\powershellScript.ps1:9 char:46
+16:33:08  + ... DE -ne 0) { throw "SonarQube analysis failed with exit code $LASTEXIT ...
+16:33:08  +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:33:08      + CategoryInfo          : OperationStopped: (SonarQube analy...ith exit code 1:String) [], RuntimeException
+16:33:08      + FullyQualifiedErrorId : SonarQube analysis failed with exit code 1
+16:33:08   
+  [Pipeline] }
+  [Pipeline] // withEnv
+  [Pipeline] }
+16:33:09  WARN: Unable to locate 'report-task.txt' in the workspace. Did the SonarScanner succeed?
+  [Pipeline] // withSonarQubeEnv
+  [Pipeline] }
+16:33:09  ERROR: script returned exit code 1
+16:33:09  Setting overall build result to UNSTABLE
+  [Pipeline] // catchError
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Build Eiffel-Backed DLL)
+  [Pipeline] powershell
+16:33:12  Loaded Visual Studio C++ x64 environment from C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+16:33:14  xpact_native.c
+16:33:16  xpact_eiffel_runtime_bridge.c
+16:33:17  xpact_eiffel_dllmain.c
+16:33:17  powershell.exe : Eiffel Compilation Manager
+16:33:17  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-74e3b628\powershellWrapper.ps1:3 char:1
+16:33:17  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+16:33:17  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:33:17      + CategoryInfo          : NotSpecified: (Eiffel Compilation Manager:String) [], RemoteException
+16:33:17      + FullyQualifiedErrorId : NativeCommandError
+16:33:17   
+16:33:17  Version 25.02.9.8723 Enterprise Edition - win64
+16:33:17  
+16:33:17  Degree 6: Examining System
+16:33:17  Degree 5: Parsing Classes
+16:33:23  Degree 4: Analyzing Inheritance
+16:33:23  Degree 3: Checking Types
+16:33:26  Degree 2: Generating Byte Code
+16:33:26  Degree -2: Constructing Polymorphic Table
+16:33:26  Degree -3: Generating Optimized Code
+16:33:33  System Recompiled.
+16:33:33  You must now run "finish_freezing" in:
+16:33:33  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\EIFGENs\xpact_native_library\F_code
+16:33:33  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:33:33  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:33:33  
+16:33:34  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:33:34  big_file_C12_c.c
+16:33:34  big_file_C13_c.c
+16:33:34  big_file_C11_c.c
+16:33:34  big_file_C2_c.c
+16:33:34  big_file_C16_c.c
+16:33:34  big_file_C3_c.c
+16:33:34  big_file_C15_c.c
+16:33:34  big_file_C7_c.c
+16:33:34  big_file_C9_c.c
+16:33:34  big_file_C6_c.c
+16:33:34  big_file_C14_c.c
+16:33:34  big_file_C8_c.c
+16:33:34  big_file_E2_c.c
+16:33:34  big_file_C5_c.c
+16:33:34  eoption.c
+16:33:34  big_file_C10_c.c
+16:33:34  big_file_C4_c.c
+16:33:34  big_file_C1_c.c
+16:33:34  eref.c
+16:33:34  epoly.c
+16:33:35  esize.c
+16:33:35  eplug.c
+16:33:35  eskelet.c
+16:33:36  enames.c
+16:33:36  evisib.c
+16:33:36  ececil.c
+16:33:36  einit.c
+16:33:36  eparents.c
+16:33:38          1 file(s) copied.
+16:33:38  emain.c
+16:33:38  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:33:38  
+16:33:38  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:33:38  
+16:33:38  
+16:33:38  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:33:38  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:33:38  
+16:33:38  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+16:33:38  e1\emain.obj 
+16:33:38  "C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+16:33:38  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:33:38  xpact_native_library.res 
+16:33:38  E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+16:33:38  E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+16:33:38  E1\eref.obj E1\eoption.obj C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib 
+16:33:38  C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib 
+16:33:38  C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib 
+16:33:38  C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+16:33:38     Creating library xpact_native_library.lib and object xpact_native_library.exp
+16:33:38  C compilation completed
+16:33:40     Creating library C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.lib and object C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.exp
+16:33:40  Built C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.dll (Production)
+16:33:42  xpact_eiffel_dll_smoke.c
+16:33:42  xpact Eiffel DLL smoke: ok
+16:33:42  Visual Studio C++ x64 environment already loaded (17.14.42)
+16:33:44  xpact_native.c
+16:33:45  xpact_eiffel_runtime_bridge.c
+16:33:47  xpact_eiffel_dllmain.c
+16:33:47  Eiffel Compilation Manager
+16:33:47  Version 25.02.9.8723 Enterprise Edition - win64
+16:33:47  
+16:33:47  Degree 6: Examining System
+16:33:47  Degree 5: Parsing Classes
+16:33:49  Degree 4: Analyzing Inheritance
+16:33:50  Degree 3: Checking Types
+16:33:53  Degree 2: Generating Byte Code
+16:33:53  Degree -2: Constructing Polymorphic Table
+16:33:53  Degree -3: Generating Optimized Code
+16:34:00  System Recompiled.
+16:34:00  You must now run "finish_freezing" in:
+16:34:00  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\EIFGENs\xpact_native_library_assertions\F_code
+16:34:00  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:34:00  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:34:00  
+16:34:00  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:34:00  big_file_C11_c.c
+16:34:00  big_file_C14_c.c
+16:34:00  big_file_E2_c.c
+16:34:00  big_file_C15_c.c
+16:34:00  big_file_C13_c.c
+16:34:00  big_file_C5_c.c
+16:34:00  big_file_C9_c.c
+16:34:01  big_file_C12_c.c
+16:34:01  eoption.c
+16:34:01  big_file_C3_c.c
+16:34:01  big_file_C10_c.c
+16:34:01  big_file_C1_c.c
+16:34:01  big_file_C4_c.c
+16:34:01  big_file_C16_c.c
+16:34:01  big_file_C7_c.c
+16:34:01  big_file_C6_c.c
+16:34:01  big_file_C8_c.c
+16:34:01  big_file_C2_c.c
+16:34:01  eref.c
+16:34:01  epoly.c
+16:34:02  esize.c
+16:34:02  eplug.c
+16:34:02  eskelet.c
+16:34:03  enames.c
+16:34:03  evisib.c
+16:34:03  ececil.c
+16:34:03  einit.c
+16:34:03  eparents.c
+16:34:04          1 file(s) copied.
+16:34:04  emain.c
+16:34:04  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:34:04  
+16:34:04  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:34:04  
+16:34:04  
+16:34:05  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:34:05  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:34:05  
+16:34:05  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+16:34:05  e1\emain.obj 
+16:34:05  "C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+16:34:05  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:34:05  xpact_native_library.res 
+16:34:05  E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+16:34:05  E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+16:34:05  E1\eref.obj E1\eoption.obj C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib 
+16:34:05  C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib 
+16:34:05  C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib 
+16:34:05  C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+16:34:05     Creating library xpact_native_library.lib and object xpact_native_library.exp
+16:34:05  C compilation completed
+16:34:07     Creating library C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact_assertions.lib and object C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact_assertions.exp
+16:34:07  Built C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact_assertions.dll (Assertions)
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Native ABI Smoke)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+16:34:09  xpact_native.c
+16:34:09     Creating library C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native\xpact.lib and object C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native\xpact.exp
+16:34:09  Built C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native\xpact.dll
+16:34:11  xpact_abi_smoke.c
+16:34:11  xpact_bridge_smoke.c
+16:34:11  xpact public ABI smoke: ok
+16:34:11  xpact bridge ABI smoke: ok
+  [Pipeline] writeFile
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+16:34:11  Recording test results
+16:34:11  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Chunked CRC Corpus)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+16:34:16  xpact_chunked_crc.c
+16:34:16  powershell.exe : chunked CRC harness ok: xpact, direct, semantic 44f3c07b
+16:34:16  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-88d3439c\powershellWrapper.ps1:3 char:1
+16:34:16  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+16:34:16  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:34:16      + CategoryInfo          : NotSpecified: (chunked CRC har...mantic 44f3c07b:String) [], RemoteException
+16:34:16      + FullyQualifiedErrorId : NativeCommandError
+16:34:16   
+16:34:16  chunked CRC harness ok: xpact, direct, semantic 405e0d08
+16:34:16  chunked CRC harness ok: xpact, direct, semantic a4b8a812
+16:34:16  chunked CRC harness ok: xpact, direct, semantic 2683e278
+16:34:19  chunked CRC harness ok: xpact, direct, semantic 44ff661d
+16:34:20  chunked CRC harness ok: xpact, direct, semantic 95bb2fa4
+16:34:24  chunked CRC harness ok: xpact, direct, semantic 3ce36398
+16:34:24  chunked CRC harness ok: xpact, buffer, semantic 44f3c07b
+16:34:24  chunked CRC harness ok: xpact, buffer, semantic 405e0d08
+16:34:24  chunked CRC harness ok: xpact, buffer, semantic a4b8a812
+16:34:24  chunked CRC harness ok: xpact, buffer, semantic 2683e278
+16:34:27  chunked CRC harness ok: xpact, buffer, semantic 44ff661d
+16:34:28  chunked CRC harness ok: xpact, buffer, semantic 95bb2fa4
+16:34:32  chunked CRC harness ok: xpact, buffer, semantic 3ce36398
+16:34:32  Chunked CRC rows written to C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\chunked-crc\chunked-crc-results.tsv
+16:34:32  Chunked CRC corpus completed for 7 documents.
+  [Pipeline] writeFile
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+16:34:32  Recording test results
+16:34:32  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Incremental Shim Audit)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+16:34:36  xpact_incremental_shim_audit.c
+16:34:36  case	classification	result	detail
+16:34:36  plain_start_nonfinal	passes	observed	status=OK start_after_first=1 parsing=PARSING final=0
+16:34:36  parse_buffer_plain_start_nonfinal	passes	observed	status=OK start_after_first=1 parsing=PARSING final=0
+16:34:36  attributed_start_nonfinal	passes	observed	first_status=OK start_after_first=1 final_status=OK start_total=1 end_total=1
+16:34:36  attributed_start_nonfinal_without_reparse_deferral	passes	observed	configured=1 status=OK start_after_first=1
+16:34:36  input_context_uses_bounded_window	passes	observed	statuses=OK/OK/OK text_bytes=4096 max_context_size=1024 max_context_offset=5
+16:34:36  suspend_resume_replay	passes	observed	parse=SUSPENDED suspended_parsing=SUSPENDED resume=OK text_bytes=6 text_callbacks=2
+16:34:36  Incremental shim audit rows written to C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\incremental-shim-audit\incremental-shim-audit.tsv
+  [Pipeline] writeFile
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+16:34:36  Recording test results
+16:34:36  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (libexpat Manifest)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+  [Pipeline] catchError
+  [Pipeline] {
+  [Pipeline] error
+  [Pipeline] writeFile
+  [Pipeline] }
+16:34:38  ERROR: Skipping libexpat manifest: EXPAT_SOURCE_DIR does not exist: C:\src\libexpat-R_2_8_1\expat
+  [Pipeline] // catchError
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+16:34:38  Recording test results
+16:34:38  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (libexpat Native Suite)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+  [Pipeline] catchError
+  [Pipeline] {
+  [Pipeline] error
+  [Pipeline] writeFile
+  [Pipeline] }
+16:34:41  ERROR: Skipping libexpat native suite: EXPAT_SOURCE_DIR does not exist: C:\src\libexpat-R_2_8_1\expat
+  [Pipeline] // catchError
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+16:34:41  Recording test results
+16:34:41  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Contributed Examples)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+16:34:43  == contributed xpact incremental example: Eiffel build ==
+16:34:55  Eiffel Compilation Manager
+16:34:55  Version 25.02.9.8723 Enterprise Edition - win64
+16:34:55  System.Management.Automation.RemoteException
+16:34:55  Degree 6: Examining System
+16:34:55  Degree 5: Parsing Classes
+16:34:55  Degree 4: Analyzing Inheritance
+16:34:55  Degree 3: Checking Types
+16:34:55  Degree 2: Generating Byte Code
+16:34:55  Freezing System Changes
+16:34:55  Degree -1: Generating Code
+16:34:55  System Recompiled.
+16:34:55  You must now run "finish_freezing" in:
+16:34:55  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\examples\contributed\xpact-incremental-example\EIFGENs\classic\W_code
+16:34:55  == contributed xpact incremental example: finish_freezing ==
+16:34:56  Loaded Visual Studio C++ x64 environment from C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+16:35:02  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:35:02  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:35:02  
+16:35:02  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:35:02  big_file_C26_c.c
+16:35:02  eoption.c
+16:35:02  big_file_C25_c.c
+16:35:02  big_file_C23_c.c
+16:35:02  big_file_C24_c.c
+16:35:02  big_file_C16_c.c
+16:35:02  big_file_C19_c.c
+16:35:02  big_file_C21_c.c
+16:35:02  big_file_C9_c.c
+16:35:02  big_file_C2_c.c
+16:35:02  big_file_C15_c.c
+16:35:02  big_file_C7_c.c
+16:35:02  big_file_C22_c.c
+16:35:02  big_file_C20_c.c
+16:35:02  big_file_C1_c.c
+16:35:02  big_file_C18_c.c
+16:35:02  big_file_C5_c.c
+16:35:02  big_file_C8_c.c
+16:35:02  big_file_C3_c.c
+16:35:02  big_file_C10_c.c
+16:35:02  big_file_C14_c.c
+16:35:02  big_file_C11_c.c
+16:35:02  big_file_C17_c.c
+16:35:02  big_file_C4_c.c
+16:35:02  big_file_C13_c.c
+16:35:02  big_file_C12_c.c
+16:35:02  big_file_C6_c.c
+16:35:02  epattern.c
+16:35:02  efrozen.c
+16:35:02  ecall.c
+16:35:02  eplug.c
+16:35:02  eskelet.c
+16:35:02  enames.c
+16:35:02  evisib.c
+16:35:02  ececil.c
+16:35:02  einit.c
+16:35:02  eparents.c
+16:35:02          1 file(s) copied.
+16:35:02  emain.c
+16:35:02  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:35:02  
+16:35:02  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:35:02  
+16:35:02  
+16:35:02  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:35:02  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:35:02  
+16:35:02  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_example.exe 
+16:35:02  e1\emain.obj 
+16:35:02  "C:\El2502E\studio\spec\win64\lib\msc_vc140\mtwkbench.lib" 
+16:35:02  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:35:02  xpact_example.res 
+16:35:02  E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj E1\enames.obj 
+16:35:02  E1\eskelet.obj E1\eplug.obj E1\ecall.obj E1\efrozen.obj E1\epattern.obj 
+16:35:02  E1\eoption.obj C26\Cobj26.lib C25\Cobj25.lib C24\Cobj24.lib C23\Cobj23.lib 
+16:35:02  C22\Cobj22.lib C21\Cobj21.lib C20\Cobj20.lib C19\Cobj19.lib C18\Cobj18.lib 
+16:35:02  C17\Cobj17.lib C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib C13\Cobj13.lib 
+16:35:02  C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib C8\Cobj8.lib 
+16:35:02  C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib C3\Cobj3.lib 
+16:35:02  C2\Cobj2.lib C1\Cobj1.lib 
+16:35:02  C compilation completed
+16:35:02  == contributed xpact incremental example: count_tags C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\examples\contributed\xpact-incremental-example\data\sample.xml ==
+16:35:02  Parsing: C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\examples\contributed\xpact-incremental-example\data\sample.xml
+16:35:02  Parsing time: 4 ms
+16:35:02  Tags sorted in order of occurrence count (Highest first)
+16:35:02  
+16:35:02  TAG: <title> occurrences 2
+16:35:02  TAG: <author> occurrences 2
+16:35:02  TAG: <book> occurrences 2
+16:35:02  TAG: <price> occurrences 2
+16:35:02  TAG: <bookstore> occurrences 1
+16:35:02  TAG: <dvd> occurrences 1
+16:35:02  
+16:35:02  
+16:35:02  == contributed xpact incremental example: print C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\examples\contributed\xpact-incremental-example\data\word-rdf.xml ==
+16:35:02  Parsing: C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\examples\contributed\xpact-incremental-example\data\word-rdf.xml
+16:35:02  rdf:RDF:
+16:35:02     ATTRIBUTES: {xmlns:rdf : "&rdf;", xmlns:a : "&a;", xmlns:b : "&b;"}
+16:35:02  rdf:Description:
+16:35:02     ATTRIBUTES: {rdf:about : "&a;100027235", b:glossaryEntry : "the act of enrolling"}
+16:35:02  rdf:Description:
+16:35:02     ATTRIBUTES: {rdf:about : "&a;100027339"}
+16:35:02  b:glossaryEntry:
+16:35:02     ATTRIBUTES: {xml:space : "preserve"}
+16:35:02     CDATA: "the act of appearing in public view; "the rookie made a brief appearance in the first period"; "it was Bernhardt''s last appearance in America""
+16:35:02  rdf:Description:
+16:35:02     ATTRIBUTES: {rdf:about : "&a;100027592", b:glossaryEntry : "the act of emerging"}
+16:35:02  rdf:Description:
+16:35:02     ATTRIBUTES: {rdf:about : "&a;100027678", b:glossaryEntry : "the act of appearing again"}
+16:35:02  rdf:Description:
+16:35:02     ATTRIBUTES: {rdf:about : "&a;100027781"}
+16:35:02  b:glossaryEntry:
+16:35:02     "(astronomy) the reappearance of a celestial body after an eclipse"
+16:35:02  Parsing time: 6 ms
+16:35:02  
+16:35:02  
+16:35:02  Contributed C expat tag counter WSL comparison skipped.
+16:35:02  Contributed examples completed. Logs written to C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\contributed-examples
+  [Pipeline] writeFile
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] junit
+16:35:02  Recording test results
+16:35:02  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Package Windows Release)
+  [Pipeline] powershell
+16:35:05  Loaded Visual Studio C++ x64 environment from C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+16:35:07  xpact_native.c
+16:35:09  xpact_eiffel_runtime_bridge.c
+16:35:11  xpact_eiffel_dllmain.c
+16:35:11  powershell.exe : Eiffel Compilation Manager
+16:35:11  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-3f96d68d\powershellWrapper.ps1:3 char:1
+16:35:11  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+16:35:11  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:35:11      + CategoryInfo          : NotSpecified: (Eiffel Compilation Manager:String) [], RemoteException
+16:35:11      + FullyQualifiedErrorId : NativeCommandError
+16:35:11   
+16:35:11  Version 25.02.9.8723 Enterprise Edition - win64
+16:35:11  
+16:35:11  Degree 6: Examining System
+16:35:11  Degree 5: Parsing Classes
+16:35:13  Degree 4: Analyzing Inheritance
+16:35:13  Degree 3: Checking Types
+16:35:16  Degree 2: Generating Byte Code
+16:35:17  Degree -2: Constructing Polymorphic Table
+16:35:17  Degree -3: Generating Optimized Code
+16:35:24  System Recompiled.
+16:35:24  You must now run "finish_freezing" in:
+16:35:24  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\EIFGENs\xpact_native_library\F_code
+16:35:24  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:35:24  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:35:24  
+16:35:24  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:35:24  eoption.c
+16:35:24  big_file_C16_c.c
+16:35:24  big_file_C10_c.c
+16:35:24  big_file_C13_c.c
+16:35:24  big_file_C11_c.c
+16:35:24  big_file_C14_c.c
+16:35:24  big_file_E2_c.c
+16:35:24  big_file_C15_c.c
+16:35:24  big_file_C8_c.c
+16:35:24  big_file_C6_c.c
+16:35:24  big_file_C5_c.c
+16:35:24  big_file_C12_c.c
+16:35:24  big_file_C9_c.c
+16:35:24  big_file_C3_c.c
+16:35:24  big_file_C7_c.c
+16:35:24  big_file_C4_c.c
+16:35:24  big_file_C2_c.c
+16:35:24  big_file_C1_c.c
+16:35:25  eref.c
+16:35:25  epoly.c
+16:35:25  esize.c
+16:35:26  eplug.c
+16:35:26  eskelet.c
+16:35:26  enames.c
+16:35:26  evisib.c
+16:35:27  ececil.c
+16:35:27  einit.c
+16:35:27  eparents.c
+16:35:28          1 file(s) copied.
+16:35:28  emain.c
+16:35:28  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:35:28  
+16:35:28  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:35:28  
+16:35:28  
+16:35:28  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:35:28  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:35:28  
+16:35:28  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+16:35:28  e1\emain.obj 
+16:35:28  "C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+16:35:28  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:35:28  xpact_native_library.res 
+16:35:28  E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+16:35:28  E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+16:35:28  E1\eref.obj E1\eoption.obj C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib 
+16:35:28  C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib 
+16:35:28  C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib 
+16:35:28  C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+16:35:28     Creating library xpact_native_library.lib and object xpact_native_library.exp
+16:35:28  C compilation completed
+16:35:30     Creating library C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.lib and object C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.exp
+16:35:30  Built C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.dll (Production)
+16:35:32  xpact_eiffel_dll_smoke.c
+16:35:32  xpact Eiffel DLL smoke: ok
+16:35:32  Visual Studio C++ x64 environment already loaded (17.14.42)
+16:35:34  xpact_native.c
+16:35:35  xpact_eiffel_runtime_bridge.c
+16:35:37  xpact_eiffel_dllmain.c
+16:35:37  Eiffel Compilation Manager
+16:35:37  Version 25.02.9.8723 Enterprise Edition - win64
+16:35:37  
+16:35:37  Degree 6: Examining System
+16:35:37  Degree 5: Parsing Classes
+16:35:39  Degree 4: Analyzing Inheritance
+16:35:39  Degree 3: Checking Types
+16:35:43  Degree 2: Generating Byte Code
+16:35:43  Degree -2: Constructing Polymorphic Table
+16:35:43  Degree -3: Generating Optimized Code
+16:35:50  System Recompiled.
+16:35:50  You must now run "finish_freezing" in:
+16:35:50  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\EIFGENs\xpact_native_library_assertions\F_code
+16:35:50  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:35:50  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:35:50  
+16:35:51  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:35:51  big_file_C14_c.c
+16:35:51  eoption.c
+16:35:51  big_file_C16_c.c
+16:35:51  big_file_C10_c.c
+16:35:51  big_file_C15_c.c
+16:35:51  big_file_C12_c.c
+16:35:51  big_file_C11_c.c
+16:35:51  big_file_C8_c.c
+16:35:51  big_file_C5_c.c
+16:35:51  big_file_E2_c.c
+16:35:51  big_file_C9_c.c
+16:35:51  big_file_C6_c.c
+16:35:51  big_file_C4_c.c
+16:35:51  big_file_C1_c.c
+16:35:51  big_file_C2_c.c
+16:35:51  big_file_C3_c.c
+16:35:51  big_file_C7_c.c
+16:35:51  big_file_C13_c.c
+16:35:51  eref.c
+16:35:51  epoly.c
+16:35:52  esize.c
+16:35:52  eplug.c
+16:35:53  eskelet.c
+16:35:53  enames.c
+16:35:53  evisib.c
+16:35:53  ececil.c
+16:35:53  einit.c
+16:35:54  eparents.c
+16:35:55          1 file(s) copied.
+16:35:55  emain.c
+16:35:55  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:35:55  
+16:35:55  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:35:55  
+16:35:55  
+16:35:55  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:35:55  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:35:55  
+16:35:55  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+16:35:55  e1\emain.obj 
+16:35:55  "C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+16:35:55  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:35:55  xpact_native_library.res 
+16:35:55  E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+16:35:55  E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+16:35:55  E1\eref.obj E1\eoption.obj C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib 
+16:35:55  C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib 
+16:35:55  C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib 
+16:35:55  C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+16:35:55     Creating library xpact_native_library.lib and object xpact_native_library.exp
+16:35:55  C compilation completed
+16:35:57     Creating library C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact_assertions.lib and object C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact_assertions.exp
+16:35:57  Built C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact_assertions.dll (Assertions)
+16:35:59  Packaged C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\dist\xpact-0.1.0-preview-windows-x64.zip
+16:35:59  SHA256  1996fd36e243d82405f736c1f29f2df36417c2aa6f7b33ef815c96c1ef879601
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Benchmarks)
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] powershell
+16:36:01  powershell.exe : ......................
+16:36:01  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact@tmp\durable-233ea951\powershellWrapper.ps1:3 char:1
+16:36:01  + & powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Comm ...
+16:36:01  + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:36:01      + CategoryInfo          : NotSpecified: (......................:String) [], RemoteException
+16:36:01      + FullyQualifiedErrorId : NativeCommandError
+16:36:01   
+16:36:01  ----------------------------------------------------------------------
+16:36:01  Ran 22 tests in 0.272s
+16:36:01  
+16:36:01  OK
+16:36:02  Eiffel Compilation Manager
+16:36:02  Version 25.02.9.8723 Enterprise Edition - win64
+16:36:02  
+16:36:02  Degree 6: Examining System
+16:36:02  Degree 5: Parsing Classes
+16:36:02  Degree 4: Analyzing Inheritance
+16:36:02  Degree 3: Checking Types
+16:36:03  Degree 2: Generating Byte Code
+16:36:03  -------------------------------------------------------------------------------
+16:36:03  
+16:36:03  Warning code: Obsolete Class
+16:36:03  
+16:36:03  Warning: type relies on obsolete class.
+16:36:03  What to do: update to new class at your earliest convenience. The
+16:36:03    class is still available but may be removed in the future.
+16:36:03  
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Feature: file_argument
+16:36:03  Obsolete class: ARGUMENTS
+16:36:03  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:03  
+16:36:03  -------------------------------------------------------------------------------
+16:36:03  
+16:36:03  Warning code: Obsolete Class
+16:36:03  
+16:36:03  Warning: type relies on obsolete class.
+16:36:03  What to do: update to new class at your earliest convenience. The
+16:36:03    class is still available but may be removed in the future.
+16:36:03  
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Feature: suspend_gc_during_parse
+16:36:03  Obsolete class: ARGUMENTS
+16:36:03  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:03  
+16:36:03  -------------------------------------------------------------------------------
+16:36:03  
+16:36:03  Warning code: Obsolete Class
+16:36:03  
+16:36:03  Warning: type relies on obsolete class.
+16:36:03  What to do: update to new class at your earliest convenience. The
+16:36:03    class is still available but may be removed in the future.
+16:36:03  
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Feature: iteration_count
+16:36:03  Obsolete class: ARGUMENTS
+16:36:03  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:03  
+16:36:03  -------------------------------------------------------------------------------
+16:36:03  
+16:36:03  Warning code: Obsolete Class
+16:36:03  
+16:36:03  Warning: type relies on obsolete class.
+16:36:03  What to do: update to new class at your earliest convenience. The
+16:36:03    class is still available but may be removed in the future.
+16:36:03  
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Feature: has_argument
+16:36:03  Obsolete class: ARGUMENTS
+16:36:03  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:03  
+16:36:03  -------------------------------------------------------------------------------
+16:36:03  
+16:36:03  Warning code: Obsolete Class
+16:36:03  
+16:36:03  Warning: type relies on obsolete class.
+16:36:03  What to do: update to new class at your earliest convenience. The
+16:36:03    class is still available but may be removed in the future.
+16:36:03  
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Class: XP_BENCHMARK_ROOT
+16:36:03  Feature: run_conformance
+16:36:03  Obsolete class: ARGUMENTS
+16:36:03  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:03  
+16:36:03  -------------------------------------------------------------------------------
+16:36:03  Degree -2: Constructing Polymorphic Table
+16:36:04  Removing Unused Code
+16:36:04  Degree -3: Generating Optimized Code
+16:36:06  System Recompiled.
+16:36:06  You must now run "finish_freezing" in:
+16:36:06  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\EIFGENs\xpact_benchmarks\F_code
+16:36:08  Loaded Visual Studio C++ x64 environment from C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+16:36:08  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:36:08  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:36:08  
+16:36:09  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:36:09  big_file_C17_c.c
+16:36:09  eref.c
+16:36:09  big_file_C15_c.c
+16:36:09  big_file_C20_c.c
+16:36:09  big_file_C19_c.c
+16:36:09  big_file_E2_c.c
+16:36:09  big_file_C16_c.c
+16:36:09  big_file_C4_c.c
+16:36:09  big_file_C9_c.c
+16:36:09  big_file_C5_c.c
+16:36:09  big_file_C12_c.c
+16:36:09  big_file_C14_c.c
+16:36:09  big_file_C13_c.c
+16:36:09  big_file_C8_c.c
+16:36:09  big_file_C7_c.c
+16:36:09  big_file_C18_c.c
+16:36:09  big_file_C6_c.c
+16:36:09  big_file_C10_c.c
+16:36:09  big_file_C3_c.c
+16:36:09  big_file_C11_c.c
+16:36:09  big_file_C1_c.c
+16:36:09  big_file_C2_c.c
+16:36:09  epoly.c
+16:36:10  esize.c
+16:36:10  eplug.c
+16:36:10  eskelet.c
+16:36:10  enames.c
+16:36:10  evisib.c
+16:36:10  ececil.c
+16:36:11  einit.c
+16:36:11  eparents.c
+16:36:11          1 file(s) copied.
+16:36:11  emain.c
+16:36:11  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:36:11  
+16:36:11  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:36:11  
+16:36:11  
+16:36:11  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:36:11  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:36:11  
+16:36:11  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_benchmarks.exe 
+16:36:11  e1\emain.obj 
+16:36:11  "C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" 
+16:36:11  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:36:11  xpact_benchmarks.res 
+16:36:11  E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+16:36:11  E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+16:36:11  E1\eref.obj C20\Cobj20.lib C19\Cobj19.lib C18\Cobj18.lib C17\Cobj17.lib 
+16:36:11  C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib C13\Cobj13.lib C12\Cobj12.lib 
+16:36:11  C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib C8\Cobj8.lib C7\Cobj7.lib 
+16:36:11  C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib C3\Cobj3.lib C2\Cobj2.lib 
+16:36:11  C1\Cobj1.lib 
+16:36:12  C compilation completed
+16:36:12  Eiffel Compilation Manager
+16:36:12  Version 25.02.9.8723 Enterprise Edition - win64
+16:36:12  
+16:36:12  Degree 6: Examining System
+16:36:13  Degree 5: Parsing Classes
+16:36:13  Degree 4: Analyzing Inheritance
+16:36:13  Degree 3: Checking Types
+16:36:13  Degree 2: Generating Byte Code
+16:36:14  -------------------------------------------------------------------------------
+16:36:14  
+16:36:14  Warning code: Obsolete Class
+16:36:14  
+16:36:14  Warning: type relies on obsolete class.
+16:36:14  What to do: update to new class at your earliest convenience. The
+16:36:14    class is still available but may be removed in the future.
+16:36:14  
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Feature: file_argument
+16:36:14  Obsolete class: ARGUMENTS
+16:36:14  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:14  
+16:36:14  -------------------------------------------------------------------------------
+16:36:14  
+16:36:14  Warning code: Obsolete Class
+16:36:14  
+16:36:14  Warning: type relies on obsolete class.
+16:36:14  What to do: update to new class at your earliest convenience. The
+16:36:14    class is still available but may be removed in the future.
+16:36:14  
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Feature: suspend_gc_during_parse
+16:36:14  Obsolete class: ARGUMENTS
+16:36:14  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:14  
+16:36:14  -------------------------------------------------------------------------------
+16:36:14  
+16:36:14  Warning code: Obsolete Class
+16:36:14  
+16:36:14  Warning: type relies on obsolete class.
+16:36:14  What to do: update to new class at your earliest convenience. The
+16:36:14    class is still available but may be removed in the future.
+16:36:14  
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Feature: iteration_count
+16:36:14  Obsolete class: ARGUMENTS
+16:36:14  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:14  
+16:36:14  -------------------------------------------------------------------------------
+16:36:14  
+16:36:14  Warning code: Obsolete Class
+16:36:14  
+16:36:14  Warning: type relies on obsolete class.
+16:36:14  What to do: update to new class at your earliest convenience. The
+16:36:14    class is still available but may be removed in the future.
+16:36:14  
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Feature: has_argument
+16:36:14  Obsolete class: ARGUMENTS
+16:36:14  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:14  
+16:36:14  -------------------------------------------------------------------------------
+16:36:14  
+16:36:14  Warning code: Obsolete Class
+16:36:14  
+16:36:14  Warning: type relies on obsolete class.
+16:36:14  What to do: update to new class at your earliest convenience. The
+16:36:14    class is still available but may be removed in the future.
+16:36:14  
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Class: XP_BENCHMARK_ROOT
+16:36:14  Feature: run_conformance
+16:36:14  Obsolete class: ARGUMENTS
+16:36:14  Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+16:36:14  
+16:36:14  -------------------------------------------------------------------------------
+16:36:14  Degree -2: Constructing Polymorphic Table
+16:36:14  Degree -3: Generating Optimized Code
+16:36:21  System Recompiled.
+16:36:21  You must now run "finish_freezing" in:
+16:36:21  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\EIFGENs\xpact_benchmarks_assertions\F_code
+16:36:21  Visual Studio C++ x64 environment already loaded (17.14.42)
+16:36:21  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:36:21  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:36:21  
+16:36:22  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:36:22  big_file_C8_c.c
+16:36:22  big_file_C15_c.c
+16:36:22  big_file_C2_c.c
+16:36:22  big_file_C7_c.c
+16:36:22  eoption.c
+16:36:22  big_file_C6_c.c
+16:36:22  big_file_C12_c.c
+16:36:22  big_file_C18_c.c
+16:36:22  big_file_C10_c.c
+16:36:22  big_file_C1_c.c
+16:36:22  big_file_C19_c.c
+16:36:22  big_file_C9_c.c
+16:36:22  big_file_C5_c.c
+16:36:22  big_file_C13_c.c
+16:36:22  big_file_C16_c.c
+16:36:22  big_file_C4_c.c
+16:36:22  big_file_C20_c.c
+16:36:22  big_file_C17_c.c
+16:36:22  big_file_C14_c.c
+16:36:22  big_file_E2_c.c
+16:36:22  big_file_C11_c.c
+16:36:22  big_file_C3_c.c
+16:36:22  eref.c
+16:36:22  epoly.c
+16:36:23  esize.c
+16:36:24  eplug.c
+16:36:24  eskelet.c
+16:36:24  enames.c
+16:36:24  evisib.c
+16:36:25  ececil.c
+16:36:25  einit.c
+16:36:25  eparents.c
+16:36:25          1 file(s) copied.
+16:36:25  emain.c
+16:36:26  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:36:26  
+16:36:26  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:36:26  
+16:36:26  
+16:36:26  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:36:26  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:36:26  
+16:36:26  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_benchmarks.exe 
+16:36:26  e1\emain.obj 
+16:36:26  "C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" 
+16:36:26  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:36:26  xpact_benchmarks.res 
+16:36:26  E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+16:36:26  E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+16:36:26  E1\eref.obj E1\eoption.obj C20\Cobj20.lib C19\Cobj19.lib C18\Cobj18.lib 
+16:36:26  C17\Cobj17.lib C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib C13\Cobj13.lib 
+16:36:26  C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib C8\Cobj8.lib 
+16:36:26  C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib C3\Cobj3.lib 
+16:36:26  C2\Cobj2.lib C1\Cobj1.lib 
+16:36:26  C compilation completed
+16:36:45  Visual Studio C++ x64 environment already loaded (17.14.42)
+16:36:45  xpact_native.c
+16:36:47  xpact_eiffel_runtime_bridge.c
+16:36:48  xpact_eiffel_dllmain.c
+16:36:49  Eiffel Compilation Manager
+16:36:49  Version 25.02.9.8723 Enterprise Edition - win64
+16:36:49  
+16:36:49  Degree 6: Examining System
+16:36:49  Degree 5: Parsing Classes
+16:36:51  Degree 4: Analyzing Inheritance
+16:36:51  Degree 3: Checking Types
+16:36:55  Degree 2: Generating Byte Code
+16:36:55  Degree -2: Constructing Polymorphic Table
+16:36:55  Degree -3: Generating Optimized Code
+16:37:02  System Recompiled.
+16:37:02  You must now run "finish_freezing" in:
+16:37:02  	C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\EIFGENs\xpact_native_library\F_code
+16:37:02  Eiffel C/C++ Compilation Tool - Version: 25.02
+16:37:02  Copyright Eiffel Software 1996-2024. All Rights Reserved.
+16:37:02  
+16:37:02  Preparing C compilation using Microsoft Visual Studio 2022 VC++ (17.0)...
+16:37:03  eoption.c
+16:37:03  big_file_E2_c.c
+16:37:03  big_file_C16_c.c
+16:37:03  big_file_C13_c.c
+16:37:03  big_file_C6_c.c
+16:37:03  big_file_C5_c.c
+16:37:03  big_file_C1_c.c
+16:37:03  big_file_C14_c.c
+16:37:03  big_file_C2_c.c
+16:37:03  big_file_C10_c.c
+16:37:03  big_file_C11_c.c
+16:37:03  big_file_C9_c.c
+16:37:03  big_file_C12_c.c
+16:37:03  big_file_C4_c.c
+16:37:03  big_file_C15_c.c
+16:37:03  big_file_C7_c.c
+16:37:03  big_file_C3_c.c
+16:37:03  big_file_C8_c.c
+16:37:03  eref.c
+16:37:03  epoly.c
+16:37:04  esize.c
+16:37:04  eplug.c
+16:37:04  eskelet.c
+16:37:05  enames.c
+16:37:05  evisib.c
+16:37:05  ececil.c
+16:37:05  einit.c
+16:37:05  eparents.c
+16:37:06          1 file(s) copied.
+16:37:06  emain.c
+16:37:06  Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+16:37:06  
+16:37:06  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:37:06  
+16:37:06  
+16:37:06  Microsoft (R) Incremental Linker Version 14.44.35229.0
+16:37:06  Copyright (C) Microsoft Corporation.  All rights reserved.
+16:37:06  
+16:37:06  -STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+16:37:06  e1\emain.obj 
+16:37:06  "C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+16:37:06  USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+16:37:06  xpact_native_library.res 
+16:37:06  E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+16:37:06  E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+16:37:06  E1\eref.obj E1\eoption.obj C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib 
+16:37:06  C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib 
+16:37:06  C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib 
+16:37:06  C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+16:37:06     Creating library xpact_native_library.lib and object xpact_native_library.exp
+16:37:07  C compilation completed
+16:37:08     Creating library C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.lib and object C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.exp
+16:37:08  Built C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\native-eiffel\xpact.dll (Production)
+16:37:10  xpact_native_c_benchmark.c
+16:38:06  Benchmark medians written to C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\docs\benchmarks.md
+16:38:06  Raw benchmark rows written to C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\benchmarks\benchmark-results.tsv
+16:38:06  | catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1000 | 2611 | 188.569 | 5303.104 | 13.205 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
+16:38:06  | catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1000 | 2611 | 191.495 | 5222.082 | 13.003 | Parser object reused; no-op event handler; finalized Eiffel C compilation; calls parse_without_garbage_collection |
+16:38:06  | catalog-100-items | xpact Eiffel finalized, assertions enabled | Phase 1 finalized assertions | 1000 | 2611 | 1738.183 | 575.313 | 1.433 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled |
+16:38:06  | catalog-100-items | xpact Eiffel finalized, assertions enabled, GC suspended during parse | Phase 1 finalized assertions | 1000 | 2611 | 1719.55 | 581.547 | 1.448 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled; calls parse_without_garbage_collection |
+16:38:06  | catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 1000 | 2611 | 214.488 | 4662.261 | 11.609 | Parser created per document; Python callbacks |
+16:38:06  | catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1000 | 2611 | 144.382 | 6926.09 | 17.246 | Parser created per document; no callbacks |
+16:38:06  | catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 5869.125 | 170.383 | 0.424 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks |
+16:38:06  | catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 787.046 | 1270.573 | 3.164 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks |
+16:38:06  | catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL, parser reused | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 5773.479 | 173.206 | 0.431 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents |
+16:38:06  | catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | 778.8 | 1284.027 | 3.197 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents |
+16:38:06  | catalog-100-items | libexpat C callbacks via WSL2 gcc | expat_2.2.9 | 1000 | 2611 | 120.93 | 8269.226 | 20.591 | gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0; parser created per document; C callbacks; launched through wsl.exe |
+16:38:06  | catalog-100-items | libexpat C tokenizer via WSL2 gcc | expat_2.2.9 | 1000 | 2611 | 117.064 | 8542.329 | 21.271 | gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0; parser created per document; no callbacks; launched through wsl.exe |
+16:38:06  | catalog-100-items | xpact native C ABI via WSL2 gcc | expat_2.8.1-xpact-eiffel-bridge | 1000 | 2611 | not measured | not measured | not measured | Compiled and linked through include/xpact.h; XML_Parse reports XML_ERROR_NOT_STARTED because the Eiffel bridge is not connected yet |
+16:38:06  W3C XML: Finalized: 2585 catalog cases
+16:38:08    Finalized: 250/2585
+16:38:10    Finalized: 500/2585
+16:38:15    Finalized: 750/2585
+16:38:19    Finalized: 1000/2585
+16:38:23    Finalized: 1250/2585
+16:38:24    Finalized: 1500/2585
+16:38:25    Finalized: 1750/2585
+16:38:26    Finalized: 2000/2585
+16:38:29    Finalized: 2250/2585
+16:38:34    Finalized: 2500/2585
+16:38:34  W3C XML: FinalizedAssertions: 2585 catalog cases
+16:38:38    FinalizedAssertions: 250/2585
+16:38:41    FinalizedAssertions: 500/2585
+16:38:45    FinalizedAssertions: 750/2585
+16:38:48    FinalizedAssertions: 1000/2585
+16:38:52    FinalizedAssertions: 1250/2585
+16:38:54    FinalizedAssertions: 1500/2585
+16:38:55    FinalizedAssertions: 1750/2585
+16:38:55    FinalizedAssertions: 2000/2585
+16:38:58    FinalizedAssertions: 2250/2585
+16:39:02    FinalizedAssertions: 2500/2585
+16:39:03  {"engine": "Finalized", "total": 2585, "passed": 1491, "failed": 236, "errors": 0, "skipped": 858, "accepted": 980, "rejected": 747, "elapsed_ms": 32946.783}
+16:39:03  {"engine": "FinalizedAssertions", "total": 2585, "passed": 1444, "failed": 236, "errors": 47, "skipped": 858, "accepted": 978, "rejected": 702, "elapsed_ms": 28704.739}
+16:39:03  W3C XML reports: C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\benchmarks\w3c-xml-conformance
+16:39:04  W3C XML conformance failed. See C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\benchmarks\w3c-xml-
+16:39:04  conformance\summary.md and junit.xml for per-case results.
+16:39:04  At C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\scripts\run_benchmarks.ps1:597 char:3
+16:39:04  +         throw "W3C XML conformance failed. See $W3cOutputRoot\summary ...
+16:39:04  +         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+16:39:04      + CategoryInfo          : OperationStopped: (W3C XML conform...r-case results.:String) [], RuntimeException
+16:39:04      + FullyQualifiedErrorId : W3C XML conformance failed. See C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\ 
+16:39:04     xpact\build\benchmarks\w3c-xml-conformance\summary.md and junit.xml for per-case results.
+16:39:04   
+  [Pipeline] writeFile
+  [Pipeline] }
+  [Pipeline] // script
+  Post stage
+  [Pipeline] junit
+16:39:04  Recording test results
+16:39:04  [Checks API] No suitable checks publisher found.
+  [Pipeline] script
+  [Pipeline] {
+  [Pipeline] fileExists
+  [Pipeline] readFile
+  [Pipeline] writeFile
+  [Pipeline] fileExists
+  [Pipeline] withEnv
+  [Pipeline] {
+  [Pipeline] powershell
+16:39:06  Could not determine previous successful build number: Fjärrservern returnerade ett fel: (403) Förbjuden.
+16:39:06  Could not read previous benchmark artifact at http://bsharp.local:8088/job/xpact/lastSuccessfulBuild/artifact/build/benchmarks/benchmark-history.tsv: Fjärrservern returnerade ett fel: (403) Förbjuden.
+  [Pipeline] }
+  [Pipeline] // withEnv
+  [Pipeline] fileExists
+  [Pipeline] readFile
+  [Pipeline] plot
+  [Pipeline] publishHTML
+16:39:07  [htmlpublisher] Archiving HTML reports...
+16:39:07  [htmlpublisher] Archiving at BUILD level C:\Users\ander\AppData\Local\Jenkins\.jenkins\workspace\xpact\build\benchmarks to Benchmark_20Plots
+16:39:07  [htmlpublisher] Copying recursive using current thread
+  [Pipeline] junit
+16:39:07  Recording test results
+16:39:07  [Checks API] No suitable checks publisher found.
+  [Pipeline] powershell
+  [Pipeline] }
+  [Pipeline] // script
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (CPython Baseline)
+  Stage "CPython Baseline" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (CPython xpact Replacement)
+  Stage "CPython xpact Replacement" skipped due to earlier failure(s)
+  [Pipeline] getContext
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] stage
+  [Pipeline] { (Declarative: Post Actions)
+  [Pipeline] archiveArtifacts
+16:39:08  Arkivera artefakter
+  [Pipeline] }
+  [Pipeline] // stage
+  [Pipeline] }
+  [Pipeline] // timestamps
+  [Pipeline] }
+  [Pipeline] // withEnv
+  [Pipeline] }
+  [Pipeline] // withEnv
+  [Pipeline] }
+  [Pipeline] // node
+  [Pipeline] End of Pipeline
+  ERROR: script returned exit code 1
+  Finished: FAILURE

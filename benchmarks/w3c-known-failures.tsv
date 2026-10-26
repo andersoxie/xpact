@@ -1,0 +1,19 @@
+# W3C XML conformance: known parser failures.
+#
+# Each row is a result that the current parser is known to get wrong. Listed rows
+# are still failures: junit.xml shows them as failures marked [known: ...] and
+# summary.md counts them under "Known". They only stop failing the build.
+#
+# The run still fails when
+#   - any failure or error is NOT listed here (a new problem), or
+#   - a listed case passes or changes status (update this list: it was fixed or changed).
+#
+# History:
+#   2026-10-23  519 rows recorded (Finalized 236 failed; FinalizedAssertions 236 failed,
+#               47 errors), the same totals as the Jenkins build of main cf12dee.
+#   2026-10-23  All 519 fixed in the parser; the list is empty. Every applicable case
+#               (1,727 per build) must pass.
+#
+# Add a row only for a confirmed parser gap with an open issue, using
+# scripts/run_w3c_conformance.py --write-known-failures <file> to get its exact form.
+engine	case_id	status	category

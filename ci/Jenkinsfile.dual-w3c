@@ -1,0 +1,89 @@
+// Focused Windows lane: run the same W3C catalog with both Eiffel implementations.
+pipeline {
+  agent { label 'built-in' }
+  options {
+    timestamps()
+    skipDefaultCheckout(true)
+    disableConcurrentBuilds()
+    timeout(time: 90, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '30'))
+  }
+  parameters {
+    booleanParam(name: 'OFFLINE', defaultValue: false,
+                 description: 'Require the pinned dependency and W3C archive to be cached, or supply a local suite.')
+    string(name: 'W3C_SUITE_DIRECTORY', defaultValue: '',
+           description: 'Optional extracted xmlconf directory outside build/dual-w3c; empty uses the verified archive.')
+    string(name: 'W3C_TIMEOUT_SECONDS', defaultValue: '10',
+           description: 'Timeout for each independently launched parser case.')
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+    stage('Runner checks') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = 'Stop'
+          foreach ($TestFile in @('test_implementation_builds.py', 'test_w3c_conformance.py', 'test_dual_w3c.py', 'test_jenkins_xpact_summary.py')) {
+            python -m unittest discover -s tests/python -p $TestFile -v
+            if ($LASTEXITCODE -ne 0) { throw "Runner checks failed: $TestFile" }
+          }
+        '''
+      }
+    }
+    stage('Dual W3C') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = 'Stop'
+          $LaneOptions = @{
+            Offline = ($env:OFFLINE -eq 'true')
+            TimeoutSeconds = [int]$env:W3C_TIMEOUT_SECONDS
+          }
+          if ($env:W3C_SUITE_DIRECTORY) { $LaneOptions.SuiteDirectory = $env:W3C_SUITE_DIRECTORY }
+          $PreviousRuns = @(Get-ChildItem -LiteralPath 'build/dual-w3c' -Directory -ErrorAction SilentlyContinue | ForEach-Object Name)
+          try {
+            & './scripts/run_dual_w3c.ps1' @LaneOptions
+          } catch {
+            # Reference-parser results remain comparison data, outside the build gate.
+            Write-Host "Comparison retained a nonzero outcome: $($_.Exception.Message)"
+          }
+          $CurrentRuns = @(Get-ChildItem -LiteralPath 'build/dual-w3c' -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $PreviousRuns -notcontains $_.Name })
+          if ($CurrentRuns.Count -ne 1) { throw 'Cannot identify one fresh W3C campaign for this build.' }
+          $CurrentRun = "build/dual-w3c/$($CurrentRuns[0].Name)"
+          $CurrentRunMarker = "build/dual-w3c-current-run-$($env:BUILD_NUMBER).txt"
+          @($env:BUILD_NUMBER, $CurrentRun) | Set-Content -LiteralPath $CurrentRunMarker -Encoding Ascii
+          python './scripts/jenkins_xpact_summary.py' --output-dir $CurrentRun --lane w3c --repo-root .
+          if ($LASTEXITCODE -ne 0) { throw 'xpact W3C validation or infrastructure failed; see xpact-summary.json.' }
+        '''
+      }
+    }
+  }
+  post {
+    always {
+      script {
+        // Only publish this build's fresh directory, never an older green run.
+        def marker = "build/dual-w3c-current-run-${env.BUILD_NUMBER}.txt"
+        if (fileExists(marker)) {
+          def ownership = readFile(marker).readLines()
+          if (ownership.size() != 2 || ownership[0] != env.BUILD_NUMBER) {
+            error('Dual W3C run marker belongs to a different Jenkins build')
+          }
+          def run = ownership[1].trim()
+          if (!(run ==~ /build\/dual-w3c\/[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}/)) {
+            error('Invalid dual W3C run directory')
+          }
+          try {
+            junit testResults: "${run}/xpact-junit.xml", allowEmptyResults: true
+          } finally {
+            archiveArtifacts artifacts: "${run}/**/*.json,${run}/**/*.tsv,${run}/**/*.md,${run}/**/*.xml,${run}/**/*.log,${run}/**/stdout.bin,${run}/**/stderr.bin",
+                             excludes: "${run}/**/project/**,${run}/**/suite/**",
+                             allowEmptyArchive: true
+          }
+        }
+      }
+    }
+  }
+}

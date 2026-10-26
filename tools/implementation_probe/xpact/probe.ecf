@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" name="xpact_build_probe" uuid="678239B6-694F-475C-A1C6-94B360C2D730">
+  <target name="probe">
+    <root class="XPACT_PROBE_ROOT" feature="make"/>
+    <option warning="true" is_obsolete_routine_type="true">
+      <assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+    </option>
+    <setting name="console_application" value="true"/>
+    <setting name="dead_code_removal" value="all"/>
+    <capability>
+      <concurrency support="none"/>
+      <void_safety support="all" use="all"/>
+    </capability>
+    <library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
+    <cluster name="parser" location="$XPACT_SOURCE_ROOT/src/"/>
+    <cluster name="probe" location="./"/>
+    <cluster name="identity" location="$XPACT_PROBE_METADATA/"/>
+  </target>
+</system>

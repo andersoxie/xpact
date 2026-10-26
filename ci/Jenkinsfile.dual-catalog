@@ -1,0 +1,83 @@
+// Focused Windows lane: qualify both implementations, then time only the catalog.
+pipeline {
+  agent { label 'built-in' }
+  options {
+    timestamps()
+    skipDefaultCheckout(true)
+    disableConcurrentBuilds()
+    timeout(time: 45, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '30'))
+  }
+  parameters {
+    booleanParam(name: 'OFFLINE_DEPENDENCY', defaultValue: false,
+                 description: 'Require the pinned Xpact-core checkout to be cached already.')
+    string(name: 'CATALOG_ITERATIONS', defaultValue: '1000',
+           description: 'Initial common document count; calibration may increase it.')
+    string(name: 'CATALOG_PAIRS', defaultValue: '6',
+           description: 'Sequential alternating AB/BA measurement pairs.')
+  }
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Runner checks') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = 'Stop'
+          foreach ($TestFile in @('test_dual_catalog.py', 'test_jenkins_xpact_summary.py')) {
+            python -m unittest discover -s tests/python -p $TestFile -v
+            if ($LASTEXITCODE -ne 0) { throw "Dual catalog runner checks failed: $TestFile" }
+          }
+        '''
+      }
+    }
+    stage('Dual catalog') {
+      steps {
+        powershell '''
+          $ErrorActionPreference = 'Stop'
+          $OfflineDependency = $env:OFFLINE_DEPENDENCY -eq 'true'
+          $PreviousRuns = @(Get-ChildItem -LiteralPath 'build/dual-catalog' -Directory -ErrorAction SilentlyContinue | ForEach-Object Name)
+          try {
+            & './scripts/run_dual_catalog.ps1' -Offline:$OfflineDependency `
+              -Iterations ([int]$env:CATALOG_ITERATIONS) -Pairs ([int]$env:CATALOG_PAIRS)
+          } catch {
+            # Reference-parser results remain comparison data, outside the build gate.
+            Write-Host "Comparison retained a nonzero outcome: $($_.Exception.Message)"
+          }
+          $CurrentRuns = @(Get-ChildItem -LiteralPath 'build/dual-catalog' -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $PreviousRuns -notcontains $_.Name })
+          if ($CurrentRuns.Count -ne 1) { throw 'Cannot identify one fresh catalog campaign for this build.' }
+          $CurrentRun = "build/dual-catalog/$($CurrentRuns[0].Name)"
+          $CurrentRunMarker = "build/dual-catalog-current-run-$($env:BUILD_NUMBER).txt"
+          @($env:BUILD_NUMBER, $CurrentRun) | Set-Content -LiteralPath $CurrentRunMarker -Encoding Ascii
+          python './scripts/jenkins_xpact_summary.py' --output-dir $CurrentRun --lane catalog --repo-root .
+          if ($LASTEXITCODE -ne 0) { throw 'xpact catalog validation or infrastructure failed; see xpact-summary.json.' }
+        '''
+      }
+    }
+  }
+  post {
+    always {
+      script {
+        def marker = "build/dual-catalog-current-run-${env.BUILD_NUMBER}.txt"
+        if (fileExists(marker)) {
+          def ownership = readFile(marker).readLines()
+          if (ownership.size() != 2 || ownership[0] != env.BUILD_NUMBER) {
+            error('Dual catalog run marker belongs to a different Jenkins build')
+          }
+          def run = ownership[1].trim()
+          if (!(run ==~ /build\/dual-catalog\/[0-9]{8}T[0-9]{6}Z-[0-9a-f]{12}/)) {
+            error('Invalid dual catalog run directory')
+          }
+          try {
+            junit testResults: "${run}/xpact-junit.xml", allowEmptyResults: true
+          } finally {
+            archiveArtifacts artifacts: "${run}/**/*.json,${run}/**/*.tsv,${run}/**/*.md,${run}/**/*.xml,${run}/**/*.log",
+                             excludes: "${run}/**/project/**",
+                             allowEmptyArchive: true
+          }
+        }
+      }
+    }
+  }
+}

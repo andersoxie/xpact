@@ -222,7 +222,8 @@ class ReportAndCliTests(TemporarySuite):
         runner.write_reports(rows, self.output, {"catalog_cases": 5})
         report = json.loads((self.output / "summary.json").read_text(encoding="utf-8"))
         self.assertEqual(report["engines"][0], {"engine": "xpact", "total": 5, "passed": 2, "failed": 1,
-                         "errors": 1, "skipped": 1, "accepted": 2, "rejected": 1, "elapsed_ms": 48})
+                         "errors": 1, "skipped": 1, "accepted": 2, "rejected": 1, "known": 0,
+                         "unexpected": 2, "elapsed_ms": 48})
         suites = ET.parse(self.output / "junit.xml").getroot().findall("testsuite")
         self.assertEqual(len(suites), 2)
         self.assertEqual({key: suites[0].get(key) for key in ("tests", "failures", "errors", "skipped")},
@@ -263,6 +264,82 @@ class ReportAndCliTests(TemporarySuite):
         suite = ET.parse(self.output / "junit.xml").getroot().find("testsuite")
         self.assertEqual(suite.get("errors"), "1")
         self.assertEqual(suite.find("testcase").get("name"), "suite-setup")
+
+
+class KnownFailureTests(TemporarySuite):
+    ACCEPT = subprocess.CompletedProcess([], 0, b"XPACT_CONFORMANCE\tACCEPT\n", b"")
+    REJECT = subprocess.CompletedProcess([], 1, b"XPACT_CONFORMANCE\tREJECT\n", b"")
+    CRASH = subprocess.CompletedProcess([], 1, b"Eiffel exception\n", b"")
+
+    def setUp(self):
+        super().setUp()
+        self.catalog('<TEST ID="good" TYPE="valid" URI="a.xml"/><TEST ID="bad" TYPE="not-wf" URI="b.xml"/>')
+        self.write("a.xml", "<r/>")
+        self.write("b.xml", "<r>")
+        self.executable = self.root / "parser.exe"
+        self.executable.touch()
+        self.known = self.root / "known.tsv"
+
+    def run_cli(self, known_rows, verdicts, *extra):
+        self.known.write_text("# comment line\nengine\tcase_id\tstatus\tcategory\n"
+                              + "".join("\t".join(row) + "\n" for row in known_rows), encoding="utf-8")
+        arguments = ["--suite-dir", str(self.suite), "--output-dir", str(self.output),
+                     "--engine", f"xpact={self.executable}", "--known-failures", str(self.known), *extra]
+        with mock.patch.object(runner.subprocess, "run", side_effect=verdicts), contextlib.redirect_stdout(io.StringIO()):
+            code = runner.main(arguments)
+        return code, json.loads((self.output / "summary.json").read_text(encoding="utf-8"))
+
+    def test_listed_failure_is_reported_as_known_and_does_not_fail_the_run(self):
+        code, report = self.run_cli([("xpact", "bad", "failed", "accepts input that must be rejected")],
+                                    [self.ACCEPT, self.ACCEPT])
+        self.assertEqual(code, 0)
+        self.assertEqual({key: report["engines"][0][key] for key in ("passed", "failed", "known", "unexpected")},
+                         {"passed": 1, "failed": 1, "known": 1, "unexpected": 0})
+        self.assertEqual(report["known_failures_listed"], 1)
+        failure = ET.parse(self.output / "junit.xml").getroot().find("testsuite/testcase/failure")
+        self.assertTrue(failure.get("message").startswith("[known: accepts input that must be rejected]"))
+
+    def test_unlisted_failure_still_fails_the_run(self):
+        code, report = self.run_cli([("xpact", "bad", "failed", "accepts input that must be rejected")],
+                                    [self.REJECT, self.ACCEPT])
+        self.assertEqual(code, 1)
+        self.assertEqual((report["engines"][0]["known"], report["engines"][0]["unexpected"]), (1, 1))
+
+    def test_listed_case_that_passes_or_changes_status_fails_the_run(self):
+        listed = [("xpact", "bad", "failed", "accepts input that must be rejected")]
+        for verdict, now in ((self.REJECT, "passed"), (self.CRASH, "error")):
+            with self.subTest(now=now):
+                code, report = self.run_cli(listed, [self.ACCEPT, verdict])
+                self.assertEqual(code, 1)
+                stale = [row for row in report["engines"] if row["engine"] == "harness"]
+                self.assertEqual(stale[0]["errors"], 1)
+                with (self.output / "results.tsv").open(encoding="utf-8", newline="") as source:
+                    harness = [row for row in csv.DictReader(source, delimiter="\t") if row["engine"] == "harness"]
+                self.assertEqual(harness[0]["case_id"], "known-failures:xpact:bad")
+                self.assertIn(f"but is now {now}", harness[0]["message"])
+
+    def test_entries_for_engines_not_run_are_ignored(self):
+        code, _ = self.run_cli([("other", "bad", "failed", "accepts input that must be rejected")],
+                               [self.ACCEPT, self.REJECT])
+        self.assertEqual(code, 0)
+
+    def test_invalid_list_is_a_setup_error(self):
+        for rows in ([("xpact", "bad", "passed", "x")],
+                     [("xpact", "bad", "failed", "x"), ("xpact", "bad", "error", "y")],
+                     [("xpact", "bad", "failed", "")]):
+            with self.subTest(rows=rows):
+                code, report = self.run_cli(rows, [self.ACCEPT, self.ACCEPT])
+                self.assertEqual(code, 1)
+                self.assertEqual(report["engines"][0]["engine"], "harness")
+
+    def test_written_list_round_trips_into_a_passing_run(self):
+        written = self.root / "written.tsv"
+        code, _ = self.run_cli([], [self.ACCEPT, self.CRASH], "--write-known-failures", str(written))
+        self.assertEqual(code, 1)
+        self.assertEqual(written.read_text(encoding="utf-8"),
+                         "engine\tcase_id\tstatus\tcategory\n"
+                         "xpact\tbad\terror\tprocess error (crash or contract violation)\n")
+        self.assertEqual(len(runner.load_known_failures(written)), 1)
 
 
 class ArchiveTests(TemporarySuite):

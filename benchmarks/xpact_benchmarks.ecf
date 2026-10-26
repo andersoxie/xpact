@@ -11,10 +11,12 @@
 			<concurrency support="none"/>
 			<void_safety support="all" use="all"/>
 		</capability>
-		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
-		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
-		<cluster name="src" location="..\src\"/>
-		<cluster name="benchmarks" location=".\"/>
+		<precompile name="base_pre" location="$ISE_PRECOMP/base-safe.ecf">
+			<condition><platform value="windows"/></condition>
+		</precompile>
+		<library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
+		<cluster name="src" location="../src/"/>
+		<cluster name="benchmarks" location="./"/>
 	</target>
 	<target name="xpact_benchmarks_assertions">
 		<root class="XP_BENCHMARK_ROOT" feature="make"/>
@@ -27,9 +29,11 @@
 			<concurrency support="none"/>
 			<void_safety support="all" use="all"/>
 		</capability>
-		<precompile name="base_pre" location="$ISE_PRECOMP\base-safe.ecf"/>
-		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
-		<cluster name="src" location="..\src\"/>
-		<cluster name="benchmarks" location=".\"/>
+		<precompile name="base_pre" location="$ISE_PRECOMP/base-safe.ecf">
+			<condition><platform value="windows"/></condition>
+		</precompile>
+		<library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
+		<cluster name="src" location="../src/"/>
+		<cluster name="benchmarks" location="./"/>
 	</target>
 </system>

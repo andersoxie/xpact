@@ -1,0 +1,11 @@
+step	exit
+python unit tests	0
+eiffel test matrix (4 lanes)	0
+build DLL production + smoke	0
+build DLL assertions + smoke	0
+native ABI tests	0
+native runtime smoke	0
+chunked CRC corpus	0
+incremental shim audit	0
+contributed examples	0
+benchmarks + W3C (rebuilds Finalized and FinalizedAssertions)	0
