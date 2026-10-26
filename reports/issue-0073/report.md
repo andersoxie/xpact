@@ -10,7 +10,7 @@ Issue: [#73](https://github.com/andersoxie/xpact/issues/73)   Branch: `fix/73-ei
 | ✔ Cause (confirmed) | Our own fixes **replaced** the Jenkins machine's fallback `C:\El2502E` with the student PC's path, instead of adding it |
 | 🔧 Fix | Both scripts now search a list: `ISE_EIFFEL` → `C:\El2502E` → EiffelStudio 25.12 Standard → the EiffelStudio whose `ec` is on `PATH` |
 | ✅ Verified here | 14 of 14 lookup cases pass (8 failed before, including the exact Jenkins error); DLL and runtime smoke still build on the student PC |
-| ⏳ Not verified | A real Jenkins run: only the supervisor can start one |
+| ✅ Verified on Jenkins | Found 2026-10-26: the supervisor's run on `main` @ `cf12dee` (which contains this fix) passed "Build Eiffel-Backed DLL" with `C:\El2502E`. See section 7 |
 
 ## 1. Problem (error report)
 
@@ -107,15 +107,33 @@ Logs: [before.txt](before.txt) (8 failures, exit 1), [after.txt](after.txt) (0 f
 
 ## 6. Limitations
 
-- ⏳ **Not run on Jenkins.** The fix is shown with fake folders, not on the
-  real 25.02 Enterprise install. Close #73 only after a Jenkins run gets past
-  "Build Eiffel-Backed DLL".
+- ~~Not run on Jenkins.~~ Done: see section 7.
 - If Jenkins gets past this stage, it reaches the compiler setting of
   [#74](https://github.com/andersoxie/xpact/issues/74) next; that is a separate fix.
 - Not related, also in the same Jenkins log: SonarQube `HTTP 401` (server
   token, supervisor) and the "Eiffel Tests" stage showing no test output.
 - The assertions tier of the DLL was not rebuilt: its smoke test crashes for
   a known, unrelated reason (K3, draft 07).
+
+## 7. Verified on Jenkins (found 2026-10-26)
+
+The fix (`63f67f3`, PR #75) reached `main` with the supervisor's merge of
+`student-Mass` (PR #78, `cf12dee`, 2026-10-23); `git merge-base --is-ancestor 63f67f3 cf12dee` is true.
+The supervisor then ran Jenkins on `main` @ `cf12dee`. That log was saved for
+#79 as [`../issue-0079/jenkins-log-cf12dee-before.txt`](../issue-0079/jenkins-log-cf12dee-before.txt);
+it was not connected back to #73 until 2026-10-26.
+
+| Line | Log | Meaning |
+|---|---|---|
+| 135 | `[Pipeline] { (Build Eiffel-Backed DLL)` | the stage that failed on 2026-10-23 |
+| 204 | `"C:\El2502E\studio\spec\win64\lib\msc_vc140\finalized.lib" ...` | the Jenkins install was found |
+| 216, 218 | `Built ...\build\native-eiffel\xpact.dll (Production)`, `xpact Eiffel DLL smoke: ok` | production DLL built and smoke test passed |
+| 292 | `Built ...\build\native-eiffel\xpact_assertions.dll (Assertions)` | assertions DLL built |
+| 296-305 | `Native ABI Smoke`: `xpact public ABI smoke: ok` | the later stages run |
+| 1232 | `Finished: FAILURE` | from the W3C check, a separate problem: [#79](https://github.com/andersoxie/xpact/issues/79) |
+
+**Result:** expected (stage passes with `C:\El2502E`) = actual. #73 closed 2026-10-26.
+The supervisor did not comment on #73; the evidence is the log only.
 
 ## How to revert
 

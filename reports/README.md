@@ -7,7 +7,7 @@ test scripts that back it up. The rules are in
 [`student/VERSIONING.md`](../student/VERSIONING.md) and [`CLAUDE.md`](../CLAUDE.md).
 
 > **Updated 2026-10-26** (`student-Mass` @ `e847813`). 48 fixes, tasks and checks below;
-> PR #76 (#74) is open; #73, #74, #79 wait for a Jenkins rerun
+> PR #76 (#74) is open; #74, #79 wait for a Jenkins rerun (#73 verified on Jenkins, closed 2026-10-26)
 > · open problems are listed in
 > [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
 > Test results that are not a fix are in [`student/results/`](../student/results/README.md).

@@ -28,7 +28,7 @@ record of weeks 1-2. Day-to-day status of every issue: the
 |---|---|---|
 | A01 evidence: tests linked, change-and-predict | [#69](https://github.com/andersoxie/xpact/pull/69) | [#68](https://github.com/andersoxie/xpact/issues/68) ✅ closed 2026-10-26 |
 | Checklist audit, doc gaps | [#71](https://github.com/andersoxie/xpact/pull/71) | [#70](https://github.com/andersoxie/xpact/issues/70) ✅ closed 2026-10-26 |
-| Jenkins Eiffel include fallback `C:\El2502E` restored | [#75](https://github.com/andersoxie/xpact/pull/75) | [#73](https://github.com/andersoxie/xpact/issues/73) 🟡 Jenkins rerun |
+| Jenkins Eiffel include fallback `C:\El2502E` restored | [#75](https://github.com/andersoxie/xpact/pull/75) | [#73](https://github.com/andersoxie/xpact/issues/73) ✅ verified on Jenkins |
 | Week 3 report | [#77](https://github.com/andersoxie/xpact/pull/77) | - |
 | Parser conformance: strict UTF-8, UTF-16, names, DTD declarations; DLL start-tag shortcut and UTF-16 loops | [#80](https://github.com/andersoxie/xpact/pull/80) | [#79](https://github.com/andersoxie/xpact/issues/79) 🟡 Jenkins rerun; fixes [#38](https://github.com/andersoxie/xpact/issues/38), [#39](https://github.com/andersoxie/xpact/issues/39), [#40](https://github.com/andersoxie/xpact/issues/40), K3 |
 | `main` brought into `student-Mass` (the supervisor's #82-#100: libexpat lanes, parser handles and chunking #85, faster tag dispatch #87, WSL GCC benchmarks, Jenkins email, Xpact-core next to xpact #94-#98) | [#81](https://github.com/andersoxie/xpact/pull/81), [#103](https://github.com/andersoxie/xpact/pull/103) | [#102](https://github.com/andersoxie/xpact/issues/102) ✅ |
@@ -72,7 +72,6 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 
 | Problem | Seen in | Cause | Issue | Next step |
 |---|---|---|---|---|
-| **Jenkins** DLL build: `Cannot find Eiffel runtime include directory`; all later stages skipped | Jenkins on `main` @ `9e1747d`, 2026-10-23 ([log](../reports/issue-0073/jenkins-log-2026-10-23.txt)) | ✔ our #2/#10 fixes replaced the Jenkins fallback `C:\El2502E` | [#73](https://github.com/andersoxie/xpact/issues/73) | fixed on `student-Mass` (both paths searched); **Jenkins rerun by the supervisor** |
 | Native build scripts always force `ISE_C_COMPILER=msc_vc140`, overriding a machine's own MSVC backend | check of all student build changes against Jenkins, 2026-10-23 | ✔ in the code · ❔ whether it breaks Jenkins | [#74](https://github.com/andersoxie/xpact/issues/74) | fixed on `student-Mass` (an existing `msc*` value is kept); Jenkins rerun |
 | GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | ⏸ **on hold** (student, 2026-10-22); parser developer |
 | Jenkins "Eiffel Tests" turns green without printing a test result | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt); stage unchanged on 2026-10-26 | ✔ on the student PC (stale exe) · ❔ on Jenkins | [#130](https://github.com/andersoxie/xpact/issues/130) | supervisor's pipeline |
@@ -119,13 +118,14 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 | `test_implementation_builds.py`: 15 problems from paths over 260 characters | Windows `LongPathsEnabled = 1` and git `core.longpaths true`; all 178 Python tests pass ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
 | Test matrix and W3C built with MinGW gcc because `ISE_C_COMPILER` had disappeared | `ISE_C_COMPILER=msc_vc140` set again; matrix 4/4 and W3C 1,727/1,727 with MSVC ([report](../reports/issue-0113/report.md)) | [#113](https://github.com/andersoxie/xpact/issues/113) |
 | `tests/python/run_w3c_conformance.py`: an old copy of the runner (361 vs 459 lines), used by nothing | Removed; Python tests 178 OK before and after ([report](../reports/issue-0132/report.md)) | [#132](https://github.com/andersoxie/xpact/issues/132) |
+| **Jenkins** DLL build: `Cannot find Eiffel runtime include directory` (2026-10-23) | Fixed in #75 (`63f67f3`), in `main` since `cf12dee` (#78). **Verified on Jenkins**: the run on `main` @ `cf12dee` found `C:\El2502E` and built both DLLs, `xpact Eiffel DLL smoke: ok` ([log](../reports/issue-0079/jenkins-log-cf12dee-before.txt), lines 135-292); found 2026-10-26 | [#73](https://github.com/andersoxie/xpact/issues/73) |
 
 </details>
 
 ## ➡️ Next
 
 1. ✅ **Done 2026-10-26:** full check ([#104](https://github.com/andersoxie/xpact/issues/104)), weeks 2-3 closed out ([#106](https://github.com/andersoxie/xpact/issues/106), [#108](https://github.com/andersoxie/xpact/issues/108)), `main` synced ([#110](https://github.com/andersoxie/xpact/issues/110)), PC set up like the supervisor's ([#113](https://github.com/andersoxie/xpact/issues/113)). Every build and test passes with assertions on, with MSVC.
-2. 🟡 **Waiting for the supervisor:** a Jenkins rerun for [#73](https://github.com/andersoxie/xpact/issues/73), [#74](https://github.com/andersoxie/xpact/issues/74) (PR [#76](https://github.com/andersoxie/xpact/pull/76) to merge) and [#79](https://github.com/andersoxie/xpact/issues/79); the week 2 decision (main improvement and input set); the questions in [`for superviser.txt`](for%20superviser.txt).
+2. 🟡 **Waiting for the supervisor:** a Jenkins rerun for [#74](https://github.com/andersoxie/xpact/issues/74) (PR [#76](https://github.com/andersoxie/xpact/pull/76) to merge) and [#79](https://github.com/andersoxie/xpact/issues/79); the week 2 decision (main improvement and input set); the questions in [`for superviser.txt`](for%20superviser.txt).
 3. ✅ **Week 4, G01** ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 W3C cases in [`results/G01-corpus/`](results/G01-corpus/README.md); the xmlconf verdict rules done too ([#117](https://github.com/andersoxie/xpact/issues/117)).
 4. **W3C skips:** 247 cases per build need external entities (resolver off in the runner); test them with local-only resolution.
 5. ✅ **Week 5 done 2026-10-26:** C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); C02 regressions ([#128](https://github.com/andersoxie/xpact/issues/128)). Open from it: findings [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) (parser work).
