@@ -143,17 +143,17 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
 **Bring to review:** A baseline log with revision, configuration, commands and known failures.
 - [x] Assertions-enabled baseline with every lane logged: [baseline/BASELINE.md](baseline/BASELINE.md)
 - [x] [A02](github/issues/02-A02.md) Reproduce assertions-enabled workbench and finalized builds: rerun in the git clone on 2026-10-22 at `1799b35`, every step as expected ([#33](https://github.com/andersoxie/xpact/issues/33), [A02-baseline](results/A02-baseline/README.md), [setup guide](report/setup-guide.md))
-- [ ] Report the baseline findings (each one's state is in [Known problems](#-known-problems-living-list)):
+- [x] Report the baseline findings (each one's state is in [Known problems](#-known-problems-living-list)); all resolved or filed, last two closed 2026-10-26 ([#106](https://github.com/andersoxie/xpact/issues/106)):
   - [x] [Finalized lane drops assertions (missing `-keep`)](github/issues/04-finding-finalized-keep.md): filed as [#48](https://github.com/andersoxie/xpact/issues/48), fixed in [reports/issue-0048](../reports/issue-0048/report.md)
   - [x] Postcondition `final_finished_or_suspended` fails (B03): [#3](https://github.com/andersoxie/xpact/issues/3). Fixed in [#12](https://github.com/andersoxie/xpact/pull/12) (merged by the supervisor); verified 2026-10-26 in [#104](https://github.com/andersoxie/xpact/issues/104). *2026-10-22:* also the cause of every `/>` crash through the DLL (confirmed with a B03-fixed build, #37)
   - [x] New, found while analysing B03: `XP_GC_CRITICAL_SECTION.execute` swallows exceptions: [#13](https://github.com/andersoxie/xpact/issues/13)
   - [x] [Test runner stops at the first failure](github/issues/06-finding-runner-stops.md): filed as [#60](https://github.com/andersoxie/xpact/issues/60), fixed in [reports/issue-0060](../reports/issue-0060/report.md)
-  - [ ] [Assertions DLL smoke test crashes](github/issues/07-finding-dll-crash.md): still a draft; *2026-10-22:* still crashes with the B03 fix
+  - [x] [Assertions DLL smoke test crashes](github/issues/07-finding-dll-crash.md) (K3): fixed in PR [#80](https://github.com/andersoxie/xpact/pull/80) ([#79](https://github.com/andersoxie/xpact/issues/79)); verified 2026-10-26: `build_native_eiffel.ps1 -BuildTier Assertions` → `xpact Eiffel DLL smoke: ok` ([#104 check](../reports/issue-0104/report.md))
   - [x] Python harness fails on Python 3.10: fixed in `492c6eb` ([#32](https://github.com/andersoxie/xpact/issues/32))
-  - [ ] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md): rechecked after the #28 repair: 47 crashes left, all in DTD declaration parsing ([list](../reports/issue-0028/w3c-after-fix/crashes-assertions-on.tsv)); still a draft
+  - [x] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md) (47 after #28): fixed in PR [#80](https://github.com/andersoxie/xpact/pull/80) ([#79](https://github.com/andersoxie/xpact/issues/79)); verified 2026-10-26: W3C `FinalizedAssertions` 1,727 passed, 0 failed, 0 errors, no crash ([#104 check](../reports/issue-0104/report.md)), with the current runner `run_w3c_conformance.py` (the original `run_xmlconf_conformance.ps1` is no longer in the repository)
   - [x] New, found in the W3C run with assertions on: the loop variant in `XP_PARSER.normalized_input` fails on every input with a CR: [#28](https://github.com/andersoxie/xpact/issues/28), regression test `1ea242e`
   - [x] [Jenkins precompile prompt](github/issues/23-finding-jenkins-precompile.md): dropped on 2026-10-22, not pursued ([#56](https://github.com/andersoxie/xpact/issues/56))
-- [ ] **Decision:** choose one main improvement and a small input set with the supervisor
+- [ ] **Decision:** choose one main improvement and a small input set with the supervisor. *Still open 2026-10-26:* no decision recorded (week 2 and week 3 notes); **needs the supervisor**. Done so far without it: B01/B02 (failure reporting) and the #80 parser repair
 
 ## Build fixes and workflow in git (week 3)
 Not a week of the guide's plan: the week 2 blocker ("build fixes not in `main`,
@@ -192,9 +192,9 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 - [x] Regression test for the CR crash: [#28](https://github.com/andersoxie/xpact/issues/28), `1ea242e`; parser repaired 2026-10-22 (PR [#59](https://github.com/andersoxie/xpact/pull/59))
 - [x] Repository repair and GitHub setup per `CLAUDE.md`: [#34](https://github.com/andersoxie/xpact/issues/34), [#35](https://github.com/andersoxie/xpact/issues/35), [#43](https://github.com/andersoxie/xpact/issues/43) (merged 2026-10-22)
 - [x] Checklist audit (2026-10-22, [#70](https://github.com/andersoxie/xpact/issues/70)): every closed issue's "Done when" list compared with the repository at `76ac272`. 12 issues had unticked boxes; the items that are really done are now ticked on GitHub, each marked "verified 2026-10-22" ([report](../reports/issue-0070/report.md)). Still open from the audit:
-  - [ ] [#35](https://github.com/andersoxie/xpact/issues/35): 6 labels in `labels.json` are not on GitHub (`D1-beginner`, `D4-expert`, `group:A-orientation`, `group:F-core`, `group:G-verification`, `type:blocker`). **Ask the supervisor** before creating them
-  - [ ] [#46](https://github.com/andersoxie/xpact/issues/46): Jenkins stage turns red: dropped ([#64](https://github.com/andersoxie/xpact/issues/64)), not checked
-  - [ ] Project board not read: the `gh` login lacks the `read:project` scope (`gh auth refresh -s read:project,project`)
+  - [ ] [#35](https://github.com/andersoxie/xpact/issues/35): 6 labels in `labels.json` are not on GitHub (`D1-beginner`, `D4-expert`, `group:A-orientation`, `group:F-core`, `group:G-verification`, `type:blocker`). **Ask the supervisor** before creating them *Still open 2026-10-26* ([#106](https://github.com/andersoxie/xpact/issues/106)): none of the 6 exists on GitHub yet
+  - [x] [#46](https://github.com/andersoxie/xpact/issues/46): Jenkins stage turns red: **dropped** 2026-10-22 by the student ([#64](https://github.com/andersoxie/xpact/issues/64)), not checked; B02 is verified on the student PC only
+  - [ ] Project board not read: the `gh` login lacks the `read:project` scope. *Still open 2026-10-26:* the student must run `gh auth refresh -s read:project,project` (opens the browser), then the board can be checked
   - [x] A01's last three items had no evidence: done in [#68](https://github.com/andersoxie/xpact/issues/68) (PR [#69](https://github.com/andersoxie/xpact/pull/69))
   - [x] #43 dates on every page and the #35 issue tables: done in [#70](https://github.com/andersoxie/xpact/issues/70)
 
