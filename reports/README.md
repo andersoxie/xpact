@@ -6,7 +6,7 @@ and padded to four digits so the folders sort by number. Each folder holds
 test scripts that back it up. The rules are in
 [`student/VERSIONING.md`](../student/VERSIONING.md) and [`CLAUDE.md`](../CLAUDE.md).
 
-> **Updated 2026-10-26** (`student-Mass` @ `97795fb`). 45 fixes, tasks and checks below, all merged;
+> **Updated 2026-10-26** (`student-Mass` @ `e30f0e6`). 46 fixes, tasks and checks below;
 > PR #76 (#74) is open; #73, #74, #79 wait for a Jenkins rerun
 > · open problems are listed in
 > [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
@@ -61,6 +61,7 @@ test scripts that back it up. The rules are in
 | [#115](https://github.com/andersoxie/xpact/issues/115) | Student docs brought up to 2026-10-26: PLAN.md, README, GUIDE section 6, supervisor page, week 4 note | (the pull request) | see `git log --grep "Refs #115"` | [issue-0115](issue-0115/report.md) |
 | [#117](https://github.com/andersoxie/xpact/issues/117) | xmlconf verdict rules (draft 12): old PowerShell runner superseded; 2026-10-14 results re-scored with the runner's rules: 676 of 854 "failures" were wrong rules, the 233 real problems pass today | (the pull request) | see `git log --grep "Refs #117"` | [issue-0117](issue-0117/report.md), [results](../student/results/xmlconf-verdicts/README.md) |
 | [#118](https://github.com/andersoxie/xpact/issues/118) | G01: corpus manifest of 93 W3C cases (83 counted, 10 marked) with hashes, dependencies and reviewed expected outcomes; `--check` for other machines; selected by the student, not reviewed by the supervisor | (the pull request) | see `git log --grep "Refs #118"` | [issue-0118](issue-0118/report.md), [results](../student/results/G01-corpus/README.md) |
+| [#121](https://github.com/andersoxie/xpact/issues/121) | C03/C10: the DLL tests run on Expat 2.8.1's own `libexpat.dll` and compared case by case: 4,308/4,308 same verdicts; 5 findings (#122-#126); `80` and `FF` inputs added | (the pull request) | see `git log --grep "Refs #121"` | [issue-0121](issue-0121/report.md), [results](../student/results/expat-2.8.1/README.md) |
 
 #36, #41, #42 and #44 were stacked pull requests, merged in that order on 2026-10-22.
 

@@ -1,0 +1,111 @@
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+-- The C compiler identification is MSVC 19.51.36260.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Looking for dlfcn.h
+-- Looking for dlfcn.h - not found
+-- Looking for fcntl.h
+-- Looking for fcntl.h - found
+-- Looking for inttypes.h
+-- Looking for inttypes.h - found
+-- Looking for memory.h
+-- Looking for memory.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stdlib.h
+-- Looking for stdlib.h - found
+-- Looking for strings.h
+-- Looking for strings.h - not found
+-- Looking for string.h
+-- Looking for string.h - found
+-- Looking for sys/stat.h
+-- Looking for sys/stat.h - found
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for unistd.h
+-- Looking for unistd.h - not found
+-- Looking for getpagesize
+-- Looking for getpagesize - not found
+-- Looking for mmap
+-- Looking for mmap - not found
+-- Looking for getrandom
+-- Looking for getrandom - not found
+-- Performing Test HAVE_ARC4RANDOM_BUF
+-- Performing Test HAVE_ARC4RANDOM_BUF - Failed
+-- Performing Test HAVE_ARC4RANDOM
+-- Performing Test HAVE_ARC4RANDOM - Failed
+-- Looking for 4 include files stdlib.h, ..., float.h
+-- Looking for 4 include files stdlib.h, ..., float.h - found
+-- Performing Test HAVE_OFF_T
+-- Performing Test HAVE_OFF_T - Success
+-- Performing Test HAVE_GETENTROPY
+-- Performing Test HAVE_GETENTROPY - Failed
+-- Performing Test HAVE_SYSCALL_GETRANDOM
+-- Performing Test HAVE_SYSCALL_GETRANDOM - Failed
+-- Performing Test _FLAG_DETECTION_UNUSABLE
+-- Performing Test _FLAG_DETECTION_UNUSABLE - Failed
+-- Performing Test FLAG_WSTRICT_ALIASING
+-- Performing Test FLAG_WSTRICT_ALIASING - Failed
+-- Performing Test FLAG_VISIBILITY
+-- Performing Test FLAG_VISIBILITY - Failed
+-- Looking for cos in m
+-- Looking for cos in m - not found
+-- -- Using static CRT OFF
+-- ===========================================================================
+-- 
+-- CMake version in use ......... 4.3.1-msvc1
+-- 
+-- Configuration
+--   Generator .................. NMake Makefiles
+--   Build type ................. Release
+--   Prefix ..................... C:/Program Files (x86)/expat
+--   Shared libraries ........... ON
+--   Static CRT ................. OFF
+--   Character type ............. char (UTF-8)
+--   Library name postfix ....... 
+-- 
+--   Build documentation ........ OFF
+--   Build examples ............. OFF
+--   Build fuzzers .............. OFF
+--   Build tests ................ OFF
+--   Build tools (xmlwf) ........ OFF
+--   Build pkg-config file ...... OFF
+--   Install files .............. ON
+-- 
+--   Features
+--     // Advanced options, changes not advised
+--     Attributes info .......... OFF
+--     Context bytes ............ 1024
+--     DTD support .............. ON
+--     General entities ......... ON
+--     Large size ............... OFF
+--     Minimum size ............. OFF
+--     Namespace support ........ ON
+-- 
+--   Entropy sources
+--     rand_s ................... ON
+-- 
+-- ===========================================================================
+-- Configuring done (11.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/masou/Desktop/Lia/xpact/xpactGit/build/libexpat-R_2_8_1/build
+[ 16%] Building C object CMakeFiles/expat.dir/lib/xmlparse.c.obj
+xmlparse.c
+[ 33%] Building C object CMakeFiles/expat.dir/lib/xmlrole.c.obj
+xmlrole.c
+[ 50%] Building C object CMakeFiles/expat.dir/lib/xmltok.c.obj
+xmltok.c
+[ 66%] Building C object CMakeFiles/expat.dir/lib/random_rand_s.c.obj
+random_rand_s.c
+[ 83%] Building RC object CMakeFiles/expat.dir/win32/version.rc.res
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+[100%] Linking C shared library libexpat.dll
+[100%] Built target expat
+Microsoft (R) C/C++ Optimizing Compiler Version 19.51.36260 for x64
+cmake version 4.3.1-msvc1
