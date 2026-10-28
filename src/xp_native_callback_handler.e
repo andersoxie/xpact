@@ -69,6 +69,7 @@ feature {NONE} -- Initialization
 			create delivered_default_lengths.make (16)
 			create external_entity_replay_contexts.make (8)
 			create external_entity_replay_counts.make (8)
+			create external_entity_replay_texts.make (4)
 			current_id_attribute_index := -1
 			diagnostic_events_enabled := True
 		ensure
@@ -190,6 +191,10 @@ feature -- Access
 	external_entity_replay_counts: HASH_TABLE [INTEGER, INTEGER]
 			-- Replacement byte counts for callbacks that parsed a parameter child.
 
+	external_entity_replay_texts: HASH_TABLE [STRING_8, INTEGER]
+			-- Replacement texts of external parameter entities included in an entity literal,
+			-- keyed by the external callback ordinal.
+
 	external_entity_replay_target: detachable XP_PARSER
 			-- Owning core parser whose reset prefix replay needs those child declarations.
 
@@ -289,15 +294,28 @@ feature -- Element change
 			end
 		end
 
+	record_external_parameter_literal_text (a_text: READABLE_STRING_8)
+			-- Retain the replacement text a child read for the active callback, as an external
+			-- parameter entity included in an entity literal.
+		require
+			text_attached: a_text /= Void
+		do
+			if active_external_entity_callback_index > 0 then
+				external_entity_replay_texts.force (create {STRING_8}.make_from_string (a_text), active_external_entity_callback_index)
+			end
+		end
+
 	clear_external_entity_replay
 			-- Release detached child declarations at the end of a parser lifecycle.
 		do
 			external_entity_replay_contexts.wipe_out
 			external_entity_replay_counts.wipe_out
+			external_entity_replay_texts.wipe_out
 			active_external_entity_callback_index := 0
 		ensure
 			no_contexts: external_entity_replay_contexts.is_empty
 			no_counts: external_entity_replay_counts.is_empty
+			no_texts: external_entity_replay_texts.is_empty
 			no_active_callback: active_external_entity_callback_index = 0
 		end
 
@@ -1437,6 +1455,7 @@ feature -- External entity resolution
 					l_callback_index := callback_sequence_count
 					external_entity_replay_contexts.remove (l_callback_index)
 					external_entity_replay_counts.remove (l_callback_index)
+					external_entity_replay_texts.remove (l_callback_index)
 					active_external_entity_callback_index := l_callback_index
 					l_before_external_count := external_entity_parse_count (native_parser_handle)
 					create l_context.make (a_name)
@@ -1459,7 +1478,12 @@ feature -- External entity resolution
 							last_resolution_is_external_child_parse := True
 							last_resolution_replacement_byte_count := last_external_child_direct_count (native_parser_handle) + last_external_child_indirect_count (native_parser_handle)
 							external_entity_replay_counts.force (last_resolution_replacement_byte_count, l_callback_index)
-							create Result.make_empty
+							if attached external_entity_replay_texts.item (l_callback_index) as l_text then
+									-- Included in literal: the child's replacement text goes into the entity value.
+								create Result.make_from_string (l_text)
+							else
+								create Result.make_empty
+							end
 						else
 							create Result.make_empty
 						end
@@ -1472,7 +1496,11 @@ feature -- External entity resolution
 						last_resolution_is_external_child_parse := True
 						last_resolution_replacement_byte_count := external_entity_replay_counts.item (callback_sequence_count)
 					end
-					create Result.make_empty
+					if attached external_entity_replay_texts.item (callback_sequence_count) as l_text then
+						create Result.make_from_string (l_text)
+					else
+						create Result.make_empty
+					end
 				end
 			else
 				on_skipped_entity (a_name, a_is_parameter)

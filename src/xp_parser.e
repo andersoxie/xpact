@@ -39,6 +39,7 @@ feature {NONE} -- Initialization
 			create external_entity_table.make (4)
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
+			create last_parameter_literal_text.make_empty
 			create namespace_context_stack.make (8)
 			create namespace_declaration_stack.make (8)
 			create last_error.make_empty
@@ -82,6 +83,7 @@ feature {NONE} -- Initialization
 			create external_entity_table.make (4)
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
+			create last_parameter_literal_text.make_empty
 			create namespace_context_stack.make (8)
 			create namespace_declaration_stack.make (8)
 			create last_error.make_empty
@@ -412,6 +414,9 @@ feature -- Configuration
 		end
 
 feature {XP_NATIVE_PARSER} -- State
+
+	last_parameter_literal_text: STRING_8
+			-- Replacement text read by the last `parse_external_parameter_literal_with_context'.
 
 	has_document_type: BOOLEAN
 			-- Has the current parse established a DOCTYPE and its declaration context?
@@ -1026,12 +1031,18 @@ feature -- Parsing
 		end
 
 	parse_external_parameter_literal_with_context (a_input: READABLE_STRING_8; a_context: detachable READABLE_STRING_8): BOOLEAN
-			-- Parse an external parameter entity used inside an entity literal.
+			-- Read an external parameter entity used inside an entity literal: its replacement text,
+			-- after the text declaration, is "included in literal" (XML 1.0 section 4.4.5) and is kept
+			-- in `last_parameter_literal_text'; it is checked, but not used as declarations or content.
 		require
 			input_attached: a_input /= Void
 			input_within_limit: a_input.count <= max_input_bytes
 		local
 			i: INTEGER
+			l_text_start: INTEGER
+			l_text_declaration_end: INTEGER
+			l_handler: XP_EVENT_HANDLER
+			l_silent_handler: XP_LITERAL_CHECK_HANDLER
 			l_content_start: INTEGER
 			l_input: STRING_8
 			l_has_active_context: BOOLEAN
@@ -1045,34 +1056,76 @@ feature -- Parsing
 				push_entity (l_context)
 				l_has_active_context := True
 			end
+			last_parameter_literal_text.wipe_out
 			if not has_error then
-				if looks_like_external_subset (l_input) then
-					process_dtd_subset (l_input, True)
+				l_content_start := external_parameter_literal_content_start (l_input)
+				if l_content_start <= l_input.count and then is_quote (l_input.item (l_content_start)) then
+					note_position (l_content_start)
+					set_error ("unterminated literal")
+				elseif l_content_start <= l_input.count and then l_input.item (l_content_start) = '$' then
+					note_position (l_content_start)
+					set_error ("invalid token")
 				else
-					l_content_start := external_parameter_literal_content_start (l_input)
-					if l_content_start <= l_input.count and then is_quote (l_input.item (l_content_start)) then
-						note_position (l_content_start)
-						set_error ("unterminated literal")
-					elseif l_content_start <= l_input.count and then l_input.item (l_content_start) = '$' then
-						note_position (l_content_start)
-						set_error ("invalid token")
-					else
-						from
-							i := 1
-						invariant
-							index_in_bounds: i >= 1 and i <= l_input.count + 1
-							depth_within_limit: element_stack.count <= max_element_depth
-						until
-							i > l_input.count or has_error or is_suspended
-						loop
-							note_position (i)
-							if l_input.item (i) = '<' then
-								i := parse_markup (l_input, i)
-							else
-								i := parse_character_data (l_input, i)
-							end
-							if not has_error then
+					l_text_start := 1
+					if not l_input.is_empty and then starts_xml_declaration_at (l_input, 1) then
+						l_text_declaration_end := find_sequence (l_input, "?>", 3)
+						if l_text_declaration_end > 0 then
+							l_text_start := l_text_declaration_end + 2
+						else
+							l_text_start := l_input.count + 1
+						end
+					end
+					if l_input.index_of ('%%', l_text_start) = 0 then
+							-- Like Expat, check the text as DTD text (bad tokens, a start tag, a cut-off character),
+							-- but silently: its declarations are neither reported nor kept (the native parser does
+							-- not merge them), and the whole text goes into the entity value. Only the text
+							-- declaration still reaches the application.
+						l_handler := handler
+						create l_silent_handler.make (l_handler)
+						handler := l_silent_handler
+						if looks_like_external_subset (l_input) then
+							process_dtd_subset (l_input, True)
+						else
+							from
+								i := 1
+							invariant
+								index_in_bounds: i >= 1 and i <= l_input.count + 1
+								depth_within_limit: element_stack.count <= max_element_depth
+							until
+								i > l_input.count or has_error or is_suspended
+							loop
 								note_position (i)
+								if l_input.item (i) = '<' then
+									i := parse_markup (l_input, i)
+								else
+									i := parse_character_data (l_input, i)
+								end
+								if not has_error then
+									note_position (i)
+								end
+							variant
+								l_input.count - i + 1
+							end
+						end
+						handler := l_handler
+						if not has_error and then l_text_start <= l_input.count then
+							last_parameter_literal_text.append (l_input.substring (l_text_start, l_input.count))
+						end
+					else
+							-- Parameter entity references in the included text are expanded as in any entity value
+							-- (this also finds a recursive reference); each external one is then read only once.
+						from
+							i := l_text_start
+						invariant
+							index_in_bounds: i >= l_text_start and i <= l_input.count + 1
+						until
+							i > l_input.count or has_error or entity_literal_ended_by_undefined_parameter
+						loop
+							if l_input.item (i) = '%%' then
+								i := append_parameter_reference_in_entity_value (l_input, i, last_parameter_literal_text)
+							else
+								last_parameter_literal_text.append_character (l_input.item (i))
+								i := i + 1
 							end
 						variant
 							l_input.count - i + 1

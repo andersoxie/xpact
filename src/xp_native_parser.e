@@ -616,12 +616,17 @@ feature -- Element change
 		end
 
 	merge_external_entity_context_from (a_child: XP_NATIVE_PARSER): BOOLEAN
-			-- Merge DTD entity declarations parsed by external entity child `a_child'.
+			-- Merge DTD entity declarations parsed by external entity child `a_child'; a child included
+			-- in an entity literal gives back its replacement text instead.
 		require
 			child_attached: a_child /= Void
 		do
-			parser.merge_entity_context_from (a_child.parser)
-			handler.record_external_entity_context_from (a_child.parser)
+			if a_child.external_entity_is_parameter_literal then
+				handler.record_external_parameter_literal_text (a_child.parser.last_parameter_literal_text)
+			else
+				parser.merge_entity_context_from (a_child.parser)
+				handler.record_external_entity_context_from (a_child.parser)
+			end
 			Result := True
 		ensure
 			merged: Result
