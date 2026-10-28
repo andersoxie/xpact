@@ -4668,6 +4668,10 @@ feature {NONE} -- DTD entity declarations
 									set_error ("missing attlist default declaration")
 								end
 							end
+							if not has_error and then attached l_default_value as l_value and then not l_attribute_type.same_string ("CDATA") then
+									-- A declared default is normalized like a specified value of its type (XML 1.0 section 3.3.3).
+								collapse_spaces (l_value)
+							end
 							if not has_error and then not dtd_declarations_disabled then
 								record_attribute_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
 								handler.on_attlist_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
