@@ -1,0 +1,5 @@
+EXPECTED C:\Users\masou\Desktop\Lia\xpact\w9-latest\build\validation-corpora\w3c-xml-20130923\xmlconf\xmltest\valid\not-sa\out\031.xml
+'<doc>&lt;!ATTLIST doc a1 CDATA &quot;v1&quot;&gt;&#10;</doc>'
+
+GOT (xpact)
+'<doc></doc>'

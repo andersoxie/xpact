@@ -1,6 +1,6 @@
 # 10-week plan
 
-> **Last updated:** 2026-10-28 (week 6) · describes `student-Mass` after PR [#152](https://github.com/andersoxie/xpact/pull/152) (includes `main` @ `1714f31` with the supervisor's [#150](https://github.com/andersoxie/xpact/pull/150)); full W3C report: [latest-2026-10-28](../reports/latest-2026-10-28/README.md)
+> **Last updated:** 2026-10-28 (week 6) · describes `student-Mass` after PR [#152](https://github.com/andersoxie/xpact/pull/152) (includes `main` @ `1714f31` with the supervisor's [#150](https://github.com/andersoxie/xpact/pull/150)); full W3C report: [latest-2026-10-28](../reports/latest-2026-10-28/README.md); W3C output test and the #154 fix: [issue-0154](../reports/issue-0154/report.md)
 > · ✅ done · 🟡 in progress / waiting · ⬜ not started · 🔴 open problem
 
 The plan comes from [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md)
@@ -80,6 +80,7 @@ The supervisor's `main` alone still has crashes and timeouts there (1 crash off;
 | Internal entity references fast again (position bookkeeping); the XML spec 16 s -> 0.2 s with assertions | [#149](https://github.com/andersoxie/xpact/pull/149) closed, superseded by #152 | [#148](https://github.com/andersoxie/xpact/issues/148) 🟡 Jenkins run |
 | Dual regression lane: 61 inputs whole and chunked on xpact and Xpact-core, lifecycle; 910/910 | [#152](https://github.com/andersoxie/xpact/pull/152) | [#153](https://github.com/andersoxie/xpact/issues/153) 🟡 Jenkins run |
 | **#146 + #148 integrated with `main` (#150)**: answers the supervisor's 2026-10-27 requests (reproduce and fix failures, more XML 1.0 cases, XML version); all 2,585 W3C cases pass, DLL 247/247 ([summary](../reports/issue-0151/summary.md)) | the pull request | [#151](https://github.com/andersoxie/xpact/issues/151) 🟡 Jenkins run |
+| **W3C output test** (432 cases with an expected output file) and the fix it led to: attribute defaults across external files; 359 -> 393 right, 0 worse, all old lanes unchanged ([report](../reports/issue-0154/report.md)) | the pull request | [#154](https://github.com/andersoxie/xpact/issues/154), [#155](https://github.com/andersoxie/xpact/issues/155) 🟡 Jenkins run |
 | Keep the machine's MSVC backend in the native build scripts; retested 2026-10-26 | [#76](https://github.com/andersoxie/xpact/pull/76) (`7cf5a94`) | [#74](https://github.com/andersoxie/xpact/issues/74) 🟡 Jenkins run |
 | Merged branches deleted (11 on GitHub, 20 local), PR #76 finished | [#138](https://github.com/andersoxie/xpact/pull/138) | [#137](https://github.com/andersoxie/xpact/issues/137) ✅ |
 | Script for the supervisor: collects the information for the open dual-implementation steps and #74/#79 | (the pull request) | [#140](https://github.com/andersoxie/xpact/issues/140) |
@@ -119,6 +120,10 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | `<root/>junk`: error 4, not 9; position moves with callbacks and chunks | Expat comparison | ❔ unknown | [#124](https://github.com/andersoxie/xpact/issues/124) | investigate |
 | Default handler gets the mismatched end tag before the error | Expat comparison | ❔ unknown | [#125](https://github.com/andersoxie/xpact/issues/125) | investigate |
 | Default handler gets LF instead of the raw CR | Expat comparison | ❓ suspected: fed from the normalized input | [#126](https://github.com/andersoxie/xpact/issues/126) | investigate |
+| W3C output: the declared default of a tokenized attribute (`NMTOKENS` …) is not normalized (`valid-sa-096`); 3 other cases fixed with #154 | W3C output test, 2026-10-28 | ❔ unknown | [#156](https://github.com/andersoxie/xpact/issues/156) | investigate |
+| W3C output: a notation's public ID is not normalized (`notation01`) | W3C output test | ❔ unknown | [#157](https://github.com/andersoxie/xpact/issues/157) | investigate |
+| W3C output: a second byte order mark at the start of an external entity is dropped (3 cases) | W3C output test | ❔ unknown | [#158](https://github.com/andersoxie/xpact/issues/158) | investigate |
+| W3C output: an external parameter entity inside an entity value is parsed as declarations (`valid-not-sa-031`) | W3C output test | ❔ unknown | [#159](https://github.com/andersoxie/xpact/issues/159) | investigate |
 
 **Workarounds in use (not fixes):** `fix.ps1` stops in Windows PowerShell 5.1,
 so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51)).
@@ -169,7 +174,8 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 5. ✅ **Week 5 done 2026-10-26:** C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); C02 regressions ([#128](https://github.com/andersoxie/xpact/issues/128)). Open from it: findings [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) (parser work).
 6. ✅ Every known problem has an issue now (2026-10-26): Jenkins "Eiffel Tests" without output [#130](https://github.com/andersoxie/xpact/issues/130), SonarQube 401 [#131](https://github.com/andersoxie/xpact/issues/131) (both need the supervisor); the old runner copy removed ([#132](https://github.com/andersoxie/xpact/issues/132)).
 7. 🟡 **Supervisor's dual-implementation plan** (`newUpdates.txt`): steps 1-2 and the catalog and W3C lanes are done on `main`. For steps 3-9, Jenkins, #74 and #79, the supervisor can run `student\tools\collect-supervisor-info.ps1` ([#140](https://github.com/andersoxie/xpact/issues/140)) and send back the `.txt`.
-8. ⏸ Still on hold: [#13](https://github.com/andersoxie/xpact/issues/13) (GC wrapper swallows exceptions), A04.
+8. ✅ **W3C output test (2026-10-28):** the content, not only the verdict, of the 432 W3C cases that have an expected output file. 359 right at first; the fix for [#154](https://github.com/andersoxie/xpact/issues/154)/[#155](https://github.com/andersoxie/xpact/issues/155) brings it to **393**, 0 worse ([report](../reports/issue-0154/report.md)). 🟡 Jenkins run, then close #154 and #155. Next: [#156](https://github.com/andersoxie/xpact/issues/156)-[#159](https://github.com/andersoxie/xpact/issues/159), one at a time.
+9. ⏸ Still on hold: [#13](https://github.com/andersoxie/xpact/issues/13) (GC wrapper swallows exceptions), A04.
 
 <details>
 <summary>The five tests chosen on 2026-10-21 and where they stand</summary>
@@ -281,6 +287,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Bring to review:** A table of matches, differences and untested cases.
 - [ ] [A04](github/issues/16-A04.md) Verify which library the tests load: ⏸ on hold (student, 2026-10-22, [#66](https://github.com/andersoxie/xpact/issues/66))
 - [ ] [G03](github/issues/17-G03.md) xpact vs Expat comparison across chunks
+- [x] W3C **output** compared with the expected output files and with Expat (432 cases): done 2026-10-28, 393 right after [#154](https://github.com/andersoxie/xpact/issues/154); differences left in [#156](https://github.com/andersoxie/xpact/issues/156)-[#159](https://github.com/andersoxie/xpact/issues/159) ([report](../reports/issue-0154/report.md))
 
 ## Week 8 – Consolidate
 **Activity:** Consolidate the results and add selected SVG or libxml2 cases. Core integration stays optional.

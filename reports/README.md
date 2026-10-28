@@ -8,7 +8,8 @@ test scripts that back it up. The rules are in
 
 > **Updated 2026-10-28** (`student-Mass` after PR #152, which brings in `main` @ `1714f31`). Latest W3C result:
 > [latest-2026-10-28](latest-2026-10-28/README.md) (2,585 cases, 0 failed, 0 errors, 0 skipped).
-> #74, #79, #142, #146, #148, #151 and #153 wait for a Jenkins run (#73 verified on Jenkins, closed 2026-10-26)
+> W3C **output** (content, not only the verdict): [issue-0154](issue-0154/report.md), 393 of 432 right (was 359).
+> #74, #79, #142, #146, #148, #151, #153, #154 and #155 wait for a Jenkins run (#73 verified on Jenkins, closed 2026-10-26)
 > · open problems are listed in
 > [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
 > Test results that are not a fix are in [`student/results/`](../student/results/README.md).
@@ -74,6 +75,7 @@ test scripts that back it up. The rules are in
 | [#146](https://github.com/andersoxie/xpact/issues/146) | **Option A**: W3C runner `--all-cases` (0 skipped, 4 lanes), DLL checker, and parser fixes F1-F7 found by it; 2,585/2,585 in both builds (30 s), Jenkins pending | [#147](https://github.com/andersoxie/xpact/pull/147) closed, superseded by [#152](https://github.com/andersoxie/xpact/pull/152) | see `git log --grep "Refs #146"` | [issue-0146](issue-0146/report.md) |
 | [#148](https://github.com/andersoxie/xpact/issues/148) | Internal entity references no longer cost time proportional to the document: the XML spec 1,100 -> 79 ms (16 s -> 0.2 s with assertions); errors inside entities now at the reference, as in Expat. Code integrated in #151 | [#149](https://github.com/andersoxie/xpact/pull/149) closed, superseded by [#152](https://github.com/andersoxie/xpact/pull/152) | see `git log --grep "Refs #148"` | [issue-0148](issue-0148/report.md) |
 | [#151](https://github.com/andersoxie/xpact/issues/151) | **#146 + #148 integrated with `main` (#150)**: teacher's code kept for F2/F4/F5/F6a, student's F1/F3/F7/#148 kept, F6b removed (E38 reversed by E10); `main` DLL crashes (F1, F3) and `pr-xml-*` timeouts (#148) gone; all 2,585 W3C cases and the DLL lane 247/247 pass in both builds | the pull request | 6 commits on `fix/151-integrate-146-148-with-main` | [issue-0151](issue-0151/report.md) |
+| [#154](https://github.com/andersoxie/xpact/issues/154), [#155](https://github.com/andersoxie/xpact/issues/155) | **Attribute defaults across external files**: `<!ATTLIST>` from an external DTD / parameter entity now reaches the document, and an external entity sees the document's declarations (`src/xp_parser.e`). New W3C **output** test (432 cases with an expected output file): 359 -> **393**, 0 worse; all old lanes unchanged; Jenkins pending | (the pull request) | see `git log --grep "Refs #154"` | [issue-0154](issue-0154/report.md) |
 | [#153](https://github.com/andersoxie/xpact/issues/153) | Dual regression lane: 61 small inputs on xpact and Xpact-core, whole, split at every byte and byte by byte, with event traces, plus a 10-step lifecycle; xpact 910/910 in both builds, Xpact-core 887/910 | [#152](https://github.com/andersoxie/xpact/pull/152) | see `git log --grep "mass-xpact#1"` | [dual-regression-2026-10-28](dual-regression-2026-10-28/summary.md) |
 | - | **W3C report for the integrated version** (2026-10-28): all 2,585 cases at 10 s, 2,283 checked + 302 no crash only, 0 failed, 0 errors, 0 skipped; DLL entity lane 247/247 | [#152](https://github.com/andersoxie/xpact/pull/152) | - | [latest-2026-10-28](latest-2026-10-28/README.md) |
 
