@@ -7148,6 +7148,12 @@ feature {NONE} -- Scanning
 				set_error ("invalid public identifier")
 				Result := a_input.count + 1
 			end
+			if not has_error then
+					-- Line ends become spaces, then space runs collapse and the ends are trimmed (XML 1.0 section 4.2.2).
+				a_value.replace_substring_all ("%R", " ")
+				a_value.replace_substring_all ("%N", " ")
+				collapse_spaces (a_value)
+			end
 		ensure
 			progress_or_error: Result > a_start_index or has_error
 			result_in_bounds: Result <= a_input.count + 1
