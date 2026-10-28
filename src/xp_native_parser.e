@@ -177,6 +177,9 @@ feature -- Access
 	has_unsupported_explicit_encoding: BOOLEAN
 			-- Should the next parse fail because `explicit_encoding' is unsupported?
 
+	last_input_byte_order_mark_removed: BOOLEAN
+			-- Did the last `decoded_input' remove a UTF-16 byte-order mark?
+
 	explicit_encoding_overrides_declaration: BOOLEAN
 			-- Did `explicit_encoding' come from `XML_SetEncoding' rather than parser creation/reset?
 
@@ -880,6 +883,7 @@ feature {NONE} -- Parsing implementation
 						parser.set_return_ns_triplet (native_return_ns_triplet (native_parser_handle))
 					end
 					l_input := decoded_input (input_buffer)
+					parser.set_input_byte_order_mark_removed (last_input_byte_order_mark_removed)
 					if l_input = Void then
 						if not a_is_final and then last_error_code = Xml_error_partial_char then
 								-- Unknown encodings can end inside a converter sequence.
@@ -1847,6 +1851,7 @@ feature {NONE} -- Encoding
 			l_complete_count: INTEGER
 			l_declared_encoding: detachable STRING_8
 		do
+			last_input_byte_order_mark_removed := False
 			l_source := a_input
 			if not final_buffer then
 				l_complete_count := complete_encoded_prefix_count (a_input)
@@ -2117,6 +2122,7 @@ feature {NONE} -- Encoding
 				loop
 					l_unit := utf16_unit_at (a_input, i, a_little_endian)
 					if i = 1 and then l_unit = 65279 then
+						last_input_byte_order_mark_removed := True
 						i := i + 2
 					elseif l_unit >= 55296 and then l_unit <= 56319 then
 						if i + 3 > a_input.count then

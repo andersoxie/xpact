@@ -399,6 +399,18 @@ feature -- Configuration
 			value_set: input_is_utf8 = a_enabled
 		end
 
+	set_input_byte_order_mark_removed (a_removed: BOOLEAN)
+			-- Declare whether the caller already removed the input's byte-order mark while converting it,
+			-- so that a U+FEFF at the start of the converted text is character data.
+		do
+			if a_removed /= input_byte_order_mark_removed then
+				clear_cached_doctype
+			end
+			input_byte_order_mark_removed := a_removed
+		ensure
+			value_set: input_byte_order_mark_removed = a_removed
+		end
+
 feature {XP_NATIVE_PARSER} -- State
 
 	has_document_type: BOOLEAN
@@ -6415,7 +6427,8 @@ feature {NONE} -- Scanning
 			l_source := decoded_input (a_input)
 			if a_allow_alias and then l_source = a_input then
 				if
-					l_source.count >= 3
+					not input_byte_order_mark_removed
+					and then l_source.count >= 3
 					and then l_source.item (1).code = 239
 					and then l_source.item (2).code = 187
 					and then l_source.item (3).code = 191
@@ -6461,8 +6474,12 @@ feature {NONE} -- Scanning
 				Result := l_string
 			else
 				create Result.make (l_source.count)
+					-- Only unconverted UTF-8 input can still start with its own byte-order mark; after a
+					-- UTF-16 conversion the mark is gone and a U+FEFF here is a character.
 				if
-					l_source.count >= 3
+					not input_byte_order_mark_removed
+					and then l_source = a_input
+					and then l_source.count >= 3
 					and then l_source.item (1).code = 239
 					and then l_source.item (2).code = 187
 					and then l_source.item (3).code = 191
@@ -8529,6 +8546,9 @@ feature {NONE} -- State
 
 	input_is_utf8: BOOLEAN
 			-- Do callers convert input to UTF-8 before parsing (see `set_input_is_utf8')?
+
+	input_byte_order_mark_removed: BOOLEAN
+			-- Did the caller remove the byte-order mark while converting the input (see `set_input_byte_order_mark_removed')?
 
 	foreign_dtd_loaded: BOOLEAN
 			-- Has the configured foreign DTD already been requested?
