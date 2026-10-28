@@ -310,6 +310,7 @@ feature -- Configuration
 			inherited_parameter_entity_accounting_table := cloned_integer_table (a_parent.parameter_entity_accounting_context_table)
 			inherited_external_entity_table := cloned_external_entity_table (a_parent.external_general_entity_context_table)
 			inherited_external_parameter_entity_table := cloned_external_entity_table (a_parent.external_parameter_entity_context_table)
+			inherited_attribute_decl_table := cloned_attribute_decl_table (a_parent.attribute_decl_context_table)
 			inherited_active_entities := a_parent.active_entity_names
 			install_inherited_entity_context
 		ensure
@@ -335,6 +336,7 @@ feature -- Configuration
 			copy_integer_entity_delta (parameter_entity_accounting_table, inherited_parameter_entity_accounting_table, Result.parameter_entity_accounting_context_table)
 			copy_external_entity_delta (external_entity_table, inherited_external_entity_table, Result.external_general_entity_context_table)
 			copy_external_entity_delta (external_parameter_entity_table, inherited_external_parameter_entity_table, Result.external_parameter_entity_context_table)
+			copy_attribute_decl_table_into (attribute_decl_table, Result.attribute_decl_context_table)
 			Result.set_entity_snapshot_state (dtd_declarations_disabled, dtd_is_standalone)
 			Result.import_entity_context (Result)
 		ensure
@@ -362,6 +364,7 @@ feature -- Configuration
 			copy_integer_table_into (a_child.parameter_entity_accounting_context_table, parameter_entity_accounting_table)
 			copy_external_entity_table_into (a_child.external_general_entity_context_table, external_entity_table)
 			copy_external_entity_table_into (a_child.external_parameter_entity_context_table, external_parameter_entity_table)
+			copy_attribute_decl_table_into (a_child.attribute_decl_context_table, attribute_decl_table)
 		end
 
 	set_parameter_entities_unless_standalone (a_enabled: BOOLEAN)
@@ -488,6 +491,14 @@ feature {XP_PARSER} -- Entity context import
 			-- Current external parameter entity table for child parser import.
 		do
 			Result := external_parameter_entity_table
+		ensure
+			result_attached: Result /= Void
+		end
+
+	attribute_decl_context_table: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
+			-- Current attribute declaration table for child parser import and merge.
+		do
+			Result := attribute_decl_table
 		ensure
 			result_attached: Result /= Void
 		end
@@ -7545,6 +7556,9 @@ feature {NONE} -- Entity tables
 			if attached inherited_external_parameter_entity_table as l_entities then
 				copy_external_entity_table_into (l_entities, external_parameter_entity_table)
 			end
+			if attached inherited_attribute_decl_table as l_decls then
+				copy_attribute_decl_table_into (l_decls, attribute_decl_table)
+			end
 		end
 
 
@@ -7683,6 +7697,41 @@ feature {NONE} -- Entity tables
 					a_target.put (a_source.item_for_iteration, l_key)
 				end
 				a_source.forth
+			end
+		end
+
+	cloned_attribute_decl_table (a_source: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]): HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
+			-- Copy of attribute declaration table `a_source'; declarations are immutable and shared.
+		require
+			source_attached: a_source /= Void
+		do
+			create Result.make (a_source.count + 1)
+			copy_attribute_decl_table_into (a_source, Result)
+		ensure
+			result_attached: Result /= Void
+			count_preserved: Result.count = a_source.count
+		end
+
+	copy_attribute_decl_table_into (a_source, a_target: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8])
+			-- Copy attribute declarations from `a_source' into `a_target', keeping the first binding of each attribute.
+		require
+			source_attached: a_source /= Void
+			target_attached: a_target /= Void
+		local
+			l_decls: ARRAYED_LIST [XP_ATTRIBUTE_DECL]
+		do
+			across a_source as c loop
+				if attached a_target.item (c.key) as l_existing then
+					l_decls := l_existing
+				else
+					create l_decls.make (c.item.count.max (1))
+					a_target.put (l_decls, c.key.twin)
+				end
+				across c.item as d loop
+					if not has_attribute_decl (l_decls, d.item.name) then
+						l_decls.extend (d.item)
+					end
+				end
 			end
 		end
 
@@ -8425,6 +8474,9 @@ feature {NONE} -- State
 
 	inherited_external_entity_table: detachable HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
 			-- Parent external general entity bindings for external entity child parsers.
+
+	inherited_attribute_decl_table: detachable HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
+			-- Parent attribute declarations for external entity child parsers.
 
 	inherited_external_parameter_entity_table: detachable HASH_TABLE [XP_EXTERNAL_ENTITY, STRING_8]
 			-- Parent external parameter entity bindings for external entity child parsers.
