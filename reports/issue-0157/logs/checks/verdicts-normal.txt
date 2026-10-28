@@ -1,0 +1,8 @@
+{
+  "core:fail": 320,
+  "core:pass": 1654,
+  "legacy-names:pass": 309,
+  "optional-error:no-crash": 28,
+  "total": 2585,
+  "xml-1.1:no-crash": 274
+}

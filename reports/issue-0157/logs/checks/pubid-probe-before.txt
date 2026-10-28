@@ -1,0 +1,11 @@
+# pubid_probe.py on student-Mass @ d0a4e21 (before the fix), build\native-eiffel\xpact.dll, 2026-10-28
+expat REJECT error in processing external entity reference
+   ['startdoctype', 'd', 'd.dtd', '-//A B//EN', 1]
+   ['notationdecl', 'n', None, 'a b']
+   ['entitydecl', 'e', 0, None, 'e.xml', 'x y', None]
+   ['entitydecl', 'u', 0, None, 'u.bin', 'p q', 'n']
+xpact REJECT error in processing external entity reference
+   ['startdoctype', 'd', 'd.dtd', '  -//A\n   B//EN ', 1]
+   ['notationdecl', 'n', None, ' a \n  b ']
+   ['entitydecl', 'e', 0, None, 'e.xml', '  x \n y ', None]
+   ['entitydecl', 'u', 0, None, 'u.bin', ' p  q ', 'n']
