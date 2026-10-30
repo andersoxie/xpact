@@ -1,0 +1,5 @@
+EXPECTED C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\validation-corpora\w3c-xml-20130923\xmlconf\eduni\xml-1.1\out\006.xml
+'<?xml version="1.1"?><foo>&#10;&#10;some text&#10;&#10;</foo>'
+
+GOT (xpact)
+'<foo>&#10;&#10;some text&#10;&#10;</foo>'

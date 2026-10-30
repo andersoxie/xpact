@@ -1,0 +1,9 @@
+OK   whole: ['xmldecl', 'startdoctype', 'entitydecl', 'enddoctype', 'start', 'end']
+       call 1: ['xmldecl', 'startdoctype', 'entitydecl', 'enddoctype', 'start', 'end']
+OK   4 pieces (smallest pattern): ['xmldecl', 'startdoctype', 'entitydecl', 'enddoctype', 'start', 'end']
+       call 1: []
+       call 2: ['xmldecl', 'startdoctype', 'entitydecl']
+       call 3: []
+       call 4: ['enddoctype', 'start', 'end']
+OK   byte by byte: ['xmldecl', 'startdoctype', 'entitydecl', 'enddoctype', 'start', 'end']
+3 of 3 as expected
