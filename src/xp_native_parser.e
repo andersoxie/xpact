@@ -1003,7 +1003,9 @@ feature {NONE} -- Parsing implementation
 						if l_direct_callback_count > 0 then
 							delivered_callback_count := delivered_callback_count + l_direct_callback_count
 						else
-							delivered_callback_count := handler.callback_sequence_count
+								-- A call may re-parse less than an earlier one (for example only up to an
+								-- unfinished DOCTYPE); the callbacks the application already received stay delivered.
+							delivered_callback_count := delivered_callback_count.max (handler.callback_sequence_count)
 						end
 						accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
 						if not l_defer_callbacks and then l_direct_callback_count = 0 and then attached l_input as l_consumed_input then
