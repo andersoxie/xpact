@@ -169,7 +169,13 @@ def _w3c_suite(directory, report):
     suite = copy.deepcopy(selected[0])
     if suite.findall(".//testsuite") or suite.findall(".//testcase") != suite.findall("testcase"):
         raise SummaryError("Nested JUnit suites or testcases cannot enter own W3C results")
-    if any(test.get("classname") != "w3c.xml.xpact" for test in suite.findall("testcase")):
+    # W3C profile lanes append a dot-separated category, including skipped
+    # cases. Keep the implementation boundary explicit: xpact-core shares
+    # the base text but is outside the w3c.xml.xpact. namespace.
+    own_class = "w3c.xml.xpact"
+    if any(test.get("classname", "") != own_class
+           and not test.get("classname", "").startswith(own_class + ".")
+           for test in suite.findall("testcase")):
         raise SummaryError("Foreign implementation testcase found inside own W3C suite")
     counts, elapsed = _case_counts(suite)
     expected = {"tests": own["total"], "passed": own["passed"], "failures": own["failed"],
