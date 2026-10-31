@@ -1,0 +1,2 @@
+  208 x xpact_libexpat_runtests.exe -> C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\native-eiffel\xpact.dll [21b5ca2cf4b78ac6]
+processes: 428 exit: 1

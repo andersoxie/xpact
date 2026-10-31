@@ -55,8 +55,10 @@ class NativeSuiteGateTests(unittest.TestCase):
         self.ctest_output = self.root / "ctest-output.txt"
         tools = self.root / "tools"
         tools.mkdir()
+        self.cmake_args = self.root / "cmake-args.txt"
         (tools / "cmake.cmd").write_text(
             '@echo off\n'
+            'echo %*>>"%XPACT_GATE_CMAKE_ARGS%"\n'
             'if "%~1"=="--build" if "%XPACT_GATE_BUILD_FAIL%"=="1" exit /b 3\n'
             'exit /b 0\n', encoding="ascii")
         (tools / "ctest.cmd").write_text(
@@ -78,6 +80,7 @@ class NativeSuiteGateTests(unittest.TestCase):
             "XPACT_GATE_EXPECTED": str(self.expected),
             "XPACT_GATE_PARITY": str(self.parity),
             "XPACT_GATE_CTEST_OUTPUT": str(self.ctest_output),
+            "XPACT_GATE_CMAKE_ARGS": str(self.cmake_args),
             "XPACT_GATE_PYTHON": sys.executable,
             "XPACT_GATE_NATIVE_LOG": str(self.log),
             "XPACT_GATE_ROOT": str(self.root),
@@ -98,9 +101,10 @@ class NativeSuiteGateTests(unittest.TestCase):
                 (self.failure() if failure is None and failed else failure or "") +
                 f"50%: Checks: {checks}, Failed: {failed}\n")
 
-    def run_adapter(self, output, *, exit_code=8, build_fail=False, reject_log_write=False):
+    def run_adapter(self, output, *, exit_code=8, build_fail=False, reject_log_write=False, library=None):
         self.ctest_output.write_text(output, encoding="ascii")
         environment = {**self.environment, "XPACT_GATE_CTEST_EXIT": str(exit_code),
+                       "XPACT_GATE_LIBRARY": self.environment["XPACT_GATE_LIBRARY"] if library is None else library,
                        "XPACT_GATE_BUILD_FAIL": "1" if build_fail else "0",
                        "XPACT_GATE_REJECT_LOG_WRITE": "1" if reject_log_write else "0"}
         wrapper = r"""
@@ -138,6 +142,21 @@ exit $AdapterExitCode
                 self.assertIn("Wrapper-LASTEXITCODE=0", result.stdout)
                 self.assertIn("test_alloc_known", result.stdout)
                 self.assertIn("run-marker:complete", self.log.read_text(encoding="utf-8-sig"))
+
+    def test_default_library_is_the_eiffel_backed_build_never_the_bridge(self):
+        # #179: without -XpactLibrary the suite linked build\native\xpact.lib, the C bridge
+        # without the Eiffel parser, and every parse failed with error 44.
+        result = self.run_adapter(self.complete(), library="")
+        configured = self.cmake_args.read_text(encoding="mbcs") if self.cmake_args.is_file() else ""
+        self.assertNotIn(f"-DXPACT_LIBRARY={REPO / 'build/native/xpact.lib'}", configured)
+        eiffel = REPO / "build/native-eiffel/xpact.lib"
+        if eiffel.is_file():
+            self.assertEqual(result.returncode, 0, result.stdout)
+            self.assertIn(f"-DXPACT_LIBRARY={eiffel}", configured)
+            self.assertIn(f"xpact library {eiffel}", result.stdout)
+        else:
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+            self.assertIn("build_native_eiffel.ps1", result.stdout)
 
     def test_crash_and_unexpected_results_cannot_borrow_expected_failure_status(self):
         cases = {
