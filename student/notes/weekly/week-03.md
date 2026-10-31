@@ -23,8 +23,8 @@
 - [x] B01: a failing test makes the run exit nonzero, in every build ✅ ([#45](https://github.com/andersoxie/xpact/issues/45), PR [#62](https://github.com/andersoxie/xpact/pull/62))
 - [x] B02: deliberately failing meta-test, switched by `XPACT_META_FAIL` ✅ ([#46](https://github.com/andersoxie/xpact/issues/46), PR [#63](https://github.com/andersoxie/xpact/pull/63))
 - [x] GitHub set up: labels, week milestones, project board ✅ ([#35](https://github.com/andersoxie/xpact/issues/35), PR [#47](https://github.com/andersoxie/xpact/pull/47))
-- [ ] B03 verified after the merge of [#12](https://github.com/andersoxie/xpact/pull/12) 🟡 (rerun the matrix with assertions on, then close [#3](https://github.com/andersoxie/xpact/issues/3))
-- [ ] Jenkins builds the DLL again 🟡 ([#73](https://github.com/andersoxie/xpact/issues/73) merged in [#75](https://github.com/andersoxie/xpact/pull/75), [#74](https://github.com/andersoxie/xpact/issues/74) in PR [#76](https://github.com/andersoxie/xpact/pull/76))
+- [x] B03 verified after the merge of [#12](https://github.com/andersoxie/xpact/pull/12) ✅ *later: verified and [#3](https://github.com/andersoxie/xpact/issues/3) closed 2026-10-26*
+- [x] Jenkins builds the DLL again ✅ *later: verified on Jenkins for [#73](https://github.com/andersoxie/xpact/issues/73) (2026-10-26); [#74](https://github.com/andersoxie/xpact/issues/74) merged in PR [#76](https://github.com/andersoxie/xpact/pull/76), Jenkins passed 2026-10-31*
 
 ## What changed in the tests and builds
 
@@ -71,11 +71,11 @@
 
 ## Next week (week 4: input matrix)
 
-- [ ] Verify B03 after the merge: assertions-on matrix (workbench and finalized `-keep`) and the C# DLL tests; close [#3](https://github.com/andersoxie/xpact/issues/3) only if they pass.
-- [ ] Close [#68](https://github.com/andersoxie/xpact/issues/68) (A01) and [#70](https://github.com/andersoxie/xpact/issues/70) (doc gaps) after checking their merged pull requests.
-- [ ] Update [PLAN.md](../../PLAN.md): it still lists #12 as a draft on hold.
-- [ ] **G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds), with source and expected result for each.
-- [ ] File the 47 remaining W3C crashes as findings, grouped by routine.
+- [x] Verify B03 after the merge: assertions-on matrix (workbench and finalized `-keep`) and the C# DLL tests; close [#3](https://github.com/andersoxie/xpact/issues/3) only if they pass. *Done 2026-10-26.*
+- [x] Close [#68](https://github.com/andersoxie/xpact/issues/68) (A01) and [#70](https://github.com/andersoxie/xpact/issues/70) (doc gaps) after checking their merged pull requests. *Done 2026-10-26.*
+- [x] Update [PLAN.md](../../PLAN.md): it still lists #12 as a draft on hold. *Done.*
+- [x] **G01:** choose 50-100 W3C cases from `results.tsv` (passes and failures, both builds), with source and expected result for each. *Done: 93 cases ([#118](https://github.com/andersoxie/xpact/issues/118)).*
+- [x] File the 47 remaining W3C crashes as findings, grouped by routine. *Not needed: the parser repair [#80](https://github.com/andersoxie/xpact/pull/80) fixed all 47 (W3C 1,727/1,727, 2026-10-26).*
 
 ## Limitations of this week's evidence
 

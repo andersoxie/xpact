@@ -131,4 +131,4 @@ Harness change for this task: `engines.py` and `worker.py` take `api="buffer"` (
 - [ ] 93 cases only (the G01 subset); the whole suite in pieces is the W3C-in-pieces test ([#165 report](../../../reports/issue-0165/report.md)), against `pyexpat` 2.7.3
 - [ ] Only the main document is chunked; external entities are parsed whole
 - [ ] Default handler, `XML_StopParser`/`XML_ResumeParser` and `XML_ParserReset` are not exercised here
-- [ ] The causes of #170-#176 are not investigated yet (all ❔ or 🟡 suspected)
+- [ ] The causes of #170-#176 are not investigated yet (all ❔ or 🟡 suspected) · *2026-10-31: #172-#175 investigated and fixed; #170, #171, #176 still open*
