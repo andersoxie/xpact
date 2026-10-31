@@ -1,0 +1,1048 @@
+{
+ "id": "x-ibm-1-0.5-valid-P04-ibm04av01.xml",
+ "path": "eduni\\errata-4e\\ibm04av01.xml",
+ "expected": "ACCEPT",
+ "counted": true,
+ "namespaces": true,
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 5,
+   "column": 0,
+   "events": [
+    [
+     "startdoctype",
+     "LegalNameChar",
+     null,
+     null,
+     1
+    ],
+    [
+     "elementdecl",
+     "LegalNameChar",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "elementdecl",
+     "LegalNameChar\u00c0",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "elementdecl",
+     "LegalNameChar\u00c1",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ]
+   ],
+   "seconds": 0.0014,
+   "peak_mb": 36.1
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 5,
+   "column": 23,
+   "events": [
+    [
+     "startdoctype",
+     "LegalNameChar",
+     null,
+     null,
+     1
+    ],
+    [
+     "elementdecl",
+     "LegalNameChar",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "elementdecl",
+     "LegalNameChar\u00c0",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "elementdecl",
+     "LegalNameChar\u00c1",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ]
+   ],
+   "seconds": 0.0001,
+   "peak_mb": 19.7
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 23,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "LegalNameChar\u00c0",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "elementdecl",
+      "LegalNameChar\u00c1",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  }
+ },
+ "xpact_chunkings_unlike_whole": {},
+ "expat_chunkings_unlike_whole": {}
+}

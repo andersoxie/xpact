@@ -4681,6 +4681,7 @@ feature {NONE} -- DTD entity declarations
 			l_default_value: detachable STRING_8
 			l_new_default_value: STRING_8
 			l_is_required: BOOLEAN
+			l_is_fixed: BOOLEAN
 			l_attributes: XP_ATTRIBUTES
 			j: INTEGER
 		do
@@ -4735,6 +4736,7 @@ feature {NONE} -- DTD entity declarations
 							end
 							l_default_value := Void
 							l_is_required := False
+							l_is_fixed := False
 							if has_error then
 							elseif has_keyword_at (a_subset, j, "#REQUIRED") then
 								l_is_required := True
@@ -4742,6 +4744,7 @@ feature {NONE} -- DTD entity declarations
 							elseif has_keyword_at (a_subset, j, "#IMPLIED") then
 								j := j + 8
 							elseif has_keyword_at (a_subset, j, "#FIXED") then
+								l_is_fixed := True
 								j := skip_required_spaces (a_subset, j + 6, "missing space after #FIXED").min (l_end)
 								if not has_error and then j < l_end and then is_quote (a_subset.item (j)) then
 									create l_new_default_value.make_empty
@@ -4767,7 +4770,8 @@ feature {NONE} -- DTD entity declarations
 							end
 							if not has_error and then not dtd_declarations_disabled then
 								record_attribute_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
-								handler.on_attlist_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required)
+									-- As Expat, the event reports `#FIXED' as required too (#174).
+								handler.on_attlist_decl (l_element_name, l_attribute_name, l_attribute_type, l_default_value, l_is_required or l_is_fixed)
 								check_handler_stop
 							end
 							if not has_error and then j > i and then j <= l_end then
