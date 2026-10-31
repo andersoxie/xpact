@@ -90,6 +90,73 @@ class OwnSummaryTests(unittest.TestCase):
         self.assertEqual(self.raw_path.read_bytes(), self.raw_bytes)
         self.assertEqual(json.loads((self.root / summary.SUMMARY_FILE).read_text()), result)
 
+    def test_own_w3c_classname_suffixes_keep_reference_failures_non_gating(self):
+        document = ET.parse(self.raw_path)
+        for test, suffix in zip(document.getroot()[0].findall("testcase"),
+                                ("legacy-names", "optional-error", "xml-1.1")):
+            test.set("classname", "w3c.xml.xpact." + suffix)
+        document.write(self.raw_path)
+        raw_bytes = self.raw_path.read_bytes()
+
+        result = self.publish()
+
+        self.assertEqual(result["status"], "complete")
+        self.assertEqual((result["failures"], result["errors"]), (0, 0))
+        self.assertEqual(result["tests"], 23)
+        own = ET.parse(self.root / summary.JUNIT_FILE).getroot()
+        classnames = {test.get("classname") for test in own.findall(".//testcase")}
+        self.assertTrue({"w3c.xml.xpact." + suffix
+                         for suffix in ("legacy-names", "optional-error", "xml-1.1")} <= classnames)
+        self.assertFalse(any("xpact-core" in name for name in classnames))
+        self.assertEqual(self.raw_path.read_bytes(), raw_bytes)
+
+    def test_own_w3c_failures_and_errors_with_classname_suffixes_remain_gating(self):
+        document = ET.parse(self.raw_path)
+        suite = document.getroot()[0]
+        suite.set("failures", "1")
+        suite.set("errors", "1")
+        for test, suffix, outcome in zip(suite.findall("testcase"),
+                                         ("legacy-names", "optional-error"), ("failure", "error")):
+            test.set("classname", "w3c.xml.xpact." + suffix)
+            ET.SubElement(test, outcome, message="own " + outcome + " in categorized case")
+        document.write(self.raw_path)
+        self.reports["w3c"]["engines"][0].update(passed=0, failed=1, errors=1)
+        raw_bytes = self.raw_path.read_bytes()
+
+        result = self.publish()
+
+        self.assertEqual(result["status"], "complete_with_failures")
+        self.assertEqual((result["failures"], result["errors"]), (1, 1))
+        self.assertEqual(self.raw_path.read_bytes(), raw_bytes)
+
+    def test_foreign_classname_failure_then_suffixed_reexport_recovers_without_stale_errors(self):
+        for foreign in ("w3c.xml.xpact-core", "w3c.xml.xpact-core.legacy-names",
+                        "w3c.xml.xpactx", "w3c.xml.xpact_core", "w3c.xml.xpact-legacy-names"):
+            with self.subTest(classname=foreign):
+                document = ET.fromstring(self.raw_bytes)
+                document[0].find("testcase").set("classname", foreign)
+                ET.ElementTree(document).write(self.raw_path)
+                rejected_bytes = self.raw_path.read_bytes()
+
+                rejected = self.publish()
+                self.assertEqual(rejected["status"], "failed")
+                self.assertGreater(rejected["errors"], 0)
+                self.assertEqual(self.raw_path.read_bytes(), rejected_bytes)
+
+                document[0].find("testcase").set("classname", "w3c.xml.xpact.legacy-names")
+                ET.ElementTree(document).write(self.raw_path)
+                repaired_bytes = self.raw_path.read_bytes()
+                repaired = self.publish()
+                self.assertEqual(repaired["status"], "complete")
+                self.assertEqual((repaired["failures"], repaired["errors"]), (0, 0))
+                self.assertEqual(json.loads((self.root / summary.SUMMARY_FILE).read_text()), repaired)
+                own = ET.parse(self.root / summary.JUNIT_FILE).getroot()
+                self.assertFalse(own.findall(".//error"))
+                self.assertFalse(any("xpact-core" in test.get("classname", "")
+                                     for test in own.findall(".//testcase")))
+                self.assertEqual(self.raw_path.read_bytes(), repaired_bytes)
+                self.assertFalse(list(self.root.glob(".xpact-summary-*.tmp")))
+
     def test_own_case_and_directed_control_failures_remain_gating(self):
         document = ET.parse(self.raw_path)
         suite = document.getroot()[0]
