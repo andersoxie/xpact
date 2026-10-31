@@ -1,0 +1,31 @@
+X ibm51n06.xml whole
+     xpact (['doctype root'], (2, 2, 0))
+     expat (['doctype root', 'comment * Wrong closing bracket in Mixed  *'], (2, 7, 33))
+X ibm51n06.xml bytes
+     xpact (['doctype root'], (2, 2, 0))
+     expat (['doctype root', 'comment * Wrong closing bracket in Mixed  *'], (2, 7, 33))
+X stray ] inside an element declaration whole
+     xpact (['doctype r'], (2, 1, 0))
+     expat (['doctype r', 'entity a', 'comment c'], (2, 1, 63))
+X stray ] inside an element declaration bytes
+     xpact (['doctype r'], (2, 1, 0))
+     expat (['doctype r', 'entity a', 'comment c'], (2, 1, 63))
+X ] then junk whole
+     xpact (['doctype r'], (2, 1, 0))
+     expat (['doctype r', 'entity a', 'comment c'], (2, 1, 40))
+X ] then junk bytes
+     xpact (['doctype r'], (2, 1, 0))
+     expat (['doctype r', 'entity a', 'comment c'], (2, 1, 40))
+X ] then a name whole
+     xpact (['doctype r'], (2, 1, 0))
+     expat (['doctype r', 'entity a'], (2, 1, 29))
+X ] then a name bytes
+     xpact (['doctype r'], (2, 1, 0))
+     expat (['doctype r', 'entity a'], (2, 1, 29))
+= valid (control) whole
+     xpact (['doctype r', 'entity a', 'comment c', 'enddoctype'], (0, 1, 44))
+     expat (['doctype r', 'entity a', 'comment c', 'enddoctype'], (0, 1, 44))
+= valid (control) bytes
+     xpact (['doctype r', 'entity a', 'comment c', 'enddoctype'], (0, 1, 44))
+     expat (['doctype r', 'entity a', 'comment c', 'enddoctype'], (0, 1, 44))
+same as Expat: 2 / 10
