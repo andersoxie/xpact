@@ -2205,7 +2205,8 @@ feature {NONE} -- Markup parsing
 							if not l_public_id.is_empty then
 								l_event_public_id := l_public_id
 							end
-							if not l_system_id.is_empty then
+								-- An external ID always has a system literal; an empty one passes "", as Expat (#175).
+							if l_has_external_subset then
 								l_event_system_id := l_system_id
 							end
 							document_has_external_subset := l_has_external_subset
@@ -5349,7 +5350,8 @@ feature {NONE} -- DTD entity declarations
 				else
 					if not dtd_declarations_disabled then
 						put_external_entity (a_name, l_public_id, l_system_id, l_notation_name, a_is_parameter, l_is_unparsed)
-						handler.on_entity_decl (a_name, a_is_parameter, Void, optional_string (l_public_id), optional_string (l_system_id), optional_string (l_notation_name))
+							-- The system literal is always present, so an empty one passes "", as Expat (#175).
+						handler.on_entity_decl (a_name, a_is_parameter, Void, optional_string (l_public_id), l_system_id, optional_string (l_notation_name))
 						check_handler_stop
 						if l_is_unparsed then
 							handler.on_unparsed_entity_decl (a_name, l_system_id, optional_string (l_public_id), optional_string (l_notation_name))
