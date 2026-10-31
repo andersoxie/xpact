@@ -1,0 +1,94 @@
+id	type	expected	counted	namespaces	status	xpact	expat	xpact_vs_expected	expat_vs_expected	xpact_error	expat_error	xpact_same_in_all_chunkings	expat_same_in_all_chunkings	configs_differing	first_configs
+rmt-ns10-001	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+rmt-ns10-002	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+rmt-ns10-007	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ht-ns10-047	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+rmt-ns10-009	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	8	8	yes	yes	0	
+rmt-ns10-014	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+rmt-ns10-026	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	27	27	yes	yes	0	
+rmt-ns10-033	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	40	40	yes	yes	0	
+valid-sa-031	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-049	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-050	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-051	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-099	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+not-wf-sa-101	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	18	30	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p02fail15	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p02fail27	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-not-wf-P22-ibm22n02.xml	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	17	17	yes	yes	0	
+ibm-not-wf-P80-ibm80n06.xml	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	30	30	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+valid-sa-024	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-061	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-082	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-101	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+o-p71pass1	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+not-wf-sa-007	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	5	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+not-wf-sa-121	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	4	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p73fail1	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	2	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-not-wf-P66-ibm66n14.xml	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	14	14	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-not-wf-P72-ibm72n06.xml	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	4	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+valid-sa-001	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-079	valid	ACCEPT	yes	on	events differ	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p46pass1	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ibm-valid-P23-ibm23v01.xml	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ibm-valid-P54-ibm54v02.xml	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+not-wf-sa-055	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	5	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+content03	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p56fail2	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	4	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-not-wf-P29-ibm29n02.xml	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	2	10	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-not-wf-P51-ibm51n06.xml	not-wf	REJECT	yes	on	events differ	REJECT	REJECT	pass	pass	2	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+valid-sa-004	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-058	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-102	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-106	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-110	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+not-wf-sa-001	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+not-wf-sa-013	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+not-wf-sa-020	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	5	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+not-wf-sa-090	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	4	4	yes	yes	0	
+o-p10fail3	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	5	5	yes	yes	0	
+valid-sa-002	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-010	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-018	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-035	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-109	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+not-wf-sa-019	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	4	4	yes	yes	0	
+attlist11	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	2	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p42fail1	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	4	4	yes	yes	0	
+ibm-not-wf-P40-ibm40n04.xml	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	4	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-not-wf-P41-ibm41n13.xml	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	4	4	yes	yes	0	
+valid-sa-016	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-036	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+valid-sa-098	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ibm-valid-P14-ibm14v03.xml	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ibm-valid-P16-ibm16v03.xml	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+not-wf-sa-003	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+not-wf-sa-051	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	4	2	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p14fail3	not-wf	REJECT	yes	on	events differ	REJECT	REJECT	pass	pass	4	4	NO	NO	6	XML_Parse 1; XML_Parse 2; XML_Parse 7
+ibm-not-wf-P14-ibm14n02.xml	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-not-wf-P17-ibm17n02.xml	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	2	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+valid-sa-012	valid	ACCEPT	yes	off	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ibm-valid-P10-ibm10v01.xml	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ibm-valid-P11-ibm11v02.xml	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+not-wf-sa-002	not-wf	REJECT	yes	on	error position differs	REJECT	REJECT	pass	pass	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+o-p03fail4	not-wf	REJECT	yes	on	match	REJECT	REJECT	pass	pass	4	4	yes	yes	0	
+ibm-not-wf-P10-ibm10n06.xml	not-wf	REJECT	yes	on	error code differs	REJECT	REJECT	pass	pass	5	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+inv-dtd01	invalid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+attr12	invalid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+o-p23pass4	invalid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+o-p66pass1	invalid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+ibm-invalid-P56-ibm56i18.xml	invalid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+rmt-ns10-037	invalid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+x-ibm-1-0.5-valid-P05-ibm05v04.xml	valid	ACCEPT	yes	on	match	ACCEPT	ACCEPT	pass	pass	0	0	yes	yes	0	
+x-ibm-1-0.5-valid-P05-ibm05v03.xml	valid	ACCEPT	yes	off	error position differs	REJECT	REJECT	FAIL	FAIL	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+x-ibm-1-0.5-valid-P04-ibm04av01.xml	valid	ACCEPT	yes	on	error position differs	REJECT	REJECT	FAIL	FAIL	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+not-wf-sa-081	not-wf	(REJECT)	no	on	error code differs	REJECT	REJECT	not counted	not counted	2	16	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+valid-ext-sa-013	valid	(ACCEPT)	no	on	match	ACCEPT	ACCEPT	not counted	not counted	0	0	yes	yes	0	
+decl01	not-wf	(REJECT)	no	on	match	REJECT	REJECT	not counted	not counted	21	21	yes	yes	0	
+ibm-not-wf-P77-ibm77n04.xml	not-wf	(REJECT)	no	on	match	REJECT	REJECT	not counted	not counted	21	21	yes	yes	0	
+ibm-1-1-valid-P46-ibm46i01.xml	invalid	(ACCEPT)	no	on	match	ACCEPT	ACCEPT	not counted	not counted	0	0	yes	yes	0	
+ibm-1-1-not-wf-P04-ibm04n20.xml	not-wf	(REJECT)	no	on	error position differs	REJECT	REJECT	not counted	not counted	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+ibm-1-1-valid-P77-ibm77v05.xml	valid	(ACCEPT)	no	on	error position differs	REJECT	REJECT	not counted	not counted	4	4	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2
+not-wf-sa-140	not-wf	(REJECT)	no	on	match	REJECT	REJECT	not counted	not counted	4	4	yes	yes	0	
+not-wf-not-sa-005	error	(unspecified)	no	on	match	ACCEPT	ACCEPT	not counted	not counted	0	0	yes	yes	0	
+ibm-invalid-P69-ibm69i01.xml	error	(unspecified)	no	on	match	ACCEPT	ACCEPT	not counted	not counted	0	0	yes	yes	0	
