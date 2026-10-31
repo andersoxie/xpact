@@ -1,0 +1,129 @@
+4308/4308 cases, 8 process(es)   
+xpact DLL tests (tests/dotnet/XpactDllTests)
+Date:      2026-10-31 17:34:19
+Commit:    02a6575594746e9bb75cc730051112a851cb789b (uncommitted changes in src/native/include/tests)
+DLL:       C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\native-eiffel\xpact.dll
+           9,868,288 bytes, modified 2026-10-31 17:31, SHA-256 c83af6db78c3802d84d0f0fa70838d264a0ede802202edaeb58a6b6e3944cb3e
+Version:   expat_2.8.1
+Filters:   none, --jobs 8
+Run:       4308 cases in 8 process(es), 0.6 s
+
+TOTAL  4308   pass 4308   fail 0   crash 0   timeout 0
+
+1. BY GROUP AND CHUNKING
+   group  chunks  total   pass   fail  crash  timeout
+   c02    whole      42     42      0      0        0
+   c02    split     396    396      0      0        0
+   c02    bytes      36     36      0      0        0
+   cr     whole      24     24      0      0        0
+   cr     split     180    180      0      0        0
+   cr     bytes      24     24      0      0        0
+   utf8   whole     252    252      0      0        0
+   utf8   split    3102   3102      0      0        0
+   utf8   bytes     252    252      0      0        0
+
+2. BY INPUT  (whole document per callback set: ok, or what went wrong; then chunked runs not ok)
+   input                              expect  none       start      end        start+end  chardata   default    chunked
+   c02-valid                          ACCEPT  ok         ok         ok         ok         ok         ok         0/42
+   c02-valid-pair                     ACCEPT  ok         ok         ok         ok         ok         ok         0/78
+   c02-text                           ACCEPT  ok         ok         ok         ok         ok         ok         0/90
+   c02-empty                          REJECT  ok         ok         ok         ok         ok         ok         -
+   c02-incomplete                     REJECT  ok         ok         ok         ok         ok         ok         0/36
+   c02-mismatched                     REJECT  ok         ok         ok         ok         ok         ok         0/120
+   c02-trailing-junk                  REJECT  ok         ok         ok         ok         ok         ok         0/66
+   cr-crlf                            ACCEPT  ok         ok         ok         ok         ok         ok         0/54
+   cr-lone                            ACCEPT  ok         ok         ok         ok         ok         ok         0/48
+   cr-last-byte                       ACCEPT  ok         ok         ok         ok         ok         ok         0/30
+   cr-attribute                       ACCEPT  ok         ok         ok         ok         ok         ok         0/72
+   utf8-valid-e9-text                 ACCEPT  ok         ok         ok         ok         ok         ok         0/54
+   utf8-valid-e9-attribute            ACCEPT  ok         ok         ok         ok         ok         ok         0/66
+   utf8-valid-e9-name                 ACCEPT  ok         ok         ok         ok         ok         ok         0/36
+   utf8-valid-e9-comment              ACCEPT  ok         ok         ok         ok         ok         ok         0/96
+   utf8-valid-e9-pi                   ACCEPT  ok         ok         ok         ok         ok         ok         0/96
+   utf8-valid-e9-cdata                ACCEPT  ok         ok         ok         ok         ok         ok         0/126
+   utf8-bad-continuation-text         REJECT  ok         ok         ok         ok         ok         ok         0/54
+   utf8-bad-continuation-attribute    REJECT  ok         ok         ok         ok         ok         ok         0/66
+   utf8-bad-continuation-name         REJECT  ok         ok         ok         ok         ok         ok         0/36
+   utf8-bad-continuation-comment      REJECT  ok         ok         ok         ok         ok         ok         0/96
+   utf8-bad-continuation-pi           REJECT  ok         ok         ok         ok         ok         ok         0/96
+   utf8-bad-continuation-cdata        REJECT  ok         ok         ok         ok         ok         ok         0/126
+   utf8-overlong-text                 REJECT  ok         ok         ok         ok         ok         ok         0/54
+   utf8-overlong-attribute            REJECT  ok         ok         ok         ok         ok         ok         0/66
+   utf8-overlong-name                 REJECT  ok         ok         ok         ok         ok         ok         0/36
+   utf8-overlong-comment              REJECT  ok         ok         ok         ok         ok         ok         0/96
+   utf8-overlong-pi                   REJECT  ok         ok         ok         ok         ok         ok         0/96
+   utf8-overlong-cdata                REJECT  ok         ok         ok         ok         ok         ok         0/126
+   utf8-surrogate-text                REJECT  ok         ok         ok         ok         ok         ok         0/60
+   utf8-surrogate-attribute           REJECT  ok         ok         ok         ok         ok         ok         0/72
+   utf8-surrogate-name                REJECT  ok         ok         ok         ok         ok         ok         0/42
+   utf8-surrogate-comment             REJECT  ok         ok         ok         ok         ok         ok         0/102
+   utf8-surrogate-pi                  REJECT  ok         ok         ok         ok         ok         ok         0/102
+   utf8-surrogate-cdata               REJECT  ok         ok         ok         ok         ok         ok         0/132
+   utf8-above-10ffff-text             REJECT  ok         ok         ok         ok         ok         ok         0/66
+   utf8-above-10ffff-attribute        REJECT  ok         ok         ok         ok         ok         ok         0/78
+   utf8-above-10ffff-name             REJECT  ok         ok         ok         ok         ok         ok         0/48
+   utf8-above-10ffff-comment          REJECT  ok         ok         ok         ok         ok         ok         0/108
+   utf8-above-10ffff-pi               REJECT  ok         ok         ok         ok         ok         ok         0/108
+   utf8-above-10ffff-cdata            REJECT  ok         ok         ok         ok         ok         ok         0/138
+   utf8-lone-continuation-text        REJECT  ok         ok         ok         ok         ok         ok         0/48
+   utf8-lone-continuation-attribute   REJECT  ok         ok         ok         ok         ok         ok         0/60
+   utf8-lone-continuation-name        REJECT  ok         ok         ok         ok         ok         ok         0/30
+   utf8-lone-continuation-comment     REJECT  ok         ok         ok         ok         ok         ok         0/90
+   utf8-lone-continuation-pi          REJECT  ok         ok         ok         ok         ok         ok         0/90
+   utf8-lone-continuation-cdata       REJECT  ok         ok         ok         ok         ok         ok         0/120
+   utf8-ff-text                       REJECT  ok         ok         ok         ok         ok         ok         0/48
+   utf8-ff-attribute                  REJECT  ok         ok         ok         ok         ok         ok         0/60
+   utf8-ff-name                       REJECT  ok         ok         ok         ok         ok         ok         0/30
+   utf8-ff-comment                    REJECT  ok         ok         ok         ok         ok         ok         0/90
+   utf8-ff-pi                         REJECT  ok         ok         ok         ok         ok         ok         0/90
+   utf8-ff-cdata                      REJECT  ok         ok         ok         ok         ok         ok         0/120
+   Cells: ok = right result. ACCEPT!/REJECT! = wrong verdict. EVENTS! = right verdict, wrong events.
+
+4. CHUNKED RUNS THAT DIFFER FROM THE WHOLE DOCUMENT  (same input and callbacks; verdict or error code)
+   0 run(s)
+
+5. ERROR CODES OF REJECTED DOCUMENTS  (information only; libexpat reference to confirm in G03)
+   c02-empty                          libexpat 3   xpact: 3 no element found (6x)
+   c02-incomplete                     libexpat 3   xpact: 3 no element found (42x)
+   c02-mismatched                     libexpat 7   xpact: 7 mismatched tag (126x)
+   c02-trailing-junk                  libexpat 9   xpact: 4 not well-formed (invalid token) (72x)
+   utf8-bad-continuation-text         libexpat 4   xpact: 4 not well-formed (invalid token) (60x)
+   utf8-bad-continuation-attribute    libexpat 4   xpact: 4 not well-formed (invalid token) (72x)
+   utf8-bad-continuation-name         libexpat 4   xpact: 4 not well-formed (invalid token) (42x)
+   utf8-bad-continuation-comment      libexpat 4   xpact: 4 not well-formed (invalid token) (102x)
+   utf8-bad-continuation-pi           libexpat 4   xpact: 4 not well-formed (invalid token) (102x)
+   utf8-bad-continuation-cdata        libexpat 4   xpact: 4 not well-formed (invalid token) (132x)
+   utf8-overlong-text                 libexpat 4   xpact: 4 not well-formed (invalid token) (60x)
+   utf8-overlong-attribute            libexpat 4   xpact: 4 not well-formed (invalid token) (72x)
+   utf8-overlong-name                 libexpat 4   xpact: 4 not well-formed (invalid token) (42x)
+   utf8-overlong-comment              libexpat 4   xpact: 4 not well-formed (invalid token) (102x)
+   utf8-overlong-pi                   libexpat 4   xpact: 4 not well-formed (invalid token) (102x)
+   utf8-overlong-cdata                libexpat 4   xpact: 4 not well-formed (invalid token) (132x)
+   utf8-surrogate-text                libexpat 4   xpact: 4 not well-formed (invalid token) (66x)
+   utf8-surrogate-attribute           libexpat 4   xpact: 4 not well-formed (invalid token) (78x)
+   utf8-surrogate-name                libexpat 4   xpact: 4 not well-formed (invalid token) (48x)
+   utf8-surrogate-comment             libexpat 4   xpact: 4 not well-formed (invalid token) (108x)
+   utf8-surrogate-pi                  libexpat 4   xpact: 4 not well-formed (invalid token) (108x)
+   utf8-surrogate-cdata               libexpat 4   xpact: 4 not well-formed (invalid token) (138x)
+   utf8-above-10ffff-text             libexpat 4   xpact: 4 not well-formed (invalid token) (72x)
+   utf8-above-10ffff-attribute        libexpat 4   xpact: 4 not well-formed (invalid token) (84x)
+   utf8-above-10ffff-name             libexpat 4   xpact: 4 not well-formed (invalid token) (54x)
+   utf8-above-10ffff-comment          libexpat 4   xpact: 4 not well-formed (invalid token) (114x)
+   utf8-above-10ffff-pi               libexpat 4   xpact: 4 not well-formed (invalid token) (114x)
+   utf8-above-10ffff-cdata            libexpat 4   xpact: 4 not well-formed (invalid token) (144x)
+   utf8-lone-continuation-text        libexpat 4   xpact: 4 not well-formed (invalid token) (54x)
+   utf8-lone-continuation-attribute   libexpat 4   xpact: 4 not well-formed (invalid token) (66x)
+   utf8-lone-continuation-name        libexpat 4   xpact: 4 not well-formed (invalid token) (36x)
+   utf8-lone-continuation-comment     libexpat 4   xpact: 4 not well-formed (invalid token) (96x)
+   utf8-lone-continuation-pi          libexpat 4   xpact: 4 not well-formed (invalid token) (96x)
+   utf8-lone-continuation-cdata       libexpat 4   xpact: 4 not well-formed (invalid token) (126x)
+   utf8-ff-text                       libexpat 4   xpact: 4 not well-formed (invalid token) (54x)
+   utf8-ff-attribute                  libexpat 4   xpact: 4 not well-formed (invalid token) (66x)
+   utf8-ff-name                       libexpat 4   xpact: 4 not well-formed (invalid token) (36x)
+   utf8-ff-comment                    libexpat 4   xpact: 4 not well-formed (invalid token) (96x)
+   utf8-ff-pi                         libexpat 4   xpact: 4 not well-formed (invalid token) (96x)
+   utf8-ff-cdata                      libexpat 4   xpact: 4 not well-formed (invalid token) (126x)
+
+6. FAILURES  (0; first 30)
+
+Results: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix0174\csharp\after-normal

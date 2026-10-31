@@ -1,0 +1,16 @@
+= #REQUIRED
+     xpact (['d a CDATA default=NULL isrequired=1'], 1)
+     expat (['d a CDATA default=NULL isrequired=1'], 1)
+= #IMPLIED
+     xpact (['d a CDATA default=NULL isrequired=0'], 1)
+     expat (['d a CDATA default=NULL isrequired=0'], 1)
+X #FIXED
+     xpact (["d a CDATA default='v' isrequired=0"], 1)
+     expat (["d a CDATA default='v' isrequired=1"], 1)
+X #FIXED, enumerated type
+     xpact (["d a (x|y) default='x' isrequired=0"], 1)
+     expat (["d a (x|y) default='x' isrequired=1"], 1)
+= plain default
+     xpact (["d a CDATA default='v' isrequired=0"], 1)
+     expat (["d a CDATA default='v' isrequired=0"], 1)
+same as Expat: 3 / 5
