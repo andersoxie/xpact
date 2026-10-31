@@ -192,3 +192,21 @@ hit Windows `PermissionError [WinError 5]` while atomically replacing `run.json`
 that failed directory was preserved and the fresh retry passed. The cause of
 that transient storage failure is unconfirmed; no retry workaround was added.
 Jenkins controller execution remains unverified.
+
+## W3C classname compatibility, 31 October 2026
+
+Build 108 had 1,974 passing xpact W3C cases and 611 exclusions, but its own
+summary failed with `Foreign implementation testcase found inside own W3C
+suite`. The W3C reporter categorized excluded cases with classnames such as
+`w3c.xml.xpact.legacy-names`; the summary accepted only `w3c.xml.xpact`.
+The summary now also accepts categories below `w3c.xml.xpact.` while still
+rejecting `w3c.xml.xpact-core` and similar implementation-name prefixes.
+
+Re-exporting build 108's authenticated reports locally produced 1,994 passes
+(including 20 directed controls), 611 skips and zero failures/errors. The
+campaign CLI's summary-based decision returned exit 0, while the comparison
+retained xpact-core's 728 failures and 14 errors. Hashes of the 13 inspected
+Jenkins report, summary and plot files were unchanged. All 106 Python tests
+across the summary, campaign, plot, dual-W3C and conformance suites passed,
+including own categorized failures/errors and repeated rejected/accepted
+exports. Parser binaries and the live Jenkins job were not rerun.
