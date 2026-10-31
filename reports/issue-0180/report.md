@@ -4,7 +4,7 @@
 > **Branch:** `fix/180-benchmarks-single-repetition`, from `student-Mass` @ `48c2fb8` · **Changed:** `scripts/run_benchmarks.ps1` (1 line + comment)
 > **Status:** ✅ fixed · ✅ verified locally · 🟡 waiting for review; Jenkins is not affected (it uses the default, 3)
 
-## 1. In short
+## In short
 
 `Invoke-TimedCommand` collects one row per repetition in a `List[object]` and returned it as `$Rows`. With **one** repetition PowerShell unrolls the one-element list to a single object, and `$AllRows.AddRange(...)` rejects a single object. Now it returns `,$Rows`, which keeps the list a list. `run_large_xml_benchmarks.ps1` already does exactly this.
 
@@ -13,7 +13,7 @@
 | `-Repetitions 1` | ❌ exit 1 after 3 s: `Cannot convert argument "collection" … for "AddRange"` | ✅ exit 0, 10 benchmark rows, W3C 2585 / 2585 for both builds |
 | `-Repetitions 3` (Jenkins default) | ✅ | ✅ exit 0, 30 benchmark rows (10 × 3), W3C 2585 / 2585 for both builds |
 
-## 2. Problem report (CLAUDE.md format)
+## Problem report (CLAUDE.md format)
 
 | Field | |
 |---|---|
@@ -24,11 +24,11 @@
 | **5. Actual** | exit 1 after the first benchmark |
 | **6. Error output** | `Cannot convert argument "collection", with value: "@{Benchmark=catalog-100-items; …}", for "AddRange" to type "System.Collections.Generic.IEnumerable``1[System.Object]"` ([before-fix.txt](logs/before-fix.txt)) |
 | **7. Investigation** | the value in the error is a single `PSCustomObject`; `Invoke-TimedCommand` ends with `$Rows`, which PowerShell unrolls when it holds one item; every caller passes the result to `AddRange`; `-Repetitions 2` and `3` work |
-| **8. Cause** | ✅ **confirmed**: reproduced before the fix, gone after it (§4) |
+| **8. Cause** | ✅ **confirmed**: reproduced before the fix, gone after it (see Verification) |
 | **9. Fix** | `,$Rows` instead of `$Rows` at the end of `Invoke-TimedCommand` |
-| **10. Verification** | ✅ see §4 |
+| **10. Verification** | ✅ see Verification below |
 
-## 3. The change
+## The change
 
 ```diff
 -	$Rows
@@ -39,7 +39,7 @@
 
 All 12 calls of `Invoke-TimedCommand` in the script are `$AllRows.AddRange((Invoke-TimedCommand …))`, so none depends on the unrolled form.
 
-## 4. Verification
+## Verification
 
 | Check | Command (all with `-Iterations 1 -SkipWslC -W3cAllCases`) | Result | Log |
 |---|---|---|---|
@@ -49,7 +49,7 @@ All 12 calls of `Invoke-TimedCommand` in the script are `$AllRows.AddRange((Invo
 
 The runs write the timing tables into `docs/benchmarks.md`; that generated change was reverted and is not part of this fix.
 
-## 5. Problems met (kept separate)
+## Problems met (kept separate)
 
 **Stale benchmark executables under `-SkipBuild`** (local environment, not this fix, not Jenkins):
 
@@ -58,12 +58,12 @@ The runs write the timing tables into `docs/benchmarks.md`; that generated chang
 - **Logs:** [after-fix-repetitions-1-stale-build.txt](logs/after-fix-repetitions-1-stale-build.txt), [after-fix-repetitions-3-stale-build.txt](logs/after-fix-repetitions-3-stale-build.txt).
 - **Lesson:** use `-SkipBuild` only right after a build of the same commit. Jenkins always builds, so it is not affected.
 
-## 6. Limitations
+## Limitations
 
 - Jenkins was not run. It uses `-Repetitions 3`, a path that is checked above.
 - The WSL C benchmark was skipped (`-SkipWslC`), as in A04. That code path calls the same `Invoke-TimedCommand`.
 - No automated test covers `run_benchmarks.ps1`. This fix is verified by real runs only.
 
-## 7. Revert
+## Revert
 
 `student\tools\fix.ps1 revert -Issue 180 -Commit <sha>`, or `git revert <sha>`.
