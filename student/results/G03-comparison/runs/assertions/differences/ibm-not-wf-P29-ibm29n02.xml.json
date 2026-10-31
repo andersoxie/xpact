@@ -1,0 +1,1010 @@
+{
+ "id": "ibm-not-wf-P29-ibm29n02.xml",
+ "path": "ibm\\not-wf\\P29\\ibm29n02.xml",
+ "expected": "REJECT",
+ "counted": true,
+ "namespaces": true,
+ "status": "error code differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 2,
+   "message": "syntax error",
+   "line": 5,
+   "column": 13,
+   "events": [
+    [
+     "xmldecl",
+     "1.0",
+     "UTF-8",
+     -1
+    ],
+    [
+     "startdoctype",
+     "animal",
+     null,
+     null,
+     1
+    ],
+    [
+     "elementdecl",
+     "animal",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "entitydecl",
+     "parameterE",
+     1,
+     "leopard EMPTY>",
+     null,
+     null,
+     null
+    ]
+   ],
+   "seconds": 0.0004,
+   "peak_mb": 31.4
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 10,
+   "message": "illegal parameter entity reference",
+   "line": 5,
+   "column": 13,
+   "events": [
+    [
+     "xmldecl",
+     "1.0",
+     "UTF-8",
+     -1
+    ],
+    [
+     "startdoctype",
+     "animal",
+     null,
+     null,
+     1
+    ],
+    [
+     "elementdecl",
+     "animal",
+     [
+      2,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "entitydecl",
+     "parameterE",
+     1,
+     "leopard EMPTY>",
+     null,
+     null,
+     null
+    ]
+   ],
+   "seconds": 0.0001,
+   "peak_mb": 17.7
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 5,
+    "column": 13,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "elementdecl",
+      "animal",
+      [
+       2,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "entitydecl",
+      "parameterE",
+      1,
+      "leopard EMPTY>",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  }
+ },
+ "xpact_chunkings_unlike_whole": {},
+ "expat_chunkings_unlike_whole": {}
+}
