@@ -976,6 +976,17 @@ feature {NONE} -- Parsing implementation
 								else
 									l_ok := parser.parse_prefix (l_parse_input)
 								end
+								if
+									not l_ok and then not parser.is_suspended
+									and then parser.invalid_input_character_index > 0
+									and then parser.invalid_input_character_index <= l_parse_input.count
+								then
+										-- A character that is not an XML Char stopped the parse before any markup.
+										-- Deliver the callbacks in front of it first, as Expat does (#172); callbacks
+										-- the failed attempt already delivered are not repeated.
+									handler.prepare_callback_replay (delivered_callback_count.max (handler.callback_sequence_count))
+									l_ok := parser.parse_prefix_before_invalid_character (l_parse_input, parser.invalid_input_character_index)
+								end
 							end
 						end
 						if l_ok then

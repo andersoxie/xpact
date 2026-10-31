@@ -434,6 +434,27 @@ feature {XP_NATIVE_PARSER} -- State
 			no_open_elements: element_stack.count = 0
 		end
 
+	invalid_input_character_index: INTEGER
+			-- Index in the input of the last document parse of the character that is not an XML
+			-- Char and stopped it before any markup was parsed, or 0 (#172).
+
+	parse_prefix_before_invalid_character (a_input: READABLE_STRING_8; a_index: INTEGER): BOOLEAN
+			-- Parse `a_input' in front of the character at `a_index', which is not an XML Char, as a
+			-- non-final prefix, then report that character. The callbacks in front of it are delivered,
+			-- as Expat delivers them for a document given whole or in pieces (#172).
+		require
+			input_attached: a_input /= Void
+			valid_index: a_index >= 1 and a_index <= a_input.count
+		do
+			if parse_prefix (a_input.substring (1, a_index - 1)) then
+				set_error ("invalid XML character")
+			end
+			Result := False
+		ensure
+			not_successful: not Result
+			stopped: has_error or is_suspended
+		end
+
 feature {XP_PARSER} -- Entity context import
 
 	set_entity_snapshot_state (a_disabled, a_standalone: BOOLEAN)
@@ -535,6 +556,7 @@ feature -- Parsing
 			reset
 			l_can_defer_positions := can_defer_position_accounting
 			l_input := normalized_input (a_input, l_can_defer_positions)
+			invalid_input_character_index := last_invalid_character_index
 			position_input := l_input
 			lazy_position_accounting := l_can_defer_positions
 			note_position (1)
@@ -610,6 +632,7 @@ feature -- Parsing
 		do
 			reset
 			l_input := normalized_input (a_input, False)
+			invalid_input_character_index := last_invalid_character_index
 			position_input := l_input
 			note_position (1)
 			from
@@ -722,6 +745,11 @@ feature -- Parsing
 					l_prefix_count := l_prefix.count
 					reset_cached_doctype_body (l_prefix_count, l_name)
 					l_body := normalized_input (a_input.substring (l_prefix_count + 1, a_input.count), False)
+					if last_invalid_character_index > 0 then
+						invalid_input_character_index := l_prefix_count + last_invalid_character_index
+					else
+						invalid_input_character_index := 0
+					end
 					l_input := l_prefix.twin
 					l_input.append (l_body)
 					position_input := l_input
@@ -6477,6 +6505,7 @@ feature {NONE} -- Scanning
 			l_length: INTEGER
 			l_source: READABLE_STRING_8
 		do
+			last_invalid_character_index := 0
 			l_source := decoded_input (a_input)
 			if a_allow_alias and then l_source = a_input then
 				if
@@ -6505,6 +6534,9 @@ feature {NONE} -- Scanning
 						if c.code >= 32 or else c = '%T' or else c = '%N' then
 							i := i + 1
 						else
+							if l_source = a_input then
+								last_invalid_character_index := i
+							end
 							set_error ("invalid XML character")
 							i := l_source.count + 1
 						end
@@ -6515,6 +6547,9 @@ feature {NONE} -- Scanning
 						elseif l_length < 0 then
 							i := l_source.count + 1
 						else
+							if l_source = a_input then
+								last_invalid_character_index := i
+							end
 							set_error ("invalid XML character")
 							i := l_source.count + 1
 						end
@@ -6560,6 +6595,9 @@ feature {NONE} -- Scanning
 							Result.append_character (c)
 							i := i + 1
 						else
+							if l_source = a_input then
+								last_invalid_character_index := i
+							end
 							set_error ("invalid XML character")
 							i := l_source.count + 1
 						end
@@ -6572,6 +6610,9 @@ feature {NONE} -- Scanning
 							Result.append_substring (l_source, i, l_source.count)
 							i := l_source.count + 1
 						else
+							if l_source = a_input then
+								last_invalid_character_index := i
+							end
 							set_error ("invalid XML character")
 							i := l_source.count + 1
 						end
@@ -8093,6 +8134,9 @@ feature {NONE} -- Entity tables
 
 feature {NONE} -- State
 
+	last_invalid_character_index: INTEGER
+			-- Index in its own input of the character that is not an XML Char at which the last
+			-- `normalized_input' stopped, or 0 when it did not stop there or converted the input.
 
 	reset_cached_doctype_body (a_prefix_count: INTEGER; a_doctype_name: STRING_8)
 			-- Restore the completed DTD baseline, retaining all existing declaration tables.
@@ -8141,6 +8185,7 @@ feature {NONE} -- State
 			clear_cached_doctype
 			has_error := False
 			last_error.wipe_out
+			invalid_input_character_index := 0
 			create position_input.make_empty
 			lazy_position_accounting := False
 			last_attribute_name_start := 0

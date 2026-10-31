@@ -1,0 +1,12 @@
+cases: 4308; changed by the fix: 3096
+field         = Expat before  = Expat after  better  worse
+verdict                 4308           4308       0      0
+error_code              4236           4236       0      0
+line                    4308           4308       0      0
+column                  1155           4251    3096      0
+byte_index              1155           4251    3096      0
+failed_call             3659           3659       0      0
+calls                   4308           4308       0      0
+events                  3649           4114     465      0
+all fields              1079           3423
+regressions (equal to Expat before, different after): 0

@@ -1,0 +1,5 @@
+EXPECTED C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\validation-corpora\w3c-xml-20130923\xmlconf\eduni\xml-1.1\out\037.xml
+'<?xml version="1.1"?><foo bar="abc&#133;def"></foo>'
+
+GOT (expat)
+'<foo bar="abc\x85def"></foo>'
