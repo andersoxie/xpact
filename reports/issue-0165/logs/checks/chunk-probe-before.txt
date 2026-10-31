@@ -1,0 +1,8 @@
+# Per-call trace on student-Mass @ e5d59e2 (before #165), build/native-eiffel/xpact.dll, 2026-10-30
+# (recorded with an earlier version of chunk_probe.py; same document and pieces)
+pieces: ['<?xml version="1.0"?', '><!DOCTYPE d [<!ENTITY e "v">', ']', '><d/>']
+   call 1: []
+   call 2: ['xmldecl', 'startdoctype', 'entitydecl']
+   call 3: []
+   call 4: ['startdoctype', 'entitydecl', 'enddoctype']
+byte by byte (harness): xmldecl, startdoctype, startdoctype, entitydecl, enddoctype, start, end
