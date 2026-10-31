@@ -1,0 +1,171 @@
+{
+  "tag": "c0173-after-normal",
+  "commit": "38aa67a",
+  "python": "3.14.0",
+  "engines": {
+    "xpact": {
+      "path": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\native-eiffel\\xpact.dll",
+      "bytes": 9868800,
+      "sha256": "12a6585809bb67dae70b622a45fa232a7523029f54c179dafc326d5b4ffa3698",
+      "XML_ExpatVersion": "expat_2.8.1"
+    },
+    "expat": {
+      "path": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\xpactGit\\build\\libexpat-R_2_8_1\\build\\libexpat.dll",
+      "bytes": 166400,
+      "sha256": "36a2532e2181ab8bdc92a233d2c2a7c86f314541c194dbd7eb002b9f164b4661",
+      "XML_ExpatVersion": "expat_2.8.1"
+    }
+  },
+  "cases": 93,
+  "counted": 83,
+  "configurations_per_engine": 14,
+  "parses": 2604,
+  "config_pairs": 1302,
+  "config_pairs_same": 1100,
+  "status": {
+    "error code differs / counted=no": 1,
+    "error code differs / counted=yes": 13,
+    "error position differs / counted=no": 2,
+    "error position differs / counted=yes": 14,
+    "events differ / counted=yes": 1,
+    "match / counted=no": 7,
+    "match / counted=yes": 55
+  },
+  "vs_expected_whole": {
+    "expat expected=(ACCEPT) not counted": 3,
+    "expat expected=(REJECT) not counted": 5,
+    "expat expected=(unspecified) not counted": 2,
+    "expat expected=ACCEPT FAIL": 2,
+    "expat expected=ACCEPT pass": 44,
+    "expat expected=REJECT pass": 37,
+    "xpact expected=(ACCEPT) not counted": 3,
+    "xpact expected=(REJECT) not counted": 5,
+    "xpact expected=(unspecified) not counted": 2,
+    "xpact expected=ACCEPT FAIL": 2,
+    "xpact expected=ACCEPT pass": 44,
+    "xpact expected=REJECT pass": 37
+  },
+  "verdicts_by_config": {
+    "xpact": {
+      "XML_Parse whole": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 1": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 2": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 3": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 7": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 64": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 1024": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer whole": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 1": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 2": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 3": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 7": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 64": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 1024": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      }
+    },
+    "expat": {
+      "XML_Parse whole": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 1": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 2": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 3": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 7": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 64": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_Parse 1024": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer whole": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 1": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 2": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 3": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 7": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 64": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      },
+      "XML_ParseBuffer 1024": {
+        "ACCEPT": 48,
+        "REJECT": 45
+      }
+    }
+  },
+  "same_in_all_chunkings": {
+    "xpact": 92,
+    "expat": 92
+  },
+  "problems": []
+}

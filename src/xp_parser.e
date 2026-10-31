@@ -2223,7 +2223,23 @@ feature {NONE} -- Markup parsing
 							if l_subset_end = 0 then
 								set_error ("unterminated internal subset")
 							elseif skip_spaces (a_input, l_subset_end + 1) /= l_end then
-								set_error ("unexpected content after internal subset")
+									-- A `]' that does not end the DOCTYPE: deliver the complete declarations in
+									-- front of it first, then report it at that `]', as Expat does (#173).
+								create l_subset.make_from_string (a_input.substring (l_subset_start + 1, l_subset_end - 1))
+								l_previous_subset_offset := dtd_subset_position_offset
+								dtd_subset_position_offset := l_subset_start
+								process_internal_subset_prefix (l_subset, False)
+								dtd_subset_position_offset := l_previous_subset_offset
+								if not has_error and not is_suspended then
+									if is_all_xml_space (l_subset.substring (complete_dtd_prefix_end (l_subset) + 1, l_subset.count)) then
+											-- The `]' ends the subset; Expat reports the content after it.
+										note_position (skip_spaces (a_input, l_subset_end + 1))
+									else
+											-- The `]' is inside a declaration; Expat reports the `]'.
+										note_position (l_subset_end)
+									end
+									set_error ("unexpected content after internal subset")
+								end
 							else
 								create l_subset.make_from_string (a_input.substring (l_subset_start + 1, l_subset_end - 1))
 								l_previous_subset_offset := dtd_subset_position_offset
