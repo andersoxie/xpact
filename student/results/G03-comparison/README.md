@@ -3,6 +3,7 @@
 > **Issue:** [#169](https://github.com/andersoxie/xpact/issues/169) (task G03, week 7) · **Date:** 2026-10-31
 > **Revision:** `f985102` (`student-Mass` = `main` + #166) · **Findings:** [#170](https://github.com/andersoxie/xpact/issues/170)-[#176](https://github.com/andersoxie/xpact/issues/176)
 > **Status:** ✅ done · no code change to xpact
+> **Since then (2026-10-31):** the findings [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175) are fixed (each fix report has its G03 rerun: `valid-sa-079`, `ibm-valid-P11-ibm11v02.xml`, `ibm-not-wf-P51-ibm51n06.xml` match; `o-p02fail15/27` now differ only in position, [#171](https://github.com/andersoxie/xpact/issues/171)). The table below is the state on `f985102`; a rerun on the fixed code is planned.
 
 ## 🚦 In short
 
