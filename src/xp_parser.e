@@ -1403,7 +1403,13 @@ feature {NONE} -- Markup parsing
 							else
 								note_position (name_start)
 							end
-							if handler.wants_end_element_default then
+								-- Only an end tag that closes the open element reaches the default handler;
+								-- a mismatched one is an error first, as in Expat (#125).
+							if
+								handler.wants_end_element_default
+								and then element_stack.count > entity_element_floor
+								and then open_element_matches_range (a_input, name_start, name_end)
+							then
 								emit_default_range (a_input, a_start_index, i)
 							end
 							if not namespace_mode and then not handler.wants_end_element_events then
