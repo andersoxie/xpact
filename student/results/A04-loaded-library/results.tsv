@@ -1,0 +1,17 @@
+id	runner	configuration	expected	observed	verdict	exit_code	seconds	processes
+dll-build-production	DLL build + C DLL smoke test (`build_native_eiffel.ps1`)	Production tier	normal	normal	ok	0	943.7	379
+dll-build-assertions	DLL build + C DLL smoke test (`build_native_eiffel.ps1`)	Assertions tier	assertions	assertions	ok	0	940.6	403
+csharp-normal	C# P/Invoke DLL tests (`XpactDllTests.exe`)	`--dll build\native-eiffel\xpact.dll`	normal	normal	ok	0	1.1	19
+csharp-default	C# P/Invoke DLL tests (`XpactDllTests.exe`)	no `--dll` (default)	assertions	assertions	ok	0	0.7	19
+abi-windows	Native ABI smoke tests (`run_native_abi_tests.ps1`)	`-Target Windows`	bridge-only	bridge-only	ok	0	907.4	114
+chunked-crc	Chunked CRC harness (`run_chunked_crc_harness.ps1`)	`-Target Xpact -Repeat 1`	normal	normal	ok	0	935.4	370
+shim-audit	Incremental shim audit (`run_incremental_shim_audit.ps1`)	default	normal	normal	ok	0	932.7	385
+libexpat-adapter-jenkins	Expat's C tests against xpact (`run_libexpat_adapter.ps1 -Mode NativeSuite`)	`-XpactLibrary build\native-eiffel\xpact.lib`, as Jenkins	normal	normal	ok	1	911.5	625
+libexpat-adapter-default	Expat's C tests against xpact (`run_libexpat_adapter.ps1 -Mode NativeSuite`)	no `-XpactLibrary` (default), after the ABI tests	normal	bridge-only	MISMATCH	1	910.6	567
+jenkins-benchmarks	Jenkins Benchmarks stage (`run_benchmarks.ps1 -W3cAllCases`)	default `-EiffelBuild` (Finalized, FinalizedAssertions, as Jenkins) `-SkipBuild -SkipWslC`, 1 iteration, 2 repetitions (1 fails, see the README)	assertions + normal	assertions + normal	ok	0	293.6	1078
+large-xml	Large XML benchmarks (`run_large_xml_benchmarks.ps1`)	one small file, `-SkipBuild -SkipWslC`	normal	normal	ok	0	903.5	65
+contributed-examples	Contributed examples (`run_contributed_examples.ps1`)	default	no xpact DLL	no xpact DLL	ok	0	916.9	249
+package	Windows release package (`package_windows_release.ps1`)	`-SkipBuild`	no xpact DLL	no xpact DLL	ok	0	2.2	1
+python-suite	Python test suite (`unittest discover tests/python`)	default	any known build	no xpact DLL	ok	0	941.4	413
+eiffel-matrix	Eiffel test matrix (`run_eiffel_test_matrix.ps1`)	all build modes, assertions off and on	no xpact DLL	no xpact DLL	ok	0	959.6	429
+student-test1	Student tool: W3C output test (`reports/issue-0154/tools/run.py`)	default `--dll`	normal	normal	ok	0	3.2	3

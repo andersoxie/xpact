@@ -1,0 +1,8 @@
+# A04 student-test1: C:\Users\masou\AppData\Local\Programs\Python\Python314\python.exe -I C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\reports\issue-0154\tools\run.py --out C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\test1
+# 3 processes, 3.2 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     1 x python.exe -> build\native-eiffel\xpact.dll [normal, 875b5664e5e9a0c6]
+
+## processes started (image [sha256 when under the repository])
+     3 x C:\Users\masou\AppData\Local\Programs\Python\Python314\python.exe

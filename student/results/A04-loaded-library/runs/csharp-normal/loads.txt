@@ -1,0 +1,10 @@
+# A04 csharp-normal: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\dotnet\XpactDllTests\bin\Release\net10.0\XpactDllTests.exe --dll C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\native-eiffel\xpact.dll --out C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\csharp-normal
+# 19 processes, 1.1 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     8 x XpactDllTests.exe -> build\native-eiffel\xpact.dll [normal, 23854731670c2786]
+
+## processes started (image [sha256 when under the repository])
+     9 x build\dotnet\XpactDllTests\bin\Release\net10.0\XpactDllTests.exe [730dd3a2d84fc876]
+     8 x C:\Windows\System32\conhost.exe
+     2 x C:\Program Files\Git\mingw64\bin\git.exe

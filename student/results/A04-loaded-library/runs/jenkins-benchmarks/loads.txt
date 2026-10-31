@@ -1,0 +1,20 @@
+# A04 jenkins-benchmarks: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_benchmarks.ps1 -Iterations 1 -Repetitions 2 -SkipBuild -SkipWslC -W3cAllCases -OutputDir build\a04\benchmarks
+# 1078 processes, 293.6 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     1 x xpact_native_windows_c_benchmark.exe -> build\native-eiffel\xpact.dll [normal, 875b5664e5e9a0c6]
+    38 x xpact_w3c_case.exe -> build\a04\benchmarks\w3c-dll\FinalizedAssertions\xpact_assertions.dll [assertions, c255a20b888566f2]
+     7 x xpact_w3c_case.exe -> build\a04\benchmarks\w3c-dll\Finalized\xpact.dll [normal, 875b5664e5e9a0c6]
+
+## processes started (image [sha256 when under the repository])
+   898 x EIFGENs\xpact_benchmarks_assertions\F_code\xpact_benchmarks.exe [ca91825d940eaedf]
+   124 x EIFGENs\xpact_benchmarks\F_code\xpact_benchmarks.exe [3f0130266b4c72a8]
+    38 x build\a04\benchmarks\w3c-dll\FinalizedAssertions\xpact_w3c_case.exe [7f071bdb8c81bb25]
+     7 x build\a04\benchmarks\w3c-dll\Finalized\xpact_w3c_case.exe [6a672797569ebee2]
+     2 x C:\Users\masou\AppData\Local\Programs\Python\Python314\python.exe
+     2 x C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe
+     2 x C:\Windows\System32\cmd.exe
+     2 x C:\Windows\System32\reg.exe
+     1 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+     1 x build\a04\benchmarks\xpact_native_windows_c_benchmark.exe [821f3db0cbbcff3e]
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe

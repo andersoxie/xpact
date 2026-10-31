@@ -1,0 +1,119 @@
+== contributed xpact incremental example: Eiffel build ==
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+System.Management.Automation.RemoteException
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Freezing System Changes
+Degree -1: Generating Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\examples\contributed\xpact-incremental-example\EIFGENs\classic\W_code
+== contributed xpact incremental example: finish_freezing ==
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+big_file_C18_c.c
+big_file_C26_c.c
+big_file_C23_c.c
+big_file_C20_c.c
+big_file_C22_c.c
+big_file_C16_c.c
+eoption.c
+big_file_C17_c.c
+big_file_C24_c.c
+big_file_C21_c.c
+big_file_C19_c.c
+big_file_C25_c.c
+epattern.c
+big_file_C15_c.c
+big_file_C14_c.c
+big_file_C13_c.c
+big_file_C12_c.c
+big_file_C11_c.c
+big_file_C10_c.c
+big_file_C9_c.c
+big_file_C8_c.c
+big_file_C7_c.c
+big_file_C6_c.c
+big_file_C5_c.c
+efrozen.c
+ecall.c
+eplug.c
+big_file_C2_c.c
+big_file_C3_c.c
+big_file_C1_c.c
+big_file_C4_c.c
+eskelet.c
+enames.c
+evisib.c
+ececil.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+        1 file(s) copied.
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Microsoft (R) Incremental Linker Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_example.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\mtwkbench.lib" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+xpact_example.res 
+E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj E1\enames.obj 
+E1\eskelet.obj E1\eplug.obj E1\ecall.obj E1\efrozen.obj E1\epattern.obj 
+E1\eoption.obj C26\Cobj26.lib C25\Cobj25.lib C24\Cobj24.lib C23\Cobj23.lib 
+C22\Cobj22.lib C21\Cobj21.lib C20\Cobj20.lib C19\Cobj19.lib C18\Cobj18.lib 
+C17\Cobj17.lib C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib C13\Cobj13.lib 
+C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib C8\Cobj8.lib 
+C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib C3\Cobj3.lib 
+C2\Cobj2.lib C1\Cobj1.lib 
+C compilation completed
+== contributed xpact incremental example: count_tags C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\examples\contributed\xpact-incremental-example\data\sample.xml ==
+Parsing: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\examples\contributed\xpact-incremental-example\data\sample.xml
+Parsing time: 3 ms
+Tags sorted in order of occurrence count (Highest first)
+
+TAG: <title> occurrences 2
+TAG: <author> occurrences 2
+TAG: <book> occurrences 2
+TAG: <price> occurrences 2
+TAG: <bookstore> occurrences 1
+TAG: <dvd> occurrences 1
+
+
+== contributed xpact incremental example: print C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\examples\contributed\xpact-incremental-example\data\word-rdf.xml ==
+Parsing: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\examples\contributed\xpact-incremental-example\data\word-rdf.xml
+rdf:RDF:
+   ATTRIBUTES: {xmlns:rdf : "&rdf;", xmlns:a : "&a;", xmlns:b : "&b;"}
+rdf:Description:
+   ATTRIBUTES: {rdf:about : "&a;100027235", b:glossaryEntry : "the act of enrolling"}
+rdf:Description:
+   ATTRIBUTES: {rdf:about : "&a;100027339"}
+b:glossaryEntry:
+   ATTRIBUTES: {xml:space : "preserve"}
+   CDATA: "the act of appearing in public view; "the rookie made a brief appearance in the first period"; "it was Bernhardt''s last appearance in America""
+rdf:Description:
+   ATTRIBUTES: {rdf:about : "&a;100027592", b:glossaryEntry : "the act of emerging"}
+rdf:Description:
+   ATTRIBUTES: {rdf:about : "&a;100027678", b:glossaryEntry : "the act of appearing again"}
+rdf:Description:
+   ATTRIBUTES: {rdf:about : "&a;100027781"}
+b:glossaryEntry:
+   "(astronomy) the reappearance of a celestial body after an eclipse"
+Parsing time: 4 ms
+
+
+Contributed C expat tag counter WSL comparison skipped.
+Contributed examples completed. Logs written to C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\examples
