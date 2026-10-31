@@ -2360,7 +2360,11 @@ feature {NONE} -- Character data and references
 					end
 					-- The fixed marker is read-only; ordinary bytes need no prefix check.
 					if c = ']' and then has_at (a_input, i, once "]]>") then
-						set_error ("CDATA close marker in character data")
+						if is_after_document_element then
+							set_outside_document_text_error (a_input, a_start_index)
+						else
+							set_error ("CDATA close marker in character data")
+						end
 						i := a_input.count + 1
 					elseif c = '&' then
 						note_position (i)
@@ -2430,7 +2434,7 @@ feature {NONE} -- Character data and references
 							l_all_space := is_all_xml_space (l_attached_text)
 						end
 						if not l_all_space then
-							set_error ("character data outside document element")
+							set_outside_document_text_error (a_input, a_start_index)
 							Result := a_input.count + 1
 						else
 							if attached l_text as l_attached_text then
@@ -2498,15 +2502,18 @@ feature {NONE} -- Character data and references
 					l_fallback := True
 					i := a_input.count + 1
 				elseif c = ']' and then has_at (a_input, i, once "]]>") then
-					note_position (i)
-					set_error ("CDATA close marker in character data")
+					if is_after_document_element then
+						set_outside_document_text_error (a_input, a_start_index)
+					else
+						note_position (i)
+						set_error ("CDATA close marker in character data")
+					end
 					i := a_input.count + 1
 				elseif (l_code >= 32 and l_code < 128) or else l_code = 9 or else l_code = 10 then
 					if l_outside_document and then l_all_space then
 						l_all_space := is_xml_space_ascii (c)
 						if not l_all_space then
-							note_position (i)
-							set_error ("character data outside document element")
+							set_outside_document_text_error (a_input, i)
 							i := a_input.count + 1
 						else
 							i := i + 1
@@ -2530,8 +2537,7 @@ feature {NONE} -- Character data and references
 					if l_outside_document and then l_all_space then
 						l_all_space := is_xml_space (c)
 						if not l_all_space then
-							note_position (i)
-							set_error ("character data outside document element")
+							set_outside_document_text_error (a_input, i)
 							i := a_input.count + 1
 						else
 							i := i + 1
@@ -2593,7 +2599,11 @@ feature {NONE} -- Character data and references
 					l_pending_literal_position := 0
 				end
 				if c = ']' and then has_at (a_input, i, once "]]>") then
-					set_error ("CDATA close marker in character data")
+					if is_after_document_element then
+						set_outside_document_text_error (a_input, a_start_index)
+					else
+						set_error ("CDATA close marker in character data")
+					end
 					i := a_input.count + 1
 				elseif c = '&' then
 					note_position (i)
@@ -2660,7 +2670,7 @@ feature {NONE} -- Character data and references
 						l_all_space := is_all_xml_space (l_attached_text)
 					end
 					if not l_all_space then
-						set_error ("character data outside document element")
+						set_outside_document_text_error (a_input, a_start_index)
 						Result := a_input.count + 1
 					else
 						if attached l_text as l_attached_text then
@@ -7384,6 +7394,31 @@ feature {NONE} -- Character and name validation
 			-- Is `c' normalized ASCII XML whitespace?
 		do
 			Result := c = ' ' or c = '%T' or c = '%N'
+		end
+
+	is_after_document_element: BOOLEAN
+			-- Is the parser in the main document, after its document element?
+		do
+			Result := element_stack.count = 0 and then not parsing_external_entity and then document_element_count > 0
+		end
+
+	set_outside_document_text_error (a_input: READABLE_STRING_8; a_start_index: INTEGER)
+			-- Report the text that starts at `a_start_index' outside the document element, at its first
+			-- character that is not white space, with or without callbacks (#124). After the document
+			-- element it is Expat's "junk after document element" (code 9); before it, character data
+			-- that is not allowed there.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+		do
+			note_position (skip_spaces (a_input, a_start_index).min (a_input.count))
+			if is_after_document_element then
+				set_error ("junk after document element")
+			else
+				set_error ("character data outside document element")
+			end
+		ensure
+			error_set: has_error
 		end
 
 	is_all_xml_space (a_text: READABLE_STRING_8): BOOLEAN

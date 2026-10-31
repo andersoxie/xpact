@@ -2556,6 +2556,8 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_duplicate_attribute
 			elseif a_error.same_string ("multiple document elements") then
 				Result := Xml_error_junk_after_doc_element
+			elseif a_error.same_string ("junk after document element") then
+				Result := Xml_error_junk_after_doc_element
 			elseif a_error.same_string ("undefined entity") then
 				Result := Xml_error_undefined_entity
 			elseif a_error.same_string ("recursive entity reference") then

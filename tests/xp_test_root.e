@@ -1393,6 +1393,10 @@ feature {NONE} -- Tests
 			assert ("multiple roots error", l_parser.last_error.same_string ("multiple document elements"))
 			assert ("non-whitespace outside root rejected", not l_parser.parse ("text<a/>"))
 			assert ("outside root error", l_parser.last_error.same_string ("character data outside document element"))
+			assert ("text after root rejected", not l_parser.parse ("<a/>text"))
+			assert ("text after root error", l_parser.last_error.same_string ("junk after document element"))
+			assert ("CDATA close after root rejected", not l_parser.parse ("<a/> ]]>"))
+			assert ("CDATA close after root error", l_parser.last_error.same_string ("junk after document element"))
 		end
 
 	test_token_slice_abstraction
