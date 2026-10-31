@@ -1,0 +1,59 @@
+﻿> powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_benchmarks.ps1 -Iterations 1 -Repetitions 3 -SkipBuild -SkipWslC -W3cAllCases -OutputDir build\fix180\after-r3
+xpact_native_c_benchmark.c
+Benchmark medians written to C:\Users\masou\Desktop\Lia\xpact\xpactGit\docs\benchmarks.md
+Raw benchmark rows written to C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix180\after-r3\benchmark-results.tsv
+| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1 | 2611 | 7.604 | 131.513 | 0.327 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1 | 2611 | 8.57 | 116.685 | 0.291 | Parser object reused; no-op event handler; finalized Eiffel C compilation; calls parse_without_garbage_collection |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled | Phase 1 finalized assertions | 1 | 2611 | 11.08 | 90.252 | 0.225 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled, GC suspended during parse | Phase 1 finalized assertions | 1 | 2611 | 10.949 | 91.333 | 0.227 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled; calls parse_without_garbage_collection |
+| catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 1 | 2611 | 227.89 | 4.388 | 0.011 | Parser created per document; Python callbacks |
+| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1 | 2611 | 1112.902 | 0.899 | 0.002 | Parser created per document; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1 | 1 | 2611 | 14.41 | 69.396 | 0.173 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1 | 1 | 2611 | 12.063 | 82.899 | 0.206 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL, parser reused | expat_2.8.1 | 1 | 2611 | 13.698 | 73.006 | 0.182 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | expat_2.8.1 | 1 | 2611 | 12.05 | 82.99 | 0.207 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents |
+xpact_w3c_case.c
+xpact_w3c_case.c
+W3C XML: Finalized: 2585 catalog cases
+  Finalized: 250/2585
+  Finalized: 500/2585
+  Finalized: 750/2585
+  Finalized: 1000/2585
+  Finalized: 1250/2585
+  Finalized: 1500/2585
+  Finalized: 1750/2585
+  Finalized: 2000/2585
+  Finalized: 2250/2585
+  Finalized: 2500/2585
+W3C XML: FinalizedAssertions: 2585 catalog cases
+  FinalizedAssertions: 250/2585
+  FinalizedAssertions: 500/2585
+  FinalizedAssertions: 750/2585
+  FinalizedAssertions: 1000/2585
+  FinalizedAssertions: 1250/2585
+  FinalizedAssertions: 1500/2585
+  FinalizedAssertions: 1750/2585
+  FinalizedAssertions: 2000/2585
+  FinalizedAssertions: 2250/2585
+  FinalizedAssertions: 2500/2585
+{"engine": "Finalized", "total": 2585, "passed": 0, "no_crash_only": 76, "failed": 0, "errors": 2509, "skipped": 0, "accepted": 46, "rejected": 30, "known": 0, "unexpected": 2509, "elapsed_ms": 69830.553}
+{"engine": "FinalizedAssertions", "total": 2585, "passed": 0, "no_crash_only": 73, "failed": 0, "errors": 2512, "skipped": 0, "accepted": 44, "rejected": 29, "known": 0, "unexpected": 2512, "elapsed_ms": 102481.863}
+W3C XML reports: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix180\after-r3\w3c-xml-conformance
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+W3C XML conformance has unexpected results (not in the known-failures list, or a listed case changed). See 
+C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix180\after-r3\w3c-xml-conformance\summary.md and junit.xml for 
+per-case results.
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_benchmarks.ps1:647 char:3
++         throw "W3C XML conformance has unexpected results (not in the ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (W3C XML conform...r-case results.:String) [], RuntimeException
+    + FullyQualifiedErrorId : W3C XML conformance has unexpected results (not in the known-failures list, or a listed  
+   case changed). See C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix180\after-r3\w3c-xml-conformance\summary.md   
+  and junit.xml for per-case results.
+ 
+exit=1 seconds=191.2
