@@ -107,7 +107,9 @@ git branch -D fix/29-w3c-assertions
   Example, 2026-10-22: #36 → #41 → #42 → #44.
 - After a merge, check the result on `student-Mass`, then close the issue by
   hand with "Fixed in `<sha>` (PR #N)", and fill in the commit in
-  [`reports/README.md`](../reports/README.md).
+  [`reports/README.md`](../reports/README.md). No Jenkins run and no merge
+  into `main` is needed before closing (student decision, 2026-10-31); the
+  local check is the evidence.
 
 ## Reverting a fix
 
