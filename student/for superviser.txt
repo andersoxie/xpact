@@ -1,59 +1,53 @@
-STATUS FOR SUPERVISOR - 2026-10-26 (week 4)
-student-Mass @ 97795fb, 0 commits behind main @ de01371 (main untouched by the student)
+STATUS FOR SUPERVISOR - 2026-10-31 (week 7)
+student-Mass @ c12b705, includes all of main (main untouched by the student)
 Repo: github.com/andersoxie/xpact   Plan + known problems: student/PLAN.md   Index: reports/README.md
-(The 2026-10-22 version of this page is in the git history.)
+Weekly notes: student/notes/weekly/ (weeks 1-7)
+(Earlier versions of this page are in the git history.)
 
 IN ONE LINE
 -----------
-  Everything builds and every test passes on the student PC with assertions on:
-  Eiffel matrix 4/4, C# DLL tests 3,360/3,360 on both DLLs, W3C 1,727/1,727 in
-  both finalized builds, 178 Python tests. Waiting for a Jenkins rerun.
+  Weeks 1-7 done. You merged student-Mass into main and Jenkins passed (PR #177).
+  W3C: 2,585 cases, 0 failed. xpact gives Expat 2.8.1's verdict in every comparison.
 
-DONE SINCE 2026-10-22
----------------------
-  [x] #80  Parser conformance repair (strict UTF-8, UTF-16, names, DTD
-           declarations, DLL start-tag shortcut): fixes #38, #39, #40, K3 and the
-           47 W3C crashes. Merged by you into main (366460d).
-  [x] #12  B03 (one line), merged by you. #3 verified and closed 2026-10-26.
-  [x] #75  Jenkins DLL build: our #2/#10 fixes had replaced your C:\El2502E
-           fallback; both paths are searched now (#73).
-  [x] #103, #111  main (your #82-#101) merged into student-Mass, no conflicts.
-  [x] #104 Full check of the merged code, all with assertions on   (PR #105)
-  [x] #110 Same checks after #101 (parser performance), built with MSVC: all pass
-  [x] #113 Student PC set up like yours where possible: ISE_C_COMPILER=msc_vc140
-           (it had disappeared, so the matrix and W3C had been built with MinGW),
-           Python 3.14.0, git and Windows long paths on. Still different on
-           purpose: EiffelStudio 25.12 Standard (yours 25.02.9.8723 Enterprise)
-           and MSVC 19.51 (yours 19.44.35229).                    (PR #114)
-  [x] #106, #108  Weeks 2-3 closed out; the 6 missing labels created; project
-           board brought up to date.
-  Every item: issue -> branch -> expected result written first -> report with
-  logs in reports/issue-NNNN/ -> pull request into student-Mass.
+DONE IN WEEKS 6-7
+-----------------
+  [x] Week 6: all 2,585 W3C cases run with no skips, the 7 bugs this showed fixed
+      (#146), entity-reference speed (#148), joined with your main (#151, PR #152)
+  [x] W3C output test: 359 -> 399 of 432 right (#154-#159)
+  [x] W3C in pieces: callbacks sent twice when input came in pieces, fixed (#165)
+  [x] G03: 93 cases x 14 ways of feeding, same verdict as Expat in all 1,302 (#169)
+  [x] A04: which DLL each of 16 test runners loads; the one wrong one fixed (#179)
+  [x] Comparison findings fixed, each checked on both builds against Expat:
+      #122 #124 #125 #172 #173 #174 #175 (one issue, one pull request each)
+  [x] Your main (PR #167) brought into student-Mass (#188)
+  [x] #88, #90, #93 closed: your PRs on main already did them (checked in the code)
 
-ANSWERED SINCE 2026-10-22 (thank you)
-------------------------------------
-  - Build fixes into main: you merged student-Mass into main (#72, #78).
-  - #12 (B03): merged.
-  - Parser repairs #28, #38, #39, #40: done in #59 and #80, merged.
-  - Labels: kept. The student created the last 6 from labels.json on 2026-10-26
-    (group:A-orientation, group:F-core, group:G-verification, D1-beginner,
-    D4-expert, type:blocker). Tell me if any should go.
+HOW FIXES ARE CHECKED NOW
+-------------------------
+  Every parser fix: a probe against Expat 2.8.1, G03, the C# DLL tests (4,308 cases,
+  field by field against Expat), all W3C verdicts and the output test through the
+  DLL, Expat's own C tests (399 checks, the same 38 allocator failures), the Eiffel
+  test matrix and the Python suite; both builds. Report and logs in
+  reports/issue-NNNN/. An issue is closed after this local check (no Jenkins run).
+  Note: these parser fixes are merged into student-Mass without a separate review
+  by you; please review them when you next merge student-Mass into main.
 
 QUESTIONS FOR YOU
 -----------------
-  1. Jenkins rerun: please run the xpact job once on main after merging
-     student-Mass, so #73 (DLL include path), #74 (PR #76, keep your MSVC
-     backend - still to merge) and #79 (W3C/DLL repair) can be confirmed and
-     closed.
-  2. Which ISE_C_COMPILER does Jenkins use (msc or msc_vc140)? Are the version
-     differences above acceptable, or should the student match 25.02 / VS 2022
-     exactly? (25.02.9.8723 is not published; Enterprise needs a licence.)
-  3. Week 2 decision, still open: the one main improvement and the small input
-     set. Proposal: G01 (50-100 W3C cases with written expectations) as the
-     input set; the improvement to be agreed.
-  4. Jenkins "Eiffel Tests" turns green without printing a test result: the
-     stage runs ec without finish_freezing, and on the student PC that ran a
-     stale xpact_tests.exe that printed nothing and exited 0. File it?
-  5. SonarQube on Jenkins answers HTTP 401: the token needs renewing (yours).
-  6. tests/python/run_w3c_conformance.py is an old copy of the runner that
-     nothing uses (added by the student in #29). Remove it?
+  1. Speed (F05-1): the DLL is 25-40x slower than Expat on a whole document and
+     re-parses markup on every XML_Parse call (8 KB, one byte per call: 58 s,
+     Expat 5 ms). Plain text is already incremental since your 4840b27.
+     XP_INCREMENTAL_PARSE_SESSION is a prototype the DLL does not use.
+     Do you have newer incremental work that is not pushed? Which way do you want:
+     small speed-ups, a checkpoint/resume step, or finishing the prototype?
+  2. #171 (error columns differ from Expat in many places) and #13 (GC wrapper
+     swallows exceptions): fix them, narrow them, or leave them to you?
+  3. Which ISE_C_COMPILER does Jenkins use (msc or msc_vc140)? (still open from
+     week 4)
+  4. #130 (Jenkins "Eiffel Tests" green without a result) and #131 (SonarQube
+     HTTP 401) are filed; both need you.
+
+STILL OPEN (saved in PLAN.md, "Next" item 12)
+----------
+  #197 test 2 on several cores (in progress) · one benchmark run for the newest
+  fixes · #176 with the rest of #123 · #170 · #126 · #171 · #13

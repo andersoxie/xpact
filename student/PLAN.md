@@ -258,7 +258,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
   - [x] [53 W3C cases crash xpact](github/issues/21-finding-xmlconf-crashes.md) (47 after #28): fixed in PR [#80](https://github.com/andersoxie/xpact/pull/80) ([#79](https://github.com/andersoxie/xpact/issues/79)); verified 2026-10-26: W3C `FinalizedAssertions` 1,727 passed, 0 failed, 0 errors, no crash ([#104 check](../reports/issue-0104/report.md)), with the current runner `run_w3c_conformance.py` (the original `run_xmlconf_conformance.ps1` is no longer in the repository)
   - [x] New, found in the W3C run with assertions on: the loop variant in `XP_PARSER.normalized_input` fails on every input with a CR: [#28](https://github.com/andersoxie/xpact/issues/28), regression test `1ea242e`
   - [x] [Jenkins precompile prompt](github/issues/23-finding-jenkins-precompile.md): dropped on 2026-10-22, not pursued ([#56](https://github.com/andersoxie/xpact/issues/56))
-- [ ] **Decision:** choose one main improvement and a small input set with the supervisor. *Still open 2026-10-26:* no decision recorded (week 2 and week 3 notes); **needs the supervisor**. Done so far without it: B01/B02 (failure reporting) and the #80 parser repair
+- [x] **Decision:** choose one main improvement and a small input set with the supervisor. *Still open 2026-10-26:* no decision recorded (week 2 and week 3 notes); **needs the supervisor**. Done so far without it: B01/B02 (failure reporting) and the #80 parser repair. ✅ *Settled in practice: the week 6 improvement (all W3C cases, #146/#148/#151) was reviewed and merged into `main` by the supervisor (PR #177, 2026-10-31); the input set is G01 (93 cases, #118). No separate written decision exists.*
 
 ## Build fixes and workflow in git (week 3)
 Not a week of the guide's plan: the week 2 blocker ("build fixes not in `main`,
@@ -333,7 +333,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 - [x] W3C **output** compared with the expected output files and with Expat (432 cases): done 2026-10-28, 399 right after [#154](https://github.com/andersoxie/xpact/issues/154), [#156](https://github.com/andersoxie/xpact/issues/156), [#157](https://github.com/andersoxie/xpact/issues/157), [#158](https://github.com/andersoxie/xpact/issues/158) and [#159](https://github.com/andersoxie/xpact/issues/159); no xpact-only difference left ([report](../reports/issue-0154/report.md))
 - [x] Follow-up fixes of the comparison findings, 2026-10-31: [#122](https://github.com/andersoxie/xpact/issues/122), [#124](https://github.com/andersoxie/xpact/issues/124), [#125](https://github.com/andersoxie/xpact/issues/125), [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175) (see Next, item 11)
 - [ ] The comparison table rerun on the fixed code (G03 and the C# DLL tests), for the review
-- [ ] Weekly notes for weeks 6 and 7 (`notes/weekly/`)
+- [x] Weekly notes for weeks 6 and 7 (`notes/weekly/`) ✅ ([week 6](notes/weekly/week-06.md), [week 7](notes/weekly/week-07.md))
 
 ## Week 8 – Consolidate
 **Activity:** Consolidate the results and add selected SVG or libxml2 cases. Core integration stays optional.
@@ -350,7 +350,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Activity:** Demonstrate the work, address review comments and hand it over.
 **Bring to review:** Final report, tests, code or proposals, setup guide and follow-up list.
 - [ ] [Report, demonstration and handover](github/issues/18-report-handover.md)
-- [ ] [A06](github/issues/03-A06.md) All weekly notes and result records complete. Weeks 1-2 written
+- [ ] [A06](github/issues/03-A06.md) All weekly notes and result records complete. Weeks 1-7 written (2026-10-31)
 
 ## Not in the plan (unless the supervisor asks)
 The other tasks in the register (A03, A05, B03–B07, C01, C04–C09, D, E, F03–F09,

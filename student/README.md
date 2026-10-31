@@ -5,9 +5,10 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-> **Updated 2026-10-26 (week 4)** · describes `student-Mass` @ `97795fb`, 0 behind `main`.
-> Weeks 1-3 ✅ · every build and test passes with assertions on (#104, #110) ·
-> #3, #38, #39, #40 fixed and closed · waiting for a Jenkins rerun (#73, #74, #79) · #13 ⏸ on hold.
+> **Updated 2026-10-31 (week 7)** · describes `student-Mass` @ `c12b705`, which includes all of `main`.
+> Weeks 1-7 ✅ (week 7: one table rerun left) · W3C 2,585 cases, 0 failed · the supervisor merged
+> `student-Mass` into `main` and Jenkins passed (PR #177) · open problems and the left-to-do list:
+> [PLAN.md](PLAN.md) ("Known problems", "Next" item 12) · #13 ⏸ on hold.
 
 ## Start here
 
@@ -25,7 +26,7 @@ folder, so it stays separate from the parser code. The plan, the task register
 |---|---|
 | Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
 | Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
-| The newest test results (everything, 2026-10-26) | [`../reports/issue-0110/`](../reports/issue-0110/report.md) (merged code, MSVC); first DLL run: [`results/dll-tests-2026-10-22/`](results/dll-tests-2026-10-22/README.md) |
+| The newest test results | W3C, all 2,585 cases: [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md) · xpact vs Expat across chunks: [`results/G03-comparison/`](results/G03-comparison/README.md) · each fix since: [`../reports/README.md`](../reports/README.md) |
 | A one-page status for the supervisor | [`for superviser.txt`](for%20superviser.txt) |
 | Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
 | What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |
@@ -35,22 +36,23 @@ folder, so it stays separate from the parser code. The plan, the task register
 | Issues not on GitHub yet | [`github/issues/`](github/issues/), listed in [`github/README.md`](github/README.md) |
 | How to make and revert a fix | [VERSIONING.md](VERSIONING.md) |
 
-The clone on this PC is `C:\xpact\xpact-student-Mass`. Make every
-change there, never in a copied folder: a copy has no commit hash, so its
-results can't be traced.
+The clone on this PC is `C:\Users\masou\Desktop\Lia\xpact\xpactGit`
+(`xpact\w10-attr-defaults` and `xpact\w11-plan` are extra worktrees of it, used to
+build several fixes side by side). Make every change there, never in a copied
+folder: a copy has no commit hash, so its results can't be traced.
 
-## Tools on this PC (2026-10-21)
+## Tools on this PC (2026-10-31)
 
 | Tool | Where | Note |
 |---|---|---|
-| Python 3.15 | `%APPDATA%\uv\python\cpython-3.15.0-windows-x86_64-none\python.exe` | Installed with uv, **not on `PATH`**: `python` opens the Microsoft Store alias. Call it by its full path, or run `uv python install --default` once |
-| GitHub CLI 2.102 | `%LOCALAPPDATA%\Microsoft\WinGet\Packages\GitHub.cli_Microsoft.Winget.Source_8wekyb3d8bbwe\bin\gh.exe` | Installed with winget, logged in as `CodTanium`. A VS Code terminal opened before the install doesn't find `gh` until VS Code is restarted |
+| Python 3.14.0 | `%LOCALAPPDATA%\Programs\Python\Python314\python.exe` | On `PATH` as `python`; the project needs 3.11 or newer ([#113](../reports/issue-0113/report.md)) |
+| GitHub CLI 2.102 | `%LOCALAPPDATA%\Programs\GitHubCLI\bin\gh.exe` | On `PATH`, logged in as `CodTanium` |
 | EiffelStudio 25.12, Visual Studio 18 (MSVC 14.51) | standard install paths | `ec` is on `PATH`; load MSVC with `. .\scripts\import_msvc_environment.ps1` |
 
-`tools/fix.ps1` does not work in **Windows PowerShell 5.1**: git writes normal
-messages ("Already on …", push progress) to stderr, and the script stops on
-them. Until that is fixed, do its steps by hand, as described in
-[VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51).
+`tools/fix.ps1` works in **Windows PowerShell 5.1** for `start` and `finish` when it is run
+plainly. Two things still stop it: adding `2>&1` (git's normal messages on stderr then count as
+errors), and a pull request title with `""` in it (5.1 splits the argument). In those cases do the
+step by hand, as described in [VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51).
 
 ## Layout
 
@@ -86,9 +88,8 @@ Outside this folder:
 | `student-Mass` | Your integration branch. Every fix lands here as one squashed commit. |
 | `fix/<issue>-<name>` | One short-lived branch per issue, e.g. `fix/7-msvc-c-backend`, made by `fix.ps1 start` from the latest `student-Mass` and deleted by `fix.ps1 merge` |
 
-A `fix/...` branch that still exists belongs to an open pull request, e.g.
-`fix/3-start-tag-loop-variant` for #12, which waits for review because it
-changes the parser.
+A `fix/...` branch that still exists belongs to an open pull request, or was merged and not
+deleted yet (the list is in [PLAN.md](PLAN.md), "Next" item 12).
 
 ## Working on one issue
 
@@ -111,8 +112,12 @@ After merging:
   on the issue and close it by hand.
 - Update [PLAN.md](PLAN.md) when a planned task changes state, and write the
   week's note in [`notes/weekly/`](notes/weekly/).
-- Parser changes (`src/`) are not merged by `fix.ps1 merge` until the parser's
-  developer has reviewed the pull request.
+- Parser changes (`src/`): at first they waited for the parser's developer. Since
+  2026-10-28 they are merged into `student-Mass` after the full check set (both builds, compared
+  with Expat 2.8.1; see each `reports/issue-NNNN/report.md`); the supervisor reviews them when he
+  merges `student-Mass` into `main`.
+- An issue is closed after the result is checked locally on `student-Mass`; no Jenkins run is
+  needed (student decision, 2026-10-31).
 
 ## What every result must record
 

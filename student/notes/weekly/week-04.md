@@ -24,12 +24,12 @@
   were settings (paths, backend, Python minimum, long paths, `-keep`).
 
 ## Blocked
-- Jenkins rerun for #73, #74, #79, and the PR #76 merge: supervisor.
-- Week 2 decision on the main improvement: supervisor.
+- Jenkins rerun for #73, #74, #79, and the PR #76 merge: supervisor. ✅ *Later: PR #76 merged; Jenkins passed on `main` 2026-10-31 (PR #177).*
+- Week 2 decision on the main improvement: supervisor. ✅ *Later: settled in practice; the week 6 improvement was reviewed and merged by the supervisor.*
 
 ## Next (rest of week 4)
 - [x] G01: 93 W3C cases with source, hash and reviewed expected result
   ([#118](https://github.com/andersoxie/xpact/issues/118), [results](../../results/G01-corpus/README.md)).
 - [x] xmlconf verdict rules: 676 of the old 854 "failures" were wrong rules
   ([#117](https://github.com/andersoxie/xpact/issues/117), [results](../../results/xmlconf-verdicts/README.md)).
-- [ ] Ask the questions in [`for superviser.txt`](../../for%20superviser.txt).
+- [ ] Ask the questions in [`for superviser.txt`](../../for%20superviser.txt). 🟡 *Still open; the list is updated for week 7.*
