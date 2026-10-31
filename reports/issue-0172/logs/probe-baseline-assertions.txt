@@ -1,0 +1,35 @@
+== bad char in content: b'<doc>abc\x11def</doc>'
+   xpact whole events=[] error=(4, 1, 0)
+   xpact split events=[('start', 'doc'), ('text', 'abc')] error=(4, 1, 0)
+   expat whole events=[('start', 'doc'), ('text', 'abc')] error=(4, 1, 8)
+   expat split events=[('start', 'doc'), ('text', 'abc')] error=(4, 1, 8)
+== bad char after child: b'<doc><a/>\x01</doc>'
+   xpact whole events=[] error=(4, 1, 0)
+   xpact split events=[('start', 'doc'), ('start', 'a'), ('end', 'a')] error=(4, 1, 0)
+   expat whole events=[('start', 'doc'), ('start', 'a'), ('end', 'a')] error=(4, 1, 9)
+   expat split events=[('start', 'doc'), ('start', 'a'), ('end', 'a')] error=(4, 1, 9)
+== bad char in attribute: b"<doc a='x\x02'/>"
+   xpact whole events=[] error=(4, 1, 0)
+   xpact split events=[] error=(4, 1, 0)
+   expat whole events=[] error=(4, 1, 9)
+   expat split events=[] error=(4, 1, 9)
+== bad char in comment: b'<doc><!-- \x03 --></doc>'
+   xpact whole events=[] error=(4, 1, 0)
+   xpact split events=[('start', 'doc')] error=(4, 1, 0)
+   expat whole events=[('start', 'doc')] error=(4, 1, 10)
+   expat split events=[('start', 'doc')] error=(4, 1, 10)
+== bad char before root: b'\x04<doc/>'
+   xpact whole events=[] error=(4, 1, 0)
+   xpact split events=[] error=(4, 1, 0)
+   expat whole events=[] error=(4, 1, 0)
+   expat split events=[] error=(4, 1, 0)
+== bad char after root: b'<doc/>\x05'
+   xpact whole events=[] error=(4, 1, 0)
+   xpact split events=[('start', 'doc'), ('end', 'doc')] error=(4, 1, 0)
+   expat whole events=[('start', 'doc'), ('end', 'doc')] error=(4, 1, 6)
+   expat split events=[('start', 'doc'), ('end', 'doc')] error=(4, 1, 6)
+== UTF-16LE like o-p02fail15: b'\xff\xfe<\x00d\x00o\x00c\x00>\x00\x11\x00<\x00/\x00d\x00o\x00c\x00>\x00'
+   xpact whole events=[] error=(4, 1, 0)
+   xpact split events=[('start', 'doc')] error=(4, 1, 0)
+   expat whole events=[('start', 'doc')] error=(4, 1, 6)
+   expat split events=[('start', 'doc')] error=(4, 1, 6)
