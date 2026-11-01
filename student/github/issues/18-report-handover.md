@@ -7,9 +7,9 @@ milestone: Week 10 - Handover
 Analyse the results, write the university report, demonstrate the work and hand it over (weeks 8–10).
 
 ## Done when
-- [ ] Draft report by week 9: question, background, method, results, limitations, next steps
-- [ ] Result tables tied to specific builds (commit + configuration)
-- [ ] Demonstration with exact commands
-- [ ] Setup guide and follow-up list
+- [x] Draft report by week 9: question, background, method, results, limitations, next steps ✅ [`FinalReport.md`](../../report/FinalReport.md) (2026-11-01)
+- [x] Result tables tied to specific builds (commit + configuration) ✅ FinalReport, Appendix B
+- [ ] Demonstration with exact commands 🟡 the commands are written (FinalReport, Appendix A); the demonstration itself is still to be held
+- [x] Setup guide and follow-up list ✅ [`setup-guide.md`](../../report/setup-guide.md), FinalReport section 13.2
 - [ ] Review comments addressed
-- [ ] All files in `student/report/`
+- [x] All files in `student/report/` ✅
