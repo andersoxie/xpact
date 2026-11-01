@@ -32,4 +32,4 @@
   ([#118](https://github.com/andersoxie/xpact/issues/118), [results](../../results/G01-corpus/README.md)).
 - [x] xmlconf verdict rules: 676 of the old 854 "failures" were wrong rules
   ([#117](https://github.com/andersoxie/xpact/issues/117), [results](../../results/xmlconf-verdicts/README.md)).
-- [ ] Ask the questions in [`for superviser.txt`](../../for%20superviser.txt). 🟡 *Still open; the list is updated for week 7.*
+- [ ] Ask the supervisor's questions. 🟡 *Still open; the current list is in [PLAN.md](../../PLAN.md), "Next", item 2.*

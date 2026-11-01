@@ -29,7 +29,7 @@ Two kinds, used together on every issue.
 | `regression` | A regression test, or something that used to work |
 | `investigation` | The cause is not confirmed yet |
 
-**Where it belongs in the task register** (created 2026-10-20 in [#24](https://github.com/andersoxie/xpact/issues/24), first without asking the supervisor; noted in [`for superviser.txt`](../for%20superviser.txt)):
+**Where it belongs in the task register** (created 2026-10-20 in [#24](https://github.com/andersoxie/xpact/issues/24), first without asking the supervisor; noted to the supervisor):
 
 | Labels | Meaning |
 |---|---|
