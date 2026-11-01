@@ -339,6 +339,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Activity:** Consolidate the results and add selected SVG or libxml2 cases. Core integration stays optional.
 **Bring to review:** Shared fixtures and comparison output, or documented integration requirements.
 - [ ] Shared fixtures and comparison output committed under `results/`
+- [ ] More test sources found online (SVG, libxml2 and others), ranked, with a suggested order: [`notes/moreTests.md`](notes/moreTests.md) (2026-11-01)
 - [ ] Optional: [F01](github/issues/19-F01.md) Core build, [F02](github/issues/20-F02.md) Core runner
 
 ## Week 9 – Analyse and draft
