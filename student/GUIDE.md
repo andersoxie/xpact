@@ -134,7 +134,7 @@ bug behind them. With them gone, every test above now runs to the end.
 |---|---|---|---|
 | 1 | ✅ **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)): one test that must fail | if a failing test still says "ok", no green result means anything | done 2026-10-22: `XPACT_META_FAIL`, every lane exits nonzero ([results](results/B02-meta-tests/README.md)) |
 | 2 | ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): failures give a nonzero exit code | same reason | done 2026-10-22 with draft 06 (#60) ([results](results/B01-nonzero-exit/README.md)) |
-| 3 | **Ask the supervisor** | decisions are theirs | [`for superviser.txt`](for%20superviser.txt), questions at the end |
+| 3 | **Ask the supervisor** | decisions are theirs | [PLAN.md](PLAN.md), "Next", item 2 |
 | 4 | **G01** (week 4): 50-100 W3C cases | an agreed regression set | from `results.tsv`: passes and failures, both builds. Not started (2026-10-26) |
 | 5 | **Expat comparison** (C03, C10, G03) | the error codes still need a real reference | needs an Expat 2.8.1 build |
 
@@ -163,7 +163,6 @@ command, the exit code. "It finished" or "it printed ok" is **not** proof.
 | [`CLAUDE.md`](../CLAUDE.md) | Your rules for reports, issues and pull requests |
 | [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md) | The assignment: plan, task register |
 | [PLAN.md](PLAN.md) | Live plan, known problems, next steps |
-| [`for superviser.txt`](for%20superviser.txt) | One page for the supervisor |
 | [baseline/BASELINE.md](baseline/BASELINE.md) | Week 2 results, K1-K5 |
 | [results/](results/README.md) | Evidence of test runs |
 | [`reports/README.md`](../reports/README.md) | Every fix and task, with its report |

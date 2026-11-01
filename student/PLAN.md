@@ -8,8 +8,7 @@ The plan comes from [`docs/xpact-student-introduction.md`](../docs/xpact-student
 ("A proposed ten week plan", "Suggested student selection"). The rules for
 issues, reports and pull requests are in [`CLAUDE.md`](../CLAUDE.md) and
 [`VERSIONING.md`](VERSIONING.md). Week 1 = 2026-10-05; review with the
-supervisor at the end of every week. [PLAN2.md](PLAN2.md) is the frozen
-record of weeks 1-2. Day-to-day status of every issue: the
+supervisor at the end of every week. Day-to-day status of every issue: the
 [project board](https://github.com/users/CodTanium/projects/3).
 
 ## At a glance
@@ -201,7 +200,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 ## ➡️ Next
 
 1. ✅ **Done 2026-10-26:** full check ([#104](https://github.com/andersoxie/xpact/issues/104)), weeks 2-3 closed out ([#106](https://github.com/andersoxie/xpact/issues/106), [#108](https://github.com/andersoxie/xpact/issues/108)), `main` synced ([#110](https://github.com/andersoxie/xpact/issues/110)), PC set up like the supervisor's ([#113](https://github.com/andersoxie/xpact/issues/113)). Every build and test passes with assertions on, with MSVC.
-2. 🟡 **Waiting for the supervisor:** ~~a Jenkins run for [#74](https://github.com/andersoxie/xpact/issues/74) (PR #76 merged 2026-10-26) and [#79](https://github.com/andersoxie/xpact/issues/79)~~ ✅ passed 2026-10-31 (PR #177); still open: the week 2 decision (main improvement and input set); the questions in [`for superviser.txt`](for%20superviser.txt).
+2. 🟡 **Waiting for the supervisor:** ~~a Jenkins run for [#74](https://github.com/andersoxie/xpact/issues/74) (PR #76 merged 2026-10-26) and [#79](https://github.com/andersoxie/xpact/issues/79)~~ ✅ passed 2026-10-31 (PR #177); still open, the questions for the supervisor (2026-11-01): (1) speed, F05-1: is there newer incremental work that is not pushed, and which way (small speed-ups, a checkpoint/resume step, or finishing `XP_INCREMENTAL_PARSE_SESSION`)?; (2) [#171](https://github.com/andersoxie/xpact/issues/171) and [#13](https://github.com/andersoxie/xpact/issues/13): fix, narrow, or leave to the supervisor?; (3) which `ISE_C_COMPILER` Jenkins uses (`msc` or `msc_vc140`); (4) [#130](https://github.com/andersoxie/xpact/issues/130) and [#131](https://github.com/andersoxie/xpact/issues/131) need the supervisor's Jenkins and SonarQube.
 3. ✅ **Week 4, G01** ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 W3C cases in [`results/G01-corpus/`](results/G01-corpus/README.md); the xmlconf verdict rules done too ([#117](https://github.com/andersoxie/xpact/issues/117)).
 4. ✅ **W3C skips (2026-10-28):** none left. All 2,585 cases run: 2,283 checked + 302 "no crash only", 0 failed, 0 errors ([#151](https://github.com/andersoxie/xpact/issues/151), PR #152). ✅ Jenkins passed on `main` @ `733688e` (PR #177); #142, #146, #148, #151 and #153 closed 2026-10-31.
 5. ✅ **Week 5 done 2026-10-26:** C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); C02 regressions ([#128](https://github.com/andersoxie/xpact/issues/128)). Open from it: findings [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) (parser work).
@@ -239,7 +238,7 @@ From [`notes/next-tests-2026-10-21.txt`](notes/next-tests-2026-10-21.txt):
 ## Week 1 – Setup
 **Activity:** Learn basic XML, the project structure and the Git workflow. Build with help.
 **Bring to review:** Setup notes and one successful example parse.
-- [x] Native build working (done outside git in weeks 1-2, see [PLAN2.md](PLAN2.md) week 1; brought into git in week 3, see [Build fixes in git](#build-fixes-and-workflow-in-git-week-3))
+- [x] Native build working (done outside git in weeks 1-2, see the [week 1 note](notes/weekly/week-01.md) and [`history/`](history/); brought into git in week 3, see [Build fixes in git](#build-fixes-and-workflow-in-git-week-3))
 - [x] First error report ([history/](history/)) and setup notes ([week-01.md](notes/weekly/week-01.md))
 - [x] [A01](github/issues/01-A01.md) Learn XML events, contracts, Git and the layout; trace one accepted and one rejected document. Done 2026-10-20 ([#18](https://github.com/andersoxie/xpact/issues/18)). Traces: [walkthrough/trace-output.txt](baseline/walkthrough/trace-output.txt). Checking tests linked and change-and-predict done 2026-10-22 ([#68](https://github.com/andersoxie/xpact/issues/68)): [results/A01-orientation/](results/A01-orientation/README.md), 2 of 3 predictions right
 

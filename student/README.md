@@ -18,7 +18,6 @@ folder, so it stays separate from the parser code. The plan, the task register
 | 2️⃣ | [PLAN.md](PLAN.md) | **Every day.** Where things stand, pull requests to merge, the known problems, next steps |
 | 3️⃣ | [`../CLAUDE.md`](../CLAUDE.md) and [VERSIONING.md](VERSIONING.md) | **Before a change.** How to report, test, branch and open a pull request |
 
-[PLAN2.md](PLAN2.md) is the frozen, detailed record of weeks 1–2 as of 2026-10-15.
 
 ## Find it fast
 
@@ -27,7 +26,7 @@ folder, so it stays separate from the parser code. The plan, the task register
 | Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
 | Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
 | The newest test results | W3C, all 2,585 cases: [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md) · xpact vs Expat across chunks: [`results/G03-comparison/`](results/G03-comparison/README.md) · each fix since: [`../reports/README.md`](../reports/README.md) |
-| A one-page status for the supervisor | [`for superviser.txt`](for%20superviser.txt) |
+| The open questions for the supervisor | [PLAN.md](PLAN.md), "Next", item 2 |
 | Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
 | What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |
 | Test results and investigations | [`results/README.md`](results/README.md) |
@@ -59,7 +58,7 @@ step by hand, as described in [VERSIONING.md](VERSIONING.md#fixps1-in-windows-po
 | Path | What goes there |
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | The project in plain words (written 2026-10-21 as `guide.txt`, updated) |
-| [`PLAN.md`](PLAN.md) / [`PLAN2.md`](PLAN2.md) | Live plan and status / frozen weeks 1–2 record |
+| [`PLAN.md`](PLAN.md) | Live plan and status |
 | [`VERSIONING.md`](VERSIONING.md) | How every fix is made: issue, branch, report, pull request, squash merge, revert |
 | [`tools/fix.ps1`](tools/fix.ps1) | Runs and checks those steps (`start`, `finish`, `merge`, `revert`, `status`) |
 | [`git/commit-template.txt`](git/commit-template.txt) | Commit message template (asks for `Refs #<issue>`) |
@@ -69,7 +68,6 @@ step by hand, as described in [VERSIONING.md](VERSIONING.md#fixps1-in-windows-po
 | [`notes/weekly/`](notes/weekly/) | Half-page weekly notes, one file per week; other notes in [`notes/`](notes/), e.g. the [tests chosen on 2026-10-21](notes/next-tests-2026-10-21.txt) |
 | [`report/`](report/) | The university report, demonstration notes and handover guide (weeks 8–10) |
 | [`github/`](github/) | Labels, milestones and issue drafts, plus `setup-github.ps1`, which creates them on GitHub |
-| [`for superviser.txt`](for%20superviser.txt) | One-page status for the supervisor |
 
 Outside this folder:
 
