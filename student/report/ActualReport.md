@@ -2,8 +2,8 @@
 
 ## A technical investigation of the xpact parser: build, assertions, conformance and comparison with Expat
 
-> **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** [University name] ✏️
-> **Company:** [Company name] ✏️ · **Supervisor:** Anders Persson ✏️ · **Internship:** 5 October – 1 November 2026 (four weeks; preparation in September)
+> **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** Medieinstitutet
+> **Company:** Bsharp · **Supervisor:** Anders Persson ✏️ · **Internship:** 6 October – 27 November 2026 (eight weeks; build preparation from September)
 > **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `student-Mass` · **Report state:** `student-Mass` @ `1280aee` (2026-11-01)
 >
 > ✅ done and verified · 🟡 partly done or waiting · 🔴 open problem · ⏭️ dropped by decision · ✏️ for the student to check or complete
@@ -14,7 +14,7 @@
 
 xpact is an XML parser written in Eiffel that offers a C interface compatible with Expat, the most widely used C XML parser. The internship's question, set by the company, was: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?**
 
-During four weeks, the work moved from making the parser build reliably on Windows, through an assertions-enabled baseline and failure reporting, to large comparisons with Expat 2.8.1. Every problem found was handled the same way: reproduce it, record the exact command and evidence, find the cause, fix it in one focused pull request, and verify the result before closing the issue.
+In the first four weeks of the eight-week internship, the work moved from making the parser build reliably on Windows, through an assertions-enabled baseline and failure reporting, to large comparisons with Expat 2.8.1. Every problem found was handled the same way: reproduce it, record the exact command and evidence, find the cause, fix it in one focused pull request, and verify the result before closing the issue.
 
 The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now runs with no skips and **0 failures** in both builds, against 1,360 crashes with assertions on at the start; xpact gives **the same verdict as Expat in every comparison made** (4,308 C-API cases, 1,302 chunked configurations); and **82 pull requests and 80 closed issues** document the work. The investigation also showed what is still missing: error positions and some events still differ from Expat, and the native library is 25–40 times slower than Expat because it re-parses its input on every call.
 
@@ -58,7 +58,7 @@ The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now 
 ## 1. Introduction
 
 ### 1.1 Background
-The internship took place at [Company name] ✏️, in a team developing **xpact**, an XML parser. The student's role was that of a junior software developer working on **testing and verification**: learning an unfamiliar codebase, building it, running and extending its tests, and reporting and fixing what the tests found. The work followed the company's ten-week student plan (`docs/xpact-student-introduction.md`). In the four weeks of the internship, weeks 1–7 of that plan were completed; this report and the handover make up weeks 8–10.
+The internship took place at **Bsharp**, from 6 October to 27 November 2026 (eight weeks), as part of the System Developer programme at **Medieinstitutet** ✏️, in a team developing **xpact**, an XML parser. The student's role was that of a junior software developer working on **testing and verification**: learning an unfamiliar codebase, building it, running and extending its tests, and reporting and fixing what the tests found. The work followed the company's ten-week student plan (`docs/xpact-student-introduction.md`). In the first four weeks of the internship (to 1 November), weeks 1–7 of that plan were completed. The remaining weeks, to 27 November, are for weeks 8–10: consolidation, this report, the demonstration and the handover.
 
 ### 1.2 Purpose of the report
 The report documents and analyses the technical work: how the problems were found, what caused them, how they were solved and how each solution was verified. It also evaluates what the tests prove and what they do not, and reflects on what was learned.
@@ -127,7 +127,7 @@ The parser must accept every well-formed document and reject every malformed one
 ### 3.4 Limitations
 - One machine (Windows 11, MSVC). Jenkins runs were made by the supervisor.
 - Parser repairs were meant for experienced developers. From week 6, fixes found by the comparisons were made by the student and verified against Expat, but not separately reviewed by the parser's author before merging into `student-Mass` (see [section 9.4](#94-review-and-continuous-integration)).
-- The time: weeks 1–7 of a ten-week plan were done in four weeks.
+- The time: weeks 1–7 of a ten-week plan were done in the first four of the eight internship weeks; this report describes the state on 1 November 2026.
 
 ---
 
@@ -175,18 +175,18 @@ Most findings in weeks 5–7 came from **differential testing**: the same input 
 
 ## 6. Work performed
 
-The internship covered weeks 1–7 of the ten-week plan in four calendar weeks. Weeks 4–7 were started early, as the work allowed.
+The internship runs for eight weeks, 6 October – 27 November 2026. Weeks 1–7 of the ten-week plan were done in its first four calendar weeks; weeks 4–7 were started early, as the work allowed. The rest of the internship is for weeks 8–10.
 
 | Plan week | When | Main focus | Status |
 |---|---|---|---|
-| 1 Setup | Sept – 9 Oct | Build on Windows, learn the structure | ✅ |
+| 1 Setup | 6–9 Oct (preparation from Sept) | Build on Windows, learn the structure | ✅ |
 | 2 Baseline | 12–16 Oct | Assertions-enabled baseline, event traces | ✅ |
 | 3 Failure reporting | 19–23 Oct | Build fixes into git, B01/B02, the CR repair, first DLL tests | ✅ |
 | 4 Input matrix | 26 Oct | Full check of the merged code, G01 (93 W3C cases) | ✅ |
 | 5 Regressions | 26 Oct | C02, C03, C10 compared with Expat (4,308 cases) | ✅ |
 | 6 One improvement | 27–30 Oct | All 2,585 W3C cases run; W3C output; input in pieces | ✅ |
 | 7 Comparison | 31 Oct | G03, A04, the comparison findings fixed | ✅ (one table rerun left) |
-| 8–10 | 1 Nov → | Consolidation, report, demonstration, handover | 🟡 this report |
+| 8–10 | 2–27 Nov | Consolidation, report, demonstration, handover | 🟡 this report |
 
 <details>
 <summary><b>Week 1 – Project familiarisation and environment setup</b></summary>
@@ -513,7 +513,7 @@ The results suggest that xpact is now **correct where it matters most** (the ver
 ## 13. Conclusion and future work
 
 ### 13.1 Conclusion
-In four weeks the project went from a parser that did not build reliably and crashed on 1,360 W3C cases with assertions on, to a parser that runs the whole W3C suite without a failure and gives Expat's verdict in every comparison, with tests and evidence that another developer can rerun. The main question can now be answered with data rather than claims.
+In the first four weeks of the eight-week internship, the project went from a parser that did not build reliably and crashed on 1,360 W3C cases with assertions on, to a parser that runs the whole W3C suite without a failure and gives Expat's verdict in every comparison, with tests and evidence that another developer can rerun. The main question can now be answered with data rather than claims.
 
 ### 13.2 Future work
 
@@ -547,7 +547,7 @@ In four weeks the project went from a parser that did not build reliably and cra
 
 [6] Eiffel Software, *EiffelStudio 25.12 documentation*. [Online]. Available: https://www.eiffel.org/documentation
 
-[7] [Company name] ✏️, *Xpact student introduction: a ten week university assignment*, internal document `docs/xpact-student-introduction.md`, 27 Sept. 2026.
+[7] Bsharp, *Xpact student introduction: a ten week university assignment*, internal document `docs/xpact-student-introduction.md`, 27 Sept. 2026.
 
 [8] S. Chacon and B. Straub, *Pro Git*, 2nd ed. Apress, 2014. [Online]. Available: https://git-scm.com/book
 
