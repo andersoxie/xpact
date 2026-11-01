@@ -1,7 +1,7 @@
 # Internship Report (short version): Building Confidence in an XML Parser
 
-> **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** [University name] ✏️
-> **Company:** [Company name] ✏️ · **Supervisor:** Anders Persson ✏️ · **Internship:** 5 October – 1 November 2026
+> **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** Medieinstitutet
+> **Company:** Bsharp · **Supervisor:** Anders Persson ✏️ · **Internship:** 6 October – 27 November 2026 (eight weeks)
 > **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `student-Mass` · **Full report:** [ActualReport.md](ActualReport.md)
 >
 > ✅ done and verified · 🟡 partly done · 🔴 open · ⏭️ dropped by decision · ✏️ for the student to complete
@@ -9,7 +9,7 @@
 ---
 
 ## Abstract
-xpact is an XML parser written in Eiffel with a C interface compatible with **Expat**, the standard C XML parser. The internship asked: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?** In four weeks the work went from making the parser build on Windows, through an assertions-enabled baseline and reliable failure reporting, to large comparisons with Expat 2.8.1. Every problem was reproduced, explained, fixed in one focused pull request and verified before its issue was closed. Result: the whole W3C conformance suite (**2,585 cases**) runs with **0 failures**, and xpact gives **the same verdict as Expat in every comparison**. Error positions, some events and speed still differ from Expat.
+xpact is an XML parser written in Eiffel with a C interface compatible with **Expat**, the standard C XML parser. The internship asked: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?** In the first four weeks of the eight-week internship at Bsharp, the work went from making the parser build on Windows, through an assertions-enabled baseline and reliable failure reporting, to large comparisons with Expat 2.8.1. Every problem was reproduced, explained, fixed in one focused pull request and verified before its issue was closed. Result: the whole W3C conformance suite (**2,585 cases**) runs with **0 failures**, and xpact gives **the same verdict as Expat in every comparison**. Error positions, some events and speed still differ from Expat.
 
 ## 🚦 At a glance
 
@@ -70,7 +70,7 @@ flowchart LR
 | 5 Regressions | Comparison with Expat | ✅ 4,308 / 4,308 same verdicts; 5 findings |
 | 6 Improvement | All 2,585 W3C cases | ✅ 0 failed; merged by the supervisor, Jenkins passed |
 | 7 Comparison | G03 (chunks), A04 (library check) | ✅ 1,302 / 1,302 same verdicts; findings fixed |
-| 8–10 | Report and handover | 🟡 this report |
+| 8–10 (2–27 Nov) | Report and handover | 🟡 this report |
 
 ## 4. Three investigations
 
@@ -131,7 +131,7 @@ flowchart LR
 The most useful habits were to **reproduce first** and to **keep the expected result separate from the actual one**. Several times the first explanation was wrong, and the evidence itself had to be checked: crashes scored as passes, tests that exited 0 on failure, a suite testing the wrong library. Compared with university exercises, the hard parts were the size of an unfamiliar codebase, the build environment, and other people's work landing at the same time. Next time I would set up faster checks earlier, and agree earlier on who reviews parser changes.
 
 ## 9. Conclusion
-In four weeks, xpact went from a parser that crashed on 1,360 W3C cases with assertions on, to one that runs the whole suite without a failure and gives Expat's verdict in every comparison, with tests another developer can rerun. The main question can now be answered with evidence. What's left is detail (positions, events) and speed, which is an architecture question for the supervisor.
+In the first four weeks of the internship, xpact went from a parser that crashed on 1,360 W3C cases with assertions on, to one that runs the whole suite without a failure and gives Expat's verdict in every comparison, with tests another developer can rerun. The main question can now be answered with evidence. What's left is detail (positions, events) and speed, which is an architecture question for the supervisor.
 
 ## References
 [1] W3C, *XML 1.0 (Fifth Edition)*, 2008. https://www.w3.org/TR/xml/ · [2] W3C, *XML Conformance Test Suites* 20130923. https://www.w3.org/XML/Test/ · [3] libexpat 2.8.1. https://github.com/libexpat/libexpat · [4] B. Meyer, *Object-Oriented Software Construction*, 2nd ed., Prentice Hall, 1997. The full list is in [ActualReport.md](ActualReport.md#14-references).
