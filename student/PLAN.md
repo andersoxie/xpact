@@ -218,6 +218,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
     - [ ] [#171](https://github.com/andersoxie/xpact/issues/171) error columns and [#13](https://github.com/andersoxie/xpact/issues/13) GC exceptions: ask the supervisor first (large or design questions)
     - [ ] ask the supervisor about F05-1: the DLL still re-parses markup on every call (8 KB byte by byte: 58 s, Expat 5 ms); `XP_INCREMENTAL_PARSE_SESSION` is a prototype the DLL does not use
     - [ ] delete the merged branches `fix/124-…`, `fix/125-…`, `fix/173-…`, `fix/174-…`, `fix/175-…` (needs the student's OK)
+    - [ ] **before the hand-in (internship ends 27 November 2026):** update [`report/ActualReport.md`](report/ActualReport.md) and [`ActualReportShorter.md`](report/ActualReportShorter.md) with the work of weeks 5-8; both describe the state on 1 November
 
 <details>
 <summary>The five tests chosen on 2026-10-21 and where they stand</summary>
