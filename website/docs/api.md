@@ -95,4 +95,5 @@ All in `backend/src/Xpact.Api/appsettings.json`, section `Xpact`:
 | `MaxConcurrentWorkers` | 4 |
 | `RequestsPerMinute` | 30 |
 | `MaxEvents` | 200 |
+| `KnownProxies` | `[]`: reverse proxies (IP addresses) whose `X-Forwarded-For` is trusted, besides one on the same machine |
 | `Builds` | `production` → `native/xpact.dll`, `assertions` → `native/xpact_assertions.dll` |

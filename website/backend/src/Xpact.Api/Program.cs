@@ -1,6 +1,8 @@
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
@@ -16,6 +18,14 @@ var xpact = builder.Configuration.GetSection(XpactOptions.Section).Get<XpactOpti
 long maxBody = xpact.MaxDocumentBytes + 64 * 1024;
 builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = maxBody);
 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = maxBody);
+
+// Behind IIS or nginx the visitor's address arrives in X-Forwarded-For. Only a proxy on this
+// machine or one listed in KnownProxies is believed, so a visitor cannot pick their own address.
+builder.Services.Configure<ForwardedHeadersOptions>(o =>
+{
+    o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    foreach (string proxy in xpact.KnownProxies) o.KnownProxies.Add(IPAddress.Parse(proxy));
+});
 
 builder.Services.AddSingleton<IWorkerRunner, WorkerRunner>();
 builder.Services.AddProblemDetails();
@@ -35,6 +45,7 @@ builder.Services.AddRateLimiter(o =>
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.Use(async (context, next) =>
 {
