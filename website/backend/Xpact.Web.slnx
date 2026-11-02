@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Xpact.Api/Xpact.Api.csproj" />
+    <Project Path="src/Xpact.Contracts/Xpact.Contracts.csproj" />
+    <Project Path="src/Xpact.Worker/Xpact.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Xpact.Api.Tests/Xpact.Api.Tests.csproj" />
+  </Folder>
+</Solution>

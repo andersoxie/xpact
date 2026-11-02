@@ -1,6 +1,6 @@
 # 10-week plan
 
-> **Last updated:** 2026-10-31 (week 7, night) · `student-Mass` @ `32bc80a` · today: [#122](https://github.com/andersoxie/xpact/issues/122), [#124](https://github.com/andersoxie/xpact/issues/124), [#125](https://github.com/andersoxie/xpact/issues/125), [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175) fixed and closed; [#88](https://github.com/andersoxie/xpact/issues/88), [#90](https://github.com/andersoxie/xpact/issues/90), [#93](https://github.com/andersoxie/xpact/issues/93) closed (already done on `main`) · **issues close after a local check on `student-Mass`; no Jenkins run is needed** (student, 2026-10-31) · earlier: the supervisor merged `student-Mass` into `main` ([#177](https://github.com/andersoxie/xpact/pull/177), `733688e`) and the Jenkins run on it passed
+> **Last updated:** 2026-11-02 (week 8) · the XPact website [#210](https://github.com/andersoxie/xpact/issues/210) (pull request open) and the finding [#211](https://github.com/andersoxie/xpact/issues/211) · earlier: 2026-10-31 (week 7, night) · `student-Mass` @ `32bc80a` · today: [#122](https://github.com/andersoxie/xpact/issues/122), [#124](https://github.com/andersoxie/xpact/issues/124), [#125](https://github.com/andersoxie/xpact/issues/125), [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175) fixed and closed; [#88](https://github.com/andersoxie/xpact/issues/88), [#90](https://github.com/andersoxie/xpact/issues/90), [#93](https://github.com/andersoxie/xpact/issues/93) closed (already done on `main`) · **issues close after a local check on `student-Mass`; no Jenkins run is needed** (student, 2026-10-31) · earlier: the supervisor merged `student-Mass` into `main` ([#177](https://github.com/andersoxie/xpact/pull/177), `733688e`) and the Jenkins run on it passed
 > · earlier: 2026-10-28 (week 6) · describes `student-Mass` after PR [#152](https://github.com/andersoxie/xpact/pull/152) (includes `main` @ `1714f31` with the supervisor's [#150](https://github.com/andersoxie/xpact/pull/150)); full W3C report: [latest-2026-10-28](../reports/latest-2026-10-28/README.md); W3C output test and its fixes: [issue-0154](../reports/issue-0154/report.md), [issue-0156](../reports/issue-0156/report.md), [issue-0157](../reports/issue-0157/report.md), [issue-0158](../reports/issue-0158/report.md), [issue-0159](../reports/issue-0159/report.md); W3C in pieces: [issue-0165](../reports/issue-0165/report.md); `main` @ `2488f44` (PR #139, merged by the supervisor 2026-10-29) = `student-Mass` @ `e5d59e2`
 > · ✅ done · 🟡 in progress / waiting · ⬜ not started · 🔴 open problem
 
@@ -22,7 +22,8 @@ supervisor at the end of every week. Day-to-day status of every issue: the
 | 5 Regressions | ✅ | C02, C03, C10 (part) run through the DLL (3 findings #38-#40, fixed in #80) · **C03 ✅, C10 ✅ compared with Expat 2.8.1** ([#121](https://github.com/andersoxie/xpact/issues/121)): 4,308/4,308 same verdicts, 5 findings (#122-#126) · **C02 ✅ regressions in the smoke test and the Eiffel suite** ([#128](https://github.com/andersoxie/xpact/issues/128)) · review with the supervisor skipped by the student | [expat-2.8.1](results/expat-2.8.1/README.md), [C02-final-input](results/C02-final-input/README.md), [week-05](notes/weekly/week-05.md) |
 | 6 One improvement | ✅ | Option A all W3C cases (#146), entity speed (#148), **integrated with `main` (#150)** ([#151](https://github.com/andersoxie/xpact/issues/151), PR #152), dual regression lane ([#153](https://github.com/andersoxie/xpact/issues/153)): **2,585 W3C cases, 0 failed, 0 errors, 0 skipped** (2026-10-28) · XML version recommendation: XML 1.0 5th edition · ✅ Jenkins passed on `main` @ `733688e` (PR #177, 2026-10-31) | [latest-2026-10-28](../reports/latest-2026-10-28/README.md), [issue-0151](../reports/issue-0151/summary.md) |
 | 7 Comparison | 🟡 | **G03 ✅** xpact vs Expat across chunks, same verdict in 1,302/1,302 pairs ([#169](https://github.com/andersoxie/xpact/issues/169), PR #178), 7 findings #170-#176 · **A04 ✅** which library each runner loads ([#168](https://github.com/andersoxie/xpact/issues/168), PR #181), findings #179, #180 · W3C output ✅ 399/432 · **follow-up fixes ✅** #122, #124, #125, #172-#175 (2026-10-31) · ⬜ G03 table rerun on the fixed code, weekly notes 6-7 | [G03-comparison](results/G03-comparison/README.md) |
-| 8-10 | ⬜ | Consolidate, report, handover | |
+| 8 Consolidate | 🟡 | **XPact website ✅ (local)** [#210](https://github.com/andersoxie/xpact/issues/210): upload or paste XML → verdict, error position, events; docs, W3C and benchmark pages; 19/19 tests · finding [#211](https://github.com/andersoxie/xpact/issues/211) (entity expansion, open) | [issue-0210](../reports/issue-0210/report.md), [website/](../website/README.md) |
+| 9-10 | ⬜ | Analyse and draft, report, handover | |
 
 ## 🧪 Latest W3C result (2026-10-28)
 
@@ -133,6 +134,7 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 
 | Problem | Seen in | Cause | Issue | Next step |
 |---|---|---|---|---|
+| Nested entity expansion ("billion laughs") rejected after ~7 s as "syntax error"; Expat: ~0.1 s, amplification limit | website security tests, 2026-11-02 | ❓ (a limit reached late; source not read) | [#211](https://github.com/andersoxie/xpact/issues/211) | read the limit in `XP_PARSER`; ask the supervisor whether to copy Expat's amplification check |
 | GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | ⏸ **on hold** (student, 2026-10-22); parser developer |
 | Jenkins "Eiffel Tests" turns green without printing a test result | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt); stage unchanged on 2026-10-26 | ✔ on the student PC (stale exe) · ❔ on Jenkins | [#130](https://github.com/andersoxie/xpact/issues/130) | supervisor's pipeline |
 | SonarQube `HTTP 401` on Jenkins | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt) | ❓ suspected: server token | [#131](https://github.com/andersoxie/xpact/issues/131) | supervisor renews the token |
@@ -219,6 +221,8 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
     - [ ] ask the supervisor about F05-1: the DLL still re-parses markup on every call (8 KB byte by byte: 58 s, Expat 5 ms); `XP_INCREMENTAL_PARSE_SESSION` is a prototype the DLL does not use
     - [ ] delete the merged branches `fix/124-…`, `fix/125-…`, `fix/173-…`, `fix/174-…`, `fix/175-…` (needs the student's OK)
     - [ ] **before the hand-in (internship ends 27 November 2026):** update [`report/ActualReport.md`](report/ActualReport.md) and [`ActualReportShorter.md`](report/ActualReportShorter.md) with the work of weeks 5-8; both describe the state on 1 November
+
+13. 🟡 **XPact website (2026-11-02):** [#210](https://github.com/andersoxie/xpact/issues/210), branch `fix/210-xpact-website`. Built from `website/guide.txt`: React + ASP.NET Core + a worker process per document calling `xpact.dll`. Guide phases 1-6 ✅, phase 7 (deployment) ⬜. Tests: 19/19 end-to-end, browser QA 0 errors ([report](../reports/issue-0210/report.md)). Found [#211](https://github.com/andersoxie/xpact/issues/211) on the way. Next: review the pull request, choose hosting.
 
 <details>
 <summary>The five tests chosen on 2026-10-21 and where they stand</summary>
@@ -341,6 +345,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 - [ ] Shared fixtures and comparison output committed under `results/`
 - [ ] More test sources found online (SVG, libxml2 and others), ranked, with a suggested order: [`notes/moreTests.md`](notes/moreTests.md) (2026-11-01)
 - [ ] Optional: [F01](github/issues/19-F01.md) Core build, [F02](github/issues/20-F02.md) Core runner
+- [x] Not in the original plan: the XPact website [#210](https://github.com/andersoxie/xpact/issues/210) (local, all tests pass; not deployed)
 
 ## Week 9 – Analyse and draft
 **Activity:** Analyse the results and draft the report. Try selected PubMed files if the correctness checks permit.

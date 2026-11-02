@@ -1,0 +1,107 @@
+{
+  "source": "https://github.com/andersoxie/xpact/blob/student-Mass/docs/benchmarks.md",
+  "generated": "2026-06-21 17:06:04 +02:00",
+  "workload": "the same UTF-8 catalog document with 100 <item> elements; median of 3 process-level runs",
+  "rows": [
+    {
+      "engine": "xpact Eiffel finalized, assertions discarded",
+      "version": "Phase 1 finalized",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 186.076,
+      "docsPerSecond": 5374.137,
+      "mibPerSecond": 13.382,
+      "notes": "Parser object reused; no-op event handler; finalized Eiffel C compilation"
+    },
+    {
+      "engine": "xpact Eiffel finalized, assertions discarded, GC suspended during parse",
+      "version": "Phase 1 finalized",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 190.24,
+      "docsPerSecond": 5256.524,
+      "mibPerSecond": 13.089,
+      "notes": "Parser object reused; no-op event handler; finalized Eiffel C compilation; calls parse_without_garbage_collection"
+    },
+    {
+      "engine": "xpact Eiffel finalized, assertions enabled",
+      "version": "Phase 1 finalized assertions",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 198.407,
+      "docsPerSecond": 5040.152,
+      "mibPerSecond": 12.55,
+      "notes": "Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled"
+    },
+    {
+      "engine": "xpact Eiffel finalized, assertions enabled, GC suspended during parse",
+      "version": "Phase 1 finalized assertions",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 185.808,
+      "docsPerSecond": 5381.894,
+      "mibPerSecond": 13.401,
+      "notes": "Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled; calls parse_without_garbage_collection"
+    },
+    {
+      "engine": "libexpat via CPython pyexpat callbacks",
+      "version": "expat_2.7.3",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 203.572,
+      "docsPerSecond": 4912.262,
+      "mibPerSecond": 12.232,
+      "notes": "Parser created per document; Python callbacks"
+    },
+    {
+      "engine": "libexpat via CPython pyexpat tokenizer",
+      "version": "expat_2.7.3",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 128.334,
+      "docsPerSecond": 7792.155,
+      "mibPerSecond": 19.403,
+      "notes": "Parser created per document; no callbacks"
+    },
+    {
+      "engine": "xpact native C ABI callbacks via Windows MSVC DLL",
+      "version": "expat_2.8.1-xpact-eiffel-bridge",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 6288.403,
+      "docsPerSecond": 159.023,
+      "mibPerSecond": 0.396,
+      "notes": "MSVC x64; linked through include/xpact.h and build\\native-eiffel\\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks"
+    },
+    {
+      "engine": "xpact native C ABI tokenizer via Windows MSVC DLL",
+      "version": "expat_2.8.1-xpact-eiffel-bridge",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 785.187,
+      "docsPerSecond": 1273.582,
+      "mibPerSecond": 3.171,
+      "notes": "MSVC x64; linked through include/xpact.h and build\\native-eiffel\\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks"
+    },
+    {
+      "engine": "xpact native C ABI callbacks via Windows MSVC DLL, parser reused",
+      "version": "expat_2.8.1-xpact-eiffel-bridge",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 6117.809,
+      "docsPerSecond": 163.457,
+      "mibPerSecond": 0.407,
+      "notes": "MSVC x64; linked through include/xpact.h and build\\native-eiffel\\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents"
+    },
+    {
+      "engine": "xpact native C ABI tokenizer via Windows MSVC DLL, parser reused",
+      "version": "expat_2.8.1-xpact-eiffel-bridge",
+      "iterations": 1000,
+      "bytesPerDoc": 2611,
+      "medianMs": 779.43,
+      "docsPerSecond": 1282.989,
+      "mibPerSecond": 3.195,
+      "notes": "MSVC x64; linked through include/xpact.h and build\\native-eiffel\\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents"
+    }
+  ]
+}
