@@ -185,6 +185,19 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
+    public async Task The_memory_cap_stops_a_worker_that_needs_more()
+    {
+        // The worker needs about 28 MB for <a/> and about 59 MB for 100,000 elements (measured, #227).
+        string large = "<a>" + string.Concat(Enumerable.Repeat("<b/>", 100_000)) + "</a>";
+        var capped = Client(("Xpact:WorkerMemoryMb", "45"));
+
+        Assert.Equal(Verdicts.Accepted, (await PostJson(capped, new { xml = "<a/>" })).Verdict);
+        Assert.Equal(Verdicts.Accepted, (await PostJson(Client(), new { xml = large })).Verdict);
+        var stopped = await PostJson(capped, new { xml = large });
+        Assert.Contains(stopped.Verdict, new[] { Verdicts.Crashed, Verdicts.Error });
+    }
+
+    [Fact]
     public async Task Results_files_are_served_and_names_are_checked()
     {
         var client = Client();
