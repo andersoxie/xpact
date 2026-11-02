@@ -14,6 +14,7 @@ The site runs a parser on documents from strangers. These are the protections, a
 | Memory exhaustion | Windows Job Object, 512 MB per worker | `Workers/JobObject.cs` | ⬜ not tested with a document that reaches the cap |
 | Huge uploads | Kestrel and form limits at 1 MB + envelope; `413` above | `Program.cs` | ✅ `Bad_requests_are_refused` |
 | Request floods | Rate limit, 30 / min per IP; at most 4 workers at once | `Program.cs` | ✅ `Requests_are_rate_limited_per_client` |
+| One visitor using up the limit for everyone behind a proxy | `X-Forwarded-For` is read from a proxy on this machine or one in `Xpact:KnownProxies` only, so the limit counts each real visitor and visitors cannot fake their address | `Program.cs` | ✅ `Visitors_behind_a_proxy_are_rate_limited_separately` |
 | Reading other files through the results endpoint | Allowed names only: `conformance`, `benchmarks`, `comparison` | `Program.cs` | ✅ `Results_files_are_served_and_names_are_checked` |
 | Click-jacking, MIME sniffing, leaking referrers | `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a strict CSP | `Program.cs` | ✅ `Security_headers_are_set` |
 | Storing visitors' documents | Nothing is written to disk; the document goes to the worker on stdin; logs record size, build, verdict and time only | `WorkerRunner.cs` | ✅ by design (code review) |
@@ -21,7 +22,7 @@ The site runs a parser on documents from strangers. These are the protections, a
 ## Known gaps before a public deployment
 
 - [ ] HTTPS: terminate TLS at the host (IIS, a reverse proxy or App Service). Kestrel runs plain HTTP here.
-- [ ] Behind a proxy, configure forwarded headers, so the rate limit sees the real client IP.
+- [x] Behind a proxy, configure forwarded headers, so the rate limit sees the real client IP ([#224](https://github.com/andersoxie/xpact/issues/224)): automatic for a proxy on the same machine; list other proxies in `Xpact:KnownProxies`.
 - [ ] Test the memory cap with a document that actually reaches it.
 - [ ] Run the worker under a low-privilege Windows account (today it inherits the API's account).
 - [ ] Load test: how many visitors at once before the 4-worker queue becomes slow.

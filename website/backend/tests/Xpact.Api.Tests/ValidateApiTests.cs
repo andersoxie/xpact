@@ -205,6 +205,21 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
+    public async Task Visitors_behind_a_proxy_are_rate_limited_separately()
+    {
+        var client = Client(("Xpact:RequestsPerMinute", "1"));
+        Task<HttpResponseMessage> From(string visitor)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/validate") { Content = JsonContent.Create(new { xml = "<a/>" }) };
+            request.Headers.Add("X-Forwarded-For", visitor);
+            return client.SendAsync(request);
+        }
+        Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.1")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.2")).StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, (await From("203.0.113.1")).StatusCode);
+    }
+
+    [Fact]
     public async Task Security_headers_are_set()
     {
         var response = await Client().GetAsync("/api/health");

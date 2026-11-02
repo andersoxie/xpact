@@ -39,6 +39,12 @@ public sealed class XpactOptions
     /// <summary>Folder with the conformance and benchmark JSON files (website/data).</summary>
     public string DataDirectory { get; set; } = "data";
 
+    /// <summary>
+    /// Reverse proxies whose X-Forwarded-For / X-Forwarded-Proto headers are trusted, besides one on
+    /// this machine (always trusted). Without this, the rate limit would count every visitor as the proxy.
+    /// </summary>
+    public string[] KnownProxies { get; set; } = [];
+
     /// <summary>Resolve a configured path against the API folder.</summary>
     public static string Resolve(string path) =>
         Path.IsPathRooted(path) ? path : Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, path));
