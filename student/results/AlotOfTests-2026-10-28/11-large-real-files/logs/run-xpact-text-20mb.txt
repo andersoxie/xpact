@@ -1,0 +1,3 @@
+file             mode    handlers |                    xpact |                    expat | events
+text-20mb.xml    whole   none     | REJECT   0.7159s  108.0MB | ACCEPT   0.0968s   40.4MB |  out of memory
+text-20mb.xml    whole   all      | REJECT   0.7055s  108.1MB | ACCEPT   1.2272s  251.7MB |  out of memory

@@ -1,0 +1,3 @@
+file	size_mb	mode	handlers	xpact	xpact_s	xpact_mb	xpact_message	xpact_hash	xpact_events	expat	expat_s	expat_mb	expat_message	expat_hash	expat_events	events
+text-20mb.xml	21.9	whole	none	REJECT	0.7159	108.0	out of memory			ACCEPT	0.0968	40.4				
+text-20mb.xml	21.9	whole	all	REJECT	0.7055	108.1	out of memory	4f53cda18c2baa0c	0	ACCEPT	1.2272	251.7		ebe300e6bbe27e28	496569	

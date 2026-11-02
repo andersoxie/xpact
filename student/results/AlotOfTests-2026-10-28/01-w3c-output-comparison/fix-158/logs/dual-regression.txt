@@ -1,0 +1,11 @@
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Dual regression results: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\dual-regression\20261028T204250Z-54c85134694a
+Building xpact (finalized/assertions-on/msvc-x64)
+Verified xpact: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\dual-regression\20261028T204250Z-54c85134694a\assertions-on\xpact\build.json
+xpact/assertions-on          910 chunked runs
+xpact-core/assertions-on     BUILD FAILED: Pinned Xpact-core is not cached at C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\dependencies\xpact-core\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676; run without --offline once
+Building xpact (finalized/assertions-off/msvc-x64)
+Verified xpact: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\dual-regression\20261028T204250Z-54c85134694a\assertions-off\xpact\build.json
+xpact/assertions-off         910 chunked runs
+xpact-core/assertions-off    BUILD FAILED: Pinned Xpact-core is not cached at C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\dependencies\xpact-core\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676; run without --offline once
+Complete: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\dual-regression\20261028T204250Z-54c85134694a\summary.md

@@ -1,0 +1,5 @@
+EXPECTED C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\validation-corpora\w3c-xml-20130923\xmlconf\eduni\errata-4e\inclbombom_out.xml
+'<root>\ufeff<f></f></root>'
+
+GOT (xpact)
+'<root><f></f></root>'

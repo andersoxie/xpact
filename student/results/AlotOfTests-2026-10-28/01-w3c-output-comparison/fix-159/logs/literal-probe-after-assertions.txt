@@ -1,0 +1,12 @@
+OK   case  0 b"<!ATTLIST doc a1 CDATA 'value'>": doc status=1 err=0; child errors=[('004-2.ent', 0), ('004-2.ent', 0), ('004-1.ent', 0)]; expected literal child error=0; e2 value=[('e2', b"<!ATTLIST doc a1 CDATA 'value'>")]
+OK   case  1 b"<!ATTLIST $doc a1 CDATA 'value'>": doc status=1 err=0; child errors=[('004-2.ent', 4), ('004-2.ent', 4), ('004-1.ent', 0)]; expected literal child error=4; e2 value=[('e2', b'')]
+OK   case  2 b"'wombat": doc status=1 err=0; child errors=[('004-2.ent', 5), ('004-2.ent', 5), ('004-1.ent', 0)]; expected literal child error=5; e2 value=[('e2', b'')]
+OK   case  3 b'\xe2\x82': doc status=1 err=0; child errors=[('004-2.ent', 6), ('004-2.ent', 6), ('004-1.ent', 0)]; expected literal child error=6; e2 value=[('e2', b'')]
+OK   case  4 b"<?xml version='1.0' encoding='utf-8'?>\n": doc status=1 err=0; child errors=[('004-2.ent', 0), ('004-2.ent', 0), ('004-1.ent', 0)]; expected literal child error=0; e2 value=[('e2', b'\n')]
+OK   case  5 b'<?xml?>': doc status=1 err=0; child errors=[('004-2.ent', 30), ('004-2.ent', 30), ('004-1.ent', 0)]; expected literal child error=30; e2 value=[('e2', b'')]
+OK   case  6 b"\xef\xbb\xbf<!ATTLIST doc a1 CDATA 'value'>": doc status=1 err=0; child errors=[('004-2.ent', 0), ('004-2.ent', 0), ('004-1.ent', 0)]; expected literal child error=0; e2 value=[('e2', b"<!ATTLIST doc a1 CDATA 'value'>")]
+OK   case  7 b"<?xml version='1.0' encoding='utf-8'?>\n$": doc status=1 err=0; child errors=[('004-2.ent', 4), ('004-2.ent', 4), ('004-1.ent', 0)]; expected literal child error=4; e2 value=[('e2', b'')]
+OK   case  8 b"<?xml version='1.0' encoding='utf-8'?>\n'wombat": doc status=1 err=0; child errors=[('004-2.ent', 5), ('004-2.ent', 5), ('004-1.ent', 0)]; expected literal child error=5; e2 value=[('e2', b'')]
+OK   case  9 b"<?xml version='1.0' encoding='utf-8'?>\n\xe2\x82": doc status=1 err=0; child errors=[('004-2.ent', 6), ('004-2.ent', 6), ('004-1.ent', 0)]; expected literal child error=6; e2 value=[('e2', b'')]
+OK   case 10 b'%e1;': doc status=1 err=0; child errors=[('004-2.ent', 12), ('004-2.ent', 12), ('004-1.ent', 0)]; expected literal child error=12; e2 value=[('e2', b'')]
+11 of 11 cases as the smoke test expects

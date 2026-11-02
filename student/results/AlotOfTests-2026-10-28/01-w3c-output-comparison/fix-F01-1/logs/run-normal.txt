@@ -1,0 +1,6 @@
+{
+  "pass": 393,
+  "xpact-only": 10,
+  "both-differ": 29,
+  "total": 432
+}
