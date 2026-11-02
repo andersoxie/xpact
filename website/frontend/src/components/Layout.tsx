@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { LINKS } from "../data/site";
+import { AUTHOR, LINKS } from "../data/site";
 
 const NAV = [
   { to: "/", label: "Home", end: true },
@@ -68,7 +68,10 @@ export function Layout() {
       </main>
       <footer className="site-footer">
         <div className="container">
-          <span>XPact: an Eiffel XML parser with an Expat-compatible C API.</span>
+          <span>
+            XPact: an Eiffel XML parser with an Expat-compatible C API. Testing, fixes and this website by{" "}
+            <a href={AUTHOR.github}>{AUTHOR.name}</a>.
+          </span>
           <span>
             <a href={LINKS.repo}>Source</a> · <a href={LINKS.issues}>Issues</a> ·{" "}
             <a href={LINKS.websiteDocs}>Website docs</a>

@@ -21,3 +21,13 @@ export const LINKS = {
   xmlSpec: "https://www.w3.org/TR/2008/REC-xml-20081126/",
   issue: (n: number) => `${REPO}/issues/${n}`,
 };
+
+// Who did the testing, the fixes and this website (footer and Project page).
+// Leave linkedin empty to hide that link.
+export const AUTHOR = {
+  name: "Masoud Dehdar",
+  role: "Software Developer (internship), Bsharp, Oct–Nov 2026",
+  github: "https://github.com/CodTanium",
+  linkedin: "",
+  pulls: `${REPO}/pulls?q=is%3Apr+is%3Amerged+author%3ACodTanium`,
+};
