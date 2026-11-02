@@ -190,6 +190,7 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         var client = Client();
         Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/results/conformance")).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/results/benchmarks")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/results/testing")).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/api/results/appsettings")).StatusCode);
     }
 

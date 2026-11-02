@@ -1,0 +1,162 @@
+{
+  "source": "https://github.com/andersoxie/xpact/blob/student-Mass/student/results/AlotOfTests-2026-10-28/README.md",
+  "date": "2026-10-28",
+  "revision": "293918f",
+  "note": "Measured on 2026-10-28, before the fixes #154-#175; not rerun since.",
+  "testing": [
+    {
+      "icon": "\ud83d\udd01",
+      "label": "XML_Parse calls",
+      "value": 8000000,
+      "approx": true,
+      "sub": "W3C-in-pieces test alone"
+    },
+    {
+      "icon": "\ud83d\udcc4",
+      "label": "Documents and inputs parsed",
+      "value": 2034000,
+      "approx": true,
+      "sub": "W3C, fuzzed, generated, libxml2, encodings, attacks, large files"
+    },
+    {
+      "icon": "\ud83e\uddec",
+      "label": "Generated documents compared with Expat",
+      "value": 1457486,
+      "approx": false,
+      "sub": "verdict, error code and events"
+    },
+    {
+      "icon": "\ud83c\udfb2",
+      "label": "Fuzzed (mutated) inputs",
+      "value": 571839,
+      "approx": false,
+      "sub": "30 minutes, seeded from W3C"
+    },
+    {
+      "icon": "\ud83d\udd24",
+      "label": "W3C bytes fed one at a time",
+      "value": 1845171,
+      "approx": false,
+      "sub": "per run"
+    },
+    {
+      "icon": "\u2702\ufe0f",
+      "label": "Two-piece split runs",
+      "value": 412842,
+      "approx": false,
+      "sub": "every byte position, W3C documents up to 4 KB"
+    },
+    {
+      "icon": "\u267b\ufe0f",
+      "label": "Parser lifecycles in the leak test",
+      "value": 160000,
+      "approx": false,
+      "sub": "8 scenarios \u00d7 20,000 rounds"
+    },
+    {
+      "icon": "\ud83d\udcda",
+      "label": "W3C conformance cases",
+      "value": 2585,
+      "approx": false,
+      "sub": "W3C XML Conformance Test Suite 20130923"
+    },
+    {
+      "icon": "\ud83d\udcc1",
+      "label": "libxml2 test files",
+      "value": 1417,
+      "approx": false,
+      "sub": "libxml2's own test corpus"
+    },
+    {
+      "icon": "\ud83d\udc0d",
+      "label": "CPython XML tests run on xpact",
+      "value": 1952,
+      "approx": false,
+      "sub": "2 builds, Python's pyexpat linked to xpact"
+    },
+    {
+      "icon": "\u2699\ufe0f",
+      "label": "Expat's own C unit tests run against xpact",
+      "value": 798,
+      "approx": false,
+      "sub": "2 builds, Expat 2.8.1 runtests"
+    },
+    {
+      "icon": "\ud83e\uddea",
+      "label": "Test areas",
+      "value": 11,
+      "approx": false,
+      "sub": "conformance, fuzzing, security, memory, real files \u2026"
+    },
+    {
+      "icon": "\ud83d\udca5",
+      "label": "Crashes / hangs / memory leaks found",
+      "value": "0 / 0 / 0",
+      "approx": false,
+      "sub": "in every test area"
+    },
+    {
+      "icon": "\ud83d\udc1e",
+      "label": "Problems found",
+      "value": 27,
+      "approx": false,
+      "sub": "each one written up; 9 fixed since"
+    }
+  ],
+  "project": {
+    "asOf": "2026-11-02",
+    "period": "6 Oct \u2013 2 Nov 2026",
+    "note": "Counted on GitHub on 2026-11-02.",
+    "items": [
+      {
+        "icon": "\ud83d\udd00",
+        "label": "PRs merged by the student",
+        "value": 92,
+        "approx": false,
+        "sub": "of 114 merged in the repo"
+      },
+      {
+        "icon": "\ud83d\udcdd",
+        "label": "Commits by the student",
+        "value": 136,
+        "approx": false,
+        "sub": "on student-Mass"
+      },
+      {
+        "icon": "\ud83d\uddc2",
+        "label": "Issue reports with evidence",
+        "value": 67,
+        "approx": false,
+        "sub": "reports/issue-NNNN/"
+      },
+      {
+        "icon": "\u2705",
+        "label": "Issues closed",
+        "value": 83,
+        "approx": false,
+        "sub": "of 96 in the repo"
+      },
+      {
+        "icon": "\ud83d\udcca",
+        "label": "Result folders",
+        "value": 17,
+        "approx": false,
+        "sub": "student/results/"
+      },
+      {
+        "icon": "\ud83c\udfaf",
+        "label": "W3C output test",
+        "value": "359 \u2192 399",
+        "approx": false,
+        "sub": "of 432 correct"
+      },
+      {
+        "icon": "\u2714\ufe0f",
+        "label": "W3C verdicts",
+        "value": "2,585 / 2,585",
+        "approx": false,
+        "sub": "run, 0 failed"
+      }
+    ]
+  }
+}

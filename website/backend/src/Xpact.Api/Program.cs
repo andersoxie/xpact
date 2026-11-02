@@ -113,7 +113,7 @@ api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions
 }).RequireRateLimiting("validate").DisableAntiforgery();
 
 // Conformance and benchmark numbers, exported from the repository's reports by scripts/export-data.py.
-string[] dataFiles = { "conformance", "benchmarks", "comparison" };
+string[] dataFiles = { "conformance", "benchmarks", "comparison", "testing" };
 api.MapGet("/results/{name}", (string name, IOptions<XpactOptions> options) =>
 {
     if (!dataFiles.Contains(name)) return Results.NotFound();

@@ -1,4 +1,4 @@
-"""Export the conformance, benchmark and Expat comparison numbers from the repository's
+"""Export the conformance, benchmark, Expat comparison and testing numbers from the repository's
 reports into website/data/*.json, which the API serves at /api/results/<name>.
 
     python website/scripts/export-data.py
@@ -18,6 +18,7 @@ GITHUB = "https://github.com/andersoxie/xpact/blob/student-Mass/"
 W3C_REPORT = REPO / "reports" / "latest-2026-10-28"
 BENCHMARKS = REPO / "docs" / "benchmarks.md"
 COMPARISON = REPO / "student" / "results" / "G03-comparison" / "README.md"
+ALOT = REPO / "student" / "results" / "AlotOfTests-2026-10-28"
 
 LANES = [
     ("core", "XML 1.0 5th edition", "W3C verdict", 1974),
@@ -90,9 +91,78 @@ def comparison() -> dict:
     }
 
 
+def tsv_rows(path: Path) -> list[dict]:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    header = lines[0].split("\t")
+    return [dict(zip(header, line.split("\t"))) for line in lines[1:] if line]
+
+
+def readme_number(path: Path, pattern: str) -> int:
+    found = re.search(pattern, path.read_text(encoding="utf-8"))
+    if not found:
+        raise SystemExit(f"{path.relative_to(REPO)}: no match for {pattern!r}")
+    return int(found.group(1).replace(",", ""))
+
+
+def testing() -> dict:
+    # W3C in pieces: per parser and build, each document once whole, once byte by byte,
+    # and split in two at every byte (documents up to 4 KB, two calls per split).
+    chunked = tsv_rows(ALOT / "02-w3c-chunked" / "logs" / "chunked-xpact.tsv")
+    sizes = [int(row["size"]) for row in chunked]
+    splits = sum(size - 1 for size in sizes if 1 < size <= 4096)
+    calls_per_run = len(sizes) + sum(sizes) + 2 * splits
+    runs = 3  # xpact.dll, xpact_assertions.dll and Expat
+    fuzzed = readme_number(ALOT / "03-fuzzing" / "README.md", r"\| Inputs \| \*\*([\d,]+)\*\*")
+    generated = readme_number(ALOT / "04-differential-vs-expat" / "README.md", r"Generated \(20 min, seed 1\) \| \*\*([\d,]+)\*\*")
+    libxml2 = len(tsv_rows(ALOT / "07-libxml2-corpus" / "logs" / "libxml2-xpact.tsv"))
+    encodings = len(tsv_rows(ALOT / "08-encodings" / "logs" / "encodings-xpact.tsv"))
+    attacks = len(tsv_rows(ALOT / "05-security-limits" / "logs" / "security-xpact.tsv"))
+    large_files = 16  # 4 shapes x 1, 5, 9 and 20 MB (11-large-real-files/README.md)
+    documents = len(sizes) + fuzzed + generated + libxml2 + encodings + attacks + large_files
+    cpython = readme_number(ALOT / "10-python-xml-tests" / "README.md", r"\| Tests run \| [\d,]+ \| ([\d,]+) \|")
+    expat_tests = readme_number(ALOT / "06-expat-runtests-parity" / "README.md", r"\| \*\*Total\*\* \| \*\*([\d,]+)\*\*")
+    item = lambda icon, label, value, sub, approx=False: {"icon": icon, "label": label, "value": value, "approx": approx, "sub": sub}
+    return {
+        "source": link(ALOT / "README.md"),
+        "date": "2026-10-28",
+        "revision": "293918f",
+        "note": "Measured on 2026-10-28, before the fixes #154-#175; not rerun since.",
+        "testing": [
+            item("🔁", "XML_Parse calls", round(calls_per_run * runs, -6), "W3C-in-pieces test alone", True),
+            item("📄", "Documents and inputs parsed", round(documents, -3), "W3C, fuzzed, generated, libxml2, encodings, attacks, large files", True),
+            item("🧬", "Generated documents compared with Expat", generated, "verdict, error code and events"),
+            item("🎲", "Fuzzed (mutated) inputs", fuzzed, "30 minutes, seeded from W3C"),
+            item("🔤", "W3C bytes fed one at a time", sum(sizes), "per run"),
+            item("✂️", "Two-piece split runs", splits, "every byte position, W3C documents up to 4 KB"),
+            item("♻️", "Parser lifecycles in the leak test", 8 * 20_000, "8 scenarios × 20,000 rounds"),
+            item("📚", "W3C conformance cases", len(sizes), "W3C XML Conformance Test Suite 20130923"),
+            item("📁", "libxml2 test files", libxml2, "libxml2's own test corpus"),
+            item("🐍", "CPython XML tests run on xpact", 2 * cpython, "2 builds, Python's pyexpat linked to xpact"),
+            item("⚙️", "Expat's own C unit tests run against xpact", 2 * expat_tests, "2 builds, Expat 2.8.1 runtests"),
+            item("🧪", "Test areas", 11, "conformance, fuzzing, security, memory, real files …"),
+            item("💥", "Crashes / hangs / memory leaks found", "0 / 0 / 0", "in every test area"),
+            item("🐞", "Problems found", 27, "each one written up; 9 fixed since"),
+        ],
+        "project": {
+            "asOf": "2026-11-02",
+            "period": "6 Oct – 2 Nov 2026",
+            "note": "Counted on GitHub on 2026-11-02.",
+            "items": [
+                item("🔀", "PRs merged by the student", 92, "of 114 merged in the repo"),
+                item("📝", "Commits by the student", 136, "on student-Mass"),
+                item("🗂", "Issue reports with evidence", 67, "reports/issue-NNNN/"),
+                item("✅", "Issues closed", 83, "of 96 in the repo"),
+                item("📊", "Result folders", 17, "student/results/"),
+                item("🎯", "W3C output test", "359 → 399", "of 432 correct"),
+                item("✔️", "W3C verdicts", "2,585 / 2,585", "run, 0 failed"),
+            ],
+        },
+    }
+
+
 def main() -> None:
     DATA.mkdir(exist_ok=True)
-    for name, build in (("conformance", conformance), ("benchmarks", benchmarks), ("comparison", comparison)):
+    for name, build in (("conformance", conformance), ("benchmarks", benchmarks), ("comparison", comparison), ("testing", testing)):
         path = DATA / f"{name}.json"
         path.write_text(json.dumps(build(), indent=2) + "\n", encoding="utf-8")
         print(f"wrote {path.relative_to(REPO)}")

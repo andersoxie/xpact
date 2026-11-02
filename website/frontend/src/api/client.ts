@@ -1,4 +1,4 @@
-import type { Benchmarks, Comparison, Conformance, ServerInfo, ValidationResult } from "./types";
+import type { Benchmarks, Comparison, Conformance, ServerInfo, Testing, ValidationResult } from "./types";
 
 /** A refused request (400, 413, 429 …) with the API's explanation. */
 export class ApiError extends Error {
@@ -55,3 +55,4 @@ export const getInfo = () => fetch("/api/info").then((r) => readJson<ServerInfo>
 export const getConformance = () => fetch("/api/results/conformance").then((r) => readJson<Conformance>(r));
 export const getBenchmarks = () => fetch("/api/results/benchmarks").then((r) => readJson<Benchmarks>(r));
 export const getComparison = () => fetch("/api/results/comparison").then((r) => readJson<Comparison>(r));
+export const getTesting = () => fetch("/api/results/testing").then((r) => readJson<Testing>(r));
