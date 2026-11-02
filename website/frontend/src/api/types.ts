@@ -95,6 +95,25 @@ export interface Benchmarks {
   }[];
 }
 
+export interface Metric {
+  icon: string;
+  label: string;
+  /** A count, or an already formatted value such as "0 / 0 / 0". */
+  value: number | string;
+  /** Rounded: shown with "≈". */
+  approx: boolean;
+  sub: string;
+}
+
+export interface Testing {
+  source: string;
+  date: string;
+  revision: string;
+  note: string;
+  testing: Metric[];
+  project: { asOf: string; period: string; note: string; items: Metric[] };
+}
+
 export interface Comparison {
   source: string;
   title: string;

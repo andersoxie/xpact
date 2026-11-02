@@ -355,6 +355,10 @@ th.num {
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
+.stat .value.long {
+  font-size: 1.5rem;
+  white-space: nowrap;
+}
 .stat .sub {
   color: var(--text-3);
   font-size: 0.82rem;

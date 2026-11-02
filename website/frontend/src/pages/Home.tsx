@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { getConformance, getComparison } from "../api/client";
+import { getConformance, getComparison, getTesting } from "../api/client";
+import type { Metric } from "../api/types";
 import { useFetch } from "../api/useFetch";
 import { Stat } from "../components/Stat";
 import { LINKS } from "../data/site";
@@ -9,6 +10,7 @@ const fmt = new Intl.NumberFormat("en");
 export function Home() {
   const conformance = useFetch(getConformance);
   const comparison = useFetch(getComparison);
+  const testing = useFetch(getTesting);
   const prod = conformance.data?.builds.find((b) => b.build === "production");
 
   return (
@@ -52,6 +54,36 @@ export function Home() {
         />
         <Stat label="Builds" value="2" sub="production · assertions checked" />
       </section>
+
+      {testing.data && (
+        <>
+          <section className="section">
+            <h2>Tested hard</h2>
+            <p className="muted">
+              Eleven test areas, from the W3C suite to fuzzing, security attacks and real-world corpora, each compared
+              with Expat. {testing.data.note}{" "}
+              <a href={testing.data.source}>Evidence and sources ↗</a>
+            </p>
+            <div className="grid grid-4">
+              {testing.data.testing.map((m) => (
+                <MetricStat key={m.label} metric={m} />
+              ))}
+            </div>
+          </section>
+
+          <section className="section">
+            <h2>The project in numbers</h2>
+            <p className="muted">
+              {testing.data.project.period}. {testing.data.project.note}
+            </p>
+            <div className="grid grid-4">
+              {testing.data.project.items.map((m) => (
+                <MetricStat key={m.label} metric={m} />
+              ))}
+            </div>
+          </section>
+        </>
+      )}
 
       <section className="section grid grid-3">
         <div className="card">
@@ -108,6 +140,12 @@ export function Home() {
       </section>
     </>
   );
+}
+
+function MetricStat({ metric }: { metric: Metric }) {
+  const number = typeof metric.value === "number" ? fmt.format(metric.value) : metric.value;
+  const value = metric.approx ? `≈ ${number}` : number;
+  return <Stat label={`${metric.icon} ${metric.label}`} value={value} sub={metric.sub} long={value.length > 11} />;
 }
 
 function Done({ children }: { children: React.ReactNode }) {
