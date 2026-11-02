@@ -1,0 +1,8 @@
+{
+  "source": "https://github.com/andersoxie/xpact/blob/student-Mass/student/results/G03-comparison/README.md",
+  "title": "XPact compared with Expat 2.8.1",
+  "pairs": 1302,
+  "sameVerdict": 1302,
+  "sameVerdictCodeAndEvents": 1042,
+  "note": "Measured before the 2026-10-31 fixes (#172-#175, #124, #125), which closed several of the differences."
+}
