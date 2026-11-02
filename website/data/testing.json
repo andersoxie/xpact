@@ -103,6 +103,64 @@
       "sub": "each one written up; 9 fixed since"
     }
   ],
+  "results": [
+    {
+      "icon": "\ud83e\udde9",
+      "label": "W3C documents identical whole and in pieces",
+      "value": "2,438 / 2,585",
+      "approx": false,
+      "sub": "after fix #165 (2026-10-30); before: 1,995"
+    },
+    {
+      "icon": "\u2696\ufe0f",
+      "label": "Accept/reject changed by chunking",
+      "value": 0,
+      "approx": false,
+      "sub": "of 2,585 W3C documents"
+    },
+    {
+      "icon": "\ud83c\udfb2",
+      "label": "Fuzzing: same verdict as Expat",
+      "value": "99.98 %",
+      "approx": false,
+      "sub": "571,749 of 571,839 inputs"
+    },
+    {
+      "icon": "\ud83e\uddec",
+      "label": "Generated documents: same verdict as Expat",
+      "value": "99.94 %",
+      "approx": false,
+      "sub": "1,456,587 of 1,457,486 documents"
+    },
+    {
+      "icon": "\u2699\ufe0f",
+      "label": "Expat's own C unit tests passed",
+      "value": "361 / 361",
+      "approx": false,
+      "sub": "all except the 38 allocator tests (by design)"
+    },
+    {
+      "icon": "\ud83d\udcc1",
+      "label": "libxml2 files identical to Expat",
+      "value": "1,269 / 1,417",
+      "approx": false,
+      "sub": "same verdict, error code and events"
+    },
+    {
+      "icon": "\ud83d\udd24",
+      "label": "Encoding cases passed",
+      "value": "141 / 146",
+      "approx": false,
+      "sub": "every broken UTF-8 sequence rejected"
+    },
+    {
+      "icon": "\ud83d\udc0d",
+      "label": "CPython XML tests passed on xpact",
+      "value": "938 / 976",
+      "approx": false,
+      "sub": "Python's own test suite, pyexpat linked to xpact"
+    }
+  ],
   "project": {
     "asOf": "2026-11-02",
     "period": "6 Oct \u2013 2 Nov 2026",

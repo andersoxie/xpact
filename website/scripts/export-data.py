@@ -97,6 +97,10 @@ def tsv_rows(path: Path) -> list[dict]:
     return [dict(zip(header, line.split("\t"))) for line in lines[1:] if line]
 
 
+def fmt(number: int) -> str:
+    return f"{number:,}"
+
+
 def readme_number(path: Path, pattern: str) -> int:
     found = re.search(pattern, path.read_text(encoding="utf-8"))
     if not found:
@@ -122,6 +126,22 @@ def testing() -> dict:
     cpython = readme_number(ALOT / "10-python-xml-tests" / "README.md", r"\| Tests run \| [\d,]+ \| ([\d,]+) \|")
     expat_tests = readme_number(ALOT / "06-expat-runtests-parity" / "README.md", r"\| \*\*Total\*\* \| \*\*([\d,]+)\*\*")
     item = lambda icon, label, value, sub, approx=False: {"icon": icon, "label": label, "value": value, "approx": approx, "sub": sub}
+
+    # Results against Expat. W3C in pieces before and after the #165 fix (2026-10-30).
+    test2 = REPO / "reports" / "issue-0165" / "logs" / "test2"
+    before = json.loads((test2 / "chunked-e5d59e2-assertions-summary.json").read_text(encoding="utf-8"))
+    after = json.loads((test2 / "chunked-fix165-assertions-summary.json").read_text(encoding="utf-8"))
+    verdict_changes = readme_number(ALOT / "02-w3c-chunked" / "README.md", r"\*\*the verdict \(ACCEPT/REJECT\) changes\*\* \| \*\*(\d+)\*\*")
+    fuzz_same = readme_number(ALOT / "03-fuzzing" / "README.md", r"\| Same verdict as Expat \| ([\d,]+)")
+    diff_readme = ALOT / "04-differential-vs-expat" / "README.md"
+    diff_same = readme_number(diff_readme, r"both accept \| ([\d,]+)") + readme_number(diff_readme, r"both reject \| ([\d,]+)")
+    expat_passed = readme_number(ALOT / "06-expat-runtests-parity" / "README.md", r"\*\*([\d,]+) passed, [\d,]+ expected failures\*\*")
+    libxml2_same = readme_number(ALOT / "07-libxml2-corpus" / "README.md", r"same verdict, error code and events as Expat \| \*\*([\d,]+)\*\*")
+    encodings_pass = sum(row["status"] == "pass" for row in tsv_rows(ALOT / "08-encodings" / "logs" / "encodings-xpact.tsv"))
+    cpython_failed = readme_number(ALOT / "10-python-xml-tests" / "README.md", r"\*\*(\d+) \+ \d+\*\*")
+    cpython_errors = readme_number(ALOT / "10-python-xml-tests" / "README.md", r"\*\*\d+ \+ (\d+)\*\*")
+    ratio = lambda part, whole: f"{fmt(part)} / {fmt(whole)}"
+    percent = lambda part, whole: f"{100 * part / whole:.2f} %"
     return {
         "source": link(ALOT / "README.md"),
         "date": "2026-10-28",
@@ -142,6 +162,16 @@ def testing() -> dict:
             item("🧪", "Test areas", 11, "conformance, fuzzing, security, memory, real files …"),
             item("💥", "Crashes / hangs / memory leaks found", "0 / 0 / 0", "in every test area"),
             item("🐞", "Problems found", 27, "each one written up; 9 fixed since"),
+        ],
+        "results": [
+            item("🧩", "W3C documents identical whole and in pieces", ratio(after["ok"], after["total"]), f"after fix #165 (2026-10-30); before: {fmt(before['ok'])}"),
+            item("⚖️", "Accept/reject changed by chunking", verdict_changes, f"of {fmt(len(sizes))} W3C documents"),
+            item("🎲", "Fuzzing: same verdict as Expat", percent(fuzz_same, fuzzed), f"{fmt(fuzz_same)} of {fmt(fuzzed)} inputs"),
+            item("🧬", "Generated documents: same verdict as Expat", percent(diff_same, generated), f"{fmt(diff_same)} of {fmt(generated)} documents"),
+            item("⚙️", "Expat's own C unit tests passed", ratio(expat_passed, expat_passed), f"all except the {expat_tests - expat_passed} allocator tests (by design)"),
+            item("📁", "libxml2 files identical to Expat", ratio(libxml2_same, libxml2), "same verdict, error code and events"),
+            item("🔤", "Encoding cases passed", ratio(encodings_pass, encodings), "every broken UTF-8 sequence rejected"),
+            item("🐍", "CPython XML tests passed on xpact", ratio(cpython - cpython_failed - cpython_errors, cpython), "Python's own test suite, pyexpat linked to xpact"),
         ],
         "project": {
             "asOf": "2026-11-02",

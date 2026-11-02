@@ -72,6 +72,19 @@ export function Home() {
           </section>
 
           <section className="section">
+            <h2>Results against Expat</h2>
+            <p className="muted">
+              The same inputs through XPact and Expat, the reference parser, compared case by case.{" "}
+              <a href={testing.data.source}>Per-test details ↗</a>
+            </p>
+            <div className="grid grid-4">
+              {testing.data.results.map((m) => (
+                <MetricStat key={m.label} metric={m} />
+              ))}
+            </div>
+          </section>
+
+          <section className="section">
             <h2>The project in numbers</h2>
             <p className="muted">
               {testing.data.project.period}. {testing.data.project.note}

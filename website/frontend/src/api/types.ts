@@ -111,6 +111,7 @@ export interface Testing {
   revision: string;
   note: string;
   testing: Metric[];
+  results: Metric[];
   project: { asOf: string; period: string; note: string; items: Metric[] };
 }
 
