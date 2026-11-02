@@ -1,0 +1,54 @@
+# XPact API requests: open in VS Code (REST Client), Visual Studio or Rider and click "Send".
+# The same requests are in xpact-api.postman_collection.json for Postman.
+@base = http://localhost:5080
+
+### Health
+GET {{base}}/api/health
+
+### Builds and limits
+GET {{base}}/api/info
+
+### Validate pasted XML (JSON body) – accepted
+POST {{base}}/api/validate
+Content-Type: application/json
+
+{ "xml": "<catalog><item id=\"1\">Book</item></catalog>" }
+
+### Mismatched tag – rejected with code 7 and its line/column
+POST {{base}}/api/validate
+Content-Type: application/json
+
+{ "xml": "<root>\n  <child>\n</root>", "build": "assertions" }
+
+### Feed the document 1 byte at a time
+POST {{base}}/api/validate
+Content-Type: application/json
+
+{ "xml": "<root><a>1</a></root>", "chunkSize": 1 }
+
+### Raw XML body (as curl --data-binary @file.xml)
+POST {{base}}/api/validate?build=production
+Content-Type: application/xml
+
+<root><a b="1"/></root>
+
+### Upload a file (multipart form)
+POST {{base}}/api/validate
+Content-Type: multipart/form-data; boundary=xpact
+
+--xpact
+Content-Disposition: form-data; name="build"
+
+production
+--xpact
+Content-Disposition: form-data; name="file"; filename="sample.xml"
+Content-Type: application/xml
+
+<note><to>Tove</to><from>Jani</from></note>
+--xpact--
+
+### W3C conformance numbers
+GET {{base}}/api/results/conformance
+
+### Benchmark numbers
+GET {{base}}/api/results/benchmarks
