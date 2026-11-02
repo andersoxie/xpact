@@ -1,0 +1,55 @@
+{
+ "files": 1417,
+ "same": 1269,
+ "stats": {
+  "xpact ACCEPT / expat ACCEPT": 1114,
+  "xpact REJECT / expat REJECT": 298,
+  "xpact REJECT / expat ACCEPT": 1,
+  "xpact TIMEOUT / expat REJECT": 2,
+  "xpact ACCEPT / expat REJECT": 2
+ }
+}
+   98  error code: xpact not well-formed (invalid token) / expat syntax error
+         e.g. c14n/exc-without-comments/merlin-c14n-two-18.ns, c14n/exc-without-comments/merlin-c14n-two-19.ns, c14n/exc-without-comments/merlin-c14n-two-20.ns, c14n/exc-without-comments/merlin-c14n-two-21.ns
+   11  events: xpact attlistdecl / expat attlistdecl field 5
+         e.g. defattr.xml, defattr2.xml, ent10, issue643.xml
+    6  error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached
+         e.g. recurse/lol_classic.xml, recurse/lol_ig_attr.xml, recurse/lol_ig_content.xml, recurse/lol_long_name.xml
+    5  error code: xpact syntax error / expat not well-formed (invalid token)
+         e.g. errors/754946.xml, errors/doctype2.xml, errors/issue868.xml, valid/t8.xml
+    5  error code: xpact not well-formed (invalid token) / expat illegal parameter entity reference
+         e.g. recurse/p1.ent, recurse/p2.ent, recurse/p3.ent, recurse/pb.ent
+    3  events: xpact entitydecl / expat enddoctype
+         e.g. ent6, ent6hex, errors/ent_redecl.xml
+    3  events: xpact entitydecl / expat entitydecl field 1
+         e.g. relaxng/tutor11_1_3.xml, valid/REC-xml-19980210.xml, valid/xlink.xml
+    2  xpact TIMEOUT
+         e.g. recurse/lol_eg.xml, recurse/lol_ep.xml
+    2  verdict: xpact ACCEPT () / expat REJECT (error in processing external entity reference)
+         e.g. valid/t4.xml, valid/t4a.xml
+    1  events: xpact attlistdecl / expat attlistdecl field 4
+         e.g. att9
+    1  error code: xpact unknown encoding / expat error in processing external entity reference
+         e.g. errors/759398.xml
+    1  error code: xpact unclosed token / expat not well-formed (invalid token)
+         e.g. errors/759573.xml
+    1  error code: xpact not well-formed (invalid token) / expat junk after document element
+         e.g. errors/extra-content.xml
+    1  error code: xpact syntax error / expat unclosed token
+         e.g. errors/name2.xml
+    1  error code: xpact unknown encoding / expat python LookupError: unknown encoding: unsupported-encoding
+         e.g. errors/unsupported-encoding.xml
+    1  error code: xpact unclosed token / expat incomplete markup in parameter entity
+         e.g. errors10/781361.xml
+    1  error code: xpact unknown encoding / expat python ValueError: multi-byte encodings are not supported
+         e.g. icu_parse_test.xml
+    1  verdict: xpact REJECT (unknown encoding) / expat ACCEPT ()
+         e.g. iso-8859-5.xml
+    1  error code: xpact unclosed token / expat syntax error
+         e.g. valid/dtds/cond_sect1.dtd
+    1  events: xpact chars / expat entitydecl
+         e.g. valid/pe-val-latin1.xml
+    1  events: xpact attlistdecl / expat entitydecl
+         e.g. valid/t11.xml
+    1  events: xpact entitydecl / expat comment
+         e.g. valid/xhtml1.xhtml

@@ -1,0 +1,3 @@
+# W3C valid-not-sa-031 through the harness; fix branch build/native-eiffel/xpact.dll
+expat ACCEPT [['entitydecl', 'e', 1, None, '031-2.ent', None, None], ['entitydecl', 'e', 0, '<![CDATA[<!ATTLIST doc a1 CDATA "v1">\n]]>', None, None, None], ['startcdata'], ['chars', '<!ATTLIST doc a1 CDATA "v1">\n']]
+xpact ACCEPT [['entitydecl', 'e', 1, None, '031-2.ent', None, None], ['entitydecl', 'e', 0, '<![CDATA[<!ATTLIST doc a1 CDATA "v1">\n]]>', None, None, None], ['startcdata'], ['chars', '<!ATTLIST doc a1 CDATA "v1">\n']]

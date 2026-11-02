@@ -1,0 +1,3 @@
+in-profile cases with external entities: 247
+Finalized {'passed': 247}
+FinalizedAssertions {'passed': 247}

@@ -1,0 +1,17 @@
+element depth                                        n=       255  xpact ACCEPT                                        0.0022s | expat ACCEPT  0.001s
+element depth                                        n=       256  xpact ACCEPT                                        0.0026s | expat ACCEPT  0.0012s
+element depth                                        n=       257  xpact REJECT  syntax error                           0.002s | expat ACCEPT  0.0011s
+attributes per element                               n=      1023  xpact ACCEPT                                        0.0054s | expat ACCEPT  0.0015s
+attributes per element                               n=      1024  xpact ACCEPT                                         0.007s | expat ACCEPT  0.0014s
+attributes per element                               n=      1025  xpact REJECT  syntax error                          0.0039s | expat ACCEPT  0.0014s
+namespace declarations per element                   n=      1023  xpact ACCEPT                                        0.0158s | expat ACCEPT  0.0026s
+namespace declarations per element                   n=      1024  xpact ACCEPT                                        0.0174s | expat ACCEPT  0.0033s
+namespace declarations per element                   n=      1025  xpact REJECT  syntax error                          0.0088s | expat ACCEPT  0.0043s
+name length (bytes)                                  n=    524288  xpact ACCEPT                                        0.1376s | expat ACCEPT  0.0062s
+name length (bytes)                                  n=    524289  xpact REJECT  syntax error                          0.0774s | expat ACCEPT  0.0052s
+attribute value (bytes)                              n=   1048512  xpact ACCEPT                                        0.3496s | expat ACCEPT  0.0037s
+attribute value (bytes)                              n=   1048640  xpact ACCEPT                                        0.3573s | expat ACCEPT  0.0057s
+text in one element, streamed (bytes)                n=   9437184  xpact TIMEOUT                                             s | expat ACCEPT  0.0271s
+text in one element, streamed (bytes)                n=  11534336  xpact TIMEOUT                                             s | expat ACCEPT  0.0303s
+document of many small elements, streamed (bytes)    n=   9437184  xpact TIMEOUT                                             s | expat ACCEPT  3.7953s
+document of many small elements, streamed (bytes)    n=  11534336  xpact TIMEOUT                                             s | expat ACCEPT  5.4467s

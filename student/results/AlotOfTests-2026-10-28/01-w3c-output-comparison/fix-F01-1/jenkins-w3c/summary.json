@@ -1,0 +1,64 @@
+{
+  "suite_version": "20130923",
+  "source": "https://www.w3.org/XML/Test/xmlts20130923.zip",
+  "archive_sha256": "f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb",
+  "source_mode": "verified-archive",
+  "known_failures_file": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\benchmarks\\w3c-known-failures.tsv",
+  "known_failures_listed": 0,
+  "suite_directory": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\validation-corpora\\w3c-xml-20130923\\xmlconf",
+  "executables": {
+    "Finalized": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\EIFGENs\\xpact_benchmarks\\F_code\\xpact_benchmarks.exe",
+    "FinalizedAssertions": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\EIFGENs\\xpact_benchmarks_assertions\\F_code\\xpact_benchmarks.exe"
+  },
+  "entity_executables": {
+    "Finalized": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\benchmarks\\w3c-dll\\Finalized\\xpact_w3c_case.exe",
+    "FinalizedAssertions": "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\benchmarks\\w3c-dll\\FinalizedAssertions\\xpact_w3c_case.exe"
+  },
+  "lanes": {
+    "core": "the profile above",
+    "legacy-names": "XML 1.0 editions 1-4: fourth-edition name tables (--legacy-names, as the native DLL parser uses); W3C verdict",
+    "external-entities": "external entities loaded through the Expat-compatible DLL (child parsers, files below the suite root); W3C verdict, nonvalidating",
+    "optional-error": "TYPE=error: the specification allows either verdict; only a crash, timeout or missing verdict fails",
+    "xml-1.1": "XML 1.1 / Namespaces 1.1: no XML 1.0 verdict exists; only a crash, timeout or missing verdict fails"
+  },
+  "catalog_cases": 2585,
+  "profile": "XML 1.0 fifth edition; namespaces unless NAMESPACE=no; nonvalidating; external-resource cases included; local suite root supplied to each engine; binary verdicts only",
+  "engines": [
+    {
+      "engine": "Finalized",
+      "total": 2585,
+      "passed": 2283,
+      "no_crash_only": 302,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "accepted": 1109,
+      "rejected": 1476,
+      "known": 0,
+      "unexpected": 0,
+      "elapsed_ms": 58466.97
+    },
+    {
+      "engine": "FinalizedAssertions",
+      "total": 2585,
+      "passed": 2283,
+      "no_crash_only": 302,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "accepted": 1109,
+      "rejected": 1476,
+      "known": 0,
+      "unexpected": 0,
+      "elapsed_ms": 54094.758
+    }
+  ],
+  "expectation_adjustments": [
+    {
+      "case_id": "rmt-e2e-38",
+      "catalog_expected": "REJECT",
+      "expected": "ACCEPT",
+      "reason": "XML 1.0 fifth edition permits this 1.1 text declaration without non-1.0 features; fourth-edition erratum E10 reverses second-edition E38: https://www.w3.org/XML/xml-V10-4e-errata#E10"
+    }
+  ]
+}

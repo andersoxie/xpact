@@ -1,0 +1,1418 @@
+file	xpact	expat	signature	xpact_message	expat_message
+adjacent-cdata.xml	ACCEPT	ACCEPT	same		
+att1	ACCEPT	ACCEPT	same		
+att10	ACCEPT	ACCEPT	same		
+att11	ACCEPT	ACCEPT	same		
+att2	ACCEPT	ACCEPT	same		
+att3	ACCEPT	ACCEPT	same		
+att4	ACCEPT	ACCEPT	same		
+att5	ACCEPT	ACCEPT	same		
+att6	ACCEPT	ACCEPT	same		
+att7	ACCEPT	ACCEPT	same		
+att8	ACCEPT	ACCEPT	same		
+att9	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 4		
+attrib.xml	ACCEPT	ACCEPT	same		
+automata/a	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+automata/aba	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+automata/abaa	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+automata/abba	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+automata/po	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+badcomment.xml	ACCEPT	ACCEPT	same		
+bigentname.xml	ACCEPT	ACCEPT	same		
+bigname.xml	ACCEPT	ACCEPT	same		
+bigname2.xml	ACCEPT	ACCEPT	same		
+boundaries1.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/doc.dtd	REJECT	REJECT	same	no element found	no element found
+c14n/1-1-without-comments/example-1.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-2.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-3.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-4.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-5.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-6.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-7.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-7.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-8.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/example-8.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-c14n11spec-102.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-c14n11spec-102.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-c14n11spec2-102.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-c14n11spec2-102.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-c14n11spec3-102.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-c14n11spec3-102.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-1.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-1.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-2.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-2.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-3.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-3.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-4.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-4.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-5.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-5.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-6.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-6.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-7.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlbase-prop-7.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlid-prop-1.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlid-prop-1.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlid-prop-2.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlid-prop-2.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-1.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-1.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-2.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-2.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-3.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-3.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-4.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmllang-prop-4.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-1.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-1.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-2.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-2.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-3.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-3.xpath	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-4.xml	ACCEPT	ACCEPT	same		
+c14n/1-1-without-comments/xmlspace-prop-4.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-09.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-09.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-10.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-10.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-11.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-11.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-12.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-12.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-13.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-13.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-14.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-14.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-15.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-15.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-16.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-16.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-17.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-17.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-18.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-18.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-18.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-19.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-19.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-19.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-20.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-20.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-20.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-21.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-21.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-21.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-22.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-22.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-22.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-23.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-23.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-23.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-24.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-24.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-24.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-25.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-25.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-25.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-26.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/merlin-c14n-two-26.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/merlin-c14n-two-26.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/test-0.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/test-0.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/test-1.ns	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+c14n/exc-without-comments/test-1.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/test-1.xpath	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/test-2.xml	ACCEPT	ACCEPT	same		
+c14n/exc-without-comments/test-2.xpath	ACCEPT	ACCEPT	same		
+c14n/with-comments/doc.dtd	REJECT	REJECT	same	no element found	no element found
+c14n/with-comments/example-1.xml	ACCEPT	ACCEPT	same		
+c14n/with-comments/example-2.xml	ACCEPT	ACCEPT	same		
+c14n/with-comments/example-3.xml	ACCEPT	ACCEPT	same		
+c14n/with-comments/example-4.xml	ACCEPT	ACCEPT	same		
+c14n/with-comments/example-5.xml	ACCEPT	ACCEPT	same		
+c14n/with-comments/example-6.xml	ACCEPT	ACCEPT	same		
+c14n/with-comments/example-7.xml	ACCEPT	ACCEPT	same		
+c14n/with-comments/example-7.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/doc.dtd	REJECT	REJECT	same	no element found	no element found
+c14n/without-comments/example-1.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/example-2.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/example-3.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/example-4.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/example-5.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/example-6.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/example-7.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/example-7.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-00.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-00.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-01.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-01.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-02.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-02.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-03.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-03.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-04.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-04.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-05.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-05.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-06.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-06.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-07.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-07.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-08.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/merlin-c14n-two-08.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-0.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-0.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-1.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-1.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-2.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-2.xpath	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-3.xml	ACCEPT	ACCEPT	same		
+c14n/without-comments/test-3.xpath	ACCEPT	ACCEPT	same		
+catalogs/catal.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/catal.sgml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/catal1.sgml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/catal2.sgml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/catal3.sgml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/catalog-recursive.xml	ACCEPT	ACCEPT	same		
+catalogs/docbook.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/docbook.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+catalogs/next-catalog-missing-attr.xml	ACCEPT	ACCEPT	same		
+catalogs/recursive.script	REJECT	REJECT	same	no element found	no element found
+catalogs/recursive.sgml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/registry.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/registry.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+catalogs/repeated-next-catalog.xml	ACCEPT	ACCEPT	same		
+catalogs/stylesheet.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+catalogs/whites.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/whites.sgml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/whitex.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+catalogs/whitex.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+cdata	ACCEPT	ACCEPT	same		
+cdata-2-byte-UTF-8.xml	ACCEPT	ACCEPT	same		
+cdata-3-byte-UTF-8.xml	ACCEPT	ACCEPT	same		
+cdata-4-byte-UTF-8.xml	ACCEPT	ACCEPT	same		
+cdata2	ACCEPT	ACCEPT	same		
+comment.xml	ACCEPT	ACCEPT	same		
+comment2.xml	ACCEPT	ACCEPT	same		
+comment3.xml	ACCEPT	ACCEPT	same		
+comment4.xml	ACCEPT	ACCEPT	same		
+comment5.xml	ACCEPT	ACCEPT	same		
+comment6.xml	ACCEPT	ACCEPT	same		
+dav1	ACCEPT	ACCEPT	same		
+dav10	ACCEPT	ACCEPT	same		
+dav11	ACCEPT	ACCEPT	same		
+dav12	ACCEPT	ACCEPT	same		
+dav13	ACCEPT	ACCEPT	same		
+dav15	ACCEPT	ACCEPT	same		
+dav16	ACCEPT	ACCEPT	same		
+dav17	ACCEPT	ACCEPT	same		
+dav18	ACCEPT	ACCEPT	same		
+dav19	ACCEPT	ACCEPT	same		
+dav2	ACCEPT	ACCEPT	same		
+dav3	ACCEPT	ACCEPT	same		
+dav4	ACCEPT	ACCEPT	same		
+dav5	ACCEPT	ACCEPT	same		
+dav6	ACCEPT	ACCEPT	same		
+dav7	ACCEPT	ACCEPT	same		
+dav8	ACCEPT	ACCEPT	same		
+dav9	ACCEPT	ACCEPT	same		
+def-xml-attr.xml	ACCEPT	ACCEPT	same		
+defattr.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+defattr2.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+dia1	ACCEPT	ACCEPT	same		
+dia2	ACCEPT	ACCEPT	same		
+dtd1	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+dtd10	ACCEPT	ACCEPT	same		
+dtd11	ACCEPT	ACCEPT	same		
+dtd12	ACCEPT	ACCEPT	same		
+dtd13	ACCEPT	ACCEPT	same		
+dtd2	ACCEPT	ACCEPT	same		
+dtd3	ACCEPT	ACCEPT	same		
+dtd4	ACCEPT	ACCEPT	same		
+dtd5	ACCEPT	ACCEPT	same		
+dtd6	ACCEPT	ACCEPT	same		
+dtd7	ACCEPT	ACCEPT	same		
+dtd8	ACCEPT	ACCEPT	same		
+dtd9	ACCEPT	ACCEPT	same		
+dtds/eve.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+ebcdic_566012.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+emptycdata.xml	ACCEPT	ACCEPT	same		
+ent1	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+ent10	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+ent11	ACCEPT	ACCEPT	same		
+ent12	ACCEPT	ACCEPT	same		
+ent13	ACCEPT	ACCEPT	same		
+ent2	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+ent3	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+ent4	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+ent5	ACCEPT	ACCEPT	same		
+ent6	ACCEPT	ACCEPT	events: xpact entitydecl / expat enddoctype		
+ent6hex	ACCEPT	ACCEPT	events: xpact entitydecl / expat enddoctype		
+ent7	ACCEPT	ACCEPT	same		
+ent8	ACCEPT	ACCEPT	same		
+ent9	ACCEPT	ACCEPT	same		
+ent_738805.xml	ACCEPT	ACCEPT	same		
+entity-in-ns-uri.xml	ACCEPT	ACCEPT	same		
+errors/754946.xml	REJECT	REJECT	error code: xpact syntax error / expat not well-formed (invalid token)	syntax error	not well-formed (invalid token)
+errors/754947.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/758588.xml	REJECT	REJECT	same	unclosed token	unclosed token
+errors/759020.xml	REJECT	REJECT	same	unclosed token	unclosed token
+errors/759398.xml	REJECT	REJECT	error code: xpact unknown encoding / expat error in processing external entity reference	unknown encoding	error in processing external entity reference
+errors/759573-2.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/759573.xml	REJECT	REJECT	error code: xpact unclosed token / expat not well-formed (invalid token)	unclosed token	not well-formed (invalid token)
+errors/759579.xml	REJECT	REJECT	same	recursive entity reference	recursive entity reference
+errors/attr1.xml	REJECT	REJECT	same	unclosed token	unclosed token
+errors/attr2.xml	REJECT	REJECT	same	unclosed token	unclosed token
+errors/attr3.xml	ACCEPT	ACCEPT	same		
+errors/attr4.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/attr5.xml	REJECT	REJECT	same	duplicate attribute	duplicate attribute
+errors/attr6.xml	REJECT	REJECT	same	duplicate attribute	duplicate attribute
+errors/cdata.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/charref1.xml	REJECT	REJECT	same	reference to invalid character number	reference to invalid character number
+errors/comment1.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/content1.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/doctype1.xml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+errors/doctype2.xml	REJECT	REJECT	error code: xpact syntax error / expat not well-formed (invalid token)	syntax error	not well-formed (invalid token)
+errors/dtd13	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/dup-xml-attr.xml	REJECT	REJECT	same	duplicate attribute	duplicate attribute
+errors/dup-xml-attr2.xml	REJECT	REJECT	same	duplicate attribute	duplicate attribute
+errors/empty.xml	REJECT	REJECT	same	no element found	no element found
+errors/ent_redecl.xml	ACCEPT	ACCEPT	events: xpact entitydecl / expat enddoctype		
+errors/extparsedent.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+errors/extra-content.xml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat junk after document element	not well-formed (invalid token)	junk after document element
+errors/invalid-start-tag-1.xml	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+errors/invalid-start-tag-2.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/issue151.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/issue868.xml	REJECT	REJECT	error code: xpact syntax error / expat not well-formed (invalid token)	syntax error	not well-formed (invalid token)
+errors/name.xml	REJECT	REJECT	same	unclosed token	unclosed token
+errors/name2.xml	REJECT	REJECT	error code: xpact syntax error / expat unclosed token	syntax error	unclosed token
+errors/name3.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/ns-ent.xml	ACCEPT	ACCEPT	same		
+errors/ns-undeclared.xml	ACCEPT	ACCEPT	same		
+errors/quadratic-defattr.xml	ACCEPT	ACCEPT	same		
+errors/rec_att_default.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+errors/rec_ext.ent	REJECT	REJECT	same	undefined entity	undefined entity
+errors/rec_ext_ent.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+errors/trailing-null-1.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/trailing-null-2.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/truncated-utf16.xml	REJECT	REJECT	same	unclosed token	unclosed token
+errors/unclosed-element.xml	REJECT	REJECT	same	no element found	no element found
+errors/unsupported-encoding.xml	REJECT	REJECT	error code: xpact unknown encoding / expat python LookupError: unknown encoding: unsupported-encoding	unknown encoding	python LookupError: unknown encoding: unsupported-encoding
+errors/utf8-1.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors/utf8-2.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+errors10/781205.xml	REJECT	REJECT	same	syntax error	syntax error
+errors10/781361.xml	REJECT	REJECT	error code: xpact unclosed token / expat incomplete markup in parameter entity	unclosed token	incomplete markup in parameter entity
+eve.xml	ACCEPT	ACCEPT	same		
+expr/base	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+html-tokenizer/contentModelFlags.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/domjs.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/entities.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/escapeFlag.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/namedEntities.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/NOTICE	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/numericEntities.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/pendingSpecChanges.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/test1.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/test2.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/test3.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/test4.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/unicodeChars.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+html-tokenizer/unicodeCharsProblematic.test	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+icu_parse_test.xml	REJECT	REJECT	error code: xpact unknown encoding / expat python ValueError: multi-byte encodings are not supported	unknown encoding	python ValueError: multi-byte encodings are not supported
+intsubset.xml	ACCEPT	ACCEPT	same		
+intsubset2.xml	ACCEPT	ACCEPT	same		
+iso-8859-5.xml	REJECT	ACCEPT	verdict: xpact REJECT (unknown encoding) / expat ACCEPT ()	unknown encoding	
+isolat1	ACCEPT	ACCEPT	same		
+isolat2	ACCEPT	ACCEPT	same		
+isolat3	ACCEPT	ACCEPT	same		
+issue626.xml	ACCEPT	ACCEPT	same		
+issue643.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+issue655.xml	ACCEPT	ACCEPT	same		
+japancrlf.xml	ACCEPT	ACCEPT	same		
+namespaces/err_0.xml	ACCEPT	ACCEPT	same		
+namespaces/err_1.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+namespaces/err_10.xml	REJECT	REJECT	same	duplicate attribute	duplicate attribute
+namespaces/err_11.xml	REJECT	REJECT	same	duplicate attribute	duplicate attribute
+namespaces/err_2.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+namespaces/err_3.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+namespaces/err_4.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+namespaces/err_5.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+namespaces/err_6.xml	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+namespaces/err_7.xml	REJECT	REJECT	same	unbound prefix	unbound prefix
+namespaces/err_8.xml	REJECT	REJECT	same	reserved prefix (xml)	reserved prefix (xml) must not be undeclared or bound to another namespace name
+namespaces/err_9.xml	REJECT	REJECT	same	duplicate attribute	duplicate attribute
+namespaces/reconcile/tests-to-c.xsl	ACCEPT	ACCEPT	same		
+namespaces/reconcile/tests.xml	ACCEPT	ACCEPT	same		
+ns	ACCEPT	ACCEPT	same		
+ns2	ACCEPT	ACCEPT	same		
+ns3	ACCEPT	ACCEPT	same		
+ns4	ACCEPT	ACCEPT	same		
+ns5	ACCEPT	ACCEPT	same		
+ns6	ACCEPT	ACCEPT	same		
+ns7	ACCEPT	ACCEPT	same		
+nsclean.xml	ACCEPT	ACCEPT	same		
+p3p	ACCEPT	ACCEPT	same		
+pattern/conj.pat	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+pattern/conj.xml	ACCEPT	ACCEPT	same		
+pattern/multiple.pat	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+pattern/multiple.xml	ACCEPT	ACCEPT	same		
+pattern/namespaces.pat	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+pattern/namespaces.xml	ACCEPT	ACCEPT	same		
+pattern/simple.pat	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+pattern/simple.xml	ACCEPT	ACCEPT	same		
+pi.xml	ACCEPT	ACCEPT	same		
+pi2.xml	ACCEPT	ACCEPT	same		
+rdf1	ACCEPT	ACCEPT	same		
+rdf2	ACCEPT	ACCEPT	same		
+recurse/g0.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+recurse/g1.ent	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+recurse/g2.ent	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+recurse/g3.ent	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+recurse/ga.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+recurse/gb.ent	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+recurse/gc.ent	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+recurse/good.xml	ACCEPT	ACCEPT	same		
+recurse/good_attr.xml	ACCEPT	ACCEPT	same		
+recurse/huge_dtd.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+recurse/lol_classic.xml	REJECT	REJECT	error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached	syntax error	limit on input amplification factor (from DTD and entities) breached
+recurse/lol_eg.xml	TIMEOUT	REJECT	xpact TIMEOUT		error in processing external entity reference
+recurse/lol_ep.xml	TIMEOUT	REJECT	xpact TIMEOUT		error in processing external entity reference
+recurse/lol_ig_attr.xml	REJECT	REJECT	error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached	syntax error	limit on input amplification factor (from DTD and entities) breached
+recurse/lol_ig_content.xml	REJECT	REJECT	error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached	syntax error	limit on input amplification factor (from DTD and entities) breached
+recurse/lol_ip_content.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+recurse/lol_ip_content.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+recurse/lol_ip_value.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+recurse/lol_ip_value.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+recurse/lol_long_name.xml	REJECT	REJECT	error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached	syntax error	limit on input amplification factor (from DTD and entities) breached
+recurse/lol_long_value.xml	REJECT	REJECT	error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached	syntax error	limit on input amplification factor (from DTD and entities) breached
+recurse/lol_param.xml	REJECT	REJECT	error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached	syntax error	limit on input amplification factor (from DTD and entities) breached
+recurse/p0.ent	REJECT	REJECT	same	no element found	no element found
+recurse/p1.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat illegal parameter entity reference	not well-formed (invalid token)	illegal parameter entity reference
+recurse/p2.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat illegal parameter entity reference	not well-formed (invalid token)	illegal parameter entity reference
+recurse/p3.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat illegal parameter entity reference	not well-formed (invalid token)	illegal parameter entity reference
+recurse/pa.ent	REJECT	REJECT	same	no element found	no element found
+recurse/pb.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat illegal parameter entity reference	not well-formed (invalid token)	illegal parameter entity reference
+recurse/pc.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat illegal parameter entity reference	not well-formed (invalid token)	illegal parameter entity reference
+regexp/branch	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/bug316338	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/bug420596	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/bug649244	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/bug757711	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/bug783015	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/content	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/hard	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue1101	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue1103	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue1103_err1	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue1103_err2	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue1103_err3	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue301	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue370	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/issue65	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/ncname	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/ranges	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/ranges2	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+regexp/xpath	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+relaxng/302836.rng	ACCEPT	ACCEPT	same		
+relaxng/302836_0.xml	ACCEPT	ACCEPT	same		
+relaxng/307377.rng	ACCEPT	ACCEPT	same		
+relaxng/307377_0.xml	ACCEPT	ACCEPT	same		
+relaxng/307377_1.xml	ACCEPT	ACCEPT	same		
+relaxng/307377_2.xml	ACCEPT	ACCEPT	same		
+relaxng/492317.rng	ACCEPT	ACCEPT	same		
+relaxng/492317_0.xml	ACCEPT	ACCEPT	same		
+relaxng/492317_1.xml	ACCEPT	ACCEPT	same		
+relaxng/492317_2.xml	ACCEPT	ACCEPT	same		
+relaxng/558452.rng	ACCEPT	ACCEPT	same		
+relaxng/558452_0.xml	ACCEPT	ACCEPT	same		
+relaxng/558452_1.xml	ACCEPT	ACCEPT	same		
+relaxng/558452_2.xml	ACCEPT	ACCEPT	same		
+relaxng/558452_3.xml	ACCEPT	ACCEPT	same		
+relaxng/558452_4.xml	ACCEPT	ACCEPT	same		
+relaxng/565219.rng	ACCEPT	ACCEPT	same		
+relaxng/565219_0.xml	ACCEPT	ACCEPT	same		
+relaxng/565219_1.xml	ACCEPT	ACCEPT	same		
+relaxng/565219_2.xml	ACCEPT	ACCEPT	same		
+relaxng/595792-ext.rng	ACCEPT	ACCEPT	same		
+relaxng/595792.rng	ACCEPT	ACCEPT	same		
+relaxng/595792_0.xml	ACCEPT	ACCEPT	same		
+relaxng/710744.rng	ACCEPT	ACCEPT	same		
+relaxng/710744_1.xml	ACCEPT	ACCEPT	same		
+relaxng/710744_2.xml	ACCEPT	ACCEPT	same		
+relaxng/addressBook.rng	ACCEPT	ACCEPT	same		
+relaxng/ambig_name-class.rng	ACCEPT	ACCEPT	same		
+relaxng/ambig_name-class_0.xml	ACCEPT	ACCEPT	same		
+relaxng/anyName0.rng	ACCEPT	ACCEPT	same		
+relaxng/anyName0_0.xml	ACCEPT	ACCEPT	same		
+relaxng/anyName1.rng	ACCEPT	ACCEPT	same		
+relaxng/anyName1_0.xml	ACCEPT	ACCEPT	same		
+relaxng/broken-xml.rng	REJECT	REJECT	same	unclosed token	unclosed token
+relaxng/broken-xml_0.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0.rng	ACCEPT	ACCEPT	same		
+relaxng/choice0_0.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_1.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_2.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_3.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_4.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_5.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_6.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_7.xml	ACCEPT	ACCEPT	same		
+relaxng/choice0_8.xml	ACCEPT	ACCEPT	same		
+relaxng/compare0.rng	ACCEPT	ACCEPT	same		
+relaxng/compare0_0.xml	ACCEPT	ACCEPT	same		
+relaxng/comps.rng	ACCEPT	ACCEPT	same		
+relaxng/comps_0.xml	ACCEPT	ACCEPT	same		
+relaxng/demo.rng	ACCEPT	ACCEPT	same		
+relaxng/demo.xml	ACCEPT	ACCEPT	same		
+relaxng/demo2.rng	ACCEPT	ACCEPT	same		
+relaxng/demo3.rng	ACCEPT	ACCEPT	same		
+relaxng/docbook.rng	ACCEPT	ACCEPT	same		
+relaxng/docbook_0.xml	ACCEPT	ACCEPT	same		
+relaxng/empty0.rng	ACCEPT	ACCEPT	same		
+relaxng/empty0_0.xml	ACCEPT	ACCEPT	same		
+relaxng/empty1.rng	ACCEPT	ACCEPT	same		
+relaxng/empty1_0.xml	ACCEPT	ACCEPT	same		
+relaxng/empty1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/include/include-limit.rng	ACCEPT	ACCEPT	same		
+relaxng/include/include-limit_1.rng	ACCEPT	ACCEPT	same		
+relaxng/include/include-limit_2.rng	ACCEPT	ACCEPT	same		
+relaxng/include/include-limit_3.rng	ACCEPT	ACCEPT	same		
+relaxng/include0.inc	ACCEPT	ACCEPT	same		
+relaxng/include0.rng	ACCEPT	ACCEPT	same		
+relaxng/include0_0.xml	ACCEPT	ACCEPT	same		
+relaxng/include1-0.inc	ACCEPT	ACCEPT	same		
+relaxng/include1-1.inc	ACCEPT	ACCEPT	same		
+relaxng/include1.rng	ACCEPT	ACCEPT	same		
+relaxng/include1_0.xml	ACCEPT	ACCEPT	same		
+relaxng/inline.rng	ACCEPT	ACCEPT	same		
+relaxng/inline2.rng	ACCEPT	ACCEPT	same		
+relaxng/inline3.rng	ACCEPT	ACCEPT	same		
+relaxng/interleave0_0.rng	ACCEPT	ACCEPT	same		
+relaxng/interleave1_0.rng	ACCEPT	ACCEPT	same		
+relaxng/ISO19005-1-XMP_Packet.rng	ACCEPT	ACCEPT	same		
+relaxng/libvirt.rng	ACCEPT	ACCEPT	same		
+relaxng/libvirt_0.xml	ACCEPT	ACCEPT	same		
+relaxng/list.rng	ACCEPT	ACCEPT	same		
+relaxng/list_0.xml	ACCEPT	ACCEPT	same		
+relaxng/list_1.xml	ACCEPT	ACCEPT	same		
+relaxng/OASIS/spectest.xml	ACCEPT	ACCEPT	same		
+relaxng/OpenDocumentSub.rng	ACCEPT	ACCEPT	same		
+relaxng/OpenDocumentSub_0.xml	ACCEPT	ACCEPT	same		
+relaxng/pattern1.rng	ACCEPT	ACCEPT	same		
+relaxng/pattern2.rng	ACCEPT	ACCEPT	same		
+relaxng/pattern3.rng	ACCEPT	ACCEPT	same		
+relaxng/pattern3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/proofsystem.rng	ACCEPT	ACCEPT	same		
+relaxng/rngbug-001.ext	ACCEPT	ACCEPT	same		
+relaxng/rngbug-001.rng	ACCEPT	ACCEPT	same		
+relaxng/rngbug-001.xml	ACCEPT	ACCEPT	same		
+relaxng/simplifyChoiceNotAllowed.rng	ACCEPT	ACCEPT	same		
+relaxng/simplifyChoiceNotAllowed_0.xml	ACCEPT	ACCEPT	same		
+relaxng/spec.rng	ACCEPT	ACCEPT	same		
+relaxng/spec1.rng	ACCEPT	ACCEPT	same		
+relaxng/spec1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/spec_0.xml	ACCEPT	ACCEPT	same		
+relaxng/table.rng	ACCEPT	ACCEPT	same		
+relaxng/testsuite.xml	ACCEPT	ACCEPT	same		
+relaxng/TestXMPInvalid1.xmp	ACCEPT	ACCEPT	same		
+relaxng/tutor10_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_10.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_10_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_1_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_1_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_1_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_1_5.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_1_6.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_2_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_2_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_2_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_4.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_4_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_5.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_5_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_6.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_6_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_7.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_7_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_7_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_7_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_8.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_8_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_8_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_8_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor10_9.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor10_9_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor11_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor11_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor11_1_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor11_1_3.xml	ACCEPT	ACCEPT	events: xpact entitydecl / expat entitydecl field 1		
+relaxng/tutor11_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor11_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor11_2_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor11_2_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor11_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor11_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor11_4.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor11_4_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor12_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor12_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor13_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor13_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor14_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor1_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor1_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor1_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor1_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor1_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor1_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor1_4.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor1_4_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor2_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor2_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_1_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_4.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_4_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_5.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_5_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_5_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_6.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_6_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_7.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_7_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_8.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_8_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor3_9.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor3_9_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor4_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor4_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor4_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_3_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_3_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_3_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_3_5.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_3_6.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor4_4.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor4_4_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor5_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor5_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor5_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor5_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor5_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor5_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor5_4.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor5_4_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor5_5.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor6_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor6_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_1_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_1_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_1_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_1_5.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor6_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_2_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_2_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_2_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor6_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor6_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor7_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_1_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_1_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_1_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor7_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_2_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_2_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_2_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor7_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_3_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_3_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_3_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor7_3_5.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor8_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_1_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor8_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_2_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_2_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_2_4.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_2_5.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_2_6.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor8_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor8_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_1.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_10.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_10_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_11.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_11_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_12.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_12_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_1_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_2.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_2_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_2_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_3.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_3_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_3_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_4.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_4_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_4_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_5.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_5_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_5_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_5_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_6.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_6_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_6_2.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_6_3.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_7.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_7_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_8.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_8_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutor9_9.rng	ACCEPT	ACCEPT	same		
+relaxng/tutor9_9_1.xml	ACCEPT	ACCEPT	same		
+relaxng/tutorA.rng	ACCEPT	ACCEPT	same		
+relaxng/useless_group.rng	ACCEPT	ACCEPT	same		
+relaxng/useless_group.xml	ACCEPT	ACCEPT	same		
+relaxng/v012-reader-main.rng	ACCEPT	ACCEPT	same		
+schemas/570702_0.xml	ACCEPT	ACCEPT	same		
+schemas/570702_0.xsd	ACCEPT	ACCEPT	same		
+schemas/579746_0.xml	ACCEPT	ACCEPT	same		
+schemas/579746_0.xsd	ACCEPT	ACCEPT	same		
+schemas/579746_1.xml	ACCEPT	ACCEPT	same		
+schemas/579746_1.xsd	ACCEPT	ACCEPT	same		
+schemas/579746_2.xml	ACCEPT	ACCEPT	same		
+schemas/579746_3.xml	ACCEPT	ACCEPT	same		
+schemas/579746_4.xml	ACCEPT	ACCEPT	same		
+schemas/579746_5.xml	ACCEPT	ACCEPT	same		
+schemas/582887-attribute.xsd	ACCEPT	ACCEPT	same		
+schemas/582887-common.xsd	ACCEPT	ACCEPT	same		
+schemas/582887-element.xsd	ACCEPT	ACCEPT	same		
+schemas/582887_0.xml	ACCEPT	ACCEPT	same		
+schemas/582887_0.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-1-common.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-1-prog1.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-1-prog2-include.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-1-prog2.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-1_0.xml	ACCEPT	ACCEPT	same		
+schemas/582906-1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-2-common.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-2-prog1.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-2-prog2-include.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-2-prog2.xsd	ACCEPT	ACCEPT	same		
+schemas/582906-2_0.xml	ACCEPT	ACCEPT	same		
+schemas/582906-2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/all.xsd	ACCEPT	ACCEPT	same		
+schemas/all1_0.xml	ACCEPT	ACCEPT	same		
+schemas/all1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/all_0.xml	ACCEPT	ACCEPT	same		
+schemas/all_0.xsd	ACCEPT	ACCEPT	same		
+schemas/all_1.xml	ACCEPT	ACCEPT	same		
+schemas/all_1.xsd	ACCEPT	ACCEPT	same		
+schemas/all_2.xml	ACCEPT	ACCEPT	same		
+schemas/all_2.xsd	ACCEPT	ACCEPT	same		
+schemas/all_3.xml	ACCEPT	ACCEPT	same		
+schemas/all_4.xml	ACCEPT	ACCEPT	same		
+schemas/all_5.xml	ACCEPT	ACCEPT	same		
+schemas/all_6.xml	ACCEPT	ACCEPT	same		
+schemas/all_7.xml	ACCEPT	ACCEPT	same		
+schemas/allsg_0.xml	ACCEPT	ACCEPT	same		
+schemas/allsg_0.xsd	ACCEPT	ACCEPT	same		
+schemas/allsg_1.xml	ACCEPT	ACCEPT	same		
+schemas/allsg_2.xml	ACCEPT	ACCEPT	same		
+schemas/allsg_3.xml	ACCEPT	ACCEPT	same		
+schemas/allsg_4.xml	ACCEPT	ACCEPT	same		
+schemas/allsg_5.xml	ACCEPT	ACCEPT	same		
+schemas/annot-err_0.xml	ACCEPT	ACCEPT	same		
+schemas/annot-err_0.xsd	ACCEPT	ACCEPT	same		
+schemas/any1_0.xml	ACCEPT	ACCEPT	same		
+schemas/any1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/any2_0.xml	ACCEPT	ACCEPT	same		
+schemas/any2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/any3_0.xml	ACCEPT	ACCEPT	same		
+schemas/any3_0.xsd	ACCEPT	ACCEPT	same		
+schemas/any4_0.xml	ACCEPT	ACCEPT	same		
+schemas/any4_0.xsd	ACCEPT	ACCEPT	same		
+schemas/any5_0.xml	ACCEPT	ACCEPT	same		
+schemas/any5_0.xsd	ACCEPT	ACCEPT	same		
+schemas/any5_1.xml	ACCEPT	ACCEPT	same		
+schemas/any5_1.xsd	ACCEPT	ACCEPT	same		
+schemas/any5_2.xml	ACCEPT	ACCEPT	same		
+schemas/any5_3.xml	ACCEPT	ACCEPT	same		
+schemas/any5_4.xml	ACCEPT	ACCEPT	same		
+schemas/any5_5.xml	ACCEPT	ACCEPT	same		
+schemas/any5_6.xml	ACCEPT	ACCEPT	same		
+schemas/any6_0.xml	ACCEPT	ACCEPT	same		
+schemas/any6_1.xsd	ACCEPT	ACCEPT	same		
+schemas/any6_2.xsd	ACCEPT	ACCEPT	same		
+schemas/any7_0.xml	ACCEPT	ACCEPT	same		
+schemas/any7_1.xml	ACCEPT	ACCEPT	same		
+schemas/any7_1.xsd	ACCEPT	ACCEPT	same		
+schemas/any7_2.xml	ACCEPT	ACCEPT	same		
+schemas/any7_2.xsd	ACCEPT	ACCEPT	same		
+schemas/any8_0.xml	ACCEPT	ACCEPT	same		
+schemas/any8_1.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr-derive-errors1_0.xml	ACCEPT	ACCEPT	same		
+schemas/anyAttr-derive-errors1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr-derive1_0.xml	ACCEPT	ACCEPT	same		
+schemas/anyAttr-derive1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr-derive2_0.xml	ACCEPT	ACCEPT	same		
+schemas/anyAttr-derive2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr-errors1_0.xml	ACCEPT	ACCEPT	same		
+schemas/anyAttr-processContents-err1_0.xml	ACCEPT	ACCEPT	same		
+schemas/anyAttr-processContents-err1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr-processContents1_0.xml	ACCEPT	ACCEPT	same		
+schemas/anyAttr-processContents1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr.importA.1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr.importB.1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/anyAttr1_0.xml	ACCEPT	ACCEPT	same		
+schemas/anyAttr1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/attr0_0.xml	ACCEPT	ACCEPT	same		
+schemas/attr0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/attruse_0_0.xml	ACCEPT	ACCEPT	same		
+schemas/attruse_0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/attruse_0_1.xml	ACCEPT	ACCEPT	same		
+schemas/attruse_0_2.xml	ACCEPT	ACCEPT	same		
+schemas/bug141312_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug141312_0.xsd	ACCEPT	ACCEPT	same		
+schemas/bug141333.xml	ACCEPT	ACCEPT	same		
+schemas/bug141333.xsd	ACCEPT	ACCEPT	same		
+schemas/bug141333_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug141333_0.xsd	ACCEPT	ACCEPT	same		
+schemas/bug143951.imp	ACCEPT	ACCEPT	same		
+schemas/bug143951_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug143951_0.xsd	ACCEPT	ACCEPT	same		
+schemas/bug145246.xsd.imp	ACCEPT	ACCEPT	same		
+schemas/bug145246_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug145246_0.xsd	ACCEPT	ACCEPT	same		
+schemas/bug152470_1.xml	ACCEPT	ACCEPT	same		
+schemas/bug152470_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug167754_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug167754_0.xsd	ACCEPT	ACCEPT	same		
+schemas/bug303566_1.xml	ACCEPT	ACCEPT	same		
+schemas/bug303566_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug306806_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug306806_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug309338_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug309338_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug310264_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug310264_0.xsd	ACCEPT	ACCEPT	same		
+schemas/bug312957_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug312957_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug313982_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug313982_0.xsd	ACCEPT	ACCEPT	same		
+schemas/bug321475_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug321475_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug322411_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug322411_1.xml	ACCEPT	ACCEPT	same		
+schemas/bug322411_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug323510_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug323510_1.xsd	ACCEPT	ACCEPT	same		
+schemas/bug455953_0.xml	ACCEPT	ACCEPT	same		
+schemas/bug455953_0.xsd	ACCEPT	ACCEPT	same		
+schemas/changelog093_0.xml	ACCEPT	ACCEPT	same		
+schemas/changelog093_1.xsd	ACCEPT	ACCEPT	same		
+schemas/choice_0.xml	ACCEPT	ACCEPT	same		
+schemas/choice_0.xsd	ACCEPT	ACCEPT	same		
+schemas/choice_1.xml	ACCEPT	ACCEPT	same		
+schemas/choice_1.xsd	ACCEPT	ACCEPT	same		
+schemas/choice_2.xml	ACCEPT	ACCEPT	same		
+schemas/choice_2.xsd	ACCEPT	ACCEPT	same		
+schemas/choice_3.xml	ACCEPT	ACCEPT	same		
+schemas/choice_4.xml	ACCEPT	ACCEPT	same		
+schemas/choice_5.xml	ACCEPT	ACCEPT	same		
+schemas/choice_6.xml	ACCEPT	ACCEPT	same		
+schemas/complex-type-extension_0.xml	ACCEPT	ACCEPT	same		
+schemas/complex-type-extension_0.xsd	ACCEPT	ACCEPT	same		
+schemas/cos-ct-extends-1-3_0.xml	ACCEPT	ACCEPT	same		
+schemas/cos-ct-extends-1-3_0.xsd	ACCEPT	ACCEPT	same		
+schemas/cos-st-restricts-1-2-err_0.xml	ACCEPT	ACCEPT	same		
+schemas/cos-st-restricts-1-2-err_0.xsd	ACCEPT	ACCEPT	same		
+schemas/ct-sc-nobase_0.xml	ACCEPT	ACCEPT	same		
+schemas/ct-sc-nobase_0.xsd	ACCEPT	ACCEPT	same		
+schemas/date-whitespace_0.xml	ACCEPT	ACCEPT	same		
+schemas/date-whitespace_0.xsd	ACCEPT	ACCEPT	same		
+schemas/date-whitespace_1.xml	ACCEPT	ACCEPT	same		
+schemas/date_0.xml	ACCEPT	ACCEPT	same		
+schemas/date_0.xsd	ACCEPT	ACCEPT	same		
+schemas/decimal-1.xml	ACCEPT	ACCEPT	same		
+schemas/decimal-1.xsd	ACCEPT	ACCEPT	same		
+schemas/decimal-1_0.xml	ACCEPT	ACCEPT	same		
+schemas/decimal-1_1.xsd	ACCEPT	ACCEPT	same		
+schemas/decimal-2_0.xml	ACCEPT	ACCEPT	same		
+schemas/decimal-2_1.xsd	ACCEPT	ACCEPT	same		
+schemas/decimal-3_0.xml	ACCEPT	ACCEPT	same		
+schemas/decimal-3_1.xsd	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-extension-err_0.xml	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-extension-err_0.xsd	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-extension_0.xml	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-extension_0.xsd	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-restriction-2-1-1_0.xml	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-restriction-2-1-1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-restriction-4-1-err_0.xml	ACCEPT	ACCEPT	same		
+schemas/derivation-ok-restriction-4-1-err_0.xsd	ACCEPT	ACCEPT	same		
+schemas/derivation-restriction-anyAttr_0.xml	ACCEPT	ACCEPT	same		
+schemas/derivation-restriction-anyAttr_0.xsd	ACCEPT	ACCEPT	same		
+schemas/derivation-restriction-anyType.xml	ACCEPT	ACCEPT	same		
+schemas/derivation-restriction-anyType.xsd	ACCEPT	ACCEPT	same		
+schemas/deter0_0.xml	ACCEPT	ACCEPT	same		
+schemas/deter0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/dur_0.xml	ACCEPT	ACCEPT	same		
+schemas/dur_0.xsd	ACCEPT	ACCEPT	same		
+schemas/elem0_0.xml	ACCEPT	ACCEPT	same		
+schemas/elem0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/element-err_0.xml	ACCEPT	ACCEPT	same		
+schemas/element-err_0.xsd	ACCEPT	ACCEPT	same		
+schemas/element-minmax-err_0.xml	ACCEPT	ACCEPT	same		
+schemas/element-minmax-err_0.xsd	ACCEPT	ACCEPT	same		
+schemas/empty-value_0.xml	ACCEPT	ACCEPT	same		
+schemas/empty-value_1.xml	ACCEPT	ACCEPT	same		
+schemas/empty-value_1.xsd	ACCEPT	ACCEPT	same		
+schemas/empty_0.xml	ACCEPT	ACCEPT	same		
+schemas/empty_0.xsd	ACCEPT	ACCEPT	same		
+schemas/empty_1.xsd	ACCEPT	ACCEPT	same		
+schemas/extension0_0.xml	ACCEPT	ACCEPT	same		
+schemas/extension0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/extension1_0.xml	ACCEPT	ACCEPT	same		
+schemas/extension1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/extension1_1.xml	ACCEPT	ACCEPT	same		
+schemas/extension1_2.xml	ACCEPT	ACCEPT	same		
+schemas/extension2_0.xml	ACCEPT	ACCEPT	same		
+schemas/extension2_1.xsd	ACCEPT	ACCEPT	same		
+schemas/facet-unionST-err1_0.xml	ACCEPT	ACCEPT	same		
+schemas/facet-unionST-err1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/facet-whiteSpace_0.xml	ACCEPT	ACCEPT	same		
+schemas/facet-whiteSpace_0.xsd	ACCEPT	ACCEPT	same		
+schemas/group0_0.xml	ACCEPT	ACCEPT	same		
+schemas/group0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/hexbinary_0.xml	ACCEPT	ACCEPT	same		
+schemas/hexbinary_0.xsd	ACCEPT	ACCEPT	same		
+schemas/hexbinary_1.xml	ACCEPT	ACCEPT	same		
+schemas/idc-keyref-err1_0.xml	ACCEPT	ACCEPT	same		
+schemas/idc-keyref-err1_1.xsd	ACCEPT	ACCEPT	same		
+schemas/import-455953.xsd	ACCEPT	ACCEPT	same		
+schemas/import-bad-1_0.imp	ACCEPT	ACCEPT	same		
+schemas/import0_0.imp	ACCEPT	ACCEPT	same		
+schemas/import0_0.xml	ACCEPT	ACCEPT	same		
+schemas/import0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/import1_0.imp	ACCEPT	ACCEPT	same		
+schemas/import1_0.xml	ACCEPT	ACCEPT	same		
+schemas/import1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/import1_0b.imp	ACCEPT	ACCEPT	same		
+schemas/import2_0.imp	ACCEPT	ACCEPT	same		
+schemas/import2_0.xml	ACCEPT	ACCEPT	same		
+schemas/import2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/include1_0.inc	ACCEPT	ACCEPT	same		
+schemas/include1_0.xml	ACCEPT	ACCEPT	same		
+schemas/include1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/include2_0.inc	ACCEPT	ACCEPT	same		
+schemas/include2_0.xml	ACCEPT	ACCEPT	same		
+schemas/include2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/include3_0.inc	ACCEPT	ACCEPT	same		
+schemas/include3_0.xml	ACCEPT	ACCEPT	same		
+schemas/include3_0.xsd	ACCEPT	ACCEPT	same		
+schemas/issue303_0.xml	ACCEPT	ACCEPT	same		
+schemas/issue303_0.xsd	ACCEPT	ACCEPT	same		
+schemas/issue40_0.xml	ACCEPT	ACCEPT	same		
+schemas/issue40_0.xsd	ACCEPT	ACCEPT	same		
+schemas/issue491_0.xml	ACCEPT	ACCEPT	same		
+schemas/issue491_0.xsd	ACCEPT	ACCEPT	same		
+schemas/item_0.xml	ACCEPT	ACCEPT	same		
+schemas/item_0.xsd	ACCEPT	ACCEPT	same		
+schemas/item_1.xsd	ACCEPT	ACCEPT	same		
+schemas/length1_0.xml	ACCEPT	ACCEPT	same		
+schemas/length1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/length2_0.xml	ACCEPT	ACCEPT	same		
+schemas/length2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/length3_0.xml	ACCEPT	ACCEPT	same		
+schemas/length3_0.xsd	ACCEPT	ACCEPT	same		
+schemas/list0_0.xml	ACCEPT	ACCEPT	same		
+schemas/list0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/list0_1.xml	ACCEPT	ACCEPT	same		
+schemas/list0_1.xsd	ACCEPT	ACCEPT	same		
+schemas/list0_2.xml	ACCEPT	ACCEPT	same		
+schemas/mixed0_0.xml	ACCEPT	ACCEPT	same		
+schemas/mixed0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/mixed1_0.xml	ACCEPT	ACCEPT	same		
+schemas/mixed1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/ns0_0.xml	ACCEPT	ACCEPT	same		
+schemas/ns0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/ns0_1.xml	ACCEPT	ACCEPT	same		
+schemas/ns0_1.xsd	ACCEPT	ACCEPT	same		
+schemas/ns0_2.xml	ACCEPT	ACCEPT	same		
+schemas/ns0_3.xml	ACCEPT	ACCEPT	same		
+schemas/ns0_4.xml	ACCEPT	ACCEPT	same		
+schemas/ns1_0.xml	ACCEPT	ACCEPT	same		
+schemas/ns1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/ns2_0.xml	ACCEPT	ACCEPT	same		
+schemas/ns2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/nvdcve_0.xml	ACCEPT	ACCEPT	same		
+schemas/nvdcve_0.xsd	ACCEPT	ACCEPT	same		
+schemas/oss-fuzz-51295_0.xml	ACCEPT	ACCEPT	same		
+schemas/oss-fuzz-51295_0.xsd	ACCEPT	ACCEPT	same		
+schemas/po0_0.xml	ACCEPT	ACCEPT	same		
+schemas/po0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/po1_0.xml	ACCEPT	ACCEPT	same		
+schemas/po1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/poschargrp0_0.xml	ACCEPT	ACCEPT	same		
+schemas/poschargrp0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/regexp-char-ref_0.xml	ACCEPT	ACCEPT	same		
+schemas/regexp-char-ref_0.xsd	ACCEPT	ACCEPT	same		
+schemas/regexp-char-ref_1.xsd	ACCEPT	ACCEPT	same		
+schemas/restrict-CT-attr-ref_0.xml	ACCEPT	ACCEPT	same		
+schemas/restrict-CT-attr-ref_0.xsd	ACCEPT	ACCEPT	same		
+schemas/restriction-attr1_0.xml	ACCEPT	ACCEPT	same		
+schemas/restriction-attr1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/restriction-enum-1_0.xml	ACCEPT	ACCEPT	same		
+schemas/restriction-enum-1_1.xsd	ACCEPT	ACCEPT	same		
+schemas/restriction0_0.xml	ACCEPT	ACCEPT	same		
+schemas/restriction0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/scc-no-xmlns_0.xml	ACCEPT	ACCEPT	same		
+schemas/scc-no-xmlns_0.xsd	ACCEPT	ACCEPT	same		
+schemas/scc-no-xsi_0.xml	ACCEPT	ACCEPT	same		
+schemas/scc-no-xsi_0.xsd	ACCEPT	ACCEPT	same		
+schemas/seq-dubl-elem1_0.xml	ACCEPT	ACCEPT	same		
+schemas/seq-dubl-elem1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/seq0_0.xml	ACCEPT	ACCEPT	same		
+schemas/seq0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-attribute1_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-attribute1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-attribute2_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-attribute2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-1_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-2-form_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-2-form_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-2-st_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-2-st_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-2-type_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-attribute3-2-type_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-attribute4_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-attribute4_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-element1_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-element1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-element2-1_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-element2-1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-element2-2_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-element2-2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/src-element3_0.xml	ACCEPT	ACCEPT	same		
+schemas/src-element3_0.xsd	ACCEPT	ACCEPT	same		
+schemas/subst-group-1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/subst-group-1_1.xml	ACCEPT	ACCEPT	same		
+schemas/union2_1.xml	ACCEPT	ACCEPT	same		
+schemas/union2_1.xsd	ACCEPT	ACCEPT	same		
+schemas/union_0_0.xml	ACCEPT	ACCEPT	same		
+schemas/union_0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/v012-reader-schema-main.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-complexTypes.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-first0_0.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first0_0.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-first1_0.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first1_0.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-first2_0.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first2_0.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-first3_0.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first3_0.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-first4_0.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first4_0.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-first4_1.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first4_2.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first5_0.xml	ACCEPT	ACCEPT	same		
+schemas/vdv-first5_0.xsd	ACCEPT	ACCEPT	same		
+schemas/vdv-simpleTypes.xsd	ACCEPT	ACCEPT	same		
+schemas/xml.xsd	ACCEPT	ACCEPT	same		
+schemas/xsd-list-itemType_0.xml	ACCEPT	ACCEPT	same		
+schemas/xsd-list-itemType_0.xsd	ACCEPT	ACCEPT	same		
+schemas/xsd-simpleType-varieties_0.xml	ACCEPT	ACCEPT	same		
+schemas/xsd-simpleType-varieties_0.xsd	ACCEPT	ACCEPT	same		
+schematron/cve-2025-49794.sct	ACCEPT	ACCEPT	same		
+schematron/cve-2025-49794_0.xml	ACCEPT	ACCEPT	same		
+schematron/cve-2025-49796.sct	ACCEPT	ACCEPT	same		
+schematron/cve-2025-49796_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon1.sct	ACCEPT	ACCEPT	same		
+schematron/zvon10.sct	ACCEPT	ACCEPT	same		
+schematron/zvon10_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon10_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon11.sct	ACCEPT	ACCEPT	same		
+schematron/zvon11_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon11_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon11_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon11_3.xml	ACCEPT	ACCEPT	same		
+schematron/zvon12.sct	ACCEPT	ACCEPT	same		
+schematron/zvon12_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon12_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon12_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon13.sct	ACCEPT	ACCEPT	same		
+schematron/zvon13_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon13_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon13_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon14.sct	ACCEPT	ACCEPT	same		
+schematron/zvon14_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon15.sct	ACCEPT	ACCEPT	same		
+schematron/zvon15_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon16.sct	ACCEPT	ACCEPT	same		
+schematron/zvon16_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon1_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon1_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon2.sct	ACCEPT	ACCEPT	same		
+schematron/zvon2_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon2_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon2_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon3.sct	ACCEPT	ACCEPT	same		
+schematron/zvon3_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon4.sct	ACCEPT	ACCEPT	same		
+schematron/zvon4_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon4_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon5.sct	ACCEPT	ACCEPT	same		
+schematron/zvon5_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon5_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon5_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon6.sct	ACCEPT	ACCEPT	same		
+schematron/zvon6_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon6_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon6_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon7.sct	ACCEPT	ACCEPT	same		
+schematron/zvon7_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon7_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon7_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon7_3.xml	ACCEPT	ACCEPT	same		
+schematron/zvon7_4.xml	ACCEPT	ACCEPT	same		
+schematron/zvon8.sct	ACCEPT	ACCEPT	same		
+schematron/zvon8_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon8_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon8_2.xml	ACCEPT	ACCEPT	same		
+schematron/zvon9.sct	ACCEPT	ACCEPT	same		
+schematron/zvon9_0.xml	ACCEPT	ACCEPT	same		
+schematron/zvon9_1.xml	ACCEPT	ACCEPT	same		
+schematron/zvon9_2.xml	ACCEPT	ACCEPT	same		
+scripts/base.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+scripts/base.xml	ACCEPT	ACCEPT	same		
+scripts/base2.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+scripts/base2.xml	ACCEPT	ACCEPT	same		
+scripts/long_command.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+scripts/long_command.xml	ACCEPT	ACCEPT	same		
+scripts/set1.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+scripts/set1.xml	ACCEPT	ACCEPT	same		
+scripts/set3.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+scripts/set3.xml	ACCEPT	ACCEPT	same		
+scripts/set4.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+scripts/set4.xml	ACCEPT	ACCEPT	same		
+scripts/whereis.script	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+scripts/whereis.xml	ACCEPT	ACCEPT	same		
+slashdot.rdf	ACCEPT	ACCEPT	same		
+slashdot.xml	ACCEPT	ACCEPT	same		
+slashdot16.xml	ACCEPT	ACCEPT	same		
+SVG/4rects.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/a-valid.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/a-wf.xml	ACCEPT	ACCEPT	same		
+SVG/bike.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/circle.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/defs.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/desc.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/ellipse.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/flower2.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/gradient.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/group01.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/group02.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/group03.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/image-valid.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/image-wf.xml	ACCEPT	ACCEPT	same		
+SVG/lin-gradient.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/marker.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/mask.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/mathswitch.xml	ACCEPT	ACCEPT	same		
+SVG/parentns.xml	ACCEPT	ACCEPT	same		
+SVG/path01.xml	ACCEPT	ACCEPT	same		
+SVG/path02.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/patternfill.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/polyline.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/private.xml	ACCEPT	ACCEPT	same		
+SVG/rad-gradient.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/rectangle.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/richdesc.xml	ACCEPT	ACCEPT	same		
+SVG/script.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/structure01.xml	ACCEPT	ACCEPT	same		
+SVG/style.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/switch.xml	ACCEPT	ACCEPT	same		
+SVG/symbol-use.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/template.xml	ACCEPT	ACCEPT	same		
+SVG/text01.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/text02.xml	ACCEPT	ACCEPT	same		
+SVG/text03.xml	ACCEPT	ACCEPT	same		
+SVG/toap01.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/toap02.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/transform.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/trivial.xml	ACCEPT	ACCEPT	same		
+SVG/twin-gradients.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/v-template.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/viewport-nest.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/viewport-transform.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+SVG/viewport.xml	ACCEPT	ACCEPT	same		
+SVG/wf-template.xml	ACCEPT	ACCEPT	same		
+svg1	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+svg2	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+svg3	ACCEPT	ACCEPT	same		
+text-4-byte-UTF-16-BE-offset.xml	ACCEPT	ACCEPT	same		
+text-4-byte-UTF-16-BE.xml	ACCEPT	ACCEPT	same		
+text-4-byte-UTF-16-LE-offset.xml	ACCEPT	ACCEPT	same		
+text-4-byte-UTF-16-LE.xml	ACCEPT	ACCEPT	same		
+threads/a/a.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/a.example.org.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/abc.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/abc.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/acb.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/acb.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/b/b.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/b.example.org.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/bac.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/bac.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/bca.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/bca.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/c/c.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/c.example.org.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/cab.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/cab.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/cba.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+threads/cba.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/complex.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/example.org.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+threads/invalid.xml	ACCEPT	ACCEPT	same		
+title.xml	ACCEPT	ACCEPT	same		
+tstblanks.xml	ACCEPT	ACCEPT	same		
+undeclared-entity.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+URI/file.uri	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+URI/port.uri	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+URI/smith.uri	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+URI/uri.data	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+utf16bebom.xml	ACCEPT	ACCEPT	same		
+utf16bom.xml	ACCEPT	ACCEPT	same		
+utf16lebom.xml	ACCEPT	ACCEPT	same		
+utf8bom.xml	ACCEPT	ACCEPT	same		
+valid/127772.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+valid/694228.xml	ACCEPT	ACCEPT	same		
+valid/737840.xml	ACCEPT	ACCEPT	same		
+valid/766956.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+valid/781333.xml	ACCEPT	ACCEPT	same		
+valid/cond_sect1.xml	ACCEPT	ACCEPT	same		
+valid/cond_sect2.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+valid/dia.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+valid/dtds/127772.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/694228.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/737840.ent	ACCEPT	ACCEPT	same		
+valid/dtds/766956.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/cond_sect1.dtd	REJECT	REJECT	error code: xpact unclosed token / expat syntax error	unclosed token	syntax error
+valid/dtds/cond_sect2.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/destfoo.ent	ACCEPT	ACCEPT	same		
+valid/dtds/external.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/external2.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/huge.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/NewsMLv1.2.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/nitf-2-5.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/notes.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/objednavka.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/pe-in-text-decl.dtd	REJECT	REJECT	same	XML declaration not well-formed	XML declaration not well-formed
+valid/dtds/pe-latin1.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/pe-test.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/pe-val-latin1.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/pe-val-latin1.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/spec.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/utf16b.ent	ACCEPT	ACCEPT	same		
+valid/dtds/utf16l.ent	ACCEPT	ACCEPT	same		
+valid/dtds/xhtml-lat1.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xhtml-special.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xhtml-symbol.ent	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xhtml.cat	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xhtml1-frameset.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xhtml1-strict.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xhtml1-transitional.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xhtml1.dcl	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/dtds/xmlspec.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/huge.xml	ACCEPT	ACCEPT	same		
+valid/id1.xml	ACCEPT	ACCEPT	same		
+valid/id2.xml	ACCEPT	ACCEPT	same		
+valid/id3.xml	ACCEPT	ACCEPT	same		
+valid/index.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+valid/mixed_ns.xml	ACCEPT	ACCEPT	same		
+valid/notes.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+valid/ns.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+valid/ns2.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+valid/objednavka.xml	ACCEPT	ACCEPT	same		
+valid/pe-in-text-decl.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+valid/pe-latin1.xml	ACCEPT	ACCEPT	same		
+valid/pe-test.xml	ACCEPT	ACCEPT	same		
+valid/pe-val-latin1.xml	ACCEPT	ACCEPT	events: xpact chars / expat entitydecl		
+valid/REC-xml-19980210.xml	ACCEPT	ACCEPT	events: xpact entitydecl / expat entitydecl field 1		
+valid/rss.xml	ACCEPT	ACCEPT	same		
+valid/t10.xml	ACCEPT	ACCEPT	same		
+valid/t11.xml	ACCEPT	ACCEPT	events: xpact attlistdecl / expat entitydecl		
+valid/t4.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/t4.xml	ACCEPT	REJECT	verdict: xpact ACCEPT () / expat REJECT (error in processing external entity reference)		error in processing external entity reference
+valid/t4a.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/t4a.xml	ACCEPT	REJECT	verdict: xpact ACCEPT () / expat REJECT (error in processing external entity reference)		error in processing external entity reference
+valid/t6.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+valid/t6.xml	ACCEPT	ACCEPT	same		
+valid/t8.xml	REJECT	REJECT	error code: xpact syntax error / expat not well-formed (invalid token)	syntax error	not well-formed (invalid token)
+valid/t8a.xml	REJECT	REJECT	error code: xpact syntax error / expat not well-formed (invalid token)	syntax error	not well-formed (invalid token)
+valid/t9.xml	ACCEPT	ACCEPT	same		
+valid/t9a.xml	ACCEPT	ACCEPT	same		
+valid/UTF16Entity.xml	ACCEPT	ACCEPT	same		
+valid/xhtml1.xhtml	ACCEPT	ACCEPT	events: xpact entitydecl / expat comment		
+valid/xlink.xml	ACCEPT	ACCEPT	events: xpact entitydecl / expat entitydecl field 1		
+VC/AttributeDefaultLegal	ACCEPT	ACCEPT	same		
+VC/AttributeNmtokens	ACCEPT	ACCEPT	same		
+VC/dtds/a.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+VC/dtds/doc.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+VC/DuplicateType	ACCEPT	ACCEPT	same		
+VC/ElementValid	ACCEPT	ACCEPT	same		
+VC/ElementValid2	ACCEPT	ACCEPT	same		
+VC/ElementValid3	ACCEPT	ACCEPT	same		
+VC/ElementValid4	ACCEPT	ACCEPT	same		
+VC/ElementValid5	ACCEPT	ACCEPT	same		
+VC/ElementValid6	ACCEPT	ACCEPT	same		
+VC/ElementValid7	ACCEPT	ACCEPT	same		
+VC/ElementValid8	ACCEPT	ACCEPT	same		
+VC/Enumeration	ACCEPT	ACCEPT	same		
+VC/NS1	ACCEPT	ACCEPT	same		
+VC/NS2	ACCEPT	ACCEPT	same		
+VC/NS3	ACCEPT	ACCEPT	events: xpact attlistdecl / expat attlistdecl field 5		
+VC/OneID	ACCEPT	ACCEPT	same		
+VC/OneID2	ACCEPT	ACCEPT	same		
+VC/OneID3	ACCEPT	ACCEPT	same		
+VC/PENesting	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+VC/PENesting2	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+VC/UniqueElementTypeDeclaration	ACCEPT	ACCEPT	same		
+VC/UniqueElementTypeDeclaration2	ACCEPT	ACCEPT	same		
+VCM/21.xml	ACCEPT	ACCEPT	same		
+VCM/AttributeNmtokens.xml	ACCEPT	ACCEPT	same		
+VCM/v1.xml	ACCEPT	ACCEPT	same		
+VCM/v10.xml	ACCEPT	ACCEPT	same		
+VCM/v11.xml	ACCEPT	ACCEPT	same		
+VCM/v12.xml	ACCEPT	ACCEPT	same		
+VCM/v13.xml	ACCEPT	ACCEPT	same		
+VCM/v14.xml	ACCEPT	ACCEPT	same		
+VCM/v15.xml	ACCEPT	ACCEPT	same		
+VCM/v16.xml	ACCEPT	ACCEPT	same		
+VCM/v17.xml	ACCEPT	ACCEPT	same		
+VCM/v18.xml	ACCEPT	ACCEPT	same		
+VCM/v19.xml	ACCEPT	ACCEPT	same		
+VCM/v2.xml	ACCEPT	ACCEPT	same		
+VCM/v20.xml	ACCEPT	ACCEPT	same		
+VCM/v21.xml	ACCEPT	ACCEPT	same		
+VCM/v22.xml	ACCEPT	ACCEPT	same		
+VCM/v23.xml	ACCEPT	ACCEPT	same		
+VCM/v24.xml	ACCEPT	ACCEPT	same		
+VCM/v3.xml	ACCEPT	ACCEPT	same		
+VCM/v4.xml	ACCEPT	ACCEPT	same		
+VCM/v5.xml	ACCEPT	ACCEPT	same		
+VCM/v6.xml	ACCEPT	ACCEPT	same		
+VCM/v7.xml	ACCEPT	ACCEPT	same		
+VCM/v8.xml	ACCEPT	ACCEPT	same		
+VCM/v9.xml	ACCEPT	ACCEPT	same		
+wap.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+winblanks.xml	ACCEPT	ACCEPT	same		
+wml.xml	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+xhtml1	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+xhtmlcomp	REJECT	REJECT	same	error in processing external entity reference	error in processing external entity reference
+XInclude/docs/base.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/coalesce.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/docids.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/fallback.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/fallback2.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/fallback3.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/fallback4.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/fallback5.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/fallback6.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/fallback8.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/include.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/invalid_char.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/issue733.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/nodes.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/nodes2.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/nodes3.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/recursive.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/red.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/tstencoding.xml	ACCEPT	ACCEPT	same		
+XInclude/docs/txtinclude.xml	ACCEPT	ACCEPT	same		
+XInclude/ents/base-inc.xml	ACCEPT	ACCEPT	same		
+XInclude/ents/coalesce1.xml	ACCEPT	ACCEPT	same		
+XInclude/ents/ids.xml	ACCEPT	ACCEPT	same		
+XInclude/ents/issue733-1.xml	ACCEPT	ACCEPT	same		
+XInclude/ents/issue733-2.xml	ACCEPT	ACCEPT	same		
+XInclude/ents/issue733.dtd	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+XInclude/ents/something.xml	ACCEPT	ACCEPT	same		
+XInclude/ents/sub-inc.ent	ACCEPT	ACCEPT	same		
+XInclude/issue1120/issue1120-1.xml	ACCEPT	ACCEPT	same		
+XInclude/issue1120/issue1120-2.xml	ACCEPT	ACCEPT	same		
+XInclude/without-reader/fallback7.xml	ACCEPT	ACCEPT	same		
+XInclude/without-reader/issue424-1.xml	ACCEPT	ACCEPT	same		
+XInclude/without-reader/issue424-2.xml	ACCEPT	ACCEPT	same		
+XInclude/without-reader/loop.xml	ACCEPT	ACCEPT	same		
+XInclude/without-reader/max-recurse.xml	ACCEPT	ACCEPT	same		
+XInclude/without-reader/ns1.xml	ACCEPT	ACCEPT	same		
+xml1	ACCEPT	ACCEPT	same		
+xml2	ACCEPT	ACCEPT	same		
+xmlid/id_err1.xml	ACCEPT	ACCEPT	same		
+xmlid/id_err2.xml	ACCEPT	ACCEPT	same		
+xmlid/id_tst1.xml	ACCEPT	ACCEPT	same		
+xmlid/id_tst2.xml	ACCEPT	ACCEPT	same		
+xmlid/id_tst3.xml	ACCEPT	ACCEPT	same		
+xmlid/id_tst4.xml	ACCEPT	ACCEPT	same		
+XPath/docs/chapters	ACCEPT	ACCEPT	same		
+XPath/docs/id	ACCEPT	ACCEPT	same		
+XPath/docs/issue289	ACCEPT	ACCEPT	same		
+XPath/docs/lang	ACCEPT	ACCEPT	same		
+XPath/docs/mixed	ACCEPT	ACCEPT	same		
+XPath/docs/nodes	ACCEPT	ACCEPT	same		
+XPath/docs/ns	ACCEPT	ACCEPT	same		
+XPath/docs/simple	ACCEPT	ACCEPT	same		
+XPath/docs/str	ACCEPT	ACCEPT	same		
+XPath/docs/unicode	ACCEPT	ACCEPT	same		
+XPath/docs/usr1	ACCEPT	ACCEPT	same		
+XPath/docs/vid	ACCEPT	ACCEPT	same		
+XPath/expr/base	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+XPath/expr/compare	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/expr/equality	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/expr/floats	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+XPath/expr/functions	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/expr/strings	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/chaptersbase	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/chaptersprefol	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/idsimple	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/langsimple	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/mixedpat	REJECT	REJECT	error code: xpact not well-formed (invalid token) / expat syntax error	not well-formed (invalid token)	syntax error
+XPath/tests/nodespat	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/nssimple	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/simpleabbr	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/simplebase	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/strbase	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/unicodesimple	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/usr1check	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/tests/vidbase	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/xptr/chapterschildseq	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/xptr/chaptersparts	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/xptr/issue289base	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/xptr/vidbase	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/xptr/vidchildseq	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/xptr/viderror	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+XPath/xptr/vidparts	REJECT	REJECT	same	not well-formed (invalid token)	not well-formed (invalid token)
+xsdtest/xsdtest.xml	ACCEPT	ACCEPT	same		
+xsdtest/xsdtest.xsl	ACCEPT	ACCEPT	same		
+xsdtest/xsdtestsuite.xml	ACCEPT	ACCEPT	same		

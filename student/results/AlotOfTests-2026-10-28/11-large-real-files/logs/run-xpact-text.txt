@@ -1,0 +1,12 @@
+file             mode    handlers |                    xpact |                    expat | events
+text-1mb.xml     whole   none     | ACCEPT   0.3816s   34.8MB | ACCEPT   0.0059s   18.5MB |  
+text-1mb.xml     whole   all      | ACCEPT   0.5706s   41.8MB | ACCEPT   0.0631s   29.9MB | same 
+text-1mb.xml     every:65536 none     | ACCEPT   3.9029s   35.5MB | ACCEPT   0.0069s   18.8MB |  
+text-1mb.xml     every:65536 all      | ACCEPT   3.7667s   49.8MB | ACCEPT   0.0489s   29.8MB | same 
+text-5mb.xml     whole   none     | ACCEPT   1.7832s   57.9MB | ACCEPT   0.0246s   23.4MB |  
+text-5mb.xml     whole   all      | ACCEPT   2.2535s   95.8MB | ACCEPT   0.2926s   77.4MB | same 
+text-5mb.xml     every:65536 none     | ACCEPT  79.5662s   78.5MB | ACCEPT   0.0268s   27.6MB |  
+text-5mb.xml     every:65536 all      | ACCEPT   84.197s  107.1MB | ACCEPT   0.2592s   81.7MB | same 
+text-9mb.xml     whole   none     | ACCEPT   3.1607s   81.3MB | ACCEPT   0.0572s   28.2MB |  
+text-9mb.xml     whole   all      | ACCEPT   4.5789s  150.3MB | ACCEPT   0.4613s  124.1MB | same 
+text-9mb.xml     every:65536 none     | TIMEOUT        s       MB | ACCEPT   0.0585s   36.5MB |  

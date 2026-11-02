@@ -1,0 +1,65 @@
+file	size_mb	mode	handlers	xpact	xpact_s	xpact_mb	xpact_message	xpact_hash	xpact_events	expat	expat_s	expat_mb	expat_message	expat_hash	expat_events	events
+records-1mb.xml	1.0	whole	none	ACCEPT	0.2419	34.9				ACCEPT	0.0096	18.5				
+records-1mb.xml	1.0	whole	all	ACCEPT	0.5051	48.3		d50eba6f91a14851	36086	ACCEPT	0.0367	29.4		d50eba6f91a14851	36086	same
+records-1mb.xml	1.0	every:65536	none	ACCEPT	2.271	41.8				ACCEPT	0.0087	18.9				
+records-1mb.xml	1.0	every:65536	all	ACCEPT	3.5546	54.5		d50eba6f91a14851	36086	ACCEPT	0.0392	28.9		d50eba6f91a14851	36086	same
+records-5mb.xml	5.1	whole	none	ACCEPT	1.2193	54.3				ACCEPT	0.0448	22.9				
+records-5mb.xml	5.1	whole	all	ACCEPT	2.6078	121.7		7e545037152092a7	178324	ACCEPT	0.1784	73.1		7e545037152092a7	178324	same
+records-5mb.xml	5.1	every:65536	none	ACCEPT	63.9999	73.5				ACCEPT	0.0426	26.9				
+records-5mb.xml	5.1	every:65536	all	ACCEPT	95.3108	138.5		7e545037152092a7	178324	ACCEPT	0.1941	77.3		7e545037152092a7	178324	same
+records-9mb.xml	9.1	whole	none	ACCEPT	2.2638	74.4				ACCEPT	0.0711	26.7				
+records-9mb.xml	9.1	whole	all	ACCEPT	5.5498	195.1		eea0be5f9b2d7ccb	321650	ACCEPT	0.3327	118.2		eea0be5f9b2d7ccb	321650	same
+records-9mb.xml	9.1	every:65536	none	ACCEPT	224.3892	94.5				ACCEPT	0.0951	35.0				
+records-9mb.xml	9.1	every:65536	all	ACCEPT	277.7665	187.0		eea0be5f9b2d7ccb	321650	ACCEPT	0.3896	125.5		eea0be5f9b2d7ccb	321650	same
+records-20mb.xml	20.2	whole	none	REJECT	0.8296	101.4	out of memory			ACCEPT	0.1844	38.0				
+records-20mb.xml	20.2	whole	all	REJECT	0.8828	101.4	out of memory	4f53cda18c2baa0c	0	ACCEPT	1.0282	239.7		ac723124a2ffba60	712869	
+records-20mb.xml	20.2	every:65536	none	REJECT	276.606	109.9	out of memory			ACCEPT	0.1941	57.2				
+records-20mb.xml	20.2	every:65536	all	TIMEOUT						ACCEPT	1.049	260.1		ac723124a2ffba60	712869	
+text-1mb.xml	1.1	whole	none	REJECT	0.1475	27.4	not well-formed (invalid token)			REJECT	0.0011	18.7	not well-formed (invalid token)			
+text-1mb.xml	1.1	whole	all	REJECT	0.1505	27.8	not well-formed (invalid token)	807270e34b34fa6b	17	REJECT	0.0017	18.7	not well-formed (invalid token)	b517623cc17d7675	18	
+text-1mb.xml	1.1	every:65536	none	REJECT	0.0122	23.8	not well-formed (invalid token)			REJECT	0.0015	18.8	not well-formed (invalid token)			
+text-1mb.xml	1.1	every:65536	all	REJECT	0.0113	24.1	not well-formed (invalid token)	807270e34b34fa6b	17	REJECT	0.0013	19.0	not well-formed (invalid token)	b517623cc17d7675	18	
+text-5mb.xml	5.5	whole	none	REJECT	0.7618	48.6	not well-formed (invalid token)			REJECT	0.0015	23.1	not well-formed (invalid token)			
+text-5mb.xml	5.5	whole	all	REJECT	0.7296	54.1	not well-formed (invalid token)	efafe2f0f8f5a5b5	83	REJECT	0.0014	23.1	not well-formed (invalid token)	f3fcbe897a50a784	84	
+text-5mb.xml	5.5	every:65536	none	REJECT	0.0155	32.7	not well-formed (invalid token)			REJECT	0.0051	27.5	not well-formed (invalid token)			
+text-5mb.xml	5.5	every:65536	all	REJECT	0.0187	32.9	not well-formed (invalid token)	efafe2f0f8f5a5b5	83	REJECT	0.005	27.7	not well-formed (invalid token)	f3fcbe897a50a784	84	
+text-9mb.xml	9.9	whole	none	REJECT	1.4608	70.5	not well-formed (invalid token)			REJECT	0.0014	27.4	not well-formed (invalid token)			
+text-9mb.xml	9.9	whole	all	REJECT	1.3606	80.3	not well-formed (invalid token)	057801724f6975e8	17	REJECT	0.0013	27.7	not well-formed (invalid token)	e3ae00da51131934	18	
+text-9mb.xml	9.9	every:65536	none	REJECT	0.0175	41.5	not well-formed (invalid token)			REJECT	0.0077	36.5	not well-formed (invalid token)			
+text-9mb.xml	9.9	every:65536	all	REJECT	0.0192	41.5	not well-formed (invalid token)	057801724f6975e8	17	REJECT	0.0071	36.4	not well-formed (invalid token)	e3ae00da51131934	18	
+text-20mb.xml	21.9	whole	none	REJECT	1.0491	108.1	out of memory			REJECT	0.0011	39.5	not well-formed (invalid token)			
+text-20mb.xml	21.9	whole	all	REJECT	1.0229	108.2	out of memory	4f53cda18c2baa0c	0	REJECT	0.0013	39.6	not well-formed (invalid token)	dfa1defaeced84e6	106	
+text-20mb.xml	21.9	every:65536	none	REJECT	0.0246	65.5	not well-formed (invalid token)			REJECT	0.0124	60.5	not well-formed (invalid token)			
+text-20mb.xml	21.9	every:65536	all	REJECT	0.0252	65.9	not well-formed (invalid token)	18b2f362ef1ba7d9	105	REJECT	0.014	60.5	not well-formed (invalid token)	dfa1defaeced84e6	106	
+ns-1mb.xml	1.0	whole	none	ACCEPT	0.9171	34.1				ACCEPT	0.0088	18.6				
+ns-1mb.xml	1.0	whole	all	ACCEPT	1.3424	64.1		d57f8e145e1960a4	113763	ACCEPT	0.0875	40.4		d57f8e145e1960a4	113763	same
+ns-1mb.xml	1.0	every:65536	none	ACCEPT	9.3101	39.0				ACCEPT	0.0111	18.7				
+ns-1mb.xml	1.0	every:65536	all	ACCEPT	10.6286	66.9		d57f8e145e1960a4	113763	ACCEPT	0.0874	40.8		d57f8e145e1960a4	113763	same
+ns-5mb.xml	5.0	whole	none	ACCEPT	4.6314	54.1				ACCEPT	0.0445	22.6				
+ns-5mb.xml	5.0	whole	all	ACCEPT	6.7634	195.5		622d63547a5c9994	558439	ACCEPT	0.5159	125.3		622d63547a5c9994	558439	same
+ns-5mb.xml	5.0	every:65536	none	ACCEPT	192.8239	69.7				ACCEPT	0.0465	26.9				
+ns-5mb.xml	5.0	every:65536	all	ACCEPT	214.3043	199.2		622d63547a5c9994	558439	ACCEPT	0.3474	129.4		622d63547a5c9994	558439	same
+ns-9mb.xml	9.1	whole	none	ACCEPT	6.554	74.1				ACCEPT	0.0614	26.9				
+ns-9mb.xml	9.1	whole	all	ACCEPT	9.9174	325.4		9342bd8bb0707a69	1001424	ACCEPT	0.9595	210.7		9342bd8bb0707a69	1001424	same
+ns-9mb.xml	9.1	every:65536	none	TIMEOUT						ACCEPT	0.0699	34.9				
+ns-9mb.xml	9.1	every:65536	all	TIMEOUT						ACCEPT	0.7352	219.4		9342bd8bb0707a69	1001424	
+ns-20mb.xml	20.1	whole	none	REJECT	0.693	101.0	out of memory			ACCEPT	0.1315	37.8				
+ns-20mb.xml	20.1	whole	all	REJECT	0.71	101.0	out of memory	4f53cda18c2baa0c	0	ACCEPT	2.0883	446.5		0e3f15be91c781a4	2212693	
+ns-20mb.xml	20.1	every:65536	none	TIMEOUT						ACCEPT	0.1381	57.0				
+ns-20mb.xml	20.1	every:65536	all	TIMEOUT						ACCEPT	2.2176	466.7		0e3f15be91c781a4	2212693	
+nested-1mb.xml	1.0	whole	none	ACCEPT	0.2994	27.9				ACCEPT	0.0084	18.6				
+nested-1mb.xml	1.0	whole	all	ACCEPT	0.6486	53.6		551b1f8ae0ff3132	86940	ACCEPT	0.0562	33.0		551b1f8ae0ff3132	86940	same
+nested-1mb.xml	1.0	every:65536	none	ACCEPT	3.6626	42.0				ACCEPT	0.0087	18.6				
+nested-1mb.xml	1.0	every:65536	all	ACCEPT	4.6129	61.4		551b1f8ae0ff3132	86940	ACCEPT	0.054	33.2		551b1f8ae0ff3132	86940	same
+nested-5mb.xml	5.0	whole	none	ACCEPT	1.4014	52.1				ACCEPT	0.0378	22.6				
+nested-5mb.xml	5.0	whole	all	ACCEPT	3.0256	150.3		1c4fcf057733f73c	434672	ACCEPT	0.2828	94.0		1c4fcf057733f73c	434672	same
+nested-5mb.xml	5.0	every:65536	none	ACCEPT	75.7799	70.9				ACCEPT	0.0379	26.9				
+nested-5mb.xml	5.0	every:65536	all	ACCEPT	102.2093	157.1		1c4fcf057733f73c	434672	ACCEPT	0.3525	97.8		1c4fcf057733f73c	434672	same
+nested-9mb.xml	9.0	whole	none	ACCEPT	3.1281	73.7				ACCEPT	0.0778	26.5				
+nested-9mb.xml	9.0	whole	all	ACCEPT	6.9058	242.9		1043f05e9773dae6	781738	ACCEPT	0.646	154.2		1043f05e9773dae6	781738	same
+nested-9mb.xml	9.0	every:65536	none	ACCEPT	268.7528	106.3				ACCEPT	0.1029	34.9				
+nested-9mb.xml	9.0	every:65536	all	TIMEOUT						ACCEPT	0.5314	162.3		1043f05e9773dae6	781738	
+nested-20mb.xml	20.0	whole	none	REJECT	0.6845	100.5	out of memory			ACCEPT	0.1487	37.8				
+nested-20mb.xml	20.0	whole	all	REJECT	0.7656	100.8	out of memory	4f53cda18c2baa0c	0	ACCEPT	1.4881	321.6		1ee16da02377dbf9	1735826	
+nested-20mb.xml	20.0	every:65536	none	TIMEOUT						ACCEPT	0.1484	56.8				
+nested-20mb.xml	20.0	every:65536	all	TIMEOUT						ACCEPT	1.3329	340.7		1ee16da02377dbf9	1735826	

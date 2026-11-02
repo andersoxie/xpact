@@ -1,0 +1,2 @@
+<!ENTITY g "general-from-dtd">
+<!ATTLIST d a CDATA "default-from-dtd">

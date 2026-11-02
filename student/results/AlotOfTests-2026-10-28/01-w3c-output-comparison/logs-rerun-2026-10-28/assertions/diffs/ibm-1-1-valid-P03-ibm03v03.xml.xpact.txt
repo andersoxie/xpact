@@ -1,0 +1,5 @@
+EXPECTED C:\Users\masou\Desktop\Lia\xpact\w9-latest\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\xml-1.1\valid\P03\out\ibm03v03.xml
+'<?xml version="1.1"?><doc>&#10;</doc>'
+
+GOT (xpact)
+'<doc>&#10;\x85</doc>'

@@ -1,0 +1,7 @@
+file	bytes	input_bytes	callbacks	expat	xpact	findings
+c02-mismatched.xml	20	<root><child></root>	default	REJECT 7 at 1:15 (byte 15)	REJECT 7 at 1:15 (byte 15)	#125
+c02-trailing-junk.xml	11	<root/>junk	default	REJECT 9 at 1:7 (byte 7)	REJECT 4 at 1:10 (byte 10)	#124
+cr-attribute.xml	12	<r a='x\x0dy'/>	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126
+cr-crlf.xml	9	<r>\x0d\x0a</r>	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126
+cr-last-byte.xml	5	<r/>\x0d	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126
+cr-lone.xml	8	<r>\x0d</r>	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126

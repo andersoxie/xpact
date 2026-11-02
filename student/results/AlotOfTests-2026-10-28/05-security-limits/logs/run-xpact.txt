@@ -1,0 +1,30 @@
+billion-laughs               expected REJECT xpact REJECT   17.9476s   132.8MB | expat REJECT    0.5659s    81.1MB | pass syntax error
+billion-laughs-attr          expected REJECT xpact REJECT    9.1198s    32.7MB | expat REJECT    0.1023s    20.4MB | pass syntax error
+billion-laughs-pe            expected REJECT xpact REJECT    0.0011s    20.7MB | expat REJECT    0.0008s    16.3MB | pass syntax error
+quadratic-blowup             expected REJECT xpact REJECT    2.6262s    47.4MB | expat REJECT    0.0153s    32.4MB | pass syntax error
+small-amplification-ok       expected ACCEPT xpact ACCEPT    0.0022s    21.2MB | expat ACCEPT    0.0008s    16.7MB | pass 
+recursive-direct             expected REJECT xpact REJECT    0.0006s    20.8MB | expat REJECT    0.0012s    16.4MB | pass recursive entity reference
+recursive-indirect           expected REJECT xpact REJECT    0.0006s    20.7MB | expat REJECT     0.001s    16.3MB | pass recursive entity reference
+recursive-pe                 expected REJECT xpact REJECT    0.0005s    20.6MB | expat REJECT    0.0009s    16.3MB | pass syntax error
+entity-chain-10k             expected ACCEPT xpact ACCEPT     0.293s    35.4MB | expat ACCEPT    0.0185s    21.5MB | pass 
+entity-chain-100k            expected ACCEPT xpact ACCEPT    3.7751s   112.8MB | expat ACCEPT    0.1829s    68.7MB | pass 
+deep-nesting-100k            expected ACCEPT xpact REJECT    0.0932s    25.7MB | expat ACCEPT    0.1235s    59.8MB | FAIL syntax error
+deep-nesting-1m              expected ACCEPT xpact REJECT    0.8273s    61.4MB | expat ACCEPT     1.536s   437.2MB | FAIL syntax error
+huge-name-10mb               expected ACCEPT xpact REJECT    0.4772s    60.4MB | expat ACCEPT    0.1182s    77.0MB | FAIL out of memory
+huge-attribute-50mb          expected ACCEPT xpact REJECT    2.1147s   220.3MB | expat ACCEPT    0.2233s   216.5MB | FAIL out of memory
+huge-text-100mb              expected ACCEPT xpact REJECT    4.3474s   420.3MB | expat ACCEPT    0.1991s   318.0MB | FAIL out of memory
+huge-comment-50mb            expected ACCEPT xpact REJECT    2.1675s   220.6MB | expat ACCEPT    0.1868s   216.4MB | FAIL out of memory
+many-attributes-100k         expected ACCEPT xpact REJECT    0.1248s    27.3MB | expat ACCEPT    0.0507s    38.8MB | FAIL syntax error
+duplicate-attribute-late     expected REJECT xpact REJECT    0.0668s    24.6MB | expat REJECT     0.015s    21.9MB | pass syntax error
+many-namespaces-50k          expected ACCEPT xpact REJECT    0.1341s    27.7MB | expat ACCEPT    0.1073s    51.5MB | FAIL syntax error
+big-token-small-chunks       expected ACCEPT xpact ACCEPT    1.3903s    76.2MB | expat ACCEPT    0.0268s    37.5MB | pass 
+big-text-byte-chunks         expected ACCEPT xpact TIMEOUT         s        MB | expat ACCEPT    0.0792s    22.3MB | FAIL (crash/timeout) 
+xxe-general-no-handler       expected ACCEPT xpact ACCEPT    0.0013s    20.8MB | expat ACCEPT    0.0006s    16.4MB | pass 
+xxe-parameter-no-handler     expected ACCEPT xpact ACCEPT    0.0006s    20.8MB | expat ACCEPT    0.0006s    16.5MB | pass 
+xxe-dtd-no-handler           expected ACCEPT xpact ACCEPT    0.0004s    20.6MB | expat ACCEPT    0.0006s    16.6MB | pass 
+ns-separator-in-uri          expected REJECT xpact ACCEPT    0.0004s    20.6MB | expat REJECT    0.0006s    16.4MB | FAIL 
+bad-utf8-in-name-2byte       expected REJECT xpact REJECT    0.0006s    20.7MB | expat REJECT    0.0006s    16.6MB | pass not well-formed (invalid token)
+bad-utf8-in-name-3byte       expected REJECT xpact REJECT    0.0003s    20.6MB | expat REJECT    0.0006s    16.4MB | pass not well-formed (invalid token)
+bad-utf8-in-attr             expected REJECT xpact REJECT    0.0003s    20.5MB | expat REJECT    0.0007s    16.3MB | pass not well-formed (invalid token)
+nul-byte                     expected REJECT xpact REJECT    0.0003s    20.7MB | expat REJECT    0.0012s    16.3MB | pass not well-formed (invalid token)
+{"pass": 19, "FAIL (crash/timeout)": 1, "FAIL": 9}
