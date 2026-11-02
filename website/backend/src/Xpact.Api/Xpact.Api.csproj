@@ -17,8 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- XPact DLLs (scripts/build-dll.ps1 puts them in website/backend/native) and the exported data. -->
-    <None Include="..\..\native\*.dll" Link="native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- XPact DLLs (scripts/build-dll.ps1 puts them in website/backend/native) and the exported data.
+         The DLLs are copied on every build: a replaced DLL can be older than the copy in bin (#216). -->
+    <None Include="..\..\native\*.dll" Link="native\%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
     <None Include="..\..\..\data\*.json" Link="data\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
