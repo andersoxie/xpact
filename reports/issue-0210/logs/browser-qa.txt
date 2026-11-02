@@ -1,0 +1,34 @@
+﻿url        http://127.0.0.1:5099/
+http       200
+load       2143ms
+title      "XPact XML Parser"
+bodyChars  2102
+patchright c:\Users\masou\.vscode\extensions\danielsanmedium.dscodegpt-3.24.81\standalone\
+browser    pinned Chromium  C:\Users\masou\AppData\Local\ms-playwright\chromium-1248\chrome-win64\chrome.exe
+text       XPact Home Validator Documentation Benchmarks Project GitHub ↗ ◐ Auto Work in progress · student project XPact: an XML parser you can check XPact is an XML parser written in Eiffel, with a C library t
+script     {
+ "/": {
+  "h1": "XPact: an XML parser you can check"
+ },
+ "/docs": {
+  "h1": "Documentation"
+ },
+ "/benchmarks": {
+  "h1": "Benchmarks and conformance"
+ },
+ "/project": {
+  "h1": "Project"
+ },
+ "benchmarkBars": 10,
+ "conformanceRows": 4,
+ "validVerdict": "✓\nWell-formed: accepted",
+ "eventRows": 25,
+ "brokenVerdict": "✕\nNot well-formed: rejected",
+ "brokenDetail": "mismatched tag code 7\nline 3, column 16 · byte 47 Show in editor",
+ "markedLine": "3",
+ "chunkedVerdict": "✕\nNot well-formed: rejected"
+}
+
+console errors/warnings (0):
+
+requests failed (0):
