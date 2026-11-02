@@ -26,7 +26,7 @@ export const LINKS = {
 // Leave linkedin empty to hide that link.
 export const AUTHOR = {
   name: "Masoud Dehdar",
-  role: "Software Developer (internship), Bsharp, Oct–Nov 2026",
+  role: "Software Developer (internship), Bsharp, Sep–Nov 2026 (10 weeks)",
   github: "https://github.com/CodTanium",
   linkedin: "",
   pulls: `${REPO}/pulls?q=is%3Apr+is%3Amerged+author%3ACodTanium`,

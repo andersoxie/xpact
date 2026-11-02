@@ -4,7 +4,7 @@ import { AUTHOR, LINKS, repoFile, repoTree } from "../data/site";
 const WORK: { area: string; what: string; href: string }[] = [
   { area: "Test automation", what: "11 test areas in Python: W3C, fuzzing, differential testing against Expat, security, memory, large files", href: repoTree("student/results/AlotOfTests-2026-10-28") },
   { area: "Parser fixes", what: "Conformance fixes in the Eiffel parser: W3C output test from 359 to 399 of 432", href: repoTree("reports") },
-  { area: "Build and CI", what: "Windows native build (MSVC), PowerShell build scripts, Jenkins and SonarQube findings", href: repoFile("reports/README.md") },
+  { area: "DevOps: build and CI", what: "Windows native build (MSVC), PowerShell build scripts, Jenkins pipelines and SonarQube findings", href: repoFile("reports/README.md") },
   { area: "This website", what: "React + TypeScript front end, ASP.NET Core API with an isolated parser worker, xUnit tests", href: repoTree("website") },
 ];
 
@@ -42,8 +42,8 @@ export function Project() {
       <section className="section">
         <h2>Who built what</h2>
         <p className="muted">
-          The XPact parser is developed at Bsharp. The testing, the conformance fixes, the build and CI work and this
-          website were done by <strong>{AUTHOR.name}</strong>, {AUTHOR.role}.
+          The XPact parser is developed at Bsharp. The testing, the conformance fixes, the DevOps work (build, CI and
+          test pipelines) and this website were done by <strong>{AUTHOR.name}</strong>, {AUTHOR.role}.
         </p>
         <div className="grid grid-4">
           {WORK.map((w) => (
