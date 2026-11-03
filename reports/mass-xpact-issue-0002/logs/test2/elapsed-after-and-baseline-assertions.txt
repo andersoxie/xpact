@@ -1,0 +1,5 @@
+v5-production exit 0 elapsed 00:15:30.4615536
+v5-assertions exit 0 elapsed 00:21:16.4164698
+baseline-253c81e-assertions exit 0 elapsed 00:23:28.3503032
+[exited with code 0]
+baseline-253c81e-production exit 0 elapsed 00:20:45.4018786
