@@ -670,6 +670,7 @@ feature -- Parsing
 			invalid_input_character_index := 0
 			if append_normalized_input (a_input, l_input, a_is_final) then
 				text_position_start := resume_text_start
+				expanded_entity_bytes := resume_entity_bytes
 				if not a_is_final then
 					parse_prefix_tokens (l_input, i, True)
 				else
@@ -1260,6 +1261,7 @@ feature {NONE} -- Resumable prefix parsing
 			i: INTEGER
 			l_token_start: INTEGER
 			l_token_sequence: INTEGER
+			l_token_entity_bytes: INTEGER
 			l_run_start: INTEGER
 			l_pending: BOOLEAN
 			l_doctype_pending: BOOLEAN
@@ -1276,6 +1278,7 @@ feature {NONE} -- Resumable prefix parsing
 				l_token_start := i
 				l_run_start := text_run_start (i)
 				l_token_sequence := handler.replay_sequence_count
+				l_token_entity_bytes := expanded_entity_bytes
 				l_pending := False
 				last_general_reference_end := 0
 				note_position (i)
@@ -1307,12 +1310,15 @@ feature {NONE} -- Resumable prefix parsing
 				if not l_pending then
 					resume_index := a_input.count + 1
 					resume_sequence_count := handler.replay_sequence_count
+					resume_entity_bytes := expanded_entity_bytes
 				elseif a_input.item (l_token_start) = '<' then
 					resume_index := l_token_start
 					resume_sequence_count := l_token_sequence
+					resume_entity_bytes := l_token_entity_bytes
 				elseif is_resumable_text_run (a_input, l_token_start) then
 					resume_index := l_token_start
 					resume_sequence_count := l_token_sequence
+					resume_entity_bytes := l_token_entity_bytes
 					if l_run_start /= l_token_start then
 						resume_text_start := l_run_start
 					end
@@ -1323,6 +1329,7 @@ feature {NONE} -- Resumable prefix parsing
 						-- Resume after the last general reference of the run instead of expanding it again.
 					resume_index := last_general_reference_end
 					resume_sequence_count := last_general_reference_sequence
+					resume_entity_bytes := last_general_reference_entity_bytes
 					resume_text_start := l_run_start
 				end
 			end
@@ -1484,6 +1491,13 @@ feature {NONE} -- Resumable prefix parsing
 
 	last_general_reference_sequence: INTEGER
 			-- Handler replay count after that reference.
+
+	last_general_reference_entity_bytes: INTEGER
+			-- `expanded_entity_bytes' after that reference.
+
+	resume_entity_bytes: INTEGER
+			-- `expanded_entity_bytes' at `resume_index': a resumed parse counts the
+			-- references of a text run it parses again only once.
 
 	resume_last_raw_cr: BOOLEAN
 			-- Did the raw input normalized so far end with a carriage return?
@@ -3079,6 +3093,7 @@ feature {NONE} -- Character data and references
 							-- Text after a general reference starts a new callback: a resumable point.
 						last_general_reference_end := Result
 						last_general_reference_sequence := handler.replay_sequence_count
+						last_general_reference_entity_bytes := expanded_entity_bytes
 					end
 				end
 			end
@@ -8530,6 +8545,7 @@ feature {NONE} -- State
 			resume_pending_utf8_count := 0
 			text_position_start := 0
 			resume_text_start := 0
+			resume_entity_bytes := 0
 			last_general_reference_end := 0
 			lazy_position_accounting := False
 			current_position_index := a_prefix_count + 1
@@ -8578,6 +8594,7 @@ feature {NONE} -- State
 			resume_pending_utf8_count := 0
 			text_position_start := 0
 			resume_text_start := 0
+			resume_entity_bytes := 0
 			last_general_reference_end := 0
 			create position_input.make_empty
 			lazy_position_accounting := False

@@ -32,6 +32,7 @@ After a successful non-final parse, `XP_PARSER` records a **checkpoint**:
 | `resume_index` | where parsing continues in the normalized input |
 | `resume_sequence_count` | the handler's callback count at that point |
 | `resume_text_start` | the start of the text run, when the checkpoint is inside one |
+| `resume_entity_bytes` | the entity accounting count (`expanded_entity_bytes`) at that point, so references in a text run that is parsed again are counted once |
 
 The checkpoint is the first of:
 
@@ -77,6 +78,9 @@ position are the same.
 - **`XML_GetInputContext`**: the context may now share `input_buffer`;
   `context_source_count` keeps its right edge where the old copy ended. Never call
   `context_source_buffer.wipe_out`: it could empty `input_buffer`.
+- **Entity accounting** (indirect byte count of the billion-laughs protection): a resumed
+  parse restarts the count from the checkpoint, so a predefined reference such as `&amp;`
+  in a pending text run is not counted on every call (Expat's `test_accounting_precision`).
 - **Scans for unfinished markup** continue where the previous scan stopped
   (`pending_markup_start`, `incomplete_markup_prefix_start_from`) instead of from byte 1.
 
