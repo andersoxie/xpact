@@ -103,14 +103,14 @@ The trace found three differences during development, all fixed before this resu
 | **3. Command** | `$env:PATH = "<VS>\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;$env:PATH"` then `.\scripts\run_libexpat_adapter.ps1 -Mode NativeSuite -ExpatSourceDir <expat-2.8.1> -XpactLibrary build\native-eiffel\xpact.lib -SkipNativeBuild -SkipXpactBuild -OutputDir build\libexpat-native-after` |
 | **4. Expected** | Checks 399, Failed 38, the 38 known allocator tests (as in #165). |
 | **5. Actual** | Checks 399, Failed **39**: also `test_accounting_precision`. |
-| **6. Error output** | `FAIL [chunksize=1 deferral=0]: test_accounting_precision` after `Document 10 of 36: Expected 5 count indirect bytes, got 60 instead.` ([log](logs/expat/runtests-v5-before-fix.log)) |
+| **6. Error output** | `FAIL [chunksize=1 deferral=0]: test_accounting_precision` after `Document 10 of 36: Expected 5 count indirect bytes, got 60 instead.` ([log](logs/expat/runtests-v5-before-fix.txt)) |
 | **7. Investigation** | Document 10 is `<e>&amp;&apos;&gt;&lt;&quot;</e>`, fed one byte at a time. Predefined references add to `expanded_entity_bytes`. On every call the resume path parsed the pending text run again from its checkpoint, so the references already in it were counted again; the old path resets the count before each full parse. |
 | **8. Cause** | ✅ **Confirmed**: the fix below makes the test pass. |
 | **9. Fix** | The checkpoint saves `expanded_entity_bytes` (`resume_entity_bytes`, also after the last general reference); `continue_prefix` restores it before parsing. |
-| **10. Verification** | ✅ Expat suite: Checks 399, Failed 38, the same list as #165 ([log](logs/expat/runtests-after-fix.log)). ✅ `XpactDllTests` 4,308/4,308 on both tiers. ✅ Traces byte-identical on both tiers; CRC rows identical; timing unchanged. ✅ Test 2 (production): all 2,585 rows identical to the run before the fix ([test2](logs/test2/chunked-fix1-acc-production.tsv)). |
+| **10. Verification** | ✅ Expat suite: Checks 399, Failed 38, the same list as #165 ([log](logs/expat/runtests-after-fix.txt)). ✅ `XpactDllTests` 4,308/4,308 on both tiers. ✅ Traces byte-identical on both tiers; CRC rows identical; timing unchanged. ✅ Test 2 (production): all 2,585 rows identical to the run before the fix ([test2](logs/test2/chunked-fix1-acc-production.tsv)). |
 
 The first rerun after the fix had a different crash: `test_deep_nested_attribute_entity` exited with
-`0xC0000005` ([log](logs/expat/runtests-after-fix-busy-pc.log)). That run overlapped with the C# tests
+`0xC0000005` ([log](logs/expat/runtests-after-fix-busy-pc.txt)). That run overlapped with the C# tests
 (8 processes). The test passed 3 of 3 times alone (32 s each) and in the clean full run. Cause:
 🟡 **suspected** load on the PC (the same test timed out under load in the #179 report), not confirmed.
 
