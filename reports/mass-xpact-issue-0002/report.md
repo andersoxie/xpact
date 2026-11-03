@@ -2,7 +2,7 @@
 
 > **Issue:** [CodTanium/mass-xpact#2](https://github.com/CodTanium/mass-xpact/issues/2) · **Branch:** `perf/incremental-parsing`, from `student-Mass` @ `253c81e`
 > **Changed:** `src/xp_parser.e`, `src/xp_native_parser.e`, `src/xp_native_callback_handler.e`, `src/xp_event_handler.e`; docs [incremental-resume.md](../../docs/incremental-resume.md)
-> **Status:** ✅ fixed · ✅ verified locally, both DLL tiers · ✅ Expat's own C tests: 38 known failures, as before (one bug found and fixed, section 4.2) · 🟡 waiting for Jenkins and review
+> **Status:** ✅ fixed · ✅ verified locally, both DLL tiers · ✅ Expat's own C tests: 38 known failures, as before (one bug found and fixed, section 4.2) · ✅ closed after local verification; PR #4 waits for the merge
 
 ## 1. In short
 
@@ -131,7 +131,7 @@ when only a default handler is set, at any chunk size. The baseline crashes the 
 - [ ] Whole-document parsing is unchanged; Test 2 is now dominated by per-parse cost
   (it parses each small document once per split point): a 10 % sample took 2.7 s with Expat,
   316 s with the baseline and 89 s after this change.
-- [ ] Measured on one PC (student PC2); Jenkins has not run it.
+- [ ] Measured on one PC (student PC2) only.
 
 ## 6. Reproduce
 
