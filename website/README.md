@@ -59,7 +59,7 @@ A crash inside the parser ends only that worker; the server reports `crashed` an
 | [`backend/requests/`](backend/requests/) | `.http` file and Postman collection |
 | [`data/`](data/) | Conformance, benchmark, comparison and testing numbers, exported from `reports/` and `student/results/` |
 | [`scripts/`](scripts/) | Build, run, test, publish, export |
-| [`docs/`](docs/) | Architecture, API, security, development, testing, roadmap |
+| [`docs/`](docs/) | Architecture, API, security, development, Docker, testing, roadmap |
 | [`guide.txt`](guide.txt) | The original design guide this site follows |
 
 ---
@@ -72,6 +72,7 @@ A crash inside the parser ends only that worker; the server reports `crashed` an
 | [docs/api.md](docs/api.md) | every endpoint, field and error |
 | [docs/security.md](docs/security.md) | limits, isolation, what was tested |
 | [docs/development.md](docs/development.md) | running, changing and publishing the site |
+| [docs/docker.md](docs/docker.md) | the Windows Docker image: build, run, settings (not tested yet) |
 | [docs/testing.md](docs/testing.md) | test record: revision, configuration, commands, results |
 | [docs/roadmap.md](docs/roadmap.md) | the guide's 7 phases, with ✅ / ⬜ |
 | [#211](https://github.com/andersoxie/xpact/issues/211) · [report](../reports/issue-0211/report.md) | the parser problem found while building the site (nested entity expansion) |
