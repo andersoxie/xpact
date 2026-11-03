@@ -1610,7 +1610,7 @@ feature {NONE} -- Encoding
 				invariant
 					index_in_bounds: i >= decoded_raw_count + 1 and i <= l_end + 1
 				until
-					i > l_end or not Result
+					i > l_end
 				loop
 					l_unit := utf16_unit_at (input_buffer, i, resume_utf16_little_endian)
 					if l_unit >= 55296 and then l_unit <= 56319 then
@@ -1630,6 +1630,10 @@ feature {NONE} -- Encoding
 					else
 						append_utf8_codepoint (l_decoded, l_unit)
 						i := i + 2
+					end
+					if not Result then
+							-- Stop here; advancing also keeps the variant decreasing (#12).
+						i := l_end + 1
 					end
 				variant
 					l_end - i + 1

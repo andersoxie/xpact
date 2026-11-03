@@ -57,4 +57,4 @@ Raw rows: [timing-pr-xml-utf-16.tsv](logs/timing-pr-xml-utf-16.tsv).
 - [ ] Latin-1, ASCII, explicit (`XML_ParserCreate ("UTF-16")`) and unknown encodings still use the full replay.
 - [ ] UTF-16 that the signature alone does not identify (an explicit encoding) is not resumed.
 - [ ] `decoded_buffer` is a second copy of the input (UTF-8), next to `input_buffer`: more memory for UTF-16 input.
-- [ ] Expat `runtests` was run on the production DLL only.
+- [x] ✅ Expat `runtests` now also run on the assertions DLL: it found a contract violation, fixed in [#12](../mass-xpact-issue-0012/report.md).
