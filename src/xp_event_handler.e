@@ -140,6 +140,14 @@ feature -- Events
 			Result := False
 		end
 
+	replay_sequence_count: INTEGER
+			-- Callbacks counted so far by a handler that replays a re-parsed input, or 0.
+		do
+			Result := 0
+		ensure
+			non_negative: Result >= 0
+		end
+
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 			-- A start element was parsed.
 		require

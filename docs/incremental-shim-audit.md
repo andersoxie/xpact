@@ -4,7 +4,9 @@ This audit records the current native chunk adapter behavior before replacing
 the accumulated-buffer replay path with a true incremental parser session.
 
 It is intentionally a focused native API audit, not a claim that the production
-parser has already stopped using replay internally. Rows classified as
+parser has already stopped using replay internally. Since mass-xpact #2 the
+adapter resumes from a checkpoint and replays only as a fallback
+([incremental-resume.md](incremental-resume.md)); all rows are unchanged by it. Rows classified as
 `current_gap` identify expected observations that should guide the
 incremental-core design; the current audit rows are green.
 

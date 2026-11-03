@@ -36,6 +36,7 @@ inherit
 			requires_eager_position_accounting,
 			stop_requested,
 			stop_is_resumable,
+			replay_sequence_count,
 			on_start_doctype_decl,
 			on_end_doctype_decl,
 			on_not_standalone,
@@ -835,6 +836,26 @@ feature -- Events
 		ensure
 			no_callbacks_seen: callback_sequence_count = 0
 			suppression_set: callbacks_to_suppress = a_suppressed_callbacks
+		end
+
+	prepare_callback_resume (a_sequence_count, a_suppressed_callbacks: INTEGER)
+			-- Continue counting from a parser checkpoint after `a_sequence_count' callbacks,
+			-- suppressing callbacks up to `a_suppressed_callbacks' already delivered.
+		require
+			non_negative_sequence: a_sequence_count >= 0
+			non_negative_suppression: a_suppressed_callbacks >= 0
+		do
+			callback_sequence_count := a_sequence_count
+			callbacks_to_suppress := a_suppressed_callbacks
+		ensure
+			sequence_set: callback_sequence_count = a_sequence_count
+			suppression_set: callbacks_to_suppress = a_suppressed_callbacks
+		end
+
+	replay_sequence_count: INTEGER
+			-- Callbacks counted so far in the current replay.
+		do
+			Result := callback_sequence_count
 		end
 
 	finish_successful_parse_callbacks

@@ -67,7 +67,8 @@ Chunked `XML_Parse` CRC diagnostics:
   -ParseMode All
 ```
 
-The current native chunk adapter still uses accumulated-buffer replay, but this
+The native chunk adapter resumes the parser from a checkpoint and falls back to
+accumulated-buffer replay ([incremental-resume.md](incremental-resume.md)); this
 corpus gate is a strict check for callback-stream equivalence across chunk
 sizes on plain text, entities, CDATA, namespaces, mixed content, deep nesting,
 and a larger catalog document. Use `-AllowMismatches` only while collecting
