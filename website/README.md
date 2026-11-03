@@ -57,7 +57,7 @@ A crash inside the parser ends only that worker; the server reports `crashed` an
 | [`backend/src/Xpact.Contracts/`](backend/src/Xpact.Contracts/) | The JSON result shared by the worker and the API |
 | [`backend/tests/`](backend/tests/) | End-to-end tests through the real worker and DLL |
 | [`backend/requests/`](backend/requests/) | `.http` file and Postman collection |
-| [`data/`](data/) | Conformance, benchmark and comparison numbers, exported from `reports/` |
+| [`data/`](data/) | Conformance, benchmark, comparison and testing numbers, exported from `reports/` and `student/results/` |
 | [`scripts/`](scripts/) | Build, run, test, publish, export |
 | [`docs/`](docs/) | Architecture, API, security, development, testing, roadmap |
 | [`guide.txt`](guide.txt) | The original design guide this site follows |
