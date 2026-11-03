@@ -1553,6 +1553,11 @@ feature {NONE} -- Encoding
 			else
 				l_tail := input_buffer.substring (a_count + 1, input_buffer.count)
 				input_buffer.keep_head (a_count)
+				if pending_scan_index > a_count + 1 then
+						-- The removed bytes are part of one character, never markup: the scan
+						-- continues at the new end instead of restarting from byte 1 (#11).
+					pending_scan_index := a_count + 1
+				end
 				Result := should_defer_reparse_callbacks (input_buffer, a_is_final, a_recent_count)
 				input_buffer.append (l_tail)
 			end
