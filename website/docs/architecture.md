@@ -48,6 +48,7 @@ The Benchmarks page never hard-codes results. [`scripts/export-data.py`](../scri
 | `data/conformance.json` | `reports/latest-2026-10-28/w3c/summary.json`, `…/dll-entity-lane/summary.json` |
 | `data/benchmarks.json` | `docs/benchmarks.md` (first results table) |
 | `data/comparison.json` | `student/results/G03-comparison/README.md` |
+| `data/testing.json` | `student/results/AlotOfTests-2026-10-28/` (test logs and READMEs), `reports/issue-0165/logs/test2/` |
 
 Each file keeps a link to its source report; the page shows that link.
 

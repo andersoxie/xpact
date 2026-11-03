@@ -11,7 +11,7 @@ Base URL: the site itself (for example `http://localhost:5099`). All responses a
 | `GET` | `/api/health` | `{"status":"ok"}` when the API runs |
 | `GET` | `/api/info` | the builds (and whether each DLL is installed) and the limits |
 | `POST` | `/api/validate` | parse one document |
-| `GET` | `/api/results/{name}` | `conformance`, `benchmarks` or `comparison` (exported report data) |
+| `GET` | `/api/results/{name}` | `conformance`, `benchmarks`, `comparison` or `testing` (exported report data) |
 
 ## `POST /api/validate`
 
