@@ -26,6 +26,7 @@ feature {NONE} -- Initialization
 			parser.set_external_entity_resolver (handler)
 			configure_external_entity_policy
 			create input_buffer.make_empty
+			create decoded_buffer.make_empty
 			create context_source_buffer.make_empty
 			create hash_salt_16_bytes.make_empty
 			last_error_code := Xml_error_none
@@ -227,10 +228,22 @@ feature -- Access
 			-- parsing `input_buffer' again from the start?
 
 	resume_raw_count: INTEGER
-			-- Bytes of `input_buffer' the parser has already received.
+			-- Bytes of `resume_source' the parser has already received.
+
+	resume_utf16: BOOLEAN
+			-- Is `input_buffer' UTF-16, so that a resumed parse reads `decoded_buffer'?
+
+	resume_utf16_little_endian: BOOLEAN
+			-- Byte order of that UTF-16 input.
+
+	decoded_buffer: STRING_8
+			-- UTF-8 decoding of the first `decoded_raw_count' bytes of UTF-16 `input_buffer'.
+
+	decoded_raw_count: INTEGER
+			-- Bytes of `input_buffer' decoded into `decoded_buffer'.
 
 	pending_scan_index: INTEGER
-			-- Where the next scan of `input_buffer' for unfinished markup continues, or 0.
+			-- Where the next scan of `resume_source' for unfinished markup continues, or 0.
 
 	context_source_count: INTEGER
 			-- Bytes of `context_source_buffer' visible to `input_context' while it shares `input_buffer'.
@@ -735,6 +748,7 @@ feature -- Element change
 			delivered_callback_count := 0
 			resume_ready := False
 			resume_raw_count := 0
+			clear_decoded_buffer
 			pending_scan_index := 0
 			deferred_reparse_start_index := 0
 			deferred_reparse_end_index := 0
@@ -908,19 +922,26 @@ feature {NONE} -- Parsing implementation
 					if namespace_mode then
 						parser.set_return_ns_triplet (native_return_ns_triplet (native_parser_handle))
 					end
-					if can_resume_parse and then not l_invalid_plain_start_suffix then
+					if
+						can_resume_parse and then not l_invalid_plain_start_suffix
+						and then (not resume_utf16 or else append_decoded_utf16 (a_is_final))
+					then
 							-- Continue from the parser's checkpoint with only the bytes it has not
 							-- received; callback numbering stays that of a full replay.
 						l_resumed := True
-						l_input := input_buffer
-							-- Decide and parse as the full replay does: without a UTF-8 character
-							-- cut off by the end of non-final input.
-						if a_is_final then
-							l_complete_count := input_buffer.count
+						l_input := resume_source
+							-- Decide and parse as the full replay does: without a character cut off
+							-- by the end of non-final input (UTF-16 decodes only complete characters).
+						if a_is_final or resume_utf16 then
+							l_complete_count := l_input.count
 						else
 							l_complete_count := complete_encoded_prefix_count (input_buffer)
 						end
-						l_defer_callbacks := should_defer_reparse_callbacks_on_prefix (l_complete_count, a_is_final, a_input.count)
+						if resume_utf16 then
+							l_defer_callbacks := should_defer_reparse_callbacks (decoded_buffer, a_is_final, a_input.count)
+						else
+							l_defer_callbacks := should_defer_reparse_callbacks_on_prefix (l_complete_count, a_is_final, a_input.count)
+						end
 						if l_defer_callbacks then
 							l_parse_end := (deferred_reparse_start_index - 1).max (0)
 							context_source_count := l_parse_end
@@ -939,7 +960,7 @@ feature {NONE} -- Parsing implementation
 							l_ok := True
 						else
 							handler.prepare_callback_resume (parser.resume_sequence_count, delivered_callback_count)
-							l_ok := parser.continue_prefix (input_buffer.substring (resume_raw_count + 1, l_parse_end), a_is_final)
+							l_ok := parser.continue_prefix (resume_source.substring (resume_raw_count + 1, l_parse_end), a_is_final)
 							if l_ok then
 								resume_raw_count := l_parse_end
 							elseif not parser.is_suspended and then not parser.has_error then
@@ -959,7 +980,7 @@ feature {NONE} -- Parsing implementation
 					if l_resumed then
 						if l_ok then
 							if a_is_final then
-								Result := raw_cr_epilog_stop_status (input_buffer)
+								Result := raw_cr_epilog_stop_status (resume_source)
 							else
 								Result := Xml_status_ok
 							end
@@ -1111,11 +1132,23 @@ feature {NONE} -- Parsing implementation
 						accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
 						if
 							l_direct_callback_count = 0 and then parser.can_continue_prefix and then not is_external_entity_parser
-							and then not handler.diagnostic_events_enabled and then l_input = input_buffer
-							and then has_stable_encoding (input_buffer)
+							and then not handler.diagnostic_events_enabled
 						then
-							resume_ready := True
-							if not l_resumed then
+							if l_input = input_buffer and then has_stable_encoding (input_buffer) then
+								resume_ready := True
+								resume_utf16 := False
+								if not l_resumed then
+									resume_raw_count := l_parse_end
+								end
+							elseif l_resumed and then resume_utf16 then
+								resume_ready := True
+							elseif not l_resumed and then attached l_input as l_decoded and then is_resumable_utf16_input then
+									-- Later calls decode only their new bytes and continue in this decoding.
+								resume_ready := True
+								resume_utf16 := True
+								resume_utf16_little_endian := has_utf16le_signature (input_buffer)
+								decoded_buffer := l_decoded
+								decoded_raw_count := complete_encoded_prefix_count (input_buffer)
 								resume_raw_count := l_parse_end
 							end
 						end
@@ -1149,6 +1182,7 @@ feature {NONE} -- Parsing implementation
 				parsing_status := Xml_finished
 				input_buffer.wipe_out
 				resume_raw_count := 0
+				clear_decoded_buffer
 				pending_scan_index := 0
 				clear_doctype_prefix_scan
 				clear_plain_ascii_text_prefix
@@ -1177,6 +1211,7 @@ feature {NONE} -- Parsing implementation
 			delivered_callback_count := 0
 			resume_ready := False
 			resume_raw_count := 0
+			clear_decoded_buffer
 			pending_scan_index := 0
 			handler.prepare_callback_replay (0)
 			handler.finish_successful_parse_callbacks
@@ -1529,7 +1564,95 @@ feature {NONE} -- Encoding
 			-- Can this call continue the parser from its checkpoint?
 		do
 			Result := resume_ready and then parser.can_continue_prefix and then not is_external_entity_parser
-				and then not handler.diagnostic_events_enabled and then resume_raw_count <= input_buffer.count
+				and then not handler.diagnostic_events_enabled and then resume_raw_count <= resume_source.count
+		end
+
+	resume_source: STRING_8
+			-- The input a resumed parse reads: `input_buffer', or its decoding for UTF-16.
+		do
+			if resume_utf16 then
+				Result := decoded_buffer
+			else
+				Result := input_buffer
+			end
+		end
+
+	is_resumable_utf16_input: BOOLEAN
+			-- Is `input_buffer' UTF-16 that its signature alone decodes, so that appended bytes
+			-- can be decoded on their own (`append_decoded_utf16')?
+		do
+			Result := explicit_encoding = Void and then input_buffer.count >= 4
+				and then (has_utf16le_signature (input_buffer) or else has_utf16be_signature (input_buffer))
+		end
+
+	append_decoded_utf16 (a_is_final: BOOLEAN): BOOLEAN
+			-- Decode the bytes of `input_buffer' after `decoded_raw_count' into `decoded_buffer',
+			-- as `decoded_input' decodes the whole buffer. Up to a character cut off by the end
+			-- of non-final input. False, with nothing changed, when only the full decode can
+			-- report the bytes (an invalid surrogate, or a partial character at the end).
+		local
+			i: INTEGER
+			l_end: INTEGER
+			l_unit: INTEGER
+			l_low: INTEGER
+			l_decoded: STRING_8
+		do
+			if a_is_final then
+				l_end := input_buffer.count
+			else
+				l_end := complete_encoded_prefix_count (input_buffer)
+			end
+			if (l_end - decoded_raw_count) \\ 2 = 0 and then decoded_raw_count >= 2 then
+				Result := True
+				create l_decoded.make (l_end - decoded_raw_count)
+				from
+					i := decoded_raw_count + 1
+				invariant
+					index_in_bounds: i >= decoded_raw_count + 1 and i <= l_end + 1
+				until
+					i > l_end
+				loop
+					l_unit := utf16_unit_at (input_buffer, i, resume_utf16_little_endian)
+					if l_unit >= 55296 and then l_unit <= 56319 then
+						if i + 3 > l_end then
+							Result := False
+						else
+							l_low := utf16_unit_at (input_buffer, i + 2, resume_utf16_little_endian)
+							if l_low < 56320 or else l_low > 57343 then
+								Result := False
+							else
+								append_utf8_codepoint (l_decoded, 65536 + ((l_unit - 55296) * 1024) + (l_low - 56320))
+								i := i + 4
+							end
+						end
+					elseif l_unit >= 56320 and then l_unit <= 57343 then
+						Result := False
+					else
+						append_utf8_codepoint (l_decoded, l_unit)
+						i := i + 2
+					end
+					if not Result then
+							-- Stop here; advancing also keeps the variant decreasing (#12).
+						i := l_end + 1
+					end
+				variant
+					l_end - i + 1
+				end
+				if Result then
+					decoded_buffer.append (l_decoded)
+					decoded_raw_count := l_end
+				end
+			end
+		ensure
+			unchanged_on_failure: not Result implies decoded_raw_count = old decoded_raw_count
+		end
+
+	clear_decoded_buffer
+			-- Forget the UTF-16 decoding used by resumed parses.
+		do
+			resume_utf16 := False
+			create decoded_buffer.make_empty
+			decoded_raw_count := 0
 		end
 
 	has_stable_encoding (a_input: READABLE_STRING_8): BOOLEAN
@@ -1564,12 +1687,12 @@ feature {NONE} -- Encoding
 		require
 			input_attached: a_input /= Void
 		do
-			if a_input = input_buffer and then pending_scan_index > 0 and then pending_scan_index <= a_input.count + 1 then
+			if a_input = resume_source and then pending_scan_index > 0 and then pending_scan_index <= a_input.count + 1 then
 				Result := parser.incomplete_markup_prefix_start_from (a_input, pending_scan_index)
 			else
 				Result := parser.incomplete_markup_prefix_start (a_input)
 			end
-			if a_input /= input_buffer then
+			if a_input /= resume_source then
 				pending_scan_index := 0
 			elseif Result > 0 then
 				pending_scan_index := Result

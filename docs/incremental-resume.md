@@ -60,7 +60,8 @@ call. `input_buffer` is therefore still kept whole (memory use is unchanged).
 |---|---|
 | The first call, and any call after one that could not record a checkpoint | no checkpoint |
 | An invalid character in the new bytes | the replay reports it exactly (#172 delivers the callbacks in front of it) |
-| Input that is not plain UTF-8 (Latin-1, UTF-16, an explicit or unknown encoding), or an XML declaration that is not complete yet | decoding is still done on the whole buffer |
+| Input that is not plain UTF-8 or UTF-16 (Latin-1, ASCII, an explicit or unknown encoding), or an XML declaration that is not complete yet | decoding is still done on the whole buffer |
+| UTF-16: an invalid surrogate, or a partial character at the final call | only the full decode reports it |
 | External entity parsers, diagnostic events | not covered yet |
 | An unfinished DOCTYPE that reports its parts as they arrive | no checkpoint inside a DOCTYPE |
 | After a resumable stop (`XML_StopParser (p, XML_TRUE)`) | `XML_ResumeParser` replays, as before |
@@ -69,6 +70,18 @@ call. `input_buffer` is therefore still kept whole (memory use is unchanged).
 An error found by the resume path (including a non-resumable `XML_StopParser`) is
 reported directly: the parser state is that of a full parse, so the error and its
 position are the same.
+
+### UTF-16 input ([mass-xpact#7](https://github.com/CodTanium/mass-xpact/issues/7))
+
+The parser always reads UTF-8: `decoded_input` decodes UTF-16 before parsing. For
+UTF-16 recognised by its signature (BOM or `<` shape, no explicit encoding), the native
+parser keeps that decoding in `decoded_buffer`. Each later call decodes only the bytes
+after `decoded_raw_count` (`append_decoded_utf16`, up to a character cut off by the end
+of non-final input, as `complete_encoded_prefix_count` cuts it) and resumes the parser
+on `decoded_buffer`. `resume_source` is the input a resumed parse reads: `input_buffer`
+for UTF-8, `decoded_buffer` for UTF-16. Deferral, the pending-markup scan and
+`resume_raw_count` work on it, exactly as the full replay works on its fresh decoding.
+`XML_GetInputContext` still shows the raw `input_buffer`, as before.
 
 ## 4. Kept exactly as before
 
@@ -86,7 +99,8 @@ position are the same.
 
 ## 5. Not done yet
 
-- [ ] Resume for non-UTF-8 input (decode only the new bytes).
+- [x] ✅ Resume for UTF-16 input (#7): only the new bytes are decoded.
+- [ ] Resume for Latin-1, ASCII, explicit and unknown encodings.
 - [ ] Resume in external entity child parsers.
 - [ ] Trim `input_buffer` once the fallback is no longer needed (memory).
 - [ ] Per-call overhead: byte-by-byte is still about 14× slower than one call.
