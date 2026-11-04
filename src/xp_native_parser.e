@@ -222,6 +222,19 @@ feature -- Access
 	plain_ascii_start_tag_name_length: INTEGER
 			-- Checked root-name byte length at that checkpoint.
 
+	resume_ready: BOOLEAN
+			-- Can the next call continue the parser from its checkpoint instead of
+			-- parsing `input_buffer' again from the start?
+
+	resume_raw_count: INTEGER
+			-- Bytes of `input_buffer' the parser has already received.
+
+	pending_scan_index: INTEGER
+			-- Where the next scan of `input_buffer' for unfinished markup continues, or 0.
+
+	context_source_count: INTEGER
+			-- Bytes of `context_source_buffer' visible to `input_context' while it shares `input_buffer'.
+
 	deferred_reparse_start_index: INTEGER
 			-- Start index of the token currently delayed by reparse deferral.
 
@@ -720,6 +733,9 @@ feature -- Element change
 		do
 			input_buffer.wipe_out
 			delivered_callback_count := 0
+			resume_ready := False
+			resume_raw_count := 0
+			pending_scan_index := 0
 			deferred_reparse_start_index := 0
 			deferred_reparse_end_index := 0
 			deferred_reparse_scan_index := 0
@@ -732,7 +748,8 @@ feature -- Element change
 			accounting_direct_count := 0
 			accounting_indirect_count := 0
 			accounting_external_child_count := 0
-			context_source_buffer.wipe_out
+				-- A new string: the old one may share `input_buffer'.
+			create context_source_buffer.make_empty
 			context_buffer := Void
 			handler.reset_events
 			handler.finish_successful_parse_callbacks
@@ -837,6 +854,10 @@ feature {NONE} -- Parsing implementation
 			l_plain_start_name_length: INTEGER
 			l_invalid_plain_start_suffix: BOOLEAN
 			l_use_cached_doctype: BOOLEAN
+			l_resumed: BOOLEAN
+			l_deferral_decided: BOOLEAN
+			l_parse_end: INTEGER
+			l_complete_count: INTEGER
 		do
 			final_buffer := a_is_final
 			accounting_direct_count := accounting_direct_count + a_input.count
@@ -887,9 +908,73 @@ feature {NONE} -- Parsing implementation
 					if namespace_mode then
 						parser.set_return_ns_triplet (native_return_ns_triplet (native_parser_handle))
 					end
-					l_input := decoded_input (input_buffer)
-					parser.set_input_byte_order_mark_removed (last_input_byte_order_mark_removed)
-					if l_input = Void then
+					if can_resume_parse and then not l_invalid_plain_start_suffix then
+							-- Continue from the parser's checkpoint with only the bytes it has not
+							-- received; callback numbering stays that of a full replay.
+						l_resumed := True
+						l_input := input_buffer
+							-- Decide and parse as the full replay does: without a UTF-8 character
+							-- cut off by the end of non-final input.
+						if a_is_final then
+							l_complete_count := input_buffer.count
+						else
+							l_complete_count := complete_encoded_prefix_count (input_buffer)
+						end
+						l_defer_callbacks := should_defer_reparse_callbacks_on_prefix (l_complete_count, a_is_final, a_input.count)
+						if l_defer_callbacks then
+							l_parse_end := (deferred_reparse_start_index - 1).max (0)
+							context_source_count := l_parse_end
+						else
+							l_parse_end := l_complete_count
+							context_source_count := input_buffer.count
+						end
+						if handler.has_observable_native_callbacks then
+							context_source_buffer := input_buffer
+						else
+							create context_source_buffer.make_empty
+						end
+						context_buffer := Void
+						if l_parse_end <= resume_raw_count and then not a_is_final then
+								-- Only bytes of the delayed token arrived: nothing new to parse yet.
+							l_ok := True
+						else
+							handler.prepare_callback_resume (parser.resume_sequence_count, delivered_callback_count)
+							l_ok := parser.continue_prefix (input_buffer.substring (resume_raw_count + 1, l_parse_end), a_is_final)
+							if l_ok then
+								resume_raw_count := l_parse_end
+							elseif not parser.is_suspended and then not parser.has_error then
+									-- Bytes only the full parse handles (an invalid character): parse
+									-- everything again. Nothing was delivered by this attempt.
+								l_resumed := False
+								l_deferral_decided := True
+								delivered_callback_count := delivered_callback_count.max (handler.callback_sequence_count)
+							end
+						end
+					end
+					resume_ready := False
+					if not l_resumed then
+						l_input := decoded_input (input_buffer)
+						parser.set_input_byte_order_mark_removed (last_input_byte_order_mark_removed)
+					end
+					if l_resumed then
+						if l_ok then
+							if a_is_final then
+								Result := raw_cr_epilog_stop_status (input_buffer)
+							else
+								Result := Xml_status_ok
+							end
+							if Result = Xml_status_ok then
+								last_error_code := Xml_error_none
+							end
+						elseif parser.is_suspended then
+							last_error_code := Xml_error_none
+							Result := Xml_status_suspended
+						else
+								-- The parser state is that of a full parse, so is its error.
+							last_error_code := error_code_for (parser.last_error)
+							Result := Xml_status_error
+						end
+					elseif l_input = Void then
 						if not a_is_final and then last_error_code = Xml_error_partial_char then
 								-- Unknown encodings can end inside a converter sequence.
 								-- Retain the bytes and previously delivered callback count.
@@ -903,7 +988,11 @@ feature {NONE} -- Parsing implementation
 						if not l_use_cached_doctype then
 							parser.clear_cached_doctype
 						end
-						l_defer_callbacks := should_defer_reparse_callbacks (l_input, a_is_final, a_input.count)
+						if not (l_deferral_decided and then l_input.count = l_complete_count) then
+								-- After a failed resume attempt the deferral decision is already made:
+								-- deciding again from its updated scan state could differ.
+							l_defer_callbacks := should_defer_reparse_callbacks (l_input, a_is_final, a_input.count)
+						end
 						if l_defer_callbacks and then deferred_reparse_start_index > 1 then
 							l_parse_input := l_input.substring (1, deferred_reparse_start_index - 1)
 							l_context_input := input_buffer.substring (1, deferred_reparse_start_index - 1)
@@ -914,6 +1003,7 @@ feature {NONE} -- Parsing implementation
 							l_parse_input := l_input
 							l_context_input := input_buffer
 						end
+						l_parse_end := l_parse_input.count
 						handler.prepare_callback_replay (delivered_callback_count)
 							-- The direct start-tag shortcut only serves non-final input, which is parsed
 							-- again by later calls; a final call must parse all of the input (C01, #38).
@@ -934,7 +1024,7 @@ feature {NONE} -- Parsing implementation
 						if handler.has_observable_native_callbacks then
 							context_source_buffer := l_context_input.twin
 						else
-							context_source_buffer.wipe_out
+							create context_source_buffer.make_empty
 						end
 						context_buffer := Void
 						if not a_is_final and then can_emit_ready_plain_start_tag_directly and then ready_plain_start_tag_end_index = l_input.count then
@@ -1019,8 +1109,18 @@ feature {NONE} -- Parsing implementation
 							delivered_callback_count := delivered_callback_count.max (handler.callback_sequence_count)
 						end
 						accounting_indirect_count := accounting_external_child_count + parser.accounting_indirect_byte_count
+						if
+							l_direct_callback_count = 0 and then parser.can_continue_prefix and then not is_external_entity_parser
+							and then not handler.diagnostic_events_enabled and then l_input = input_buffer
+							and then has_stable_encoding (input_buffer)
+						then
+							resume_ready := True
+							if not l_resumed then
+								resume_raw_count := l_parse_end
+							end
+						end
 						if not l_defer_callbacks and then l_direct_callback_count = 0 and then attached l_input as l_consumed_input then
-							l_pending_start := parser.incomplete_markup_prefix_start (l_consumed_input)
+							l_pending_start := pending_markup_start (l_consumed_input)
 							if l_pending_start = 0 then
 								native_consume_input_prefix (native_parser_handle, 0)
 							else
@@ -1048,9 +1148,11 @@ feature {NONE} -- Parsing implementation
 				parser.clear_cached_doctype
 				parsing_status := Xml_finished
 				input_buffer.wipe_out
+				resume_raw_count := 0
+				pending_scan_index := 0
 				clear_doctype_prefix_scan
 				clear_plain_ascii_text_prefix
-				context_source_buffer.wipe_out
+				create context_source_buffer.make_empty
 				context_buffer := Void
 				delivered_callback_count := 0
 				deferred_reparse_start_index := 0
@@ -1073,6 +1175,9 @@ feature {NONE} -- Parsing implementation
 			create context_source_buffer.make_empty
 			context_buffer := Void
 			delivered_callback_count := 0
+			resume_ready := False
+			resume_raw_count := 0
+			pending_scan_index := 0
 			handler.prepare_callback_replay (0)
 			handler.finish_successful_parse_callbacks
 			parser.clear_cached_doctype
@@ -1114,8 +1219,12 @@ feature -- Parsing
 			l_offset: INTEGER
 			l_source_count: INTEGER
 		do
-			if parsing_status = Xml_parsing and then not context_source_buffer.is_empty then
-				l_source_count := context_source_buffer.count
+			l_source_count := context_source_buffer.count
+			if context_source_buffer = input_buffer then
+					-- A resumed parse shares `input_buffer'; the context ends where it was parsed.
+				l_source_count := l_source_count.min (context_source_count)
+			end
+			if parsing_status = Xml_parsing and then l_source_count > 0 then
 				l_offset := current_byte_index
 				if l_offset < 0 then
 					l_offset := 0
@@ -1347,7 +1456,11 @@ feature {NONE} -- Encoding
 					if delivered_callback_count = 0 and then a_input.count > 0 and then is_deferred_start_tag_prefix (a_input, 1) and then parser.markup_prefix_end (a_input, 1) = 0 then
 						deferred_reparse_start_index := 1
 					else
-						l_start := parser.incomplete_markup_prefix_start (a_input)
+						if attached {STRING_8} a_input as l_buffer then
+							l_start := pending_markup_start (l_buffer)
+						else
+							l_start := parser.incomplete_markup_prefix_start (a_input)
+						end
 						if l_start > 0 then
 							deferred_reparse_start_index := l_start
 						end
@@ -1389,6 +1502,82 @@ feature {NONE} -- Encoding
 					end
 				end
 			end
+		end
+
+	should_defer_reparse_callbacks_on_prefix (a_count: INTEGER; a_is_final: BOOLEAN; a_recent_count: INTEGER): BOOLEAN
+			-- `should_defer_reparse_callbacks' for the first `a_count' bytes of `input_buffer', the
+			-- input the full replay decodes. The bytes after them (part of one character) are put
+			-- back afterwards, so scans of `input_buffer' can continue where they stopped.
+		require
+			count_in_buffer: a_count >= 0 and a_count <= input_buffer.count
+		local
+			l_tail: STRING_8
+		do
+			if a_count = input_buffer.count then
+				Result := should_defer_reparse_callbacks (input_buffer, a_is_final, a_recent_count)
+			else
+				l_tail := input_buffer.substring (a_count + 1, input_buffer.count)
+				input_buffer.keep_head (a_count)
+				Result := should_defer_reparse_callbacks (input_buffer, a_is_final, a_recent_count)
+				input_buffer.append (l_tail)
+			end
+		ensure
+			buffer_count_restored: input_buffer.count = old input_buffer.count
+		end
+
+	can_resume_parse: BOOLEAN
+			-- Can this call continue the parser from its checkpoint?
+		do
+			Result := resume_ready and then parser.can_continue_prefix and then not is_external_entity_parser
+				and then not handler.diagnostic_events_enabled and then resume_raw_count <= input_buffer.count
+		end
+
+	has_stable_encoding (a_input: READABLE_STRING_8): BOOLEAN
+			-- Can bytes appended to `a_input' no longer change how it is decoded? That is so
+			-- once an XML declaration at its start is complete, or cannot start there.
+		require
+			input_attached: a_input /= Void
+		local
+			l_start: INTEGER
+			l_declaration: STRING_8
+		do
+			l_declaration := "<?xml"
+			l_start := 1
+			if a_input.count >= 3 and then a_input.item (1).code = 239 and then a_input.item (2).code = 187 and then a_input.item (3).code = 191 then
+				l_start := 4
+			end
+			if a_input.count < 3 then
+					-- A byte-order mark may still be arriving.
+				Result := False
+			elseif a_input.count - l_start + 1 < l_declaration.count then
+				Result := a_input.count >= l_start and then not l_declaration.same_characters (a_input, l_start, a_input.count, 1)
+			elseif a_input.same_characters (l_declaration, 1, l_declaration.count, l_start) then
+				Result := a_input.substring_index ("?>", l_start + l_declaration.count) > 0
+			else
+				Result := True
+			end
+		end
+
+	pending_markup_start (a_input: STRING_8): INTEGER
+			-- `parser.incomplete_markup_prefix_start (a_input)'; a scan of the growing
+			-- `input_buffer' continues where the previous one stopped.
+		require
+			input_attached: a_input /= Void
+		do
+			if a_input = input_buffer and then pending_scan_index > 0 and then pending_scan_index <= a_input.count + 1 then
+				Result := parser.incomplete_markup_prefix_start_from (a_input, pending_scan_index)
+			else
+				Result := parser.incomplete_markup_prefix_start (a_input)
+			end
+			if a_input /= input_buffer then
+				pending_scan_index := 0
+			elseif Result > 0 then
+				pending_scan_index := Result
+			else
+				pending_scan_index := a_input.count + 1
+			end
+		ensure
+			not_found_or_valid: Result = 0 or else (Result >= 1 and Result <= a_input.count)
 		end
 
 	clear_plain_ascii_text_prefix

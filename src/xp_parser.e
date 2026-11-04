@@ -627,7 +627,6 @@ feature -- Parsing
 			input_attached: a_input /= Void
 			input_within_limit: a_input.count <= max_input_bytes
 		local
-			i: INTEGER
 			l_input: STRING_8
 		do
 			reset
@@ -635,37 +634,93 @@ feature -- Parsing
 			invalid_input_character_index := last_invalid_character_index
 			position_input := l_input
 			note_position (1)
-			from
-				i := 1
-			invariant
-				index_in_bounds: i >= 1 and i <= l_input.count + 1
-				depth_within_limit: element_stack.count <= max_element_depth
-			until
-				i > l_input.count or has_error or is_suspended
-			loop
-				note_position (i)
-				if l_input.item (i) = '<' then
-					if is_incomplete_markup_prefix (l_input, i) then
-						if has_at (l_input, i, "<!DOCTYPE") then
-							process_incomplete_doctype_prefix (l_input, i)
-						end
-						i := l_input.count + 1
-					else
-						i := parse_markup (l_input, i)
-					end
-				else
-					i := parse_character_data_prefix (l_input, i)
-				end
-				if not has_error then
-					note_position (i)
-				end
-			variant
-				l_input.count - i + 1
+			parse_prefix_tokens (l_input, 1, True)
+			if resume_index > 0 then
+				resume_last_raw_cr := a_input.count > 0 and then a_input.item (a_input.count) = '%R'
+				resume_pending_utf8_count := trailing_partial_utf8_count (l_input)
 			end
 			Result := not has_error and not is_suspended
 		ensure
 			result_matches_state: Result = (not has_error and not is_suspended)
+			resumable_only_after_success: resume_index > 0 implies Result
 		end
+
+	can_continue_prefix: BOOLEAN
+			-- Can `continue_prefix' resume the last successful non-final prefix parse?
+		do
+			Result := resume_index > 0 and then not has_error and then not is_suspended
+		end
+
+	continue_prefix (a_input: READABLE_STRING_8; a_is_final: BOOLEAN): BOOLEAN
+			-- Continue the last non-final prefix parse with the bytes `a_input' that follow it,
+			-- without parsing the earlier input again. Positions and replay counts stay those of
+			-- a full parse of the whole input. When the new bytes need the full parse path (an
+			-- invalid character, or an unfinished UTF-8 sequence at the end of final input), the
+			-- result is False with no error and no callbacks, and `resume_index' is 0.
+		require
+			input_attached: a_input /= Void
+			resumable: can_continue_prefix
+		local
+			i: INTEGER
+			l_input: STRING_8
+		do
+			l_input := position_input
+			i := resume_index
+			resume_index := 0
+			invalid_input_character_index := 0
+			if append_normalized_input (a_input, l_input, a_is_final) then
+				text_position_start := resume_text_start
+				expanded_entity_bytes := resume_entity_bytes
+				if not a_is_final then
+					parse_prefix_tokens (l_input, i, True)
+				else
+					from
+					invariant
+						index_in_bounds: i >= 1 and i <= l_input.count + 1
+						depth_within_limit: element_stack.count <= max_element_depth
+					until
+						i > l_input.count or has_error or is_suspended
+					loop
+						note_position (i)
+						if l_input.item (i) = '<' then
+							i := parse_markup (l_input, i)
+						else
+							i := parse_character_data (l_input, i)
+						end
+						text_position_start := 0
+						if not has_error then
+							note_position (i)
+						end
+					variant
+						l_input.count - i + 1
+					end
+					text_position_start := 0
+					if not has_error and not is_suspended and element_stack.count /= 0 then
+						note_position (l_input.count + 1)
+						set_error ("unclosed element")
+					end
+					if not has_error and not is_suspended and document_element_count = 0 then
+						note_position (l_input.count + 1)
+						set_error ("missing document element")
+					end
+					if not has_error and not is_suspended then
+						note_position (l_input.count + 1)
+					end
+					force_current_position
+				end
+				Result := not has_error and not is_suspended
+			end
+		ensure
+			result_matches_state: Result implies (not has_error and not is_suspended)
+			fallback_has_no_error: (not Result and not has_error and not is_suspended) implies resume_index = 0
+			final_not_resumable: a_is_final implies resume_index = 0
+		end
+
+	resume_index: INTEGER
+			-- Index in the normalized input where `continue_prefix' resumes, or 0 when it cannot.
+
+	resume_sequence_count: INTEGER
+			-- Handler replay count at `resume_index'; callbacks after it are counted again.
 
 
 	cached_doctype_byte_count: INTEGER
@@ -753,28 +808,30 @@ feature -- Parsing
 					l_input := l_prefix.twin
 					l_input.append (l_body)
 					position_input := l_input
-					from
-						i := l_prefix_count + 1
-					until
-						i > l_input.count or has_error or is_suspended
-					loop
-						note_position (i)
-						if l_input.item (i) = '<' then
-							if not a_is_final and then is_incomplete_markup_prefix (l_input, i) then
-								i := l_input.count + 1
-							else
-								i := parse_markup (l_input, i)
-							end
-						elseif a_is_final then
-							i := parse_character_data (l_input, i)
-						else
-							i := parse_character_data_prefix (l_input, i)
+					if not a_is_final then
+						parse_prefix_tokens (l_input, l_prefix_count + 1, False)
+						if resume_index > 0 then
+							resume_last_raw_cr := a_input.count > 0 and then a_input.item (a_input.count) = '%R'
+							resume_pending_utf8_count := trailing_partial_utf8_count (l_input)
 						end
-						if not has_error then
+					else
+						from
+							i := l_prefix_count + 1
+						until
+							i > l_input.count or has_error or is_suspended
+						loop
 							note_position (i)
+							if l_input.item (i) = '<' then
+								i := parse_markup (l_input, i)
+							else
+								i := parse_character_data (l_input, i)
+							end
+							if not has_error then
+								note_position (i)
+							end
+						variant
+							l_input.count - i + 1
 						end
-					variant
-						l_input.count - i + 1
 					end
 					if a_is_final and then not has_error and then not is_suspended then
 						if element_stack.count /= 0 then
@@ -961,12 +1018,24 @@ feature -- Parsing
 			-- Start index of the first markup token incomplete at the end of `a_input', or zero.
 		require
 			input_attached: a_input /= Void
+		do
+			Result := incomplete_markup_prefix_start_from (a_input, 1)
+		ensure
+			not_found_or_valid: Result = 0 or else (Result >= 1 and Result <= a_input.count and then a_input.item (Result) = '<')
+		end
+
+	incomplete_markup_prefix_start_from (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- `incomplete_markup_prefix_start (a_input)' when an earlier scan of the first
+			-- bytes of `a_input' stopped at `a_start_index'.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count + 1
 		local
 			i: INTEGER
 			l_end: INTEGER
 		do
 			from
-				i := 1
+				i := a_start_index
 			invariant
 				index_in_bounds: i >= 1 and i <= a_input.count + 1
 				result_in_bounds: Result >= 0 and Result <= a_input.count
@@ -1177,6 +1246,264 @@ feature -- Parsing
 			result_matches_state: Result = (not has_error and not is_suspended)
 			not_external_after_parse: not parsing_external_entity
 		end
+
+feature {NONE} -- Resumable prefix parsing
+
+	parse_prefix_tokens (a_input: STRING_8; a_start_index: INTEGER; a_report_doctype_prefix: BOOLEAN)
+			-- Parse the complete tokens of non-final `a_input' from `a_start_index' and record
+			-- where a later `continue_prefix' resumes: at the unfinished markup or the text
+			-- run that reaches the end of `a_input', or after the input. With
+			-- `a_report_doctype_prefix', an unfinished DOCTYPE delivers what it has so far.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count + 1
+		local
+			i: INTEGER
+			l_token_start: INTEGER
+			l_token_sequence: INTEGER
+			l_token_entity_bytes: INTEGER
+			l_run_start: INTEGER
+			l_pending: BOOLEAN
+			l_doctype_pending: BOOLEAN
+		do
+			resume_index := 0
+			from
+				i := a_start_index
+			invariant
+				index_in_bounds: i >= 1 and i <= a_input.count + 1
+				depth_within_limit: element_stack.count <= max_element_depth
+			until
+				i > a_input.count or has_error or is_suspended
+			loop
+				l_token_start := i
+				l_run_start := text_run_start (i)
+				l_token_sequence := handler.replay_sequence_count
+				l_token_entity_bytes := expanded_entity_bytes
+				l_pending := False
+				last_general_reference_end := 0
+				note_position (i)
+				if a_input.item (i) = '<' then
+					if is_incomplete_markup_prefix (a_input, i) then
+						if a_report_doctype_prefix and then has_at (a_input, i, "<!DOCTYPE") then
+							process_incomplete_doctype_prefix (a_input, i)
+							l_doctype_pending := True
+						end
+						l_pending := True
+						i := a_input.count + 1
+					else
+						i := parse_markup (a_input, i)
+					end
+				else
+					i := parse_character_data_prefix (a_input, i)
+					l_pending := i > a_input.count
+				end
+				text_position_start := 0
+				if not has_error then
+					note_position (i)
+				end
+			variant
+				a_input.count - i + 1
+			end
+			text_position_start := 0
+			resume_text_start := 0
+			if not has_error and not is_suspended and not l_doctype_pending then
+				if not l_pending then
+					resume_index := a_input.count + 1
+					resume_sequence_count := handler.replay_sequence_count
+					resume_entity_bytes := expanded_entity_bytes
+				elseif a_input.item (l_token_start) = '<' then
+					resume_index := l_token_start
+					resume_sequence_count := l_token_sequence
+					resume_entity_bytes := l_token_entity_bytes
+				elseif is_resumable_text_run (a_input, l_token_start) then
+					resume_index := l_token_start
+					resume_sequence_count := l_token_sequence
+					resume_entity_bytes := l_token_entity_bytes
+					if l_run_start /= l_token_start then
+						resume_text_start := l_run_start
+					end
+				elseif
+					last_general_reference_end > l_token_start
+					and then (last_general_reference_end > a_input.count or else is_resumable_text_run (a_input, last_general_reference_end))
+				then
+						-- Resume after the last general reference of the run instead of expanding it again.
+					resume_index := last_general_reference_end
+					resume_sequence_count := last_general_reference_sequence
+					resume_entity_bytes := last_general_reference_entity_bytes
+					resume_text_start := l_run_start
+				end
+			end
+		ensure
+			resumable_only_after_success: resume_index > 0 implies (not has_error and not is_suspended)
+			resume_in_input: resume_index = 0 or else (resume_index >= a_start_index and resume_index <= a_input.count + 1)
+		end
+
+	is_resumable_text_run (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+			-- Can the text run from `a_start_index' to the end of `a_input' be parsed again
+			-- without side effects? Character and predefined entity references only add text;
+			-- other references expand entities and change parser state.
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+		local
+			i: INTEGER
+			l_end: INTEGER
+		do
+			Result := True
+			from
+				i := find_character (a_input, '&', a_start_index)
+			until
+				i = 0 or not Result
+			loop
+				l_end := find_character (a_input, ';', i + 1)
+				if l_end = 0 then
+					i := 0
+				else
+					Result := l_end > i + 1 and then (a_input.item (i + 1) = '#' or else is_predefined_entity (a_input.substring (i + 1, l_end - 1)))
+					i := find_character (a_input, '&', l_end + 1)
+				end
+			end
+		end
+
+	append_normalized_input (a_input: READABLE_STRING_8; a_target: STRING_8; a_is_final: BOOLEAN): BOOLEAN
+			-- Append the line-end normalized form of the raw bytes `a_input' that follow the input
+			-- already normalized into `a_target', as `normalized_input' would for the whole input.
+			-- False when the bytes contain a character that is not an XML Char, or end final
+			-- input inside a UTF-8 sequence: the full parse path reports those.
+		require
+			input_attached: a_input /= Void
+			target_attached: a_target /= Void
+			pending_bytes_in_target: resume_pending_utf8_count <= a_target.count
+		local
+			i: INTEGER
+			c: CHARACTER_8
+			l_length: INTEGER
+			l_source: READABLE_STRING_8
+			l_carry: STRING_8
+		do
+			if resume_pending_utf8_count > 0 then
+					-- The unfinished UTF-8 sequence at the end of `a_target' continues in `a_input'.
+				l_carry := a_target.substring (a_target.count - resume_pending_utf8_count + 1, a_target.count)
+				a_target.remove_tail (resume_pending_utf8_count)
+				l_carry.append (a_input)
+				l_source := l_carry
+			else
+				l_source := a_input
+			end
+			i := 1
+			if resume_last_raw_cr and then l_source.count > 0 and then l_source.item (1) = '%N' then
+					-- The LF of a CR LF pair split between calls; its CR was already normalized.
+				i := 2
+			end
+			resume_last_raw_cr := False
+			resume_pending_utf8_count := 0
+			Result := True
+			from
+			invariant
+				index_in_bounds: i >= 1 and i <= l_source.count + 1
+			until
+				i > l_source.count or not Result
+			loop
+				c := l_source.item (i)
+				if c = '%R' then
+					a_target.append_character ('%N')
+					if i + 1 <= l_source.count and then l_source.item (i + 1) = '%N' then
+						i := i + 2
+					else
+						resume_last_raw_cr := i = l_source.count
+						i := i + 1
+					end
+				elseif c.code < 128 then
+					if c.code >= 32 or else c = '%T' or else c = '%N' then
+						a_target.append_character (c)
+						i := i + 1
+					else
+						Result := False
+						i := l_source.count + 1
+					end
+				else
+					l_length := utf8_character_length (l_source, i)
+					if l_length > 0 then
+						a_target.append_substring (l_source, i, i + l_length - 1)
+						i := i + l_length
+					elseif l_length < 0 and then not a_is_final then
+						a_target.append_substring (l_source, i, l_source.count)
+						resume_pending_utf8_count := l_source.count - i + 1
+						i := l_source.count + 1
+					else
+						Result := False
+						i := l_source.count + 1
+					end
+				end
+			variant
+				l_source.count - i + 1
+			end
+		end
+
+	trailing_partial_utf8_count (a_input: READABLE_STRING_8): INTEGER
+			-- Number of bytes of a UTF-8 sequence cut off by the end of `a_input', or 0.
+		require
+			input_attached: a_input /= Void
+		local
+			i: INTEGER
+			l_code: INTEGER
+		do
+			from
+				i := a_input.count
+			until
+				i < 1 or i < a_input.count - 3
+			loop
+				l_code := a_input.item (i).code
+				if l_code < 128 then
+					i := 0
+				elseif l_code >= 192 then
+					if utf8_character_length (a_input, i) < 0 then
+						Result := a_input.count - i + 1
+					end
+					i := 0
+				else
+					i := i - 1
+				end
+			end
+		ensure
+			bounded: Result >= 0 and Result <= 4
+		end
+
+	text_run_start (a_index: INTEGER): INTEGER
+			-- Start of the text run whose text from `a_index' is parsed: earlier than `a_index'
+			-- when a resumed parse starts inside the run, so positions stay those of a full parse.
+		do
+			if text_position_start > 0 then
+				Result := text_position_start
+			else
+				Result := a_index
+			end
+		end
+
+	text_position_start: INTEGER
+			-- Start of the text run in which the first token of a resumed parse starts, or 0.
+
+	resume_text_start: INTEGER
+			-- Start of the text run that `resume_index' is inside, or 0.
+
+	last_general_reference_end: INTEGER
+			-- Index after the last general reference in the current document text run, or 0.
+
+	last_general_reference_sequence: INTEGER
+			-- Handler replay count after that reference.
+
+	last_general_reference_entity_bytes: INTEGER
+			-- `expanded_entity_bytes' after that reference.
+
+	resume_entity_bytes: INTEGER
+			-- `expanded_entity_bytes' at `resume_index': a resumed parse counts the
+			-- references of a text run it parses again only once.
+
+	resume_last_raw_cr: BOOLEAN
+			-- Did the raw input normalized so far end with a carriage return?
+
+	resume_pending_utf8_count: INTEGER
+			-- Bytes of an unfinished UTF-8 sequence at the end of the normalized input.
 
 feature {NONE} -- Garbage collection critical sections
 
@@ -2463,7 +2790,7 @@ feature {NONE} -- Character data and references
 							if entity_reference_count_stack.count > 0 then
 								note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
 							else
-								note_token_position (a_start_index, l_attached_text.count)
+								note_token_position (text_run_start (a_start_index), l_attached_text.count)
 							end
 							emit_text (l_attached_text)
 						end
@@ -2696,7 +3023,7 @@ feature {NONE} -- Character data and references
 						if entity_reference_count_stack.count > 0 then
 							note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
 						else
-							note_token_position (a_start_index, l_attached_text.count)
+							note_token_position (text_run_start (a_start_index), l_attached_text.count)
 						end
 						emit_text (l_attached_text)
 					end
@@ -2761,6 +3088,12 @@ feature {NONE} -- Character data and references
 							emit_default (a_input.substring (a_start_index, l_end))
 						end
 						Result := l_end + 1
+					end
+					if internal_entity_expansion_depth = 0 and then not has_error then
+							-- Text after a general reference starts a new callback: a resumable point.
+						last_general_reference_end := Result
+						last_general_reference_sequence := handler.replay_sequence_count
+						last_general_reference_entity_bytes := expanded_entity_bytes
 					end
 				end
 			end
@@ -8207,6 +8540,13 @@ feature {NONE} -- State
 			has_error := False
 			last_error.wipe_out
 			is_suspended := False
+			resume_index := 0
+			resume_last_raw_cr := False
+			resume_pending_utf8_count := 0
+			text_position_start := 0
+			resume_text_start := 0
+			resume_entity_bytes := 0
+			last_general_reference_end := 0
 			lazy_position_accounting := False
 			current_position_index := a_prefix_count + 1
 			current_line_number := cached_doctype_line
@@ -8249,6 +8589,13 @@ feature {NONE} -- State
 			has_error := False
 			last_error.wipe_out
 			invalid_input_character_index := 0
+			resume_index := 0
+			resume_last_raw_cr := False
+			resume_pending_utf8_count := 0
+			text_position_start := 0
+			resume_text_start := 0
+			resume_entity_bytes := 0
+			last_general_reference_end := 0
 			create position_input.make_empty
 			lazy_position_accounting := False
 			last_attribute_name_start := 0
