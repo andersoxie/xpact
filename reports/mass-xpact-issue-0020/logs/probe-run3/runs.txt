@@ -1,0 +1,29 @@
+# Probe run 3, 2026-11-04: two jobs at the same time, GC stress, probe runner.
+# prev-*: previous build (build/textrun = #11 + #16 + #18, no static input), 4 loops x 4 runs.
+# asrt-*: static input, ASSERTIONS tier (all assertions, -keep), 4 loops x 3 runs (started while prev-* ran).
+prev-a run 1 (814 s): pass
+prev-a run 2 (893 s): pass
+prev-a run 3 (772 s): pass
+prev-b run 1 (279 s): crash 0xC0000005
+prev-b run 2 (873 s): pass
+prev-b run 3 (872 s): pass
+prev-b run 4 (232 s): crash 0xC0000005
+prev-c run 1 (796 s): pass
+prev-c run 2 (875 s): pass
+prev-c run 3 (422 s): fail: Expat version: expat_2.8.1 FAIL [chunksize=2 deferral=1]: test_deep_nested_attribute_entity (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\basic_tests.c:5853) xpact_libexpat_runte
+prev-c run 4 (66 s): fail: Expat version: expat_2.8.1 xpact_libexpat_runtests.exe : ERROR: 11: undefined entity (line 60002, offset 3) At C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad \probe\stress-probe.ps1:10 char:30 + ... mand { $o = & $exe --timeout 90
+prev-d run 1 (814 s): pass
+prev-d run 2 (897 s): pass
+prev-d run 3 (775 s): pass
+asrt-a run 1 (1015 s): pass
+asrt-a run 2 (998 s): pass
+asrt-a run 3 (653 s): pass
+asrt-b run 1 (459 s): crash 0xC0000005
+asrt-b run 2 (984 s): pass
+asrt-b run 3 (891 s): pass
+asrt-c run 1 (1009 s): pass
+asrt-c run 2 (919 s): crash 0xC0000005
+asrt-c run 3 (697 s): pass
+asrt-d run 1 (766 s): crash 0xC0000005
+asrt-d run 2 (976 s): pass
+asrt-d run 3 (755 s): pass

@@ -1,0 +1,15 @@
+# Probe run 1, 2026-11-04: runner relinked with tools/probe/probe.c (vectored handler: stack + minidump on access violation, no debugger).
+# DLL: relinked static-input build without inlining (scratchpad dbg, with map). 4 loops x 3 runs in parallel, GC stress.
+a run 1 (469 s): pass
+a run 2 (436 s): pass
+a run 3 (400 s): fail: Expat version: expat_2.8.1 xpact_libexpat_runtests.exe : ERROR: 5: unclosed token (line 60002, offset 3) At C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad \probe\stress-probe.ps1:10 char:30 + ... mand { $o = & $exe --timeout 900 -
+b run 1 (464 s): pass
+b run 2 (427 s): pass
+b run 3 (407 s): pass
+c run 1 (437 s): pass
+c run 2 (427 s): pass
+c run 3 (413 s): pass
+d run 1 (462 s): pass
+d run 2 (415 s): pass
+d run 3 (423 s): pass
+# Access violations recorded: none (out/ empty). New wrong result in a3: 'unclosed token (line 60002, offset 3)', the <foo start tag.

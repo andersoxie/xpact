@@ -1,0 +1,15 @@
+# Probe run 2, 2026-11-04: same setup as probe-run1.txt (4 loops x 3 runs, GC stress, relinked static build without inlining).
+a run 1 (162 s): fail: Expat version: expat_2.8.1 FAIL [chunksize=1 deferral=1]: test_deep_nested_attribute_entity (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\basic_tests.c:5853) xpact_libexpat_runte
+a run 2 (425 s): pass
+a run 3 (445 s): pass
+b run 1 (472 s): pass
+b run 2 (461 s): pass
+b run 3 (296 s): pass
+c run 1 (173 s): crash 0xC0000005
+c run 2 (431 s): pass
+c run 3 (437 s): pass
+d run 1 (469 s): pass
+d run 2 (461 s): pass
+d run 3 (298 s): pass
+av-59748-1.dmp
+av-59748-1.txt
