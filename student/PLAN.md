@@ -214,6 +214,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] #37: the XML declaration is checked without per-call allocations; byte by byte 334 → 286 ms (merged, #38). Byte by byte `pr-xml-utf-8.xml` 2026-11-04: 2,857 → 286 ms (10×)
    - [x] #40: the declared encoding of a complete declaration is kept; byte by byte 290 → 236 ms (merged, #41). Byte by byte `pr-xml-utf-8.xml` 2026-11-04: 2,857 → 236 ms (12×); see `docs/notes/note-13.txt`
    - [x] #43: each input chunk is copied once instead of twice; byte by byte 248 → 217 ms (merged, #44). Byte by byte `pr-xml-utf-8.xml` 2026-11-04: 2,857 → 217 ms (13×)
+   - [x] #46: small input chunks reuse one string (219 → 200 ms, #47); #48: the UTF-16 checks are answered from a known XML declaration (198 → 184 ms, #49). Byte by byte `pr-xml-utf-8.xml`: 2,857 → 184 ms (15.5×)
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
    - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
    - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
