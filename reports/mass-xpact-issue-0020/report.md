@@ -11,7 +11,12 @@ The change makes the parser's internal scanners take `a_input: STRING_8` instead
 which makes a whole parse about **20 % faster**. Every result check passes, but one Expat test
 crashes intermittently, and often under GC stress. Until the cause is known, the change stays parked.
 
-> **Update 2 (2026-11-04): #16 exposes it.** `student-Mass` as is passed 24 of 24 stressed runs; `student-Mass` + #16 (finalize without `-keep`) failed 3 of 16 ([section 4](#investigation)). **Do not merge #16 or #18** until this is understood.
+> **Update 3 (2026-11-04, afternoon): load matters more than the build; "#16 exposes it" is not proven.**
+> With 12 stressed runs in parallel instead of 4, **every** build crashed: the parser chain **with `-keep`** 6 of 21, the candidate fix 5 of 8, #16 5 of 11 ([probe run 6](logs/probe-run6/runs.txt)), all with the same GC signature.
+> The baseline's 24 of 24 below was measured at the lower load, so it doesn't compare. A paired batch (all four builds at the same time, same load) is running.
+> #16 and #18 stay blocked until it's in.
+>
+> **Update 2 (2026-11-04): #16 exposes it** *(withdrawn by update 3: the comparison was not at equal load)*. `student-Mass` as is passed 24 of 24 stressed runs; `student-Mass` + #16 (finalize without `-keep`) failed 3 of 16 ([section 4](#investigation)). **Do not merge #16 or #18** until this is understood.
 >
 > **Update 2026-11-04: the bug is older than this change.** The previous build, which does not have
 > this change, failed 4 of 16 stressed runs under the same load: 2 × `0xC0000005`, 1 × `undefined entity` and 1 other failure
@@ -103,7 +108,7 @@ externals) or the runtime.
   - In two test children, a `0x01` was written there by `{SPECIAL}.force` ← `{HASH_TABLE}.put` ← `accommodate` ← `force` ← **`{XP_PARSER}.resolved_general_entity_name`** ← `include_general_entity_in_literal` ← `append_reference_in_literal` ← `parse_attribute`.
   - That routine keeps `l_seen: HASH_TABLE [BOOLEAN, STRING_8]` while it follows the 60,000 aliases. The write stores entry 2,694 (`True`) of its `BOOLEAN` array: the `0x01` run ends exactly at the watched byte and the bytes after it are still `00`. So **this write is legitimate**: the array really occupied that memory then. Neither child crashed.
   - **Suspected, not confirmed:** in every crash the corrupting byte is `0x01` = `True`, at an address `l_seen`'s array once occupied. So the corruption is probably a later `True` written through a stale reference to that array, after it moved or was freed. The generated `HASH_TABLE` setters do have the write barrier (`RTAR`), and every routine on the path registers its locals. The stale reference is not explained, and may be in the Eiffel runtime.
-- [ ] **Candidate fix** ([branch `fix/20-seen-name-tables`](https://github.com/CodTanium/mass-xpact/tree/fix/20-seen-name-tables), `e1433da`): the three alias-following loops (`resolved_general_entity_name`, `append_parameter_entity_literal`, `resolved_parameter_entity_name`) use `HASH_TABLE [STRING_8, STRING_8]` instead of a `BOOLEAN` table. Same cycle check, no `BOOLEAN` array. Being stress-tested without `-keep` (24 runs; #16 alone failed 3 of 16).
+- [ ] **Candidate fix** ([branch `fix/20-seen-name-tables`](https://github.com/CodTanium/mass-xpact/tree/fix/20-seen-name-tables), `e1433da`): the three alias-following loops (`resolved_general_entity_name`, `append_parameter_entity_literal`, `resolved_parameter_entity_name`) use `HASH_TABLE [STRING_8, STRING_8]` instead of a `BOOLEAN` table. Same cycle check, no `BOOLEAN` array. DLL tests 4,308 / 4,308, `results.tsv` identical to the #16 build. ❌ **Does not fix the crash:** it crashed 5 of 8 under the 12-loop load (probe run 6). Kept as a branch only; not proposed for merging.
 - [ ] Suspects now: an Eiffel reference that the GC does not see (a C bridge pointer or a local the generated code does not register) and that is used after a scavenge has moved the object.
 - [x] Get a crash dump without a debugger attached (done with the in-process probe, see section 4) (Windows Error Reporting `LocalDumps` for `xpact_libexpat_runtests.exe`) and map it; the debugger seems to hide the crash.
 - [ ] Find out why other load on the machine matters for a single-threaded parse. No thread or timer in the bridge or runner (checked); the Eiffel runtime itself is still unchecked.
