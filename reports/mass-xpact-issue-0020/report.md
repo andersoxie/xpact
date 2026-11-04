@@ -60,6 +60,8 @@ Scripts: [flaky.ps1](logs/tools/flaky.ps1), [stress.ps1](logs/tools/stress.ps1).
 - [x] `array_optimization` ruled out: the generated C is byte-identical with and without it, so the "no `array_optimization`" rows are the same code.
 - [x] Inlining ruled out: the change also crashes with `inlining=false`.
 - [x] Not a fluke of one run: crashes in normal runs, in a full suite run, and under GC stress.
+- [ ] Faulting stack, in-process probe ([log](logs/probe-run1.txt), [probe.c](logs/tools/probe/probe.c)): the runner relinked with a vectored exception handler that writes the stack and a minidump on an access violation, with no debugger attached (checked with a test that faults on purpose, [selftest.c](logs/tools/probe/selftest.c)). In 12 stressed runs (4 in parallel) of the relinked static build without inlining: 11 pass, no access violation, and **one new wrong result**: `unclosed token (line 60002, offset 3)`, at the `<foo` start tag. That is a third symptom next to the crash and `undefined entity`.
+- [x] No time or randomness in the sources: no clock, tick counter or random call in `src/` or `native/`; the hash salt is only stored.
 - [ ] Faulting stack: not caught. Under a mini debugger ([minidbg.c](logs/tools/minidbg.c), Win32 debug API, `StackWalk64`) the test child (`--xpact-child 241`) passed 7 of 7 stressed runs, with and without the debug heap.
 - [x] Follow-up ([log](logs/followup.txt)): the relinked DLL without the debugger passed 4 / 4 stressed runs, and the **original** no-inlining DLL, run again with nothing else on the machine, passed 4 / 4. All four stress crashes happened while another heavy job ran at the same time; the two non-stress failures (1 of 60 single runs, 1 of 6 suites) happened with nothing else running.
 - [x] Load alone ruled out ([log](logs/paired-load.txt), [paired.sh](logs/tools/paired.sh)): the previous build and both static builds ran stressed at the same time, 4 runs each, so all three had the same load. The previous build passed 4 / 4; each static build crashed once (`0xC0000005`). Load makes the crash more likely, but the static change is what exposes it. Combined stress tally without a debugger: previous build 0 crashes in 7 runs (one of them a 300 s timeout), static builds 6 crashes in 23 runs (including the 4 relinked and 4 machine-idle runs).
@@ -70,7 +72,7 @@ Scripts: [flaky.ps1](logs/tools/flaky.ps1), [stress.ps1](logs/tools/stress.ps1).
 
 ### Cause
 
-**Unknown.** Suspected: a GC-safety problem, a raw pointer to an Eiffel object kept across a
+**Unknown.** Three different symptoms (access violation, `undefined entity`, `unclosed token`) from the same deterministic input, with no clock, randomness or thread in the code, mean the parse depends on something outside the input: object addresses or memory contents. Suspected: a GC-safety problem, a raw pointer to an Eiffel object kept across a
 collection. It could be in the C bridge, or exposed by the changed allocation pattern. A wrong error
 (`undefined entity`) next to access violations points to memory corruption, not to a logic
 difference. Pure Eiffel code is GC-safe by construction, so the suspicion is on C code (bridge,
