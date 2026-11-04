@@ -1,0 +1,18 @@
+# Inclusive profile, pr-xml-utf-8.xml fed 1 byte per call, student-Mass @ e9d7d43 (after #37), production DLL relinked with -MAP.
+# sampler2.exe pr-xml-utf-8.xml 5 stacks.txt 1 -> 787 samples, 303.70 ms/parse; stacks.py (reports/mass-xpact-issue-0031/logs/tools/).
+784 samples
+100.0%  XML_Parse
+ 98.9%  {XP_NATIVE_BRIDGE_INSTALLER}.parse
+ 84.8%  {XP_NATIVE_PARSER}.parse
+ 84.7%  {XP_NATIVE_PARSER}.parse_with_current_gc_policy
+ 25.3%  {XP_NATIVE_PARSER}.complete_encoded_prefix_count
+ 24.7%  {XP_PARSER}.continue_prefix
+ 23.9%  {XP_PARSER}.parse_prefix_tokens
+ 18.0%  {STRING_8}.item (dispatch)
+ 16.8%  {XP_NATIVE_PARSER}.declared_xml_encoding
+ 15.7%  F125_1648
+ 12.2%  {XP_NATIVE_PARSER}.should_defer_reparse_callbacks
+ 11.1%  {STRING_8}.item
+ 10.8%  {XP_NATIVE_BRIDGE_INSTALLER}.bytes_to_string
+  7.8%  {READABLE_STRING_8}.make
+  6.5%  {XP_NATIVE_PARSER}.has_stable_encoding
