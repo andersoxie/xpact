@@ -1,0 +1,30 @@
+Note8 - 2026-11-03 - text runs (#11), assertions regression (#12)
+==================================================================
+
+USER: "full autonomy, commit, and continue" (memory: full-autonomy). Merging still the user's.
+DECIDED: W3C runner --jobs default stays 1 (benchmarks publish summed elapsed_ms). Done, no change.
+
+#12 REGRESSION FROM #7 (fixed as 2nd commit 19ba873 on perf/resume-utf16 = PR #8)
+- Found by the FIRST Expat run on the assertions DLL: 40 failures instead of 38
+  (test_utf16_bad_surrogate_pair, test_bad_cdata_utf16, 0xC00000FF).
+- append_decoded_utf16: failure branch did not advance i -> loop variant violation (assertions only).
+- LESSON: always run the Expat suite on BOTH tiers (-XpactLibrary ...\xpact_assertions.lib).
+- One test against any DLL: build\<out>\cbuild\Debug\xpact_libexpat_runtests.exe --timeout 120 --test <name>
+  with the DLL dir first on PATH (same exe works for every DLL of that tier).
+
+#11 TEXT RUNS (PR #13, branch perf/resume-text-runs, stacked on #8)
+- Found with scratchpad profile_t2.py (per-case Test 2 times) + percall.py (per XML_Parse call).
+- (1) carry the pending text run (resume_text_carry / character_data_seed / last_text_stop_index);
+  (2) clamp pending_scan_index in should_defer_reparse_callbacks_on_prefix.
+- Test 2 16 jobs: production 46 s, assertions 1:14 (was 1:39 / 4:17).
+- TRAP: engines.load() caches the first DLL per process -> compare DLLs in separate processes.
+- Edge check: reports/mass-xpact-issue-0011/logs/edge11.py <dll> (73 pre-existing diffs, same before/after).
+
+MERGE ORDER: #4 -> retarget #8 -> #8 -> retarget #13 -> #13. #6, #10 independent.
+
+NEXT
+- Slowest Test 2 cases now: weekly-* (external DTD, split at every point) and ibm07v01 - profile again.
+- Per-call overhead (#5 in improvement.txt).
+- Carry for default-handler runs; Latin-1/ASCII resume.
+- The 73 split-point diffs in error docs (]]> in text, unterminated &amp, text after root + default
+  handler): compare with Expat before calling them bugs.

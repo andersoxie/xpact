@@ -1,0 +1,30 @@
+Note5 - 2026-11-03 - incremental parsing (#1) DONE: where things stand
+====================================================================
+
+PUSHED (CodTanium/mass-xpact)
+- Branch perf/incremental-parsing: 544aeae (code + docs), 0ff0615 (report + tools).
+- PR #4 into student-Mass: OPEN, not merged (the user merges).
+- Issue #2: board "In review", comment added. Close only after review + Jenkins.
+- Issue #3 (pre-existing assertions-DLL crash on ibm68n03.xml, default handler only): Todo.
+
+FINAL NUMBERS (production DLL unless noted)
+- rich 131 KB, 16-byte pieces: 214.5 s -> 0.16 s; 1-byte pieces now 1.2 s.
+- plain 43 KB, 16-byte pieces: 22.8 s -> 0.04 s.
+- whole doc (one call + empty final): 110 -> 71 ms (the old final call parsed twice).
+- Test 2 (W3C in pieces): 20:45 -> 15:30 production, 23:28 -> 21:16 assertions.
+  Only 1 case changed: pr-xml-utf-8 TIMEOUT -> stable.
+  Why Test 2 gained little: it parses each small doc once per split point (n whole parses
+  per doc) + Python ctypes callbacks. 10 % sample: expat 2.7 s, xpact before 316 s, after 89 s.
+  So the NEXT win for test time is per-parse cost (parser create/reset, per-callback
+  C_STRING allocation) and/or running the Test 2 harness in parallel (it is sequential).
+
+STILL OPEN
+- Expat runtests not run (permission). Ask the user to allow it; command in Note4.
+- Personal files NOT committed: Note1-5.txt, improvement.txt.
+- build\evidence\ has all raw outputs (traces, crc, timing, test2 interim v2 results).
+- build\native-eiffel\ currently holds the v5 production DLL (copied for the audit script).
+
+NEXT STEPS (pick from improvement.txt)
+1. #7 parallel W3C runner / parallel Test 2 harness (easy, big test-time win).
+2. Per-parse/per-callback cost (#5): reuse C strings, avoid reset work, diag strings.
+3. Resume for non-UTF-8 input and external entity parsers (docs/incremental-resume.md 5).

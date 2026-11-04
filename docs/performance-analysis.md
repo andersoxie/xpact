@@ -1,5 +1,8 @@
 # Performance Analysis
 
+> The 2026-11 speed fixes (incremental parsing, `-keep`, inlining, …) are listed in
+> [Speed work: session notes](notes/README.md).
+
 The [PubMed DOCTYPE follow-up](pubmed-doctype-performance.md) compares the
 remaining core architecture differences and measures the bounded no-op
 slice-path change. Earlier reports retain their original measurements.

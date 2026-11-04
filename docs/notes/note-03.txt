@@ -1,0 +1,44 @@
+Note3 - 2026-11-03 - incremental parsing (#1), verification tools and v3
+======================================================================
+
+v3 = v2 + one fix found by reading the diff:
+- On fallback (resume attempt failed), should_defer_reparse_callbacks was called a second time.
+  It keeps state between calls (it clears/sets deferred_reparse_*), so the second answer could
+  differ and delay an error. Fix: l_deferral_decided -> the legacy path reuses the decision
+  when l_input = input_buffer.
+
+VERIFICATION DONE ON v3 (both tiers unless noted)
+- build + smoke (tests/native/xpact_eiffel_dll_smoke.c): ok, assertions and production.
+- XpactDllTests: 4308/4308 assertions, 4308/4308 production.
+- Chunked CRC harness (direct + buffer modes, generated-catalog with chunk 1..whole, rich and
+  plain docs with 64..whole): 54 rows IDENTICAL to baseline in every column (status, error,
+  byte index, line, column, semantic_crc AND trace_crc = callback boundaries).
+  Baseline run 3 min 11 s, v2/v3 run 1.2 s.
+- Incremental shim audit (6 cases): IDENTICAL to baseline.
+- Eiffel test matrix (direct parser, 4 configs: assertions off/on x Workbench/Finalized): ok,
+  1 min 18 s.
+
+HOW TO RUN THINGS (copy/paste)
+- CRC harness script fails under Windows PowerShell 5.1 (the exe prints "ok" to stderr and the
+  script has ErrorActionPreference Stop). Run the compiled exe directly:
+  build\baseline\chunked-crc\xpact_chunked_crc.exe --mode direct|buffer --chunk-sizes ... [--file X]
+  My wrapper: scratchpad\crc.ps1 -Dir <dll dir> -Out <tsv>.
+- Shim audit / CRC scripts always use build\native-eiffel\xpact.dll: copy the DLL+lib you want
+  to test into that folder first. Put "C:\Program Files (x86)\Microsoft Visual Studio\Installer"
+  on PATH (vswhere) or vcvars fails.
+- Eiffel test matrix: .\scripts\run_eiffel_test_matrix.ps1 (no *> redirect!).
+- No pwsh (PowerShell 7) on this PC.
+
+DIFFERENTIAL TRACE TEST (scratchpad\trace) - strongest check of observable behaviour
+- trace.c: for every file on stdin: XML_Parse in pieces of N; print every callback with
+  XML_GetCurrentLineNumber/ColumnNumber/ByteIndex and its data; final status/error/position.
+  Modes: events (start/end/text/PI/comment/CDATA/doctype/entitydecl), default (default handler
+  only), suspend (XML_StopParser resumable every 3rd callback, then XML_ResumeParser).
+- run.ps1 -Dir <dll dir> -Out <dir>: 7 runs over the W3C files < 2 KB (chunk 1) and < 8 KB
+  (chunk 7, whole). Compare two output dirs with diff -r.
+- v3 runs all 7 in ~3 s each; the baseline takes much longer (it is the old quadratic code).
+
+STILL TO DO
+- Test 2 (W3C in pieces) on v3, both tiers, for the final numbers.
+- Trace diff baseline vs v3.
+- Commit, push to massxpact (CodTanium/mass-xpact), issue + PR into its student-Mass.

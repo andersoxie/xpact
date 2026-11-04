@@ -1,0 +1,54 @@
+Note1 - 2026-11-03 - incremental parsing (#1), setup and first findings
+=====================================================================
+
+SETUP / ENVIRONMENT (saves time next session)
+- Work repo: https://github.com/CodTanium/mass-xpact.git  (local remote name: massxpact)
+  - mirror of andersoxie/xpact; its student-Mass = 253c81e at start.
+  - origin (andersoxie/xpact) = read only now. Never touch main anywhere.
+  - old remote "mass" -> CodTanium/Xpact-mass-2026 does not exist (fetch error is harmless).
+- Local branch: perf/incremental-parsing (from student-Mass 253c81e).
+- Python: the "python" on PATH is the Store stub. Use
+  C:\Users\masou\AppData\Roaming\uv\python\cpython-3.15.0-windows-x86_64-none\python.exe  (run with -I)
+- DLL build is FAST here (~40 s each, incremental EIFGENs):
+  .\scripts\build_native_eiffel.ps1 -BuildTier Production -OutputDir <dir>
+  .\scripts\build_native_eiffel.ps1 -BuildTier Assertions -OutputDir <dir>
+  (production -> xpact.dll, assertions -> xpact_assertions.dll; both run the smoke test)
+- C# DLL tests: dotnet build tests\dotnet\XpactDllTests -c Release
+  exe: build\dotnet\XpactDllTests\bin\Release\net10.0\XpactDllTests.exe --dll <dll> --out <dir>
+  4,308 cases, takes < 1 s. NOT the slow test.
+- THE slow test = "Test 2, W3C in pieces" (issue #165):
+  python -I reports\issue-0165\tools\run.py --dll <dll> --tag <unique-tag>
+  writes reports\issue-0165\logs\chunked-<tag>.tsv and -summary.json (use a unique tag, do
+  not overwrite old evidence). ~25 min per build per the #165 report.
+  Expected baseline: 2,438 ok / 142 xpact-only / 5 both.
+
+BASELINE (253c81e)
+- XpactDllTests: 4308/4308 pass, assertions and production.
+- Test 2 production: running at time of writing (see Note2).
+
+ROOT CAUSE OF SLOWNESS (confirmed in code)
+- xp_native_parser.e parse_with_current_gc_policy: every XML_Parse appends to input_buffer,
+  then decoded_input(whole buffer) -> parser.parse_prefix(whole) which starts with reset and
+  re-parses from byte 1; already delivered callbacks are suppressed by count
+  (handler.prepare_callback_replay (delivered_callback_count)).
+- Text split across calls = ONE callback index whose delivered length grows
+  (delivered_character_data_lengths), so replay delivers only the new suffix.
+- Also O(n) per call: normalized_input (whole), context_source_buffer twin,
+  incomplete_markup_prefix_start scans from 1.
+
+DESIGN CHOSEN FOR #1
+- Fast path "resume": keep the parser state (no reset), keep one growing normalized buffer
+  (positions stay absolute = identical numbers), continue the token loop from a checkpoint.
+- Checkpoint = start of the last incomplete markup, or start of the last text run that reached
+  the end of input (that text run is re-parsed; suppression trims the delivered prefix).
+- Keep callback numbering identical to the legacy replay so the legacy path can be used as a
+  fallback at ANY call (input_buffer is kept whole for that reason).
+- Fallback to legacy for: errors, suspension, external entity parsers, non-identity encodings,
+  diagnostic events, reparse deferral, direct start-tag emission, general entity refs in the
+  pending text run.
+
+IDEAS FOR LATER (not part of #1)
+- on_processing_instruction (and maybe others) always builds a diagnostic event string even when
+  diagnostics are off: wasted allocation per PI. Check all on_* features.
+- Once resume works, input_buffer could be trimmed (memory), but then no legacy fallback.
+- W3C runner run_w3c_conformance.py is sequential, one process per case: add --jobs (#7).
