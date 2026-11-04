@@ -57,7 +57,9 @@ Scripts: [flaky.ps1](logs/tools/flaky.ps1), [stress.ps1](logs/tools/stress.ps1).
 - [x] `array_optimization` ruled out: the generated C is byte-identical with and without it, so the "no `array_optimization`" rows are the same code.
 - [x] Inlining ruled out: the change also crashes with `inlining=false`.
 - [x] Not a fluke of one run: crashes in normal runs, in a full suite run, and under GC stress.
-- [ ] Faulting stack: a mini debugger ([minidbg.c](logs/tools/minidbg.c), Win32 debug API, `StackWalk64`) runs the test child (`--xpact-child 241`) under GC stress; no crash caught yet (the crash is intermittent).
+- [ ] Faulting stack: not caught. Under a mini debugger ([minidbg.c](logs/tools/minidbg.c), Win32 debug API, `StackWalk64`) the test child (`--xpact-child 241`) passed 7 of 7 stressed runs, with and without the debug heap.
+- [x] Follow-up ([log](logs/followup.txt)): the relinked DLL without the debugger passed 4 / 4 stressed runs, and the **original** no-inlining DLL, run again with nothing else on the machine, passed 4 / 4. All four stress crashes happened while another heavy job ran at the same time; the two non-stress failures (1 of 60 single runs, 1 of 6 suites) happened with nothing else running.
+- [x] Memory pressure ruled out: the test child peaks at 69 MB private (101 MB on the previous build), on a 15.9 GB machine.
 
 ### Cause
 
@@ -69,6 +71,7 @@ externals) or the runtime.
 
 ## 5. Next steps
 
-- [ ] Catch the crash under the debugger and map the stack (`xpact.map` from a `-MAP` relink).
+- [ ] Get a crash dump without a debugger attached (Windows Error Reporting `LocalDumps` for `xpact_libexpat_runtests.exe`) and map it; the debugger seems to hide the crash.
+- [ ] Find out why other load on the machine matters for a single-threaded parse (does the runtime or the bridge start a thread, or use time?).
 - [ ] Review the C bridge for pointers into Eiffel objects held across calls back into Eiffel.
 - [ ] Run the same stress on the previous build more often, to rule out a latent bug that this change only makes more likely.
