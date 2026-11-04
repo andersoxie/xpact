@@ -1,0 +1,154 @@
+XPact speed improvements - analysis of 2026-11-03
+=================================================
+
+Local student-Mass synced to 253c81e. Nothing committed.
+
+WHAT THE SUPERVISOR'S COMMIT ACTUALLY DOES
+------------------------------------------
+His commit 4840b27 ("Fix libexpat incremental parsing...") is already in both
+main and student-Mass. It does not make parsing truly incremental. It adds
+shortcuts on top of the old "keep everything and parse it all again" approach:
+
+- src/xp_native_parser.e:855 - every XML_Parse call appends the new bytes to
+  input_buffer.
+- src/xp_native_parser.e:890 and :977 - it then decodes and parses the whole
+  buffer from byte 1 again. It hides callbacks the caller has already seen
+  using prepare_callback_replay (delivered_callback_count).
+- input_buffer is only emptied at the final call or on an error (:1050). It
+  never shrinks in between.
+
+So feeding a document in N pieces costs about N x the document size, which
+grows with the square of the input. The test runner's "bytes" mode (one call
+per byte) and its "split@k" mode (every k) are exactly the worst case. His own
+docs/incremental-core-prototype.md says the real resumable session
+(XP_INCREMENTAL_PARSE_SESSION) is "not wired into XP_NATIVE_PARSER yet".
+
+No timings were taken for this analysis. Everything below comes from reading
+the code plus the supervisor's measurements in docs/.
+
+
+TOP 10 IMPROVEMENTS, HIGHEST IMPACT FIRST
+-----------------------------------------
+
+1. Make chunked parsing truly incremental
+   What:  Save the parser state (element stack, DTD tables, namespaces,
+          position, encoding) at the last complete token. Keep only the
+          unfinished tail in input_buffer, and resume from there instead of
+          parsing everything again. Finish and connect
+          XP_INCREMENTAL_PARSE_SESSION, which already does this for tags and
+          text.
+   Where: xp_native_parser.e parse_with_current_gc_policy,
+          xp_incremental_parse_session.e
+   Gain:  Very large: chunked parsing goes from square-growth to linear. This
+          is the main reason chunked tests are slow.
+   How sure: Confirmed in the code
+
+2. Stop copying the whole buffer on every call (a quick win until #1 is done)
+   What:  context_source_buffer := l_context_input.twin copies everything
+          whenever callbacks are set. decoded_input copies or decodes
+          everything again for Latin-1, ASCII and UTF-16 input.
+          normalized_input runs again in parse_prefix. declared_xml_encoding
+          detects the encoding again. Fix: decide the encoding once, decode
+          only the new bytes, and keep only the bounded context window that
+          XML_GetInputContext actually returns.
+   Where: xp_native_parser.e:935, decoded_input at :1863
+   Gain:  Large on chunked input. Each call does less, but the total still
+          grows with the square of the input until #1.
+   How sure: Confirmed in the code
+
+3. Make the replayed part cheap (also before #1)
+   What:  Callbacks that were already delivered are suppressed, but the
+          parser still builds the XP_ATTRIBUTES and strings for them. Use the
+          existing no-event fast path while the callback count is still below
+          callbacks_to_suppress.
+   Where: xp_native_callback_handler.e prepare_callback_replay, xp_parser.e
+   Gain:  Medium to large
+   How sure: Likely
+
+4. Scan for unfinished markup from the last pending position, not from byte 1
+   What:  incomplete_markup_prefix_start walks the whole buffer on every call.
+   Where: xp_parser.e:960
+   Gain:  Medium; another full pass per call removed
+   How sure: Confirmed in the code
+
+5. Cut the cost of each callback in the C bridge
+   What:  The supervisor's benchmark: direct Eiffel 186 ms, the DLL with no
+          callbacks 785 ms, the DLL with callbacks 6,288 ms (34x slower). Each
+          start tag allocates a C_STRING for the name and one per attribute
+          name and value, plus an ARRAYED_LIST and a MANAGED_POINTER. Reuse
+          one per-parser buffer (arena) and intern element names, as Expat
+          does.
+   Where: xp_native_callback_handler.e on_start_element and the other on_*
+          features
+   Gain:  Large for every DLL and C# test
+   How sure: Measured (his docs)
+
+6. Speed up the tokenizer core
+   What:  Pinned Xpact-core is still 11x faster on PubMed, 10x on text-heavy
+          input and 2.4x on the catalog (docs/parser-profile-performance.md).
+          Scan the raw SPECIAL [CHARACTER_8] / area instead of calling
+          READABLE_STRING_8.item, which goes through dynamic dispatch and
+          doesn't inline. Use a 256-entry byte-class table like Expat's.
+          Replace the ~100 .twin / .substring calls in xp_parser.e with
+          XP_TOKEN_SLICE.
+   Where: xp_parser.e
+   Gain:  Large for every test
+   How sure: Gap measured; the fixes are suggestions
+
+7. Run the W3C runner in parallel or in batches
+   What:  run_w3c_conformance.py starts one process per case per engine, one
+          after another (~2,585 cases x 2 engines, each paying Eiffel runtime
+          startup). Add --jobs with a process pool, as XpactDllTests already
+          does. Or run a batch of cases per child and restart a child when it
+          crashes.
+   Where: scripts/run_w3c_conformance.py:575
+   Gain:  Large cut in test time (about the number of cores, more with
+          batching). Easy to do.
+   How sure: Confirmed in the code
+
+8. Split the chunk tests into a quick tier and a full tier
+   What:  split@k for every k plus bytes creates O(n) cases per input, and
+          under the current replay each case costs O(n^2), so O(n^3) per
+          input. Run the full sweep nightly on Jenkins. On PRs, use k values
+          around markup boundaries plus the bytes mode on small inputs. After
+          #1 this matters much less.
+   Where: tests/dotnet/XpactDllTests/Catalog.cs:134
+   Gain:  Large for PR test time
+   How sure: Confirmed in the code
+
+9. Shorten builds
+   What:  The base_pre precompile was removed in #7 because of an msc_vc140
+          conflict, so every compile is a full one. Build a precompile with
+          the same compiler once and cache it, together with EIFGENs, on
+          Jenkins. Rebuild only the configurations a change affects.
+   Where: *.ecf, ci/Jenkinsfile.*
+   Gain:  Medium; depends on how much of the run is compiling. Measure first.
+   How sure: Suspected
+
+10. Add a chunked-parsing performance guard in CI
+   What:  Feed the 512 KB PubMed file in 4 KB pieces and a small document one
+          byte at a time. Fail the run if it exceeds a time budget or the time
+          grows faster than linearly. This proves whether #1-#4 worked and
+          catches regressions. Today's benchmarks parse whole documents only,
+          which is why the problem doesn't show up there.
+   Where: benchmarks/, scripts/run_benchmarks.ps1
+   Gain:  Indirect: a measurable target
+   How sure: n/a
+
+
+RULED OUT
+---------
+- Assertions are not the slowdown. The class invariants and postconditions
+  checked are cheap, and his numbers show 199 ms with assertions vs 193 ms
+  without.
+- Pausing the garbage collector during a parse also measured neutral.
+
+
+RECOMMENDED ORDER
+-----------------
+- #7 and #8 cut test time fastest and are low-risk.
+- #2-#4 are small, contained parser changes.
+- #1 is the real fix but the largest change.
+- #5 and #6 are what close the gap to Expat and Xpact-core.
+
+None of this has been measured or turned into issues yet.

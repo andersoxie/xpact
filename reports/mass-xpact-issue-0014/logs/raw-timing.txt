@@ -1,0 +1,17 @@
+raw.py: XML_ParserCreate + XML_Parse + XML_ParserFree, no handlers; student-Mass @ 253c81e sources
+== baseline (with -keep) japanese/pr-xml-utf-8.xml
+create+free                       16.0 us
+whole                          61015.7 us
+split half                     92586.2 us
+== baseline (with -keep) japanese/weekly-utf-8.xml
+create+free                       15.7 us
+whole                            763.0 us
+split half                      1254.7 us
+== nokeep (without -keep) japanese/pr-xml-utf-8.xml
+create+free                        9.1 us
+whole                          16996.0 us
+split half                     26525.1 us
+== nokeep (without -keep) japanese/weekly-utf-8.xml
+create+free                        8.9 us
+whole                            209.8 us
+split half                       370.1 us

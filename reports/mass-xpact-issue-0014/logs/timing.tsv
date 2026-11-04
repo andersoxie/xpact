@@ -1,0 +1,11 @@
+document	chunk	ms_with_keep	ms_without_keep
+doc-rich.xml	1	798.6	249.7
+doc-rich.xml	16	124.5	38.5
+doc-rich.xml	256	73.7	21.7
+doc-rich.xml	4096	67.4	20.3
+doc-rich.xml	131167	67.1	20.0
+doc-plain.xml	1	162.1	48.7
+doc-plain.xml	16	37.5	12.3
+doc-plain.xml	256	25.9	8.3
+doc-plain.xml	4096	24.8	7.9
+doc-plain.xml	42841	24.8	7.9

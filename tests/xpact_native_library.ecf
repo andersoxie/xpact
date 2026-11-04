@@ -7,6 +7,9 @@
 		</option>
 		<setting name="console_application" value="false"/>
 		<setting name="dead_code_removal" value="all"/>
+		<setting name="inlining" value="true"/>
+		<setting name="inlining_size" value="4"/>
+		<setting name="array_optimization" value="true"/>
 		<capability>
 			<concurrency support="none"/>
 			<void_safety support="all" use="all"/>

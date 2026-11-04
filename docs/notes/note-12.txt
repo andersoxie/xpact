@@ -1,0 +1,46 @@
+NOTE 12 - 2026-11-04 (afternoon/evening) - #20 is pre-existing; everything merged
+
+SHORT
+- The GC heap corruption (#20) is ALREADY IN student-Mass. At equal load (12 stressed runs in
+  parallel), student-Mass as it was crashed 2 of 12, the same as #16 (2 of 12) and the parser
+  chain (1 of 12). Note 11's "#16 exposes it" compared different loads and is withdrawn.
+- So nothing blocked the speed PRs: #4, #8, #13, #23, #16, #18 merged into student-Mass
+  (8ccf51b) and verified together (reports/mass-xpact-merge-2026-11-04/report.md).
+- Open: #21 (static input, draft), #20 (the corruption, cause unknown), #3.
+
+LESSON: COMPARE AT EQUAL LOAD
+- The crash rate depends strongly on machine load: ~0 in 24 with 4 runs in parallel, ~1 in 8
+  with 12. A comparison between builds is only fair when they run AT THE SAME TIME
+  (tools/probe/paired4.sh: 3 loops x 4 runs per build, all builds together).
+
+WHAT THE WATCHPOINT FOUND (tools/probe/watch.c)
+- Hardware write watchpoints, set in-process by a watcher thread on every heap address ending in
+  38c9be (the address of the bad byte in every crash), log every write there.
+- The 0x01 written there comes from {SPECIAL}.force <- {HASH_TABLE}.put <- accommodate <- force
+  <- {XP_PARSER}.resolved_general_entity_name, which keeps l_seen: HASH_TABLE [BOOLEAN, STRING_8]
+  while it follows the 60,000 aliases. Those writes were legitimate (the array lived there then).
+- Suspected: a later True written through a stale reference to that array. The generated
+  HASH_TABLE setters have the write barrier (RTAR) and every routine registers its locals
+  (tools/probe/unreg-all.awk), so the stale reference is unexplained; maybe the Eiffel runtime.
+- Replacing the three BOOLEAN seen-tables with HASH_TABLE [STRING_8, STRING_8]
+  (branch fix/20-seen-name-tables) did NOT help: 1 crash + 1 wrong result in 12 at equal load.
+
+THE ONE BEHAVIOUR CHANGE OF THE MERGES
+- DLL tests: utf8-bad-continuation-text, fed byte by byte, is rejected on call 5 instead of 6
+  (the earliest possible). Verdict, code, line, column, byte index unchanged. From #4/#8/#13.
+
+TRAPS
+- PowerShell 5.1 `*>` writes UTF-16; convert (iconv -f UTF-16LE) before grepping a log.
+- A sed that inserts a line into a CRLF file is fine here: git normalizes (autocrlf).
+- The auto-mode classifier sometimes blocks `gh pr merge` even with the user's authorization;
+  retrying later worked. Never work around it.
+- Killing a stress wrapper (sh) leaves its powershell loops running: stop them by command line.
+
+NEXT
+- #20: does it also happen WITHOUT the GC stress settings, under heavy load? That decides whether
+  real users can hit it.
+- #20: the runtime calls GetProcessTimes and _ftime64; if GC decisions use measured time, that
+  would explain the load dependence. Needs the runtime sources or an upstream question.
+- #21: rebase on student-Mass, equal-load stress, then decide.
+- Speed leads with no GC risk: per-call overhead of XML_Parse, append_character / hash reset,
+  note_position, Latin-1 resume.

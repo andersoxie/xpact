@@ -1,0 +1,61 @@
+Note2 - 2026-11-03 - incremental parsing (#1), implementation v1 -> v2
+=====================================================================
+
+WHAT WAS CHANGED (working tree on branch perf/incremental-parsing)
+- src/xp_parser.e
+  - parse_prefix now calls parse_prefix_tokens, which records a checkpoint (resume_index,
+    resume_sequence_count) after a successful non-final prefix parse.
+  - continue_prefix (new bytes, is_final): no reset; appends the normalized new bytes to
+    position_input (append_normalized_input) and continues the token loop from resume_index.
+    Returns False with no error when the full parse must take over (invalid char, final input
+    ending inside UTF-8).
+  - parse_with_cached_doctype records the same checkpoint for non-final input.
+  - incomplete_markup_prefix_start_from (scan continues where the previous one stopped).
+  - append_reference_in_content records last_general_reference_end/sequence: text after a
+    general entity reference starts a new callback, so it is a resumable point (v2).
+  - text_run_start: a text run resumed in the middle keeps the run start for its callback
+    position, exactly as the full replay did.
+- src/xp_native_parser.e
+  - resume path in parse_with_current_gc_policy before the legacy full replay.
+  - resume_ready / resume_raw_count / pending_scan_index; can_resume_parse,
+    has_stable_encoding, pending_markup_start.
+  - fallback: any error or unhandled case -> the old full replay, with
+    delivered_callback_count := max(delivered, handler.callback_sequence_count).
+  - context_source_buffer may now share input_buffer: NEVER call context_source_buffer.wipe_out
+    any more (it would wipe input_buffer). Use create ... make_empty.
+- src/xp_event_handler.e: replay_sequence_count (0 by default).
+- src/xp_native_callback_handler.e: replay_sequence_count redefined, prepare_callback_resume.
+
+BUGS HIT AND FIXED DURING DEVELOPMENT (lessons)
+1. Loop variant failure in append_normalized_input when an invalid byte stopped the loop
+   (i not advanced). Found by XpactDllTests utf8 group (1,590 crashes). Fix: i := count + 1.
+2. Smoke test crashed silently (exit 0xC0000028, no output) on XML_Parse(p, "", 0, FALSE):
+   has_stable_encoding called same_characters with an empty range (precondition).
+   How it was found: instrumented copy of tests/native/xpact_eiffel_dll_smoke.c whose check()
+   prints "CHECK <label>" to stderr; run with Start-Process -RedirectStandardError.
+   Tool kept in scratchpad\smoke\ (build.ps1 + smoke_trace.c). Reuse it next time!
+3. v1 was still quadratic on documents with general entities in text (&co;): a pending text
+   run with a general reference forced the full replay. v2 resumes after the last reference.
+
+TIMING TOOL (scratchpad\chunktime)
+- chunk_time.c: XML_Parse in pieces of N bytes; prints status, start/end counts, text bytes,
+  checksum of all events, ms. run.ps1 -Dir <dll dir> -File <xml> -Chunks "1,16,256,4096,0".
+- gen.py <out> <items>: makes -rich (decl, DOCTYPE, entity, CRLF, UTF-8, refs, CDATA, comments)
+  and -plain documents.
+
+RESULTS SO FAR (same checksums in every row = same events)
+  rich 131 KB, 16-byte pieces : baseline 205,133 ms -> v1 3,629 ms -> v2 140 ms
+  rich, 1-byte pieces         : v2 951 ms (baseline not measured; hours)
+  rich, 4 KB pieces           : 968 ms -> 82 ms
+  rich, whole                 : 111 ms -> 68 ms
+  plain 43 KB, 16-byte pieces : 23,224 ms -> 40 ms
+- XpactDllTests 4,308/4,308 on v2, both tiers. Smoke ok both tiers.
+- Test 2 baseline production: 20 min 45 s, ok 2561 / xpact-only 19 / both 5.
+  NOTE: run.py writes to reports\issue-0165\tools\logs\ (not logs\).
+
+IDEAS / TODO
+- Byte-by-byte is still ~14x slower than whole: per-call overhead (C <-> Eiffel, substring of
+  new bytes, should_defer_reparse_callbacks, handler.reset_events). Could be next.
+- input_buffer is still kept whole (needed for the fallback). Memory is unchanged, not reduced.
+- Non-UTF-8 input (Latin-1, UTF-16, explicit encodings) and external entity parsers still use
+  the full replay: candidates for a later step.

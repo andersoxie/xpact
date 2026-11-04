@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 import csv
 from dataclasses import asdict, dataclass, replace
 import hashlib
@@ -19,6 +20,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from urllib.parse import urljoin, urlsplit
 from urllib.request import url2pathname, urlopen
@@ -526,9 +528,14 @@ def main(argv: list[str] | None = None) -> int:
                         help="With --all-cases: Expat-compatible DLL checker for engine NAME, used for cases with external entities")
     parser.add_argument("--write-known-failures", type=Path, metavar="PATH",
                         help="Write this run's failures and errors as a known-failures TSV for review")
+    parser.add_argument("--jobs", type=int, default=1,
+                        help="Cases run at the same time (default: 1). Results are the same; per-case "
+                             "elapsed times include the load of the other jobs")
     args = parser.parse_args(argv)
     if not 0 < args.timeout < float("inf"):
         parser.error("--timeout must be positive and finite")
+    if args.jobs < 1:
+        parser.error("--jobs must be at least 1")
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     for name in REPORT_FILES:
@@ -575,20 +582,30 @@ def main(argv: list[str] | None = None) -> int:
         with tempfile.TemporaryDirectory(prefix="w3c-", dir=output) as work:
             for engine, executable in engines.items():
                 print(f"W3C XML: {engine}: {len(cases)} catalog cases", flush=True)
-                for index, case in enumerate(cases, 1):
+
+                def run_one(case: Case) -> Result:
+                    work_dir = Path(work)
+                    if args.jobs > 1:
+                        # A crash log per job: parallel crashes never share one exception_trace.log.
+                        work_dir = work_dir / f"job-{threading.get_ident()}"
+                        work_dir.mkdir(exist_ok=True)
                     if args.all_cases and case.skip_reason:
                         lane_case = replace(case, expected=case.lane_expected, skip_reason="")
                         if case.entities:
-                            results.append(run_case(lane_case, engine, entity_engines[engine], args.timeout, Path(work),
-                                                    extra_arguments=("--entity-root", str(suite_dir))))
-                        else:
-                            extra = ("--legacy-names",) if case.lane == "legacy-names" else ()
-                            results.append(run_case(lane_case, engine, executable, args.timeout, Path(work),
-                                                    suite_root=suite_dir, extra_arguments=extra))
-                    else:
-                        results.append(run_case(case, engine, executable, args.timeout, Path(work), suite_root=suite_dir))
-                    if index % 250 == 0:
-                        print(f"  {engine}: {index}/{len(cases)}", flush=True)
+                            return run_case(lane_case, engine, entity_engines[engine], args.timeout, work_dir,
+                                            extra_arguments=("--entity-root", str(suite_dir)))
+                        extra = ("--legacy-names",) if case.lane == "legacy-names" else ()
+                        return run_case(lane_case, engine, executable, args.timeout, work_dir,
+                                        suite_root=suite_dir, extra_arguments=extra)
+                    return run_case(case, engine, executable, args.timeout, work_dir, suite_root=suite_dir)
+
+                with ThreadPoolExecutor(max_workers=args.jobs) as pool:
+                    # map keeps catalog order, so the reports do not depend on --jobs.
+                    rows = pool.map(run_one, cases) if args.jobs > 1 else map(run_one, cases)
+                    for index, row in enumerate(rows, 1):
+                        results.append(row)
+                        if index % 250 == 0:
+                            print(f"  {engine}: {index}/{len(cases)}", flush=True)
     except (OSError, ValueError, KeyError, expat.ExpatError, zipfile.BadZipFile) as error:
         results.append(Result("harness", "suite-setup", "", "", "", "not-run", "error", message=str(error)))
     if known and not any(row.engine == "harness" for row in results):
