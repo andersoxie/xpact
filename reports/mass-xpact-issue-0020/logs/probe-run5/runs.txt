@@ -1,0 +1,26 @@
+# Probe run 5, 2026-11-04: student-Mass @ 253c81e as is (build/baseline: production DLL finalized WITH -keep, md5 ed66e1b0fe5fffe97eb41a35f7fc47a3).
+# Two batches of 4 loops x 3 runs in parallel, GC stress, probe runner. No access violation recorded.
+baseline-a run 1 (593 s): pass
+baseline-a run 2 (552 s): pass
+baseline-a run 3 (530 s): pass
+baseline-b run 1 (568 s): pass
+baseline-b run 2 (506 s): pass
+baseline-b run 3 (568 s): pass
+baseline-c run 1 (541 s): pass
+baseline-c run 2 (519 s): pass
+baseline-c run 3 (578 s): pass
+baseline-d run 1 (591 s): pass
+baseline-d run 2 (563 s): pass
+baseline-d run 3 (530 s): pass
+baseline2-a run 1 (580 s): pass
+baseline2-a run 2 (549 s): pass
+baseline2-a run 3 (538 s): pass
+baseline2-b run 1 (537 s): pass
+baseline2-b run 2 (553 s): pass
+baseline2-b run 3 (519 s): pass
+baseline2-c run 1 (581 s): pass
+baseline2-c run 2 (552 s): pass
+baseline2-c run 3 (533 s): pass
+baseline2-d run 1 (581 s): pass
+baseline2-d run 2 (560 s): pass
+baseline2-d run 3 (529 s): pass

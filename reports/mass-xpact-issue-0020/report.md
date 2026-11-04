@@ -11,6 +11,8 @@ The change makes the parser's internal scanners take `a_input: STRING_8` instead
 which makes a whole parse about **20 % faster**. Every result check passes, but one Expat test
 crashes intermittently, and often under GC stress. Until the cause is known, the change stays parked.
 
+> **Update 2 (2026-11-04): #16 exposes it.** `student-Mass` as is passed 24 of 24 stressed runs; `student-Mass` + #16 (finalize without `-keep`) failed 3 of 16 ([section 4](#investigation)). **Do not merge #16 or #18** until this is understood.
+>
 > **Update 2026-11-04: the bug is older than this change.** The previous build, which does not have
 > this change, failed 4 of 16 stressed runs under the same load: 2 × `0xC0000005`, 1 × `undefined entity` and 1 other failure
 > ([probe run 3](logs/probe-run3/runs.txt)). Its earlier 0 of 7 was luck. This change does not cause
@@ -94,7 +96,8 @@ externals) or the runtime.
   - In all three dumps the bad byte is `0x01` at an address ending in **`...38c9be`**. Only the low 24 bits match; the heap ranges, and the offset inside each range, differ (`2939be`, `3b59be`, `3b9be`).
   - What lives there differs: in two dumps it is the `area` field of a 29- or 6-character `STRING_8`, in the third an item of a `SPECIAL` of references. One damaged string's area holds `entity-decl:s10749:0:&s10748;`, an event string from `{XP_NATIVE_CALLBACK_HANDLER}.on_entity_decl`.
   - So something writes `0x01` to a computed address. Not a field of one particular object.
-- [ ] Stress `student-Mass` @ `253c81e` as is (with `-keep`, `build/baseline`) to see whether #16 matters. Running.
+- [x] Stress `student-Mass` @ `253c81e` as is (with `-keep`, `build/baseline`) ([runs](logs/probe-run5/runs.txt)): ✅ **24 / 24 pass**, no access violation. With #16 added (the only difference is finalizing without `-keep`), the same sources failed 3 of 16. At that failure rate, 24 clean runs would happen by chance in less than 1 % of cases. So **#16 exposes (or introduces) the corruption**. The suspected mechanism is unverified: without `-keep`, the finalized routines lose their exception frames and assertion code, which changes the generated C and its GC-root handling.
+- [ ] The static assertions build (with `-keep`, plus #11, #18 and #21) still crashed 3 of 12, so `-keep` alone does not prevent it once the later changes are in. Not explained yet.
 - [ ] Suspects now: an Eiffel reference that the GC does not see (a C bridge pointer or a local the generated code does not register) and that is used after a scavenge has moved the object.
 - [x] Get a crash dump without a debugger attached (done with the in-process probe, see section 4) (Windows Error Reporting `LocalDumps` for `xpact_libexpat_runtests.exe`) and map it; the debugger seems to hide the crash.
 - [ ] Find out why other load on the machine matters for a single-threaded parse. No thread or timer in the bridge or runner (checked); the Eiffel runtime itself is still unchecked.
