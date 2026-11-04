@@ -39,6 +39,7 @@ still only on its branch; its report is here so the evidence can be read now.
 | ✅ | [#31](https://github.com/CodTanium/mass-xpact/issues/31) | Search for `encoding` only inside the XML declaration | [#32](https://github.com/CodTanium/mass-xpact/pull/32) | **merged** 2026-11-04 | byte by byte 2,857 → 438 ms (6.5×) | [mass-xpact-issue-0031](mass-xpact-issue-0031/report.md) |
 | ✅ | [#34](https://github.com/CodTanium/mass-xpact/issues/34) | Resume the search for the end of a delayed DOCTYPE | [#35](https://github.com/CodTanium/mass-xpact/pull/35) | **merged** 2026-11-04 | byte by byte 437 → 319 ms | [mass-xpact-issue-0034](mass-xpact-issue-0034/report.md) |
 | ✅ | [#37](https://github.com/CodTanium/mass-xpact/issues/37) | Check the XML declaration without per-call allocations | [#38](https://github.com/CodTanium/mass-xpact/pull/38) | **merged** 2026-11-04 | byte by byte 334 → 286 ms | [mass-xpact-issue-0037](mass-xpact-issue-0037/report.md) |
+| ✅ | [#40](https://github.com/CodTanium/mass-xpact/issues/40) | Keep the declared encoding of a complete XML declaration | [#41](https://github.com/CodTanium/mass-xpact/pull/41) | **merged** 2026-11-04 | byte by byte 290 → 236 ms | [mass-xpact-issue-0040](mass-xpact-issue-0040/report.md) |
 
 ## Fixes
 
