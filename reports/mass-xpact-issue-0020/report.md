@@ -2,15 +2,19 @@
 
 > **Issue:** [CodTanium/mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) · **Branch:** `perf/static-string-input`, stacked on `perf/resume-text-runs` (#11)
 > **Changed:** `src/xp_parser.e`
-> **Status:** ⛔ **parked, do not merge** · cause unknown
+> **Status:** ⛔ **parked, do not merge** · cause unknown · the crash also happens **without** this change (latent bug, see the update in section 1)
 
 ## 1. In short
 
 The change makes the parser's internal scanners take `a_input: STRING_8` instead of
 `READABLE_STRING_8`. Calls such as `a_input [i]` are then statically bound and can be inlined,
 which makes a whole parse about **20 % faster**. Every result check passes, but one Expat test
-crashes intermittently, and often under GC stress. The previous build does not. Until the cause is
-known, the change stays parked.
+crashes intermittently, and often under GC stress. Until the cause is known, the change stays parked.
+
+> **Update 2026-11-04: the bug is older than this change.** The previous build, which does not have
+> this change, failed 4 of 16 stressed runs under the same load: 2 × `0xC0000005`, 1 × `undefined entity` and 1 other failure
+> ([probe run 3](logs/probe-run3/runs.txt)). Its earlier 0 of 7 was luck. This change does not cause
+> the corruption; how much it changes the failure rate is not measured.
 
 | Production DLL, one `XML_Parse` call, no handlers | #11 + #16 + #18 | + this change |
 |---|---:|---:|
@@ -42,7 +46,8 @@ known, the change stays parked.
 
 | Build | Normal runs | Full suite runs | GC stress runs |
 |---|---|---|---|
-| Previous | ✅ 90 / 90 | ✅ 4 / 4 | 2 pass, 1 timeout (300 s, machine loaded), 0 crashes |
+| Previous | ✅ 90 / 90 | ✅ 4 / 4 | 2 pass, 1 timeout (300 s, machine loaded), 0 crashes; **later 12 / 16 (2 × `0xC0000005`, 1 × `undefined entity`, 1 other failure)**, probe run 3 |
+| Static input, **assertions tier** | | | 9 / 12, **3 × `0xC0000005`**, no assertion violation first (probe run 3) |
 | Static input | ❌ 59 / 60 (1 × `0xC0000005`) | ❌ 5 / 6 (1 × `undefined entity`) | 1 pass, **2 crashes** |
 | Static input, no `array_optimization` | 70 / 70 | | |
 | Static input, `inlining=false` | | | 2 pass, **2 crashes** |
@@ -82,7 +87,10 @@ externals) or the runtime.
 
 ## 5. Next steps
 
-- [ ] Stress the static change in the **assertions** tier: an out-of-bounds `SPECIAL` or `STRING_8` write is unchecked in the production tier and silently corrupts the heap, but there it becomes a precondition violation with an Eiffel trace.
+- [x] Stress the static change in the **assertions** tier ([runs](logs/probe-run3/runs.txt), [stacks](logs/probe-run3/)): 3 access violations in 12 runs (plus 2 in a first attempt that I stopped to fix the log capture), all in the GC, with **no** precondition violation first. An out-of-bounds write through Eiffel `SPECIAL` or `STRING_8` features would have raised one, so that is unlikely.
+- [x] Stress the previous build more: **it fails too**, 4 of 16 (see section 1). The two previous-build crashes left no probe file; why is unknown.
+- [ ] Stress `student-Mass` @ `253c81e` + #16 (`build/nokeep`, before #11, #18 and this change) to find which change, if any, introduced the bug. Running.
+- [ ] Suspects now: an Eiffel reference that the GC does not see (a C bridge pointer or a local the generated code does not register) and that is used after a scavenge has moved the object.
 - [x] Get a crash dump without a debugger attached (done with the in-process probe, see section 4) (Windows Error Reporting `LocalDumps` for `xpact_libexpat_runtests.exe`) and map it; the debugger seems to hide the crash.
 - [ ] Find out why other load on the machine matters for a single-threaded parse. No thread or timer in the bridge or runner (checked); the Eiffel runtime itself is still unchecked.
 - [ ] Review the C bridge for pointers into Eiffel objects held across calls back into Eiffel.
