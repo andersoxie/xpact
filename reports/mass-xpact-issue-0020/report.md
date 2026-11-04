@@ -2,7 +2,7 @@
 
 > **Issue:** [CodTanium/mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) · **Branch:** `perf/static-string-input`, stacked on `perf/resume-text-runs` (#11)
 > **Changed:** `src/xp_parser.e`
-> **Status:** ⛔ **parked, do not merge** · cause unknown · the crash also happens **without** this change (latent bug, see the update in section 1)
+> **Status:** cause unknown · **pre-existing in `student-Mass`** (update 4) · PR #21 (static input) still parked, do not merge
 
 ## 1. In short
 
@@ -11,7 +11,30 @@ The change makes the parser's internal scanners take `a_input: STRING_8` instead
 which makes a whole parse about **20 % faster**. Every result check passes, but one Expat test
 crashes intermittently, and often under GC stress. Until the cause is known, the change stays parked.
 
-> **Update 2 (2026-11-04): #16 exposes it.** `student-Mass` as is passed 24 of 24 stressed runs; `student-Mass` + #16 (finalize without `-keep`) failed 3 of 16 ([section 4](#investigation)). **Do not merge #16 or #18** until this is understood.
+> **Update 5 (2026-11-04, 18:03): it also happens with default GC settings.** The merged `student-Mass` @ `8ccf51b`
+> (production DLL), **without** the GC stress variables, 12 runs in parallel: **71 / 72 pass, 1 wrong result**.
+> The wrong result was `undefined entity (line 60002, offset 3)`, with no crash
+> ([probe run 8](logs/probe-run8-default-gc/runs.txt), [output](logs/probe-run8-default-gc/nogc-j-1.txt)).
+> So normal use on a busy machine can hit it, as a wrong parse result, rarely.
+>
+> **Update 4 (2026-11-04, 16:08): the bug is already in `student-Mass`; no speed PR causes it.**
+> Paired batch, four builds at the same time under the same load (12 runs in parallel) ([probe run 7](logs/probe-run7-paired/runs.txt)):
+>
+> | Build | Runs | Pass | Crash | Wrong result |
+> |---|---|---|---|---|
+> | `student-Mass` @ `253c81e` **as is** (with `-keep`) | 12 | 10 | **2** | 0 |
+> | + #16 (no `-keep`) | 12 | 10 | 2 | 0 |
+> | candidate fix, no `-keep` | 12 | 10 | 1 | 1 |
+> | parser chain #4 + #8 + #13 (with `-keep`) | 12 | 11 | 1 | 0 |
+>
+> All six crashes have the same signature: a read of `ffffffffffffffff`, 4 of 6 in the GC's marking code. The PRs are unblocked: #16 and #18 are ready again. #21 is still parked for its own reasons (no separate equal-load data). This issue now tracks the **pre-existing** corruption.
+>
+> **Update 3 (2026-11-04, afternoon): load matters more than the build; "#16 exposes it" is not proven.**
+> With 12 stressed runs in parallel instead of 4, **every** build crashed: the parser chain **with `-keep`** 6 of 21, the candidate fix 5 of 8, #16 5 of 11 ([probe run 6](logs/probe-run6/runs.txt)), all with the same GC signature.
+> The baseline's 24 of 24 below was measured at the lower load, so it doesn't compare. A paired batch (all four builds at the same time, same load) is running.
+> #16 and #18 stay blocked until it's in.
+>
+> **Update 2 (2026-11-04): #16 exposes it** *(withdrawn by update 3: the comparison was not at equal load)*. `student-Mass` as is passed 24 of 24 stressed runs; `student-Mass` + #16 (finalize without `-keep`) failed 3 of 16 ([section 4](#investigation)). **Do not merge #16 or #18** until this is understood.
 >
 > **Update 2026-11-04: the bug is older than this change.** The previous build, which does not have
 > this change, failed 4 of 16 stressed runs under the same load: 2 × `0xC0000005`, 1 × `undefined entity` and 1 other failure
@@ -98,6 +121,12 @@ externals) or the runtime.
   - So something writes `0x01` to a computed address. Not a field of one particular object.
 - [x] Stress `student-Mass` @ `253c81e` as is (with `-keep`, `build/baseline`) ([runs](logs/probe-run5/runs.txt)): ✅ **24 / 24 pass**, no access violation. With #16 added (the only difference is finalizing without `-keep`), the same sources failed 3 of 16. At that failure rate, 24 clean runs would happen by chance in less than 1 % of cases. So **#16 exposes (or introduces) the corruption**. The suspected mechanism is unverified: without `-keep`, the finalized routines lose their exception frames and assertion code, which changes the generated C and its GC-root handling.
 - [ ] The static assertions build (with `-keep`, plus #11, #18 and #21) still crashed 3 of 12, so `-keep` alone does not prevent it once the later changes are in. Not explained yet.
+- [x] Missing GC roots in the generated C, unlikely ([gc-registration.txt](logs/gc-registration.txt), [unreg-all.awk](logs/tools/probe/unreg-all.awk)): every routine that has reference locals and makes calls registers them (`RTLD`/`RTLI`/`RTLR`), both with `-keep` (4,940 routines) and without (880). A heuristic text check, not a proof: it does not see references held in C registers across inlined code.
+- [x] Watchpoint run (`watch.c`, [logs](logs/watch-run1/), [mapped stack](logs/watch-run1/mapped.txt)): hardware write watchpoints on the heap addresses ending in `38c9be`, on the #16 DLL relinked with a map.
+  - In two test children, a `0x01` was written there by `{SPECIAL}.force` ← `{HASH_TABLE}.put` ← `accommodate` ← `force` ← **`{XP_PARSER}.resolved_general_entity_name`** ← `include_general_entity_in_literal` ← `append_reference_in_literal` ← `parse_attribute`.
+  - That routine keeps `l_seen: HASH_TABLE [BOOLEAN, STRING_8]` while it follows the 60,000 aliases. The write stores entry 2,694 (`True`) of its `BOOLEAN` array: the `0x01` run ends exactly at the watched byte and the bytes after it are still `00`. So **this write is legitimate**: the array really occupied that memory then. Neither child crashed.
+  - **Suspected, not confirmed:** in every crash the corrupting byte is `0x01` = `True`, at an address `l_seen`'s array once occupied. So the corruption is probably a later `True` written through a stale reference to that array, after it moved or was freed. The generated `HASH_TABLE` setters do have the write barrier (`RTAR`), and every routine on the path registers its locals. The stale reference is not explained, and may be in the Eiffel runtime.
+- [ ] **Candidate fix** ([branch `fix/20-seen-name-tables`](https://github.com/CodTanium/mass-xpact/tree/fix/20-seen-name-tables), `e1433da`): the three alias-following loops (`resolved_general_entity_name`, `append_parameter_entity_literal`, `resolved_parameter_entity_name`) use `HASH_TABLE [STRING_8, STRING_8]` instead of a `BOOLEAN` table. Same cycle check, no `BOOLEAN` array. DLL tests 4,308 / 4,308, `results.tsv` identical to the #16 build. ❌ **Does not fix the crash:** it crashed 5 of 8 under the 12-loop load (probe run 6). Kept as a branch only; not proposed for merging.
 - [ ] Suspects now: an Eiffel reference that the GC does not see (a C bridge pointer or a local the generated code does not register) and that is used after a scavenge has moved the object.
 - [x] Get a crash dump without a debugger attached (done with the in-process probe, see section 4) (Windows Error Reporting `LocalDumps` for `xpact_libexpat_runtests.exe`) and map it; the debugger seems to hide the crash.
 - [ ] Find out why other load on the machine matters for a single-threaded parse. No thread or timer in the bridge or runner (checked); the Eiffel runtime itself is still unchecked.

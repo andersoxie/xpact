@@ -35,6 +35,7 @@ still only on its branch; its report is here so the evidence can be read now.
 | 🔴 | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | **Pre-existing** GC heap corruption under stress and load (not caused by any speed PR); static `STRING_8` input (#21) parked | [#21](https://github.com/CodTanium/mass-xpact/pull/21) | #21 draft | 20 % faster | [mass-xpact-issue-0020](mass-xpact-issue-0020/report.md) |
 | ✅ | [#15](https://github.com/CodTanium/mass-xpact/issues/15) | Build stops when `ec` generated no new C | [#23](https://github.com/CodTanium/mass-xpact/pull/23) | **merged** 2026-11-04 | no silent stale DLLs | [mass-xpact-issue-0015](mass-xpact-issue-0015/report.md) |
 | ✅ | | **Post-merge check** of all the above together (`student-Mass` @ `8ccf51b`) | | 2026-11-04 | DLL tests 4,308/4,308, Expat same 38, both tiers | [mass-xpact-merge-2026-11-04](mass-xpact-merge-2026-11-04/report.md) |
+| ✅ | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | Assertions DLL exited with `0xC0000028` on `ibm68n03.xml` (default handler only) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | **merged** 2026-11-04 | precondition no longer violated | [mass-xpact-issue-0003](mass-xpact-issue-0003/report.md) |
 
 ## Fixes
 
