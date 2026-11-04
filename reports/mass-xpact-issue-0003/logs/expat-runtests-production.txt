@@ -1,0 +1,85 @@
+﻿Expat version: expat_2.8.1
+FAIL [chunksize=0 deferral=0]: test_alloc_dtd_copy_default_atts (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\handlers.c:1351)
+xpact_libexpat_runtests.exe : ERROR: Second external parser unexpectedly created
+At C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad
+\expat-fix3.ps1:8 char:2
++     & $exe --timeout 600 *> "$out\runtests-$($t[0]).txt"
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: Second e...ectedly created:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ERROR: Not all handlers were called
+FAIL [chunksize=0 deferral=0]: test_alloc_dtd_default_handling (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:543)
+ERROR: Encoding set despite failing allocator
+FAIL [chunksize=0 deferral=0]: test_alloc_explicit_encoding (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:558)
+ERROR: Parse succeeded with no reallocation
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_buffer (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:606)
+ERROR: Succeeded with no reallocations
+FAIL [chunksize=0 deferral=0]: test_alloc_ext_entity_realloc_buffer (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:632)
+ERROR: Parse succeeded despite no reallocations
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_many_attributes (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:677)
+ERROR: Parsing worked despite failing reallocation
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_subst_public_entity_value (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:793)
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_attribute_enum_value (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1003)
+ERROR: Parse succeeded despite failing reallocator
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_implied_attribute (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1053)
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_default_attribute (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1103)
+ERROR: Element handler not fired
+FAIL [chunksize=0 deferral=0]: test_alloc_nested_groups (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1311)
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_nested_groups (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1346)
+ERROR: Element handler flag not raised
+FAIL [chunksize=0 deferral=0]: test_alloc_large_group (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1387)
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_group_choice (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1421)
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_long_attribute_value (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1516)
+ERROR: Memory Fail not faulted
+FAIL [chunksize=0 deferral=0]: test_alloc_nested_entities (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\handlers.c:500)
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_param_entity_newline (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1735)
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_ce_extends_pe (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1781)
+ERROR: Parse succeeded despite failing reallocator
+FAIL [chunksize=0 deferral=0]: test_alloc_realloc_attributes (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:1816)
+ERROR: Unexpected non-NULL context
+FAIL [chunksize=0 deferral=0]: test_alloc_reset_after_external_entity_parser_create_fail (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\handlers.c:1496)
+ERROR: check failed: sizeRecordedFor(ptr) == 10
+FAIL [chunksize=0 deferral=0]: test_alloc_tracker_size_recorded (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:2117)
+ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+FAIL [chunksize=0 deferral=0]: test_alloc_tracker_maximum_amplification (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:2169)
+ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+FAIL [chunksize=0 deferral=0]: test_alloc_tracker_threshold (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:2196)
+ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+FAIL [chunksize=0 deferral=0]: test_alloc_tracker_getbuffer_unlimited (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:2211)
+ERROR: Call with NULL parser is NOT supposed to succeed
+FAIL [chunksize=0 deferral=0]: test_alloc_tracker_api (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\alloc_tests.c:2232)
+ERROR: Pre-init XML_ParseBuffer not faulted
+FAIL [chunksize=0 deferral=0]: test_nsalloc_parse_buffer (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:126)
+ERROR: Parsing worked despite failing reallocation
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_binding_uri (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:538)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_prefix (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:614)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_longer_prefix (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:690)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:958)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_2 (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:958)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_3 (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:958)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_4 (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:958)
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_5 (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:958)
+ERROR: Parsing worked despite failing reallocations
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_6 (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:958)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_7 (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:958)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_ge_name (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:1241)
+ERROR: Parsing worked despite failing reallocations
+FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_in_dtd (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\nsalloc_tests.c:1349)
+90%: Checks: 399, Failed: 38

@@ -1,0 +1,12 @@
+# Stack of the 0xC0000028 exit (exception-before.txt), mapped with the link map of the student-Mass @ 8ccf51b assertions DLL (relinked with -MAP).
+830aa9 LJ20 libvcruntime:longjmp.obj 
+bf6f ereturn finalized:except.obj 
+c3a1 eviol finalized:except.obj 
+6bfa81 F123_1787 Cobj3:big_file_C3_c.obj {XP_PARSER}.is_predefined_entity
+680299 _ctrlfp$filt$0 libucrt:fpctrl.obj 
+66b925 F123_1564 Cobj3:big_file_C3_c.obj {XP_PARSER}.parse
+6d5c60 F125_2043 Cobj3:big_file_C3_c.obj {XP_NATIVE_PARSER}.parse_with_current_gc_policy
+6d3cc3 F125_2042 Cobj3:big_file_C3_c.obj {XP_NATIVE_PARSER}.parse
+7dbc1a F47_726 Cobj1:big_file_C1_c.obj {XP_NATIVE_BRIDGE_INSTALLER}.parse
+1c00 XML_Parse xpact_native.obj 
+# _ctrlfp$filt$0 is the nearest public symbol of a static C function (map lists only public ones).
