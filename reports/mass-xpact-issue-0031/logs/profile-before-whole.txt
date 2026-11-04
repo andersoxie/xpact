@@ -1,0 +1,23 @@
+1730 samples
+  6.9%    119  {STRING_8}.append_character
+  6.2%    107  {XP_PARSER}.note_position
+  5.7%     99  F123_1618  [Cobj3:big_file_C3_c.obj]
+  3.7%     64  {STRING_8}.put_code
+  3.2%     56  {XP_PARSER}.normalized_input
+  2.9%     50  {C_STRING}.read_substring_into
+  2.7%     47  eif_spset  [finalized:malloc.obj]
+  2.7%     47  {XP_PARSER}.parse_comment
+  2.7%     47  {XP_PARSER}.is_incomplete_utf8_sequence_at
+  2.5%     43  rt_id_of  [finalized:gen_conf.obj]
+  2.1%     37  {STRING_8_SEARCHER}.substring_index_with_deltas
+  2.0%     35  {READABLE_STRING_8}.make
+  2.0%     35  eif_set  [finalized:malloc.obj]
+  2.0%     34  {XP_PARSER}.find_sequence
+  2.0%     34  {STRING_8}.item
+  1.8%     32  special_malloc  [finalized:malloc.obj]
+  1.8%     32  {SPECIAL}.make_filled
+  1.8%     31  spmalloc  [finalized:malloc.obj]
+  1.7%     30  memset  [libvcruntime:memset.obj]
+  1.7%     30  F123_1603  [Cobj3:big_file_C3_c.obj]
+  1.6%     27  malloc_from_zone  [finalized:malloc.obj]
+  1.6%     27  {READABLE_STRING_8}.make_from_string
