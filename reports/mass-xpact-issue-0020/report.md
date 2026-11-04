@@ -89,7 +89,12 @@ externals) or the runtime.
 
 - [x] Stress the static change in the **assertions** tier ([runs](logs/probe-run3/runs.txt), [stacks](logs/probe-run3/)): 3 access violations in 12 runs (plus 2 in a first attempt that I stopped to fix the log capture), all in the GC, with **no** precondition violation first. An out-of-bounds write through Eiffel `SPECIAL` or `STRING_8` features would have raised one, so that is unlikely.
 - [x] Stress the previous build more: **it fails too**, 4 of 16 (see section 1). The two previous-build crashes left no probe file; why is unknown.
-- [ ] Stress `student-Mass` @ `253c81e` + #16 (`build/nokeep`, before #11, #18 and this change) to find which change, if any, introduced the bug. Running.
+- [x] Stress `student-Mass` @ `253c81e` + #16 (`build/nokeep`, before #11, #18 and this change) ([runs](logs/probe-run4/runs.txt)): **fails too**, 13 / 16, 3 × `0xC0000005`, all three in `hybrid_mark` at the same instruction. So the bug is older than #11, #18 and #21.
+- [x] Minidump memory ([dump-memory.txt](logs/probe-run4/dump-memory.txt), [dumpmem.py](logs/tools/probe/dumpmem.py), [region.py](logs/tools/probe/region.py)):
+  - In all three dumps the bad byte is `0x01` at an address ending in **`...38c9be`**. Only the low 24 bits match; the heap ranges, and the offset inside each range, differ (`2939be`, `3b59be`, `3b9be`).
+  - What lives there differs: in two dumps it is the `area` field of a 29- or 6-character `STRING_8`, in the third an item of a `SPECIAL` of references. One damaged string's area holds `entity-decl:s10749:0:&s10748;`, an event string from `{XP_NATIVE_CALLBACK_HANDLER}.on_entity_decl`.
+  - So something writes `0x01` to a computed address. Not a field of one particular object.
+- [ ] Stress `student-Mass` @ `253c81e` as is (with `-keep`, `build/baseline`) to see whether #16 matters. Running.
 - [ ] Suspects now: an Eiffel reference that the GC does not see (a C bridge pointer or a local the generated code does not register) and that is used after a scavenge has moved the object.
 - [x] Get a crash dump without a debugger attached (done with the in-process probe, see section 4) (Windows Error Reporting `LocalDumps` for `xpact_libexpat_runtests.exe`) and map it; the debugger seems to hide the crash.
 - [ ] Find out why other load on the machine matters for a single-threaded parse. No thread or timer in the bridge or runner (checked); the Eiffel runtime itself is still unchecked.
