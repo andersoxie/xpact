@@ -1,0 +1,33 @@
+# Stack of probe-run2-av.txt mapped with the DLL's link map (xpact.map) and the F_code feature comments.
+# rva  symbol  object  feature
+7d5f hybrid_mark finalized:garcol.obj 
+7d5f hybrid_mark finalized:garcol.obj 
+7fae hybrid_mark finalized:garcol.obj 
+7fae hybrid_mark finalized:garcol.obj 
+7fae hybrid_mark finalized:garcol.obj 
+7fae hybrid_mark finalized:garcol.obj 
+7fae hybrid_mark finalized:garcol.obj 
+7fae hybrid_mark finalized:garcol.obj 
+8f6b run_collector finalized:garcol.obj 
+8be4 partial_scavenging finalized:garcol.obj 
+9412 _ctrlfp$filt$0 libucrt:fpctrl.obj 
+6885 _ctrlfp$filt$0 libucrt:fpctrl.obj 
+fc46 malloc_from_eiffel_list finalized:malloc.obj 
+1183b spmalloc finalized:malloc.obj 
+116b7 special_malloc finalized:malloc.obj 
+3b4cf F670_3932 Cobj13:big_file_C13_c.obj {HASH_TABLE}.make
+3ddc6 F670_3990 Cobj13:big_file_C13_c.obj {HASH_TABLE}.empty_duplicate
+3b7de F670_3935 Cobj13:big_file_C13_c.obj {HASH_TABLE}.accommodate
+3cf86 F670_3978 Cobj13:big_file_C13_c.obj {HASH_TABLE}.put
+c651d F123_1779 Cobj3:big_file_C3_c.obj {XP_PARSER}.put_general_entity
+b7f5d F123_1681 Cobj3:big_file_C3_c.obj {XP_PARSER}.parse_entity_declaration
+a927c F123_1640 Cobj3:big_file_C3_c.obj {XP_PARSER}.process_dtd_subset
+a1665 F123_1616 Cobj3:big_file_C3_c.obj {XP_PARSER}.parse_doctype
+9b16e F123_1603 Cobj3:big_file_C3_c.obj {XP_PARSER}.parse_markup
+99bc7 F123_1583 Cobj3:big_file_C3_c.obj {XP_PARSER}.parse_prefix_tokens
+96f5c F123_1568 Cobj3:big_file_C3_c.obj {XP_PARSER}.continue_prefix
+cd941 F125_2044 Cobj3:big_file_C3_c.obj {XP_NATIVE_PARSER}.parse_with_current_gc_policy
+ccad1 F125_2043 Cobj3:big_file_C3_c.obj {XP_NATIVE_PARSER}.parse
+e4a4e F47_726 Cobj1:big_file_C1_c.obj {XP_NATIVE_BRIDGE_INSTALLER}.parse
+1c00 XML_Parse xpact_native.obj 
+# _ctrlfp$filt$0 frames are static functions of garcol.c/malloc.c that the map does not list (nearest public symbol).
