@@ -2288,7 +2288,8 @@ feature {NONE} -- Encoding
 				if l_end = 0 then
 					l_end := a_input.count
 				end
-				l_pos := a_input.substring_index ("encoding", 1)
+				-- Only the declaration: input in pieces grows on every call (mass-xpact #31).
+				l_pos := a_input.substring_index_in_bounds ("encoding", 1, l_end)
 				if l_pos > 0 and then l_pos < l_end then
 					l_index := l_pos + 8
 					from
