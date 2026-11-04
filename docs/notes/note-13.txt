@@ -2,7 +2,8 @@ NOTE 13 - 2026-11-04 (evening) - profile-driven speed rounds on input in pieces
 
 SHORT
 - pr-xml-utf-8.xml (207 KB) fed 1 byte per call, production DLL:
-    2,857 ms (student-Mass after #21) -> 438 (#31) -> 319 (#34) -> 286 (#37) -> 236 (#40) -> 217 ms (#43) = 13x.
+    2,857 ms (student-Mass after #21) -> 438 (#31) -> 319 (#34) -> 286 (#37) -> 236 (#40) -> 217 (#43)
+    -> 200 (#46) -> 184 ms (#48) = 15.5x.
   16-byte pieces 209 -> 40 ms; 64-byte 69 -> 27 ms; whole parse unchanged (~22 ms).
 - Every round: output identical (DLL tests, W3C trace, Test 2 byte-identical on both tiers;
   Expat the same 38 failures). All merged into student-Mass and pushed to anders' incremental-test.
@@ -15,6 +16,10 @@ THE ROUNDS (one issue + one PR each)
   "<!--" / "<?" so it equals a full scan.
 - #37 / #38: the encoding checks created manifest strings and ran STRING_SEARCHER on every
   call. Constants + two small loops with the same results.
+- #46 / #47 (2026-11-05): small chunks reuse one string; a nested parse (from a callback) or a
+  chunk over 64 KB still gets its own. Checked: XP_NATIVE_PARSER never keeps its argument.
+- #48 / #49 (2026-11-05): input that starts with a known <?xml ...?> has no UTF-16 signature, so
+  both signature checks and the encoding lookup are answered from the #40 prefix check.
 - #43 / #44: each input chunk was copied twice (through a C_STRING). One from_c_substring copy;
   a NUL-byte test (4 documents) shows the bytes are kept.
 - #40 / #41: the declared encoding was re-read on every call. Kept with the bytes it depends on
