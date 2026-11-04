@@ -1431,10 +1431,13 @@ feature {NONE} -- Encoding
 			l_needed: INTEGER
 			l_declared_encoding: detachable STRING_8
 			l_utf8: BOOLEAN
+			l_known: BOOLEAN
 		do
 			Result := a_input.count
-			l_little_endian := has_utf16le_signature (a_input) or else explicit_encoding_is_utf16le
-			l_utf16 := l_little_endian or else has_utf16be_signature (a_input) or else explicit_encoding_is_utf16be or else explicit_encoding_is_utf16
+				-- Input that starts with a known `<?xml ...?>' has no UTF-16 signature (mass-xpact #48).
+			l_known := starts_with_known_declaration (a_input)
+			l_little_endian := (not l_known and then has_utf16le_signature (a_input)) or else explicit_encoding_is_utf16le
+			l_utf16 := l_little_endian or else (not l_known and then has_utf16be_signature (a_input)) or else explicit_encoding_is_utf16be or else explicit_encoding_is_utf16
 			if l_utf16 then
 				Result := a_input.count - (a_input.count \\ 2)
 				if Result >= 2 then
@@ -1444,7 +1447,11 @@ feature {NONE} -- Encoding
 					end
 				end
 			elseif not a_input.is_empty then
-				l_declared_encoding := declared_xml_encoding (a_input)
+				if l_known then
+					l_declared_encoding := declared_encoding_value
+				else
+					l_declared_encoding := declared_xml_encoding (a_input)
+				end
 				if explicit_encoding_overrides_declaration and then attached explicit_encoding as l_encoding then
 					l_utf8 := is_utf8_encoding_name (l_encoding)
 				elseif attached l_declared_encoding as l_encoding then
@@ -1680,9 +1687,7 @@ feature {NONE} -- Encoding
 			if a_input.count >= 3 and then a_input.item (1).code = 239 and then a_input.item (2).code = 187 and then a_input.item (3).code = 191 then
 				l_start := 4
 			end
-			if attached declared_encoding_prefix as l_known and then a_input.count >= l_known.count
-				and then a_input.same_characters (l_known, 1, l_known.count, 1)
-			then
+			if starts_with_known_declaration (a_input) then
 					-- Starts with a complete XML declaration seen before (mass-xpact #40).
 				Result := True
 			elseif a_input.count < 3 then
@@ -2203,6 +2208,7 @@ feature {NONE} -- Encoding
 			l_source: READABLE_STRING_8
 			l_complete_count: INTEGER
 			l_declared_encoding: detachable STRING_8
+			l_known: BOOLEAN
 		do
 			last_input_byte_order_mark_removed := False
 			l_source := a_input
@@ -2212,14 +2218,19 @@ feature {NONE} -- Encoding
 					l_source := a_input.substring (1, l_complete_count)
 				end
 			end
+			l_known := starts_with_known_declaration (l_source)
 			if explicit_encoding_overrides_declaration and then attached explicit_encoding as l_explicit_encoding then
 				Result := decoded_input_with_encoding (l_source, l_explicit_encoding)
-			elseif has_utf16le_signature (l_source) then
+			elseif not l_known and then has_utf16le_signature (l_source) then
 				Result := decoded_utf16_input (l_source, True)
-			elseif has_utf16be_signature (l_source) then
+			elseif not l_known and then has_utf16be_signature (l_source) then
 				Result := decoded_utf16_input (l_source, False)
 			else
-				l_declared_encoding := declared_xml_encoding (l_source)
+				if l_known then
+					l_declared_encoding := declared_encoding_value
+				else
+					l_declared_encoding := declared_xml_encoding (l_source)
+				end
 				if explicit_encoding_is_utf16 or else attached l_declared_encoding as l_encoding and then is_utf16_encoding_name (l_encoding) then
 					last_error_code := Xml_error_incorrect_encoding
 				elseif attached l_declared_encoding as l_encoding then
@@ -2300,9 +2311,7 @@ feature {NONE} -- Encoding
 			l_end: INTEGER
 			l_prefix: STRING_8
 		do
-			if attached declared_encoding_prefix as l_known and then a_input.count >= l_known.count
-				and then a_input.same_characters (l_known, 1, l_known.count, 1)
-			then
+			if starts_with_known_declaration (a_input) then
 				Result := declared_encoding_value
 			else
 				Result := scanned_xml_encoding (a_input)
@@ -2315,6 +2324,17 @@ feature {NONE} -- Encoding
 					end
 				end
 			end
+		end
+
+	starts_with_known_declaration (a_input: READABLE_STRING_8): BOOLEAN
+			-- Does `a_input' start with `declared_encoding_prefix', a complete XML declaration seen before?
+			-- If so, it starts with `<?xml', so it has no UTF-16 signature, and its declared encoding is
+			-- `declared_encoding_value' (mass-xpact #40, #48).
+		require
+			input_attached: a_input /= Void
+		do
+			Result := attached declared_encoding_prefix as l_known and then a_input.count >= l_known.count
+				and then a_input.same_characters (l_known, 1, l_known.count, 1)
 		end
 
 	declared_encoding_prefix: detachable STRING_8
