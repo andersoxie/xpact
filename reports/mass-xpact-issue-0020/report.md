@@ -11,6 +11,12 @@ The change makes the parser's internal scanners take `a_input: STRING_8` instead
 which makes a whole parse about **20 % faster**. Every result check passes, but one Expat test
 crashes intermittently, and often under GC stress. Until the cause is known, the change stays parked.
 
+> **Update 5 (2026-11-04, 18:03): it also happens with default GC settings.** The merged `student-Mass` @ `8ccf51b`
+> (production DLL), **without** the GC stress variables, 12 runs in parallel: **71 / 72 pass, 1 wrong result**.
+> The wrong result was `undefined entity (line 60002, offset 3)`, with no crash
+> ([probe run 8](logs/probe-run8-default-gc/runs.txt), [output](logs/probe-run8-default-gc/nogc-j-1.txt)).
+> So normal use on a busy machine can hit it, as a wrong parse result, rarely.
+>
 > **Update 4 (2026-11-04, 16:08): the bug is already in `student-Mass`; no speed PR causes it.**
 > Paired batch, four builds at the same time under the same load (12 runs in parallel) ([probe run 7](logs/probe-run7-paired/runs.txt)):
 >
