@@ -209,6 +209,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] Parallel Test 2 (#6), W3C runner `--jobs` (#10), session notes and reports (#19, #22): merged 2026-11-04
    - [x] Parser chain #4 → #8 → #13, build check #23, no `-keep` #16 (3.5× faster), inlining #18: merged 2026-11-04 and verified together
    - [x] #21 (static `STRING_8` input, 20 % faster): merged 2026-11-04 after an equal-load GC-stress check (23/24 against 24/24)
+   - [x] #31: `encoding` searched only inside the XML declaration; `pr-xml-utf-8` byte by byte 2,857 → 438 ms (merged, #32)
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
    - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
    - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
