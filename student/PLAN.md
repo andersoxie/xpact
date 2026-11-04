@@ -155,6 +155,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 | Problem | Fixed in | Issue |
 |---|---|---|
+| Assertions DLL exited with `0xC0000028` on `ibm68n03.xml` with only a default handler (`is_predefined_entity` precondition on `& aaa`); found in the speed work | PR [#25](https://github.com/CodTanium/mass-xpact/pull/25) (mass-xpact) | [mass-xpact#3](https://github.com/CodTanium/mass-xpact/issues/3) |
 | `build_native_eiffel.ps1` relinked the old generated C when `ec` rejected its options (exit 0); found in the speed work, 2026-11-04 | PR [#23](https://github.com/CodTanium/mass-xpact/pull/23) (`7af037d`, mass-xpact) | [mass-xpact#15](https://github.com/CodTanium/mass-xpact/issues/15) |
 | Eiffel runtime include path | `9eb18bd` | [#2](https://github.com/andersoxie/xpact/issues/2) |
 | MSVC imports grew `PATH` past cmd's limit | `3b8a205` | [#4](https://github.com/andersoxie/xpact/issues/4) |
@@ -209,6 +210,8 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] Parser chain #4 → #8 → #13, build check #23, no `-keep` #16 (3.5× faster), inlining #18: merged 2026-11-04 and verified together
    - [ ] #21 (static `STRING_8` input, 20 % faster): draft; needs equal-load GC-stress data of its own
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
+   - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
+   - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
 1. ✅ **Done 2026-10-26:** full check ([#104](https://github.com/andersoxie/xpact/issues/104)), weeks 2-3 closed out ([#106](https://github.com/andersoxie/xpact/issues/106), [#108](https://github.com/andersoxie/xpact/issues/108)), `main` synced ([#110](https://github.com/andersoxie/xpact/issues/110)), PC set up like the supervisor's ([#113](https://github.com/andersoxie/xpact/issues/113)). Every build and test passes with assertions on, with MSVC.
 2. 🟡 **Waiting for the supervisor:** ~~a Jenkins run for [#74](https://github.com/andersoxie/xpact/issues/74) (PR #76 merged 2026-10-26) and [#79](https://github.com/andersoxie/xpact/issues/79)~~ ✅ passed 2026-10-31 (PR #177); still open, the questions for the supervisor (2026-11-01): (1) speed, F05-1: is there newer incremental work that is not pushed, and which way (small speed-ups, a checkpoint/resume step, or finishing `XP_INCREMENTAL_PARSE_SESSION`)?; (2) [#171](https://github.com/andersoxie/xpact/issues/171) and [#13](https://github.com/andersoxie/xpact/issues/13): fix, narrow, or leave to the supervisor?; (3) which `ISE_C_COMPILER` Jenkins uses (`msc` or `msc_vc140`); (4) [#130](https://github.com/andersoxie/xpact/issues/130) and [#131](https://github.com/andersoxie/xpact/issues/131) need the supervisor's Jenkins and SonarQube.
 3. ✅ **Week 4, G01** ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 W3C cases in [`results/G01-corpus/`](results/G01-corpus/README.md); the xmlconf verdict rules done too ([#117](https://github.com/andersoxie/xpact/issues/117)).

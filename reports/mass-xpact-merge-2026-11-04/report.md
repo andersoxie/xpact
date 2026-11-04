@@ -64,5 +64,14 @@ So none of the merged PRs causes it ([report](../mass-xpact-issue-0020/report.md
 
 ## 5. Limitations
 
-- [ ] Test 2, the traces/CRC harness and the Eiffel test matrix were not rerun on the merged build. Each was run on the individual PR branches; see their reports.
-- [ ] The GC-stress problem (#20) is open and its cause unknown.
+- [x] **Test 2** (added later the same evening): `reports/issue-0165/tools/run.py --jobs 16`, 2,585 cases, on both tiers.
+  The TSVs are **byte-identical** to their references:
+  - Production: [`chunked-sm8ccf51b-production.tsv`](../issue-0165/tools/logs/chunked-sm8ccf51b-production.tsv) = `chunked-inline-production.tsv` (the #18 build).
+  - Assertions: [`chunked-sm8ccf51b-assertions.tsv`](../issue-0165/tools/logs/chunked-sm8ccf51b-assertions.tsv) = `chunked-textrun-assertions.tsv` (the #11 build).
+- [x] **W3C trace** (`run-tools.ps1 -Run Trace`, all handler sets), run during [#3](../mass-xpact-issue-0003/report.md):
+  - Production: all 9 trace files written.
+  - Assertions: the two `default` traces stopped at `ibm68n03.xml`. That was #3, fixed afterwards by #25, after which both tiers match.
+- [x] **Chunked CRC harness** (`run-tools.ps1 -Run Crc`, 54 rows, direct and buffer modes, chunk 1 … whole): byte-identical to the #11 and #17 results, on both tiers ([production](logs/chunked-crc-production.tsv), [assertions](logs/chunked-crc-assertions.tsv)).
+- [x] **Eiffel test matrix** (`scriptsun_eiffel_test_matrix.ps1`, on `student-Mass` after #27): `xpact Phase 1 tests: ok` in all four cells (assertions off and on, each in Workbench and Finalized), exit 0 ([log](logs/eiffel-test-matrix.log)).
+- [x] Every check of the verification recipe (note 7) has now been run on the merged build.
+- [ ] The GC-stress problem (#20) is open and its cause unknown; it also shows rarely with default GC settings under heavy load (1 wrong result in 72).
