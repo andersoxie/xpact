@@ -114,7 +114,7 @@ static int find_candidates(DWORD64 out[4], int *total) {
   int n = 0; *total = 0;
   MEMORY_BASIC_INFORMATION mb;
   for (DWORD64 p = 0x10000; p < 0x7fffffff0000ull && VirtualQuery((LPCVOID)p, &mb, sizeof mb); p = (DWORD64)mb.BaseAddress + mb.RegionSize) {
-    if (mb.State != MEM_COMMIT || mb.Type != MEM_PRIVATE || mb.Protect != PAGE_READWRITE) continue;
+    if (mb.State != MEM_COMMIT || mb.Type != MEM_PRIVATE || mb.Protect != PAGE_READWRITE || mb.RegionSize < 0x100000) continue; /* Eiffel chunks are 2-6 MB */
     DWORD64 b = (DWORD64)mb.BaseAddress, end = b + mb.RegionSize;
     DWORD64 a = (b & ~0xffffffull) | low_bits;
     if (a < b) a += 0x1000000;

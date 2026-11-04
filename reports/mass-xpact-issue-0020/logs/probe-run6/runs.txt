@@ -1,0 +1,42 @@
+# Probe run 6, 2026-11-04 afternoon: three batches at the same time (12 loops in parallel), stopped early.
+# chain = perf/resume-text-runs with -keep (chain24.sh); fix20 = fix/20-seen-name-tables without -keep (fix20_24.sh); watch = #16 relinked with map, watchpoint runner (watch16.sh).
+chain-a run 1 (666 s): pass
+chain-a run 2 (735 s): pass
+chain-a run 3 (938 s): pass
+chain-a run 4 (1184 s): fail
+chain-a run 5 (385 s): crash 0xC0000005
+chain-b run 1 (708 s): pass
+chain-b run 2 (745 s): pass
+chain-b run 3 (925 s): pass
+chain-b run 4 (1304 s): pass
+chain-b run 5 (565 s): crash 0xC0000005
+chain-b run 6 (96 s): crash 0xFFFFFFFF
+chain-c run 1 (707 s): pass
+chain-c run 2 (742 s): pass
+chain-c run 3 (917 s): pass
+chain-c run 4 (1293 s): pass
+chain-d run 1 (684 s): pass
+chain-d run 2 (717 s): pass
+chain-d run 3 (938 s): pass
+chain-d run 4 (686 s): crash 0xC0000005
+chain-d run 5 (677 s): crash 0xC0000005
+chain-d run 6 (2 s): crash 0xC0000005
+fix20-a run 1 (1565 s): pass
+fix20-b run 1 (1569 s): pass
+fix20-b run 2 (57 s): crash 0xC0000005
+fix20-b run 3 (122 s): crash 0xFFFFFFFF
+fix20-b run 4 (0 s): fail
+fix20-c run 1 (1564 s): pass
+fix20-d run 1 (1106 s): crash 0xC0000005
+fix20-d run 2 (467 s): crash 0xC0000005
+watch-a run 1 (1171 s): pass
+watch-a run 2 (1360 s): pass
+watch-b run 1 (1170 s): pass
+watch-b run 2 (1021 s): crash 0xC0000005
+watch-b run 3 (245 s): fail
+watch-c run 1 (1172 s): pass
+watch-c run 2 (1358 s): pass
+watch-d run 1 (1154 s): pass
+watch-d run 2 (680 s): crash 0xC0000005
+watch-d run 3 (70 s): crash 0xC0000005
+watch-d run 4 (37 s): crash 0xC0000005

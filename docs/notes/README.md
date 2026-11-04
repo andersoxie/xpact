@@ -25,7 +25,7 @@ PR and report; the notes record the order of the work, the traps, and how to rep
 | ✅ | Eiffel inlining for the production DLL | [#17](https://github.com/CodTanium/mass-xpact/issues/17) | [#18](https://github.com/CodTanium/mass-xpact/pull/18) | whole parse 15–20 % faster | [0017](../../reports/mass-xpact-issue-0017/report.md) |
 | 🟡 | Static `STRING_8` scanner input | | [#21](https://github.com/CodTanium/mass-xpact/pull/21) (draft) | whole parse 14.1 → 11.3 ms | [0020](../../reports/mass-xpact-issue-0020/report.md) |
 | 🔴 | **Pre-existing** heap corruption under GC stress and load (`test_deep_nested_attribute_entity`) | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | | | [0020](../../reports/mass-xpact-issue-0020/report.md) |
-| ⬜ | Assertions DLL crash on `ibm68n03.xml` (default handler only) | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | | | |
+| ✅ | Assertions DLL crash on `ibm68n03.xml` (default handler only): name checked before `is_predefined_entity` | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | assertions DLL no longer dies | [0003](../../reports/mass-xpact-issue-0003/report.md) |
 
 All reports are also listed in [`reports/README.md`](../../reports/README.md#speed-work-codtaniummass-xpact-2026-110304).
 Raw Test 2 outputs of every build (TSV + summary per run) are in [`reports/issue-0165/tools/logs/`](../../reports/issue-0165/tools/logs/).
@@ -34,6 +34,7 @@ Raw Test 2 outputs of every build (TSV + summary per run) are in [`reports/issue
 
 - [x] #6, #10, #19, #22 (2026-11-04)
 - [x] #4 → #8 → #13 → #23 → #16 → #18 (2026-11-04, `student-Mass` @ `8ccf51b`), [verified together](../../reports/mass-xpact-merge-2026-11-04/report.md)
+- [x] #25 (#3, 2026-11-04)
 - [ ] #21: rebase on `student-Mass` and get equal-load GC-stress data of its own before merging
 
 Retarget a stacked PR **before** deleting the branch under it, or GitHub closes it.
