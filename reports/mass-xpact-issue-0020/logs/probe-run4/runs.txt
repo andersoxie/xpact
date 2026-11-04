@@ -1,0 +1,18 @@
+# Probe run 4, 2026-11-04: student-Mass @ 253c81e + #16 (build/nokeep: production DLL, no -keep), before #11, #18 and #21.
+# 4 loops x 4 runs in parallel, GC stress, probe runner.
+nokeep-a run 1 (133 s): crash 0xC0000005
+nokeep-a run 2 (514 s): pass
+nokeep-a run 3 (519 s): pass
+nokeep-a run 4 (140 s): crash 0xC0000005
+nokeep-b run 1 (138 s): crash 0xC0000005
+nokeep-b run 2 (509 s): pass
+nokeep-b run 3 (523 s): pass
+nokeep-b run 4 (423 s): pass
+nokeep-c run 1 (542 s): pass
+nokeep-c run 2 (540 s): pass
+nokeep-c run 3 (427 s): pass
+nokeep-c run 4 (304 s): pass
+nokeep-d run 1 (541 s): pass
+nokeep-d run 2 (509 s): pass
+nokeep-d run 3 (450 s): pass
+nokeep-d run 4 (307 s): pass

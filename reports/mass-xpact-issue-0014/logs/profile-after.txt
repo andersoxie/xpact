@@ -1,0 +1,31 @@
+2055 samples (production DLL built without -keep, perf/resume-text-runs @ 10c8b66 + this fix); F123_1618 is {XP_PARSER}.parse_character_data
+ 11.4%    235  {STRING_8}.item
+  5.9%    121  {STRING_GENERAL}.reset_hash_codes
+  5.8%    120  {STRING_8}.item (dispatch)
+  4.5%     92  F123_1618  [Cobj3:big_file_C3_c.obj]
+  3.5%     72  {READABLE_STRING_8}.capacity
+  3.5%     71  {XP_PARSER}.note_position
+  3.1%     63  {STRING_8}.put_code
+  2.7%     56  {XP_PARSER}.normalized_input
+  2.5%     52  {STRING_8}.append_character
+  2.5%     51  {XP_PARSER}.parse_comment
+  2.3%     48  {C_STRING}.read_substring_into
+  2.0%     41  {XP_PARSER}.is_incomplete_utf8_sequence_at
+  1.9%     39  {SPECIAL}.make_filled
+  1.9%     39  memset  [libvcruntime:memset.obj]
+  1.9%     39  {XP_PARSER}.utf8_character_length
+  1.7%     34  {XP_PARSER}.find_sequence
+  1.6%     33  {ARRAY}.item
+  1.6%     32  malloc_from_zone  [finalized:malloc.obj]
+  1.5%     31  eif_set  [finalized:malloc.obj]
+  1.5%     31  special_malloc  [finalized:malloc.obj]
+  1.5%     30  {READABLE_STRING_8}.make_from_string
+  1.4%     29  spmalloc  [finalized:malloc.obj]
+  1.4%     29  {READABLE_STRING_8}.make
+  1.4%     28  {FINITE}.is_empty
+  1.4%     28  rt_id_of  [finalized:gen_conf.obj]
+  1.1%     23  {STRING_8_SEARCHER}.substring_index_with_deltas
+  1.1%     22  {ARRAYED_LIST}.count
+  1.0%     21  eif_spset  [finalized:malloc.obj]
+  0.9%     19  F123_1603  [Cobj3:big_file_C3_c.obj]
+  0.9%     18  {XP_PARSER}.parse_attribute

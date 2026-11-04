@@ -1,0 +1,10 @@
+static run 1 (269 s): 100%: Checks: 1, Failed: 0
+static run 2 (101 s): xpact_libexpat_runtests.exe : ***Exception: test_deep_nested_attribute_entity exited with code 0xC0000005 |     + CategoryInfo          : NotSpecified: (***Exception: t...code 0xC0000005:String) [], RemoteException
+static run 3 (57 s): xpact_libexpat_runtests.exe : ***Exception: test_deep_nested_attribute_entity exited with code 0xC0000005 |     + CategoryInfo          : NotSpecified: (***Exception: t...code 0xC0000005:String) [], RemoteException
+inline4 run 1 (170 s): 100%: Checks: 1, Failed: 0
+inline4 run 2 (284 s): 100%: Checks: 1, Failed: 0
+inline4 run 3 (300 s):     + CategoryInfo          : NotSpecified: (***Timeout: tes...ded 300 seconds:String) [], RemoteException |     + FullyQualifiedErrorId : NativeCommandError
+static-noinline stress run 1 (22 s): crash 0xC0000005
+static-noinline stress run 2 (5 s): crash 0xC0000005
+static-noinline stress run 3 (407 s): pass
+static-noinline stress run 4 (312 s): pass

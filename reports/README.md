@@ -16,6 +16,24 @@ test scripts that back it up. The rules are in
 > [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
 > Test results that are not a fix are in [`student/results/`](../student/results/README.md).
 
+## Speed work (CodTanium/mass-xpact, 2026-11-03/04)
+
+Issues and PRs are in [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact). The full story,
+merge order and how-tos are in [`docs/notes/`](../docs/notes/README.md). The code of an unmerged PR is
+still only on its branch; its report is here so the evidence can be read now.
+
+| | Issue | Work | PR | State | Effect | Report |
+|---|---|---|---|---|---|---|
+| ✅ | [#5](https://github.com/CodTanium/mass-xpact/issues/5) | Test 2 harness runs cases in parallel | [#6](https://github.com/CodTanium/mass-xpact/pull/6) | **merged** 2026-11-04 | 15:30 → 5:02 | [mass-xpact-issue-0005](mass-xpact-issue-0005/report.md) |
+| ✅ | [#9](https://github.com/CodTanium/mass-xpact/issues/9) | W3C runner `--jobs` | [#10](https://github.com/CodTanium/mass-xpact/pull/10) | **merged** 2026-11-04 | 40 s → 9 s | [mass-xpact-issue-0009](mass-xpact-issue-0009/report.md) |
+| 🟡 | [#2](https://github.com/CodTanium/mass-xpact/issues/2) | Chunked parsing resumes instead of re-parsing the buffer | [#4](https://github.com/CodTanium/mass-xpact/pull/4) | open, GC-stress check running ([#20](https://github.com/CodTanium/mass-xpact/issues/20)) | square growth → linear | [mass-xpact-issue-0002](mass-xpact-issue-0002/report.md) |
+| 🟡 | [#7](https://github.com/CodTanium/mass-xpact/issues/7) | UTF-16 input resumes too | [#8](https://github.com/CodTanium/mass-xpact/pull/8) | open, stacked on #4 | 70.5 s → 0.18 s | [mass-xpact-issue-0007](mass-xpact-issue-0007/report.md) |
+| 🟡 | [#12](https://github.com/CodTanium/mass-xpact/issues/12) | Assertions regression from #7 | in [#8](https://github.com/CodTanium/mass-xpact/pull/8) | open | 40 → 38 expected Expat failures | [mass-xpact-issue-0012](mass-xpact-issue-0012/report.md) |
+| 🟡 | [#11](https://github.com/CodTanium/mass-xpact/issues/11) | Long text runs continue instead of re-parsing | [#13](https://github.com/CodTanium/mass-xpact/pull/13) | open, stacked on #8 | byte by byte 72.6 s → 9.9 s | [mass-xpact-issue-0011](mass-xpact-issue-0011/report.md) |
+| ⛔ | [#14](https://github.com/CodTanium/mass-xpact/issues/14) | Production DLL finalized without `-keep` | [#16](https://github.com/CodTanium/mass-xpact/pull/16) | draft, **blocked by #20** | 3.5× faster | [mass-xpact-issue-0014](mass-xpact-issue-0014/report.md) |
+| ⛔ | [#17](https://github.com/CodTanium/mass-xpact/issues/17) | Eiffel inlining for the production DLL | [#18](https://github.com/CodTanium/mass-xpact/pull/18) | draft, stacked on #16 | 15–20 % faster | [mass-xpact-issue-0017](mass-xpact-issue-0017/report.md) |
+| ⛔ | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | GC heap corruption under stress, exposed by #16; static `STRING_8` input parked | [#21](https://github.com/CodTanium/mass-xpact/pull/21) | draft, **do not merge** | 20 % faster | [mass-xpact-issue-0020](mass-xpact-issue-0020/report.md) |
+
 ## Fixes
 
 | Issue | Fix | Pull request | Commit on `student-Mass` | Report |

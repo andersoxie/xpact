@@ -1,0 +1,12 @@
+﻿Expat version: expat_2.8.1
+xpact_libexpat_runtests.exe : ***Exception: test_deep_nested_attribute_entity exited with code 0xC0000005
+At C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad
+\probe\stress-probe.ps1:11 char:30
++ ... mand { $o = & $exe --timeout 1800 --test test_deep_nested_attribute_e ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (***Exception: t...code 0xC0000005:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAIL [isolated child]: test_deep_nested_attribute_entity (during child process at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\basic_tests.c:0)
+0%: Checks: 1, Failed: 1
+

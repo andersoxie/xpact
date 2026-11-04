@@ -1,0 +1,16 @@
+# Paired GC stress, 2026-11-04: three builds run at the same time, so they share one machine load (16 logical CPUs).
+# Each line: DLL directory, run, wall time, result. Test: test_deep_nested_attribute_entity, child process, --timeout 600.
+# EIF_MEMORY_SCAVENGE=65536 EIF_FULL_COLLECTION_PERIOD=1. Script: tools/paired.sh calling tools/stress-path.ps1.
+C:/xpact/xpact-student-Mass/build/static-noinline/native-eiffel stress run 1 (333 s): pass
+C:/xpact/xpact-student-Mass/build/static-noinline/native-eiffel stress run 2 (325 s): pass
+C:/xpact/xpact-student-Mass/build/static-noinline/native-eiffel stress run 3 (270 s): crash 0xC0000005
+C:/xpact/xpact-student-Mass/build/static-noinline/native-eiffel stress run 4 (307 s): pass
+C:/xpact/xpact-student-Mass/build/static/native-eiffel stress run 1 (342 s): pass
+C:/xpact/xpact-student-Mass/build/static/native-eiffel stress run 2 (331 s): pass
+C:/xpact/xpact-student-Mass/build/static/native-eiffel stress run 3 (184 s): crash 0xC0000005
+C:/xpact/xpact-student-Mass/build/static/native-eiffel stress run 4 (340 s): pass
+C:/xpact/xpact-student-Mass/build/textrun/native-eiffel stress run 1 (349 s): pass
+C:/xpact/xpact-student-Mass/build/textrun/native-eiffel stress run 2 (349 s): pass
+C:/xpact/xpact-student-Mass/build/textrun/native-eiffel stress run 3 (369 s): pass
+C:/xpact/xpact-student-Mass/build/textrun/native-eiffel stress run 4 (233 s): pass
+
