@@ -53,9 +53,9 @@ already gave, so production behaviour is unchanged.
 | ✅ The failing case, assertions DLL | Exit 0; the same 24-line trace as production, `END@7:32:138 status=0 error=4` | [after](logs/trace-after-assertions.txt) |
 | ✅ The failing case, production DLL | Byte-identical to before the fix | [before](logs/trace-before-production.txt), [after](logs/trace-after-production.txt) |
 | ✅ Both tiers build | `System Recompiled.`; smoke `ok` | |
-| ✅ DLL tests (4,308 cases), both tiers | 4,308 / 4,308; `results.tsv` byte-identical to `student-Mass` @ `8ccf51b`, both tiers | |
-| ⏳ W3C trace, 3 handler sets, both tiers | running | |
-| ⏳ Expat 2.8.1 `runtests`, both tiers | not run yet | |
+| ✅ DLL tests (4,308 cases), both tiers | 4,308 / 4,308; `results.tsv` byte-identical to `student-Mass` @ `8ccf51b`, both tiers | [production](logs/dlltests-production-summary.txt), [assertions](logs/dlltests-assertions-summary.txt) |
+| ✅ W3C trace (`run-tools.ps1 -Run Trace`: events, default, suspend, abort; byte by byte, 7-byte pieces, whole), both tiers | All 9 trace files of the fix, **both tiers**, byte-identical to `student-Mass` production. Before the fix, the assertions DLL's two `default` traces stopped at this document (19,484 and 16,449 lines against 53,953 and 47,076) | SHA-256: [sm production](logs/w3c-trace-sha256-sm-prod.txt), [sm assertions](logs/w3c-trace-sha256-sm-asrt.txt), [fix production](logs/w3c-trace-sha256-fix3-prod.txt), [fix assertions](logs/w3c-trace-sha256-fix3-asrt.txt) |
+| ✅ Expat 2.8.1 `runtests`, both tiers | `Checks: 399, Failed: 38` on both, the same 38 test names as before (the allocator tests) | [production](logs/expat-runtests-production.txt), [assertions](logs/expat-runtests-assertions.txt) |
 
 ## 6. How to revert
 
