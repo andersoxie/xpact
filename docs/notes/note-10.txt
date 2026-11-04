@@ -26,8 +26,16 @@ TRAPS
 - Report files committed on a branch vanish from the working tree when switching branches
   (reports/issue-0165/tools/logs is on docs/session-notes): compare with git show <branch>:<path>.
 
+FOLLOW-UP (same day)
+- Under minidbg: 7/7 pass (debug heap on and off). Relinked DLL without debugger: 4/4.
+  Original no-inline DLL alone on the machine: 4/4. ALL stress crashes ran while another heavy job
+  ran in parallel; the 2 non-stress failures ran alone. Memory: 69 MB peak (old 101 MB), not it.
+- Cause still unknown. The debugger seems to hide it.
+
 NEXT
-- Catch the crash under minidbg and map the stack.
+- Crash dump without a debugger: WER LocalDumps (HKCU registry, per exe) - ask before
+  changing the registry? It is per-user and reversible; note it in the report.
+- Why does machine load matter for a single-threaded parse (runtime thread? timer?).
 - Review native/*.c for pointers into Eiffel objects held across calls back into Eiffel.
 - Stress the previous build more (rule out a latent bug made more likely by this change).
 - Other leads (no source risk): append_character / hash reset, string allocation, note_position.
