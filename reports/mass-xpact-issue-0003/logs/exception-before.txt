@@ -1,0 +1,22 @@
+EXCEPTION 1 code 0xc0000028 at  ntdll.dll+1d3df
+ read address 0
+ rax=0 rbx=c0000001 rcx=cb05afcc60 rdx=2 rsi=7ffaa7cb7434 rdi=cb05afa000
+ r8=10 r9=1ff1dea1418 r10=7ff9e3b102af r11=10 r12=27 r13=cb05b00000 r14=7ffaa7ae0000 r15=cb05afdce0 rsp=cb05afcfe0 rbp=cb05afdae0
+stack:
+  ntdll.dll+1d3df
+  ntdll.dll+1daee
+  ntdll.dll+c49bd
+  xpact.dll+830aa9
+  xpact.dll+bf6f
+  xpact.dll+c3a1
+  xpact.dll+6bfa81
+  xpact.dll+680299
+  xpact.dll+66b925
+  xpact.dll+6d5c60
+  xpact.dll+6d3cc3
+  xpact.dll+7dbc1a
+  xpact.dll+1c00
+  trace-probe.exe+1398
+  trace-probe.exe+26ef
+  KERNEL32.DLL+2dda7
+  ntdll.dll+7ee4c

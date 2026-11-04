@@ -1469,7 +1469,7 @@ feature {NONE} -- Resumable prefix parsing
 				if l_end = 0 then
 					i := 0
 				else
-					Result := l_end > i + 1 and then (a_input.item (i + 1) = '#' or else is_predefined_entity (a_input.substring (i + 1, l_end - 1)))
+					Result := l_end > i + 1 and then (a_input.item (i + 1) = '#' or else is_valid_predefined_entity_name (a_input.substring (i + 1, l_end - 1)))
 					i := find_character (a_input, '&', l_end + 1)
 				end
 			end
@@ -2827,7 +2827,7 @@ feature {NONE} -- Character data and references
 							end
 							check attached l_text as l_attached_text then
 								l_reference_end := find_character (a_input, ';', i + 1)
-								if l_literal_default and then l_reference_end > i + 1 and then a_input.item (i + 1) /= '#' and then not is_predefined_entity (a_input.substring (i + 1, l_reference_end - 1)) then
+								if l_literal_default and then l_reference_end > i + 1 and then a_input.item (i + 1) /= '#' and then not is_valid_predefined_entity_name (a_input.substring (i + 1, l_reference_end - 1)) then
 									emit_default_range (a_input, l_default_start, i - 1)
 									if not has_error and not is_suspended then
 										i := append_reference_in_content (a_input, i, l_attached_text)
@@ -3071,7 +3071,7 @@ feature {NONE} -- Character data and references
 						end
 						check attached l_text as l_attached_text then
 							l_reference_end := find_character (a_input, ';', i + 1)
-							if l_literal_default and then l_reference_end > i + 1 and then a_input.item (i + 1) /= '#' and then not is_predefined_entity (a_input.substring (i + 1, l_reference_end - 1)) then
+							if l_literal_default and then l_reference_end > i + 1 and then a_input.item (i + 1) /= '#' and then not is_valid_predefined_entity_name (a_input.substring (i + 1, l_reference_end - 1)) then
 								emit_default_range (a_input, l_default_start, i - 1)
 								if not has_error and not is_suspended then
 									i := append_reference_in_content (a_input, i, l_attached_text)
@@ -8515,6 +8515,15 @@ feature {NONE} -- Entity tables
 			valid_name: is_valid_name (a_name)
 		do
 			Result := a_name.same_string ("lt") or a_name.same_string ("gt") or a_name.same_string ("amp") or a_name.same_string ("apos") or a_name.same_string ("quot")
+		end
+
+	is_valid_predefined_entity_name (a_name: READABLE_STRING_8): BOOLEAN
+			-- Is `a_name' a valid name and one of the XML predefined entities?
+			-- For text between `&' and `;' that may not be a name, such as "& aaa" (mass-xpact #3).
+		require
+			name_attached: a_name /= Void
+		do
+			Result := is_valid_name (a_name) and then is_predefined_entity (a_name)
 		end
 
 	append_predefined_entity (a_name: READABLE_STRING_8; a_text: STRING_8)
