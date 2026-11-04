@@ -212,6 +212,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] #31: `encoding` searched only inside the XML declaration; `pr-xml-utf-8` byte by byte 2,857 → 438 ms (merged, #32)
    - [x] #34: the search for the end of a delayed DOCTYPE resumes instead of rescanning; byte by byte 437 → 319 ms (merged, #35). Byte by byte is now 9× faster than at the start of 2026-11-04
    - [x] #37: the XML declaration is checked without per-call allocations; byte by byte 334 → 286 ms (merged, #38). Byte by byte `pr-xml-utf-8.xml` 2026-11-04: 2,857 → 286 ms (10×)
+   - [x] #40: the declared encoding of a complete declaration is kept; byte by byte 290 → 236 ms (merged, #41). Byte by byte `pr-xml-utf-8.xml` 2026-11-04: 2,857 → 236 ms (12×); see `docs/notes/note-13.txt`
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
    - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
    - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
