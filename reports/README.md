@@ -40,6 +40,7 @@ still only on its branch; its report is here so the evidence can be read now.
 | ✅ | [#34](https://github.com/CodTanium/mass-xpact/issues/34) | Resume the search for the end of a delayed DOCTYPE | [#35](https://github.com/CodTanium/mass-xpact/pull/35) | **merged** 2026-11-04 | byte by byte 437 → 319 ms | [mass-xpact-issue-0034](mass-xpact-issue-0034/report.md) |
 | ✅ | [#37](https://github.com/CodTanium/mass-xpact/issues/37) | Check the XML declaration without per-call allocations | [#38](https://github.com/CodTanium/mass-xpact/pull/38) | **merged** 2026-11-04 | byte by byte 334 → 286 ms | [mass-xpact-issue-0037](mass-xpact-issue-0037/report.md) |
 | ✅ | [#40](https://github.com/CodTanium/mass-xpact/issues/40) | Keep the declared encoding of a complete XML declaration | [#41](https://github.com/CodTanium/mass-xpact/pull/41) | **merged** 2026-11-04 | byte by byte 290 → 236 ms | [mass-xpact-issue-0040](mass-xpact-issue-0040/report.md) |
+| ✅ | [#43](https://github.com/CodTanium/mass-xpact/issues/43) | Copy each input chunk once instead of twice | [#44](https://github.com/CodTanium/mass-xpact/pull/44) | **merged** 2026-11-04 | byte by byte 248 → 217 ms | [mass-xpact-issue-0043](mass-xpact-issue-0043/report.md) |
 
 ## Fixes
 
