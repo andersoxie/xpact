@@ -39,3 +39,12 @@ NEXT
 - Review native/*.c for pointers into Eiffel objects held across calls back into Eiffel.
 - Stress the previous build more (rule out a latent bug made more likely by this change).
 - Other leads (no source risk): append_character / hash reset, string allocation, note_position.
+
+PAIRED LOAD RUN (2026-11-04)
+- All three builds stressed at the same time, 4 runs each (same load):
+  previous 4/4 pass, static 3/4 (1 x 0xC0000005), static no-inlining 3/4 (1 x 0xC0000005).
+- So load raises the odds but the static change is what exposes the crash.
+  Totals without a debugger: previous 0 crashes / 7 runs, static 6 crashes / 23 runs.
+- Ruled out: deep recursion (aliases resolved in a loop), aliasing (no scanner mutates its
+  input), threads/timers (none in bridge or runner child).
+- Report + log: reports/mass-xpact-issue-0020 on perf/static-string-input (2c0f277).
