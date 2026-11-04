@@ -46,6 +46,9 @@ known, the change stays parked.
 | Static input | ❌ 59 / 60 (1 × `0xC0000005`) | ❌ 5 / 6 (1 × `undefined entity`) | 1 pass, **2 crashes** |
 | Static input, no `array_optimization` | 70 / 70 | | |
 | Static input, `inlining=false` | | | 2 pass, **2 crashes** |
+| **Paired run** (all three at the same time, same load): previous | | | ✅ 4 / 4 |
+| **Paired run**: static input | | | ❌ 3 / 4 (1 × `0xC0000005`) |
+| **Paired run**: static input, `inlining=false` | | | ❌ 3 / 4 (1 × `0xC0000005`) |
 
 GC stress = `EIF_MEMORY_SCAVENGE=65536`, `EIF_FULL_COLLECTION_PERIOD=1`.
 Logs: [repeat runs](logs/repeat-runs.tsv), [crash output](logs/fail-static-run2.txt),
@@ -59,6 +62,10 @@ Scripts: [flaky.ps1](logs/tools/flaky.ps1), [stress.ps1](logs/tools/stress.ps1).
 - [x] Not a fluke of one run: crashes in normal runs, in a full suite run, and under GC stress.
 - [ ] Faulting stack: not caught. Under a mini debugger ([minidbg.c](logs/tools/minidbg.c), Win32 debug API, `StackWalk64`) the test child (`--xpact-child 241`) passed 7 of 7 stressed runs, with and without the debug heap.
 - [x] Follow-up ([log](logs/followup.txt)): the relinked DLL without the debugger passed 4 / 4 stressed runs, and the **original** no-inlining DLL, run again with nothing else on the machine, passed 4 / 4. All four stress crashes happened while another heavy job ran at the same time; the two non-stress failures (1 of 60 single runs, 1 of 6 suites) happened with nothing else running.
+- [x] Load alone ruled out ([log](logs/paired-load.txt), [paired.sh](logs/tools/paired.sh)): the previous build and both static builds ran stressed at the same time, 4 runs each, so all three had the same load. The previous build passed 4 / 4; each static build crashed once (`0xC0000005`). Load makes the crash more likely, but the static change is what exposes it. Combined stress tally without a debugger: previous build 0 crashes in 7 runs (one of them a 300 s timeout), static builds 6 crashes in 23 runs (including the 4 relinked and 4 machine-idle runs).
+- [x] Deep recursion ruled out: `resolved_general_entity_name` follows the 60,000 one-reference aliases in a loop, so the Eiffel call stack does not grow with the nesting depth.
+- [x] Aliasing ruled out: `string_8_input` now passes the caller's `STRING_8` itself instead of a copy, but no scanner changes its `a_input`, `a_subset`, `a_content` or `a_data` in place.
+- [x] No threads: neither the C bridge, the Eiffel sources (`concurrency support="none"`) nor the isolated runner's child starts a thread or a timer.
 - [x] Memory pressure ruled out: the test child peaks at 69 MB private (101 MB on the previous build), on a 15.9 GB machine.
 
 ### Cause
@@ -72,6 +79,6 @@ externals) or the runtime.
 ## 5. Next steps
 
 - [ ] Get a crash dump without a debugger attached (Windows Error Reporting `LocalDumps` for `xpact_libexpat_runtests.exe`) and map it; the debugger seems to hide the crash.
-- [ ] Find out why other load on the machine matters for a single-threaded parse (does the runtime or the bridge start a thread, or use time?).
+- [ ] Find out why other load on the machine matters for a single-threaded parse. No thread or timer in the bridge or runner (checked); the Eiffel runtime itself is still unchecked.
 - [ ] Review the C bridge for pointers into Eiffel objects held across calls back into Eiffel.
-- [ ] Run the same stress on the previous build more often, to rule out a latent bug that this change only makes more likely.
+- [ ] Run the same stress on the previous build more often, to rule out a latent bug that this change only makes more likely. So far 0 crashes in 7 stressed runs, 4 of them under the same load as the crashing builds.
