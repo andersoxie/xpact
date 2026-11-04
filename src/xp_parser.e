@@ -1106,6 +1106,74 @@ feature -- Parsing
 			result_in_bounds: Result >= 0 and Result <= a_input.count
 		end
 
+	doctype_end_resumed (a_input: READABLE_STRING_8; a_scan: XP_DOCTYPE_SCAN): INTEGER
+			-- End of the doctype declaration at `a_scan.start_index', or zero if `a_input' does not hold it yet.
+			-- Goes on from where `a_scan' stopped and, when the end is missing, leaves in `a_scan' where to go on,
+			-- so that input which only grows is inspected once (mass-xpact #34).
+		require
+			input_attached: a_input /= Void
+			scan_attached: a_scan /= Void
+			valid_start: a_scan.start_index >= 1 and a_scan.start_index <= a_input.count
+			starts_doctype: a_scan.start_index + 8 <= a_input.count and then a_input.substring (a_scan.start_index, a_scan.start_index + 8).same_string ("<!DOCTYPE")
+			scan_in_bounds: a_scan.next_index >= a_scan.start_index + 9 and a_scan.next_index <= a_input.count + 1
+		local
+			l_input: STRING_8
+			i, l_next: INTEGER
+			l_depth: INTEGER
+			l_in_quote: BOOLEAN
+			l_quote: CHARACTER_8
+			l_wait: BOOLEAN
+			c: CHARACTER_8
+		do
+			l_input := string_8_input (a_input)
+			i := a_scan.next_index
+			l_depth := a_scan.depth
+			l_in_quote := a_scan.in_quote
+			l_quote := a_scan.quote
+			from
+			until
+				i > l_input.count or Result /= 0 or l_wait
+			loop
+				c := l_input.item (i)
+				if l_in_quote then
+					if c = l_quote then
+						l_in_quote := False
+					end
+					i := i + 1
+				elseif l_depth > 0 and then c = '<' and then (has_at (l_input, i, "<!--") or has_at (l_input, i, "<?")) then
+						-- Quotes in comments and processing instructions do not start literals.
+					l_next := index_after_subset_comment_or_pi (l_input, i, l_input.count)
+					if l_next > l_input.count then
+							-- Not terminated yet: look at it again when more input arrives.
+						l_wait := True
+					else
+						i := l_next
+					end
+				elseif l_depth > 0 and then c = '<' and then is_partial_comment_or_pi_opener (l_input, i) then
+					l_wait := True
+				elseif is_quote (c) then
+					l_in_quote := True
+					l_quote := c
+					i := i + 1
+				elseif c = '[' then
+					l_depth := l_depth + 1
+					i := i + 1
+				elseif c = ']' and l_depth > 0 then
+					l_depth := l_depth - 1
+					i := i + 1
+				elseif c = '>' and l_depth = 0 then
+					Result := i
+				else
+					i := i + 1
+				end
+			end
+			if Result = 0 then
+				a_scan.stop_at (i, l_depth, l_in_quote, l_quote, l_input.count)
+			end
+		ensure
+			result_in_bounds: Result = 0 or else (Result > a_scan.start_index and Result <= a_input.count)
+		end
+
 	parse_external_subset_with_context (a_input: READABLE_STRING_8; a_context: detachable READABLE_STRING_8): BOOLEAN
 			-- Parse a complete external DTD subset with active entity `a_context', if valid.
 		require
@@ -7592,6 +7660,21 @@ feature {NONE} -- Scanning
 				end
 			variant
 				a_input.count - i + 1
+			end
+		end
+
+	is_partial_comment_or_pi_opener (a_input: STRING_8; a_start_index: INTEGER): BOOLEAN
+			-- Are the bytes from `a_start_index' to the end of `a_input' the start of an unfinished "<!--" or "<?"?
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count
+		local
+			l_rest: INTEGER
+		do
+			l_rest := a_input.count - a_start_index + 1
+			if l_rest < 4 then
+				Result := ("<!--").starts_with (a_input.substring (a_start_index, a_input.count))
+					or else (l_rest < 2 and then ("<?").starts_with (a_input.substring (a_start_index, a_input.count)))
 			end
 		end
 

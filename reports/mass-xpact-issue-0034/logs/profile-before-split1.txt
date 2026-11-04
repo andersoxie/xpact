@@ -1,0 +1,28 @@
+# Inclusive profile, pr-xml-utf-8.xml fed 1 byte per call, student-Mass @ fad2125 (after #31), production DLL relinked with -MAP.
+# sampler2.exe pr-xml-utf-8.xml 4 stacks.txt 1 -> 992 samples, 464.48 ms/parse; stacks.py (reports/mass-xpact-issue-0031/logs/tools/).
+992 samples
+100.0%  XML_Parse
+ 99.2%  {XP_NATIVE_BRIDGE_INSTALLER}.parse
+ 92.4%  {XP_NATIVE_PARSER}.parse
+ 92.3%  {XP_NATIVE_PARSER}.parse_with_current_gc_policy
+ 34.7%  {XP_NATIVE_PARSER}.should_defer_reparse_callbacks
+ 30.4%  {XP_NATIVE_PARSER}.incremental_deferred_markup_end
+ 28.9%  {XP_PARSER}.markup_prefix_end
+ 27.7%  {XP_PARSER}.find_doctype_end
+ 20.1%  {XP_NATIVE_PARSER}.complete_encoded_prefix_count
+ 17.3%  makestr_with_hash
+ 17.1%  {XP_PARSER}.continue_prefix
+ 16.6%  {XP_PARSER}.parse_prefix_tokens
+ 15.5%  {XP_NATIVE_PARSER}.declared_xml_encoding
+ 13.2%  {STRING_SEARCHER}.substring_index
+ 11.3%  {READABLE_STRING_8}.make
+ 10.6%  F123_1620
+ 10.2%  {XP_PARSER}.index_after_subset_comment_or_pi
+  9.9%  {XP_NATIVE_PARSER}.has_stable_encoding
+  8.5%  {XP_PARSER}.find_sequence
+  7.8%  {STRING_8}.item (dispatch)
+  6.5%  emalloc_size
+  5.8%  special_malloc
+  5.2%  {XP_NATIVE_BRIDGE_INSTALLER}.bytes_to_string
+  5.2%  {STRING_8_SEARCHER}.substring_index_with_deltas
+  4.3%  {SPECIAL}.fill_with
