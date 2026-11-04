@@ -38,6 +38,7 @@ still only on its branch; its report is here so the evidence can be read now.
 | ✅ | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | Assertions DLL exited with `0xC0000028` on `ibm68n03.xml` (default handler only) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | **merged** 2026-11-04 | precondition no longer violated | [mass-xpact-issue-0003](mass-xpact-issue-0003/report.md) |
 | ✅ | [#31](https://github.com/CodTanium/mass-xpact/issues/31) | Search for `encoding` only inside the XML declaration | [#32](https://github.com/CodTanium/mass-xpact/pull/32) | **merged** 2026-11-04 | byte by byte 2,857 → 438 ms (6.5×) | [mass-xpact-issue-0031](mass-xpact-issue-0031/report.md) |
 | ✅ | [#34](https://github.com/CodTanium/mass-xpact/issues/34) | Resume the search for the end of a delayed DOCTYPE | [#35](https://github.com/CodTanium/mass-xpact/pull/35) | **merged** 2026-11-04 | byte by byte 437 → 319 ms | [mass-xpact-issue-0034](mass-xpact-issue-0034/report.md) |
+| ✅ | [#37](https://github.com/CodTanium/mass-xpact/issues/37) | Check the XML declaration without per-call allocations | [#38](https://github.com/CodTanium/mass-xpact/pull/38) | **merged** 2026-11-04 | byte by byte 334 → 286 ms | [mass-xpact-issue-0037](mass-xpact-issue-0037/report.md) |
 
 ## Fixes
 

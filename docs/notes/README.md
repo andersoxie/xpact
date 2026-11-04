@@ -26,6 +26,7 @@ PR and report; the notes record the order of the work, the traps, and how to rep
 | ✅ | Static `STRING_8` scanner input | | [#21](https://github.com/CodTanium/mass-xpact/pull/21) | whole parse 14.1 → 11.3 ms | [0020](../../reports/mass-xpact-issue-0020/report.md) |
 | ✅ | Search for `encoding` only inside the XML declaration (input in pieces was quadratic) | [#31](https://github.com/CodTanium/mass-xpact/issues/31) | [#32](https://github.com/CodTanium/mass-xpact/pull/32) | pr-xml-utf-8 byte by byte 2,857 → 438 ms | [0031](../../reports/mass-xpact-issue-0031/report.md) |
 | ✅ | Resume the search for the end of a delayed DOCTYPE (no rescan of the internal subset) | [#34](https://github.com/CodTanium/mass-xpact/issues/34) | [#35](https://github.com/CodTanium/mass-xpact/pull/35) | pr-xml-utf-8 byte by byte 437 → 319 ms | [0034](../../reports/mass-xpact-issue-0034/report.md) |
+| ✅ | Check the XML declaration without per-call allocations | [#37](https://github.com/CodTanium/mass-xpact/issues/37) | [#38](https://github.com/CodTanium/mass-xpact/pull/38) | pr-xml-utf-8 byte by byte 334 → 286 ms | [0037](../../reports/mass-xpact-issue-0037/report.md) |
 | 🔴 | **Pre-existing** heap corruption under GC stress and load (`test_deep_nested_attribute_entity`) | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | | | [0020](../../reports/mass-xpact-issue-0020/report.md) |
 | ✅ | Assertions DLL crash on `ibm68n03.xml` (default handler only): name checked before `is_predefined_entity` | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | assertions DLL no longer dies | [0003](../../reports/mass-xpact-issue-0003/report.md) |
 
@@ -40,6 +41,7 @@ Raw Test 2 outputs of every build (TSV + summary per run) are in [`reports/issue
 - [x] #21 (2026-11-04, after the equal-load check: 23/24 against `student-Mass` 24/24)
 - [x] #32 (#31, 2026-11-04)
 - [x] #35 (#34, 2026-11-04)
+- [x] #38 (#37, 2026-11-04)
 
 Retarget a stacked PR **before** deleting the branch under it, or GitHub closes it.
 
