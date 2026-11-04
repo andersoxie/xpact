@@ -1675,7 +1675,7 @@ feature {NONE} -- Encoding
 			l_start: INTEGER
 			l_declaration: STRING_8
 		do
-			l_declaration := "<?xml"
+			l_declaration := Xml_declaration_opener
 			l_start := 1
 			if a_input.count >= 3 and then a_input.item (1).code = 239 and then a_input.item (2).code = 187 and then a_input.item (3).code = 191 then
 				l_start := 4
@@ -1686,7 +1686,7 @@ feature {NONE} -- Encoding
 			elseif a_input.count - l_start + 1 < l_declaration.count then
 				Result := a_input.count >= l_start and then not l_declaration.same_characters (a_input, l_start, a_input.count, 1)
 			elseif a_input.same_characters (l_declaration, 1, l_declaration.count, l_start) then
-				Result := a_input.substring_index ("?>", l_start + l_declaration.count) > 0
+				Result := index_of_declaration_end (a_input, l_start + l_declaration.count) > 0
 			else
 				Result := True
 			end
@@ -2297,12 +2297,12 @@ feature {NONE} -- Encoding
 			l_start: INTEGER
 		do
 			if has_initial_xml_declaration (a_input) then
-				l_end := a_input.substring_index ("?>", 1)
+				l_end := index_of_declaration_end (a_input, 1)
 				if l_end = 0 then
 					l_end := a_input.count
 				end
 				-- Only the declaration: input in pieces grows on every call (mass-xpact #31).
-				l_pos := a_input.substring_index_in_bounds ("encoding", 1, l_end)
+				l_pos := index_of_encoding_keyword (a_input, l_end)
 				if l_pos > 0 and then l_pos < l_end then
 					l_index := l_pos + 8
 					from
@@ -2336,6 +2336,57 @@ feature {NONE} -- Encoding
 					end
 				end
 			end
+		end
+
+	Xml_declaration_opener: STRING_8 = "<?xml"
+			-- Start of an XML or text declaration.
+
+	Encoding_keyword: STRING_8 = "encoding"
+			-- Name of the encoding pseudo-attribute.
+
+	index_of_declaration_end (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+			-- Index of the first "?>" at or after `a_start_index', or 0. Like `substring_index' without its
+			-- set-up, which is paid on every `XML_Parse' call (mass-xpact #37).
+		require
+			input_attached: a_input /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count + 1
+		local
+			i: INTEGER
+		do
+			from
+				i := a_start_index
+			until
+				Result > 0 or i >= a_input.count
+			loop
+				if a_input.item (i) = '?' and then a_input.item (i + 1) = '>' then
+					Result := i
+				end
+				i := i + 1
+			end
+		ensure
+			found_or_zero: Result = 0 or else (Result >= a_start_index and Result < a_input.count)
+		end
+
+	index_of_encoding_keyword (a_input: READABLE_STRING_8; a_end_index: INTEGER): INTEGER
+			-- Index of the first `Encoding_keyword' that lies within `a_input [1 .. a_end_index]', or 0.
+		require
+			input_attached: a_input /= Void
+			valid_end: a_end_index >= 0 and a_end_index <= a_input.count
+		local
+			i: INTEGER
+		do
+			from
+				i := 1
+			until
+				Result > 0 or i + Encoding_keyword.count - 1 > a_end_index
+			loop
+				if a_input.item (i) = 'e' and then a_input.same_characters (Encoding_keyword, 1, Encoding_keyword.count, i) then
+					Result := i
+				end
+				i := i + 1
+			end
+		ensure
+			found_or_zero: Result = 0 or else Result + Encoding_keyword.count - 1 <= a_end_index
 		end
 
 	has_initial_xml_declaration (a_input: READABLE_STRING_8): BOOLEAN
