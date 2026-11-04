@@ -64,6 +64,7 @@ call. `input_buffer` is therefore still kept whole (memory use is unchanged).
 | UTF-16: an invalid surrogate, or a partial character at the final call | only the full decode reports it |
 | External entity parsers, diagnostic events | not covered yet |
 | An unfinished DOCTYPE that reports its parts as they arrive | no checkpoint inside a DOCTYPE |
+| A text run seen by a default handler, or inside an entity, at the end of the input | the run is parsed again from its start (#11 carries the text only for the character data handler) |
 | After a resumable stop (`XML_StopParser (p, XML_TRUE)`) | `XML_ResumeParser` replays, as before |
 | The direct start-tag shortcut delivered a callback | the parser did not see that tag |
 
@@ -82,6 +83,25 @@ on `decoded_buffer`. `resume_source` is the input a resumed parse reads: `input_
 for UTF-8, `decoded_buffer` for UTF-16. Deferral, the pending-markup scan and
 `resume_raw_count` work on it, exactly as the full replay works on its fresh decoding.
 `XML_GetInputContext` still shows the raw `input_buffer`, as before.
+
+### Long text runs ([mass-xpact#11](https://github.com/CodTanium/mass-xpact/issues/11))
+
+A text run that reaches the end of non-final input used to be the checkpoint itself: the next
+call parsed the whole run again, so a long paragraph fed in small pieces cost (run length)².
+Now, when only the character data handler sees the run's text, the checkpoint is the point
+where parsing stopped inside the run (`last_text_stop_index`) and the text so far is kept
+(`resume_text_carry`). The next call continues there with that text as the seed
+(`character_data_seed`). The run's callback is delivered again with the longer text, and the
+handler passes on only the new suffix, as it does for a full replay.
+
+- A trailing `]` or `]]` is parsed again, because the next byte may make it `]]>`.
+- The carry is used only when no default handler wants the raw bytes, and in document content
+  outside an entity (`can_carry_text_run`). Otherwise the run is parsed again from its start, as
+  before. If the handlers change between calls so that the carry is no longer allowed,
+  `continue_prefix` returns False and the full replay takes over.
+- With reparse deferral on (Expat 2.6 default), `should_defer_reparse_callbacks_on_prefix` cuts a
+  partial UTF-8 character off `input_buffer` for a moment. `pending_scan_index` is now clamped to
+  the shorter buffer, so the scan for unfinished markup no longer restarts from byte 1.
 
 ## 4. Kept exactly as before
 
@@ -103,4 +123,5 @@ for UTF-8, `decoded_buffer` for UTF-16. Deferral, the pending-markup scan and
 - [ ] Resume for Latin-1, ASCII, explicit and unknown encodings.
 - [ ] Resume in external entity child parsers.
 - [ ] Trim `input_buffer` once the fallback is no longer needed (memory).
+- [x] ✅ Long text runs and deferral with a partial UTF-8 character (#11): no longer quadratic.
 - [ ] Per-call overhead: byte-by-byte is still about 14× slower than one call.

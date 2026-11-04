@@ -634,7 +634,7 @@ feature -- Parsing
 			invalid_input_character_index := last_invalid_character_index
 			position_input := l_input
 			note_position (1)
-			parse_prefix_tokens (l_input, 1, True)
+			parse_prefix_tokens (l_input, 1, Void, True)
 			if resume_index > 0 then
 				resume_last_raw_cr := a_input.count > 0 and then a_input.item (a_input.count) = '%R'
 				resume_pending_utf8_count := trailing_partial_utf8_count (l_input)
@@ -655,25 +655,36 @@ feature -- Parsing
 			-- Continue the last non-final prefix parse with the bytes `a_input' that follow it,
 			-- without parsing the earlier input again. Positions and replay counts stay those of
 			-- a full parse of the whole input. When the new bytes need the full parse path (an
-			-- invalid character, or an unfinished UTF-8 sequence at the end of final input), the
-			-- result is False with no error and no callbacks, and `resume_index' is 0.
+			-- invalid character, an unfinished UTF-8 sequence at the end of final input, or a
+			-- carried text run that the current handlers no longer allow), the result is False
+			-- with no error and no callbacks, and `resume_index' is 0.
 		require
 			input_attached: a_input /= Void
 			resumable: can_continue_prefix
 		local
 			i: INTEGER
 			l_input: STRING_8
+			l_carry: detachable STRING_8
 		do
 			l_input := position_input
 			i := resume_index
+			l_carry := resume_text_carry
 			resume_index := 0
+			resume_text_carry := Void
 			invalid_input_character_index := 0
-			if append_normalized_input (a_input, l_input, a_is_final) then
+			if (l_carry = Void or else can_carry_text_run) and then append_normalized_input (a_input, l_input, a_is_final) then
 				text_position_start := resume_text_start
 				expanded_entity_bytes := resume_entity_bytes
 				if not a_is_final then
-					parse_prefix_tokens (l_input, i, True)
+					parse_prefix_tokens (l_input, i, l_carry, True)
 				else
+					if attached l_carry as l_text then
+						i := continue_carried_text (l_input, i, l_text, True)
+						text_position_start := 0
+						if not has_error then
+							note_position (i)
+						end
+					end
 					from
 					invariant
 						index_in_bounds: i >= 1 and i <= l_input.count + 1
@@ -809,7 +820,7 @@ feature -- Parsing
 					l_input.append (l_body)
 					position_input := l_input
 					if not a_is_final then
-						parse_prefix_tokens (l_input, l_prefix_count + 1, False)
+						parse_prefix_tokens (l_input, l_prefix_count + 1, Void, False)
 						if resume_index > 0 then
 							resume_last_raw_cr := a_input.count > 0 and then a_input.item (a_input.count) = '%R'
 							resume_pending_utf8_count := trailing_partial_utf8_count (l_input)
@@ -1249,10 +1260,11 @@ feature -- Parsing
 
 feature {NONE} -- Resumable prefix parsing
 
-	parse_prefix_tokens (a_input: STRING_8; a_start_index: INTEGER; a_report_doctype_prefix: BOOLEAN)
+	parse_prefix_tokens (a_input: STRING_8; a_start_index: INTEGER; a_carry: detachable STRING_8; a_report_doctype_prefix: BOOLEAN)
 			-- Parse the complete tokens of non-final `a_input' from `a_start_index' and record
 			-- where a later `continue_prefix' resumes: at the unfinished markup or the text
-			-- run that reaches the end of `a_input', or after the input. With
+			-- run that reaches the end of `a_input', or after the input. `a_carry' is the text
+			-- of a run that a previous call parsed up to `a_start_index'. With
 			-- `a_report_doctype_prefix', an unfinished DOCTYPE delivers what it has so far.
 		require
 			input_attached: a_input /= Void
@@ -1265,24 +1277,41 @@ feature {NONE} -- Resumable prefix parsing
 			l_run_start: INTEGER
 			l_pending: BOOLEAN
 			l_doctype_pending: BOOLEAN
+			l_text_token: BOOLEAN
+			l_carried_token: BOOLEAN
+			l_carry: detachable STRING_8
+			l_carry_left: INTEGER
 		do
 			resume_index := 0
+			resume_text_carry := Void
+			l_carry := a_carry
+			if l_carry /= Void then
+				l_carry_left := 1
+			end
 			from
 				i := a_start_index
 			invariant
 				index_in_bounds: i >= 1 and i <= a_input.count + 1
 				depth_within_limit: element_stack.count <= max_element_depth
 			until
-				i > a_input.count or has_error or is_suspended
+				(i > a_input.count and l_carry = Void) or has_error or is_suspended
 			loop
 				l_token_start := i
 				l_run_start := text_run_start (i)
 				l_token_sequence := handler.replay_sequence_count
 				l_token_entity_bytes := expanded_entity_bytes
 				l_pending := False
+				l_text_token := True
+				l_carried_token := l_carry /= Void
 				last_general_reference_end := 0
 				note_position (i)
-				if a_input.item (i) = '<' then
+				if attached l_carry as l_text then
+					l_carry := Void
+					l_carry_left := 0
+					i := continue_carried_text (a_input, i, l_text, False)
+					l_pending := i > a_input.count
+				elseif a_input.item (i) = '<' then
+					l_text_token := False
 					if is_incomplete_markup_prefix (a_input, i) then
 						if a_report_doctype_prefix and then has_at (a_input, i, "<!DOCTYPE") then
 							process_incomplete_doctype_prefix (a_input, i)
@@ -1302,7 +1331,7 @@ feature {NONE} -- Resumable prefix parsing
 					note_position (i)
 				end
 			variant
-				a_input.count - i + 1
+				a_input.count - i + 1 + l_carry_left
 			end
 			text_position_start := 0
 			resume_text_start := 0
@@ -1311,10 +1340,35 @@ feature {NONE} -- Resumable prefix parsing
 					resume_index := a_input.count + 1
 					resume_sequence_count := handler.replay_sequence_count
 					resume_entity_bytes := expanded_entity_bytes
-				elseif a_input.item (l_token_start) = '<' then
+				elseif not l_text_token then
 					resume_index := l_token_start
 					resume_sequence_count := l_token_sequence
 					resume_entity_bytes := l_token_entity_bytes
+				elseif attached last_text_carry as l_text and then last_text_stop_index >= l_token_start and then can_carry_text_run then
+						-- Continue the run after the text parsed so far instead of parsing it again
+						-- (#11). Its callback is delivered again with the longer text, and the
+						-- handler passes on only the new suffix, as in a full replay.
+					resume_index := last_text_stop_index
+					from
+					until
+						resume_index <= l_token_start or else l_text.is_empty
+						or else a_input.item (resume_index - 1) /= ']' or else l_text.item (l_text.count) /= ']'
+						or else last_text_stop_index - resume_index = 2
+					loop
+							-- Parse a trailing "]" or "]]" again: it may start "]]>".
+						l_text.remove_tail (1)
+						resume_index := resume_index - 1
+					end
+					resume_text_carry := l_text
+					if last_general_reference_end > 0 then
+						resume_sequence_count := last_general_reference_sequence
+					else
+						resume_sequence_count := l_token_sequence
+					end
+					resume_entity_bytes := expanded_entity_bytes
+					resume_text_start := l_run_start
+				elseif l_carried_token then
+						-- The carried run cannot be parsed again from its start here: no checkpoint.
 				elseif is_resumable_text_run (a_input, l_token_start) then
 					resume_index := l_token_start
 					resume_sequence_count := l_token_sequence
@@ -1337,6 +1391,62 @@ feature {NONE} -- Resumable prefix parsing
 			resumable_only_after_success: resume_index > 0 implies (not has_error and not is_suspended)
 			resume_in_input: resume_index = 0 or else (resume_index >= a_start_index and resume_index <= a_input.count + 1)
 		end
+
+	can_carry_text_run: BOOLEAN
+			-- Can a text run that reaches the end of non-final input be continued later from the
+			-- text parsed so far? Only its character data callback sees that text: no default
+			-- handler wants its raw bytes, and it is document content outside any entity.
+		do
+			Result := handler.wants_character_data_events
+				and then not handler.wants_default_events
+				and then not handler.wants_automatic_character_data_default
+				and then element_stack.count > 0
+				and then entity_reference_count_stack.count = 0
+				and then not parsing_external_entity
+		end
+
+	continue_carried_text (a_input: STRING_8; a_start_index: INTEGER; a_carry: STRING_8; a_is_final: BOOLEAN): INTEGER
+			-- Continue at `a_start_index' the text run whose text before it is `a_carry'.
+		require
+			input_attached: a_input /= Void
+			carry_attached: a_carry /= Void
+			valid_start: a_start_index >= 1 and a_start_index <= a_input.count + 1
+		do
+			if a_start_index <= a_input.count and then a_input.item (a_start_index) /= '<' then
+				character_data_seed := a_carry
+				if a_is_final then
+					Result := parse_character_data (a_input, a_start_index)
+				else
+					Result := parse_character_data_prefix (a_input, a_start_index)
+				end
+				character_data_seed := Void
+			else
+					-- No more text in the run yet, or it ends here.
+				if not a_carry.is_empty then
+					note_token_position (text_run_start (a_start_index), a_carry.count)
+					emit_text (a_carry)
+				end
+				last_text_carry := a_carry
+				last_text_stop_index := a_start_index
+				Result := a_start_index
+			end
+		ensure
+			result_in_bounds: Result >= a_start_index and Result <= a_input.count + 1
+		end
+
+	resume_text_carry: detachable STRING_8
+			-- Text of the run parsed up to `resume_index', when `continue_prefix' continues
+			-- inside that run, or Void.
+
+	character_data_seed: detachable STRING_8
+			-- Text the next character data parse starts with, or Void.
+
+	last_text_carry: detachable STRING_8
+			-- Pending callback text of the last `parse_character_data_prefix'.
+
+	last_text_stop_index: INTEGER
+			-- Index where the last `parse_character_data_prefix' stopped in its pending run:
+			-- after the input, or at an unfinished reference or UTF-8 sequence; 0 otherwise.
 
 	is_resumable_text_run (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
 			-- Can the text run from `a_start_index' to the end of `a_input' be parsed again
@@ -2675,7 +2785,10 @@ feature {NONE} -- Character data and references
 			end
 			if Result = 0 then
 				force_current_position
-				if l_materialize_text then
+				if attached character_data_seed as l_seed then
+					l_text := l_seed
+					character_data_seed := Void
+				elseif l_materialize_text then
 					create l_text.make_empty
 				end
 				l_all_space := True
@@ -2915,9 +3028,13 @@ feature {NONE} -- Character data and references
 			l_literal_default := handler.wants_automatic_character_data_default and then handler.wants_literal_character_data_default
 			l_default_start := a_start_index
 			l_default_end := a_start_index - 1
-			if l_materialize_text then
+			if attached character_data_seed as l_seed then
+				l_text := l_seed
+				character_data_seed := Void
+			elseif l_materialize_text then
 				create l_text.make_empty
 			end
+			last_text_stop_index := 0
 			l_all_space := True
 			from
 				i := a_start_index
@@ -2943,6 +3060,7 @@ feature {NONE} -- Character data and references
 					l_pending_literal_position := 0
 					if find_character (a_input, ';', i + 1) = 0 then
 						l_done := True
+						last_text_stop_index := i
 						i := a_input.count + 1
 					elseif element_stack.count = 0 and then not parsing_external_entity then
 						set_error ("entity reference outside document element")
@@ -2969,6 +3087,7 @@ feature {NONE} -- Character data and references
 					note_position (i)
 					l_pending_literal_position := 0
 					l_done := True
+					last_text_stop_index := i
 					i := a_input.count + 1
 				elseif not is_xml_character_code (c.code) then
 					note_position (i)
@@ -2993,6 +3112,10 @@ feature {NONE} -- Character data and references
 			variant
 				a_input.count - i + 1
 			end
+			if not l_done and then i > a_input.count then
+				last_text_stop_index := i
+			end
+			last_text_carry := l_text
 			if l_pending_literal_position > 0 then
 				-- Included entity text has no surrounding position commit.
 				note_position (l_pending_literal_position)
@@ -8546,6 +8669,9 @@ feature {NONE} -- State
 			text_position_start := 0
 			resume_text_start := 0
 			resume_entity_bytes := 0
+			resume_text_carry := Void
+			character_data_seed := Void
+			last_text_carry := Void
 			last_general_reference_end := 0
 			lazy_position_accounting := False
 			current_position_index := a_prefix_count + 1
@@ -8595,6 +8721,9 @@ feature {NONE} -- State
 			text_position_start := 0
 			resume_text_start := 0
 			resume_entity_bytes := 0
+			resume_text_carry := Void
+			character_data_seed := Void
+			last_text_carry := Void
 			last_general_reference_end := 0
 			create position_input.make_empty
 			lazy_position_accounting := False
