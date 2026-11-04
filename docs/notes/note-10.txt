@@ -1,0 +1,33 @@
+Note10 - 2026-11-04 - static STRING_8 scanner input (#20, draft PR #21): parked on a crash
+=========================================================================================
+
+WHAT
+- XP_PARSER scanners: a_input/a_subset/a_content/a_data READABLE_STRING_8 -> STRING_8, so
+  a_input [i] is statically bound (was R3093[Dtype-565] dispatch). Entry points keep
+  READABLE_STRING_8 and call string_8_input (the object itself, or one copy).
+- 20 % faster whole parse (pr-xml-utf-8 14.1 -> 11.3 ms). All result checks identical.
+- BLOCKER: Expat test_deep_nested_attribute_entity crashes intermittently (0xC0000005, once a
+  wrong "undefined entity"). Previous build: 90/90 + 4/4 suites + 0 crashes under GC stress.
+  Static: 59/60, 5/6 suites, 2/3 crashes under stress; also crashes with inlining=false.
+  Cause unknown, suspected GC safety (C bridge or runtime). Do not merge #21.
+
+TRAPS
+- A READABLE_STRING_8 passed to a STRING_8 parameter COMPILES (obsolete implicit as_string_8 =
+  a copy per call). Count them with: scratchpad check.ps1 (ec melt, 11 s) + obs.py on the log;
+  "Obsolete Call ... as_string_8" lines. Must be 0.
+- array_optimization changes NOTHING in the generated C for this system (diffed F_code).
+- Flaky tests: one run proves nothing. Count runs (flaky.ps1), and make it reproducible with GC
+  stress: EIF_MEMORY_SCAVENGE=65536 EIF_FULL_COLLECTION_PERIOD=1 (stress.ps1). Each stressed run
+  of this test takes 1-7 minutes.
+- Test child directly: xpact_libexpat_runtests.exe --xpact-child 241 (= test_deep_nested_attribute_entity,
+  index = line in --list-tests minus 1).
+- No cdb on PC2. minidbg.c (reports/mass-xpact-issue-0020/logs/tools) = Win32 debug API +
+  StackWalk64; relink the DLL with -MAP (scratchpad dbg/build.ps1) to map RVAs.
+- Report files committed on a branch vanish from the working tree when switching branches
+  (reports/issue-0165/tools/logs is on docs/session-notes): compare with git show <branch>:<path>.
+
+NEXT
+- Catch the crash under minidbg and map the stack.
+- Review native/*.c for pointers into Eiffel objects held across calls back into Eiffel.
+- Stress the previous build more (rule out a latent bug made more likely by this change).
+- Other leads (no source risk): append_character / hash reset, string allocation, note_position.
