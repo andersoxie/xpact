@@ -27,6 +27,7 @@ feature {NONE} -- Initialization
 			configure_external_entity_policy
 			create input_buffer.make_empty
 			create decoded_buffer.make_empty
+			create deferred_doctype_scan.make
 			create context_source_buffer.make_empty
 			create hash_salt_16_bytes.make_empty
 			last_error_code := Xml_error_none
@@ -262,6 +263,9 @@ feature -- Access
 
 	deferred_reparse_scan_quote: CHARACTER_8
 			-- Quote that ends the current delayed start-tag attribute value.
+
+	deferred_doctype_scan: XP_DOCTYPE_SCAN
+			-- Where the search for the end of a delayed DOCTYPE stopped.
 
 	doctype_prefix_scan_index: INTEGER
 			-- Next byte to inspect in an initial incomplete DOCTYPE.
@@ -753,6 +757,7 @@ feature -- Element change
 			deferred_reparse_start_index := 0
 			deferred_reparse_end_index := 0
 			deferred_reparse_scan_index := 0
+			deferred_doctype_scan.reset (0)
 			deferred_reparse_scan_in_quote := False
 			deferred_reparse_scan_quote := '%U'
 			clear_doctype_prefix_scan
@@ -1503,6 +1508,7 @@ feature {NONE} -- Encoding
 					if deferred_reparse_start_index > 0 then
 						deferred_reparse_end_index := 0
 						deferred_reparse_scan_index := 0
+						deferred_doctype_scan.reset (0)
 						deferred_reparse_scan_in_quote := False
 						deferred_reparse_scan_quote := '%U'
 					end
@@ -1818,6 +1824,12 @@ feature {NONE} -- Encoding
 				else
 					deferred_reparse_scan_index := (a_input.count - l_end_marker.count + 2).max (l_content_start)
 				end
+			elseif l_start + 8 <= a_input.count and then a_input.substring (l_start, l_start + 8).same_string ("<!DOCTYPE") then
+					-- Go on where the last call stopped instead of rescanning the internal subset (mass-xpact #34).
+				if deferred_doctype_scan.start_index /= l_start or else a_input.count < deferred_doctype_scan.scanned_count then
+					deferred_doctype_scan.reset (l_start)
+				end
+				Result := parser.doctype_end_resumed (a_input, deferred_doctype_scan)
 			else
 				Result := parser.markup_prefix_end (a_input, l_start)
 			end
@@ -1835,6 +1847,7 @@ feature {NONE} -- Encoding
 			deferred_reparse_start_index := 0
 			deferred_reparse_end_index := 0
 			deferred_reparse_scan_index := 0
+			deferred_doctype_scan.reset (0)
 			deferred_reparse_scan_in_quote := False
 			deferred_reparse_scan_quote := '%U'
 		ensure
