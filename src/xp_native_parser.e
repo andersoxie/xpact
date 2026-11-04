@@ -1680,7 +1680,12 @@ feature {NONE} -- Encoding
 			if a_input.count >= 3 and then a_input.item (1).code = 239 and then a_input.item (2).code = 187 and then a_input.item (3).code = 191 then
 				l_start := 4
 			end
-			if a_input.count < 3 then
+			if attached declared_encoding_prefix as l_known and then a_input.count >= l_known.count
+				and then a_input.same_characters (l_known, 1, l_known.count, 1)
+			then
+					-- Starts with a complete XML declaration seen before (mass-xpact #40).
+				Result := True
+			elseif a_input.count < 3 then
 					-- A byte-order mark may still be arriving.
 				Result := False
 			elseif a_input.count - l_start + 1 < l_declaration.count then
@@ -2287,6 +2292,39 @@ feature {NONE} -- Encoding
 
 	declared_xml_encoding (a_input: READABLE_STRING_8): detachable STRING_8
 			-- Encoding declared in an ASCII XML/text declaration, if present.
+			-- Once a declaration is complete its answer is kept with the bytes it depends on (up to "?>"),
+			-- and reused while `a_input' starts with the same bytes (mass-xpact #40).
+		require
+			input_attached: a_input /= Void
+		local
+			l_end: INTEGER
+			l_prefix: STRING_8
+		do
+			if attached declared_encoding_prefix as l_known and then a_input.count >= l_known.count
+				and then a_input.same_characters (l_known, 1, l_known.count, 1)
+			then
+				Result := declared_encoding_value
+			else
+				Result := scanned_xml_encoding (a_input)
+				if has_initial_xml_declaration (a_input) then
+					l_end := index_of_declaration_end (a_input, 1)
+					if l_end > 0 then
+						create l_prefix.make_from_string (a_input.substring (1, l_end + 1))
+						declared_encoding_prefix := l_prefix
+						declared_encoding_value := Result
+					end
+				end
+			end
+		end
+
+	declared_encoding_prefix: detachable STRING_8
+			-- Bytes of the last complete XML declaration seen by `declared_xml_encoding', up to its "?>".
+
+	declared_encoding_value: detachable STRING_8
+			-- What `declared_xml_encoding' answered for `declared_encoding_prefix'.
+
+	scanned_xml_encoding (a_input: READABLE_STRING_8): detachable STRING_8
+			-- Encoding declared in an ASCII XML/text declaration, if present, read from `a_input'.
 		require
 			input_attached: a_input /= Void
 		local
