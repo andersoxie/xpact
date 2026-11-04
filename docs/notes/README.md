@@ -28,6 +28,7 @@ PR and report; the notes record the order of the work, the traps, and how to rep
 | ✅ | Resume the search for the end of a delayed DOCTYPE (no rescan of the internal subset) | [#34](https://github.com/CodTanium/mass-xpact/issues/34) | [#35](https://github.com/CodTanium/mass-xpact/pull/35) | pr-xml-utf-8 byte by byte 437 → 319 ms | [0034](../../reports/mass-xpact-issue-0034/report.md) |
 | ✅ | Check the XML declaration without per-call allocations | [#37](https://github.com/CodTanium/mass-xpact/issues/37) | [#38](https://github.com/CodTanium/mass-xpact/pull/38) | pr-xml-utf-8 byte by byte 334 → 286 ms | [0037](../../reports/mass-xpact-issue-0037/report.md) |
 | ✅ | Keep the declared encoding of a complete XML declaration | [#40](https://github.com/CodTanium/mass-xpact/issues/40) | [#41](https://github.com/CodTanium/mass-xpact/pull/41) | pr-xml-utf-8 byte by byte 290 → 236 ms | [0040](../../reports/mass-xpact-issue-0040/report.md) |
+| ✅ | Copy each input chunk once instead of twice | [#43](https://github.com/CodTanium/mass-xpact/issues/43) | [#44](https://github.com/CodTanium/mass-xpact/pull/44) | pr-xml-utf-8 byte by byte 248 → 217 ms | [0043](../../reports/mass-xpact-issue-0043/report.md) |
 | 🔴 | **Pre-existing** heap corruption under GC stress and load (`test_deep_nested_attribute_entity`) | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | | | [0020](../../reports/mass-xpact-issue-0020/report.md) |
 | ✅ | Assertions DLL crash on `ibm68n03.xml` (default handler only): name checked before `is_predefined_entity` | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | assertions DLL no longer dies | [0003](../../reports/mass-xpact-issue-0003/report.md) |
 
@@ -44,6 +45,7 @@ Raw Test 2 outputs of every build (TSV + summary per run) are in [`reports/issue
 - [x] #35 (#34, 2026-11-04)
 - [x] #38 (#37, 2026-11-04)
 - [x] #41 (#40, 2026-11-04)
+- [x] #44 (#43, 2026-11-04)
 
 Retarget a stacked PR **before** deleting the branch under it, or GitHub closes it.
 
