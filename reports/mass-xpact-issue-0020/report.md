@@ -2,7 +2,7 @@
 
 > **Issue:** [CodTanium/mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) · **Branch:** `perf/static-string-input`, stacked on `perf/resume-text-runs` (#11)
 > **Changed:** `src/xp_parser.e`
-> **Status:** ⛔ **parked, do not merge** · cause unknown · the crash also happens **without** this change (latent bug, see the update in section 1)
+> **Status:** cause unknown · **pre-existing in `student-Mass`** (update 4) · PR #21 (static input) still parked, do not merge
 
 ## 1. In short
 
@@ -11,6 +11,18 @@ The change makes the parser's internal scanners take `a_input: STRING_8` instead
 which makes a whole parse about **20 % faster**. Every result check passes, but one Expat test
 crashes intermittently, and often under GC stress. Until the cause is known, the change stays parked.
 
+> **Update 4 (2026-11-04, 16:08): the bug is already in `student-Mass`; no speed PR causes it.**
+> Paired batch, four builds at the same time under the same load (12 runs in parallel) ([probe run 7](logs/probe-run7-paired/runs.txt)):
+>
+> | Build | Runs | Pass | Crash | Wrong result |
+> |---|---|---|---|---|
+> | `student-Mass` @ `253c81e` **as is** (with `-keep`) | 12 | 10 | **2** | 0 |
+> | + #16 (no `-keep`) | 12 | 10 | 2 | 0 |
+> | candidate fix, no `-keep` | 12 | 10 | 1 | 1 |
+> | parser chain #4 + #8 + #13 (with `-keep`) | 12 | 11 | 1 | 0 |
+>
+> All six crashes have the same signature: a read of `ffffffffffffffff`, 4 of 6 in the GC's marking code. The PRs are unblocked: #16 and #18 are ready again. #21 is still parked for its own reasons (no separate equal-load data). This issue now tracks the **pre-existing** corruption.
+>
 > **Update 3 (2026-11-04, afternoon): load matters more than the build; "#16 exposes it" is not proven.**
 > With 12 stressed runs in parallel instead of 4, **every** build crashed: the parser chain **with `-keep`** 6 of 21, the candidate fix 5 of 8, #16 5 of 11 ([probe run 6](logs/probe-run6/runs.txt)), all with the same GC signature.
 > The baseline's 24 of 24 below was measured at the lower load, so it doesn't compare. A paired batch (all four builds at the same time, same load) is running.
