@@ -2,15 +2,25 @@
 
 > **Issue:** [CodTanium/mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) · **Branch:** `perf/static-string-input`, stacked on `perf/resume-text-runs` (#11)
 > **Changed:** `src/xp_parser.e`
-> **Status:** cause unknown · **pre-existing in `student-Mass`** (update 4) · PR #21 (static input) still parked, do not merge
+> **Status:** cause unknown · **pre-existing in `student-Mass`** (update 4) · PR #21 (static input): no measurable effect on this bug (update 6), re-verified and **merged**
 
 ## 1. In short
 
 The change makes the parser's internal scanners take `a_input: STRING_8` instead of
 `READABLE_STRING_8`. Calls such as `a_input [i]` are then statically bound and can be inlined,
 which makes a whole parse about **20 % faster**. Every result check passes, but one Expat test
-crashes intermittently, and often under GC stress. Until the cause is known, the change stays parked.
+crashes intermittently, and often under GC stress. That crash turned out to be pre-existing (#20), and this change does not change its rate (update 6). The change is **merged** (2026-11-04).
 
+> **Update 6 (2026-11-04, 19:40): #21 does not measurably change the rate.** `student-Mass` @ `8ccf51b` and the static-input branch on top of it, both with GC stress, run at the same time (12 in parallel):
+> `student-Mass` **24 / 24** pass, static input **23 / 24** (1 × `not well-formed (invalid token)` at line 60002, offset 3, no crash)
+> ([probe run 9](logs/probe-run9-paired21/runs.txt)). 0 of 24 against 1 of 24 is no measurable difference (Fisher exact p = 1.0).
+> So #21 is no longer parked on #20; it is judged on its own checks.
+> **Re-verified on `student-Mass` + #3** (`build\static-sm2`), both tiers:
+> - DLL tests: 4,308 / 4,308, `results.tsv` byte-identical.
+> - W3C trace: 9 / 9 files byte-identical to production.
+> - Test 2: byte-identical TSVs (`chunked-static21-*` = `chunked-sm8ccf51b-*` in `reports/issue-0165/tools/logs/`).
+> - Expat 2.8.1: the same 38 failures.
+>
 > **Update 5 (2026-11-04, 18:03): it also happens with default GC settings.** The merged `student-Mass` @ `8ccf51b`
 > (production DLL), **without** the GC stress variables, 12 runs in parallel: **71 / 72 pass, 1 wrong result**.
 > The wrong result was `undefined entity (line 60002, offset 3)`, with no crash
