@@ -1,0 +1,67 @@
+NOTE 11 - 2026-11-04 - #20 narrowed: heap corruption exposed by #16 (finalize without -keep)
+
+SHORT
+- The "static input" crash (#20) is NOT caused by the static change (#21).
+- student-Mass @ 253c81e as is (with -keep): 24 / 24 stressed runs pass.
+- student-Mass @ 253c81e + #16 (no -keep): 13 / 16, 3 x 0xC0000005.
+- So #16 and #18 (stacked on it) are back to DRAFT. Do not merge them until #20 is understood.
+- Cause still unknown.
+
+ALL STRESSED RUNS (test_deep_nested_attribute_entity, EIF_MEMORY_SCAVENGE=65536,
+EIF_FULL_COLLECTION_PERIOD=1, 4 runs in parallel, probe runner)
+  build                                         runs  result
+  student-Mass as is (-keep)                      24  24 pass
+  student-Mass + #16                              16  13 pass, 3 crash
+  + #11 + #18 ("previous", build/textrun)         16  12 pass, 2 crash, 2 wrong result
+  + #21 static, production (relinked, map)        24  21 pass, 1 crash, 2 wrong result
+  + #21 static, assertions tier (-keep)           12   9 pass, 3 crash, NO assertion violation
+- Wrong results seen: "undefined entity", "unclosed token (line 60002, offset 3)", another failure.
+- Lesson: 0 of 7 on the previous build earlier was luck. With a ~20 % failure rate you need
+  ~24 clean runs before "it does not fail" means anything (0.8^24 = 0.5 %).
+
+WHAT THE CRASH IS
+- Access violation in the Eiffel GC, hybrid_mark, instruction movzx ebp, word ptr [rdi-0Ch]
+  (reading the header of the object to mark). Stack: special_malloc -> partial_scavenging ->
+  run_collector -> hybrid_mark (6 deep), called from {HASH_TABLE}.make <- accommodate <- put
+  <- {XP_PARSER}.put_general_entity <- parse_entity_declaration <- process_dtd_subset ...
+- The reference in rdi is a heap pointer with byte 6 = 0x01 (e.g. 0x0001_012d_2a38_c9e8).
+- Minidumps: in EVERY crash the bad 0x01 byte sits at an address ending in ...38c9be.
+  Only the low 24 bits match; the heap range and the offset in it differ. What lives there
+  differs too (an "entity-decl:..." event string's area, a 6-char string, a reference array).
+  => something writes 0x01 to a computed address. Not a field of one particular object.
+
+RULED OUT
+- Deep recursion (aliases are followed in a loop), aliasing of scanner input, threads/timers,
+  clock or randomness in src/ or native/, memory pressure (69 MB peak), machine load alone
+  (the paired run: same load, only some builds fail), Eiffel out-of-bounds writes (the
+  assertions tier crashes without any precondition violation first).
+
+HOW TO REPRODUCE / TOOLS (all in reports/mass-xpact-issue-0020/logs/tools/probe/ on perf/static-string-input)
+- probe.c: linked into a copy of the libexpat runner. A vectored exception handler installed
+  before main writes av-<pid>-<n>.txt (registers + RtlVirtualUnwind stack) and a minidump to
+  %XPACT_CRASH_DIR% on the first 3 access violations. No debugger attached, so the timing is
+  unchanged (minidbg.c, a real debugger, never saw the crash in 7 runs).
+- build.ps1: relinks the runner from build\libexpat-native-static\cbuild\...\Debug\*.obj + probe.obj.
+  selftest.c: a program that faults on purpose, to check the probe writes its files.
+- stress-probe.ps1 <dll dir> <runs> <tag>: runs the test with that DLL first on PATH; saves the
+  full output of every non-passing run.
+- run4.sh / prev16.sh / asrt.sh: 4 loops in parallel (the parallel load raises the crash rate).
+- Mapping: relink the DLL with -MAP (dbg-build.ps1), then RVA -> map symbol -> F_code comment
+  (/* {CLASS}.feature */). SAVE the F_code name table before the next ec run overwrites it.
+- dumpmem.py <dump> <hex addr> [bytes]: memory from the minidump; region.py: the range holding it.
+- dumpbin /disasm /range:... (dis.ps1) for the faulting instruction.
+
+TRAPS
+- A stressed run takes 5-15 minutes when 4 run in parallel; a batch of 12-16 takes 30-60 min.
+- Killing the sh wrapper does not kill the powershell loops: find them by command line
+  (Win32_Process, "*stress-probe.ps1*") and stop them.
+- Two crashes of the previous build left no probe file; why is unknown.
+- The output dir is shared between batches: move out\* away before the next batch.
+
+NEXT
+- Find what writes 0x01 at ...38c9be: a hardware write watchpoint (debug registers set
+  in-process by the probe, on every heap address ending in 38c9be) would catch the writer.
+- Compare the generated C of student-Mass with and without -keep for GC-root handling
+  (RTLD/RTLI local registration) in the routines on the crash path.
+- Ask whether the problem is in the Eiffel runtime (EiffelStudio 25.12) rather than XPact:
+  no runtime sources are installed, so that needs an upstream report.
