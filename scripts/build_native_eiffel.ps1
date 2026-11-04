@@ -140,7 +140,14 @@ try {
 	$SavedErrorActionPreference = $ErrorActionPreference
 	$ErrorActionPreference = "Continue"
 	try {
-		ec -batch -clean -finalize -keep -config tests\xpact_native_library.ecf -target $EiffelTarget
+		# -keep only for the assertions tier: it keeps the assertion code and a
+		# per-routine exception frame in every finalized routine, even where the
+		# target disables all assertions.
+		[string[]] $FinalizeArgs = @("-finalize")
+		if ($BuildTier -eq "Assertions") {
+			$FinalizeArgs += "-keep"
+		}
+		ec -batch -clean @FinalizeArgs -config tests\xpact_native_library.ecf -target $EiffelTarget
 		$EiffelExitCode = $LASTEXITCODE
 	} finally {
 		$ErrorActionPreference = $SavedErrorActionPreference
