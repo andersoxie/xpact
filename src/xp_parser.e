@@ -612,7 +612,7 @@ feature -- Parsing
 		do
 			create l_result.put (False)
 			create l_section.make
-			l_section.execute (agent parse_into_boolean_cell (a_input, l_result))
+			l_section.execute (agent parse_into_boolean_cell (string_8_input (a_input), l_result))
 			Result := l_result.item
 		ensure
 			result_matches_state: Result = (not has_error and not is_suspended)
@@ -672,7 +672,7 @@ feature -- Parsing
 			resume_index := 0
 			resume_text_carry := Void
 			invalid_input_character_index := 0
-			if (l_carry = Void or else can_carry_text_run) and then append_normalized_input (a_input, l_input, a_is_final) then
+			if (l_carry = Void or else can_carry_text_run) and then append_normalized_input (string_8_input (a_input), l_input, a_is_final) then
 				text_position_start := resume_text_start
 				expanded_entity_bytes := resume_entity_bytes
 				if not a_is_final then
@@ -784,9 +784,9 @@ feature -- Parsing
 				then
 					clear_cached_doctype
 				end
-				if cached_doctype_prefix = Void and then not a_is_final and then has_at (a_input, 1, "<!DOCTYPE") then
-					l_end := find_doctype_end (a_input, 1)
-					l_cr := find_character (a_input, '%R', 1)
+				if cached_doctype_prefix = Void and then not a_is_final and then has_at (string_8_input (a_input), 1, "<!DOCTYPE") then
+					l_end := find_doctype_end (string_8_input (a_input), 1)
+					l_cr := find_character (string_8_input (a_input), '%R', 1)
 					if l_end > 0 and then (l_cr = 0 or else l_cr > l_end) then
 						l_prefix_input := a_input.substring (1, l_end).to_string_8
 						l_prepared := True
@@ -1079,26 +1079,28 @@ feature -- Parsing
 			starts_markup: a_input.item (a_start_index) = '<'
 		local
 			l_end: INTEGER
+			l_input: STRING_8
 		do
-			if has_at (a_input, a_start_index, "<!--") then
-				l_end := find_sequence (a_input, "-->", a_start_index + 4)
+			l_input := string_8_input (a_input)
+			if has_at (l_input, a_start_index, "<!--") then
+				l_end := find_sequence (l_input, "-->", a_start_index + 4)
 				if l_end > 0 then
 					Result := l_end + 2
 				end
-			elseif has_at (a_input, a_start_index, "<![CDATA[") then
-				l_end := find_sequence (a_input, "]]>", a_start_index + 9)
+			elseif has_at (l_input, a_start_index, "<![CDATA[") then
+				l_end := find_sequence (l_input, "]]>", a_start_index + 9)
 				if l_end > 0 then
 					Result := l_end + 2
 				end
-			elseif has_at (a_input, a_start_index, "<!DOCTYPE") then
-				Result := find_doctype_end (a_input, a_start_index)
-			elseif has_at (a_input, a_start_index, "<?") then
-				l_end := find_sequence (a_input, "?>", a_start_index + 2)
+			elseif has_at (l_input, a_start_index, "<!DOCTYPE") then
+				Result := find_doctype_end (l_input, a_start_index)
+			elseif has_at (l_input, a_start_index, "<?") then
+				l_end := find_sequence (l_input, "?>", a_start_index + 2)
 				if l_end > 0 then
 					Result := l_end + 1
 				end
 			else
-				Result := find_markup_declaration_end (a_input, a_start_index)
+				Result := find_markup_declaration_end (l_input, a_start_index)
 			end
 		ensure
 			result_in_bounds: Result >= 0 and Result <= a_input.count
@@ -1448,7 +1450,7 @@ feature {NONE} -- Resumable prefix parsing
 			-- Index where the last `parse_character_data_prefix' stopped in its pending run:
 			-- after the input, or at an unfinished reference or UTF-8 sequence; 0 otherwise.
 
-	is_resumable_text_run (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+	is_resumable_text_run (a_input: STRING_8; a_start_index: INTEGER): BOOLEAN
 			-- Can the text run from `a_start_index' to the end of `a_input' be parsed again
 			-- without side effects? Character and predefined entity references only add text;
 			-- other references expand entities and change parser state.
@@ -1475,7 +1477,7 @@ feature {NONE} -- Resumable prefix parsing
 			end
 		end
 
-	append_normalized_input (a_input: READABLE_STRING_8; a_target: STRING_8; a_is_final: BOOLEAN): BOOLEAN
+	append_normalized_input (a_input: STRING_8; a_target: STRING_8; a_is_final: BOOLEAN): BOOLEAN
 			-- Append the line-end normalized form of the raw bytes `a_input' that follow the input
 			-- already normalized into `a_target', as `normalized_input' would for the whole input.
 			-- False when the bytes contain a character that is not an XML Char, or end final
@@ -1488,7 +1490,7 @@ feature {NONE} -- Resumable prefix parsing
 			i: INTEGER
 			c: CHARACTER_8
 			l_length: INTEGER
-			l_source: READABLE_STRING_8
+			l_source: STRING_8
 			l_carry: STRING_8
 		do
 			if resume_pending_utf8_count > 0 then
@@ -1550,7 +1552,7 @@ feature {NONE} -- Resumable prefix parsing
 			end
 		end
 
-	trailing_partial_utf8_count (a_input: READABLE_STRING_8): INTEGER
+	trailing_partial_utf8_count (a_input: STRING_8): INTEGER
 			-- Number of bytes of a UTF-8 sequence cut off by the end of `a_input', or 0.
 		require
 			input_attached: a_input /= Void
@@ -1617,7 +1619,7 @@ feature {NONE} -- Resumable prefix parsing
 
 feature {NONE} -- Garbage collection critical sections
 
-	parse_into_boolean_cell (a_input: READABLE_STRING_8; a_result: CELL [BOOLEAN])
+	parse_into_boolean_cell (a_input: STRING_8; a_result: CELL [BOOLEAN])
 			-- Store `parse (a_input)' in `a_result'.
 		require
 			input_attached: a_input /= Void
@@ -1631,7 +1633,7 @@ feature {NONE} -- Garbage collection critical sections
 
 feature {NONE} -- Markup parsing
 
-	parse_markup (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_markup (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse markup beginning at `a_start_index'.
 		require
 			input_attached: a_input /= Void
@@ -1667,7 +1669,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_start_tag (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_start_tag (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse a start tag.
 		require
 			input_attached: a_input /= Void
@@ -1800,7 +1802,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_end_tag (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_end_tag (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse an end tag.
 		require
 			input_attached: a_input /= Void
@@ -1873,7 +1875,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_attributes_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_attributes_no_events (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse attributes without materializing `XP_ATTRIBUTES', or return zero if unsupported.
 		require
 			input_attached: a_input /= Void
@@ -1961,7 +1963,7 @@ feature {NONE} -- Markup parsing
 			unsupported_or_in_bounds: Result = 0 or else (Result >= a_start_index and Result <= a_input.count + 1)
 		end
 
-	parse_attribute_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_attribute_no_events (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse one simple attribute without materializing name/value strings, or return zero if unsupported.
 		require
 			input_attached: a_input /= Void
@@ -2046,7 +2048,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	skip_spaces_between_attributes (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	skip_spaces_between_attributes (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Index after the spaces following an attribute value; another attribute needs at least one space.
 		require
 			input_attached: a_input /= Void
@@ -2064,7 +2066,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result >= a_start_index and Result <= a_input.count + 1
 		end
 
-	has_attribute_name_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER; a_name_starts, a_name_ends: ARRAYED_LIST [INTEGER]): BOOLEAN
+	has_attribute_name_range (a_input: STRING_8; a_name_start, a_name_end: INTEGER; a_name_starts, a_name_ends: ARRAYED_LIST [INTEGER]): BOOLEAN
 			-- Do stored attribute name ranges contain `a_input [a_name_start..a_name_end]'?
 		require
 			input_attached: a_input /= Void
@@ -2094,7 +2096,7 @@ feature {NONE} -- Markup parsing
 			end
 		end
 
-	parse_attribute (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_attributes: XP_ATTRIBUTES): INTEGER
+	parse_attribute (a_input: STRING_8; a_start_index: INTEGER; a_attributes: XP_ATTRIBUTES): INTEGER
 			-- Parse one attribute beginning at `a_start_index'.
 		require
 			input_attached: a_input /= Void
@@ -2153,7 +2155,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_attribute_value (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_quote: CHARACTER_8; a_value: STRING_8): INTEGER
+	parse_attribute_value (a_input: STRING_8; a_start_index: INTEGER; a_quote: CHARACTER_8; a_value: STRING_8): INTEGER
 			-- Parse and normalize attribute value content until `a_quote'.
 		require
 			input_attached: a_input /= Void
@@ -2208,7 +2210,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_comment (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_comment (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse an XML comment.
 		require
 			input_attached: a_input /= Void
@@ -2264,7 +2266,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_cdata (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_cdata (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse a CDATA section.
 		require
 			input_attached: a_input /= Void
@@ -2322,7 +2324,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_processing_instruction (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_processing_instruction (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse processing instruction or XML declaration.
 		require
 			input_attached: a_input /= Void
@@ -2402,7 +2404,7 @@ feature {NONE} -- Markup parsing
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_xml_declaration_data (a_data: READABLE_STRING_8)
+	parse_xml_declaration_data (a_data: STRING_8)
 			-- Parse attributes in an XML declaration and emit the declaration event.
 		require
 			data_attached: a_data /= Void
@@ -2533,7 +2535,7 @@ feature {NONE} -- Markup parsing
 			end
 		end
 
-	parse_doctype (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_doctype (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse document type declaration and internal entity declarations.
 		require
 			input_attached: a_input /= Void
@@ -2716,7 +2718,7 @@ feature {NONE} -- Markup parsing
 
 feature {NONE} -- Character data and references
 
-	process_incomplete_doctype_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER)
+	process_incomplete_doctype_prefix (a_input: STRING_8; a_start_index: INTEGER)
 			-- Process complete declarations before an internal subset's outer ]> arrives.
 		local
 			i, l_subset_start, l_subset_end, l_name_start, l_name_end, l_previous_offset: INTEGER
@@ -2760,7 +2762,7 @@ feature {NONE} -- Character data and references
 			end
 		end
 
-	parse_character_data (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_character_data (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse character data until next markup delimiter.
 		require
 			input_attached: a_input /= Void
@@ -2918,7 +2920,7 @@ feature {NONE} -- Character data and references
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_character_data_no_events (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_character_data_no_events (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse no-callback character data, or return zero when entity expansion is needed.
 		require
 			input_attached: a_input /= Void
@@ -3007,7 +3009,7 @@ feature {NONE} -- Character data and references
 			result_in_bounds: Result >= 0 and Result <= a_input.count + 1
 		end
 
-	parse_character_data_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_character_data_prefix (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse character data in a non-final prefix, stopping before incomplete references.
 		require
 			input_attached: a_input /= Void
@@ -3160,7 +3162,7 @@ feature {NONE} -- Character data and references
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	append_reference_in_content (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
+	append_reference_in_content (a_input: STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
 			-- Expand a reference in element content.
 		require
 			input_attached: a_input /= Void
@@ -3225,7 +3227,7 @@ feature {NONE} -- Character data and references
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	append_reference_in_literal (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
+	append_reference_in_literal (a_input: STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
 			-- Expand a reference in an attribute value or entity literal.
 		require
 			input_attached: a_input /= Void
@@ -3643,7 +3645,7 @@ feature {NONE} -- Character data and references
 				and then not (parameter_entities_unless_standalone and then xml_standalone = 1)
 		end
 
-	parse_entity_content (a_content: READABLE_STRING_8)
+	parse_entity_content (a_content: STRING_8)
 			-- Parse replacement text as included content.
 		require
 			content_attached: a_content /= Void
@@ -3672,7 +3674,7 @@ feature {NONE} -- Character data and references
 			end
 		end
 
-	expand_literal_text (a_content: READABLE_STRING_8; a_text: STRING_8)
+	expand_literal_text (a_content: STRING_8; a_text: STRING_8)
 			-- Expand replacement text as literal character data.
 		require
 			content_attached: a_content /= Void
@@ -3712,7 +3714,7 @@ feature {NONE} -- Character data and references
 
 feature {NONE} -- DTD entity declarations
 
-	looks_like_external_subset (a_input: READABLE_STRING_8): BOOLEAN
+	looks_like_external_subset (a_input: STRING_8): BOOLEAN
 			-- Does `a_input' start with DTD-subset content rather than parsed XML content?
 		require
 			input_attached: a_input /= Void
@@ -3767,7 +3769,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	process_internal_subset (a_subset: READABLE_STRING_8)
+	process_internal_subset (a_subset: STRING_8)
 			-- Internal subsets, internal parameter replacements and INCLUDE bodies cannot have text declarations.
 		require
 			subset_attached: a_subset /= Void
@@ -3775,7 +3777,7 @@ feature {NONE} -- DTD entity declarations
 			process_dtd_subset (a_subset, False)
 		end
 
-	process_dtd_subset (a_subset: READABLE_STRING_8; a_allow_text_declaration: BOOLEAN)
+	process_dtd_subset (a_subset: STRING_8; a_allow_text_declaration: BOOLEAN)
 			-- Process declarations; only an external resource entry may begin with a text declaration.
 		require
 			subset_attached: a_subset /= Void
@@ -3785,7 +3787,7 @@ feature {NONE} -- DTD entity declarations
 			l_text: STRING_8
 			l_target_end, l_data_start: INTEGER
 			l_target, l_data: STRING_8
-			l_subset: READABLE_STRING_8
+			l_subset: STRING_8
 			l_expanded: detachable STRING_8
 			l_reference, l_reference_end, l_old_count: INTEGER
 			l_edits: ARRAYED_LIST [TUPLE [reference_index, old_count, new_count: INTEGER]]
@@ -3926,7 +3928,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	next_dtd_declaration_parameter_reference (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	next_dtd_declaration_parameter_reference (a_subset: STRING_8; a_start_index: INTEGER): INTEGER
 			-- First PE outside literals in this declaration, or in a conditional header.
 			-- A parameter declaration's percent marker is followed by whitespace, not a name.
 		local
@@ -3951,7 +3953,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	dtd_subset_with_parameter_reference (a_subset: READABLE_STRING_8; a_reference: INTEGER): detachable STRING_8
+	dtd_subset_with_parameter_reference (a_subset: STRING_8; a_reference: INTEGER): detachable STRING_8
 			-- Expand one inline PE and keep the unconsumed stream, including any split delimiter.
 			-- Unknown references remain for the nonvalidating declaration-skip rules.
 		local
@@ -3981,7 +3983,7 @@ feature {NONE} -- DTD entity declarations
 	expanded_dtd_parameter_value (a_name: READABLE_STRING_8): detachable STRING_8
 			-- Token replacement for an inline PE. Quoted spans are left for their own grammar.
 		local
-			l_value: detachable READABLE_STRING_8
+			l_value: detachable STRING_8
 			l_external_value: STRING_8
 			l_end, i: INTEGER
 			l_name: STRING_8
@@ -4040,7 +4042,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	validate_processing_instruction_target (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER)
+	validate_processing_instruction_target (a_input: STRING_8; a_start_index, a_end_index: INTEGER)
 			-- Check the target of a processing instruction (not an XML declaration) that
 			-- starts at `a_start_index' and whose "?>" begins at `a_end_index'.
 		require
@@ -4067,7 +4069,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	process_internal_subset_prefix (a_subset: READABLE_STRING_8; a_allow_text_declaration: BOOLEAN)
+	process_internal_subset_prefix (a_subset: STRING_8; a_allow_text_declaration: BOOLEAN)
 			-- Process only complete declaration tokens in a non-final subset.
 		require
 			subset_attached: a_subset /= Void
@@ -4080,7 +4082,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	parse_conditional_section (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_conditional_section (a_subset: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse a DTD conditional section.
 		require
 			subset_attached: a_subset /= Void
@@ -4162,7 +4164,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_subset.count + 1
 		end
 
-	find_conditional_section_end (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	find_conditional_section_end (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Closing marker of a possibly nested conditional section.
 		local
 			i, l_depth: INTEGER
@@ -4188,7 +4190,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	has_partial_utf8_tail (a_input: READABLE_STRING_8): BOOLEAN
+	has_partial_utf8_tail (a_input: STRING_8): BOOLEAN
 		local
 			i: INTEGER
 		do
@@ -4202,7 +4204,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	starts_xml_declaration_at (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+	starts_xml_declaration_at (a_input: STRING_8; a_start_index: INTEGER): BOOLEAN
 			-- Does `a_input' contain an XML declaration PI at `a_start_index'?
 		require
 			input_attached: a_input /= Void
@@ -4225,7 +4227,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	external_parameter_literal_content_start (a_input: READABLE_STRING_8): INTEGER
+	external_parameter_literal_content_start (a_input: STRING_8): INTEGER
 			-- First significant content byte after an optional text declaration.
 		require
 			input_attached: a_input /= Void
@@ -4247,7 +4249,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result >= 1 and Result <= a_input.count + 1
 		end
 
-	is_incomplete_utf8_sequence_at (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+	is_incomplete_utf8_sequence_at (a_input: STRING_8; a_start_index: INTEGER): BOOLEAN
 			-- Does a UTF-8 leading byte at `a_start_index' lack enough trailing bytes?
 		require
 			input_attached: a_input /= Void
@@ -4288,7 +4290,7 @@ feature {NONE} -- DTD entity declarations
 			Result := a_code >= 128 and then a_code <= 191
 		end
 
-	utf8_character_length (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	utf8_character_length (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Byte length of the UTF-8 sequence at `a_start_index' when it encodes an XML character,
 			-- which is then available as `last_utf8_code'; 0 when the bytes are not well-formed
 			-- UTF-8 or the character is not allowed in XML; -1 when the sequence is well-formed
@@ -4571,23 +4573,25 @@ feature {NONE} -- DTD entity declarations
 			l_end: INTEGER
 			i: INTEGER
 			l_close: INTEGER
+			l_input: STRING_8
 		do
+			l_input := string_8_input (a_input)
 			create Result.make_empty
 			if
-				has_at (a_input, a_start_index, "<?xml") and then a_start_index + 5 <= a_input.count
-				and then is_xml_space (a_input.item (a_start_index + 5))
+				has_at (l_input, a_start_index, "<?xml") and then a_start_index + 5 <= l_input.count
+				and then is_xml_space (l_input.item (a_start_index + 5))
 			then
-				l_end := find_sequence (a_input, "?>", a_start_index + 5)
+				l_end := find_sequence (l_input, "?>", a_start_index + 5)
 				if l_end > 0 then
-					i := find_sequence (a_input, "encoding", a_start_index + 5)
+					i := find_sequence (l_input, "encoding", a_start_index + 5)
 					if i > 0 and then i < l_end then
-						i := skip_spaces (a_input, i + 8)
-						if i < l_end and then a_input.item (i) = '=' then
-							i := skip_spaces (a_input, i + 1)
-							if i < l_end and then is_quote (a_input.item (i)) then
-								l_close := find_character (a_input, a_input.item (i), i + 1)
+						i := skip_spaces (l_input, i + 8)
+						if i < l_end and then l_input.item (i) = '=' then
+							i := skip_spaces (l_input, i + 1)
+							if i < l_end and then is_quote (l_input.item (i)) then
+								l_close := find_character (l_input, l_input.item (i), i + 1)
 								if l_close > 0 and then l_close < l_end then
-									Result.append (a_input.substring (i + 1, l_close - 1))
+									Result.append (l_input.substring (i + 1, l_close - 1))
 									Result.to_lower
 								end
 							end
@@ -4712,7 +4716,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	parse_element_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_element_declaration (a_subset: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse an element declaration and emit its content model.
 		require
 			subset_attached: a_subset /= Void
@@ -4786,7 +4790,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_subset.count + 1
 		end
 
-	parse_content_particle (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_top_level: BOOLEAN): INTEGER
+	parse_content_particle (a_subset: STRING_8; a_start_index, a_end_index: INTEGER; a_top_level: BOOLEAN): INTEGER
 			-- Parse content-model groups with an explicit stack, including very deep groups.
 		require
 			subset_attached: a_subset /= Void
@@ -4886,7 +4890,7 @@ feature {NONE} -- DTD entity declarations
 			error_at_end: has_error implies Result = a_end_index + 1
 		end
 
-	parse_mixed_content_particle (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_top_level: BOOLEAN): INTEGER
+	parse_mixed_content_particle (a_subset: STRING_8; a_start_index, a_end_index: INTEGER; a_top_level: BOOLEAN): INTEGER
 			-- Parse one element-content particle and store it in `parsed_content_model'.
 			-- Only the top-level group of a content model may be mixed content (#PCDATA).
 			-- On error the result is `a_end_index + 1'.
@@ -5041,7 +5045,7 @@ feature {NONE} -- DTD entity declarations
 			error_at_end: has_error implies Result = a_end_index + 1
 		end
 
-	apply_content_quantifier (a_model: XP_CONTENT_MODEL; a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
+	apply_content_quantifier (a_model: XP_CONTENT_MODEL; a_subset: STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
 			-- Apply optional quantifier at `a_start_index' and return next index.
 		require
 			model_attached: a_model /= Void
@@ -5065,7 +5069,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result >= a_start_index and Result <= a_end_index + 1
 		end
 
-	parse_notation_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_notation_declaration (a_subset: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse a notation declaration and emit it.
 		require
 			subset_attached: a_subset /= Void
@@ -5155,7 +5159,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_subset.count + 1
 		end
 
-	parse_attlist_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_attlist_declaration (a_subset: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse an attribute-list declaration and emit one callback per attribute definition.
 		require
 			subset_attached: a_subset /= Void
@@ -5288,7 +5292,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_subset.count + 1
 		end
 
-	skip_declaration_for_undefined_parameter (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): BOOLEAN
+	skip_declaration_for_undefined_parameter (a_subset: STRING_8; a_start_index, a_end_index: INTEGER): BOOLEAN
 			-- A non-validating external subset may skip declarations using unknown PEs.
 		local
 			i, l_end: INTEGER
@@ -5331,7 +5335,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	parse_attlist_type (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_type: STRING_8): INTEGER
+	parse_attlist_type (a_subset: STRING_8; a_start_index, a_end_index: INTEGER; a_type: STRING_8): INTEGER
 			-- Parse an attribute type and append Expat-compatible spelling to `a_type'.
 			-- On error the result is `a_end_index + 1'.
 		require
@@ -5371,7 +5375,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result > a_start_index and Result <= a_end_index + 1
 		end
 
-	append_attlist_group (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_type: STRING_8; a_names: BOOLEAN): INTEGER
+	append_attlist_group (a_subset: STRING_8; a_start_index, a_end_index: INTEGER; a_type: STRING_8; a_names: BOOLEAN): INTEGER
 			-- Parse an enumeration ('(' S? Nmtoken (S? '|' S? Nmtoken)* S? ')') or, when `a_names',
 			-- a notation group of Names, and append it to `a_type' with whitespace removed.
 			-- On error the result is `a_end_index + 1'.
@@ -5431,7 +5435,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result > a_start_index and Result <= a_end_index + 1
 		end
 
-	scan_nmtoken (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	scan_nmtoken (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Index immediately after the Nmtoken beginning at `a_start_index';
 			-- unlike a Name, it may start with any name character.
 		require
@@ -5471,7 +5475,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	parse_attlist_default_value (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
+	parse_attlist_default_value (a_subset: STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
 			-- Parse and normalize an attribute default literal bounded by `a_end_index'.
 		require
 			subset_attached: a_subset /= Void
@@ -5663,7 +5667,7 @@ feature {NONE} -- DTD entity declarations
 			no_trailing_space: not a_value.is_empty implies a_value.item (a_value.count) /= ' '
 		end
 
-	parse_entity_declaration (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	parse_entity_declaration (a_subset: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Parse an internal-subset entity declaration.
 		require
 			subset_attached: a_subset /= Void
@@ -5769,7 +5773,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_subset.count + 1
 		end
 
-	parse_external_entity_declaration (a_subset: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN): INTEGER
+	parse_external_entity_declaration (a_subset: STRING_8; a_start_index, a_end_index: INTEGER; a_name: READABLE_STRING_8; a_is_parameter: BOOLEAN): INTEGER
 			-- Parse external ID and optional NDATA for entity `a_name'.
 		require
 			subset_attached: a_subset /= Void
@@ -5860,7 +5864,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_subset.count + 1
 		end
 
-	parse_entity_literal (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_quote: CHARACTER_8; a_value: STRING_8): INTEGER
+	parse_entity_literal (a_input: STRING_8; a_start_index: INTEGER; a_quote: CHARACTER_8; a_value: STRING_8): INTEGER
 			-- Parse an entity value literal, expanding character and parameter references.
 		require
 			input_attached: a_input /= Void
@@ -5914,7 +5918,7 @@ feature {NONE} -- DTD entity declarations
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	append_reference_in_entity_value (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
+	append_reference_in_entity_value (a_input: STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
 			-- Expand character references and bypass general references in an entity value.
 		require
 			input_attached: a_input /= Void
@@ -6001,7 +6005,7 @@ feature {NONE} -- DTD entity declarations
 			current_entity_literal_accounting_adjustment := l_adjustment + expanded_entity_bytes - l_accounting_start - (a_text.count - l_output_start)
 		end
 
-	append_parameter_reference_in_entity_value (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
+	append_parameter_reference_in_entity_value (a_input: STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
 			-- Expand parameter entity reference in an entity value.
 		require
 			input_attached: a_input /= Void
@@ -6074,7 +6078,7 @@ feature {NONE} -- DTD entity declarations
 			end
 		end
 
-	include_parameter_entity_in_subset (a_subset: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	include_parameter_entity_in_subset (a_subset: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Include a parameter entity reference in the internal subset.
 		require
 			subset_attached: a_subset /= Void
@@ -6277,7 +6281,7 @@ feature {NONE} -- Event dispatch
 			depth_bounded: element_stack.count <= max_element_depth
 		end
 
-	open_element_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER)
+	open_element_range (a_input: STRING_8; a_name_start, a_name_end: INTEGER)
 			-- Push an element name represented as a range in `a_input' without materializing it.
 		require
 			input_attached: a_input /= Void
@@ -6346,7 +6350,7 @@ feature {NONE} -- Event dispatch
 			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
 		end
 
-	close_element_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER)
+	close_element_range (a_input: STRING_8; a_name_start, a_name_end: INTEGER)
 			-- Pop an end tag name represented as a range in `a_input' without materializing it.
 		require
 			input_attached: a_input /= Void
@@ -6367,7 +6371,7 @@ feature {NONE} -- Event dispatch
 			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
 		end
 
-	open_element_matches_range (a_input: READABLE_STRING_8; a_name_start, a_name_end: INTEGER): BOOLEAN
+	open_element_matches_range (a_input: STRING_8; a_name_start, a_name_end: INTEGER): BOOLEAN
 			-- Does the current open element match `a_input [a_name_start..a_name_end]'?
 		require
 			input_attached: a_input /= Void
@@ -6432,7 +6436,7 @@ feature {NONE} -- Event dispatch
 			end
 		end
 
-	emit_default_range (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER)
+	emit_default_range (a_input: STRING_8; a_start_index, a_end_index: INTEGER)
 			-- Emit raw default-handler text for `a_input [a_start_index..a_end_index]'.
 		require
 			input_attached: a_input /= Void
@@ -6444,7 +6448,7 @@ feature {NONE} -- Event dispatch
 			end
 		end
 
-	emit_doctype_default_open (a_input: READABLE_STRING_8; a_start_index, a_name_start, a_name_end, a_subset_start, a_doctype_end: INTEGER)
+	emit_doctype_default_open (a_input: STRING_8; a_start_index, a_name_start, a_name_end, a_subset_start, a_doctype_end: INTEGER)
 			-- Emit Expat-shaped default-handler chunks before a doctype subset.
 		require
 			input_attached: a_input /= Void
@@ -6471,7 +6475,7 @@ feature {NONE} -- Event dispatch
 			end
 		end
 
-	emit_doctype_default_tail (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER)
+	emit_doctype_default_tail (a_input: STRING_8; a_start_index, a_end_index: INTEGER)
 			-- Emit names, whitespace and complete quoted external identifiers separately.
 		local
 			i, l_end: INTEGER
@@ -6515,7 +6519,7 @@ feature {NONE} -- Event dispatch
 			end
 		end
 
-	emit_internal_entity_declaration_default (a_subset: READABLE_STRING_8; a_start_index, a_name_start, a_name_end, a_literal_start, a_literal_end, a_declaration_end: INTEGER)
+	emit_internal_entity_declaration_default (a_subset: STRING_8; a_start_index, a_name_start, a_name_end, a_literal_start, a_literal_end, a_declaration_end: INTEGER)
 			-- Emit Expat-shaped default-handler chunks for an internal ENTITY declaration.
 		require
 			subset_attached: a_subset /= Void
@@ -6997,11 +7001,18 @@ feature {NONE} -- Scanning
 			c: CHARACTER_8
 			l_needs_copy: BOOLEAN
 			l_length: INTEGER
-			l_source: READABLE_STRING_8
+			l_decoded: READABLE_STRING_8
+			l_source: STRING_8
 		do
 			last_invalid_character_index := 0
-			l_source := decoded_input (a_input)
-			if a_allow_alias and then l_source = a_input then
+			l_decoded := decoded_input (a_input)
+				-- Read through a STRING_8: calls on it are statically bound (#20).
+			if attached {STRING_8} l_decoded as l_decoded_string then
+				l_source := l_decoded_string
+			else
+				create l_source.make_from_string (l_decoded)
+			end
+			if a_allow_alias and then l_decoded = a_input then
 				if
 					not input_byte_order_mark_removed
 					and then l_source.count >= 3
@@ -7028,7 +7039,7 @@ feature {NONE} -- Scanning
 						if c.code >= 32 or else c = '%T' or else c = '%N' then
 							i := i + 1
 						else
-							if l_source = a_input then
+							if l_decoded = a_input then
 								last_invalid_character_index := i
 							end
 							set_error ("invalid XML character")
@@ -7041,7 +7052,7 @@ feature {NONE} -- Scanning
 						elseif l_length < 0 then
 							i := l_source.count + 1
 						else
-							if l_source = a_input then
+							if l_decoded = a_input then
 								last_invalid_character_index := i
 							end
 							set_error ("invalid XML character")
@@ -7052,7 +7063,7 @@ feature {NONE} -- Scanning
 					l_source.count - i + 1
 				end
 			end
-			if a_allow_alias and then l_source = a_input and then not has_error and then not l_needs_copy and then attached {STRING_8} a_input as l_string then
+			if a_allow_alias and then l_decoded = a_input and then not has_error and then not l_needs_copy and then attached {STRING_8} a_input as l_string then
 				Result := l_string
 			else
 				create Result.make (l_source.count)
@@ -7060,7 +7071,7 @@ feature {NONE} -- Scanning
 					-- UTF-16 conversion the mark is gone and a U+FEFF here is a character.
 				if
 					not input_byte_order_mark_removed
-					and then l_source = a_input
+					and then l_decoded = a_input
 					and then l_source.count >= 3
 					and then l_source.item (1).code = 239
 					and then l_source.item (2).code = 187
@@ -7089,7 +7100,7 @@ feature {NONE} -- Scanning
 							Result.append_character (c)
 							i := i + 1
 						else
-							if l_source = a_input then
+							if l_decoded = a_input then
 								last_invalid_character_index := i
 							end
 							set_error ("invalid XML character")
@@ -7104,7 +7115,7 @@ feature {NONE} -- Scanning
 							Result.append_substring (l_source, i, l_source.count)
 							i := l_source.count + 1
 						else
-							if l_source = a_input then
+							if l_decoded = a_input then
 								last_invalid_character_index := i
 							end
 							set_error ("invalid XML character")
@@ -7119,7 +7130,7 @@ feature {NONE} -- Scanning
 			result_attached: Result /= Void
 		end
 
-	scan_name (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	scan_name (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- Index immediately after the XML name beginning at `a_start_index'.
 			-- Non-ASCII characters are decoded; one that is not allowed at its position in a
 			-- name is an error, since markup never continues a name with a non-ASCII character.
@@ -7179,7 +7190,7 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	skip_spaces_before_literal (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_message: READABLE_STRING_8): INTEGER
+	skip_spaces_before_literal (a_input: STRING_8; a_start_index: INTEGER; a_message: READABLE_STRING_8): INTEGER
 			-- First non-XML-space index at or after `a_start_index'; reports `a_message'
 			-- when a quoted literal follows a keyword or literal without whitespace.
 			-- Callers report a missing literal themselves.
@@ -7198,7 +7209,7 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result >= a_start_index and Result <= a_input.count + 1
 		end
 
-	input_range_same_string (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_text: READABLE_STRING_8): BOOLEAN
+	input_range_same_string (a_input: STRING_8; a_start_index, a_end_index: INTEGER; a_text: READABLE_STRING_8): BOOLEAN
 			-- Is `a_input [a_start_index..a_end_index]' equal to `a_text'?
 		require
 			input_attached: a_input /= Void
@@ -7230,7 +7241,7 @@ feature {NONE} -- Scanning
 			end
 		end
 
-	input_ranges_same (a_input: READABLE_STRING_8; a_left_start, a_left_end, a_right_start, a_right_end: INTEGER): BOOLEAN
+	input_ranges_same (a_input: STRING_8; a_left_start, a_left_end, a_right_start, a_right_end: INTEGER): BOOLEAN
 			-- Are the two ranges in `a_input' equal?
 		require
 			input_attached: a_input /= Void
@@ -7295,7 +7306,7 @@ feature {NONE} -- Scanning
 				or else (l_code >= 128 and l_code <= 255)
 		end
 
-	skip_spaces (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	skip_spaces (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- First non-XML-space index at or after `a_start_index'.
 		require
 			input_attached: a_input /= Void
@@ -7319,7 +7330,7 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result >= a_start_index and Result <= a_input.count + 1
 		end
 
-	skip_required_spaces (a_input: READABLE_STRING_8; a_start_index: INTEGER; a_message: READABLE_STRING_8): INTEGER
+	skip_required_spaces (a_input: STRING_8; a_start_index: INTEGER; a_message: READABLE_STRING_8): INTEGER
 			-- First non-XML-space index after the whitespace at `a_start_index';
 			-- reports `a_message' when there is no whitespace there.
 		require
@@ -7338,7 +7349,7 @@ feature {NONE} -- Scanning
 			space_or_error: Result > a_start_index or has_error
 		end
 
-	find_sequence (a_input, a_marker: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	find_sequence (a_input: STRING_8; a_marker: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
 			-- First index of `a_marker' at or after `a_start_index', or 0.
 		require
 			input_attached: a_input /= Void
@@ -7370,7 +7381,7 @@ feature {NONE} -- Scanning
 			not_found_or_valid: Result = 0 or else has_at (a_input, Result, a_marker)
 		end
 
-	find_character (a_input: READABLE_STRING_8; a_character: CHARACTER_8; a_start_index: INTEGER): INTEGER
+	find_character (a_input: STRING_8; a_character: CHARACTER_8; a_start_index: INTEGER): INTEGER
 			-- First index of `a_character' at or after `a_start_index', or 0.
 		require
 			input_attached: a_input /= Void
@@ -7398,7 +7409,7 @@ feature {NONE} -- Scanning
 			not_found_or_valid: Result = 0 or else a_input.item (Result) = a_character
 		end
 
-	find_markup_declaration_end (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	find_markup_declaration_end (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- End of a declaration that may contain quoted `>' characters.
 		require
 			input_attached: a_input /= Void
@@ -7438,7 +7449,7 @@ feature {NONE} -- Scanning
 			end
 		end
 
-	is_incomplete_markup_prefix (a_input: READABLE_STRING_8; a_start_index: INTEGER): BOOLEAN
+	is_incomplete_markup_prefix (a_input: STRING_8; a_start_index: INTEGER): BOOLEAN
 			-- Does markup at `a_start_index' lack its closing delimiter in this non-final prefix?
 		require
 			input_attached: a_input /= Void
@@ -7461,7 +7472,7 @@ feature {NONE} -- Scanning
 			Result := l_end = 0
 		end
 
-	complete_dtd_prefix_end (a_subset: READABLE_STRING_8): INTEGER
+	complete_dtd_prefix_end (a_subset: STRING_8): INTEGER
 			-- Last index that belongs to a complete DTD token prefix.
 		require
 			subset_attached: a_subset /= Void
@@ -7534,7 +7545,7 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result >= 0 and Result <= a_subset.count
 		end
 
-	find_doctype_end (a_input: READABLE_STRING_8; a_start_index: INTEGER): INTEGER
+	find_doctype_end (a_input: STRING_8; a_start_index: INTEGER): INTEGER
 			-- End of a doctype declaration with an optional internal subset.
 		require
 			input_attached: a_input /= Void
@@ -7584,7 +7595,7 @@ feature {NONE} -- Scanning
 			end
 		end
 
-	index_after_subset_comment_or_pi (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
+	index_after_subset_comment_or_pi (a_input: STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
 			-- Index after the comment or processing instruction at `a_start_index', or
 			-- `a_end_index + 1' when it is not terminated by `a_end_index'.
 		require
@@ -7613,7 +7624,7 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result <= a_end_index + 1
 		end
 
-	find_unquoted_character (a_input: READABLE_STRING_8; a_character: CHARACTER_8; a_start_index, a_end_index: INTEGER): INTEGER
+	find_unquoted_character (a_input: STRING_8; a_character: CHARACTER_8; a_start_index, a_end_index: INTEGER): INTEGER
 			-- First unquoted `a_character' in `a_input' between the given bounds, or 0.
 		require
 			input_attached: a_input /= Void
@@ -7652,7 +7663,7 @@ feature {NONE} -- Scanning
 			end
 		end
 
-	find_subset_end (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
+	find_subset_end (a_input: STRING_8; a_start_index, a_end_index: INTEGER): INTEGER
 			-- Matching unquoted `]' before `a_end_index', or 0. Comments and processing
 			-- instructions are skipped, so quotes inside them do not start literals.
 		require
@@ -7694,7 +7705,7 @@ feature {NONE} -- Scanning
 			end
 		end
 
-	read_quoted_literal (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
+	read_quoted_literal (a_input: STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
 			-- Read quoted literal starting at `a_start_index' and return index after closing quote.
 		require
 			input_attached: a_input /= Void
@@ -7740,7 +7751,7 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	read_public_id_literal (a_input: READABLE_STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
+	read_public_id_literal (a_input: STRING_8; a_start_index, a_end_index: INTEGER; a_value: STRING_8): INTEGER
 			-- Read public identifier literal and reject characters outside XML `PubidChar'.
 		require
 			input_attached: a_input /= Void
@@ -7764,7 +7775,22 @@ feature {NONE} -- Scanning
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	has_at (a_input: READABLE_STRING_8; a_index: INTEGER; a_marker: READABLE_STRING_8): BOOLEAN
+	string_8_input (a_input: READABLE_STRING_8): STRING_8
+			-- `a_input' itself when it is a STRING_8, else a copy. The scanners take STRING_8 so that
+			-- their character access is statically bound (#20).
+		require
+			input_attached: a_input /= Void
+		do
+			if attached {STRING_8} a_input as l_string then
+				Result := l_string
+			else
+				create Result.make_from_string (a_input)
+			end
+		ensure
+			same_characters: Result.same_string (a_input)
+		end
+
+	has_at (a_input: STRING_8; a_index: INTEGER; a_marker: READABLE_STRING_8): BOOLEAN
 			-- Does `a_marker' appear at `a_index' in `a_input'?
 		require
 			input_attached: a_input /= Void
@@ -7791,7 +7817,7 @@ feature {NONE} -- Scanning
 			end
 		end
 
-	is_incomplete_marker_at_end (a_input: READABLE_STRING_8; a_index: INTEGER; a_marker: READABLE_STRING_8): BOOLEAN
+	is_incomplete_marker_at_end (a_input: STRING_8; a_index: INTEGER; a_marker: READABLE_STRING_8): BOOLEAN
 			-- Does input ending at `a_input.count' contain a proper prefix of `a_marker' at `a_index'?
 		require
 			input_attached: a_input /= Void
@@ -7820,7 +7846,7 @@ feature {NONE} -- Scanning
 			end
 		end
 
-	has_keyword_at (a_input: READABLE_STRING_8; a_index: INTEGER; a_keyword: READABLE_STRING_8): BOOLEAN
+	has_keyword_at (a_input: STRING_8; a_index: INTEGER; a_keyword: READABLE_STRING_8): BOOLEAN
 			-- Does keyword `a_keyword' appear at `a_index' with a token boundary after it?
 		require
 			input_attached: a_input /= Void
@@ -7864,7 +7890,7 @@ feature {NONE} -- Character and name validation
 			Result := element_stack.count = 0 and then not parsing_external_entity and then document_element_count > 0
 		end
 
-	set_outside_document_text_error (a_input: READABLE_STRING_8; a_start_index: INTEGER)
+	set_outside_document_text_error (a_input: STRING_8; a_start_index: INTEGER)
 			-- Report the text that starts at `a_start_index' outside the document element, at its first
 			-- character that is not white space, with or without callbacks (#124). After the document
 			-- element it is Expat's "junk after document element" (code 9); before it, character data
@@ -7911,7 +7937,9 @@ feature {NONE} -- Character and name validation
 			name_attached: a_name /= Void
 		local
 			i, l_length: INTEGER
+			l_name: STRING_8
 		do
+			l_name := string_8_input (a_name)
 			if a_name.count > 0 and then a_name.count <= max_name_length then
 				from
 					Result := True
@@ -7919,7 +7947,7 @@ feature {NONE} -- Character and name validation
 				until
 					i > a_name.count or not Result
 				loop
-					l_length := utf8_character_length (a_name, i)
+					l_length := utf8_character_length (l_name, i)
 					if l_length > 0 then
 						if i = 1 then
 							Result := is_name_start_code (last_utf8_code)

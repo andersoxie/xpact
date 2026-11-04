@@ -1,0 +1,6 @@
+    reported from C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\basic_tests.c, line 5853
+
+FAIL [chunksize=1 deferral=1]: test_deep_nested_attribute_entity (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\basic_tests.c:5853)
+ERROR: Second external parser unexpectedly created
+FAIL [chunksize=0 deferral=0]: test_alloc_dtd_copy_default_atts (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\handlers.c:1351)
+ERROR: Not all handlers were called
