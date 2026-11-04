@@ -538,14 +538,13 @@ feature {NONE} -- Byte conversion
 			-- Copy `a_length' bytes from `a_bytes' into an Eiffel string.
 		require
 			valid_range: valid_bytes (a_bytes, a_length)
-		local
-			l_bytes: C_STRING
 		do
 			if a_length = 0 then
 				create Result.make_empty
 			else
-				create l_bytes.make_by_pointer_and_count (a_bytes, a_length)
-				Result := l_bytes.substring_8 (1, a_length)
+					-- One copy, NUL bytes included; a C_STRING would copy twice (mass-xpact #43).
+				create Result.make (a_length)
+				Result.from_c_substring (a_bytes, 1, a_length)
 			end
 		ensure
 			result_attached: Result /= Void
