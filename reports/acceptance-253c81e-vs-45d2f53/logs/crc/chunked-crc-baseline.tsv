@@ -1,0 +1,54 @@
+﻿engine	version	mode	document	bytes	chunk_size	status	error_code	error_text	byte_index	line	column	semantic_crc	trace_crc	events	text_bytes
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	1	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	2	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	3	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	4	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	5	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	7	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	8	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	16	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	31	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	64	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	127	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	1024	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	4096	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	direct	generated-catalog	138	138	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+engine	version	mode	document	bytes	chunk_size	status	error_code	error_text	byte_index	line	column	semantic_crc	trace_crc	events	text_bytes
+expat-compatible	expat_2.8.1	direct	doc-rich.xml	131167	64	OK	0	no error	128760	2408	0	b5723dfb	72f164b2	8154	80071
+expat-compatible	expat_2.8.1	direct	doc-rich.xml	131167	127	OK	0	no error	128760	2408	0	b5723dfb	fe06b0e7	7764	80071
+expat-compatible	expat_2.8.1	direct	doc-rich.xml	131167	1024	OK	0	no error	128760	2408	0	b5723dfb	6a8bf1ab	7273	80071
+expat-compatible	expat_2.8.1	direct	doc-rich.xml	131167	4096	OK	0	no error	128760	2408	0	b5723dfb	53d10844	7221	80071
+expat-compatible	expat_2.8.1	direct	doc-rich.xml	131167	131167	OK	0	no error	128760	2408	0	b5723dfb	5be34702	7203	80071
+engine	version	mode	document	bytes	chunk_size	status	error_code	error_text	byte_index	line	column	semantic_crc	trace_crc	events	text_bytes
+expat-compatible	expat_2.8.1	direct	doc-plain.xml	42841	64	OK	0	no error	42841	403	0	33f5be42	f6b3933a	3865	17781
+expat-compatible	expat_2.8.1	direct	doc-plain.xml	42841	127	OK	0	no error	42841	403	0	33f5be42	017631bc	3735	17781
+expat-compatible	expat_2.8.1	direct	doc-plain.xml	42841	1024	OK	0	no error	42841	403	0	33f5be42	3915672a	3622	17781
+expat-compatible	expat_2.8.1	direct	doc-plain.xml	42841	4096	OK	0	no error	42841	403	0	33f5be42	55eee912	3610	17781
+expat-compatible	expat_2.8.1	direct	doc-plain.xml	42841	42841	OK	0	no error	42841	403	0	33f5be42	33f5be42	3603	17781
+engine	version	mode	document	bytes	chunk_size	status	error_code	error_text	byte_index	line	column	semantic_crc	trace_crc	events	text_bytes
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	1	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	2	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	3	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	4	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	5	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	7	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	8	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	16	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	31	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	64	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	127	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	1024	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	4096	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+expat-compatible	expat_2.8.1	buffer	generated-catalog	138	138	OK	0	no error	138	3	66	3b6bc5a9	45ffd520	6	12
+engine	version	mode	document	bytes	chunk_size	status	error_code	error_text	byte_index	line	column	semantic_crc	trace_crc	events	text_bytes
+expat-compatible	expat_2.8.1	buffer	doc-rich.xml	131167	64	OK	0	no error	128760	2408	0	b5723dfb	72f164b2	8154	80071
+expat-compatible	expat_2.8.1	buffer	doc-rich.xml	131167	127	OK	0	no error	128760	2408	0	b5723dfb	fe06b0e7	7764	80071
+expat-compatible	expat_2.8.1	buffer	doc-rich.xml	131167	1024	OK	0	no error	128760	2408	0	b5723dfb	6a8bf1ab	7273	80071
+expat-compatible	expat_2.8.1	buffer	doc-rich.xml	131167	4096	OK	0	no error	128760	2408	0	b5723dfb	53d10844	7221	80071
+expat-compatible	expat_2.8.1	buffer	doc-rich.xml	131167	131167	OK	0	no error	128760	2408	0	b5723dfb	5be34702	7203	80071
+engine	version	mode	document	bytes	chunk_size	status	error_code	error_text	byte_index	line	column	semantic_crc	trace_crc	events	text_bytes
+expat-compatible	expat_2.8.1	buffer	doc-plain.xml	42841	64	OK	0	no error	42841	403	0	33f5be42	f6b3933a	3865	17781
+expat-compatible	expat_2.8.1	buffer	doc-plain.xml	42841	127	OK	0	no error	42841	403	0	33f5be42	017631bc	3735	17781
+expat-compatible	expat_2.8.1	buffer	doc-plain.xml	42841	1024	OK	0	no error	42841	403	0	33f5be42	3915672a	3622	17781
+expat-compatible	expat_2.8.1	buffer	doc-plain.xml	42841	4096	OK	0	no error	42841	403	0	33f5be42	55eee912	3610	17781
+expat-compatible	expat_2.8.1	buffer	doc-plain.xml	42841	42841	OK	0	no error	42841	403	0	33f5be42	33f5be42	3603	17781
