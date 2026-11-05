@@ -217,6 +217,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] #46: small input chunks reuse one string (219 → 200 ms, #47); #48: the UTF-16 checks are answered from a known XML declaration (198 → 184 ms, #49). Byte by byte `pr-xml-utf-8.xml`: 2,857 → 184 ms (15.5×)
    - [x] #51: long text runs in pieces were quadratic (positions counted again every call); 100 KB run 7,394 → 102 ms, `pr-xml-utf-8.xml` 184 → 145 ms (merged, #52). Byte by byte `pr-xml-utf-8.xml`: 2,857 → 145 ms (20×)
    - [x] #53: without a character-data handler, plain text after a pending text run is counted, not parsed again; 100 KB run in 16-byte pieces 1,622 → 3.6 ms (merged, #55)
+   - [x] #57: no per-call allocations in the reparse-deferral checks; byte by byte 145 → 134 ms (merged, #58). Byte by byte `pr-xml-utf-8.xml`: 2,857 → 134 ms (21×)
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
    - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
    - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
