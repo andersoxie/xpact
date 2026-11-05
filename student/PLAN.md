@@ -142,7 +142,7 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | SonarQube `HTTP 401` on Jenkins | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt) | ❓ suspected: server token | [#131](https://github.com/andersoxie/xpact/issues/131) | supervisor renews the token |
 | Malformed UTF-8: no events before the error | Expat comparison | ✔ same check as #122 (confirmed in #172) | [#123](https://github.com/andersoxie/xpact/issues/123) | 🟡 598 → 133 cases with the #172 fix; left: CDATA with the default handler (Expat delivers `<![CDATA[` first); planned together with #176 |
 | Default handler gets LF instead of the raw CR | Expat comparison | ❓ suspected: fed from the normalized input | [#126](https://github.com/andersoxie/xpact/issues/126) | investigate |
-| Error code differs from Expat on 14 W3C cases (verdict right) | G03 comparison, 2026-10-31 | ❔ unknown, probably several code paths | [#170](https://github.com/andersoxie/xpact/issues/170) | investigate |
+| Error code differs from Expat on 14 W3C cases (verdict right) | G03 comparison, 2026-10-31 | ❔ unknown, probably several code paths | [#170](https://github.com/andersoxie/xpact/issues/170) | 🟡 full comparison (3,061 W3C files, 2026-11-05): 361 code and 1,152 position differences; **verdicts 24 → 4** with mass-xpact [#64](https://github.com/CodTanium/mass-xpact/issues/64) (external entities without a handler); left: `eduni/misc/008`, `eduni/xml-1.1/008`, `ibm69n05`, `xmltest/not-wf/not-sa/002` |
 | Error column 0 (start of the line) where Expat points at the token: 22 of 32 rejections | G03 comparison, 2026-10-31 | ❓ suspected: position taken from the line or token group | [#171](https://github.com/andersoxie/xpact/issues/171) | investigate (with #122) |
 | In pieces, `]]` of a forbidden `]]>` delivered as text before the error | G03 comparison, 2026-10-31 | ❓ suspected: text flushed at a chunk boundary | [#176](https://github.com/andersoxie/xpact/issues/176) | investigate |
 
@@ -219,6 +219,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] #53: without a character-data handler, plain text after a pending text run is counted, not parsed again; 100 KB run in 16-byte pieces 1,622 → 3.6 ms (merged, #55)
    - [x] #57: no per-call allocations in the reparse-deferral checks; byte by byte 145 → 134 ms (merged, #58). Byte by byte `pr-xml-utf-8.xml`: 2,857 → 134 ms (21×)
    - [x] #60: billion-laughs protection as in Expat (amplification rule, code 43); from andersoxie#211 (merged, #62). #61 open: strict custom settings
+   - [x] #64: external entities without a handler skipped as in Expat, not code 21; Expat verdict differences 24 → 4 over 3,061 W3C files (merged, #65)
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
    - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
    - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
