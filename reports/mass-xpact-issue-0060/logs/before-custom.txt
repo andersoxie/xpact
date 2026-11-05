@@ -1,0 +1,8 @@
+laughs-3.xml	181 bytes	accepted	code 0	-	1.8 ms
+laughs-4.xml	225 bytes	accepted	code 0	-	14.4 ms
+laughs-5.xml	269 bytes	accepted	code 0	-	139.7 ms
+laughs-6.xml	313 bytes	rejected	code 2	syntax error	894.5 ms
+laughs-8.xml	401 bytes	rejected	code 2	syntax error	1011.1 ms
+big-low-factor.xml	1012036 bytes	rejected	code 2	syntax error	62.4 ms
+under-threshold.xml	7380 bytes	accepted	code 0	-	33.8 ms
+over-threshold.xml	7386 bytes	rejected	code 2	syntax error	35.7 ms
