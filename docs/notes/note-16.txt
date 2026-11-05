@@ -1,0 +1,59 @@
+NOTE 16 - 2026-11-05 - acceptance run against andersoxie student-Mass (#67): 3 regressions found and fixed, fuzzing
+
+SHORT
+- Question: is our student-Mass as good as andersoxie student-Mass (253c81e) before the work moves
+  there? Answer: yes, as good or better on every check, none worse
+  (reports/acceptance-253c81e-vs-45d2f53/report.md, PR #78).
+- Method: reuse every result recorded for 253c81e at the start (reports/mass-xpact-issue-0002/),
+  run the missing ones on the baseline DLLs kept in build/baseline/, and build only what needs
+  the source (Eiffel matrix, benchmark runner) in a local worktree (build/wt-253c81e, never pushed).
+  Expat 2.8.1 compiled into the probes is the referee.
+- Found on the way, all fixed and merged before the final report:
+  #68 (PR #71) regression from #2: between calls the position pointed inside unfinished markup.
+       26,295 calls worse than 253c81e byte by byte. Now 122,827 calls = Expat (253c81e 122,310).
+  #69 (PR #70) regression from #64: 3 Eiffel matrix assertions. One test expected a skipped-entity
+       callback that real Expat does not make (checked: 6/6 cases, we match Expat).
+  #72 (PR #76) in both versions, found by fuzzing: the assertions DLL died on `</£` and on
+       `(#PCDATA>` (parse_end_tag returned 0; a loop variant did not decrease on the error).
+- Opened: #73 (no trace for an unrescued exception in a DLL call: the root jmp_buf lives in the
+  returned DllMain frame), #74 (error code depends on the pieces, 63 of 20,000 fuzzed documents),
+  #75 (not thread-safe: 2 threads crash), #77 (matrix lane 4 stops in a full run, passes alone).
+
+COMPARE STEP BY STEP AND END TO END
+- Every fix had been compared with the build before it. The end-to-end comparison still found
+  2 regressions and 1 undocumented change (a DLL test row, failed call 6 -> 5, = Expat, from #2;
+  the #2 report compared pass counts, not rows). Compare rows, not totals.
+- A probe that only gives a checksum says "changed", not "better or worse". callpos.c prints the
+  position after every call; cpcmp.py scores each call against Expat. That is what showed #68.
+- Bisect over the saved builds (build/fixNN, build/work*): run the same probe on every saved DLL
+  and look where the number changes. Found the #2 origin of #68 and of the DLL row in minutes.
+
+FUZZING (reports/mass-xpact-issue-0072/logs/tools/)
+- fuzzgen.py <seed list> <out> 20000 67: mutations of the W3C files <= 4 KB, deterministic.
+- fuzzprobe.c: each document whole, 1-byte, 7-byte and seeded random pieces, with handlers;
+  text concatenated in the digest so callback splits do not count as differences.
+- fuzzrun.py: restarts the probe after a crash or hang and records the file.
+- fuzzcmp.py: per engine against Expat; baseline -> ours changes judged by Expat.
+- shrink.py: removes bytes while the probe still dies. 400-byte documents -> `</£`.
+- exprobe.c + relink-map2.ps1 + mapstack.py: the stack of a crash without a trace, with names.
+
+TRAPS
+- Backslashes: a Windows path in a bash variable passed to Python lost its backslashes; every
+  baseline fuzz run "crashed" with 0xC0000135 (DLL not found). Use cygpath -w.
+- PowerShell jobs (Start-Job) stop on the Eiffel compiler's stderr. Run the matrix with
+  powershell.exe -File from bash instead.
+- run_benchmarks.ps1 takes the first `python` on PATH (here the Store placeholder): put the uv
+  Python first. With -SkipBuild it uses build\native-eiffel, which was an old 2026-11-03 build:
+  copy the DLL under test there first. It also rewrites docs/benchmarks.md: restore it.
+- One benchmark run gave 623 ms against 130 ms; three alternating reruns gave 124-126. Always
+  repeat a surprising timing before reporting it.
+
+NUMBERS (253c81e -> 45d2f53)
+- DLL tests 4,308 x 2 all pass; Expat runtests 399, same 38; matrix 4/4; W3C conformance 1,974
+  pass, identical per case; Test 2 ok 2,561 -> 2,564; Expat verdicts 3,037 -> 3,057 of 3,061;
+  fuzz crashes production 0 / 0, assertions 7 -> 0.
+- doc-rich.xml (131 KB) byte by byte: 3,024 s (50 min) -> 106 ms. Native DLL callbacks ~4x,
+  tokenizer ~5x.
+
+NOT DONE
+- Linux (no WSL), other machines, more fuzz seeds; #20 left out on request.

@@ -3,6 +3,8 @@
 Working notes from the 2026-11-03/04 sessions that made XPact faster. Each fix has its own issue,
 PR and report; the notes record the order of the work, the traps, and how to repeat the checks.
 
+> **Updated 2026-11-05 (evening).** ✅ Speed work done (21× byte by byte), then correctness: billion laughs (#60), external entities (#64), and the **acceptance run against andersoxie `253c81e`** (#67): [report](../../reports/acceptance-253c81e-vs-45d2f53/report.md), as good or better on every check. Notes [15](note-15.txt) and [16](note-16.txt).
+>
 > **Updated 2026-11-04 (evening).** ✅ **All speed PRs are merged into `student-Mass`** (`8ccf51b`; #21 later the same evening) and
 > verified together: [post-merge check](../../reports/mass-xpact-merge-2026-11-04/report.md). The GC heap corruption (#20)
 > turned out to be **already in `student-Mass`** (equal-load test), so it did not block #16 and #18 after all.
@@ -102,6 +104,8 @@ Retarget a stacked PR **before** deleting the branch under it, or GitHub closes 
 | [note-12.txt](note-12.txt) | 2026-11-04 | #20 is **pre-existing** (equal-load test); watchpoint found the `BOOLEAN` table; everything merged |
 | [note-13.txt](note-13.txt) | 2026-11-04 | Speed rounds #31, #34, #37, #40: **byte by byte 12× faster**; how a profile round goes |
 | [note-14.txt](note-14.txt) | 2026-11-05 | **Long text runs were quadratic** (#51, up to 72× faster); profile with handlers too |
+| [note-15.txt](note-15.txt) | 2026-11-05 | End of the speed rounds (#57, **21×**); **billion laughs as Expat** (#60); external entities without a handler (#64); how the Expat comparison works |
+| [note-16.txt](note-16.txt) | 2026-11-05 | **Acceptance against andersoxie `253c81e`** (#67): 3 regressions found and fixed (#68, #69, #72); fuzzing how-to; traps |
 
 <details>
 <summary>Traps worth knowing (from the notes)</summary>
