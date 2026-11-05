@@ -46,6 +46,7 @@ still only on its branch; its report is here so the evidence can be read now.
 | ✅ | [#51](https://github.com/CodTanium/mass-xpact/issues/51) | Count positions only once over a continued text run (long text runs were quadratic) | [#52](https://github.com/CodTanium/mass-xpact/pull/52) | **merged** 2026-11-05 | 100 KB run byte by byte 7,394 → 102 ms | [mass-xpact-issue-0051](mass-xpact-issue-0051/report.md) |
 | ✅ | [#53](https://github.com/CodTanium/mass-xpact/issues/53) | Without a character-data handler, count plain text bytes after a pending text run without parsing them | [#55](https://github.com/CodTanium/mass-xpact/pull/55) | **merged** 2026-11-05 | 100 KB run, 16-byte pieces, no handlers 1,622 → 3.6 ms | [mass-xpact-issue-0053](mass-xpact-issue-0053/report.md) |
 | ✅ | [#57](https://github.com/CodTanium/mass-xpact/issues/57) | Drop the per-call allocations of the reparse-deferral checks | [#58](https://github.com/CodTanium/mass-xpact/pull/58) | **merged** 2026-11-05 | byte by byte 145 → 134 ms | [mass-xpact-issue-0057](mass-xpact-issue-0057/report.md) |
+| ✅ | [#60](https://github.com/CodTanium/mass-xpact/issues/60) | Billion laughs: Expat's amplification rule and code 43 (from andersoxie#211) | [#62](https://github.com/CodTanium/mass-xpact/pull/62) | **merged** 2026-11-05 | all 8 test documents match Expat | [mass-xpact-issue-0060](mass-xpact-issue-0060/report.md) |
 
 ## Fixes
 
