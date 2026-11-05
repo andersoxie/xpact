@@ -515,6 +515,8 @@ feature {XP_NATIVE_PARSER} -- State
 			valid_index: a_index >= 1 and a_index <= a_input.count
 		do
 			if parse_prefix (a_input.substring (1, a_index - 1)) then
+					-- The error is at the character, also inside unfinished markup (mass-xpact #68).
+				note_position (position_input.count + 1)
 				set_error ("invalid XML character")
 			end
 			Result := False
@@ -1465,7 +1467,11 @@ feature {NONE} -- Resumable prefix parsing
 					l_pending := i > a_input.count
 				end
 				text_position_start := 0
-				if not has_error then
+				if has_error then
+				elseif l_pending and not l_text_token and not l_doctype_pending then
+						-- As Expat, the position stays at the start of the unfinished markup (mass-xpact #68).
+					note_position (l_token_start)
+				else
 					note_position (i)
 				end
 			variant

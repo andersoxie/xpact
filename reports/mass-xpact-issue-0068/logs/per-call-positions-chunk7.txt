@@ -1,0 +1,14 @@
+== baseline 253c81e vs fix69
+calls 72000: equal to Expat baseline 14863, ours 11720
+calls changed 6860: ours = Expat 4, baseline = Expat 3147, neither 3709
+what changed: {'statusline/colbyte': 20, 'line/colbyte': 6840}
+comment/CDATA/decl: 1600 calls in 97 files
+start/end tag: 1534 calls in 57 files
+PI: 13 calls in 3 files
+{'ours ahead': 3147}
+== baseline 253c81e vs fix68
+calls 72000: equal to Expat baseline 14863, ours 15357
+calls changed 952: ours = Expat 501, baseline = Expat 7, neither 444
+what changed: {'statusline/colbyte': 20, 'line/colbyte': 932}
+text: 7 calls in 7 files
+{'ours behind': 7}

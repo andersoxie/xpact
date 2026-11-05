@@ -1,0 +1,4 @@
+chunk 0: final status/code/line/col/byte differ from fix69 in 0 of 3061 files; per-call checksum changed in 0
+chunk 1: final status/code/line/col/byte differ from fix69 in 0 of 3061 files; per-call checksum changed in 522
+chunk 7: final status/code/line/col/byte differ from fix69 in 0 of 3061 files; per-call checksum changed in 514
+chunk 16: final status/code/line/col/byte differ from fix69 in 0 of 3061 files; per-call checksum changed in 490
