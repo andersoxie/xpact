@@ -932,6 +932,7 @@ feature {NONE} -- Parsing implementation
 					if namespace_mode then
 						parser.set_return_ns_triplet (native_return_ns_triplet (native_parser_handle))
 					end
+					parser.set_amplification_limits (native_maximum_amplification (native_parser_handle), native_amplification_threshold (native_parser_handle))
 					if
 						can_resume_parse and then not l_invalid_plain_start_suffix
 						and then (not resume_utf16 or else append_decoded_utf16 (a_is_final))
@@ -3042,6 +3043,9 @@ feature {NONE} -- Error mapping
 				Result := Xml_error_junk_after_doc_element
 			elseif a_error.same_string ("undefined entity") then
 				Result := Xml_error_undefined_entity
+			elseif a_error.same_string ("entity expansion limit exceeded") then
+					-- Expat's billion-laughs protection (mass-xpact #60).
+				Result := Xml_error_amplification_limit_breach
 			elseif a_error.same_string ("recursive entity reference") then
 				Result := Xml_error_recursive_entity_ref
 			elseif a_error.same_string ("asynchronous entity") then
@@ -3206,6 +3210,29 @@ feature {NONE} -- Native helpers
 						&& amplification >= p->billionLaughsMaximumAmplification
 					) ? EIF_TRUE : EIF_FALSE;
 				}
+			]"
+		end
+
+	native_maximum_amplification (a_parser: POINTER): REAL_32
+			-- Maximum amplification set with `XML_SetBillionLaughsAttackProtectionMaximumAmplification', or Expat's default.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"[
+				struct XML_ParserStruct *p = (struct XML_ParserStruct *) $a_parser;
+				return (EIF_REAL_32) ((p != 0 && p->hasBillionLaughsMaximumAmplification) ? p->billionLaughsMaximumAmplification : 100.0f);
+			]"
+		end
+
+	native_amplification_threshold (a_parser: POINTER): INTEGER_64
+			-- Activation threshold set with `XML_SetBillionLaughsAttackProtectionActivationThreshold', or Expat's default.
+		external
+			"C inline use %"xpact_native_private.h%""
+		alias
+			"[
+				struct XML_ParserStruct *p = (struct XML_ParserStruct *) $a_parser;
+				unsigned long long t = (p != 0 && p->hasBillionLaughsActivationThreshold) ? p->billionLaughsActivationThresholdBytes : 8388608ULL;
+				return (EIF_INTEGER_64) (t > 0x7FFFFFFFFFFFFFFFULL ? 0x7FFFFFFFFFFFFFFFULL : t);
 			]"
 		end
 

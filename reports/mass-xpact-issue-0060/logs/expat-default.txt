@@ -1,0 +1,8 @@
+laughs-3.xml	181 bytes	accepted	code 0	-	2.8 ms
+laughs-4.xml	225 bytes	accepted	code 0	-	2.1 ms
+laughs-5.xml	269 bytes	accepted	code 0	-	17.2 ms
+laughs-6.xml	313 bytes	rejected	code 43	limit on input amplification factor (from DTD and entities) breached	120.5 ms
+laughs-8.xml	401 bytes	rejected	code 43	limit on input amplification factor (from DTD and entities) breached	145.1 ms
+big-low-factor.xml	1012036 bytes	accepted	code 0	-	13.0 ms
+under-threshold.xml	7380 bytes	accepted	code 0	-	18.9 ms
+over-threshold.xml	7386 bytes	rejected	code 43	limit on input amplification factor (from DTD and entities) breached	10.8 ms

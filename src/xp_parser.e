@@ -26,6 +26,8 @@ feature {NONE} -- Initialization
 			max_element_depth := Default_max_element_depth
 			max_attribute_count := Default_max_attribute_count
 			max_token_length := Default_max_token_length
+			amplification_threshold := Default_amplification_threshold_bytes
+			maximum_amplification := Default_maximum_amplification
 			create element_stack.make (32)
 			create entity_stack.make (8)
 			create element_slice_stack.make (32)
@@ -70,6 +72,8 @@ feature {NONE} -- Initialization
 			max_element_depth := a_max_element_depth
 			max_attribute_count := a_max_attribute_count
 			max_token_length := a_max_token_length
+			amplification_threshold := Default_amplification_threshold_bytes
+			maximum_amplification := Default_maximum_amplification
 			create element_stack.make (32)
 			create entity_stack.make (8)
 			create element_slice_stack.make (32)
@@ -422,6 +426,25 @@ feature {XP_NATIVE_PARSER} -- State
 			-- Has the current parse established a DOCTYPE and its declaration context?
 		do
 			Result := has_doctype
+		end
+
+	amplification_threshold: INTEGER_64
+			-- Output (direct + entity bytes) below which entity expansion is never rejected.
+
+	maximum_amplification: REAL_32
+			-- Largest tolerated output / direct bytes once `amplification_threshold' is reached.
+
+	set_amplification_limits (a_maximum: REAL_32; a_threshold: INTEGER_64)
+			-- Use Expat's billion-laughs protection settings (mass-xpact #60).
+		require
+			valid_maximum: a_maximum >= 1.0
+			non_negative_threshold: a_threshold >= 0
+		do
+			maximum_amplification := a_maximum
+			amplification_threshold := a_threshold
+		ensure
+			maximum_set: maximum_amplification = a_maximum
+			threshold_set: amplification_threshold = a_threshold
 		end
 
 	ends_in_plain_text_run: BOOLEAN
@@ -8685,7 +8708,26 @@ feature {NONE} -- Entity tables
 			expanded_entity_bytes := expanded_entity_bytes + a_count
 			if expanded_entity_bytes > Default_max_entity_expansion_bytes then
 				set_error ("entity expansion limit exceeded")
+			elseif parsing_external_entity then
+					-- External entities keep the fixed limit; the native parser checks their amplification.
+				if expanded_entity_bytes > Default_amplification_threshold_bytes then
+					set_error ("entity expansion limit exceeded")
+				end
+			elseif is_amplification_limit_breached then
+				set_error ("entity expansion limit exceeded")
 			end
+		end
+
+	is_amplification_limit_breached: BOOLEAN
+			-- Expat's billion-laughs rule: the output (document bytes + entity replacement bytes) has
+			-- reached `amplification_threshold' and is more than `maximum_amplification' times the
+			-- document bytes (mass-xpact #60).
+		local
+			l_direct, l_output: INTEGER_64
+		do
+			l_direct := position_input.count.max (1)
+			l_output := l_direct + expanded_entity_bytes
+			Result := l_output >= amplification_threshold and then l_output.to_real / l_direct.to_real > maximum_amplification
 		end
 
 	push_entity (a_name: READABLE_STRING_8)
