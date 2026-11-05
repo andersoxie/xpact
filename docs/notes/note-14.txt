@@ -20,7 +20,9 @@ TRAP: PROFILE WITH HANDLERS TOO
 - callees.py (same folder): where the time INSIDE a routine goes (stacks.py shows only callers).
 
 STILL OPEN
-- #53: without a character-data handler, a long text run is parsed again from its start on every
+- #53 FIXED (#55): the native plain-ASCII shortcut also starts after a pending plain text run (positions
+  checked against Expat first: between calls it reports the end of the data fed). 1,622 -> 3.6 ms.
+  Was: without a character-data handler, a long text run is parsed again from its start on every
   call (the is_resumable_text_run path). Separate quadratic case.
 - #20: pre-existing GC heap corruption under stress and load.
 
