@@ -2340,8 +2340,10 @@ feature {NONE} -- Tests
 			assert ("native Eiffel parser resets for unloaded external general entity", l_native.reset)
 			l_status := l_native.parse ("<!DOCTYPE doc [<!ENTITY en SYSTEM %"http://example.org/dummy.ent%">]><doc>&en;</doc>", True)
 			assert ("native Eiffel parser skips unloaded external general entity", l_status = l_native.Xml_status_ok)
-			assert ("native Eiffel parser reports skipped entity", l_native.handler.skipped_entity_count = 1)
-			assert ("native Eiffel parser names skipped entity", across l_native.handler.events as l_event some l_event.item.same_string ("skipped:en:0") end)
+				-- Without an external entity handler Expat reads nothing and makes no skipped-entity
+				-- callback for a declared external entity (checked against Expat 2.8.1, mass-xpact #69).
+			assert ("native Eiffel parser makes no skipped-entity callback", l_native.handler.skipped_entity_count = 0)
+			assert ("native Eiffel parser reports no skipped event", not across l_native.handler.events as l_event some l_event.item.starts_with ("skipped:") end)
 
 			assert ("native Eiffel parser resets for external parsed entity", l_native.reset)
 			assert ("native Eiffel parser marks external parsed entity", l_native.set_external_entity_context (default_pointer))
