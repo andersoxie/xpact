@@ -28,6 +28,7 @@ feature {NONE} -- Initialization
 			create input_buffer.make_empty
 			create decoded_buffer.make_empty
 			create deferred_doctype_scan.make
+			create name_checker.make
 			create context_source_buffer.make_empty
 			create hash_salt_16_bytes.make_empty
 			last_error_code := Xml_error_none
@@ -266,6 +267,10 @@ feature -- Access
 
 	deferred_doctype_scan: XP_DOCTYPE_SCAN
 			-- Where the search for the end of a delayed DOCTYPE stopped.
+
+	name_checker: XP_ATTRIBUTES
+			-- Shared object for the name-character tests of the per-call start-tag checks, which used to
+			-- create one on every call (mass-xpact #57). Never holds attributes.
 
 	doctype_prefix_scan_index: INTEGER
 			-- Next byte to inspect in an initial incomplete DOCTYPE.
@@ -1773,7 +1778,7 @@ feature {NONE} -- Encoding
 			l_valid: BOOLEAN
 		do
 			if a_input.count >= 3 and then a_input.item (1) = '<' and then a_input.item (2).code < 128 then
-				create l_attributes.make
+				l_attributes := name_checker
 				if l_attributes.is_name_start_character (a_input.item (2)) then
 					from i := 3 until i > a_input.count or else a_input.item (i).code >= 128 or else not l_attributes.is_name_character (a_input.item (i)) loop
 						i := i + 1
@@ -1820,15 +1825,15 @@ feature {NONE} -- Encoding
 			l_terminator: detachable STRING_8
 		do
 			l_start := deferred_reparse_start_index
-			if l_start + 3 <= a_input.count and then a_input.substring (l_start, l_start + 3).same_string ("<!--") then
+			if l_start + 3 <= a_input.count and then a_input.same_characters (Comment_opener, 1, Comment_opener.count, l_start) then
 				l_content_start := l_start + 4
-				l_terminator := "-->"
-			elseif l_start + 8 <= a_input.count and then a_input.substring (l_start, l_start + 8).same_string ("<![CDATA[") then
+				l_terminator := Comment_terminator
+			elseif l_start + 8 <= a_input.count and then a_input.same_characters (Cdata_opener, 1, Cdata_opener.count, l_start) then
 				l_content_start := l_start + 9
-				l_terminator := "]]>"
-			elseif l_start + 1 <= a_input.count and then a_input.substring (l_start, l_start + 1).same_string ("<?") then
+				l_terminator := Cdata_terminator
+			elseif l_start + 1 <= a_input.count and then a_input.same_characters (Pi_opener, 1, Pi_opener.count, l_start) then
 				l_content_start := l_start + 2
-				l_terminator := "?>"
+				l_terminator := Pi_terminator
 			end
 			if attached l_terminator as l_end_marker then
 				l_found := a_input.substring_index (l_end_marker, deferred_reparse_scan_index.max (l_content_start))
@@ -1837,7 +1842,7 @@ feature {NONE} -- Encoding
 				else
 					deferred_reparse_scan_index := (a_input.count - l_end_marker.count + 2).max (l_content_start)
 				end
-			elseif l_start + 8 <= a_input.count and then a_input.substring (l_start, l_start + 8).same_string ("<!DOCTYPE") then
+			elseif l_start + 8 <= a_input.count and then a_input.same_characters (Doctype_opener, 1, Doctype_opener.count, l_start) then
 					-- Go on where the last call stopped instead of rescanning the internal subset (mass-xpact #34).
 				if deferred_doctype_scan.start_index /= l_start or else a_input.count < deferred_doctype_scan.scanned_count then
 					deferred_doctype_scan.reset (l_start)
@@ -1853,6 +1858,18 @@ feature {NONE} -- Encoding
 
 	Context_bytes_before_event: INTEGER = 64
 			-- Preferred number of bytes retained before the current callback.
+
+	Comment_opener: STRING_8 = "<!--"
+	Cdata_opener: STRING_8 = "<![CDATA["
+	Pi_opener: STRING_8 = "<?"
+	Doctype_opener: STRING_8 = "<!DOCTYPE"
+			-- Openers of the delayed tokens `incremental_deferred_markup_end' tells apart, compared in place
+			-- instead of through a new substring on every call (mass-xpact #57).
+
+	Comment_terminator: STRING_8 = "-->"
+	Cdata_terminator: STRING_8 = "]]>"
+	Pi_terminator: STRING_8 = "?>"
+			-- Their terminators, created once.
 
 	clear_deferred_reparse
 			-- Forget any delayed token and incremental scan state.
@@ -1933,7 +1950,7 @@ feature {NONE} -- Encoding
 				and then a_input.item (a_start_index + 1) /= '!'
 				and then a_input.item (a_start_index + 1) /= '?'
 			then
-				create l_attributes.make
+				l_attributes := name_checker
 				i := a_start_index + 1
 				if l_attributes.is_name_start_character (a_input.item (i)) then
 					l_name_start := i
@@ -2140,7 +2157,7 @@ feature {NONE} -- Encoding
 				and then a_input.item (a_start_index + 1) /= '!'
 				and then a_input.item (a_start_index + 1) /= '?'
 			then
-				create l_attributes.make
+				l_attributes := name_checker
 				i := a_start_index + 1
 				if a_input.item (i).code < 128 and then l_attributes.is_name_start_character (a_input.item (i)) then
 					from
