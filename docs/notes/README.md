@@ -31,6 +31,8 @@ PR and report; the notes record the order of the work, the traps, and how to rep
 | ✅ | Copy each input chunk once instead of twice | [#43](https://github.com/CodTanium/mass-xpact/issues/43) | [#44](https://github.com/CodTanium/mass-xpact/pull/44) | pr-xml-utf-8 byte by byte 248 → 217 ms | [0043](../../reports/mass-xpact-issue-0043/report.md) |
 | ✅ | Reuse one string for small input chunks | [#46](https://github.com/CodTanium/mass-xpact/issues/46) | [#47](https://github.com/CodTanium/mass-xpact/pull/47) | pr-xml-utf-8 byte by byte 219 → 200 ms | [0046](../../reports/mass-xpact-issue-0046/report.md) |
 | ✅ | Answer the UTF-16 checks from a known XML declaration | [#48](https://github.com/CodTanium/mass-xpact/issues/48) | [#49](https://github.com/CodTanium/mass-xpact/pull/49) | pr-xml-utf-8 byte by byte 198 → 184 ms | [0048](../../reports/mass-xpact-issue-0048/report.md) |
+| ✅ | Count positions only once over a continued text run (long text runs were quadratic) | [#51](https://github.com/CodTanium/mass-xpact/issues/51) | [#52](https://github.com/CodTanium/mass-xpact/pull/52) | 100 KB text run byte by byte 7,394 → 102 ms; pr-xml-utf-8 184 → 145 ms | [0051](../../reports/mass-xpact-issue-0051/report.md) |
+| ⬜ | Without a character-data handler, a long text run is parsed again each call | [#53](https://github.com/CodTanium/mass-xpact/issues/53) | | | |
 | 🔴 | **Pre-existing** heap corruption under GC stress and load (`test_deep_nested_attribute_entity`) | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | | | [0020](../../reports/mass-xpact-issue-0020/report.md) |
 | ✅ | Assertions DLL crash on `ibm68n03.xml` (default handler only): name checked before `is_predefined_entity` | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | assertions DLL no longer dies | [0003](../../reports/mass-xpact-issue-0003/report.md) |
 
@@ -49,6 +51,7 @@ Raw Test 2 outputs of every build (TSV + summary per run) are in [`reports/issue
 - [x] #41 (#40, 2026-11-04)
 - [x] #44 (#43, 2026-11-04)
 - [x] #47 (#46) and #49 (#48), 2026-11-05
+- [x] #52 (#51), 2026-11-05
 
 Retarget a stacked PR **before** deleting the branch under it, or GitHub closes it.
 
@@ -81,6 +84,7 @@ Retarget a stacked PR **before** deleting the branch under it, or GitHub closes 
 | [note-11.txt](note-11.txt) | 2026-11-04 | #20 narrowed: **#16 exposes a GC heap corruption**; in-process crash probe how-to |
 | [note-12.txt](note-12.txt) | 2026-11-04 | #20 is **pre-existing** (equal-load test); watchpoint found the `BOOLEAN` table; everything merged |
 | [note-13.txt](note-13.txt) | 2026-11-04 | Speed rounds #31, #34, #37, #40: **byte by byte 12× faster**; how a profile round goes |
+| [note-14.txt](note-14.txt) | 2026-11-05 | **Long text runs were quadratic** (#51, up to 72× faster); profile with handlers too |
 
 <details>
 <summary>Traps worth knowing (from the notes)</summary>

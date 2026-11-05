@@ -43,6 +43,7 @@ still only on its branch; its report is here so the evidence can be read now.
 | ✅ | [#43](https://github.com/CodTanium/mass-xpact/issues/43) | Copy each input chunk once instead of twice | [#44](https://github.com/CodTanium/mass-xpact/pull/44) | **merged** 2026-11-04 | byte by byte 248 → 217 ms | [mass-xpact-issue-0043](mass-xpact-issue-0043/report.md) |
 | ✅ | [#46](https://github.com/CodTanium/mass-xpact/issues/46) | Reuse one string for small input chunks | [#47](https://github.com/CodTanium/mass-xpact/pull/47) | **merged** 2026-11-05 | byte by byte 219 → 200 ms | [mass-xpact-issue-0046](mass-xpact-issue-0046/report.md) |
 | ✅ | [#48](https://github.com/CodTanium/mass-xpact/issues/48) | Answer the UTF-16 checks from a known XML declaration | [#49](https://github.com/CodTanium/mass-xpact/pull/49) | **merged** 2026-11-05 | byte by byte 198 → 184 ms | [mass-xpact-issue-0048](mass-xpact-issue-0048/report.md) |
+| ✅ | [#51](https://github.com/CodTanium/mass-xpact/issues/51) | Count positions only once over a continued text run (long text runs were quadratic) | [#52](https://github.com/CodTanium/mass-xpact/pull/52) | **merged** 2026-11-05 | 100 KB run byte by byte 7,394 → 102 ms | [mass-xpact-issue-0051](mass-xpact-issue-0051/report.md) |
 
 ## Fixes
 
