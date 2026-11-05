@@ -1,0 +1,10 @@
+2142c2142
+< pr-xml-little	core	313076	xpact-only	TIMEOUT			stable	same	
+---
+> pr-xml-little	core	313076	ok	stable	same		stable	same	
+2144,2145c2144,2145
+< pr-xml-utf-16	core	313074	xpact-only	TIMEOUT			stable	same	
+< pr-xml-utf-8	core	207172	xpact-only	TIMEOUT			stable	same	
+---
+> pr-xml-utf-16	core	313074	ok	stable	same		stable	same	
+> pr-xml-utf-8	core	207172	ok	stable	same		stable	same	
