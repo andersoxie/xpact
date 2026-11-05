@@ -1,0 +1,13 @@
+TOTAL  4308   pass 4308   fail 0   crash 0   timeout 0
+
+1. BY GROUP AND CHUNKING
+   group  chunks  total   pass   fail  crash  timeout
+   c02    whole      42     42      0      0        0
+   c02    split     396    396      0      0        0
+   c02    bytes      36     36      0      0        0
+   cr     whole      24     24      0      0        0
+   cr     split     180    180      0      0        0
+   cr     bytes      24     24      0      0        0
+   utf8   whole     252    252      0      0        0
+   utf8   split    3102   3102      0      0        0
+   utf8   bytes     252    252      0      0        0

@@ -933,6 +933,7 @@ feature {NONE} -- Parsing implementation
 						parser.set_return_ns_triplet (native_return_ns_triplet (native_parser_handle))
 					end
 					parser.set_amplification_limits (native_maximum_amplification (native_parser_handle), native_amplification_threshold (native_parser_handle))
+					configure_external_entity_policy
 					if
 						can_resume_parse and then not l_invalid_plain_start_suffix
 						and then (not resume_utf16 or else append_decoded_utf16 (a_is_final))
@@ -3012,8 +3013,13 @@ feature {NONE} -- Error mapping
 
 	configure_external_entity_policy
 			-- Keep Eiffel resolver policy aligned with native external entity callbacks.
+			-- Without an external entity handler Expat loads nothing and reports no error (mass-xpact #64).
 		do
-			if param_entity_parsing = Xml_param_entity_parsing_never then
+			parser.set_ignores_unread_external_entities (handler.external_entity_ref_callback = default_pointer)
+			if handler.external_entity_ref_callback = default_pointer then
+				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.No_external_entities)
+				parser.set_parameter_entities_unless_standalone (param_entity_parsing = Xml_param_entity_parsing_unless_standalone)
+			elseif param_entity_parsing = Xml_param_entity_parsing_never then
 				parser.set_external_entity_policy ({XP_EXTERNAL_ENTITY_POLICY}.External_general_entities)
 				parser.set_parameter_entities_unless_standalone (False)
 			elseif param_entity_parsing = Xml_param_entity_parsing_unless_standalone then
