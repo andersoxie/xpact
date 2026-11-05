@@ -302,9 +302,10 @@ feature -- Configuration
 		end
 
 	ignores_unread_external_entities: BOOLEAN
-			-- Are external entities that may not be loaded passed over as Expat does without an
-			-- external entity handler: no error and no skipped-entity callback; an unread parameter
-			-- entity disables later declarations unless the document is standalone (mass-xpact #64)?
+			-- Are external entities never loaded, whatever `external_entity_policy' allows, and passed
+			-- over as Expat does without an external entity handler: no error and no skipped-entity
+			-- callback; an unread parameter entity disables later declarations unless the document is
+			-- standalone (mass-xpact #64, #69)?
 
 	set_ignores_unread_external_entities (a_enabled: BOOLEAN)
 			-- Set `ignores_unread_external_entities'; changing it releases the completed-DOCTYPE cache.
@@ -3548,7 +3549,7 @@ feature {NONE} -- Character data and references
 			l_previous_floor := entity_element_floor
 			if a_entity.is_unparsed then
 				set_error ("unparsed entity reference")
-			elseif not allows_general_entities (external_entity_policy) then
+			elseif ignores_unread_external_entities or else not allows_general_entities (external_entity_policy) then
 				if ignores_unread_external_entities then
 						-- Expat without an external entity handler reads nothing and reports nothing here.
 				elseif skip_unread_external_entities then
@@ -3791,6 +3792,7 @@ feature {NONE} -- Character data and references
 		do
 			Result := allows_parameter_entities (external_entity_policy)
 				and then not (parameter_entities_unless_standalone and then xml_standalone = 1)
+				and then not ignores_unread_external_entities
 		end
 
 	parse_entity_content (a_content: STRING_8)
