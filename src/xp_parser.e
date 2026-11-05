@@ -424,6 +424,34 @@ feature {XP_NATIVE_PARSER} -- State
 			Result := has_doctype
 		end
 
+	ends_in_plain_text_run: BOOLEAN
+			-- Did the last non-final prefix stop in a text run of an open element, outside any entity,
+			-- whose bytes from where parsing resumes to the end are plain ASCII (32 .. 126, no `<', `&', `]')?
+			-- Then more such bytes only make the run longer, and the position is at the end of the input,
+			-- so the caller may count them without parsing until other bytes arrive (mass-xpact #53).
+		local
+			i: INTEGER
+			c: CHARACTER_8
+		do
+			if resume_index >= 1 and then resume_index <= position_input.count
+				and then not has_error and then not is_suspended
+				and then element_stack.count > 0 and then entity_reference_count_stack.count = 0
+				and then not parsing_external_entity
+				and then current_position_index = position_input.count + 1
+			then
+				Result := True
+				from
+					i := resume_index
+				until
+					i > position_input.count or not Result
+				loop
+					c := position_input.item (i)
+					Result := c.code >= 32 and then c.code <= 126 and then c /= '<' and then c /= '&' and then c /= ']'
+					i := i + 1
+				end
+			end
+		end
+
 	reset_for_reuse
 			-- Reset parse state while preserving parser object storage.
 		do
