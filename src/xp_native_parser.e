@@ -1174,8 +1174,11 @@ feature {NONE} -- Parsing implementation
 						end
 						if not is_external_entity_parser and then not handler.diagnostic_events_enabled and then
 							not handler.has_observable_native_callbacks and then attached l_input as l_complete_input and then
-							l_complete_input.count > 0 and then is_plain_completed_start_tag (l_complete_input, 1, l_complete_input.count)
+							l_complete_input.count > 0 and then
+							(is_plain_completed_start_tag (l_complete_input, 1, l_complete_input.count)
+								or else (not l_defer_callbacks and then has_one_byte_ascii_encoding and then parser.ends_in_plain_text_run))
 						then
+								-- Also when the prefix ends inside a plain text run (mass-xpact #53).
 							plain_ascii_text_prefix := True
 						end
 			else
@@ -2793,6 +2796,28 @@ feature {NONE} -- Encoding
 			-- Did the caller explicitly select UTF-8?
 		do
 			Result := attached explicit_encoding as l_encoding and then is_utf8_encoding_name (l_encoding)
+		end
+
+	has_one_byte_ascii_encoding: BOOLEAN
+			-- Is `input_buffer' read with one raw byte per ASCII character (no UTF-16, and UTF-8, US-ASCII
+			-- or ISO-8859-1, declared, explicit or by default)? Then a raw ASCII byte is one character of the
+			-- parsed text (mass-xpact #53).
+		local
+			l_encoding: detachable READABLE_STRING_8
+		do
+			if not has_utf16le_signature (input_buffer) and then not has_utf16be_signature (input_buffer)
+				and then not explicit_encoding_is_utf16le and then not explicit_encoding_is_utf16be and then not explicit_encoding_is_utf16
+			then
+				if explicit_encoding_overrides_declaration and then attached explicit_encoding as l_explicit then
+					l_encoding := l_explicit
+				elseif attached declared_xml_encoding (input_buffer) as l_declared then
+					l_encoding := l_declared
+				else
+					l_encoding := explicit_encoding
+				end
+				Result := not attached l_encoding as l_name
+					or else is_utf8_encoding_name (l_name) or else is_ascii_encoding_name (l_name) or else is_latin1_encoding_name (l_name)
+			end
 		end
 
 	is_utf8_encoding_name (a_encoding: READABLE_STRING_8): BOOLEAN
