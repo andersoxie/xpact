@@ -1,0 +1,29 @@
+NOTE 14 - 2026-11-05 - long text runs in pieces were quadratic (#51), and the "profile without handlers" trap
+
+SHORT
+- A document with ONE long text run, fed in small pieces, was quadratic: a 100 KB run took
+  7.4 s byte by byte. pr-xml-utf-8.xml hid it (its text runs are short).
+- Cause: on every call the continued text run (#11) moved the position back to the run start and
+  counted lines/columns forward over the whole run again (note_position -> advance_position_to).
+- Fix #51 (PR #52): a high-water mark in advance_position_to and a one-entry memory of the last
+  retreat target in retreat_position_to, both with line and column, cleared on recompute/reset.
+  100 KB run 7,394 -> 102 ms; 4,000-line text 5,446 -> 100 ms; pr-xml-utf-8 184 -> 145 ms.
+  All positions identical (3 new 4,000-line documents + W3C trace + DLL tests + Test 2).
+
+TRAP: PROFILE WITH HANDLERS TOO
+- sampler2.exe sets NO handlers. The parser takes different paths with and without a
+  character-data handler (#11's carry only works with one). All profiles of 2026-11-04 were
+  without handlers, so this case never showed. reports/mass-xpact-issue-0051/logs/tools/sampler3.c
+  takes a 5th argument "h" to set element + character-data handlers, like chunk_time.exe.
+- A quick quadratic test: time the same structure at 25/50/100 KB. Linear doubles, quadratic x4.
+  runlen/text-<N>k.xml = "<a>" + N KB of "x" + "</a>".
+- callees.py (same folder): where the time INSIDE a routine goes (stacks.py shows only callers).
+
+STILL OPEN
+- #53: without a character-data handler, a long text run is parsed again from its start on every
+  call (the is_resumable_text_run path). Separate quadratic case.
+- #20: pre-existing GC heap corruption under stress and load.
+
+TOTALS (pr-xml-utf-8.xml byte by byte, production DLL)
+  2,857 ms -> 438 (#31) -> 319 (#34) -> 286 (#37) -> 236 (#40) -> 217 (#43) -> 200 (#46)
+  -> 184 (#48) -> 145 ms (#51) = 20x.
