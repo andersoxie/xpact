@@ -301,6 +301,22 @@ feature -- Configuration
 			value_set: skip_unread_external_entities = a_enabled
 		end
 
+	ignores_unread_external_entities: BOOLEAN
+			-- Are external entities that may not be loaded passed over as Expat does without an
+			-- external entity handler: no error and no skipped-entity callback; an unread parameter
+			-- entity disables later declarations unless the document is standalone (mass-xpact #64)?
+
+	set_ignores_unread_external_entities (a_enabled: BOOLEAN)
+			-- Set `ignores_unread_external_entities'; changing it releases the completed-DOCTYPE cache.
+		do
+			if a_enabled /= ignores_unread_external_entities then
+				clear_cached_doctype
+			end
+			ignores_unread_external_entities := a_enabled
+		ensure
+			value_set: ignores_unread_external_entities = a_enabled
+		end
+
 	import_entity_context (a_parent: XP_PARSER)
 			-- Import DTD entity declarations from `a_parent' for an external entity child parser.
 		require
@@ -3533,7 +3549,9 @@ feature {NONE} -- Character data and references
 			if a_entity.is_unparsed then
 				set_error ("unparsed entity reference")
 			elseif not allows_general_entities (external_entity_policy) then
-				if skip_unread_external_entities then
+				if ignores_unread_external_entities then
+						-- Expat without an external entity handler reads nothing and reports nothing here.
+				elseif skip_unread_external_entities then
 					handler.on_skipped_entity (a_entity.name, False)
 					check_handler_stop
 				else
@@ -3586,7 +3604,13 @@ feature {NONE} -- Character data and references
 			l_previous_base := current_external_entity_base
 			l_previous_depth := external_dtd_depth
 			if not parameter_entity_loading_allowed then
-				if skip_unread_external_entities then
+				if ignores_unread_external_entities then
+						-- As Expat: later declarations count only in a standalone document, then the
+						-- not-standalone check; no skipped-entity callback for an external entity.
+					dtd_has_parameter_entity_references := True
+					dtd_declarations_disabled := not dtd_is_standalone
+					check_not_standalone
+				elseif skip_unread_external_entities then
 					dtd_has_parameter_entity_references := True
 					dtd_declarations_disabled := not dtd_is_standalone
 					handler.on_skipped_entity (a_entity.name, True)
@@ -3633,7 +3657,12 @@ feature {NONE} -- Character data and references
 		do
 			l_previous_base := current_external_entity_base
 			l_previous_depth := external_dtd_depth
-			if not parameter_entity_loading_allowed then
+			if not parameter_entity_loading_allowed and then ignores_unread_external_entities then
+					-- As Expat: the reference contributes nothing; later declarations count only in a
+					-- standalone document (mass-xpact #64).
+				dtd_has_parameter_entity_references := True
+				dtd_declarations_disabled := not dtd_is_standalone
+			elseif not parameter_entity_loading_allowed then
 				set_error ("external entity not loaded")
 			elseif external_entity_resolver = Void then
 				set_error ("external entity resolver missing")
