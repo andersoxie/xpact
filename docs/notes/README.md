@@ -36,6 +36,14 @@ PR and report; the notes record the order of the work, the traps, and how to rep
 | ✅ | Drop the per-call allocations of the reparse-deferral checks | [#57](https://github.com/CodTanium/mass-xpact/issues/57) | [#58](https://github.com/CodTanium/mass-xpact/pull/58) | pr-xml-utf-8 byte by byte 145 → 134 ms | [0057](../../reports/mass-xpact-issue-0057/report.md) |
 | ✅ | **Billion laughs:** Expat's amplification rule and code 43 instead of a fixed 8 MiB cap and "syntax error" (from andersoxie#211) | [#60](https://github.com/CodTanium/mass-xpact/issues/60) | [#62](https://github.com/CodTanium/mass-xpact/pull/62) | all 8 test documents match Expat; a legitimate 1 MB document is no longer rejected | [0060](../../reports/mass-xpact-issue-0060/report.md) |
 | ✅ | **External entities without a handler:** skipped as in Expat instead of failing with code 21 | [#64](https://github.com/CodTanium/mass-xpact/issues/64) | [#65](https://github.com/CodTanium/mass-xpact/pull/65) | Expat comparison, 3,061 W3C files: verdict differences 24 → 4 | [0064](../../reports/mass-xpact-issue-0064/report.md) |
+| ✅ | **Acceptance against andersoxie `253c81e`:** as good or better on every check, none worse | [#67](https://github.com/CodTanium/mass-xpact/issues/67) | [#78](https://github.com/CodTanium/mass-xpact/pull/78) | 15 checks, fuzzing 80,000 parses, speed | [acceptance](../../reports/acceptance-253c81e-vs-45d2f53/report.md) |
+| ✅ | Regression: position between calls inside unfinished markup | [#68](https://github.com/CodTanium/mass-xpact/issues/68) | [#71](https://github.com/CodTanium/mass-xpact/pull/71) | 122,827 calls = Expat (253c81e 122,310) | [0068](../../reports/mass-xpact-issue-0068/report.md) |
+| ✅ | Regression from #64: 3 Eiffel matrix assertions | [#69](https://github.com/CodTanium/mass-xpact/issues/69) | [#70](https://github.com/CodTanium/mass-xpact/pull/70) | matrix 4/4; skipped entities 6/6 as Expat | [0069](../../reports/mass-xpact-issue-0069/report.md) |
+| ✅ | Assertions DLL died on 7 fuzzed documents | [#72](https://github.com/CodTanium/mass-xpact/issues/72) | [#76](https://github.com/CodTanium/mass-xpact/pull/76) | fuzz crashes 7 → 0 | [0072](../../reports/mass-xpact-issue-0072/report.md) |
+| ⬜ | Unrescued Eiffel exception in a DLL call: no trace (`0xC00000FF`) | [#73](https://github.com/CodTanium/mass-xpact/issues/73) | | | |
+| ⬜ | Error code depends on the pieces (63 of 20,000 fuzzed documents) | [#74](https://github.com/CodTanium/mass-xpact/issues/74) | | | |
+| ⬜ | Not thread-safe: 2 threads crash the DLL | [#75](https://github.com/CodTanium/mass-xpact/issues/75) | | | |
+| ⬜ | Eiffel matrix lane 4 stops in a full run (environment) | [#77](https://github.com/CodTanium/mass-xpact/issues/77) | | | |
 | ⬜ | With very strict custom billion-laughs settings, XPact rejects 2 documents Expat accepts | [#61](https://github.com/CodTanium/mass-xpact/issues/61) | | | |
 | 🔴 | **Pre-existing** heap corruption under GC stress and load (`test_deep_nested_attribute_entity`) | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | | | [0020](../../reports/mass-xpact-issue-0020/report.md) |
 | ✅ | Assertions DLL crash on `ibm68n03.xml` (default handler only): name checked before `is_predefined_entity` | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | assertions DLL no longer dies | [0003](../../reports/mass-xpact-issue-0003/report.md) |
@@ -60,6 +68,7 @@ Raw Test 2 outputs of every build (TSV + summary per run) are in [`reports/issue
 - [x] #58 (#57), 2026-11-05
 - [x] #62 (#60), 2026-11-05
 - [x] #65 (#64), 2026-11-05
+- [x] #70 (#69), #71 (#68), #76 (#72), #78 (#67), 2026-11-05
 
 Retarget a stacked PR **before** deleting the branch under it, or GitHub closes it.
 

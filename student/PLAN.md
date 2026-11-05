@@ -220,6 +220,11 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] #57: no per-call allocations in the reparse-deferral checks; byte by byte 145 → 134 ms (merged, #58). Byte by byte `pr-xml-utf-8.xml`: 2,857 → 134 ms (21×)
    - [x] #60: billion-laughs protection as in Expat (amplification rule, code 43); from andersoxie#211 (merged, #62). #61 open: strict custom settings
    - [x] #64: external entities without a handler skipped as in Expat, not code 21; Expat verdict differences 24 → 4 over 3,061 W3C files (merged, #65)
+   - [x] #67: **acceptance against andersoxie `253c81e`**: as good or better on every check, none worse ([report](../reports/acceptance-253c81e-vs-45d2f53/report.md), merged #78)
+   - [x] #68: regression found by #67, position between calls inside unfinished markup (merged, #71)
+   - [x] #69: regression found by #67, #64 broke 3 Eiffel matrix assertions (merged, #70)
+   - [x] #72: assertions DLL died on 7 fuzzed documents (merged, #76)
+   - [ ] #73 (no trace for an unrescued exception in a DLL call), #74 (error code depends on the pieces), #75 (not thread-safe), #77 (matrix lane 4 environment)
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
    - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
    - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
