@@ -1,0 +1,36 @@
+NOTE 15 - 2026-11-05 - end of the speed rounds, billion laughs (#60), external entities without a handler (#64)
+
+SHORT
+- #57 (PR #58): the reparse-deferral checks allocated strings on every call. Shared constants
+  and one name checker instead. pr-xml-utf-8.xml byte by byte 145 -> 134 ms. Speed rounds stopped
+  here (total 2,857 -> 134 ms = 21x); the user moved the work to correctness.
+- #60 (PR #62, from andersoxie#211): billion-laughs documents were stopped by a fixed 8 MiB cap and
+  reported as code 2 "syntax error". Now Expat's rule: reject when output >= threshold (8 MiB)
+  AND output / document bytes > factor (100), with the XML_SetBillionLaughsAttackProtection*
+  values; code 43. All 8 test documents as Expat; a legitimate 1 MB document is accepted again.
+  Left: very strict custom settings (-m 2 -t 1000) reject 2 documents Expat accepts (#61): XPact
+  counts a whole replacement text at once, Expat token by token.
+- #64 (PR #65): without XML_SetExternalEntityRefHandler, Expat reads no external entity and
+  reports nothing. XPact failed with code 21. New XP_PARSER mode ignores_unread_external_entities.
+  Expat comparison, 3,061 W3C files: verdict differences 24 -> 4.
+
+HOW THE EXPAT COMPARISON WORKS (reuse it)
+- nohprobe.c (reports/mass-xpact-issue-0053/logs/tools/) is built twice: with Expat 2.8.1 compiled
+  in (-DUSE_EXPAT -DXML_STATIC -D_CRT_RAND_S -DHAVE_EXPAT_CONFIG_H, xmlparse.c xmlrole.c xmltok.c
+  random_rand_s.c) and against xpact.lib. Same source, same settings, so every difference is real.
+- Columns: status, code, line, column, byte index, checksum of the positions after every call.
+  Compare whole and at 1/7/16-byte pieces.
+- The 4 verdict differences left: eduni/misc/008, eduni/xml-1.1/008, ibm69n05,
+  xmltest/not-wf/not-sa/002. Then 361 code differences (#170) and 1,152 position ones (#171).
+
+TRAPS
+- The Expat runtests logs are UTF-16 when PowerShell writes them and UTF-8 when bash does. Check
+  with `file` before `iconv`, or the 38 failure names compare as "different".
+- The assertions runtests need the assertions DLL copied as xpact.dll (build\fixNN\asrt-as-xpact).
+  Without that folder the PATH falls through to the production DLL and "assertions" tests
+  production. It happened once (#64): check the folder exists.
+- #64 was verified WITHOUT the Eiffel test matrix and broke 3 matrix assertions (#69, note 16).
+  The matrix is now part of every parser verification.
+
+STILL OPEN
+- #61 (strict billion-laughs settings), #20 (heap corruption, pre-existing), #170/#171.
