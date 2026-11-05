@@ -8795,6 +8795,8 @@ feature {NONE} -- State
 			last_general_reference_end := 0
 			lazy_position_accounting := False
 			current_position_index := a_prefix_count + 1
+			position_high_water_index := 0
+			position_retreat_index := 0
 			current_line_number := cached_doctype_line
 			current_column_number := cached_doctype_column
 			current_byte_index := a_prefix_count
@@ -8857,6 +8859,8 @@ feature {NONE} -- State
 			dtd_declarations_disabled := False
 			entity_literal_ended_by_undefined_parameter := False
 			current_position_index := 0
+			position_high_water_index := 0
+			position_retreat_index := 0
 			current_line_number := 1
 			current_column_number := 0
 			current_byte_index := -1
@@ -8976,14 +8980,24 @@ feature {NONE} -- State
 
 	advance_position_to (a_index: INTEGER)
 			-- Advance line and column counters from current parser position to `a_index'.
+			-- Bytes up to the furthest index reached before are not counted again: a text run that
+			-- is continued in later calls goes back to its start and forward again (mass-xpact #51).
+			-- Like `retreat_position_to', this relies on `position_input' not changing before that index.
 		require
 			index_in_bounds: a_index >= 1 and a_index <= position_input.count + 1
 			forward: current_position_index >= 1 and current_position_index <= a_index
 		local
 			i: INTEGER
 		do
+			i := current_position_index
+			if position_high_water_input = position_input and then position_high_water_index > i
+				and then position_high_water_index <= a_index
+			then
+				i := position_high_water_index
+				current_line_number := position_high_water_line
+				current_column_number := position_high_water_column
+			end
 			from
-				i := current_position_index
 			invariant
 				index_in_bounds: i >= current_position_index and i <= a_index
 				line_positive: current_line_number >= 1
@@ -9000,6 +9014,12 @@ feature {NONE} -- State
 				i := i + 1
 			variant
 				a_index - i
+			end
+			if position_high_water_input /= position_input or else a_index > position_high_water_index then
+				position_high_water_input := position_input
+				position_high_water_index := a_index
+				position_high_water_line := current_line_number
+				position_high_water_column := current_column_number
 			end
 		ensure
 			line_positive: current_line_number >= 1
@@ -9022,6 +9042,10 @@ feature {NONE} -- State
 			if l_distance <= current_column_number then
 					-- The target is at or after the start of the current line.
 				current_column_number := current_column_number - l_distance
+			elseif position_retreat_index = a_index and then position_retreat_input = position_input then
+					-- Same target as last time: its line and column are known.
+				current_line_number := position_retreat_line
+				current_column_number := position_retreat_column
 			else
 				from
 					i := current_position_index - 1
@@ -9044,6 +9068,10 @@ feature {NONE} -- State
 				else
 					current_column_number := a_index - 1 - position_input.last_index_of ('%N', a_index - 1)
 				end
+				position_retreat_input := position_input
+				position_retreat_index := a_index
+				position_retreat_line := current_line_number
+				position_retreat_column := current_column_number
 			end
 		ensure
 			line_positive: current_line_number >= 1
@@ -9057,6 +9085,8 @@ feature {NONE} -- State
 		local
 			i: INTEGER
 		do
+			position_high_water_index := 0
+			position_retreat_index := 0
 			current_line_number := 1
 			current_column_number := 0
 			from
@@ -9321,6 +9351,26 @@ feature {NONE} -- State
 
 	current_position_index: INTEGER
 			-- Current 1-based position in `position_input'.
+
+	position_high_water_index: INTEGER
+			-- Furthest index `advance_position_to' has reached in `position_high_water_input' since the
+			-- last `recompute_position_from_start', or 0 (mass-xpact #51).
+
+	position_high_water_line, position_high_water_column: INTEGER
+			-- Line and column at `position_high_water_index'.
+
+	position_high_water_input: detachable STRING_8
+			-- `position_input' when `position_high_water_index' was reached.
+
+	position_retreat_index: INTEGER
+			-- Index `retreat_position_to' last moved back to across a line end in `position_retreat_input',
+			-- or 0. A continued text run moves back to the same run start on every call (mass-xpact #51).
+
+	position_retreat_line, position_retreat_column: INTEGER
+			-- Line and column at `position_retreat_index'.
+
+	position_retreat_input: detachable STRING_8
+			-- `position_input' when `position_retreat_index' was computed.
 
 	lazy_position_accounting: BOOLEAN
 			-- Are line and column counters deferred for the current no-callback parse?

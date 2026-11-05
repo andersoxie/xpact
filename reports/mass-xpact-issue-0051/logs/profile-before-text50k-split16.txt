@@ -1,0 +1,13 @@
+# sampler3.exe text-50k.xml 2 stacks.txt 16 h (element + character-data handlers), student-Mass @ 3f75c8f
+129 samples (128.69 ms/parse)
+100.0%  XML_Parse
+ 99.2%  {XP_NATIVE_BRIDGE_INSTALLER}.parsed_chunk
+ 99.2%  {XP_NATIVE_PARSER}.parse
+ 99.2%  {XP_NATIVE_PARSER}.parse_with_current_gc_policy
+ 98.4%  {XP_PARSER}.continue_prefix
+ 97.7%  {XP_PARSER}.parse_prefix_tokens
+ 96.1%  {XP_PARSER}.note_position
+  3.9%  {XP_PARSER}.continue_carried_text
+  3.9%  {XP_PARSER}.parse_character_data_prefix
+  2.3%  {XP_PARSER}.emit_text
+  2.3%  {XP_NATIVE_CALLBACK_HANDLER}.on_character_data
