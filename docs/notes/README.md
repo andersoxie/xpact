@@ -35,6 +35,7 @@ PR and report; the notes record the order of the work, the traps, and how to rep
 | ✅ | Without a character-data handler, count plain text bytes after a pending text run without parsing them | [#53](https://github.com/CodTanium/mass-xpact/issues/53) | [#55](https://github.com/CodTanium/mass-xpact/pull/55) | 100 KB run, 16-byte pieces, no handlers 1,622 → 3.6 ms | [0053](../../reports/mass-xpact-issue-0053/report.md) |
 | ✅ | Drop the per-call allocations of the reparse-deferral checks | [#57](https://github.com/CodTanium/mass-xpact/issues/57) | [#58](https://github.com/CodTanium/mass-xpact/pull/58) | pr-xml-utf-8 byte by byte 145 → 134 ms | [0057](../../reports/mass-xpact-issue-0057/report.md) |
 | ✅ | **Billion laughs:** Expat's amplification rule and code 43 instead of a fixed 8 MiB cap and "syntax error" (from andersoxie#211) | [#60](https://github.com/CodTanium/mass-xpact/issues/60) | [#62](https://github.com/CodTanium/mass-xpact/pull/62) | all 8 test documents match Expat; a legitimate 1 MB document is no longer rejected | [0060](../../reports/mass-xpact-issue-0060/report.md) |
+| ✅ | **External entities without a handler:** skipped as in Expat instead of failing with code 21 | [#64](https://github.com/CodTanium/mass-xpact/issues/64) | [#65](https://github.com/CodTanium/mass-xpact/pull/65) | Expat comparison, 3,061 W3C files: verdict differences 24 → 4 | [0064](../../reports/mass-xpact-issue-0064/report.md) |
 | ⬜ | With very strict custom billion-laughs settings, XPact rejects 2 documents Expat accepts | [#61](https://github.com/CodTanium/mass-xpact/issues/61) | | | |
 | 🔴 | **Pre-existing** heap corruption under GC stress and load (`test_deep_nested_attribute_entity`) | [#20](https://github.com/CodTanium/mass-xpact/issues/20) | | | [0020](../../reports/mass-xpact-issue-0020/report.md) |
 | ✅ | Assertions DLL crash on `ibm68n03.xml` (default handler only): name checked before `is_predefined_entity` | [#3](https://github.com/CodTanium/mass-xpact/issues/3) | [#25](https://github.com/CodTanium/mass-xpact/pull/25) | assertions DLL no longer dies | [0003](../../reports/mass-xpact-issue-0003/report.md) |
@@ -58,6 +59,7 @@ Raw Test 2 outputs of every build (TSV + summary per run) are in [`reports/issue
 - [x] #55 (#53), 2026-11-05
 - [x] #58 (#57), 2026-11-05
 - [x] #62 (#60), 2026-11-05
+- [x] #65 (#64), 2026-11-05
 
 Retarget a stacked PR **before** deleting the branch under it, or GitHub closes it.
 
