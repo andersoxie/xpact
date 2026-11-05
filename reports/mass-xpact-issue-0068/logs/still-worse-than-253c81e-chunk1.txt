@@ -1,0 +1,5 @@
+nt-Mass\xmlconf\eduni\errata-3e\E05b.xml call 134 expat ('1', '6', '22', '134') ours ('1', '6', '2', '114') | from ours: b'<![CDATA[cdata section]]'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n36.xml call 109 expat ('1', '4', '19', '109') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x83  \xc2'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n38.xml call 109 expat ('1', '4', '19', '109') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x84  \xc2'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n39.xml call 109 expat ('1', '4', '19', '109') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x86  \xc2'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n41.xml call 109 expat ('1', '4', '19', '109') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x88  \xc2'
