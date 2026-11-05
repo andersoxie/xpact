@@ -1,0 +1,30 @@
+489 samples
+100.0%  XML_Parse
+ 97.1%  {XP_NATIVE_BRIDGE_INSTALLER}.parse
+ 91.8%  {XP_NATIVE_BRIDGE_INSTALLER}.parsed_chunk
+ 87.9%  {XP_NATIVE_PARSER}.parse
+ 87.3%  {XP_NATIVE_PARSER}.parse_with_current_gc_policy
+ 29.9%  {XP_PARSER}.continue_prefix
+ 27.6%  {XP_PARSER}.parse_prefix_tokens
+ 17.8%  {XP_NATIVE_PARSER}.should_defer_reparse_callbacks
+ 16.8%  F125_1653
+ 15.5%  {XP_PARSER}.continue_carried_text
+ 11.0%  {XP_NATIVE_PARSER}.complete_encoded_prefix_count
+ 10.8%  {XP_PARSER}.emit_text
+ 10.2%  {XP_NATIVE_CALLBACK_HANDLER}.on_character_data
+  9.6%  {XP_NATIVE_PARSER}.incremental_deferred_markup_end
+  8.8%  {STRING_8}.substring
+  7.2%  F125_1636
+  7.0%  {READABLE_STRING_8}.make
+  7.0%  {XP_NATIVE_PARSER}.starts_with_known_declaration
+  6.3%  {STRING_8}.new_string
+  6.3%  {XP_NATIVE_PARSER}.is_plain_completed_start_tag
+  5.7%  {READABLE_STRING_8}.same_characters
+  5.1%  {STRING_8}.item (dispatch)
+  4.9%  special_malloc
+  4.5%  {XP_NATIVE_PARSER}.has_stable_encoding
+  4.3%  {SPECIAL}.same_items
+  4.3%  {XP_NATIVE_PARSER}.should_wait_for_doctype_prefix
+  3.7%  makestr_with_hash
+  3.5%  {HASH_TABLE}.item
+  3.5%  emalloc_size
