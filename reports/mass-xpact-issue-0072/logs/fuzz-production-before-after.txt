@@ -1,0 +1,22 @@
+== production: fix68 -> fix72
+documents: 20000; ways per document: 4 (whole, bytes, seven, random)
+Expat crashes/hangs: 0
+Expat consistent whole/pieces: 19992 of 20000
+
+measure	baseline	ours
+crash/hang	0	0
+ways	80000	80000
+verdict = Expat	79960	79960
+verdict+code = Expat	54639	54639
++position = Expat	18930	18930
+accepted by both	2480	2480
+events = Expat (accepted docs)	2476	2476
+docs	20000	20000
+consistent verdict+code	19937	19937
+consistent events	20000	20000
+
+crash/hang files baseline: []
+crash/hang files ours: []
+
+baseline -> ours changed results: 0; closer to Expat 0, further 0, same distance 0
+further from Expat, by first changed field: {}

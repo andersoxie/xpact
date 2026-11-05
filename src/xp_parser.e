@@ -1965,7 +1965,10 @@ feature {NONE} -- Markup parsing
 				name_start := i
 				i := scan_name (a_input, i)
 				name_end := i - 1
-				if i - name_start > max_name_length then
+				if has_error then
+						-- A non-ASCII character that cannot start a name (mass-xpact #72).
+					Result := a_input.count + 1
+				elseif i - name_start > max_name_length then
 					set_error ("end tag name exceeds limit")
 					Result := a_input.count + 1
 				else
@@ -5105,7 +5108,8 @@ feature {NONE} -- DTD entity declarations
 								i := a_end_index + 1
 							end
 						variant
-							a_end_index - i + 2
+								-- The iteration that sets the error need not advance `i' (mass-xpact #72).
+							a_end_index - i + 2 + (not has_error).to_integer
 						end
 						if not has_error then
 							if i <= a_end_index and then a_subset.item (i) = '*' then

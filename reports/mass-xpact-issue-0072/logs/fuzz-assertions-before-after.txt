@@ -1,0 +1,21 @@
+== before: fix68 assertions DLL
+documents: 20000; ways per document: 4 (whole, bytes, seven, random)
+Expat crashes/hangs: 0
+Expat consistent whole/pieces: 19992 of 20000
+
+measure	baseline	ours
+crash/hang	7	0
+ways	79972	80000
+verdict = Expat	79932	79960
+verdict+code = Expat	54623	54639
++position = Expat	18930	18930
+accepted by both	2480	2480
+events = Expat (accepted docs)	2476	2476
+docs	19993	20000
+consistent verdict+code	19930	19937
+consistent events	19993	20000
+
+crash/hang files baseline: [2002, 2150, 2896, 5293, 12249, 15380, 17702]
+crash/hang files ours: []
+
+baseline -> ours changed results: 0; closer to Expat 0, further 0, same distance 0
