@@ -1,0 +1,738 @@
+{
+ "id": "rub-nds/test/dos_3gb.xml",
+ "status": "events differ",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 43,
+   "message": "amplification limit breached",
+   "line": 13,
+   "column": 6,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 43,
+   "message": "limit on input amplification factor (from DTD and entities) breached",
+   "line": 13,
+   "column": 6,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "amplification limit breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 43,
+    "message": "limit on input amplification factor (from DTD and entities) breached",
+    "line": 13,
+    "column": 6,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 13,
+    "events_a": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,520 characters]"
+     ]
+    ],
+    "events_b": [
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "data",
+      []
+     ],
+     [
+      "chars",
+      "dosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdosdos... [3,323,583 characters]"
+     ]
+    ],
+    "count_a": 14,
+    "count_b": 14
+   }
+  }
+ }
+}

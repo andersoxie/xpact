@@ -5,7 +5,7 @@
 >
 > **⛔ Two things to know before running large or chunked files:**
 > - xpact rejects input over **10 MB** and nesting over **256 levels** (`src/xp_limits.e`; AlotOfTests test 05).
-> - Streaming large files is slow, because the DLL re-parses on every call (F05-1).
+> - ~~Streaming large files is slow, because the DLL re-parses on every call (F05-1).~~ ✅ Fixed (mass-xpact #2 – #57, 2026-11-05) for UTF-8 and UTF-16; **still slow for ISO-8859-1 input in pieces** ([#84](https://github.com/CodTanium/mass-xpact/issues/84)).
 >
 > Large files therefore need a raised limit, or must be fed whole.
 
@@ -87,12 +87,12 @@ All of these are ⛔ over 10 MB unless the limit is raised for the test, or a cu
 
 ## ➡️ Suggested order
 
-- [ ] **Markus Kuhn's UTF-8 stress test** (~1–2 h): direct value for the open UTF-8 and event findings
-- [ ] **Expat's `xmltest.log.expected`** (~2 h): xpact against Expat's own record of the W3C suite
-- [ ] **pugixml encoding files** (~1–2 h): BOM, UTF-16 and UTF-32 variants
-- [ ] **RUB-NDS DTD-Attacks** (~2–3 h): security, together with F05/F07
-- [ ] **UW Mondial and a cut-down dblp** (~2 h): real files with DTDs and many entities, under 10 MB
-- [ ] **SVG 1.1** (~2–3 h): week 8's "SVG cases"
+- [x] ✅ **Markus Kuhn's UTF-8 stress test**: 582/582 identical to Expat ([results](../results/kuhn-utf8-2026-11-06/README.md), 2026-11-06)
+- [x] ✅ **Expat's `xmltest.log.expected`**: Expat's record except `ibm68i01`-`04`, [#82](https://github.com/CodTanium/mass-xpact/issues/82) ([results](../results/expat-xmltest-2026-11-06/README.md))
+- [x] ✅ **pugixml encoding files**: 28/28 same verdict; [#83](https://github.com/CodTanium/mass-xpact/issues/83) ([results](../results/pugixml-encodings-2026-11-06/README.md))
+- [x] ✅ **RUB-NDS DTD-Attacks**: 104/104 same verdict, no crash or hang ([results](../results/rub-nds-dtd-attacks-2026-11-06/README.md))
+- [x] ✅ **UW Mondial and a cut-down dblp**: same verdicts; ISO-8859-1 in pieces quadratic, [#84](https://github.com/CodTanium/mass-xpact/issues/84) ([results](../results/real-world-dtd-2026-11-06/README.md))
+- [x] ✅ **SVG 1.1**: 525/525 same verdict, 521 identical ([results](../results/svg11-2026-11-06/README.md))
 - [ ] **Expat's fuzz harness on `xpact.lib`** (~0.5–1 day)
 - [ ] **XMark, PubMed, UniProt, OSM, Wikipedia**: after the 10 MB limit is handled and, for streaming, after F05-1
 

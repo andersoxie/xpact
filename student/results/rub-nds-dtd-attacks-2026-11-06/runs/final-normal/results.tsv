@@ -1,0 +1,105 @@
+id	set	finding	expected	status	xpact	expat	xpact_error	expat_error	xpact_vs_expected	xpact_same_in_all_chunkings	expat_same_in_all_chunkings	configs_differing	first_configs	pairs_same
+rub-nds/dos/dos_core.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dos/dos_entitySize.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dos/dos_indirections.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dos/dos_indirections_parameterEntity.xml	rub-nds			error code differs	REJECT	REJECT	2	10		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dos/dos_recursion.xml	rub-nds			match	REJECT	REJECT	12	12		yes	yes	0		14
+rub-nds/dtd/character/internalSubset_CharacterInAttValue_DefaultValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/character/internalSubset_CharacterInAttValue_startTag.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/character/internalSubset_CharacterInContent.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/character/internalSubset_CharacterInContent_NoRecursion.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/character/internalSubset_CharacterInDTD.xml	rub-nds			error code differs	REJECT	REJECT	2	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/character/internalSubset_CharacterInDTD_singleCharRefInName.xml	rub-nds			error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+rub-nds/dtd/character/internalSubset_CharacterInInternalGeneralEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/character/internalSubset_CharacterInParamEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntity_Definition_NoReference.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceAsAttValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.xml	rub-nds			error code differs	REJECT	REJECT	2	16		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInAttValue_startTag.xml	rub-nds			error code differs	REJECT	REJECT	2	16		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInContent.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInContent_withCharacterReference.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInDTD.xml	rub-nds			error code differs	REJECT	REJECT	2	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInInternalGeneralEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInParamEntity.xml	rub-nds			error code differs	REJECT	REJECT	2	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/externalParameterEntity/internalSubset_ExternalPEReferenceAsAttValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalParameterEntity/internalSubset_ExternalPEReferenceInAttValue_DefaultValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalParameterEntity/internalSubset_ExternalPEReferenceInAttValue_startTag.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalParameterEntity/internalSubset_ExternalPEReferenceInContent.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalParameterEntity/internalSubset_ExternalPEReferenceInDTD.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalParameterEntity/internalSubset_ExternalPEReferenceInInternalGeneralEntity.xml	rub-nds			error code differs	REJECT	REJECT	2	10		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/externalParameterEntity/internalSubset_ExternalPEReferenceInParamEntity.xml	rub-nds			error code differs	REJECT	REJECT	2	10		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/externalSubset_ExternalPEReferenceIn_ExternalSubset_InternalGeneralEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalSubset_ExternalPEReferenceInInternalGeneralEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalSubset_ExternalPEReferenceInInternalGeneralEntity_standalone.xml	rub-nds			match	REJECT	REJECT	24	24		yes	yes	0		14
+rub-nds/dtd/externalSubset_ExternalPEReferenceInParamEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalSubset_PEReferenceInInternalGeneralEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalSubset_PEReferenceInInternalGeneralEntity_Reparsing.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/externalSubset_PEReferenceInParamEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceAsAttValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceInAttValue_DefaultValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceInAttValue_startTag.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceInContent.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceInContent_multipleUse.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceInDTD.xml	rub-nds			error code differs	REJECT	REJECT	2	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceInInternalGeneralEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalGeneralEntity/internalSubset_EntityReferenceInParamEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceAsAttValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInAttValue_DefaultValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInAttValue_startTag.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInContent.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInDTD.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInDTD_UseFirstDeclareLater.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInInternalGeneralEntity.xml	rub-nds			error code differs	REJECT	REJECT	2	10		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInParamEntity.xml	rub-nds			error code differs	REJECT	REJECT	2	10		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/dtd/internalSubset_PEReferenceIn_ExternalSubsetInternalGeneralEntity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/template.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/unparsed/internalSubset_UnparsedEntityAsAttValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/unparsed/internalSubset_UnparsedEntityInAttValue_startTag.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/dtd/unparsed/internalSubset_UnparsedEntityInContent.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/optional/dos_parameterEntity.xml	rub-nds			error code differs	REJECT	REJECT	2	10		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/ssrf/url_invocation_doctype.xml	rub-nds			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+rub-nds/ssrf/url_invocation_externalGeneralEntity.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/ssrf/url_invocation_noNamespaceSchemaLocation.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/ssrf/url_invocation_parameterEntity.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/ssrf/url_invocation_schemaLocation.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/ssrf/url_invocation_xinclude.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/standard.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/characterReferenceAsAttValue.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/dos.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/dos2.xml	rub-nds			match	REJECT	REJECT	12	12		yes	yes	0		14
+rub-nds/test/dos_3gb.xml	rub-nds			events differ	REJECT	REJECT	43	43		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/test/externalSubset_ExternalPEReferenceInInternalGeneralEntity_standalone.xml	rub-nds			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+rub-nds/test/notation.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/paramEnity_attribute.xml	rub-nds			events differ	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/test/paramEntity.xml	rub-nds			events differ	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/test/paramEntity2.xml	rub-nds			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+rub-nds/test/paramEntity3.xml	rub-nds			events differ	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/test/paramEntity_sax.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/test/paramEntity_sendhttp.xml	rub-nds			events differ	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+rub-nds/test/parameter_entity.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/parameterEntity_sendftp.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/test/schemaEntity_xmlns.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/test/schemaEntity_xsl.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/test/test.xml	rub-nds			match	REJECT	REJECT	3	3		yes	yes	0		14
+rub-nds/test/unparsed.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/unparsed2.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/unparsed3.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/test/xxe.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/test/xxe_mailto.xml	rub-nds			match	REJECT	REJECT	9	9		yes	yes	0		14
+rub-nds/test/xxx.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xinclude/android/xinclude.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xinclude/android/xinclude_source.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xinclude/xinclude.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xinclude/xinclude_source.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xslt/android/xslt.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xslt/xslt.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xxe/android/xxe.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/xxe/xxe.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/xxep/android/internalSubset_ExternalPEReferenceInDTD.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/xxep/android/internalSubset_PEReferenceInDTD.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xxep/android/parameterEntity_core.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/xxep/android/parameterEntity_doctype.xml	rub-nds			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+rub-nds/xxep/internalSubset_ExternalPEReferenceInDTD.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/xxep/internalSubset_PEReferenceInDTD.xml	rub-nds			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+rub-nds/xxep/parameterEntity_core.xml	rub-nds			match	REJECT	REJECT	21	21		yes	yes	0		14
+rub-nds/xxep/parameterEntity_doctype.xml	rub-nds			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14

@@ -1,0 +1,23 @@
+{
+ "id": "rub-nds/ssrf/url_invocation_doctype.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 21,
+   "message": "error in processing external entity reference",
+   "line": 3,
+   "column": 25,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 21,
+   "message": "error in processing external entity reference",
+   "line": 4,
+   "column": 1,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

@@ -1,0 +1,41 @@
+{
+  "tag": "final-normal",
+  "engines": {
+    "xpact": {
+      "path": "C:\\xpact\\xpact-student-Mass\\build\\fix72\\native-eiffel\\xpact.dll",
+      "bytes": 1566208,
+      "sha256": "17219e108d13a2beee69403acec4f0df1134c25f275cce2986db912dc2156ff6",
+      "XML_ExpatVersion": "expat_2.8.1"
+    },
+    "expat": {
+      "path": "C:\\xpact\\xpact-student-Mass\\build\\libexpat-R_2_8_1\\Release\\libexpat.dll",
+      "bytes": 166400,
+      "sha256": "74c3c976823bf3865edbe232afa3bfe8c72cbe70b1a5ef58af2d0e635a2ecd4b",
+      "XML_ExpatVersion": "expat_2.8.1"
+    }
+  },
+  "fixtures": 104,
+  "parses": 2912,
+  "sets": {
+    "rub-nds": {
+      "fixtures": 104,
+      "match": 81,
+      "verdict same (whole)": 104,
+      "pairs": 1456,
+      "pairs same": 1218,
+      "xpact stable": 104,
+      "expat stable": 104,
+      "status": {
+        "match": 81,
+        "error code differs": 12,
+        "error position differs": 6,
+        "events differ": 5
+      }
+    }
+  },
+  "expected": {
+    "pass": 0,
+    "FAIL": 0
+  },
+  "problems": []
+}
