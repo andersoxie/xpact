@@ -13,10 +13,10 @@ from pathlib import Path
 WEBSITE = Path(__file__).resolve().parent.parent
 REPO = WEBSITE.parent
 DATA = WEBSITE / "data"
-GITHUB = "https://github.com/andersoxie/xpact/blob/student-Mass/"
+GITHUB = "https://github.com/andersoxie/xpact/blob/incremental-test/"
 
 W3C_REPORT = REPO / "reports" / "latest-2026-10-28"
-BENCHMARKS = REPO / "docs" / "benchmarks.md"
+BENCHMARKS = REPO / "reports" / "acceptance-253c81e-vs-45d2f53" / "logs" / "speed" / "bench3-ours-1-table.md"
 COMPARISON = REPO / "student" / "results" / "G03-comparison" / "README.md"
 ALOT = REPO / "student" / "results" / "AlotOfTests-2026-10-28"
 
@@ -58,6 +58,7 @@ def conformance() -> dict:
 def benchmarks() -> dict:
     text = BENCHMARKS.read_text(encoding="utf-8")
     generated = re.search(r"Generated: (.+)", text)
+    generated_text = generated.group(1).strip() if generated else "2026-11-05 (acceptance run, mass-xpact #67)"
     rows = []
     for line in text.splitlines():
         # Only the first results table; later tables repeat older, focused runs.
@@ -70,24 +71,23 @@ def benchmarks() -> dict:
                          "docsPerSecond": float(cells[6]), "mibPerSecond": float(cells[7]), "notes": cells[8]})
     return {
         "source": link(BENCHMARKS),
-        "generated": generated.group(1).strip() if generated else "",
+        "generated": generated_text,
         "workload": "the same UTF-8 catalog document with 100 <item> elements; median of 3 process-level runs",
         "rows": rows,
     }
 
 
 def comparison() -> dict:
-    text = COMPARISON.read_text(encoding="utf-8")
-    verdict = re.search(r"all ([\d,]+) configuration pairs", text)
-    full = re.search(r"\*\*([\d,]+) of ([\d,]+)\*\* pairs give the same verdict, error code and events", text)
-    number = lambda s: int(s.replace(",", ""))
+    run = json.loads((COMPARISON.parent / "runs" / "final-normal" / "summary.json").read_text(encoding="utf-8"))
+    verdicts = run["verdicts_by_config"]
+    same_verdict = run["config_pairs"] if all(verdicts["xpact"][c] == verdicts["expat"][c] for c in verdicts["xpact"]) else None
     return {
         "source": link(COMPARISON),
         "title": "XPact compared with Expat 2.8.1",
-        "pairs": number(verdict.group(1)) if verdict else None,
-        "sameVerdict": number(verdict.group(1)) if verdict else None,
-        "sameVerdictCodeAndEvents": number(full.group(1)) if full else None,
-        "note": "Measured before the 2026-10-31 fixes (#172-#175, #124, #125), which closed several of the differences.",
+        "pairs": run["config_pairs"],
+        "sameVerdict": same_verdict,
+        "sameVerdictCodeAndEvents": run["config_pairs_same"],
+        "note": "Rerun on the final code on 2026-11-06 (mass-xpact #81): the 93 G01 W3C cases, 14 ways of feeding each.",
     }
 
 

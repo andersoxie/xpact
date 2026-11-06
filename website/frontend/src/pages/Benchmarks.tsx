@@ -165,8 +165,8 @@ export function Benchmarks() {
             )}
           </div>
           <p className="small muted" style={{ marginTop: 10 }}>
-            The Eiffel parser is about as fast as Expat through Python. The C library is slower today, most of all with
-            callbacks; the cause is still being investigated (see <a href="/docs#limits">known limitations</a>).{" "}
+            The Eiffel parser and the C library are now about as fast as Expat through Python; with callbacks the
+            C library is about 2.3 times slower (see <a href="/docs#limits">known limitations</a>).{" "}
             <a href={benchmarks.data.source}>Benchmark report</a>
           </p>
         </section>

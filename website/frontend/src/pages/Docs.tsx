@@ -239,17 +239,14 @@ curl -H "Content-Type: application/json" \\
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Incremental parsing through the DLL re-reads the buffered input on each call</td>
-                    <td>Feeding a document in very small pieces is slow (8 KB byte by byte: about a minute; Expat: milliseconds)</td>
-                    <td>F05-1</td>
+                    <td>Input declared ISO-8859-1 and fed in pieces is decoded again on every call</td>
+                    <td>1 MB in 1 KB pieces: 46 s (Expat 0.2 s). UTF-8 and UTF-16 input in pieces is linear</td>
+                    <td><a href={LINKS.massIssue(84)}>mass-xpact#84</a></td>
                   </tr>
                   <tr>
-                    <td>Deeply nested entity expansion (“billion laughs”) is cut off late, with a general code</td>
-                    <td>
-                      A 10 MB+ expansion is rejected after about 7 s as “syntax error”; Expat rejects it in about 0.1 s as
-                      “amplification limit breached”
-                    </td>
-                    <td><a href={LINKS.issue(211)}>#211</a></td>
+                    <td>The DLL is not thread-safe</td>
+                    <td>Two threads, each with its own parser, crash it; use one thread at a time (Expat allows this)</td>
+                    <td><a href={LINKS.massIssue(75)}>mass-xpact#75</a></td>
                   </tr>
                   <tr>
                     <td>Some error codes differ from Expat</td>

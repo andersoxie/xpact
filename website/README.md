@@ -2,7 +2,7 @@
 
 A website where anyone can **upload or paste an XML document and see what XPact does with it**: accepted or rejected, the error with its line and column, and the parser events. It also explains the parser, shows the W3C conformance and benchmark results, and links to the project.
 
-> 🟢 **Status:** working locally, all checks pass (19 / 19 backend tests, browser QA with 0 console errors). ⬜ Not deployed yet.
+> 🟢 **Status:** working locally, all checks pass (20 / 20 backend tests, browser QA of all 5 pages with 0 console errors and 0 failed requests, 2026-11-06, with the final parser `45d2f53`). ⬜ Not deployed yet.
 
 ---
 
