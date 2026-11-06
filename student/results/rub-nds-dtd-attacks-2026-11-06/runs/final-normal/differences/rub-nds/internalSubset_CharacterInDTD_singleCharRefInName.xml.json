@@ -1,0 +1,23 @@
+{
+ "id": "rub-nds/dtd/character/internalSubset_CharacterInDTD_singleCharRefInName.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 3,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 3,
+   "column": 9,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

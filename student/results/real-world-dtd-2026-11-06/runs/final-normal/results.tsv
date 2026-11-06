@@ -1,0 +1,3 @@
+id	set	finding	expected	status	xpact	expat	xpact_error	expat_error	xpact_vs_expected	xpact_same_in_all_chunkings	expat_same_in_all_chunkings	configs_differing	first_configs	pairs_same
+real/mondial-3.0	real-world			match	ACCEPT	ACCEPT	0	0		yes	yes	0		6
+real/dblp-9mb	real-world			crash or timeout	ACCEPT	ACCEPT	0	0		NO	yes	4	XML_Parse 64; XML_Parse 1024; XML_ParseBuffer 64	2

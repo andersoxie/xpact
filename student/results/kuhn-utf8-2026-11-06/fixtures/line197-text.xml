@@ -1,0 +1,1 @@
+<r>reject overlong UTF-8 sequences for which a shorter encoding exists.          |</r>

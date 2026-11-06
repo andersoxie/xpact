@@ -1,0 +1,196 @@
+{
+ "id": "real/dblp-9mb",
+ "status": "crash or timeout",
+ "whole": {
+  "xpact": {
+   "verdict": "ACCEPT",
+   "error": 0,
+   "message": "",
+   "line": 0,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "ACCEPT",
+   "error": 0,
+   "message": "",
+   "line": 0,
+   "column": 0,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "TIMEOUT",
+    "error": null,
+    "message": null,
+    "line": null,
+    "column": null,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 0,
+    "events_a": [],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "startdoctype",
+      "dblp",
+      "dblp.dtd",
+      null,
+      0
+     ],
+     [
+      "comment",
+      "\n\tThe dblp computer science bibliography is copyright by Schloss Dagstuhl - Leibniz Center for Informatics.\n\n\tThe metadata provided by dblp on its webpages, as well as their XML, JSON, RDF, RIS, BibTeX, and text export formats\n\tavailable at our website, is released under the CC0 1.0 Public Domain Dedication license. That is, you are free to copy,\n\tdistribute, use, modify, transform, build upon, and produce derived works from our data, even for commercial purposes,\n\tall without asking permission. Of course, we are always happy if you provide a link to us as the source of the data.\n\n\tRead the full CC0 1.0 legal code for the exact terms that apply:\n\n\thttps://creativecommons.org/publicdomain/zero/1.0/legalcode\n\n\tA daily updated dblp XML record dump is available at:\n\n        https://dblp.org/xml/dblp.xml.gz\n\n\tPersistent snapshots of the dblp XML record dumps are available at:\n\n        https://dblp.org/xml/release/\n\n\tDate of this DTD file: May 10, 2023\n\n\tA changelog for this dblp.dtd can be found at:\n\n\thttps://dblp.org/xml/CHANGES.txt\n\n\tFor further details on the content of dblp XML records see:\n\n\thttps://dblp.org/faq/16154937.html\n"
+     ]
+    ],
+    "count_a": 0,
+    "count_b": 717872
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "TIMEOUT",
+    "error": null,
+    "message": null,
+    "line": null,
+    "column": null,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 0,
+    "events_a": [],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "startdoctype",
+      "dblp",
+      "dblp.dtd",
+      null,
+      0
+     ],
+     [
+      "comment",
+      "\n\tThe dblp computer science bibliography is copyright by Schloss Dagstuhl - Leibniz Center for Informatics.\n\n\tThe metadata provided by dblp on its webpages, as well as their XML, JSON, RDF, RIS, BibTeX, and text export formats\n\tavailable at our website, is released under the CC0 1.0 Public Domain Dedication license. That is, you are free to copy,\n\tdistribute, use, modify, transform, build upon, and produce derived works from our data, even for commercial purposes,\n\tall without asking permission. Of course, we are always happy if you provide a link to us as the source of the data.\n\n\tRead the full CC0 1.0 legal code for the exact terms that apply:\n\n\thttps://creativecommons.org/publicdomain/zero/1.0/legalcode\n\n\tA daily updated dblp XML record dump is available at:\n\n        https://dblp.org/xml/dblp.xml.gz\n\n\tPersistent snapshots of the dblp XML record dumps are available at:\n\n        https://dblp.org/xml/release/\n\n\tDate of this DTD file: May 10, 2023\n\n\tA changelog for this dblp.dtd can be found at:\n\n\thttps://dblp.org/xml/CHANGES.txt\n\n\tFor further details on the content of dblp XML records see:\n\n\thttps://dblp.org/faq/16154937.html\n"
+     ]
+    ],
+    "count_a": 0,
+    "count_b": 717872
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "TIMEOUT",
+    "error": null,
+    "message": null,
+    "line": null,
+    "column": null,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 0,
+    "events_a": [],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "startdoctype",
+      "dblp",
+      "dblp.dtd",
+      null,
+      0
+     ],
+     [
+      "comment",
+      "\n\tThe dblp computer science bibliography is copyright by Schloss Dagstuhl - Leibniz Center for Informatics.\n\n\tThe metadata provided by dblp on its webpages, as well as their XML, JSON, RDF, RIS, BibTeX, and text export formats\n\tavailable at our website, is released under the CC0 1.0 Public Domain Dedication license. That is, you are free to copy,\n\tdistribute, use, modify, transform, build upon, and produce derived works from our data, even for commercial purposes,\n\tall without asking permission. Of course, we are always happy if you provide a link to us as the source of the data.\n\n\tRead the full CC0 1.0 legal code for the exact terms that apply:\n\n\thttps://creativecommons.org/publicdomain/zero/1.0/legalcode\n\n\tA daily updated dblp XML record dump is available at:\n\n        https://dblp.org/xml/dblp.xml.gz\n\n\tPersistent snapshots of the dblp XML record dumps are available at:\n\n        https://dblp.org/xml/release/\n\n\tDate of this DTD file: May 10, 2023\n\n\tA changelog for this dblp.dtd can be found at:\n\n\thttps://dblp.org/xml/CHANGES.txt\n\n\tFor further details on the content of dblp XML records see:\n\n\thttps://dblp.org/faq/16154937.html\n"
+     ]
+    ],
+    "count_a": 0,
+    "count_b": 717872
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "TIMEOUT",
+    "error": null,
+    "message": null,
+    "line": null,
+    "column": null,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 0,
+    "events_a": [],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "startdoctype",
+      "dblp",
+      "dblp.dtd",
+      null,
+      0
+     ],
+     [
+      "comment",
+      "\n\tThe dblp computer science bibliography is copyright by Schloss Dagstuhl - Leibniz Center for Informatics.\n\n\tThe metadata provided by dblp on its webpages, as well as their XML, JSON, RDF, RIS, BibTeX, and text export formats\n\tavailable at our website, is released under the CC0 1.0 Public Domain Dedication license. That is, you are free to copy,\n\tdistribute, use, modify, transform, build upon, and produce derived works from our data, even for commercial purposes,\n\tall without asking permission. Of course, we are always happy if you provide a link to us as the source of the data.\n\n\tRead the full CC0 1.0 legal code for the exact terms that apply:\n\n\thttps://creativecommons.org/publicdomain/zero/1.0/legalcode\n\n\tA daily updated dblp XML record dump is available at:\n\n        https://dblp.org/xml/dblp.xml.gz\n\n\tPersistent snapshots of the dblp XML record dumps are available at:\n\n        https://dblp.org/xml/release/\n\n\tDate of this DTD file: May 10, 2023\n\n\tA changelog for this dblp.dtd can be found at:\n\n\thttps://dblp.org/xml/CHANGES.txt\n\n\tFor further details on the content of dblp XML records see:\n\n\thttps://dblp.org/faq/16154937.html\n"
+     ]
+    ],
+    "count_a": 0,
+    "count_b": 717872
+   }
+  }
+ }
+}

@@ -1,0 +1,29 @@
+id	set	finding	expected	status	xpact	expat	xpact_error	expat_error	xpact_vs_expected	xpact_same_in_all_chunkings	expat_same_in_all_chunkings	configs_differing	first_configs	pairs_same
+pugixml/____.xml	pugixml			error code differs	REJECT	REJECT	4	2		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+pugixml/empty.xml	pugixml			match	REJECT	REJECT	3	3		NO	NO	0		14
+pugixml/large.xml	pugixml			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+pugixml/latintest_latin1.xml	pugixml			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+pugixml/latintest_utf8.xml	pugixml			events differ	ACCEPT	ACCEPT	0	0		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+pugixml/multiline.xml	pugixml			match	REJECT	REJECT	9	9		yes	yes	0		14
+pugixml/small.xml	pugixml			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+pugixml/truncation.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf16_be.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf16_be_bom.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf16_be_clean.xml	pugixml			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+pugixml/utftest_utf16_be_nodecl.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf16_le.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf16_le_bom.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf16_le_clean.xml	pugixml			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+pugixml/utftest_utf16_le_nodecl.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf32_be.xml	pugixml			match	REJECT	REJECT	4	4		yes	yes	0		14
+pugixml/utftest_utf32_be_bom.xml	pugixml			match	REJECT	REJECT	4	4		yes	yes	0		14
+pugixml/utftest_utf32_be_clean.xml	pugixml			match	REJECT	REJECT	4	4		yes	yes	0		14
+pugixml/utftest_utf32_be_nodecl.xml	pugixml			match	REJECT	REJECT	4	4		yes	yes	0		14
+pugixml/utftest_utf32_le.xml	pugixml			match	REJECT	REJECT	4	4		yes	yes	0		14
+pugixml/utftest_utf32_le_bom.xml	pugixml			error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf32_le_clean.xml	pugixml			error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf32_le_nodecl.xml	pugixml			match	REJECT	REJECT	4	4		yes	yes	0		14
+pugixml/utftest_utf8.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf8_bom.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+pugixml/utftest_utf8_clean.xml	pugixml			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+pugixml/utftest_utf8_nodecl.xml	pugixml			error position differs	REJECT	REJECT	21	21		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14

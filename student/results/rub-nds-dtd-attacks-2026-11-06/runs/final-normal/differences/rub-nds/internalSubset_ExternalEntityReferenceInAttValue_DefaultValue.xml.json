@@ -1,0 +1,934 @@
+{
+ "id": "rub-nds/dtd/externalGeneralEntity/internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.xml",
+ "status": "error code differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 2,
+   "message": "syntax error",
+   "line": 5,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 16,
+   "message": "reference to external entity in attribute",
+   "line": 5,
+   "column": 27,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 5,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 16,
+    "message": "reference to external entity in attribute",
+    "line": 5,
+    "column": 27,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 4,
+    "events_a": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "entitydecl",
+      "external",
+      0,
+      null,
+      "internalSubset_ExternalEntityReferenceInAttValue_DefaultValue.txt",
+      null,
+      null
+     ],
+     [
+      "elementdecl",
+      "data",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ]
+    ],
+    "count_a": 4,
+    "count_b": 4
+   }
+  }
+ }
+}

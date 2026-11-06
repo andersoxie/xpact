@@ -1,0 +1,23 @@
+{
+ "id": "pugixml/empty.xml",
+ "status": "match",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 3,
+   "message": "no element found",
+   "line": 1,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 3,
+   "message": "no element found",
+   "line": 1,
+   "column": 0,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

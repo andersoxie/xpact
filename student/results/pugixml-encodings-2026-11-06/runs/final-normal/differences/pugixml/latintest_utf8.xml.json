@@ -1,0 +1,1214 @@
+{
+ "id": "pugixml/latintest_utf8.xml",
+ "status": "events differ",
+ "whole": {
+  "xpact": {
+   "verdict": "ACCEPT",
+   "error": 0,
+   "message": "",
+   "line": 0,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "ACCEPT",
+   "error": 0,
+   "message": "",
+   "line": 0,
+   "column": 0,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00e4\u00f6\u00fc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00e4\u00f6\u00fc>"
+     ]
+    ],
+    "events_b": [
+     [
+      "xmldecl",
+      "1.0",
+      "ISO-8859-1",
+      -1
+     ],
+     [
+      "start",
+      "EXAMPLE",
+      []
+     ],
+     [
+      "comment",
+      "This is a comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ],
+     [
+      "start",
+      "ORDER",
+      [
+       "version",
+       "1.0",
+       "xml:lang",
+       "de"
+      ]
+     ],
+     [
+      "comment",
+      "This is another comment with special chars: <\u00c3\u00a4\u00c3\u00b6\u00c3\u00bc>"
+     ]
+    ],
+    "count_a": 44,
+    "count_b": 44
+   }
+  }
+ }
+}

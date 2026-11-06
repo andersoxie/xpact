@@ -1,0 +1,23 @@
+{
+ "id": "pugixml/utftest_utf16_le_nodecl.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 21,
+   "message": "error in processing external entity reference",
+   "line": 1,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 21,
+   "message": "error in processing external entity reference",
+   "line": 1,
+   "column": 38,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

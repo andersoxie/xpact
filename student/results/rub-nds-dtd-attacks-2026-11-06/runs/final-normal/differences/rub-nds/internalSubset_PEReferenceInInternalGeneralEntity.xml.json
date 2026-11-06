@@ -1,0 +1,976 @@
+{
+ "id": "rub-nds/dtd/internalParameterEntity/internalSubset_PEReferenceInInternalGeneralEntity.xml",
+ "status": "error code differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 2,
+   "message": "syntax error",
+   "line": 4,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 10,
+   "message": "illegal parameter entity reference",
+   "line": 4,
+   "column": 14,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 2,
+    "message": "syntax error",
+    "line": 4,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 10,
+    "message": "illegal parameter entity reference",
+    "line": 4,
+    "column": 14,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "data",
+      null,
+      null,
+      1
+     ],
+     [
+      "entitydecl",
+      "internal",
+      1,
+      "it_works",
+      null,
+      null,
+      null
+     ],
+     [
+      "entitydecl",
+      "use",
+      0,
+      "",
+      null,
+      null,
+      null
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 4
+   }
+  }
+ }
+}
