@@ -1,0 +1,23 @@
+{
+ "id": "G01-w3c/not-wf-sa-001",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 2,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 3,
+   "column": 0,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

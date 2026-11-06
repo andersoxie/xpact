@@ -1,0 +1,5 @@
+þÿ<?xml encodint (#PCDATA)> 
+]>
+
+<!-- testing invalid CDSect with missing CDEnd  -->
+<student>My Name is SnowMan. <![CDATA[This is <normal> text </student>

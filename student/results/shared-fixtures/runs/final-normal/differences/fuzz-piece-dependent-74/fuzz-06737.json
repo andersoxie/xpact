@@ -1,0 +1,282 @@
+{
+ "id": "fuzz-piece-dependent-74/fuzz-06737",
+ "status": "error code differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 5,
+   "column": 74,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 9,
+   "message": "junk after document element",
+   "line": 5,
+   "column": 50,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 74,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 5,
+    "column": 50,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 7,
+    "events_a": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "count_a": 7,
+    "count_b": 7
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 74,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 5,
+    "column": 50,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 7,
+    "events_a": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "count_a": 7,
+    "count_b": 7
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 74,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 5,
+    "column": 50,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 7,
+    "events_a": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "count_a": 7,
+    "count_b": 7
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 74,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 5,
+    "column": 50,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 7,
+    "events_a": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "count_a": 7,
+    "count_b": 7
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 74,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 5,
+    "column": 50,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 7,
+    "events_a": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "count_a": 7,
+    "count_b": 7
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 5,
+    "column": 74,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 5,
+    "column": 50,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 7,
+    "events_a": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\nThis test case tests the k>\n"
+     ],
+     [
+      "end",
+      "root"
+     ]
+    ],
+    "count_a": 7,
+    "count_b": 7
+   }
+  }
+ }
+}

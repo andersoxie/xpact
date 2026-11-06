@@ -1,0 +1,23 @@
+{
+ "id": "G01-w3c/ibm-not-wf-P14-ibm14n02.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 9,
+   "column": 38,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 9,
+   "column": 43,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}
