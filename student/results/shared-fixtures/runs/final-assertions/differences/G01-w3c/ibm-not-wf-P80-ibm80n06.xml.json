@@ -1,0 +1,23 @@
+{
+ "id": "G01-w3c/ibm-not-wf-P80-ibm80n06.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 30,
+   "message": "XML declaration not well-formed",
+   "line": 1,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 30,
+   "message": "XML declaration not well-formed",
+   "line": 1,
+   "column": 20,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

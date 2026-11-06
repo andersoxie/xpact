@@ -1,0 +1,23 @@
+{
+ "id": "G01-w3c/o-p73fail1",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 2,
+   "message": "syntax error",
+   "line": 5,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 2,
+   "message": "syntax error",
+   "line": 5,
+   "column": 12,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

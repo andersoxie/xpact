@@ -1,0 +1,1 @@
+<!DOCTYPE doc [<!ENTITY % pe SYSTEM "x.ent"> %pe; <!ENTITY e 'v'>]><doc>&e;</doc>

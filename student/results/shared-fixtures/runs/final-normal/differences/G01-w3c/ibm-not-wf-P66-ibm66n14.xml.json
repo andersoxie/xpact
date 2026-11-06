@@ -1,0 +1,23 @@
+{
+ "id": "G01-w3c/ibm-not-wf-P66-ibm66n14.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 14,
+   "message": "reference to invalid character number",
+   "line": 7,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 14,
+   "message": "reference to invalid character number",
+   "line": 7,
+   "column": 40,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}
