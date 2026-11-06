@@ -132,7 +132,9 @@ export function Home() {
             <Done>External entities through the C API: 247 / 247</Done>
             <Done>Same accept/reject verdict as Expat in every compared case</Done>
             <Todo>Error codes and events identical to Expat in every case (most match; see the open issues)</Todo>
-            <Todo>Fast incremental parsing through the DLL (small pieces are slow today)</Todo>
+            <Done>Fast incremental parsing through the DLL: 131 KB fed byte by byte in 0.1 s (was 50 min)</Done>
+            <Done>Billion-laughs protection as in Expat (amplification rule, error 43)</Done>
+            <Todo>ISO-8859-1 input in small pieces is still slow (mass-xpact#84)</Todo>
           </ul>
           <p className="small muted" style={{ marginTop: 10 }}>
             Details and evidence: <Link to="/benchmarks">Benchmarks and conformance</Link> ·{" "}

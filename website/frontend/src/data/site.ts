@@ -1,7 +1,7 @@
 // Links and facts shown on several pages. One place to update them.
 
 export const REPO = "https://github.com/andersoxie/xpact";
-export const BRANCH = "student-Mass";
+export const BRANCH = "incremental-test";
 export const repoFile = (path: string) => `${REPO}/blob/${BRANCH}/${path}`;
 export const repoTree = (path: string) => `${REPO}/tree/${BRANCH}/${path}`;
 
@@ -20,6 +20,7 @@ export const LINKS = {
   w3cSuite: "https://www.w3.org/XML/Test/",
   xmlSpec: "https://www.w3.org/TR/2008/REC-xml-20081126/",
   issue: (n: number) => `${REPO}/issues/${n}`,
+  massIssue: (n: number) => `https://github.com/CodTanium/mass-xpact/issues/${n}`,
 };
 
 // Who did the testing, the fixes and this website (footer and Project page).
