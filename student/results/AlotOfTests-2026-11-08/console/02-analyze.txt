@@ -1,0 +1,10 @@
+[
+ [
+  "same verdict, other events",
+  15
+ ],
+ [
+  "same verdict, other error code",
+  1
+ ]
+]

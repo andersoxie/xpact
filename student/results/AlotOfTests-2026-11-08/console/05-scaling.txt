@@ -1,0 +1,21 @@
+shape            size     mode          xpact s   expat s
+text              128 KB  whole          0.0039    0.0007
+text              128 KB  every:65536    0.0046    0.0008
+text              256 KB  whole          0.0081    0.0008
+text              256 KB  every:65536    0.0083     0.001
+text              512 KB  whole          0.0137    0.0009
+text              512 KB  every:65536    0.0172    0.0016
+text             1024 KB  whole          0.0271    0.0018
+text             1024 KB  every:65536     0.032    0.0022
+text             2048 KB  whole          0.0531     0.003
+text             2048 KB  every:65536     0.065    0.0038
+small-elements    128 KB  whole          0.0672    0.0174
+small-elements    128 KB  every:65536    0.0798    0.0189
+small-elements    256 KB  whole          0.1409     0.045
+small-elements    256 KB  every:65536    0.1651    0.0355
+small-elements    512 KB  whole          0.2799    0.0727
+small-elements    512 KB  every:65536    0.3191    0.0717
+small-elements   1024 KB  whole          0.5604    0.1523
+small-elements   1024 KB  every:65536    0.6409    0.1518
+small-elements   2048 KB  whole          1.1669     0.355
+small-elements   2048 KB  every:65536     1.395    0.3464

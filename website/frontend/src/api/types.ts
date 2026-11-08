@@ -103,6 +103,8 @@ export interface Metric {
   /** Rounded: shown with "≈". */
   approx: boolean;
   sub: string;
+  /** The outcome in words, e.g. "✅ 0 crashes · 0 hangs". */
+  result?: { text: string; tone: "good" | "warn" };
 }
 
 export interface Testing {

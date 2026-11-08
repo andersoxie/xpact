@@ -61,7 +61,8 @@ export function Home() {
             <h2>Tested hard</h2>
             <p className="muted">
               Eleven test areas, from the W3C suite to fuzzing, security attacks and real-world corpora, each compared
-              with Expat. {testing.data.note}{" "}
+              with Expat, plus the project's own C#, Python and Eiffel suites. {testing.data.note} Under each number:
+              ✅ passed, 🟡 passed with known differences or limits (each one written up).{" "}
               <a href={testing.data.source}>Evidence and sources ↗</a>
             </p>
             <div className="grid grid-4">
@@ -160,7 +161,7 @@ export function Home() {
 function MetricStat({ metric }: { metric: Metric }) {
   const number = typeof metric.value === "number" ? fmt.format(metric.value) : metric.value;
   const value = metric.approx ? `≈ ${number}` : number;
-  return <Stat label={`${metric.icon} ${metric.label}`} value={value} sub={metric.sub} long={value.length > 11} />;
+  return <Stat label={`${metric.icon} ${metric.label}`} value={value} sub={metric.sub} long={value.length > 11} result={metric.result} />;
 }
 
 function Done({ children }: { children: React.ReactNode }) {

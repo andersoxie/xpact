@@ -1,0 +1,6 @@
+utf16-unpaired-high-surrogate            error 4 vs Expat 3  [xpact: not well-formed (invalid token) | expat: no element found]
+create-latin1-overrides-utf8             events differ from Expat  [xpact:  | expat: ]
+create-utf8-overrides-latin1             verdict ACCEPT (expected REJECT)  [xpact:  | expat: not well-formed (invalid token)]
+create-utf16-on-utf8                     error 19 vs Expat 4  [xpact: encoding specified in XML declaration is incorrect | expat: not well-formed (invalid token)]
+bom-utf8-decl-utf16                      verdict ACCEPT (expected REJECT)  [xpact:  | expat: encoding specified in XML declaration is incorrect]
+{"pass": 141, "FAIL": 5, "total": 146}

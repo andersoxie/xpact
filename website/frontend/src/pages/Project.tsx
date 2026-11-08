@@ -1,4 +1,4 @@
-import { AUTHOR, LINKS, repoFile, repoTree } from "../data/site";
+import { AUTHOR, BRANCH, LINKS, repoFile, repoTree } from "../data/site";
 
 // What the student built, with the evidence for each part.
 const WORK: { area: string; what: string; href: string }[] = [
@@ -31,7 +31,7 @@ export function Project() {
       </div>
 
       <section className="grid grid-3">
-        <LinkCard title="Source code" href={LINKS.branch} text="The student-Mass branch: parser, C library, tests and this website." />
+        <LinkCard title="Source code" href={LINKS.branch} text={`The ${BRANCH} branch: parser, C library, tests and this website.`} />
         <LinkCard title="Issues" href={LINKS.issues} text="One issue per bug, finding or task, each with a report and its evidence." />
         <LinkCard title="Project board" href={LINKS.board} text="What is being worked on: Todo → In progress → In review → Done." />
         <LinkCard title="Reports" href={LINKS.reports} text="Investigations, fixes and test runs, one folder per issue." />

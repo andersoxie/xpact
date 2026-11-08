@@ -15,10 +15,13 @@ REPO = WEBSITE.parent
 DATA = WEBSITE / "data"
 GITHUB = "https://github.com/andersoxie/xpact/blob/incremental-test/"
 
+# W3C runner, all lanes, rerun on incremental-test 2026-11-08. The DLL external-entity lane
+# (247 cases) was not rerun; it stays from 2026-10-28.
+W3C_RUN = REPO / "student" / "results" / "AlotOfTests-2026-11-08" / "repo-suites" / "w3c"
 W3C_REPORT = REPO / "reports" / "latest-2026-10-28"
 BENCHMARKS = REPO / "reports" / "acceptance-253c81e-vs-45d2f53" / "logs" / "speed" / "bench3-ours-1-table.md"
 COMPARISON = REPO / "student" / "results" / "G03-comparison" / "README.md"
-ALOT = REPO / "student" / "results" / "AlotOfTests-2026-10-28"
+ALOT = REPO / "student" / "results" / "AlotOfTests-2026-11-08"
 
 LANES = [
     ("core", "XML 1.0 5th edition", "W3C verdict", 1974),
@@ -33,11 +36,11 @@ def link(path: Path) -> str:
 
 
 def conformance() -> dict:
-    summary = json.loads((W3C_REPORT / "w3c" / "summary.json").read_text(encoding="utf-8"))
+    summary = json.loads((W3C_RUN / "summary.json").read_text(encoding="utf-8"))
     dll = json.loads((W3C_REPORT / "dll-entity-lane" / "summary.json").read_text(encoding="utf-8"))
     return {
-        "source": link(W3C_REPORT / "README.md"),
-        "date": "2026-10-28",
+        "source": link(W3C_RUN.parent.parent / "README.md"),
+        "date": "2026-11-08",
         "suite": {"name": "W3C XML Conformance Test Suite", "version": summary["suite_version"],
                   "url": summary["source"], "cases": summary["catalog_cases"]},
         "profile": summary["profile"],
@@ -91,87 +94,82 @@ def comparison() -> dict:
     }
 
 
-def tsv_rows(path: Path) -> list[dict]:
-    lines = path.read_text(encoding="utf-8").splitlines()
-    header = lines[0].split("\t")
-    return [dict(zip(header, line.split("\t"))) for line in lines[1:] if line]
-
-
 def fmt(number: int) -> str:
     return f"{number:,}"
 
 
-def readme_number(path: Path, pattern: str) -> int:
-    found = re.search(pattern, path.read_text(encoding="utf-8"))
-    if not found:
-        raise SystemExit(f"{path.relative_to(REPO)}: no match for {pattern!r}")
-    return int(found.group(1).replace(",", ""))
-
-
 def testing() -> dict:
-    # W3C in pieces: per parser and build, each document once whole, once byte by byte,
-    # and split in two at every byte (documents up to 4 KB, two calls per split).
-    chunked = tsv_rows(ALOT / "02-w3c-chunked" / "logs" / "chunked-xpact.tsv")
-    sizes = [int(row["size"]) for row in chunked]
-    splits = sum(size - 1 for size in sizes if 1 < size <= 4096)
-    calls_per_run = len(sizes) + sum(sizes) + 2 * splits
-    runs = 3  # xpact.dll, xpact_assertions.dll and Expat
-    fuzzed = readme_number(ALOT / "03-fuzzing" / "README.md", r"\| Inputs \| \*\*([\d,]+)\*\*")
-    generated = readme_number(ALOT / "04-differential-vs-expat" / "README.md", r"Generated \(20 min, seed 1\) \| \*\*([\d,]+)\*\*")
-    libxml2 = len(tsv_rows(ALOT / "07-libxml2-corpus" / "logs" / "libxml2-xpact.tsv"))
-    encodings = len(tsv_rows(ALOT / "08-encodings" / "logs" / "encodings-xpact.tsv"))
-    attacks = len(tsv_rows(ALOT / "05-security-limits" / "logs" / "security-xpact.tsv"))
-    large_files = 16  # 4 shapes x 1, 5, 9 and 20 MB (11-large-real-files/README.md)
-    documents = len(sizes) + fuzzed + generated + libxml2 + encodings + attacks + large_files
-    cpython = readme_number(ALOT / "10-python-xml-tests" / "README.md", r"\| Tests run \| [\d,]+ \| ([\d,]+) \|")
-    expat_tests = readme_number(ALOT / "06-expat-runtests-parity" / "README.md", r"\| \*\*Total\*\* \| \*\*([\d,]+)\*\*")
-    item = lambda icon, label, value, sub, approx=False: {"icon": icon, "label": label, "value": value, "approx": approx, "sub": sub}
-
-    # Results against Expat. W3C in pieces before and after the #165 fix (2026-10-30).
-    test2 = REPO / "reports" / "issue-0165" / "logs" / "test2"
-    before = json.loads((test2 / "chunked-e5d59e2-assertions-summary.json").read_text(encoding="utf-8"))
-    after = json.loads((test2 / "chunked-fix165-assertions-summary.json").read_text(encoding="utf-8"))
-    verdict_changes = readme_number(ALOT / "02-w3c-chunked" / "README.md", r"\*\*the verdict \(ACCEPT/REJECT\) changes\*\* \| \*\*(\d+)\*\*")
-    fuzz_same = readme_number(ALOT / "03-fuzzing" / "README.md", r"\| Same verdict as Expat \| ([\d,]+)")
-    diff_readme = ALOT / "04-differential-vs-expat" / "README.md"
-    diff_same = readme_number(diff_readme, r"both accept \| ([\d,]+)") + readme_number(diff_readme, r"both reject \| ([\d,]+)")
-    expat_passed = readme_number(ALOT / "06-expat-runtests-parity" / "README.md", r"\*\*([\d,]+) passed, [\d,]+ expected failures\*\*")
-    libxml2_same = readme_number(ALOT / "07-libxml2-corpus" / "README.md", r"same verdict, error code and events as Expat \| \*\*([\d,]+)\*\*")
-    encodings_pass = sum(row["status"] == "pass" for row in tsv_rows(ALOT / "08-encodings" / "logs" / "encodings-xpact.tsv"))
-    cpython_failed = readme_number(ALOT / "10-python-xml-tests" / "README.md", r"\*\*(\d+) \+ \d+\*\*")
-    cpython_errors = readme_number(ALOT / "10-python-xml-tests" / "README.md", r"\*\*\d+ \+ (\d+)\*\*")
+    # AlotOfTests rerun on incremental-test (2026-11-08): one summary.json built by collect.py from the logs.
+    s = json.loads((ALOT / "summary.json").read_text(encoding="utf-8"))
+    w3c = next(b for b in conformance()["builds"] if b["build"] == "production")
+    calls, fuzz, diff = s["xml_parse_calls"], s["fuzzing"], s["differential"]
+    pieces = s["w3c_pieces"]["assertions"]
+    runtests, cpy, lib, sec = s["expat_runtests"]["normal"], s["cpython"], s["libxml2"], s["security"]["normal"]
+    enc = s["encodings"]["normal"]
+    xpact_timeouts = lib["stats"].get("xpact TIMEOUT / expat REJECT", 0) + lib["stats"].get("xpact TIMEOUT / expat ACCEPT", 0)
     ratio = lambda part, whole: f"{fmt(part)} / {fmt(whole)}"
     percent = lambda part, whole: f"{100 * part / whole:.2f} %"
+    good = lambda text: {"text": "✅ " + text, "tone": "good"}
+    warn = lambda text: {"text": "🟡 " + text, "tone": "warn"}
+
+    def item(icon, label, value, sub, approx=False, result=None):
+        out = {"icon": icon, "label": label, "value": value, "approx": approx, "sub": sub}
+        if result:
+            out["result"] = result
+        return out
+
+    both_builds_same = all(s["w3c_pieces"][b]["xpact_crash_or_timeout"] == 0 for b in ("normal", "assertions"))
     return {
         "source": link(ALOT / "README.md"),
-        "date": "2026-10-28",
-        "revision": "293918f",
-        "note": "Measured on 2026-10-28, before the fixes #154-#175; not rerun since.",
+        "date": s["date"],
+        "revision": "incremental-test",
+        "note": "Rerun on 2026-11-08 on the final parser (incremental-test), both builds.",
         "testing": [
-            item("🔁", "XML_Parse calls", round(calls_per_run * runs, -6), "W3C-in-pieces test alone", True),
-            item("📄", "Documents and inputs parsed", round(documents, -3), "W3C, fuzzed, generated, libxml2, encodings, attacks, large files", True),
-            item("🧬", "Generated documents compared with Expat", generated, "verdict, error code and events"),
-            item("🎲", "Fuzzed (mutated) inputs", fuzzed, "30 minutes, seeded from W3C"),
-            item("🔤", "W3C bytes fed one at a time", sum(sizes), "per run"),
-            item("✂️", "Two-piece split runs", splits, "every byte position, W3C documents up to 4 KB"),
-            item("♻️", "Parser lifecycles in the leak test", 8 * 20_000, "8 scenarios × 20,000 rounds"),
-            item("📚", "W3C conformance cases", len(sizes), "W3C XML Conformance Test Suite 20130923"),
-            item("📁", "libxml2 test files", libxml2, "libxml2's own test corpus"),
-            item("🐍", "CPython XML tests run on xpact", 2 * cpython, "2 builds, Python's pyexpat linked to xpact"),
-            item("⚙️", "Expat's own C unit tests run against xpact", 2 * expat_tests, "2 builds, Expat 2.8.1 runtests"),
-            item("🧪", "Test areas", 11, "conformance, fuzzing, security, memory, real files …"),
-            item("💥", "Crashes / hangs / memory leaks found", "0 / 0 / 0", "in every test area"),
-            item("🐞", "Problems found", 27, "each one written up; 9 fixed since"),
+            item("🔁", "XML_Parse calls", round(calls["total"], -4),
+                 "W3C files whole, byte by byte and split in two; 2 XPact builds + Expat", True,
+                 good("0 crashes · 0 timeouts · verdict never changed") if both_builds_same and s["verdict_changes_by_chunking"] == 0 else warn("see the report")),
+            item("📄", "Documents and inputs parsed", round(s["documents_parsed"], -3),
+                 "W3C, fuzzed, generated, libxml2, encodings, attacks, large files", True, good("0 crashes in XPact")),
+            item("🎲", "Fuzzed (mutated) inputs", fuzz["inputs"], "30 minutes, seeded from W3C",
+                 result=good("0 crashes · 0 hangs") if fuzz["crashes_or_hangs"] == 0 else warn(f"{fuzz['crashes_or_hangs']} crashes or hangs")),
+            item("🧬", "Generated documents compared with Expat", diff["documents"], "20 minutes; verdict, error code and events",
+                 result=good(f"{percent(diff['same_verdict'], diff['documents'])} same verdict · 0 crashes")),
+            item("📚", "W3C conformance cases", w3c["total"], "W3C XML Conformance Test Suite 20130923",
+                 result=good(f"{w3c['failed']} failed · {w3c['errors']} errors") if w3c["failed"] == 0 and w3c["errors"] == 0 else warn(f"{w3c['failed']} failed")),
+            item("🔤", "W3C bytes fed one at a time", calls["bytes_one_by_one"], "every W3C document, one byte per call",
+                 result=good(f"{ratio(pieces['ok'], pieces['total'])} same as whole")),
+            item("✂️", "Two-piece split runs", calls["two_piece_splits"], "every byte position, W3C documents up to 4 KB",
+                 result=good("accept/reject never changed") if s["verdict_changes_by_chunking"] == 0 else warn("verdict changed")),
+            item("♻️", "Parser lifecycles in the leak test", s["memory"]["lifecycles"], "8 scenarios × 20,000 rounds",
+                 result=good("no memory leak")),
+            item("🧪", "C# DLL tests", 4308, "whole, every split, byte by byte; both builds", result=good("4,308 / 4,308 pass")),
+            item("⚙️", "Expat's own C unit tests", 2 * runtests["checks"], "Expat 2.8.1 runtests, 2 builds",
+                 result=good(f"{runtests['passed']} / {runtests['checks']} · the rest are allocator tests (by design)")),
+            item("🐍", "CPython XML tests run on XPact", cpy["run"], "Python's own tests, pyexpat linked to XPact",
+                 result=warn(f"{fmt(cpy['passed'])} pass · {cpy['failures']} fail")),
+            item("📁", "libxml2 test files", lib["files"], "libxml2's own test corpus",
+                 result=warn(f"{fmt(lib['same_as_expat'])} same as Expat · {xpact_timeouts} timeouts")),
+            item("🛡️", "Attack and limit cases", sec["cases"], "XXE, billion laughs, CVE inputs, huge inputs",
+                 result=warn(f"{sec['pass']} pass · {sec['fail']} hit a hard limit")),
+            item("📏", "Large files", s["large_files"]["files"], "1, 5, 9, 20 MB × 4 shapes, whole and in pieces",
+                 result=warn("same events as Expat up to 9 MB · 20 MB over the limit")),
+            item("🧱", "Eiffel test matrix", "4 / 4", "assertions on/off × workbench/finalized", result=good("all lanes ok")),
+            item("💥", "Crashes / timeouts / leaks", f"0 / {xpact_timeouts} / 0", "in all test areas",
+                 result=warn(f"{xpact_timeouts} timeouts: external billion laughs (libxml2)") if xpact_timeouts else good("none found")),
         ],
         "results": [
-            item("🧩", "W3C documents identical whole and in pieces", ratio(after["ok"], after["total"]), f"after fix #165 (2026-10-30); before: {fmt(before['ok'])}"),
-            item("⚖️", "Accept/reject changed by chunking", verdict_changes, f"of {fmt(len(sizes))} W3C documents"),
-            item("🎲", "Fuzzing: same verdict as Expat", percent(fuzz_same, fuzzed), f"{fmt(fuzz_same)} of {fmt(fuzzed)} inputs"),
-            item("🧬", "Generated documents: same verdict as Expat", percent(diff_same, generated), f"{fmt(diff_same)} of {fmt(generated)} documents"),
-            item("⚙️", "Expat's own C unit tests passed", ratio(expat_passed, expat_passed), f"all except the {expat_tests - expat_passed} allocator tests (by design)"),
-            item("📁", "libxml2 files identical to Expat", ratio(libxml2_same, libxml2), "same verdict, error code and events"),
-            item("🔤", "Encoding cases passed", ratio(encodings_pass, encodings), "every broken UTF-8 sequence rejected"),
-            item("🐍", "CPython XML tests passed on xpact", ratio(cpython - cpython_failed - cpython_errors, cpython), "Python's own test suite, pyexpat linked to xpact"),
+            item("🧩", "W3C documents identical whole and in pieces", ratio(pieces["ok"], pieces["total"]),
+                 f"{pieces['xpact-only']} differ in XPact only, {pieces['both']} in Expat too (events or error code)"),
+            item("⚖️", "Accept/reject changed by chunking", s["verdict_changes_by_chunking"], f"of {fmt(calls['documents'])} W3C documents"),
+            item("🎲", "Fuzzing: same verdict as Expat", percent(fuzz["same_verdict"], fuzz["inputs"]),
+                 f"{fmt(fuzz['same_verdict'])} of {fmt(fuzz['inputs'])} inputs"),
+            item("🧬", "Generated documents: same verdict as Expat", percent(diff["same_verdict"], diff["documents"]),
+                 f"{fmt(diff['same_verdict'])} of {fmt(diff['documents'])} documents"),
+            item("⚙️", "Expat's own C unit tests passed", ratio(runtests["passed"], runtests["passed"]),
+                 f"all except the {runtests['failed_allocator_tests']} allocator tests (by design)"),
+            item("📁", "libxml2 files identical to Expat", ratio(lib["same_as_expat"], lib["files"]), "same verdict, error code and events"),
+            item("🔤", "Encoding cases passed", ratio(enc["pass"], enc["cases"]), "every broken UTF-8 sequence rejected"),
+            item("🐍", "CPython XML tests passed on XPact", ratio(cpy["passed"], cpy["run"]), "Python's own test suite, pyexpat linked to XPact"),
         ],
         "project": {
             "asOf": "2026-11-02",
@@ -179,7 +177,7 @@ def testing() -> dict:
             "note": "Counted on GitHub on 2026-11-02.",
             "items": [
                 item("🔀", "PRs merged by the student", 92, "of 114 merged in the repo"),
-                item("📝", "Commits by the student", 136, "on student-Mass"),
+                item("📝", "Commits by the student", 136, "on student-Mass (by 2026-11-02)"),
                 item("🗂", "Issue reports with evidence", 67, "reports/issue-NNNN/"),
                 item("✅", "Issues closed", 83, "of 96 in the repo"),
                 item("📊", "Result folders", 17, "student/results/"),

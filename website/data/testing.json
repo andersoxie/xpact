@@ -1,115 +1,193 @@
 {
-  "source": "https://github.com/andersoxie/xpact/blob/incremental-test/student/results/AlotOfTests-2026-10-28/README.md",
-  "date": "2026-10-28",
-  "revision": "293918f",
-  "note": "Measured on 2026-10-28, before the fixes #154-#175; not rerun since.",
+  "source": "https://github.com/andersoxie/xpact/blob/incremental-test/student/results/AlotOfTests-2026-11-08/README.md",
+  "date": "2026-11-08",
+  "revision": "incremental-test",
+  "note": "Rerun on 2026-11-08 on the final parser (incremental-test), both builds.",
   "testing": [
     {
       "icon": "\ud83d\udd01",
       "label": "XML_Parse calls",
-      "value": 8000000,
+      "value": 8020000,
       "approx": true,
-      "sub": "W3C-in-pieces test alone"
+      "sub": "W3C files whole, byte by byte and split in two; 2 XPact builds + Expat",
+      "result": {
+        "text": "\u2705 0 crashes \u00b7 0 timeouts \u00b7 verdict never changed",
+        "tone": "good"
+      }
     },
     {
       "icon": "\ud83d\udcc4",
       "label": "Documents and inputs parsed",
-      "value": 2034000,
+      "value": 7032000,
       "approx": true,
-      "sub": "W3C, fuzzed, generated, libxml2, encodings, attacks, large files"
-    },
-    {
-      "icon": "\ud83e\uddec",
-      "label": "Generated documents compared with Expat",
-      "value": 1457486,
-      "approx": false,
-      "sub": "verdict, error code and events"
+      "sub": "W3C, fuzzed, generated, libxml2, encodings, attacks, large files",
+      "result": {
+        "text": "\u2705 0 crashes in XPact",
+        "tone": "good"
+      }
     },
     {
       "icon": "\ud83c\udfb2",
       "label": "Fuzzed (mutated) inputs",
-      "value": 571839,
+      "value": 3879031,
       "approx": false,
-      "sub": "30 minutes, seeded from W3C"
+      "sub": "30 minutes, seeded from W3C",
+      "result": {
+        "text": "\u2705 0 crashes \u00b7 0 hangs",
+        "tone": "good"
+      }
     },
     {
-      "icon": "\ud83d\udd24",
-      "label": "W3C bytes fed one at a time",
-      "value": 1845171,
+      "icon": "\ud83e\uddec",
+      "label": "Generated documents compared with Expat",
+      "value": 3148557,
       "approx": false,
-      "sub": "per run"
-    },
-    {
-      "icon": "\u2702\ufe0f",
-      "label": "Two-piece split runs",
-      "value": 412842,
-      "approx": false,
-      "sub": "every byte position, W3C documents up to 4 KB"
-    },
-    {
-      "icon": "\u267b\ufe0f",
-      "label": "Parser lifecycles in the leak test",
-      "value": 160000,
-      "approx": false,
-      "sub": "8 scenarios \u00d7 20,000 rounds"
+      "sub": "20 minutes; verdict, error code and events",
+      "result": {
+        "text": "\u2705 99.94 % same verdict \u00b7 0 crashes",
+        "tone": "good"
+      }
     },
     {
       "icon": "\ud83d\udcda",
       "label": "W3C conformance cases",
       "value": 2585,
       "approx": false,
-      "sub": "W3C XML Conformance Test Suite 20130923"
+      "sub": "W3C XML Conformance Test Suite 20130923",
+      "result": {
+        "text": "\u2705 0 failed \u00b7 0 errors",
+        "tone": "good"
+      }
+    },
+    {
+      "icon": "\ud83d\udd24",
+      "label": "W3C bytes fed one at a time",
+      "value": 1845171,
+      "approx": false,
+      "sub": "every W3C document, one byte per call",
+      "result": {
+        "text": "\u2705 2,564 / 2,585 same as whole",
+        "tone": "good"
+      }
+    },
+    {
+      "icon": "\u2702\ufe0f",
+      "label": "Two-piece split runs",
+      "value": 412842,
+      "approx": false,
+      "sub": "every byte position, W3C documents up to 4 KB",
+      "result": {
+        "text": "\u2705 accept/reject never changed",
+        "tone": "good"
+      }
+    },
+    {
+      "icon": "\u267b\ufe0f",
+      "label": "Parser lifecycles in the leak test",
+      "value": 160000,
+      "approx": false,
+      "sub": "8 scenarios \u00d7 20,000 rounds",
+      "result": {
+        "text": "\u2705 no memory leak",
+        "tone": "good"
+      }
+    },
+    {
+      "icon": "\ud83e\uddea",
+      "label": "C# DLL tests",
+      "value": 4308,
+      "approx": false,
+      "sub": "whole, every split, byte by byte; both builds",
+      "result": {
+        "text": "\u2705 4,308 / 4,308 pass",
+        "tone": "good"
+      }
+    },
+    {
+      "icon": "\u2699\ufe0f",
+      "label": "Expat's own C unit tests",
+      "value": 798,
+      "approx": false,
+      "sub": "Expat 2.8.1 runtests, 2 builds",
+      "result": {
+        "text": "\u2705 361 / 399 \u00b7 the rest are allocator tests (by design)",
+        "tone": "good"
+      }
+    },
+    {
+      "icon": "\ud83d\udc0d",
+      "label": "CPython XML tests run on XPact",
+      "value": 976,
+      "approx": false,
+      "sub": "Python's own tests, pyexpat linked to XPact",
+      "result": {
+        "text": "\ud83d\udfe1 942 pass \u00b7 34 fail",
+        "tone": "warn"
+      }
     },
     {
       "icon": "\ud83d\udcc1",
       "label": "libxml2 test files",
       "value": 1417,
       "approx": false,
-      "sub": "libxml2's own test corpus"
+      "sub": "libxml2's own test corpus",
+      "result": {
+        "text": "\ud83d\udfe1 1,288 same as Expat \u00b7 2 timeouts",
+        "tone": "warn"
+      }
     },
     {
-      "icon": "\ud83d\udc0d",
-      "label": "CPython XML tests run on xpact",
-      "value": 1952,
+      "icon": "\ud83d\udee1\ufe0f",
+      "label": "Attack and limit cases",
+      "value": 29,
       "approx": false,
-      "sub": "2 builds, Python's pyexpat linked to xpact"
+      "sub": "XXE, billion laughs, CVE inputs, huge inputs",
+      "result": {
+        "text": "\ud83d\udfe1 20 pass \u00b7 9 hit a hard limit",
+        "tone": "warn"
+      }
     },
     {
-      "icon": "\u2699\ufe0f",
-      "label": "Expat's own C unit tests run against xpact",
-      "value": 798,
+      "icon": "\ud83d\udccf",
+      "label": "Large files",
+      "value": 16,
       "approx": false,
-      "sub": "2 builds, Expat 2.8.1 runtests"
+      "sub": "1, 5, 9, 20 MB \u00d7 4 shapes, whole and in pieces",
+      "result": {
+        "text": "\ud83d\udfe1 same events as Expat up to 9 MB \u00b7 20 MB over the limit",
+        "tone": "warn"
+      }
     },
     {
-      "icon": "\ud83e\uddea",
-      "label": "Test areas",
-      "value": 11,
+      "icon": "\ud83e\uddf1",
+      "label": "Eiffel test matrix",
+      "value": "4 / 4",
       "approx": false,
-      "sub": "conformance, fuzzing, security, memory, real files \u2026"
+      "sub": "assertions on/off \u00d7 workbench/finalized",
+      "result": {
+        "text": "\u2705 all lanes ok",
+        "tone": "good"
+      }
     },
     {
       "icon": "\ud83d\udca5",
-      "label": "Crashes / hangs / memory leaks found",
-      "value": "0 / 0 / 0",
+      "label": "Crashes / timeouts / leaks",
+      "value": "0 / 2 / 0",
       "approx": false,
-      "sub": "in every test area"
-    },
-    {
-      "icon": "\ud83d\udc1e",
-      "label": "Problems found",
-      "value": 27,
-      "approx": false,
-      "sub": "each one written up; 9 fixed since"
+      "sub": "in all test areas",
+      "result": {
+        "text": "\ud83d\udfe1 2 timeouts: external billion laughs (libxml2)",
+        "tone": "warn"
+      }
     }
   ],
   "results": [
     {
       "icon": "\ud83e\udde9",
       "label": "W3C documents identical whole and in pieces",
-      "value": "2,438 / 2,585",
+      "value": "2,564 / 2,585",
       "approx": false,
-      "sub": "after fix #165 (2026-10-30); before: 1,995"
+      "sub": "16 differ in XPact only, 5 in Expat too (events or error code)"
     },
     {
       "icon": "\u2696\ufe0f",
@@ -121,16 +199,16 @@
     {
       "icon": "\ud83c\udfb2",
       "label": "Fuzzing: same verdict as Expat",
-      "value": "99.98 %",
+      "value": "99.99 %",
       "approx": false,
-      "sub": "571,749 of 571,839 inputs"
+      "sub": "3,878,459 of 3,879,031 inputs"
     },
     {
       "icon": "\ud83e\uddec",
       "label": "Generated documents: same verdict as Expat",
       "value": "99.94 %",
       "approx": false,
-      "sub": "1,456,587 of 1,457,486 documents"
+      "sub": "3,146,594 of 3,148,557 documents"
     },
     {
       "icon": "\u2699\ufe0f",
@@ -142,7 +220,7 @@
     {
       "icon": "\ud83d\udcc1",
       "label": "libxml2 files identical to Expat",
-      "value": "1,269 / 1,417",
+      "value": "1,288 / 1,417",
       "approx": false,
       "sub": "same verdict, error code and events"
     },
@@ -155,10 +233,10 @@
     },
     {
       "icon": "\ud83d\udc0d",
-      "label": "CPython XML tests passed on xpact",
-      "value": "938 / 976",
+      "label": "CPython XML tests passed on XPact",
+      "value": "942 / 976",
       "approx": false,
-      "sub": "Python's own test suite, pyexpat linked to xpact"
+      "sub": "Python's own test suite, pyexpat linked to XPact"
     }
   ],
   "project": {
@@ -178,7 +256,7 @@
         "label": "Commits by the student",
         "value": 136,
         "approx": false,
-        "sub": "on student-Mass"
+        "sub": "on student-Mass (by 2026-11-02)"
       },
       {
         "icon": "\ud83d\uddc2",
