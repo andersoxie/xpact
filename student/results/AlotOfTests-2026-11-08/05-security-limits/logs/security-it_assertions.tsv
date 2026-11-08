@@ -1,0 +1,30 @@
+id	status	expected	xpact	xpact_s	xpact_mb	xpact_message	expat	expat_s	expat_mb	expat_message	size_mb	note
+billion-laughs	pass	REJECT	REJECT	22.3933	132.4	amplification limit breached	REJECT	0.3275	82.4	limit on input amplification factor (from DTD and entities) breached	0.0	10^9 x 'lol' in content: amplification limit
+billion-laughs-attr	pass	REJECT	REJECT	13.4915	35.8	amplification limit breached	REJECT	0.0708	20.6	limit on input amplification factor (from DTD and entities) breached	0.0	same, in an attribute value
+billion-laughs-pe	pass	REJECT	REJECT	0.0006	21.2	syntax error	REJECT	0.0006	16.5	illegal parameter entity reference	0.0	same with parameter entities in the DTD
+quadratic-blowup	pass	REJECT	REJECT	2.9129	47.5	amplification limit breached	REJECT	0.0082	32.7	limit on input amplification factor (from DTD and entities) breached	0.06	one 50 KB entity used 4,000 times (200 MB of text)
+small-amplification-ok	pass	ACCEPT	ACCEPT	0.0035	21.3		ACCEPT	0.0006	16.8		0.0	100 x 'lol': must stay allowed
+recursive-direct	pass	REJECT	REJECT	0.0005	21.0	recursive entity reference	REJECT	0.0005	16.5	recursive entity reference	0.0	entity refers to itself
+recursive-indirect	pass	REJECT	REJECT	0.0006	21.1	recursive entity reference	REJECT	0.0005	16.7	recursive entity reference	0.0	a -> b -> a
+recursive-pe	pass	REJECT	REJECT	0.0005	21.0	syntax error	REJECT	0.0005	16.6	illegal parameter entity reference	0.0	parameter entity refers to itself
+entity-chain-10k	pass	ACCEPT	ACCEPT	0.3786	36.4		ACCEPT	0.0101	21.8		0.24	CVE-2024-8176: 10,000 nested entity references (stack depth)
+entity-chain-100k	pass	ACCEPT	ACCEPT	4.091	113.2		ACCEPT	0.1036	69.0		2.55	CVE-2024-8176: 100,000 nested entity references
+deep-nesting-100k	FAIL	ACCEPT	REJECT	0.0775	25.2	syntax error	ACCEPT	0.0711	59.0		0.67	100,000 nested elements
+deep-nesting-1m	FAIL	ACCEPT	REJECT	0.7612	61.3	syntax error	ACCEPT	0.9396	437.7		6.68	1,000,000 nested elements
+huge-name-10mb	FAIL	ACCEPT	REJECT	0.2901	50.7	out of memory	ACCEPT	0.0757	76.8		10.0	a 10 MB element name
+huge-attribute-50mb	FAIL	ACCEPT	REJECT	1.4413	170.8	out of memory	ACCEPT	0.1513	216.8		50.0	a 50 MB attribute value
+huge-text-100mb	FAIL	ACCEPT	REJECT	2.8956	320.6	out of memory	ACCEPT	0.1158	318.1		100.0	100 MB of text
+huge-comment-50mb	FAIL	ACCEPT	REJECT	1.4639	170.9	out of memory	ACCEPT	0.1227	216.8		50.0	a 50 MB comment
+many-attributes-100k	FAIL	ACCEPT	REJECT	0.1221	27.8	syntax error	ACCEPT	0.0301	39.7		1.04	100,000 different attributes on one element
+duplicate-attribute-late	pass	REJECT	REJECT	0.0049	21.4	duplicate attribute	REJECT	0.0007	16.8	duplicate attribute	0.01	1,000 attributes (under the limit), the first repeated at the end
+many-namespaces-50k	FAIL	ACCEPT	REJECT	0.1251	28.0	syntax error	ACCEPT	0.0658	51.5		1.03	50,000 namespace declarations (namespace parser)
+big-token-small-chunks	pass	ACCEPT	ACCEPT	1.5804	73.3		ACCEPT	0.0158	37.8		4.0	CVE-2023-52425: one 4 MB start tag fed in 4 KB chunks (must not be quadratic)
+big-text-byte-chunks	pass	ACCEPT	ACCEPT	4.0202	35.8		ACCEPT	0.0697	22.9		0.19	200 KB text fed byte by byte
+xxe-general-no-handler	pass	ACCEPT	ACCEPT	0.0005	21.0		ACCEPT	0.0005	16.8		0.0	external entity without a handler: must not be read
+xxe-parameter-no-handler	pass	ACCEPT	ACCEPT	0.0005	21.1		ACCEPT	0.0006	16.5		0.0	external parameter entity without a handler: must not be read
+xxe-dtd-no-handler	pass	ACCEPT	ACCEPT	0.0005	21.0		ACCEPT	0.0006	16.8		0.0	external DTD without a handler: must not be read
+ns-separator-in-uri	FAIL	REJECT	ACCEPT	0.0005	21.1		REJECT	0.0007	16.5	syntax error	0.0	CVE-2022-25236: namespace URI contains the separator '|'
+bad-utf8-in-name-2byte	pass	REJECT	REJECT	0.0004	20.9	not well-formed (invalid token)	REJECT	0.0005	16.5	not well-formed (invalid token)	0.0	CVE-2022-25235: invalid 2-byte UTF-8 in a name
+bad-utf8-in-name-3byte	pass	REJECT	REJECT	0.0005	20.8	not well-formed (invalid token)	REJECT	0.0005	16.8	not well-formed (invalid token)	0.0	CVE-2022-25235: invalid 3-byte UTF-8 in a name
+bad-utf8-in-attr	pass	REJECT	REJECT	0.0004	21.1	not well-formed (invalid token)	REJECT	0.0005	16.7	not well-formed (invalid token)	0.0	invalid 4-byte UTF-8 in an attribute value
+nul-byte	pass	REJECT	REJECT	0.0004	21.0	not well-formed (invalid token)	REJECT	0.0005	16.5	not well-formed (invalid token)	0.0	a NUL byte in text

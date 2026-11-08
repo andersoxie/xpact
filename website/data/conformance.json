@@ -1,6 +1,6 @@
 {
-  "source": "https://github.com/andersoxie/xpact/blob/incremental-test/reports/latest-2026-10-28/README.md",
-  "date": "2026-10-28",
+  "source": "https://github.com/andersoxie/xpact/blob/incremental-test/student/results/AlotOfTests-2026-11-08/README.md",
+  "date": "2026-11-08",
   "suite": {
     "name": "W3C XML Conformance Test Suite",
     "version": "20130923",
@@ -19,7 +19,7 @@
       "skipped": 0,
       "accepted": 1109,
       "rejected": 1476,
-      "elapsedMs": 36209.352
+      "elapsedMs": 34636.035
     },
     {
       "build": "assertions",
@@ -31,7 +31,7 @@
       "skipped": 0,
       "accepted": 1109,
       "rejected": 1476,
-      "elapsedMs": 36024.888
+      "elapsedMs": 30303.728
     }
   ],
   "lanes": [

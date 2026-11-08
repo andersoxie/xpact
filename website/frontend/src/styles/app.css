@@ -363,6 +363,22 @@ th.num {
   color: var(--text-3);
   font-size: 0.82rem;
 }
+.stat .result {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.stat .result.good {
+  color: var(--good);
+  background: var(--good-soft);
+}
+.stat .result.warn {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
 
 /* ---------- Validator ---------- */
 .validator {

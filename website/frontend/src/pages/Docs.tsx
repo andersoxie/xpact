@@ -1,4 +1,4 @@
-import { LINKS, repoFile } from "../data/site";
+import { BRANCH, LINKS, repoFile } from "../data/site";
 
 const SECTIONS = [
   ["overview", "Overview"],
@@ -89,7 +89,7 @@ export function Docs() {
             <pre>
               <code>{`git clone ${LINKS.repo}.git
 cd xpact
-git checkout student-Mass
+git checkout ${BRANCH}
 
 # Build the C library (both builds)
 .\\scripts\\build_native_eiffel.ps1 -BuildTier Production

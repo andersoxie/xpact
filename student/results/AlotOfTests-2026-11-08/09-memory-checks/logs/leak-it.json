@@ -1,0 +1,200 @@
+{
+ "rounds": 20000,
+ "results": [
+  {
+   "scenario": "small-document",
+   "engine": "xpact",
+   "samples_mb": [
+    28.9,
+    31.0,
+    32.1,
+    32.1,
+    32.1
+   ],
+   "growth_mb": 3.2,
+   "kb_per_1000_rounds": 182.0
+  },
+  {
+   "scenario": "small-document",
+   "engine": "expat",
+   "samples_mb": [
+    12.0,
+    12.3,
+    12.8,
+    14.2,
+    14.9
+   ],
+   "growth_mb": 2.9,
+   "kb_per_1000_rounds": 165.0
+  },
+  {
+   "scenario": "dtd-entities-defaults",
+   "engine": "xpact",
+   "samples_mb": [
+    28.9,
+    31.0,
+    32.1,
+    32.1,
+    32.1
+   ],
+   "growth_mb": 3.2,
+   "kb_per_1000_rounds": 182.0
+  },
+  {
+   "scenario": "dtd-entities-defaults",
+   "engine": "expat",
+   "samples_mb": [
+    12.2,
+    12.8,
+    15.1,
+    17.2,
+    19.0
+   ],
+   "growth_mb": 6.8,
+   "kb_per_1000_rounds": 386.8
+  },
+  {
+   "scenario": "namespaces",
+   "engine": "xpact",
+   "samples_mb": [
+    28.9,
+    32.0,
+    32.0,
+    32.0,
+    32.0
+   ],
+   "growth_mb": 3.1,
+   "kb_per_1000_rounds": 176.4
+  },
+  {
+   "scenario": "namespaces",
+   "engine": "expat",
+   "samples_mb": [
+    12.0,
+    12.3,
+    13.8,
+    14.3,
+    15.7
+   ],
+   "growth_mb": 3.7,
+   "kb_per_1000_rounds": 210.5
+  },
+  {
+   "scenario": "error-document",
+   "engine": "xpact",
+   "samples_mb": [
+    28.6,
+    29.7,
+    32.8,
+    32.8,
+    32.8
+   ],
+   "growth_mb": 4.2,
+   "kb_per_1000_rounds": 238.9
+  },
+  {
+   "scenario": "error-document",
+   "engine": "expat",
+   "samples_mb": [
+    12.0,
+    12.3,
+    13.7,
+    14.3,
+    14.9
+   ],
+   "growth_mb": 2.9,
+   "kb_per_1000_rounds": 165.0
+  },
+  {
+   "scenario": "chunked-byte-by-byte",
+   "engine": "xpact",
+   "samples_mb": [
+    28.9,
+    31.0,
+    32.1,
+    32.1,
+    32.1
+   ],
+   "growth_mb": 3.2,
+   "kb_per_1000_rounds": 182.0
+  },
+  {
+   "scenario": "chunked-byte-by-byte",
+   "engine": "expat",
+   "samples_mb": [
+    12.1,
+    13.9,
+    15.1,
+    17.1,
+    19.4
+   ],
+   "growth_mb": 7.3,
+   "kb_per_1000_rounds": 415.3
+  },
+  {
+   "scenario": "external-entity",
+   "engine": "xpact",
+   "samples_mb": [
+    31.8,
+    33.9,
+    33.9,
+    33.9,
+    33.9
+   ],
+   "growth_mb": 2.1,
+   "kb_per_1000_rounds": 119.5
+  },
+  {
+   "scenario": "external-entity",
+   "engine": "expat",
+   "samples_mb": [
+    12.5,
+    14.6,
+    17.1,
+    19.8,
+    22.3
+   ],
+   "growth_mb": 9.8,
+   "kb_per_1000_rounds": 557.5
+  },
+  {
+   "scenario": "parser-reset-reuse",
+   "engine": "xpact",
+   "samples_mb": [
+    26.9,
+    26.9,
+    26.9,
+    26.9,
+    26.9
+   ],
+   "growth_mb": 0.0,
+   "kb_per_1000_rounds": 0.0
+  },
+  {
+   "scenario": "billion-laughs-small",
+   "engine": "xpact",
+   "samples_mb": [
+    102.6,
+    190.1,
+    239.2,
+    242.3,
+    242.1
+   ],
+   "growth_mb": 139.5,
+   "kb_per_1000_rounds": 7936.0
+  },
+  {
+   "scenario": "billion-laughs-small",
+   "engine": "expat",
+   "samples_mb": [
+    73.5,
+    113.7,
+    182.3,
+    250.7,
+    315.3
+   ],
+   "growth_mb": 241.8,
+   "kb_per_1000_rounds": 13755.7
+  }
+ ]
+}

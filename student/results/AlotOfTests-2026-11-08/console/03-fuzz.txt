@@ -1,0 +1,12 @@
+{
+ "stats": {
+  "inputs": 3879031
+ },
+ "verdicts": {
+  "xpact REJECT / expat REJECT": 3830770,
+  "xpact ACCEPT / expat ACCEPT": 47689,
+  "xpact REJECT / expat ACCEPT": 538,
+  "xpact ACCEPT / expat REJECT": 34
+ },
+ "saved": []
+}
