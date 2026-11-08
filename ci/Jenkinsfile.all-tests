@@ -819,9 +819,15 @@ pipeline {
                  description: 'Require cached pinned Xpact-core and W3C archive for the dual lanes; W3C_SUITE_DIRECTORY may supply a local suite.')
     booleanParam(name: 'RUN_WSL_EIFFEL_BENCHMARKS',
                  defaultValue: true,
-                 description: 'Run separate Linux Eiffel/GCC and libexpat benchmarks inside WSL2. Requires Linux EiffelStudio.')
+                 description: 'Run separate Linux Eiffel/GCC and libexpat benchmarks inside WSL2. Requires the selected Linux Eiffel compilers.')
+    string(name: 'WSL_EIFFEL_COMPILERS',
+           defaultValue: 'EiffelStudio,Gobo',
+           description: 'Comma-separated Linux Eiffel compilers: EiffelStudio, Gobo, or both. Each selected compiler must be installed.')
+    string(name: 'WSL_GOBO_ENVIRONMENT',
+           defaultValue: '/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/gobo-env.sh',
+           description: 'Optional Linux Bash environment file defining GOBO and adding gec to PATH. Sourced after WSL_EIFFEL_ENVIRONMENT.')
     string(name: 'WSL_DISTRIBUTION',
-           defaultValue: 'Ubuntu',
+           defaultValue: 'Ubuntu-24.04',
            description: 'Optional WSL2 distribution for Eiffel/GCC benchmarks. Leave empty to use the default distribution.')
     string(name: 'WSL_EIFFEL_ENVIRONMENT',
            defaultValue: '/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/eiffel-env.sh',
@@ -1251,6 +1257,18 @@ pipeline {
                 throw "WSL benchmark runner unit tests failed."
               }
               $BenchmarkArguments = @{}
+              if (-not [string]::IsNullOrWhiteSpace($env:WSL_EIFFEL_COMPILERS)) {
+                $Compilers = @($env:WSL_EIFFEL_COMPILERS.Split(',') | ForEach-Object { $_.Trim() })
+                foreach ($Compiler in $Compilers) {
+                  if ($Compiler -cnotin @('EiffelStudio', 'Gobo')) {
+                    throw "WSL_EIFFEL_COMPILERS must contain EiffelStudio, Gobo, or both. Invalid value: '$Compiler'"
+                  }
+                }
+                $BenchmarkArguments.EiffelCompiler = $Compilers
+              }
+              if (-not [string]::IsNullOrWhiteSpace($env:WSL_GOBO_ENVIRONMENT)) {
+                $BenchmarkArguments.GoboEnvironment = $env:WSL_GOBO_ENVIRONMENT
+              }
               if (-not [string]::IsNullOrWhiteSpace($env:WSL_DISTRIBUTION)) {
                 $BenchmarkArguments.Distribution = $env:WSL_DISTRIBUTION
               }

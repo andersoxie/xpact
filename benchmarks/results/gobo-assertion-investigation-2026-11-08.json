@@ -1,0 +1,860 @@
+{
+  "schema_version": 1,
+  "investigation_date": "2026-11-08",
+  "parser_revision": "b870d3bb1a067868a43402d36c17a38e9af1e274",
+  "parser_sha256": "f434ed1294af2f3131ef0e301928117448364610f2c81d1a58545b3cc2603b9a",
+  "environment": {
+    "eiffel_version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+    "gobo_version": "gec version 26.10.18+c84ee2f",
+    "gcc_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "os_release": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "machine": "x86_64"
+  },
+  "interpretation": "Original assertion modes have unequal Base-library scope and unequal enforcement. Base-off Gobo aligns broad scope but still misses check instructions, decreasing loop variants and supplier-only preconditions. Diagnostic C/GC variants are not production changes.",
+  "original_1000_document_run": {
+    "generated_utc": "2026-11-08T08:40:35.171915+00:00",
+    "c_options": {
+      "EiffelStudio": "-O3",
+      "Gobo": "-O2"
+    },
+    "note": "Historical Gobo assertion-enabled rows include Base assertions; current configuration disables them.",
+    "rows": [
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Eiffel finalized, assertions discarded via WSL2 gcc",
+        "Version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+        "Repetition": 1,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 185.419,
+        "DocsPerSecond": 5393.197,
+        "MiBPerSecond": 13.429,
+        "Notes": "Linux EiffelStudio/GCC; parser reused; no-op event handler; Linux process wall time"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Eiffel finalized, assertions discarded via WSL2 gcc",
+        "Version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+        "Repetition": 2,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 188.183,
+        "DocsPerSecond": 5313.965,
+        "MiBPerSecond": 13.232,
+        "Notes": "Linux EiffelStudio/GCC; parser reused; no-op event handler; Linux process wall time"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Eiffel finalized, assertions discarded via WSL2 gcc",
+        "Version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+        "Repetition": 3,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 190.277,
+        "DocsPerSecond": 5255.489,
+        "MiBPerSecond": 13.086,
+        "Notes": "Linux EiffelStudio/GCC; parser reused; no-op event handler; Linux process wall time"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Eiffel finalized, assertions enabled via WSL2 gcc",
+        "Version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+        "Repetition": 1,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 1605.818,
+        "DocsPerSecond": 622.735,
+        "MiBPerSecond": 1.551,
+        "Notes": "Linux EiffelStudio/GCC; parser reused; no-op event handler; Linux process wall time"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Eiffel finalized, assertions enabled via WSL2 gcc",
+        "Version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+        "Repetition": 2,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 1650.984,
+        "DocsPerSecond": 605.699,
+        "MiBPerSecond": 1.508,
+        "Notes": "Linux EiffelStudio/GCC; parser reused; no-op event handler; Linux process wall time"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Eiffel finalized, assertions enabled via WSL2 gcc",
+        "Version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+        "Repetition": 3,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 1615.829,
+        "DocsPerSecond": 618.877,
+        "MiBPerSecond": 1.541,
+        "Notes": "Linux EiffelStudio/GCC; parser reused; no-op event handler; Linux process wall time"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Gobo Eiffel finalized, assertions discarded via WSL2 gcc",
+        "Version": "gec version 26.10.18+c84ee2f",
+        "Repetition": 1,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 112.063,
+        "DocsPerSecond": 8923.55,
+        "MiBPerSecond": 22.22,
+        "Notes": "Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; Linux process wall time; GC suspension unavailable in Gobo MEMORY"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Gobo Eiffel finalized, assertions discarded via WSL2 gcc",
+        "Version": "gec version 26.10.18+c84ee2f",
+        "Repetition": 2,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 113.548,
+        "DocsPerSecond": 8806.86,
+        "MiBPerSecond": 21.929,
+        "Notes": "Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; Linux process wall time; GC suspension unavailable in Gobo MEMORY"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Gobo Eiffel finalized, assertions discarded via WSL2 gcc",
+        "Version": "gec version 26.10.18+c84ee2f",
+        "Repetition": 3,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 115.689,
+        "DocsPerSecond": 8643.855,
+        "MiBPerSecond": 21.524,
+        "Notes": "Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; Linux process wall time; GC suspension unavailable in Gobo MEMORY"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Gobo Eiffel finalized, assertions enabled via WSL2 gcc",
+        "Version": "gec version 26.10.18+c84ee2f",
+        "Repetition": 1,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 24833.566,
+        "DocsPerSecond": 40.268,
+        "MiBPerSecond": 0.1,
+        "Notes": "Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; Linux process wall time; GC suspension unavailable in Gobo MEMORY"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Gobo Eiffel finalized, assertions enabled via WSL2 gcc",
+        "Version": "gec version 26.10.18+c84ee2f",
+        "Repetition": 2,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 24753.059,
+        "DocsPerSecond": 40.399,
+        "MiBPerSecond": 0.101,
+        "Notes": "Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; Linux process wall time; GC suspension unavailable in Gobo MEMORY"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "xpact Gobo Eiffel finalized, assertions enabled via WSL2 gcc",
+        "Version": "gec version 26.10.18+c84ee2f",
+        "Repetition": 3,
+        "Iterations": 1000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 25465.474,
+        "DocsPerSecond": 39.269,
+        "MiBPerSecond": 0.098,
+        "Notes": "Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; Linux process wall time; GC suspension unavailable in Gobo MEMORY"
+      }
+    ]
+  },
+  "controlled_100_document_runs": {
+    "iterations": 100,
+    "repetitions": 3,
+    "warmups": 1,
+    "results": [
+      {
+        "name": "EiffelStudio assertions off",
+        "executable": "build/gobo-benchmark-validation/builds/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks",
+        "environment": {},
+        "milliseconds": [
+          42.93514403980225,
+          43.2631429284811,
+          43.1968430057168
+        ],
+        "median_ms": 43.1968430057168
+      },
+      {
+        "name": "EiffelStudio assertions on",
+        "executable": "build/gobo-benchmark-validation/builds/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks",
+        "environment": {},
+        "milliseconds": [
+          257.84733798354864,
+          254.64654609095305,
+          241.8843520572409
+        ],
+        "median_ms": 254.64654609095305
+      },
+      {
+        "name": "Gobo assertions off",
+        "executable": "build/gobo-benchmark-validation/builds/Gobo/Finalized/.gobo/xpact_benchmarks",
+        "environment": {},
+        "milliseconds": [
+          14.35147796291858,
+          15.48014604486525,
+          14.611458056606352
+        ],
+        "median_ms": 14.611458056606352
+      },
+      {
+        "name": "Gobo original assertions on",
+        "executable": "build/gobo-benchmark-validation/builds/Gobo/FinalizedAssertions/.gobo/xpact_benchmarks",
+        "environment": {},
+        "milliseconds": [
+          2433.6236679228023,
+          2509.0803150087595,
+          2432.527767959982
+        ],
+        "median_ms": 2433.6236679228023
+      },
+      {
+        "name": "Gobo original assertions on, O3",
+        "executable": "build/gobo-assertion-investigation/variants/o3/xpact_benchmarks",
+        "environment": {},
+        "milliseconds": [
+          2452.853962080553,
+          2438.3062209235504,
+          2419.277943088673
+        ],
+        "median_ms": 2438.3062209235504
+      },
+      {
+        "name": "Gobo original assertions on, serial GC marker",
+        "executable": "build/gobo-benchmark-validation/builds/Gobo/FinalizedAssertions/.gobo/xpact_benchmarks",
+        "environment": {
+          "GC_MARKERS": "1"
+        },
+        "milliseconds": [
+          892.0479720691219,
+          890.2844729600474,
+          909.1390459798276
+        ],
+        "median_ms": 892.0479720691219
+      },
+      {
+        "name": "Gobo no integer invariant boxing (diagnostic)",
+        "executable": "build/gobo-assertion-investigation/variants/no-integer-box/xpact_benchmarks",
+        "environment": {},
+        "milliseconds": [
+          666.6347290156409,
+          681.4399430295452,
+          682.7011769637465
+        ],
+        "median_ms": 681.4399430295452
+      },
+      {
+        "name": "Gobo Base assertions off",
+        "executable": "build/gobo-assertion-investigation/equivalence/gobo-library-off/.gobo/xpact_benchmarks",
+        "environment": {},
+        "milliseconds": [
+          44.765561004169285,
+          48.113664030097425,
+          44.63503893930465
+        ],
+        "median_ms": 44.765561004169285
+      }
+    ]
+  },
+  "boxing_count_run": {
+    "iterations": 10,
+    "includes_startup": true,
+    "integer_32_boxes": 554112,
+    "integer_32_invariants": 554112,
+    "raw_counts": "xpact benchmark harness parsed 10 documents.\nXPACT_DIAGNOSTIC boxed_integer_32=554112 integer_32_invariants=554112\nXPACT_BOXES type_id=40 value_boxes=34 pointer_boxes=0\nXPACT_BOXES type_id=88 value_boxes=1 pointer_boxes=0\nXPACT_BOXES type_id=103 value_boxes=136 pointer_boxes=0\nXPACT_BOXES type_id=106 value_boxes=6 pointer_boxes=0\nXPACT_BOXES type_id=107 value_boxes=344 pointer_boxes=0\nXPACT_BOXES type_id=108 value_boxes=4 pointer_boxes=0\nXPACT_BOXES type_id=109 value_boxes=44 pointer_boxes=0\nXPACT_BOXES type_id=110 value_boxes=8 pointer_boxes=0\nXPACT_BOXES type_id=111 value_boxes=554112 pointer_boxes=0\nXPACT_BOXES type_id=112 value_boxes=8 pointer_boxes=0\nXPACT_BOXES type_id=113 value_boxes=8 pointer_boxes=0\nXPACT_BOXES type_id=114 value_boxes=204 pointer_boxes=0\nXPACT_BOXES type_id=115 value_boxes=8 pointer_boxes=0\nXPACT_BOXES type_id=164 value_boxes=220 pointer_boxes=0\n"
+  },
+  "gc_diagnostics": [
+    {
+      "name": "Gobo assertions off",
+      "iterations": 10,
+      "collections": 1,
+      "bytes_allocated_before_collections": 0,
+      "log": "gc-gobo-assertions-off.txt"
+    },
+    {
+      "name": "Gobo original assertions on",
+      "iterations": 10,
+      "collections": 84,
+      "bytes_allocated_before_collections": 18086272,
+      "log": "gc-gobo-original-assertions-on.txt"
+    },
+    {
+      "name": "Gobo no integer invariant boxing (diagnostic)",
+      "iterations": 10,
+      "collections": 3,
+      "bytes_allocated_before_collections": 418640,
+      "log": "gc-gobo-no-integer-invariant-boxing-diagnostic.txt"
+    },
+    {
+      "name": "Gobo Base assertions off",
+      "iterations": 10,
+      "collections": 1,
+      "bytes_allocated_before_collections": 0,
+      "log": "gc-gobo-base-assertions-off.txt"
+    }
+  ],
+  "ise_runtime_scope": {
+    "selected_types": [
+      {
+        "type": "XP_PARSER",
+        "id": 131,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_BENCHMARK_ROOT",
+        "id": 132,
+        "assert_level": 63
+      },
+      {
+        "type": "ARRAYED_STACK [G#1]",
+        "id": 668,
+        "assert_level": 0
+      },
+      {
+        "type": "CHARACTER_8",
+        "id": 715,
+        "assert_level": 0
+      },
+      {
+        "type": "BOOLEAN",
+        "id": 718,
+        "assert_level": 0
+      },
+      {
+        "type": "INTEGER_32",
+        "id": 724,
+        "assert_level": 0
+      },
+      {
+        "type": "STRING_8",
+        "id": 798,
+        "assert_level": 0
+      }
+    ],
+    "enabled_types": [
+      {
+        "type": "XP_TOKEN_SLICE",
+        "id": 4,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_ATTRIBUTE_DECL",
+        "id": 5,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_CONTENT_MODEL",
+        "id": 6,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_GC_CRITICAL_SECTION",
+        "id": 7,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_ATTRIBUTE_NAME_RANGE_SET",
+        "id": 8,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_EXTERNAL_ENTITY",
+        "id": 9,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_EXTERNAL_ENTITY_POLICY",
+        "id": 41,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_EXTERNAL_ENTITY_RESOLVER",
+        "id": 42,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_EVENT_HANDLER",
+        "id": 43,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_NULL_EVENT_HANDLER",
+        "id": 44,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_LIMITS",
+        "id": 128,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_ATTRIBUTES",
+        "id": 129,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_LOCAL_EXTERNAL_ENTITY_RESOLVER",
+        "id": 130,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_PARSER",
+        "id": 131,
+        "assert_level": 63
+      },
+      {
+        "type": "XP_BENCHMARK_ROOT",
+        "id": 132,
+        "assert_level": 63
+      }
+    ],
+    "scope": "Only 15 xpact types have nonzero assertion levels. All Base dynamic types are 0; supplier preconditions may be requested by an xpact caller."
+  },
+  "contract_qualification": {
+    "generated_utc": "2026-11-08T19:38:58.396292+00:00",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "compilers": {
+      "Gobo": {
+        "version": "gec version 26.10.18+c84ee2f"
+      },
+      "EiffelStudio": {
+        "version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64"
+      }
+    },
+    "cases": [
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation        deliberate_precondition:     \n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "post",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation        deliberate_postcondition:    \n<0000000000000000>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "check",
+        "expected_violation": true,
+        "detected_violation": false,
+        "matches_requested_setting": false,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation        deliberate_invariant:        \n<0000000000000000>                         Class invariant violated.     Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "loop_invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation        deliberate_loop_invariant:   \n<0000000000000000>                         Loop invariant violated.      Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "loop_variant",
+        "expected_violation": true,
+        "detected_violation": false,
+        "matches_requested_setting": false,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "negative_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation        deliberate_negative_variant: \n<0000000000000000>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "pre",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED pre\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": false,
+        "matches_requested_setting": false,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED pre\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre @1            deliberate_precondition:     \n<00007B59B8FFE598>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @6                                             \n<00007B59B8FFE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007B59B8FFE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "post",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post @1           deliberate_postcondition:    \n<0000775B1D1FE598>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post @1                                        \n<0000775B1D1FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @8                                             \n<0000775B1D1FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000775B1D1FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "check",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check @1          deliberate_check:            \n<0000714A7FFFE598>                         Assertion violated.           Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check @1                                       \n<0000714A7FFFE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @10                                            \n<0000714A7FFFE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000714A7FFFE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   _invariant @3          deliberate_invariant:        \n<0000720AE07FE598>  (From NATIVE_ARRAY)    Class invariant violated.     Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   _invariant                                          \n<0000720AE07FE598>  (From NATIVE_ARRAY)    Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_invariant @1                                   \n<0000720AE07FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @12                                            \n<0000720AE07FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000720AE07FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "loop_invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant @2 deliberate_loop_invariant:   \n<000076CED93FE598>                         Loop invariant violated.      Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant @2                              \n<000076CED93FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @14                                            \n<000076CED93FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<000076CED93FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "loop_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant @2   deliberate_loop_variant:     \n<00007697B9BFE598>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant @2                                \n<00007697B9BFE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @16                                            \n<00007697B9BFE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007697B9BFE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "negative_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant @2\n                                           deliberate_negative_variant:\n<00007B27749FE598>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant @2\n<00007B27749FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @18                                            \n<00007B27749FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007B27749FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "pre",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED pre\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre @1            deliberate_precondition:     \n<00006FFDAC7FE598>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @6                                             \n<00006FFDAC7FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00006FFDAC7FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      }
+    ],
+    "source_sha256": {
+      "assertion_probe.e": "dfaf23a676736a03ee9d4a5f6f18fac0a2a082270caa39160ee415053129f7ce",
+      "assertion_subject.e": "cf2e4d184996827ee9a51fea367039c55714328abfe17d9f5e5711d0382037c8"
+    },
+    "gcc_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "all_requested_checks_match": false
+  }
+}
