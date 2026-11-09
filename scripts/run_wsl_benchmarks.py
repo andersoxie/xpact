@@ -73,9 +73,12 @@ def parse_args(argv=None):
     parser.add_argument("--eiffel-build", action="append",
                         choices=("Finalized", "FinalizedAssertions", "Workbench"),
                         help="repeat to select several modes; defaults to both finalized modes")
+    parser.add_argument("--eiffel-compiler", action="append", choices=("EiffelStudio", "Gobo"),
+                        help="repeat to select compilers; defaults to EiffelStudio and Gobo")
     args = parser.parse_args(argv)
     args.output_dir = args.output_dir.expanduser().resolve()
     args.eiffel_build = args.eiffel_build or ["Finalized", "FinalizedAssertions"]
+    args.eiffel_compiler = list(dict.fromkeys(args.eiffel_compiler or ["EiffelStudio", "Gobo"]))
     return args
 
 
@@ -141,38 +144,145 @@ def require_linux_executable(path, name, elf=False):
         raise BenchmarkError("{} is not executable: {}".format(name, path))
 
 
-def check_prerequisites(repo_root):
+def check_prerequisites(repo_root, compilers=("EiffelStudio", "Gobo")):
     if not sys.platform.startswith("linux"):
         raise BenchmarkError("Run this script with Linux Python inside WSL2, not Windows Python.")
     environment = clean_environment()
     ise_platform = environment.get("ISE_PLATFORM", "")
     ise_eiffel = environment.get("ISE_EIFFEL", "")
-    if ise_platform and not ise_platform.startswith("linux"):
+    if "EiffelStudio" in compilers and ise_platform and not ise_platform.startswith("linux"):
         raise BenchmarkError("ISE_PLATFORM must identify Linux, found {!r}.".format(ise_platform))
-    if ise_eiffel and (re.match(r"^[A-Za-z]:", ise_eiffel) or "\\" in ise_eiffel):
+    if "EiffelStudio" in compilers and ise_eiffel and (re.match(r"^[A-Za-z]:", ise_eiffel) or "\\" in ise_eiffel):
         raise BenchmarkError("ISE_EIFFEL must name the Linux EiffelStudio installation.")
     c_compiler = environment.get("ISE_C_COMPILER", "")
-    if c_compiler and c_compiler != "gcc":
+    if "EiffelStudio" in compilers and c_compiler and c_compiler != "gcc":
         raise BenchmarkError("Unset ISE_C_COMPILER or set it to gcc for this Linux benchmark.")
     tools = {}
-    for name in ("ec", "finish_freezing", "gcc", "ldd"):
+    required = ["gcc", "ldd", "make"]
+    if "EiffelStudio" in compilers:
+        required.extend(("ec", "finish_freezing"))
+    if "Gobo" in compilers:
+        required.extend(("gec", "sh"))
+    for name in required:
         executable = shutil.which(name, path=environment.get("PATH"))
         if executable is None:
             raise BenchmarkError("Required Linux tool {!r} was not found on PATH. Install/configure "
-                                 "Linux EiffelStudio, GCC, make and libexpat development files.".format(name))
-        require_linux_executable(executable, name, elf=(name == "ec"))
+                                 "the selected Linux Eiffel compiler(s), GCC, make and libexpat "
+                                 "development files; see docs/wsl-benchmarks.md.".format(name))
+        require_linux_executable(executable, name, elf=(name in ("ec", "gec")))
         tools[name] = executable
-    if shutil.which("make", path=environment.get("PATH")) is None:
-        raise BenchmarkError("Required Linux tool 'make' was not found on PATH.")
-    tools["eiffel_version"] = run_checked([tools["ec"], "-version"], env=environment)
-    if "linux" not in tools["eiffel_version"].lower():
-        raise BenchmarkError("ec -version did not identify a Linux Eiffel compiler: " +
-                             tools["eiffel_version"])
+    if "EiffelStudio" in compilers:
+        tools["eiffel_version"] = run_checked([tools["ec"], "-version"], env=environment)
+        if "linux" not in tools["eiffel_version"].lower():
+            raise BenchmarkError("ec -version did not identify a Linux Eiffel compiler: " +
+                                 tools["eiffel_version"])
+    if "Gobo" in compilers:
+        gobo_root = environment.get("GOBO", "")
+        if not gobo_root or not Path(gobo_root).is_absolute() or not (
+                Path(gobo_root) / "library" / "free_elks" / "library_ge.ecf").is_file():
+            raise BenchmarkError("Set GOBO to the Linux Gobo installation containing "
+                                 "library/free_elks/library_ge.ecf.")
+        # Keep compiler defaults or inherited CLI overrides from changing GC, assertions,
+        # output paths or the C backend behind the benchmark's labels.
+        gobo_environment = {name: value for name, value in environment.items()
+                            if not name.startswith(("GOBO_CLI_", "GOBO_DEFAULT_"))}
+        gobo_environment.pop("BOEHM_GC", None)
+        gobo_environment.update(GOBO_EIFFEL="ge", GOBO_CC="gcc", ISE_PLATFORM="linux-x86-64")
+        tools["gobo_environment"] = gobo_environment
+        tools["gobo_root"] = str(Path(gobo_root).resolve())
+        tools["gobo_version"] = run_checked([tools["gec"], "--version"], env=gobo_environment)
     tools["gcc_version"] = run_checked([tools["gcc"], "--version"], env=environment)
     tools["ise_platform"] = ise_platform
     tools["ise_eiffel"] = ise_eiffel
     tools["environment"] = environment
     return tools
+
+
+def record_gobo_build(project, spec, tools):
+    """Verify and retain the actual C commands before executing Gobo's build script."""
+    script = project / "xpact_benchmarks.sh"
+    if not script.is_file():
+        raise BenchmarkError("Gobo generation did not create {}".format(script))
+    script_text = script.read_text(encoding="utf-8")
+    commands = [line for line in script_text.splitlines()
+                if not line.lstrip().startswith("#") and re.search(r"\s-(?:c|o)\s", line)]
+    if not commands:
+        raise BenchmarkError("Cannot identify Gobo's C compiler in {}".format(script))
+    compiler_paths = set()
+    for command in commands:
+        compiler = shlex.split(command)[0]
+        compiler_path = shutil.which(compiler, path=tools["gobo_environment"].get("PATH"))
+        if compiler_path is None:
+            raise BenchmarkError("Cannot resolve Gobo's generated C compiler: {}".format(compiler))
+        require_linux_executable(compiler_path, "Gobo C compiler")
+        version = run_checked([compiler_path, "--version"], env=tools["gobo_environment"])
+        if "gcc" not in version.lower() and "Free Software Foundation" not in version:
+            raise BenchmarkError("Gobo selected a C compiler other than GCC: {}\n{}".format(
+                compiler, version))
+        compiler_paths.add(str(Path(compiler_path).resolve()))
+    assertion_coverage = "Assertion coverage is compiler-dependent; see docs/gobo-assertions.md"
+    if re.search(r"\b26\.10(?:[.+\s]|$)", tools["gobo_version"]):
+        assertion_coverage = ("Gobo 26.10 does not enforce check instructions, decreasing loop "
+                              "variants or supplier-only preconditions; see docs/gobo-assertions.md")
+    tools.setdefault("gobo_build_details", {})[spec.name] = {
+        "code_directory": str(project), "compiler_paths": sorted(compiler_paths),
+        "compiler_version": version, "c_build_script": script_text,
+        "gc": "boehm", "assertions_requested": spec.assertions,
+        "base_assertions": False, "assertion_coverage": assertion_coverage,
+    }
+    return script
+
+
+def build_gobo(repo_root, output_dir, spec, tools):
+    project = output_dir / "builds" / "Gobo" / spec.name
+    project.mkdir(parents=True, exist_ok=True)
+    # Current Gobo releases generate under .gobo; older releases use the working
+    # directory itself. Invalidate both layouts when upgrading a toolchain.
+    code_directories = (project / ".gobo", project)
+    executables = [directory / "xpact_benchmarks" for directory in code_directories]
+    scripts = [directory / "xpact_benchmarks.sh" for directory in code_directories]
+    # A successful generation must produce a fresh script, and a successful C build
+    # must produce a fresh executable. Neither may survive a failed rebuild.
+    for path in executables + scripts + [
+            output_dir / "logs" / ("Gobo-" + spec.name + "-eiffel.log"),
+            output_dir / "logs" / ("Gobo-" + spec.name + "-c.log")]:
+        if path.exists():
+            path.unlink()
+    command = [tools["gec"], "--finalize", "--gc=boehm", "--cc=no",
+               "--target=" + spec.target, repo_root / "benchmarks" / "xpact_gobo_benchmarks.ecf"]
+    print("Building Gobo Eiffel {} with Linux GCC...".format(spec.name), flush=True)
+    try:
+        run_checked(command, cwd=project, env=tools["gobo_environment"],
+                    log_path=output_dir / "logs" / ("Gobo-" + spec.name + "-eiffel.log"))
+        generated = [script for script in scripts if script.is_file()]
+        if len(generated) != 1:
+            raise BenchmarkError("Gobo generation must create one fresh xpact_benchmarks.sh in "
+                                 "{} or its .gobo directory".format(project))
+        code_directory = generated[0].parent
+        executable = code_directory / "xpact_benchmarks"
+        script = record_gobo_build(code_directory, spec, tools)
+        # Execute with -e: some gec versions do not propagate failure from the C backend.
+        run_checked([tools["sh"], "-e", script], cwd=code_directory, env=tools["gobo_environment"],
+                    log_path=output_dir / "logs" / ("Gobo-" + spec.name + "-c.log"))
+        if not executable.is_file():
+            raise BenchmarkError("Gobo build did not create {}".format(executable))
+        require_linux_executable(executable, "Gobo benchmark", elf=True)
+    except BaseException:
+        for executable in executables:
+            if executable.exists():
+                executable.unlink()
+        raise
+    name = "xpact Gobo Eiffel finalized, {} via WSL2 gcc".format(
+        "xpact assertions requested" if spec.assertions else "assertions discarded")
+    # Gobo 26.10 implements MEMORY.collection_off/on as no-ops. Do not publish
+    # a suspended-GC row merely because the shared harness accepts the option.
+    notes = ("Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; "
+             "Linux process wall time; GC suspension unavailable in Gobo MEMORY; "
+             "Base assertions disabled")
+    if spec.assertions:
+        notes += "; " + tools["gobo_build_details"][spec.name]["assertion_coverage"]
+    return [Engine(name, executable, (), tools["gobo_version"], notes,
+                   tools["gobo_environment"])]
 
 
 def record_eiffel_build(code_directory, spec, tools):
@@ -325,7 +435,8 @@ def render_summary(rows, metadata):
     lines = [
         "# WSL2 GCC benchmarks", "", "Generated: " + metadata["generated_utc"], "",
         "Linux: " + metadata["os"], "",
-        "Eiffel: " + markdown_cell(metadata["eiffel_version"]), "",
+        "EiffelStudio: " + markdown_cell(metadata.get("eiffel_version", "not selected")), "",
+        "Gobo Eiffel: " + markdown_cell(metadata.get("gobo_version", "not selected")), "",
         "GCC: " + markdown_cell(metadata["gcc_version"].splitlines()[0]), "",
         "Expat: {} ({})".format(metadata["libexpat_version"], metadata["libexpat_library"]), "",
         "Workload: the same 2611-byte UTF-8 catalog with 100 item elements; {} documents per run."
@@ -389,11 +500,16 @@ def run_benchmarks(args):
     output_dir.mkdir(parents=True, exist_ok=True)
     clear_reports(output_dir)
     try:
-        tools = check_prerequisites(REPO_ROOT)
+        if "Gobo" in args.eiffel_compiler and "Workbench" in args.eiffel_build:
+            raise BenchmarkError("Gobo supports Finalized and FinalizedAssertions; select only "
+                                 "EiffelStudio with --eiffel-compiler EiffelStudio to benchmark Workbench")
+        tools = check_prerequisites(REPO_ROOT, args.eiffel_compiler)
         specs = build_specs(args.eiffel_build)
         engines = []
-        for spec in specs:
-            engines.extend(build_eiffel(REPO_ROOT, output_dir, spec, tools))
+        for compiler in args.eiffel_compiler:
+            build = build_eiffel if compiler == "EiffelStudio" else build_gobo
+            for spec in specs:
+                engines.extend(build(REPO_ROOT, output_dir, spec, tools))
         engines.extend(build_libexpat(REPO_ROOT, output_dir, tools))
         rows = []
         for engine in engines:
@@ -407,14 +523,21 @@ def run_benchmarks(args):
             "repository": str(REPO_ROOT), "iterations": args.iterations,
             "repetitions": args.repetitions, "warmups_per_engine": 1,
             "document_bytes": sample_document_bytes(), "eiffel_builds": [spec.name for spec in specs],
-            "eiffel_version": tools["eiffel_version"], "gcc_version": tools["gcc_version"],
-            "ise_platform": tools["ise_platform"], "ise_eiffel": tools["ise_eiffel"],
+            "eiffel_compilers": args.eiffel_compiler, "gcc_version": tools["gcc_version"],
             "libexpat_version": tools["libexpat_version"],
             "libexpat_library": tools["libexpat_library"], "libexpat_c_flags": ["-O2"],
-            "eiffel_build_details": tools.get("eiffel_build_details", {}),
-            "tool_paths": {name: tools[name] for name in ("ec", "finish_freezing", "gcc", "ldd")},
+            "tool_paths": {name: tools[name] for name in
+                           ("ec", "finish_freezing", "gec", "sh", "gcc", "ldd", "make")
+                           if name in tools},
             "timing": "perf_counter around Linux subprocess; compilation and wsl.exe launch excluded",
         }
+        if "EiffelStudio" in args.eiffel_compiler:
+            metadata.update(eiffel_version=tools["eiffel_version"],
+                            ise_platform=tools["ise_platform"], ise_eiffel=tools["ise_eiffel"],
+                            eiffel_build_details=tools.get("eiffel_build_details", {}))
+        if "Gobo" in args.eiffel_compiler:
+            metadata.update(gobo_version=tools["gobo_version"], gobo_root=tools["gobo_root"],
+                            gobo_build_details=tools.get("gobo_build_details", {}))
         publish_reports(output_dir, rows, metadata)
     except BaseException:
         clear_reports(output_dir)
