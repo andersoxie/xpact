@@ -2,8 +2,8 @@
 
 > **What:** the 11 AlotOfTests areas of [2026-10-28](../AlotOfTests-2026-10-28/README.md), plus the repository's own suites, rerun on the final parser.
 > **Tested code:** andersoxie/xpact `incremental-test` @ `df75792`; parser source identical to the acceptance run's `45d2f53` ([report](../../../reports/acceptance-253c81e-vs-45d2f53/report.md)).
-> **Builds:** `xpact.dll` (SHA-256 `4513b4a2a7f1530b…`) and `xpact_assertions.dll` (`eb1266280bc18c71…`), built at 23:10 on 2026-11-08 with `websitescriptsbuild-dll.ps1` (EiffelStudio 25.12, MSVC `msc_vc140`, smoke test ok); the same DLLs the website and the release `website-2026-11-09` use. The W3C runner rebuilt `build
-ative-eiffel` from the same source at 00:40, after the other tests (new hashes `b3f661e2…` / `a86eae91…`, timestamps differ).
+> **Builds:** `xpact.dll` (SHA-256 `4513b4a2a7f1530b…`) and `xpact_assertions.dll` (`eb1266280bc18c71…`), built at 23:10 on 2026-11-08 with `website\scriptsuild-dll.ps1` (EiffelStudio 25.12, MSVC `msc_vc140`, smoke test ok); the same DLLs the website and the release `website-2026-11-09` use. The W3C runner rebuilt `build
+ative-eiffel` from the same source at 00:40, after the other tests (new hashes `b3f661e2…` / `a86eae91…`; the binaries differ, the source does not).
 > **Reference:** Expat through Python 3.14.0's `pyexpat` (Expat 2.7.3); Expat 2.8.1 for its own unit tests.
 > **Machine:** the student PC (Windows 11, AMD Ryzen 7 5800H). Areas 1, 2, 7, 8, 9 and areas 3–4 ran at the same time; areas 5, 6, 10, 11 and the repository suites ran alone.
 > **Status:** ✅ no crash in XPact, no regression against 2026-10-28; several results better. Known differences are listed below and stay open.
