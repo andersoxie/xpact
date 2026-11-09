@@ -76,10 +76,6 @@ export function Layout() {
         </div>
         <div className="container">
           <span>
-            XPact: an Eiffel XML parser with an Expat-compatible C API. Testing, parser fixes and this website by{" "}
-            <a href={AUTHOR.github}>{AUTHOR.name}</a>.
-          </span>
-          <span>
             <a href={LINKS.repo}>Source</a> · <a href={LINKS.issues}>Issues</a> ·{" "}
             <a href={LINKS.websiteDocs}>Website docs</a>
           </span>
