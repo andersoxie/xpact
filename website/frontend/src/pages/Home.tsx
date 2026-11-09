@@ -16,8 +16,7 @@ export function Home() {
   return (
     <>
       <section className="hero">
-        <span className="badge">Work in progress · student project</span>
-        <h1 style={{ marginTop: 14 }}>XPact: an XML parser you can check</h1>
+        <h1>XPact: an XML parser you can check</h1>
         <p className="lead">
           XPact is an XML parser written in <strong>Eiffel</strong>, with a C library that offers the same API as{" "}
           <a href={LINKS.expat}>Expat</a>, the widely used C parser. Every part of the parser carries contracts
