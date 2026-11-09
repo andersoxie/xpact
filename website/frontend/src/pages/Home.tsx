@@ -62,7 +62,7 @@ export function Home() {
             <p className="muted">
               Eleven test areas, from the W3C suite to fuzzing, security attacks and real-world corpora, each compared
               with Expat, plus the project's own C#, Python and Eiffel suites. {testing.data.note} Under each number:
-              ✅ passed, 🟡 passed with known differences or limits (each one written up).{" "}
+              ✅ passed; without a tick: passed with known differences or limits (each one written up).{" "}
               <a href={testing.data.source}>Evidence and sources ↗</a>
             </p>
             <div className="grid grid-4">

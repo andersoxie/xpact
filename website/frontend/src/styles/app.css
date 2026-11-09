@@ -192,6 +192,18 @@ main {
   gap: 12px;
   flex-wrap: wrap;
 }
+.site-footer .footer-credit {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.site-footer .footer-credit strong {
+  color: var(--text);
+  font-size: 0.95rem;
+}
 
 /* ---------- Cards, buttons, badges ---------- */
 .card {
@@ -375,9 +387,10 @@ th.num {
   color: var(--good);
   background: var(--good-soft);
 }
-.stat .result.warn {
-  color: var(--warn);
-  background: var(--warn-soft);
+.stat .result.plain {
+  color: var(--text-2);
+  padding-left: 0;
+  font-weight: 500;
 }
 
 /* ---------- Validator ---------- */

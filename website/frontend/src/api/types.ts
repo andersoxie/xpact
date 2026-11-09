@@ -104,7 +104,7 @@ export interface Metric {
   approx: boolean;
   sub: string;
   /** The outcome in words, e.g. "✅ 0 crashes · 0 hangs". */
-  result?: { text: string; tone: "good" | "warn" };
+  result?: { text: string; tone: "good" | "plain" };
 }
 
 export interface Testing {

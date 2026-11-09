@@ -110,7 +110,7 @@ def testing() -> dict:
     ratio = lambda part, whole: f"{fmt(part)} / {fmt(whole)}"
     percent = lambda part, whole: f"{100 * part / whole:.2f} %"
     good = lambda text: {"text": "✅ " + text, "tone": "good"}
-    warn = lambda text: {"text": "🟡 " + text, "tone": "warn"}
+    warn = lambda text: {"text": text, "tone": "plain"}  # known differences or limits: no colour
 
     def item(icon, label, value, sub, approx=False, result=None):
         out = {"icon": icon, "label": label, "value": value, "approx": approx, "sub": sub}
