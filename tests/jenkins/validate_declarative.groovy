@@ -10,6 +10,8 @@ import org.jenkinsci.plugins.pipeline.modeldefinition.agent.impl.None
 import org.jenkinsci.plugins.pipeline.modeldefinition.agent.impl.Label
 import org.jenkinsci.plugins.pipeline.modeldefinition.model.Parameters
 import org.jenkinsci.plugins.pipeline.modeldefinition.model.Options
+import org.jenkinsci.plugins.pipeline.modeldefinition.model.StageOptions
+import org.jenkinsci.plugins.workflow.steps.TimeoutStep
 import org.jenkinsci.plugins.structs.SymbolLookup
 import org.jenkinsci.plugins.structs.describable.DescribableModel
 import hudson.model.StringParameterDefinition
@@ -52,6 +54,9 @@ SymbolLookup.getSymbolValue(discarder).each { name -> optionTypes[name] = discar
 def timestamps = new TimestamperStep.DescriptorImpl()
 optionTypes[timestamps.functionName] = timestamps.id
 Options.metaClass.'static'.getAllowedOptionTypes = { -> optionTypes }
+def timeout = new TimeoutStep.DescriptorImpl()
+optionTypes[timeout.functionName] = timeout.id
+StageOptions.metaClass.'static'.getAllowedOptionTypes = { -> [(timeout.functionName): timeout.id] }
 
 def parseDeclarative(String source) {
     // Converter.scriptToPipelineDef obtains its loader from a running Jenkins instance.

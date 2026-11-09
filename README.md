@@ -117,6 +117,10 @@ and reports their acceptance/rejection results side by side.
 Both lanes are included in the main [Jenkins execution and plots](docs/dual-implementation-jenkins.md)
 when `RUN_BENCHMARKS` is enabled.
 
+The [All Benchmark Plots report](docs/jenkins-plots.md) brings the dual-parser,
+Windows, WSL, and optional large XML plots together on one page, with detailed
+measurement explanations and links to their source evidence.
+
 Compile and run the Eiffel regression matrix, both with and without Eiffel
 runtime assertions:
 
