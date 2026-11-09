@@ -3,9 +3,9 @@
 The benchmark runner also executes [W3C XML conformance tests](w3c-xml-conformance.md)
 for each selected Eiffel build and publishes their per-case results in Jenkins.
 
-An additional [WSL2 Eiffel/GCC benchmark lane](wsl-benchmarks.md) compiles and
-times Eiffel and libexpat inside Linux, with its own reports and toolchain
-metadata.
+An additional [WSL2 Eiffel/GCC benchmark lane](wsl-benchmarks.md) compiles the
+same xpact parser with EiffelStudio and Gobo Eiffel and compares them with
+libexpat inside Linux, with its own reports and toolchain metadata.
 
 Generated: 2026-06-21 17:06:04 +02:00
 

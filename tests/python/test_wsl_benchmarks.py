@@ -38,10 +38,15 @@ class BenchmarkLifecycleTests(unittest.TestCase):
         self.commands = []
         self.failure = None
         self.omit_eiffel_binary = False
+        self.omit_gobo_binary = False
+        self.gobo_script_mode = "valid"
+        self.gobo_layout = ".gobo"
+        self.environments = []
         compiler_directory = Path(self.temporary.name) / "compilers"
         compiler_directory.mkdir()
         self.makefile_compiler = compiler_directory / "gcc"
         self.write_executable(self.makefile_compiler)
+        self.write_executable(compiler_directory / "clang")
         self.makefile_mode = "valid"
         self.expat_library = "/usr/lib/libexpat.so.1"
         self.expat_version = "expat_2.7.1"
@@ -52,6 +57,11 @@ class BenchmarkLifecycleTests(unittest.TestCase):
             "gcc_version": "gcc (test fixture) 12.3.0",
             "ise_platform": "linux-x86-64", "ise_eiffel": "/tools/eiffel",
             "environment": dict(os.environ, CC="/tools/gcc"),
+            "gec": "/tools/gec", "sh": "/tools/sh",
+            "gobo_version": "gec version 26.10.18+test-fixture",
+            "gobo_root": "/tools/gobo",
+            "gobo_environment": dict(os.environ, GOBO="/tools/gobo",
+                                     GOBO_EIFFEL="ge", GOBO_CC="gcc"),
         }
 
     def read_rows(self):
@@ -63,11 +73,15 @@ class BenchmarkLifecycleTests(unittest.TestCase):
         for name in REPORTS:
             self.assertFalse((self.output / name).exists(), name)
 
-    def invoke(self, builds=("Finalized", "FinalizedAssertions")):
+    def invoke(self, builds=("Finalized", "FinalizedAssertions"),
+               compilers=("EiffelStudio",)):
         arguments = ["--output-dir", str(self.output), "--iterations", "20",
                      "--repetitions", "2"]
         for build in builds:
             arguments += ["--eiffel-build", build]
+        if compilers is not None:
+            for compiler in compilers:
+                arguments += ["--eiffel-compiler", compiler]
         diagnostics = io.StringIO()
         original_resolve = Path.resolve
 
@@ -78,9 +92,14 @@ class BenchmarkLifecycleTests(unittest.TestCase):
                 return path
             return original_resolve(path, *args, **kwargs)
 
+        def compiler_path(name, **kwargs):
+            if name == "clang":
+                return str(self.makefile_compiler.parent / "clang")
+            return str(self.makefile_compiler)
+
         with mock.patch.object(runner, "check_prerequisites", return_value=self.tools), \
                 mock.patch.object(runner, "run_checked", side_effect=self.fake_command), \
-                mock.patch.object(runner.shutil, "which", return_value=str(self.makefile_compiler)), \
+                mock.patch.object(runner.shutil, "which", side_effect=compiler_path), \
                 mock.patch.object(Path, "resolve", resolve_fixture_library), \
                 contextlib.redirect_stdout(diagnostics), \
                 contextlib.redirect_stderr(diagnostics):
@@ -96,6 +115,7 @@ class BenchmarkLifecycleTests(unittest.TestCase):
     def fake_command(self, command, cwd=None, env=None, log_path=None):
         command = [str(value) for value in command]
         self.commands.append((command, Path(cwd) if cwd is not None else None))
+        self.environments.append(env)
         if self.failure and self.failure(command):
             raise runner.BenchmarkError("deliberate toolchain failure")
         if "-project_path" in command:
@@ -120,6 +140,20 @@ class BenchmarkLifecycleTests(unittest.TestCase):
                 self.write_executable(code / "xpact_benchmarks")
         if Path(command[0]).name == "finish_freezing" and not self.omit_eiffel_binary:
             self.write_executable(Path(cwd) / "xpact_benchmarks")
+        if Path(command[0]).name == "gec" and "--cc=no" in command:
+            if self.gobo_script_mode != "missing":
+                compiler = "clang" if self.gobo_script_mode == "clang" else "gcc"
+                script = "#!/bin/sh\n"
+                if self.gobo_script_mode != "empty":
+                    script += ("{0} -O2 -c xpact_benchmarks1.c\n"
+                               "{0} -o xpact_benchmarks xpact_benchmarks1.o -lgc\n").format(compiler)
+                layouts = ("", ".gobo") if self.gobo_layout == "ambiguous" else (self.gobo_layout,)
+                for layout in layouts:
+                    code_directory = Path(cwd) / layout
+                    code_directory.mkdir(parents=True, exist_ok=True)
+                    (code_directory / "xpact_benchmarks.sh").write_text(script, encoding="utf-8")
+        if Path(command[0]).name == "sh" and not self.omit_gobo_binary:
+            self.write_executable(Path(cwd) / "xpact_benchmarks")
         if "-o" in command:
             executable = Path(command[command.index("-o") + 1])
             executable.parent.mkdir(parents=True, exist_ok=True)
@@ -131,6 +165,8 @@ class BenchmarkLifecycleTests(unittest.TestCase):
                 return self.tools["gcc_version"]
             if Path(command[0]).name == "clang":
                 return "clang version 18.1.0"
+            if Path(command[0]).name == "gec":
+                return self.tools["gobo_version"]
             return self.expat_version + "\n"
         return "benchmark parsed documents.\n"
 
@@ -293,6 +329,290 @@ class BenchmarkLifecycleTests(unittest.TestCase):
                 self.assertFalse(any("--iterations" in command for command, _ in self.commands))
                 self.assert_no_reports()
 
+    def test_default_compilers_use_isolated_modes_and_publish_both_versions(self):
+        self.assertEqual(self.invoke(compilers=None), 0)
+        rows = self.read_rows()
+        self.assertEqual(len(rows), 16)
+        gobo_rows = [row for row in rows if "Gobo" in row["Engine"]]
+        self.assertEqual(len(gobo_rows), 4)
+        self.assertEqual({row["Version"] for row in gobo_rows}, {self.tools["gobo_version"]})
+        self.assertTrue(all("GC suspended" not in row["Engine"] for row in gobo_rows))
+        self.assertTrue(all("GC suspension unavailable" in row["Notes"] for row in gobo_rows))
+        gobo_measurements = [command for command, _ in self.commands
+                            if "--iterations" in command and "Gobo" in Path(command[0]).parts]
+        self.assertTrue(gobo_measurements)
+        self.assertTrue(all("--suspend-gc" not in command for command in gobo_measurements))
+        ise_measurements = [command for command, _ in self.commands
+                            if "--iterations" in command and "EIFGENs" in Path(command[0]).parts]
+        self.assertTrue(any("--suspend-gc" in command for command in ise_measurements))
+        self.assertEqual({row["DocumentBytes"] for row in rows}, {"2611"})
+        generated = [(command, cwd) for command, cwd in self.commands
+                     if Path(command[0]).name == "gec" and "--cc=no" in command]
+        self.assertEqual(len(generated), 2)
+        self.assertEqual({cwd for _, cwd in generated}, {
+            self.output / "builds" / "Gobo" / "Finalized",
+            self.output / "builds" / "Gobo" / "FinalizedAssertions",
+        })
+        self.assertEqual({next(arg for arg in command if arg.startswith("--target="))
+                          for command, _ in generated}, {
+            "--target=xpact_benchmarks", "--target=xpact_benchmarks_assertions",
+        })
+        for command, _ in generated:
+            self.assertIn("--finalize", command)
+            self.assertIn("--gc=boehm", command)
+            self.assertTrue(command[-1].endswith("xpact_gobo_benchmarks.ecf"))
+        compiled = [command for command, _ in self.commands if Path(command[0]).name == "sh"]
+        self.assertEqual(len(compiled), 2)
+        self.assertTrue(all("-e" in command for command in compiled))
+        for command, cwd in self.commands:
+            if Path(command[0]).name == "sh":
+                self.assertEqual(cwd, Path(command[-1]).parent)
+                self.assertEqual(cwd.name, ".gobo")
+        metadata = json.loads((self.output / "metadata.json").read_text(encoding="utf-8"))
+        self.assertEqual(metadata["eiffel_compilers"], ["EiffelStudio", "Gobo"])
+        self.assertEqual(metadata["gobo_version"], self.tools["gobo_version"])
+        self.assertEqual(set(metadata["gobo_build_details"]), {"Finalized", "FinalizedAssertions"})
+        self.assertIn("-O2", json.dumps(metadata["gobo_build_details"]))
+
+    def test_gobo_report_qualifies_assertions_and_refreshes_version_specific_coverage(self):
+        self.assertEqual(self.invoke(builds=("FinalizedAssertions",), compilers=("Gobo",)), 0)
+        rows = [row for row in self.read_rows() if "Gobo" in row["Engine"]]
+        self.assertTrue(all("xpact assertions requested" in row["Engine"] for row in rows))
+        self.assertTrue(all("assertions enabled" not in row["Engine"] for row in rows))
+        for row in rows:
+            self.assertIn("Base assertions disabled", row["Notes"])
+            self.assertIn("does not enforce check instructions", row["Notes"])
+            self.assertIn("decreasing loop variants or supplier-only preconditions", row["Notes"])
+        metadata = json.loads((self.output / "metadata.json").read_text(encoding="utf-8"))
+        details = metadata["gobo_build_details"]["FinalizedAssertions"]
+        self.assertTrue(details["assertions_requested"])
+        self.assertFalse(details["base_assertions"])
+
+        # A later compiler must not inherit the known 26.10 coverage claims.
+        self.tools["gobo_version"] = "gec version 27.01.01+test-fixture"
+        self.assertEqual(self.invoke(builds=("FinalizedAssertions",), compilers=("Gobo",)), 0)
+        rows = [row for row in self.read_rows() if "Gobo" in row["Engine"]]
+        self.assertTrue(all("compiler-dependent" in row["Notes"] for row in rows))
+        self.assertTrue(all("does not enforce" not in row["Notes"] for row in rows))
+        metadata = json.loads((self.output / "metadata.json").read_text(encoding="utf-8"))
+        self.assertNotIn("26.10", metadata["gobo_build_details"]["FinalizedAssertions"]["assertion_coverage"])
+
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 0)
+        rows = [row for row in self.read_rows() if "Gobo" in row["Engine"]]
+        self.assertTrue(all("assertions discarded" in row["Engine"] for row in rows))
+        metadata = json.loads((self.output / "metadata.json").read_text(encoding="utf-8"))
+        self.assertFalse(metadata["gobo_build_details"]["Finalized"]["assertions_requested"])
+
+    def test_gobo_generation_failure_c_failure_and_recovery_invalidate_old_results(self):
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 0)
+        project = self.output / "builds" / "Gobo" / "Finalized" / ".gobo"
+        executable = project / "xpact_benchmarks"
+        script = project / "xpact_benchmarks.sh"
+        self.assertTrue(executable.is_file())
+        self.assertTrue(script.is_file())
+        self.failure = lambda command: Path(command[0]).name == "gec" and "--cc=no" in command
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 1)
+        self.assertFalse(executable.exists())
+        self.assertFalse(script.exists())
+        self.assert_no_reports()
+        self.failure = lambda command: Path(command[0]).name == "sh"
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 1)
+        self.assertFalse(executable.exists())
+        self.assert_no_reports()
+        self.failure = None
+        self.assertEqual(self.invoke(builds=("FinalizedAssertions",), compilers=("Gobo",)), 0)
+        rows = self.read_rows()
+        self.assertEqual(len(rows), 6)
+        self.assertFalse(any("assertions discarded" in row["Engine"] for row in rows))
+        self.assertFalse(any("-project_path" in command for command, _ in self.commands))
+
+    def test_gobo_success_exit_without_new_binary_never_times_previous_binary(self):
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 0)
+        self.commands.clear()
+        self.omit_gobo_binary = True
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 1)
+        self.assertFalse(any("--iterations" in command for command, _ in self.commands))
+        self.assert_no_reports()
+
+    def test_gobo_failed_c_step_releases_partial_binary_before_recovery(self):
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 0)
+        executable = self.output / "builds" / "Gobo" / "Finalized" / ".gobo" / "xpact_benchmarks"
+        partial_writes = []
+
+        def fail_after_writing_binary(command):
+            if Path(command[0]).name == "sh":
+                partial = Path(command[-1]).parent / "xpact_benchmarks"
+                partial.write_bytes(b"incomplete native binary")
+                partial_writes.append(partial)
+                return True
+            return False
+
+        self.failure = fail_after_writing_binary
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 1)
+        self.assertEqual(partial_writes, [executable])
+        self.assertFalse(executable.exists())
+        self.assert_no_reports()
+        self.failure = None
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 0)
+        self.assertEqual(executable.read_bytes()[:4], b"\x7fELF")
+        self.assertEqual(len(self.read_rows()), 6)
+
+    def test_gobo_missing_script_or_backend_change_cannot_reuse_previous_build(self):
+        for mode in ("missing", "empty", "clang"):
+            with self.subTest(mode=mode):
+                self.gobo_script_mode = "valid"
+                self.assertEqual(self.invoke(compilers=("Gobo",)), 0)
+                self.commands.clear()
+                self.gobo_script_mode = mode
+                self.assertEqual(self.invoke(compilers=("Gobo",)), 1)
+                self.assertFalse(any("--iterations" in command for command, _ in self.commands))
+                self.assertFalse(any(Path(command[0]).name == "sh" for command, _ in self.commands))
+                self.assert_no_reports()
+
+    def test_gobo_toolchain_layout_upgrade_invalidates_legacy_artifacts_before_failure(self):
+        project = self.output / "builds" / "Gobo" / "Finalized"
+        legacy_binary = project / "xpact_benchmarks"
+        legacy_script = project / "xpact_benchmarks.sh"
+        current_binary = project / ".gobo" / "xpact_benchmarks"
+        current_script = project / ".gobo" / "xpact_benchmarks.sh"
+        self.gobo_layout = ""
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 0)
+        self.assertTrue(legacy_binary.is_file())
+        self.assertTrue(legacy_script.is_file())
+        self.gobo_layout = ".gobo"
+        self.failure = lambda command: Path(command[0]).name == "gec" and "--cc=no" in command
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 1)
+        for path in (legacy_binary, legacy_script, current_binary, current_script):
+            self.assertFalse(path.exists(), str(path))
+        self.assert_no_reports()
+        self.failure = None
+        self.commands.clear()
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 0)
+        self.assertTrue(current_binary.is_file())
+        self.assertTrue(current_script.is_file())
+        self.assertFalse(legacy_binary.exists())
+        self.assertFalse(legacy_script.exists())
+        measured = [Path(command[0]) for command, _ in self.commands
+                    if "--iterations" in command and "Gobo" in Path(command[0]).parts]
+        self.assertTrue(measured)
+        self.assertEqual(set(measured), {current_binary})
+
+    def test_gobo_ambiguous_generated_layout_is_rejected_before_c_compilation(self):
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 0)
+        self.commands.clear()
+        self.gobo_layout = "ambiguous"
+        self.assertEqual(self.invoke(builds=("Finalized",), compilers=("Gobo",)), 1)
+        self.assertFalse(any(Path(command[0]).name == "sh" for command, _ in self.commands))
+        self.assertFalse(any("--iterations" in command for command, _ in self.commands))
+        project = self.output / "builds" / "Gobo" / "Finalized"
+        for directory in (project, project / ".gobo"):
+            self.assertFalse((directory / "xpact_benchmarks").exists())
+        self.assert_no_reports()
+
+    def test_late_gobo_measurement_failure_discards_completed_eiffelstudio_rows(self):
+        self.assertEqual(self.invoke(compilers=None), 0)
+        self.commands.clear()
+        self.failure = lambda command: ("--iterations" in command and
+                                        "Gobo" in Path(command[0]).parts and
+                                        "FinalizedAssertions" in Path(command[0]).parts)
+        self.assertEqual(self.invoke(compilers=None), 1)
+        completed_ise = [command for command, _ in self.commands
+                         if "--iterations" in command and "EIFGENs" in Path(command[0]).parts]
+        self.assertGreater(len(completed_ise), 4)
+        self.assert_no_reports()
+
+    def test_gobo_publication_failure_removes_reports_and_temporary_files_then_recovers(self):
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 0)
+        original_replace = Path.replace
+        published = []
+
+        def fail_second_replace(path, destination):
+            published.append(Path(destination).name)
+            if len(published) == 2:
+                raise OSError("deliberate Gobo report persistence failure")
+            return original_replace(path, destination)
+
+        with mock.patch.object(Path, "replace", fail_second_replace):
+            self.assertEqual(self.invoke(compilers=("Gobo",)), 1)
+        self.assertEqual(len(published), 2)
+        self.assert_no_reports()
+        self.assertEqual(list(self.output.glob(".xpact-report-*")), [])
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 0)
+        self.assertEqual(len(self.read_rows()), 8)
+
+    def test_gobo_only_prerequisites_ignore_ise_and_pin_gcc_gc_environment(self):
+        tool_root = Path(self.temporary.name) / "native tools"
+        tool_root.mkdir()
+        for name in ("gcc", "ldd", "make", "gec", "sh"):
+            self.write_executable(tool_root / name)
+        gobo_root = Path(self.temporary.name) / "Gobo installation"
+        base = gobo_root / "library" / "free_elks" / "library_ge.ecf"
+        base.parent.mkdir(parents=True)
+        base.write_text("fixture", encoding="utf-8")
+        found = []
+
+        def find_tool(name, **kwargs):
+            found.append(name)
+            path = tool_root / name
+            return str(path) if path.is_file() else None
+
+        injected = {"GOBO": str(gobo_root), "GOBO_CC": "zig", "GOBO_EIFFEL": "ise",
+                    "GOBO_CLI_GEC": "--gc=no --setting=executable_name=wrong",
+                    "GOBO_DEFAULT_SETTING": "all_assertions=true",
+                    "BOEHM_GC": "/fixture/other-gc",
+                    "GOBO_CLI_GECC": "--thread=9", "ISE_PLATFORM": "win64",
+                    "ISE_EIFFEL": r"C:\Windows Eiffel", "ISE_C_COMPILER": "msc_vc140"}
+        with mock.patch.object(runner.sys, "platform", "linux"), \
+                mock.patch.dict(runner.os.environ, injected), \
+                mock.patch.object(runner.shutil, "which", side_effect=find_tool), \
+                mock.patch.object(runner, "run_checked", side_effect=self.fake_command):
+            tools = runner.check_prerequisites(SCRIPT.parents[1], ("Gobo",))
+        self.assertNotIn("ec", found)
+        self.assertNotIn("finish_freezing", found)
+        self.assertNotIn("eiffel_version", tools)
+        self.assertEqual(tools["gobo_version"], self.tools["gobo_version"])
+        environment = tools["gobo_environment"]
+        self.assertEqual(environment["GOBO_CC"], "gcc")
+        self.assertEqual(environment["GOBO_EIFFEL"], "ge")
+        self.assertEqual(environment["ISE_PLATFORM"], "linux-x86-64")
+        self.assertFalse(any(name.startswith(("GOBO_CLI_", "GOBO_DEFAULT_")) for name in environment))
+        self.assertNotIn("BOEHM_GC", environment)
+
+    def test_missing_selected_gobo_compiler_fails_instead_of_silently_skipping_it(self):
+        self.assertEqual(self.invoke(compilers=None), 0)
+        executable = self.makefile_compiler
+
+        def find_tool(name, **kwargs):
+            return None if name == "gec" else str(executable)
+
+        with mock.patch.object(runner.sys, "platform", "linux"), \
+                mock.patch.object(runner.shutil, "which", side_effect=find_tool), \
+                mock.patch.object(runner, "run_checked") as execute, \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()) as diagnostics:
+            result = runner.main(["--output-dir", str(self.output),
+                                  "--eiffel-compiler", "Gobo"])
+        self.assertEqual(result, 1)
+        self.assertIn("gec", diagnostics.getvalue())
+        execute.assert_not_called()
+        self.assert_no_reports()
+
+    def test_gobo_workbench_failure_invalidates_reports_before_prerequisites_then_recovers(self):
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 0)
+        with mock.patch.object(runner.subprocess, "run") as execute, \
+                mock.patch.object(runner, "check_prerequisites") as prerequisites, \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()) as diagnostics:
+            result = runner.main(["--output-dir", str(self.output),
+                                  "--eiffel-compiler", "Gobo", "--eiffel-build", "Workbench"])
+        self.assertEqual(result, 1)
+        self.assertIn("Workbench", diagnostics.getvalue())
+        execute.assert_not_called()
+        prerequisites.assert_not_called()
+        self.assert_no_reports()
+        self.assertEqual(self.invoke(compilers=("Gobo",)), 0)
+        self.assertEqual(len(self.read_rows()), 8)
+
 
 class TimingTests(unittest.TestCase):
     def test_iteration_overflow_is_rejected_before_starting_a_subprocess(self):
@@ -317,6 +637,13 @@ class TimingTests(unittest.TestCase):
         self.assertEqual([row["DocsPerSecond"] for row in rows], [80.0, 40.0])
         for call in execute.call_args_list:
             self.assertNotIn("wsl.exe", [str(value) for value in call.args[0]])
+
+    def test_eiffelstudio_workbench_and_repeated_compiler_selection(self):
+        arguments = runner.parse_args(["--eiffel-compiler", "EiffelStudio",
+                                       "--eiffel-compiler", "EiffelStudio",
+                                       "--eiffel-build", "Workbench"])
+        self.assertEqual(arguments.eiffel_compiler, ["EiffelStudio"])
+        self.assertEqual(arguments.eiffel_build, ["Workbench"])
 
 
 if __name__ == "__main__":

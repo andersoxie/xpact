@@ -184,14 +184,17 @@ The suite runs by default in both Jenkins benchmark pipelines. See
 profile, offline setup, and detailed reports.
 
 Run the additional Eiffel/GCC comparison inside WSL2 (requires Linux
-EiffelStudio in that distribution):
+EiffelStudio and Gobo Eiffel in that distribution):
 
 ```powershell
-.\scripts\run_wsl_benchmarks.ps1 -Distribution Ubuntu
+.\scripts\run_wsl_benchmarks.ps1 -Distribution Ubuntu-24.04
 ```
 
+Both compilers use the same xpact parser and workload, with assertions enabled
+and disabled, alongside the libexpat C baseline. Pass `-EiffelCompiler Gobo`
+or `-EiffelCompiler EiffelStudio` to select just one compiler.
 See [WSL2 Eiffel/GCC benchmarks](docs/wsl-benchmarks.md) for setup, timing
-methodology, and the optional Jenkins lane.
+methodology, and the Jenkins lane.
 
 Run opt-in large XML benchmarks with pre-decompressed real XML files:
 
