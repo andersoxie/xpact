@@ -16,6 +16,7 @@ Open `http://<server>/`. For HTTPS, put IIS or another reverse proxy in front an
 | Tag | Content |
 |---|---|
 | `latest` | the newest website build |
+| `website-2026-11-09-3` | `incremental-test` @ `c9f74cd`: old one-line footer credit removed; same DLLs and results ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09-3)) |
 | `website-2026-11-09-2` | `incremental-test` @ `f9c9e97`: footer credit, plain result lines; same DLLs and results ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09-2)) |
 | `website-2026-11-09` | `incremental-test` @ `307744b`, test results of 2026-11-08 ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09)) |
 
