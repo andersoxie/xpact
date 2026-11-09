@@ -40,11 +40,6 @@ export function Project() {
       </section>
 
       <section className="section">
-        <h2>Who built what</h2>
-        <p className="muted">
-          The XPact parser is developed at Bsharp. The testing, the conformance fixes, the DevOps work (build, CI and
-          test pipelines) and this website were done by <strong>{AUTHOR.name}</strong>, {AUTHOR.role}.
-        </p>
         <div className="grid grid-4">
           {WORK.map((w) => (
             <a key={w.area} className="card" href={w.href} style={{ color: "inherit" }}>
