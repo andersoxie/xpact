@@ -67,6 +67,13 @@ export function Layout() {
         </div>
       </main>
       <footer className="site-footer">
+        <div className="container footer-credit">
+          <strong>Engine Development &amp; Quality Assurance</strong>
+          <span>
+            Core engine development, native integration, XML parsing, debugging, and extensive conformance testing by{" "}
+            <a href={AUTHOR.github}>{AUTHOR.name}</a>.
+          </span>
+        </div>
         <div className="container">
           <span>
             XPact: an Eiffel XML parser with an Expat-compatible C API. Testing, parser fixes and this website by{" "}

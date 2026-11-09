@@ -121,8 +121,8 @@
       "approx": false,
       "sub": "Python's own tests, pyexpat linked to XPact",
       "result": {
-        "text": "\ud83d\udfe1 942 pass \u00b7 34 fail",
-        "tone": "warn"
+        "text": "942 pass \u00b7 34 fail",
+        "tone": "plain"
       }
     },
     {
@@ -132,8 +132,8 @@
       "approx": false,
       "sub": "libxml2's own test corpus",
       "result": {
-        "text": "\ud83d\udfe1 1,288 same as Expat \u00b7 2 timeouts",
-        "tone": "warn"
+        "text": "1,288 same as Expat \u00b7 2 timeouts",
+        "tone": "plain"
       }
     },
     {
@@ -143,8 +143,8 @@
       "approx": false,
       "sub": "XXE, billion laughs, CVE inputs, huge inputs",
       "result": {
-        "text": "\ud83d\udfe1 20 pass \u00b7 9 hit a hard limit",
-        "tone": "warn"
+        "text": "20 pass \u00b7 9 hit a hard limit",
+        "tone": "plain"
       }
     },
     {
@@ -154,8 +154,8 @@
       "approx": false,
       "sub": "1, 5, 9, 20 MB \u00d7 4 shapes, whole and in pieces",
       "result": {
-        "text": "\ud83d\udfe1 same events as Expat up to 9 MB \u00b7 20 MB over the limit",
-        "tone": "warn"
+        "text": "same events as Expat up to 9 MB \u00b7 20 MB over the limit",
+        "tone": "plain"
       }
     },
     {
@@ -176,8 +176,8 @@
       "approx": false,
       "sub": "in all test areas",
       "result": {
-        "text": "\ud83d\udfe1 2 timeouts: external billion laughs (libxml2)",
-        "tone": "warn"
+        "text": "2 timeouts: external billion laughs (libxml2)",
+        "tone": "plain"
       }
     }
   ],

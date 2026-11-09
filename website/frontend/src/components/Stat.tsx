@@ -4,8 +4,8 @@ interface Props {
   sub?: string;
   /** A long value (such as "2,585 / 2,585") in a smaller size, so it stays on one line. */
   long?: boolean;
-  /** What the number means for the test: "✅ 0 crashes · 0 hangs", in green (good) or amber (warn). */
-  result?: { text: string; tone: "good" | "warn" };
+  /** What the number means for the test: "✅ 0 crashes · 0 hangs", in green (good) or plain text (plain). */
+  result?: { text: string; tone: "good" | "plain" };
 }
 
 /** A single headline number. */
