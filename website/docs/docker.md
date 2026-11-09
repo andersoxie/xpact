@@ -2,7 +2,26 @@
 
 [← documentation](README.md) · [Dockerfile](../Dockerfile) · issue [#233](https://github.com/andersoxie/xpact/issues/233)
 
-> ⚠️ **Not tested yet.** The student PC (Windows 11 Home) cannot run Windows containers. The image still has to be built and run once on a Windows Server or Windows Pro machine; see [Check after the first run](#check-after-the-first-run).
+## Quick start: pull the ready image
+
+The image is built by GitHub Actions ([`website-docker.yml`](../../.github/workflows/website-docker.yml)) on Windows Server 2022 and published as **`ghcr.io/andersoxie/xpact-website`**. On a Windows host with Docker in **Windows containers** mode (Windows Server 2022, or Windows 10/11 Pro):
+
+```powershell
+docker pull ghcr.io/andersoxie/xpact-website:latest
+docker run -d --name xpact -p 80:8080 --memory 4g --restart unless-stopped ghcr.io/andersoxie/xpact-website:latest
+```
+
+Open `http://<server>/`. For HTTPS, put IIS or another reverse proxy in front and set `Xpact__KnownProxies__0` ([Settings](#settings)).
+
+| Tag | Content |
+|---|---|
+| `latest` | the newest website build |
+| `website-2026-11-09` | `incremental-test` @ `307744b`, test results of 2026-11-08 ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09)) |
+
+> ✅ **Tested in CI** (2026-11-09, [run 42541400409](https://github.com/andersoxie/xpact/actions/runs/42541400409)): the image builds on `windows-2022`, `/api/health` answers, both builds report `"available": true`, `<root/>junk` → `rejected` code 9, `<a x="1">hi</a>` → `accepted`, the home page loads.
+> ⬜ **Not tested yet:** a Windows Server 2025 host (needs `--build-arg WINDOWS_TAG=ltsc2025` and a rebuild), the memory cap inside the container, a run behind a reverse proxy.
+
+**New website version:** build the DLLs and the site on a PC with EiffelStudio (`build-dll.ps1`, `publish.ps1`), zip `website\dist` as `xpact-website-dist.zip`, attach it to a new GitHub release, set `WEBSITE_RELEASE` in the workflow to the new tag and push to `incremental-test`.
 
 ## Overview
 
