@@ -13,6 +13,8 @@ is not intended to become a second C parser.
 
 ## Current Status
 
+**Version 0.9.0** (launch candidate). What each version contains: [CHANGELOG.md](CHANGELOG.md).
+
 This checkpoint is a Windows-only Phase 1 preview, not a final drop-in
 replacement for libexpat.
 
