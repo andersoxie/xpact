@@ -75,17 +75,3 @@ lane proves those contracts are executable and still consistent with the test
 suite. The assertion-off lane proves the parser behavior does not depend on
 runtime contract checking and matches the way finalized release and benchmark
 builds execute.
-
-## .NET suites in Jenkins
-
-Both `ci/Jenkinsfile.all-tests` (inside "Windows Native Tests") and
-`ci/Jenkinsfile.windows-phase1` (stage ".NET DLL and Website Tests") run, after
-the Eiffel-backed DLLs are built:
-
-| Jenkins test case | Command | What | Switch |
-|---|---|---|---|
-| `C# DLL tests` | `scripts\run_dotnet_tests.ps1 -Suite Dll` | `tests/dotnet/XpactDllTests`, 4,308 cases on `xpact.dll` and on `xpact_assertions.dll` | `RUN_DOTNET_DLL_TESTS` |
-| `website backend tests` | `scripts\run_dotnet_tests.ps1 -Suite Website` | `website/backend` end-to-end tests through the real worker and DLL (21 tests, incl. the memory cap) | `RUN_WEBSITE_TESTS` |
-
-The Jenkins agent needs the .NET 10 SDK. Results are archived as
-`build/dotnet-dll-tests/**/summary.txt`, `results.tsv` and `build/website-tests/*.trx`.
