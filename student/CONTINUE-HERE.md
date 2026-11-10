@@ -31,14 +31,14 @@ The 9 open mass-xpact issues were closed as "not planned" without verification; 
 ## 3. Next
 
 - [x] `main` = `incremental-test` (2026-11-10).
-- [ ] **Fair speed test, xpact vs native Expat 2.8.1 (run on PC2, idle PC).** Scope chosen 2026-11-10: core matrix.
+- [x] ✅ **Fair speed test, xpact vs native Expat 2.8.1** ([#275](https://github.com/andersoxie/xpact/issues/275), done 2026-11-10): xpact 9–20× slower whole document (callbacks on), 21–43× in 1-byte pieces, median 18×; 0 checksum mismatches; ISO-8859-1 in pieces quadratic (#272). → [results](results/fair-speed-2026-11-10/README.md)
   - Open an issue first. One C harness that loads `libexpat.dll` or `xpact.dll` through the same `expat.h` API (LoadLibrary), event checksum so both do the same work.
   - Matrix: 5 shapes (elements, attributes, text, DTD + entities, namespaces) × 10 KB / 1 MB / 10 MB × whole, 64 KB, 4 KB, 256, 16, 1 byte × callbacks on/off, UTF-8; UTF-16 and ISO-8859-1 on one shape; assertions DLL on a subset. Median of 5+, alternating, warm-up.
   - Expat DLL: `build\` is not committed; build it with `reports\issue-0121\expat-build.cmd` (Release). Build xpact once, record SHA-256 of all three DLLs.
   - Starting points: `benchmarks/libexpat_c_benchmark.c`, `benchmarks/xpact_native_c_benchmark.c`. Estimate ~1 day work, 1–2 h machine time.
 - [ ] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test (in progress), load test, worker account (code part); HTTPS and deployment [#210](https://github.com/andersoxie/xpact/issues/210) are the supervisor's.
 - [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
-- [ ] Refile mass-xpact #84, #73, #75 on andersoxie (one issue each).
+- [x] ✅ Refiled mass-xpact #84, #73, #75 on andersoxie as [#272](https://github.com/andersoxie/xpact/issues/272), [#273](https://github.com/andersoxie/xpact/issues/273), [#274](https://github.com/andersoxie/xpact/issues/274) (2026-11-10).
 - [x] Reports updated to 2026-11-10 (weeks 1–8); update again if anything changes before 27 Nov.
 
 ## 4. Setup on a new PC

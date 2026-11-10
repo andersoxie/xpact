@@ -149,10 +149,10 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 
 | Problem | Seen in | Cause | Issue | Next step |
 |---|---|---|---|---|
-| 🔴 Slow ISO-8859-1 input fed in pieces (64/128/256 KB in 1 KB pieces: 0.116 / 0.421 / 1.634 s; UTF-8 0.003 / 0.006 / 0.011 s) | rechecked 2026-11-09 on `incremental-test` | ❔ unknown | [mass-xpact#84](https://github.com/CodTanium/mass-xpact/issues/84) (closed without a fix) | refile on andersoxie |
-| 🔴 DLL crash without trace: `exenv` is local in `dllmain`, no per-entry guard | code unchanged, rechecked 2026-11-09 | ✔ code reading | [mass-xpact#73](https://github.com/CodTanium/mass-xpact/issues/73) (closed without a fix) | refile on andersoxie |
+| 🔴 Slow ISO-8859-1 input fed in pieces (64/128/256 KB in 1 KB pieces: 0.116 / 0.421 / 1.634 s; UTF-8 0.003 / 0.006 / 0.011 s) | rechecked 2026-11-09 on `incremental-test` | ❔ unknown | [mass-xpact#84](https://github.com/CodTanium/mass-xpact/issues/84) (closed without a fix) → [#272](https://github.com/andersoxie/xpact/issues/272) | not fixed; 2026-11-10 speed test: 16 B and 1 B pieces of 1 MB time out (> 900 s) |
+| 🔴 DLL crash without trace: `exenv` is local in `dllmain`, no per-entry guard | code unchanged, rechecked 2026-11-09 | ✔ code reading | [mass-xpact#73](https://github.com/CodTanium/mass-xpact/issues/73) (closed without a fix) → [#273](https://github.com/andersoxie/xpact/issues/273) | not fixed |
 | ❔ Heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20): not reproduced (72 / 72 normal runs pass; 12 stressed runs all hit the 300 s timeout = inconclusive) | 2026-11-09 | ❔ unknown | [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) (closed without verification) | keep listed as open |
-| 🔴 Not thread-safe (`xpact.ecf` has `concurrency none`) | 2026-11-09 | ✔ | [mass-xpact#75](https://github.com/CodTanium/mass-xpact/issues/75) | not fixed |
+| 🔴 Not thread-safe (`xpact.ecf` has `concurrency none`) | 2026-11-09 | ✔ | [mass-xpact#75](https://github.com/CodTanium/mass-xpact/issues/75) → [#274](https://github.com/andersoxie/xpact/issues/274) | not fixed |
 | Boogie proof needs 3 facts that no contract states | [#252](https://github.com/andersoxie/xpact/issues/252) report | ✔ | [#252](https://github.com/andersoxie/xpact/issues/252) (PR #253 merged) | decide whether to add contracts |
 | Jenkins and SonarQube: the student has a token from the supervisor; a local scan is tried 2026-11-10 | | ❓ | [#131](https://github.com/andersoxie/xpact/issues/131) | verify the scan result |
 | Heap corruption under GC stress and heavy load in `test_deep_nested_attribute_entity` (access violation in the GC, or a wrong `undefined entity` / `unclosed token`); **pre-existing**: at equal load `student-Mass` as it was crashes 2 in 12, the same as the speed PRs | Expat 2.8.1 suite with `EIF_MEMORY_SCAVENGE=65536`, `EIF_FULL_COLLECTION_PERIOD=1`, 12 runs in parallel, 2026-11-04 | ❔ unknown; a `0x01` (`True`) at an address a `HASH_TABLE [BOOLEAN, STRING_8]` array once used; ❓ suspected: a stale reference, maybe in the Eiffel runtime | [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) | check whether it happens without the GC stress settings ([report](../reports/mass-xpact-issue-0020/report.md)) |
@@ -230,7 +230,8 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 - [ ] Merge `incremental-test` into `main` (planned 2026-11-11, by the student and supervisor; Claude never merges into `main`).
 - [ ] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test (🟡 today), load test, low-privilege worker account (code part ours, account on the supervisor's server); HTTPS and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's.
 - [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
-- [ ] Refile mass-xpact #84, #73, #75 on andersoxie (closed without a fix); #20 stays inconclusive.
+- [x] ✅ Refiled mass-xpact #84, #73, #75 on andersoxie as #272, #273, #274 (2026-11-10); #20 stays inconclusive.
+- [x] ✅ Fair speed test vs Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275)): median 18× slower, 0 checksum mismatches → [results](results/fair-speed-2026-11-10/README.md)
 - [ ] Before the hand-in (27 November): update [`report/ActualReport.md`](report/ActualReport.md) and `ActualReportShorter.md` with weeks 5-8.
 - Items 0-13 below are history and older to-dos; item 12 is replaced by this list where they overlap.
 

@@ -56,5 +56,6 @@
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and load test (2026-11-10).
 - [ ] Website: worker under a low-privilege account (code part ours, account on the supervisor's server). HTTPS: the supervisor.
 - [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
-- [ ] Reopen or refile mass-xpact#84, #73, #75 on andersoxie (one issue each), since they were closed without a fix.
+- [x] ✅ Refiled mass-xpact#84, #73, #75 on andersoxie as #272, #273, #274 (2026-11-10).
+- [x] ✅ Fair speed test vs Expat 2.8.1 (#275): xpact median 18× slower, 0 checksum mismatches, ISO-8859-1 in pieces quadratic → [results](../../results/fair-speed-2026-11-10/README.md)
 - [ ] Week 9-10: update [`ActualReport.md`](../../report/ActualReport.md) and `ActualReportShorter.md` with weeks 5-8, then hand-in (27 November).
