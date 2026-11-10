@@ -14,8 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<XpactOptions>(builder.Configuration.GetSection(XpactOptions.Section));
 var xpact = builder.Configuration.GetSection(XpactOptions.Section).Get<XpactOptions>() ?? new XpactOptions();
 
-// A document plus the multipart envelope; anything larger is refused before it is read.
-long maxBody = xpact.MaxDocumentBytes + 64 * 1024;
+// A document plus its envelope; anything larger is refused before it is read. Pasted text arrives as JSON,
+// where escaping (quotes, line ends) can make a document up to twice as long, so the body may be 2x the document.
+// The document itself is still checked against MaxDocumentBytes below.
+long maxBody = 2L * xpact.MaxDocumentBytes + 64 * 1024;
 builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = maxBody);
 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = maxBody);
 

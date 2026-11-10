@@ -18,7 +18,7 @@ The website follows the five components of [guide.txt](../guide.txt). The rule f
 
 1. **Frontend:** the browser sends the document. An uploaded file goes as `multipart/form-data` with its **original bytes**, so UTF-16 or ISO-8859-1 files reach the parser unchanged. Pasted text goes as JSON (UTF-8).
 2. **API:**
-   - checks the rate limit (30 / min per IP), the size (≤ 1 MB), the build name and the chunk size
+   - checks the rate limit (30 / min per IP), the size (≤ 10 MB), the build name and the chunk size
    - waits for a free worker slot (max 4 at once)
 3. **API → worker:**
    - starts `Xpact.Worker.exe` in an empty working folder, at below-normal priority, inside a **Windows Job Object** (512 MB memory cap; the job kills the process when its handle closes)

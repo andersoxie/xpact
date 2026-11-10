@@ -15,8 +15,8 @@ public sealed class XpactOptions
         ["assertions"] = "native/xpact_assertions.dll",
     };
 
-    /// <summary>Largest document accepted, in bytes.</summary>
-    public int MaxDocumentBytes { get; set; } = 1024 * 1024;
+    /// <summary>Largest document accepted, in bytes. 10 MB is also the parser's own input limit (src/xp_limits.e).</summary>
+    public int MaxDocumentBytes { get; set; } = 10 * 1024 * 1024;
 
     /// <summary>A worker that runs longer is killed and the result is "timeout".</summary>
     public int TimeoutSeconds { get; set; } = 10;

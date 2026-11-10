@@ -80,7 +80,7 @@ Returned as [RFC 9457 problem details](https://www.rfc-editor.org/rfc/rfc9457) (
 | Status | When |
 |---|---|
 | `400` | no document, an unknown build, a negative chunk size, or an unreadable request |
-| `413` | the document is larger than the limit (1 MB by default) |
+| `413` | the document is larger than the limit (10 MB by default) |
 | `429` | more than 30 requests per minute from one IP |
 
 ## Limits
@@ -89,7 +89,7 @@ All in `backend/src/Xpact.Api/appsettings.json`, section `Xpact`:
 
 | Setting | Default |
 |---|---|
-| `MaxDocumentBytes` | 1,048,576 |
+| `MaxDocumentBytes` | 10,485,760 |
 | `TimeoutSeconds` | 10 |
 | `WorkerMemoryMb` | 512 |
 | `MaxConcurrentWorkers` | 4 |

@@ -53,4 +53,4 @@ python website\backend\tests\tools\load-test.py --doc 100kb
 
 - With the normal rate limit (30 per minute per visitor) one visitor cannot load the site much; the limit is the 4-worker queue.
 - On a server with more cores, `Xpact:MaxConcurrentWorkers` can be raised; measure again there.
-- Not tested: the 1 MB maximum document, slow networks, HTTPS in front, a different machine.
+- Not tested: large documents (the limit was 1 MB then, 10 MB since 2026-11-10), slow networks, HTTPS in front, a different machine.
