@@ -5,10 +5,8 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-> **Updated 2026-10-31 (week 7)** · describes `student-Mass` @ `c12b705`, which includes all of `main`.
-> Weeks 1-7 ✅ (week 7: one table rerun left) · W3C 2,585 cases, 0 failed · the supervisor merged
-> `student-Mass` into `main` and Jenkins passed (PR #177) · open problems and the left-to-do list:
-> [PLAN.md](PLAN.md) ("Known problems", "Next" item 12) · #13 ⏸ on hold.
+> **Updated 2026-11-10 (week 8)** · work branch is **`incremental-test`** (andersoxie/xpact, since 2026-11-08); `student-Mass` is contained in it.
+> Weeks 1-7 ✅, week 8 🟡 · state and next steps: [CONTINUE-HERE.md](CONTINUE-HERE.md), [PLAN.md](PLAN.md) ("Next", "Known problems"), [week-08](notes/weekly/week-08.md).
 
 ## Start here
 
@@ -83,7 +81,8 @@ Outside this folder:
 | Branch | Purpose |
 |---|---|
 | `main` | The teacher's code. Never commit to it directly. |
-| `student-Mass` | Your integration branch. Every fix lands here as one squashed commit. |
+| `incremental-test` | Current work branch since 2026-11-08 (contains all of `student-Mass`). Fixes land here as one squashed commit. |
+| `student-Mass` | Earlier integration branch (until 2026-11-08), kept for history. |
 | `fix/<issue>-<name>` | One short-lived branch per issue, e.g. `fix/7-msvc-c-backend`, made by `fix.ps1 start` from the latest `student-Mass` and deleted by `fix.ps1 merge` |
 
 A `fix/...` branch that still exists belongs to an open pull request, or was merged and not
