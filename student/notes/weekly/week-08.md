@@ -52,9 +52,9 @@
 - `main` has 2 commits not in `incremental-test` (PR #254, Jenkins plots, 9 November).
 
 ## Next
-- [ ] Merge `incremental-test` into `main` (planned 2026-11-11; done by the student and supervisor, not by Claude).
+- [x] Merge `incremental-test` into `main`: `main` contains all of `incremental-test` (checked 2026-11-11).
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and load test (2026-11-10).
 - [ ] Website: worker under a low-privilege account (code part ours, account on the supervisor's server). HTTPS: the supervisor.
-- [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
-- [ ] Reopen or refile mass-xpact#84, #73, #75 on andersoxie (one issue each), since they were closed without a fix.
-- [ ] Week 9-10: update [`ActualReport.md`](../../report/ActualReport.md) and `ActualReportShorter.md` with weeks 5-8, then hand-in (27 November).
+- [ ] Open issues on andersoxie (17 on 2026-11-11): #281, #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13. (#227 closed 2026-11-10.)
+- [x] Refile mass-xpact#84, #73, #75 on andersoxie: #272, #273, #274.
+- [x] Update [`ActualReport.md`](../../report/ActualReport.md) and `ActualReportShorter.md` with week 8 (PR #269). Hand-in 27 November.

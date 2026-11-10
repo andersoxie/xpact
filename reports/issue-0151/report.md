@@ -188,8 +188,8 @@ As in #146: add `C:\Program Files (x86)\Microsoft Visual Studio\Installer` to `P
 
 ## 10. Next steps
 
-- [ ] Review and merge the pull request into `student-Mass` (the student merges).
-- [ ] Run Jenkins on the result, then close #151.
-- [ ] PR #147 (#146) and PR #149 (#148) are contained in this branch: close them after this one is merged, or merge them first (git will see the same changes).
+- [x] Review and merge the pull request into `student-Mass` (the student merges). *Done: PR #152.*
+- [x] Run Jenkins on the result, then close #151. *Done: Jenkins passed (PR #177); #151 closed 2026-10-31.*
+- [x] PR #147 (#146) and PR #149 (#148) are contained in this branch: close them after this one is merged, or merge them first (git will see the same changes). *Done: both closed 2026-10-28.*
 - [ ] Open an issue for P2.
 - [ ] Add the in-profile DLL entity lane to the runner.

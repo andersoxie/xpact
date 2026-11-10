@@ -60,8 +60,8 @@ The result's `events.sample` lists the parser events. Example from the browser Q
 
 ### Limitations of this baseline
 
-- [ ] Not deployed; tested on `localhost` only.
-- [ ] The memory cap (Job Object) was not triggered by any test.
-- [ ] No load test (many visitors at once).
+- [ ] Not deployed; tested on `localhost` only. (HTTPS and hosting: the supervisor.)
+- [x] ~~The memory cap (Job Object) was not triggered by any test.~~ Tested since 2026-11-10 ([#227](https://github.com/andersoxie/xpact/issues/227)).
+- [x] ~~No load test (many visitors at once).~~ Done 2026-11-10 ([load-test.md](load-test.md)).
 - [ ] The frontend has no unit tests; it is checked by the type check, the build and the browser QA.
 - [ ] The Postman collection was written but not run in Postman; the same requests are covered by the xUnit tests.

@@ -225,13 +225,14 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 ## ➡️ Next
 
-**State 2026-11-10 (read first):**
+**State 2026-11-11 (read first):**
 
-- [ ] Merge `incremental-test` into `main` (planned 2026-11-11, by the student and supervisor; Claude never merges into `main`).
-- [ ] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test (🟡 today), load test, low-privilege worker account (code part ours, account on the supervisor's server); HTTPS and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's.
-- [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
-- [ ] Refile mass-xpact #84, #73, #75 on andersoxie (closed without a fix); #20 stays inconclusive.
-- [ ] Before the hand-in (27 November): update [`report/ActualReport.md`](report/ActualReport.md) and `ActualReportShorter.md` with weeks 5-8.
+- [x] `main` contains all of `incremental-test` (checked 2026-11-11). `main` has 3 Jenkins-plot commits (up to PR #280) that `incremental-test` lacks: bring them in with a merge-commit PR.
+- [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and the load test ([#255](https://github.com/andersoxie/xpact/issues/255)), 2026-11-10.
+- [ ] Website: the code-review findings of 2026-11-11 ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)), first 1-2; low-privilege worker account (code part ours, account on the supervisor's server). HTTPS and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's.
+- [ ] Open issues on andersoxie (17 on 2026-11-11): #281, #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
+- [x] Refile mass-xpact #84, #73, #75 on andersoxie: [#272](https://github.com/andersoxie/xpact/issues/272), [#273](https://github.com/andersoxie/xpact/issues/273), [#274](https://github.com/andersoxie/xpact/issues/274). #20 stays inconclusive and is not refiled.
+- [x] `report/ActualReport.md` and `ActualReportShorter.md` updated with week 8 (PR #269, state 2026-11-10). Refresh again if anything changes before the hand-in (27 November).
 - Items 0-13 below are history and older to-dos; item 12 is replaced by this list where they overlap.
 
 0. ✅ **Speed work (2026-11-03/04, [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact)):** status table, merge order and the notes of every step in [`docs/notes/README.md`](../docs/notes/README.md); the reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304).
@@ -253,7 +254,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
    - [x] #68: regression found by #67, position between calls inside unfinished markup (merged, #71)
    - [x] #69: regression found by #67, #64 broke 3 Eiffel matrix assertions (merged, #70)
    - [x] #72: assertions DLL died on 7 fuzzed documents (merged, #76)
-   - [ ] #73 (no trace for an unrescued exception in a DLL call), #74 (error code depends on the pieces), #75 (not thread-safe), #77 (matrix lane 4 environment)
+   - [ ] #73 (no trace for an unrescued exception in a DLL call), #74 (error code depends on the pieces), #75 (not thread-safe), #77 (matrix lane 4 environment). #73 and #75 are refiled on andersoxie as #273 and #274 (#84 as #272).
    - [ ] 🔴 mass-xpact#20: pre-existing GC heap corruption under stress and load; cause unknown
    - [x] mass-xpact#3 (assertions DLL exit on `ibm68n03.xml`): fixed and merged (#25)
    - [x] mass-xpact#20 also happens with default GC settings under heavy load: 1 wrong result in 72 runs
@@ -275,8 +276,8 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
     - [ ] [#170](https://github.com/andersoxie/xpact/issues/170) error codes (14 W3C cases), then [#126](https://github.com/andersoxie/xpact/issues/126) raw CR to the default handler (large: about 41 call sites)
     - [ ] [#171](https://github.com/andersoxie/xpact/issues/171) error columns and [#13](https://github.com/andersoxie/xpact/issues/13) GC exceptions: ask the supervisor first (large or design questions)
     - [ ] ask the supervisor about F05-1: the DLL still re-parses markup on every call (8 KB byte by byte: 58 s, Expat 5 ms); `XP_INCREMENTAL_PARSE_SESSION` is a prototype the DLL does not use
-    - [ ] delete the merged branches `fix/124-…`, `fix/125-…`, `fix/173-…`, `fix/174-…`, `fix/175-…` (needs the student's OK)
-    - [ ] **before the hand-in (internship ends 27 November 2026):** update [`report/ActualReport.md`](report/ActualReport.md) and [`ActualReportShorter.md`](report/ActualReportShorter.md) with the work of weeks 5-8; both describe the state on 1 November
+    - [x] delete the merged branches `fix/124-…`, `fix/125-…`, `fix/173-…`, `fix/174-…`, `fix/175-…` (gone from `origin`, checked 2026-11-11)
+    - [x] **before the hand-in (internship ends 27 November 2026):** (done in PR #269, state 2026-11-10) update [`report/ActualReport.md`](report/ActualReport.md) and [`ActualReportShorter.md`](report/ActualReportShorter.md) with the work of weeks 5-8; both describe the state on 1 November
 
 13. 🟡 **XPact website (2026-11-02):** [#210](https://github.com/andersoxie/xpact/issues/210), branch `fix/210-xpact-website`. Built from `website/guide.txt`: React + ASP.NET Core + a worker process per document calling `xpact.dll`. Guide phases 1-6 ✅, phase 7 (deployment) ⬜. Tests: 19/19 end-to-end, browser QA 0 errors ([report](../reports/issue-0210/report.md)). Found [#211](https://github.com/andersoxie/xpact/issues/211) on the way. Next: review the pull request, choose hosting.
 
