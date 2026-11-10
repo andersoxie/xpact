@@ -1,6 +1,7 @@
 # 10-week plan
 
-> **Last updated:** 2026-11-04 evening (week 8) · **speed work** in [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact): ✅ all speed PRs merged into `student-Mass` @ `8ccf51b` and #21 (static input), and verified together ([post-merge check](../reports/mass-xpact-merge-2026-11-04/report.md)); the GC heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) is pre-existing (open); status and notes in [`docs/notes/`](../docs/notes/README.md), reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304)
+> **Last updated:** 2026-11-10 (week 8) · work branch **`incremental-test`** of andersoxie/xpact (since 2026-11-08; `student-Mass` is fully contained in it) · CodTanium/mass-xpact is a mirror of it since 2026-11-09 · state: [week-08](notes/weekly/week-08.md), [CONTINUE-HERE](CONTINUE-HERE.md)
+> · earlier: 2026-11-04 evening (week 8) · **speed work** in [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact): ✅ all speed PRs merged into `student-Mass` @ `8ccf51b` and #21 (static input), and verified together ([post-merge check](../reports/mass-xpact-merge-2026-11-04/report.md)); the GC heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) is pre-existing (open); status and notes in [`docs/notes/`](../docs/notes/README.md), reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304)
 > · earlier: 2026-11-02 (week 8) · the XPact website [#210](https://github.com/andersoxie/xpact/issues/210) (pull request open) and the finding [#211](https://github.com/andersoxie/xpact/issues/211) · earlier: 2026-10-31 (week 7, night) · `student-Mass` @ `32bc80a` · today: [#122](https://github.com/andersoxie/xpact/issues/122), [#124](https://github.com/andersoxie/xpact/issues/124), [#125](https://github.com/andersoxie/xpact/issues/125), [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175) fixed and closed; [#88](https://github.com/andersoxie/xpact/issues/88), [#90](https://github.com/andersoxie/xpact/issues/90), [#93](https://github.com/andersoxie/xpact/issues/93) closed (already done on `main`) · **issues close after a local check on `student-Mass`; no Jenkins run is needed** (student, 2026-10-31) · earlier: the supervisor merged `student-Mass` into `main` ([#177](https://github.com/andersoxie/xpact/pull/177), `733688e`) and the Jenkins run on it passed
 > · earlier: 2026-10-28 (week 6) · describes `student-Mass` after PR [#152](https://github.com/andersoxie/xpact/pull/152) (includes `main` @ `1714f31` with the supervisor's [#150](https://github.com/andersoxie/xpact/pull/150)); full W3C report: [latest-2026-10-28](../reports/latest-2026-10-28/README.md); W3C output test and its fixes: [issue-0154](../reports/issue-0154/report.md), [issue-0156](../reports/issue-0156/report.md), [issue-0157](../reports/issue-0157/report.md), [issue-0158](../reports/issue-0158/report.md), [issue-0159](../reports/issue-0159/report.md); W3C in pieces: [issue-0165](../reports/issue-0165/report.md); `main` @ `2488f44` (PR #139, merged by the supervisor 2026-10-29) = `student-Mass` @ `e5d59e2`
 > · ✅ done · 🟡 in progress / waiting · ⬜ not started · 🔴 open problem
@@ -23,7 +24,7 @@ supervisor at the end of every week. Day-to-day status of every issue: the
 | 5 Regressions | ✅ | C02, C03, C10 (part) run through the DLL (3 findings #38-#40, fixed in #80) · **C03 ✅, C10 ✅ compared with Expat 2.8.1** ([#121](https://github.com/andersoxie/xpact/issues/121)): 4,308/4,308 same verdicts, 5 findings (#122-#126) · **C02 ✅ regressions in the smoke test and the Eiffel suite** ([#128](https://github.com/andersoxie/xpact/issues/128)) · review with the supervisor skipped by the student | [expat-2.8.1](results/expat-2.8.1/README.md), [C02-final-input](results/C02-final-input/README.md), [week-05](notes/weekly/week-05.md) |
 | 6 One improvement | ✅ | Option A all W3C cases (#146), entity speed (#148), **integrated with `main` (#150)** ([#151](https://github.com/andersoxie/xpact/issues/151), PR #152), dual regression lane ([#153](https://github.com/andersoxie/xpact/issues/153)): **2,585 W3C cases, 0 failed, 0 errors, 0 skipped** (2026-10-28) · XML version recommendation: XML 1.0 5th edition · ✅ Jenkins passed on `main` @ `733688e` (PR #177, 2026-10-31) | [latest-2026-10-28](../reports/latest-2026-10-28/README.md), [issue-0151](../reports/issue-0151/summary.md) |
 | 7 Comparison | 🟡 | **G03 ✅** xpact vs Expat across chunks, same verdict in 1,302/1,302 pairs ([#169](https://github.com/andersoxie/xpact/issues/169), PR #178), 7 findings #170-#176 · **A04 ✅** which library each runner loads ([#168](https://github.com/andersoxie/xpact/issues/168), PR #181), findings #179, #180 · W3C output ✅ 399/432 · **follow-up fixes ✅** #122, #124, #125, #172-#175 (2026-10-31) · ⬜ G03 table rerun on the fixed code, weekly notes 6-7 | [G03-comparison](results/G03-comparison/README.md) |
-| 8 Consolidate | 🟡 | **XPact website ✅ (local)** [#210](https://github.com/andersoxie/xpact/issues/210): upload or paste XML → verdict, error position, events; docs, W3C and benchmark pages; 19/19 tests · finding [#211](https://github.com/andersoxie/xpact/issues/211) (entity expansion, open) · **speed work 🟡** (2026-11-03/04, mass-xpact): chunked input resumes instead of re-parsing (square → linear), parallel Test 2 (15:30 → 5:02) ✅ and W3C runner (40 s → 9 s) ✅; whole parse 3.5× faster without `-keep`, blocked by the GC heap corruption mass-xpact#20 | [issue-0210](../reports/issue-0210/report.md), [website/](../website/README.md), [speed notes](../docs/notes/README.md) |
+| 8 Consolidate | 🟡 | ✅ shared fixtures and Expat comparison (#81, #85) · ✅ speed and fix rounds merged · ✅ full rerun on `incremental-test` 2026-11-08 (no regression) · ✅ Boogie models [#252](https://github.com/andersoxie/xpact/issues/252) (PR #253) · ✅ `main` brought into `incremental-test` (PR #251; Python tests 226 OK) · ✅ website built, Docker image released, **not deployed** ([#210](https://github.com/andersoxie/xpact/issues/210)) · 🟡 [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test · ⬜ load test, worker account, HTTPS (supervisor) · 🔴 mass-xpact#84, #73, #75 still present, #20 inconclusive | [week-08](notes/weekly/week-08.md), [rerun 2026-11-08](results/AlotOfTests-2026-11-08/README.md), [issue-0252](../reports/issue-0252/report.md) |
 | 9-10 | ⬜ | Analyse and draft, report, handover | |
 
 ## 🧪 Latest W3C result (2026-10-28)
@@ -109,6 +110,19 @@ The supervisor's `main` alone still has crashes and timeouts there (1 crash off;
 | #125: a mismatched end tag kept from the default handler | [#199](https://github.com/andersoxie/xpact/pull/199) (`32bc80a`) | [#125](https://github.com/andersoxie/xpact/issues/125) ✅ closed |
 | #88, #90, #93 (WSL defaults, email, Xpact-core pin): already done by the supervisor on `main` (#89, #91/#92, #94-#98) | checked against the code | [#88](https://github.com/andersoxie/xpact/issues/88), [#90](https://github.com/andersoxie/xpact/issues/90), [#93](https://github.com/andersoxie/xpact/issues/93) ✅ closed |
 
+**On `incremental-test` since 2026-11-02 (andersoxie/xpact):**
+
+| What | Pull request | Issue |
+|---|---|---|
+| Boogie models of the #3 loop and the UTF-16 decoder loop | [#253](https://github.com/andersoxie/xpact/pull/253) (`68abdcb`) | [#252](https://github.com/andersoxie/xpact/issues/252) |
+| `main` (Gobo and WSL compiler benchmarks, PR #235) merged into `incremental-test` | [#251](https://github.com/andersoxie/xpact/pull/251) (`5519ea2`) | - |
+| Website Docker image from GitHub, releases `website-2026-11-09-*`; small text changes | #241, #243-#249 | - |
+| Rerun of all tests on `incremental-test`; #209 and #211 rechecked | #239, #240, #242 | - |
+| `student-Mass` and mass-xpact work merged in (website, speed rounds, acceptance, fixtures) | #234, #237, #87, #89 | - |
+| Website hardening and tests | #212, #225, #226 | [#210](https://github.com/andersoxie/xpact/issues/210), [#224](https://github.com/andersoxie/xpact/issues/224), [#216](https://github.com/andersoxie/xpact/issues/216) |
+
+`main` has 2 commits not in `incremental-test` (PR #254, Jenkins plots, 9 November). The student plans to merge `incremental-test` into `main` on 2026-11-11.
+
 No pull request of ours is open (2026-10-31, evening). `student-Mass` includes all of `main` (PR [#189](https://github.com/andersoxie/xpact/pull/189)). Branches left on andersoxie/xpact: `main`, `student-Mass`, `fix/172-whole-document-events-before-char-error` (merged in #192), and the supervisor's `codex/*`.
 
 <details>
@@ -135,6 +149,12 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 
 | Problem | Seen in | Cause | Issue | Next step |
 |---|---|---|---|---|
+| 🔴 Slow ISO-8859-1 input fed in pieces (64/128/256 KB in 1 KB pieces: 0.116 / 0.421 / 1.634 s; UTF-8 0.003 / 0.006 / 0.011 s) | rechecked 2026-11-09 on `incremental-test` | ❔ unknown | [mass-xpact#84](https://github.com/CodTanium/mass-xpact/issues/84) (closed without a fix) | refile on andersoxie |
+| 🔴 DLL crash without trace: `exenv` is local in `dllmain`, no per-entry guard | code unchanged, rechecked 2026-11-09 | ✔ code reading | [mass-xpact#73](https://github.com/CodTanium/mass-xpact/issues/73) (closed without a fix) | refile on andersoxie |
+| ❔ Heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20): not reproduced (72 / 72 normal runs pass; 12 stressed runs all hit the 300 s timeout = inconclusive) | 2026-11-09 | ❔ unknown | [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) (closed without verification) | keep listed as open |
+| 🔴 Not thread-safe (`xpact.ecf` has `concurrency none`) | 2026-11-09 | ✔ | [mass-xpact#75](https://github.com/CodTanium/mass-xpact/issues/75) | not fixed |
+| Boogie proof needs 3 facts that no contract states | [#252](https://github.com/andersoxie/xpact/issues/252) report | ✔ | [#252](https://github.com/andersoxie/xpact/issues/252) (PR #253 merged) | decide whether to add contracts |
+| Jenkins and SonarQube: the student has a token from the supervisor; a local scan is tried 2026-11-10 | | ❓ | [#131](https://github.com/andersoxie/xpact/issues/131) | verify the scan result |
 | Heap corruption under GC stress and heavy load in `test_deep_nested_attribute_entity` (access violation in the GC, or a wrong `undefined entity` / `unclosed token`); **pre-existing**: at equal load `student-Mass` as it was crashes 2 in 12, the same as the speed PRs | Expat 2.8.1 suite with `EIF_MEMORY_SCAVENGE=65536`, `EIF_FULL_COLLECTION_PERIOD=1`, 12 runs in parallel, 2026-11-04 | ❔ unknown; a `0x01` (`True`) at an address a `HASH_TABLE [BOOLEAN, STRING_8]` array once used; ❓ suspected: a stale reference, maybe in the Eiffel runtime | [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) | check whether it happens without the GC stress settings ([report](../reports/mass-xpact-issue-0020/report.md)) |
 | Billion laughs: **fixed** in mass-xpact #60 (Expat's amplification rule, code 43; all 8 test documents match Expat). Left: very strict custom settings, mass-xpact#61 | website security tests, 2026-11-02 | ✔ fixed cap and missing error mapping | [#211](https://github.com/andersoxie/xpact/issues/211), [mass-xpact#60](https://github.com/CodTanium/mass-xpact/issues/60) | the andersoxie issue can be closed after review |
 | GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | ⏸ **on hold** (student, 2026-10-22); parser developer |
@@ -204,6 +224,15 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 </details>
 
 ## ➡️ Next
+
+**State 2026-11-10 (read first):**
+
+- [ ] Merge `incremental-test` into `main` (planned 2026-11-11, by the student and supervisor; Claude never merges into `main`).
+- [ ] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test (🟡 today), load test, low-privilege worker account (code part ours, account on the supervisor's server); HTTPS and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's.
+- [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
+- [ ] Refile mass-xpact #84, #73, #75 on andersoxie (closed without a fix); #20 stays inconclusive.
+- [ ] Before the hand-in (27 November): update [`report/ActualReport.md`](report/ActualReport.md) and `ActualReportShorter.md` with weeks 5-8.
+- Items 0-13 below are history and older to-dos; item 12 is replaced by this list where they overlap.
 
 0. ✅ **Speed work (2026-11-03/04, [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact)):** status table, merge order and the notes of every step in [`docs/notes/README.md`](../docs/notes/README.md); the reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304).
    - [x] Parallel Test 2 (#6), W3C runner `--jobs` (#10), session notes and reports (#19, #22): merged 2026-11-04
@@ -371,6 +400,10 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Bring to review:** Shared fixtures and comparison output, or documented integration requirements.
 - [x] Shared fixtures and comparison output committed under `results/`: done 2026-11-06 ([#81](https://github.com/CodTanium/mass-xpact/issues/81)): 247 fixtures in 9 sets, same verdict as Expat 245 / 247 (the other 2: [#82](https://github.com/CodTanium/mass-xpact/issues/82)) ([results](results/shared-fixtures/README.md))
 - [x] More test sources found online (SVG, libxml2 and others), ranked, with a suggested order: [`notes/moreTests.md`](notes/moreTests.md) (2026-11-01); **items 1–6 run** 2026-11-06 ([#85](https://github.com/CodTanium/mass-xpact/issues/85)): Kuhn UTF-8 582/582 identical, Expat's xmltest record matched except #82, pugixml 28/28 verdicts, RUB-NDS 104/104 verdicts, SVG 1.1 525/525 verdicts; new findings [#82](https://github.com/CodTanium/mass-xpact/issues/82), [#83](https://github.com/CodTanium/mass-xpact/issues/83), [#84](https://github.com/CodTanium/mass-xpact/issues/84)
+- [x] Full rerun on `incremental-test` 2026-11-08: no regression ([results](results/AlotOfTests-2026-11-08/README.md)) ✅
+- [x] Boogie models of two loops ([#252](https://github.com/andersoxie/xpact/issues/252), PR #253): find both old bugs, prove the current code; 3 unstated facts open ✅
+- [x] Website: built, Docker image released, not deployed; [#227](https://github.com/andersoxie/xpact/issues/227), load test, worker account, HTTPS and deployment left 🟡
+- [x] Weekly note: [week-08](notes/weekly/week-08.md) ✅
 - [ ] Optional: [F01](github/issues/19-F01.md) Core build, [F02](github/issues/20-F02.md) Core runner
 - [x] Not in the original plan: the XPact website [#210](https://github.com/andersoxie/xpact/issues/210) (local, all tests pass; not deployed)
 

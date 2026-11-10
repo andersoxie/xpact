@@ -1,43 +1,44 @@
-# 🖥️ PC2: continue from here
+# Continue here
 
-> **Note for Claude on the student's second PC (PC2).** Work moved here from PC1 on **2026-11-02**.
-> Claude's memory from PC1 is not on this PC: this file is the handover. Read it first, then `student/PLAN.md` ("Next", item 12).
-> Git marker: tag **`pc2-continue-here`** (the last work-in-progress commit).
+> Short and current: state on **2026-11-10** (week 8 of 8). Start with `git fetch --all`, then read
+> [PLAN.md](PLAN.md) ("Next", "Known problems") and [week-08](notes/weekly/week-08.md).
+> Rules: the repo's `CLAUDE.md` and [VERSIONING.md](VERSIONING.md).
 
-## 1. State on 2026-11-02
+## 1. Branches
 
-- `student-Mass` has everything merged up to this note. `main` is never touched.
-- Work in progress, **not merged**: branch **`test/227-memory-cap`** (tag `pc2-continue-here`), issue [#227](https://github.com/andersoxie/xpact/issues/227).
-- Rules: the repo's `CLAUDE.md` and `student/VERSIONING.md`. One issue per problem, one PR per change into `student-Mass`, test evidence in the PR, verify before closing.
+- Work branch: **`incremental-test`** on andersoxie/xpact (`origin`), since 2026-11-08. Not `student-Mass`.
+- `student-Mass` is fully contained in `incremental-test` (0 missing; `incremental-test` has 153 more).
+- `main` has 2 commits not in `incremental-test` (PR #254, Jenkins plots, 9 Nov). The student plans to merge
+  `incremental-test` into `main` on 2026-11-11. Claude never merges into or pushes to `main`.
+- CodTanium/mass-xpact is a mirror of andersoxie/xpact since 2026-11-09 (default `incremental-test`).
 
-## 2. The student's request being worked on (website hardening before the supervisor hosts it)
+## 2. State
 
-| # | Point | State |
-|---|---|---|
-| 1 | Proxy: forwarded headers, so the rate limit sees the real visitor | ✅ done: [#224](https://github.com/andersoxie/xpact/issues/224), PR #225 |
-| 2 | Website test #216 (`<root/>junk` gave 4 instead of 9) | ✅ done: [#216](https://github.com/andersoxie/xpact/issues/216), PR #226. Cause: stale DLL + `PreserveNewest` skipped an older-dated replacement |
-| 3 | Memory cap test | 🟡 **in progress**: [#227](https://github.com/andersoxie/xpact/issues/227), branch `test/227-memory-cap` (see 3.1) |
-| 4 | Load test | ⬜ to do |
-| 5 | HTTPS through IIS or a reverse proxy | ⬜ to do: TLS is set up on the supervisor's server; prepare the app (HSTS/redirect behind the proxy) and write `website/docs/deployment.md` with the IIS steps |
-| 6 | Workers under a low-privilege Windows account | ⬜ to do: the account is created on the supervisor's server; harden the worker in code (e.g. Job Object: no child processes) and document the account |
+| Area | State |
+|---|---|
+| Full test rerun 2026-11-08 | ✅ no regression ([results](results/AlotOfTests-2026-11-08/README.md)); parser source unchanged since |
+| PR #251 (`main` into `incremental-test`) | ✅ Python tests 226 OK (212 before) |
+| PR #253, issue #252 (Boogie models) | ✅ merged; finds both old loop bugs, proves current code; 3 unstated facts open |
+| Website | ✅ built, Docker image `website-2026-11-09-*`; 🟡 not deployed |
+| mass-xpact#84 slow ISO-8859-1 in pieces | 🔴 still present (0.116 / 0.421 / 1.634 s for 64/128/256 KB) |
+| mass-xpact#73 DLL crash without trace | 🔴 still present (code unchanged) |
+| mass-xpact#20 heap corruption | ❔ not reproduced, inconclusive; cause unknown |
+| mass-xpact#75 thread safety | 🔴 not fixed |
+| SonarQube #131 | 🟡 student has a token; local scan tried 2026-11-10 |
 
-### 3.1 Memory cap: what is known
-- The Job Object limit **is active** (flags `0x2500`, limit stored). Probe: `website/backend/tests/tools/job-memory-probe.ps1 -CapMb 40 -Kind elements|attr1mb|attrs|expand|tiny`.
-- Under a 40–45 MB cap the worker **stays below the cap and finishes**: without a cap it peaks at 59–64 MB, but that is garbage-collector headroom.
-- Measured peaks: tiny 27–28 MB; 1 MB attribute 40–43; 1,000 attributes 38–43; 1,000 × 1 KB entity expansion 28–29. **No document tried needs more than 40 MB.**
-- The test `The_memory_cap_stops_a_worker_that_needs_more` **fails** on the branch (the document is accepted under the cap).
-- Next: find a document that truly needs more memory, or test a cap below the worker's start-up size (~27 MB) and expect `crashed`; then finish the test, update `website/docs/security.md`, PR, merge, close #227.
+The 9 open mass-xpact issues were closed as "not planned" without verification; the rows above are rechecks.
 
-## 3. Also open (from the same day)
+## 3. Next
 
-- [ ] **Internship dates.** The website says "Sep–Nov 2026 (10 weeks)". The reports say "6 October – 27 November 2026 (eight weeks; build preparation from September)". The student says they started in September (ChatGPT for the first ~4 weeks, then Claude). **Ask the student for the exact start date**, then make the website (`website/frontend/src/data/site.ts`, `AUTHOR.role`), `student/report/ActualReport.md` and `ActualReportShorter.md` match, and add the ChatGPT → Claude use to the report's AI-use note. Use only real facts.
-- [ ] `website/docs/api.md` and `security.md` list the allowed data names without `testing`.
-- [ ] Optional: `website/docs/deployment.md` for the supervisor (Windows x64, `publish.ps1` → `dist/`, .NET 10, ~2–3 GB RAM, settings, open points, questions for him).
-- [ ] The rest of `student/PLAN.md` item 12 (#197, #176/#123, #170, #126; #171/#13 wait for the supervisor). The supervisor runs the long tests on Jenkins.
+- [ ] Merge `incremental-test` into `main` (student and supervisor, 2026-11-11).
+- [ ] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test (in progress), load test, worker account (code part); HTTPS and deployment [#210](https://github.com/andersoxie/xpact/issues/210) are the supervisor's.
+- [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
+- [ ] Refile mass-xpact #84, #73, #75 on andersoxie (one issue each).
+- [ ] Before 27 Nov: update `report/ActualReport.md` and `ActualReportShorter.md` with weeks 5-8.
 
-## 4. Setting up PC2
+## 4. Setup on a new PC
 
-1. Clone `https://github.com/andersoxie/xpact`, `git checkout student-Mass`.
-2. Build the DLLs: `.\website\scripts\build-dll.ps1` (EiffelStudio 25.12 + MSVC, `ISE_C_COMPILER=msc_vc140`, the same as Jenkins).
-3. Website checks: `.\website\scripts\test.ps1` (should be 20/20 on `student-Mass`; 21 tests on `test/227-memory-cap`, where the new memory-cap test fails until finished).
-4. Run the site: `.\website\scripts\dev.ps1` → http://localhost:5173.
+1. Clone `https://github.com/andersoxie/xpact`, `git checkout incremental-test`.
+2. Build the DLLs: `.\website\scripts\build-dll.ps1` (EiffelStudio 25.12 + MSVC `msc_vc140`).
+3. Website checks: `.\website\scripts\test.ps1`; run the site: `.\website\scripts\dev.ps1`.
+4. Skip the 45-minute W3C-in-pieces test unless a fix touches chunked input.

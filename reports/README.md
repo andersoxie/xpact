@@ -6,6 +6,7 @@ and padded to four digits so the folders sort by number. Each folder holds
 test scripts that back it up. The rules are in
 [`student/VERSIONING.md`](../student/VERSIONING.md) and [`CLAUDE.md`](../CLAUDE.md).
 
+> **Branch note 2026-11-10:** the work branch is now `incremental-test` (andersoxie/xpact); `student-Mass` below is the earlier integration branch. Newest: [issue-0252](issue-0252/report.md) (Boogie models).
 > **Updated 2026-10-28** (`student-Mass` after PR #152, which brings in `main` @ `1714f31`). Latest W3C result:
 > [latest-2026-10-28](latest-2026-10-28/README.md) (2,585 cases, 0 failed, 0 errors, 0 skipped).
 > W3C **output** (content, not only the verdict): [issue-0154](issue-0154/report.md), [issue-0156](issue-0156/report.md), [issue-0157](issue-0157/report.md), [issue-0158](issue-0158/report.md), [issue-0159](issue-0159/report.md): 399 of 432 right (was 359); every xpact-only difference fixed.
