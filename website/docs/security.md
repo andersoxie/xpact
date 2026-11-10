@@ -25,7 +25,7 @@ The site runs a parser on documents from strangers. These are the protections, a
 - [x] Behind a proxy, configure forwarded headers, so the rate limit sees the real client IP ([#224](https://github.com/andersoxie/xpact/issues/224)): automatic for a proxy on the same machine; list other proxies in `Xpact:KnownProxies`.
 - [x] Test the memory cap with a document that actually reaches it ([#227](https://github.com/andersoxie/xpact/issues/227)).
 - [ ] Run the worker under a low-privilege Windows account (today it inherits the API's account).
-- [ ] Load test: how many visitors at once before the 4-worker queue becomes slow.
+- [x] Load test: how many visitors at once before the 4-worker queue becomes slow ([load-test.md](load-test.md): ~31-40 requests/s, no failures up to 32 at once).
 
 ## Parser findings from the security tests
 
