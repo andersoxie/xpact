@@ -662,6 +662,142 @@ def linkBenchmarkReportInBuildDescription(artifactPath, label) {
   currentBuild.description = previousDescription ? "${previousDescription}\n${link}" : link
 }
 
+// Snapshots are stashed before another stage can clear the workspace.
+def initializePlotReport() {
+  env.PLOT_REPORT_TOOLS_READY = ''
+  ['dual', 'windows', 'wsl', 'large'].each { lane ->
+    env["PLOT_REPORT_${lane.toUpperCase()}"] = ''
+    env["PLOT_INPUT_${lane.toUpperCase()}"] = ''
+  }
+  stash name: 'xpact-plot-report-tools',
+        includes: 'scripts/jenkins_plot_report.py,scripts/dual_jenkins_reports.py',
+        allowEmpty: false
+  env.PLOT_REPORT_TOOLS_READY = env.BUILD_TAG
+}
+
+def prepareBenchmarkPlotSource(lane, tsvPath, reportPrefix) {
+  env["PLOT_INPUT_${lane.toUpperCase()}"] = ''
+  env["PLOT_REPORT_${lane.toUpperCase()}"] = ''
+  // Keep history, but never mistake a previous build's current values for this run.
+  withEnv(["PLOT_CURRENT_TSV=${tsvPath}", "PLOT_CURRENT_PREFIX=${safeReportToken(reportPrefix)}"]) {
+    powershell '''
+      $ErrorActionPreference = 'Stop'
+      $OutputDir = Split-Path -Parent $env:PLOT_CURRENT_TSV
+      $Paths = @($env:PLOT_CURRENT_TSV,
+                 "jenkins-plot-$($env:PLOT_CURRENT_PREFIX)-manifest.tsv",
+                 (Join-Path $OutputDir 'benchmark-plots.html'))
+      foreach ($Path in $Paths) {
+        if (Test-Path -LiteralPath $Path -PathType Leaf) {
+          Remove-Item -LiteralPath $Path -Force
+        }
+      }
+      if (Test-Path -LiteralPath $OutputDir -PathType Container) {
+        Get-ChildItem -LiteralPath $OutputDir -Filter "jenkins-plot-$($env:PLOT_CURRENT_PREFIX)-*-elapsed-ms.csv" -File |
+          ForEach-Object { Remove-Item -LiteralPath $_.FullName -Force }
+      }
+    '''
+  }
+  env["PLOT_INPUT_${lane.toUpperCase()}"] = env.BUILD_TAG
+}
+
+def capturePlotReport(lane, sourceDir, manifest = '') {
+  env["PLOT_REPORT_${lane.toUpperCase()}"] = ''
+  try {
+    if (manifest && !fileExists(manifest)) {
+      return
+    }
+    withEnv(["REPORT_LANE=${lane}", "REPORT_SOURCE=${sourceDir}", "REPORT_MANIFEST=${manifest}"]) {
+      powershell '''
+        $ErrorActionPreference = 'Stop'
+        $CaptureArgs = @('capture', '--lane', $env:REPORT_LANE, '--build-id', $env:BUILD_TAG,
+                         '--source-dir', $env:REPORT_SOURCE,
+                         '--output', "build/jenkins-plot-snapshots/$($env:REPORT_LANE).json")
+        if ($env:REPORT_MANIFEST) { $CaptureArgs += @('--manifest', $env:REPORT_MANIFEST) }
+        python scripts/jenkins_plot_report.py @CaptureArgs
+        if ($LASTEXITCODE -ne 0) { throw "Could not capture $($env:REPORT_LANE) plots for this build." }
+      '''
+    }
+    stash name: "xpact-plot-report-${lane}",
+          includes: "build/jenkins-plot-snapshots/${lane}.json", allowEmpty: false
+  } finally {
+    withEnv(["REPORT_LANE=${lane}"]) {
+      powershell '''
+        $ErrorActionPreference = 'Stop'
+        $SnapshotPath = "build/jenkins-plot-snapshots/$($env:REPORT_LANE).json"
+        if (Test-Path -LiteralPath $SnapshotPath -PathType Leaf) {
+          Remove-Item -LiteralPath $SnapshotPath -Force
+        }
+      '''
+    }
+  }
+  // Publish ownership only after persistence, stash and local staging cleanup succeed.
+  env["PLOT_REPORT_${lane.toUpperCase()}"] = env.BUILD_TAG
+}
+
+def publishBenchmarkFamily(lane, sourceDir, resultFile, reportPrefix, groupName, suiteName) {
+  try {
+    if (env["PLOT_INPUT_${lane.toUpperCase()}"] == env.BUILD_TAG) {
+      if (lane == 'windows') {
+        junit testResults: "${sourceDir}/w3c-xml-conformance/junit.xml", allowEmptyResults: true
+      }
+      writeBenchmarkJUnitReport("${sourceDir}/${resultFile}", suiteName, reportPrefix)
+      def plots = writeBenchmarkPlotCsvFiles("${sourceDir}/${resultFile}", reportPrefix, groupName)
+      capturePlotReport(lane, sourceDir, "jenkins-plot-${reportPrefix}-manifest.tsv")
+      publishBenchmarkPlots(plots)
+    }
+  } finally {
+    // Preserve current diagnostics even if capture, stash, or a publisher fails.
+    try {
+      def artifacts = "${sourceDir}/*.tsv,${sourceDir}/*.csv,${sourceDir}/*.html,${sourceDir}/*.json,${sourceDir}/*.md,${sourceDir}/logs/**,${sourceDir}/w3c-xml-conformance/*.tsv,${sourceDir}/w3c-xml-conformance/*.json,${sourceDir}/w3c-xml-conformance/*.md,${sourceDir}/w3c-xml-conformance/*.xml"
+      if (lane == 'windows') { artifacts += ',docs/benchmarks.md,docs/performance-analysis.md' }
+      if (lane == 'large') { artifacts += ',docs/large-xml-benchmarks.md' }
+      archiveArtifacts artifacts: artifacts, allowEmptyArchive: true
+    } finally {
+      publishJenkinsTestResults()
+    }
+  }
+}
+
+def publishAllBenchmarkPlots() {
+  if (!env.PLOT_REPORT_TOOLS_READY || env.PLOT_REPORT_TOOLS_READY != env.BUILD_TAG) {
+    return
+  }
+  def assembly = "build/plot-report-assembly-${env.BUILD_NUMBER}-${System.currentTimeMillis()}"
+  try {
+    dir(assembly) {
+      unstash 'xpact-plot-report-tools'
+      ['dual', 'windows', 'wsl', 'large'].each { lane ->
+        if (env["PLOT_REPORT_${lane.toUpperCase()}"] == env.BUILD_TAG) {
+          unstash "xpact-plot-report-${lane}"
+        }
+      }
+    }
+    def disabled = []
+    if (!params.RUN_BENCHMARKS) { disabled.addAll(['dual', 'windows']) }
+    if (!params.RUN_WSL_EIFFEL_BENCHMARKS) { disabled << 'wsl' }
+    if (!(params.RUN_LARGE_XML_BENCHMARKS && params.LARGE_XML_FILE?.trim())) { disabled << 'large' }
+    withEnv(["REPORT_ASSEMBLY=${assembly}", "REPORT_DISABLED=${disabled.join(',')}"]) {
+      powershell '''
+        $ErrorActionPreference = 'Stop'
+        $RenderArgs = @('render', '--build-id', $env:BUILD_TAG,
+                        '--input-dir', "$($env:REPORT_ASSEMBLY)/build/jenkins-plot-snapshots",
+                        '--output', 'build/all-benchmark-plots/index.html')
+        if ($env:BUILD_URL) { $RenderArgs += @('--build-url', $env:BUILD_URL) }
+        foreach ($Lane in ($env:REPORT_DISABLED -split ',')) {
+          if ($Lane) { $RenderArgs += @('--disabled', $Lane) }
+        }
+        python "$($env:REPORT_ASSEMBLY)/scripts/jenkins_plot_report.py" @RenderArgs
+        if ($LASTEXITCODE -ne 0) { throw 'Could not render the consolidated benchmark report.' }
+      '''
+    }
+    archiveArtifacts artifacts: 'build/all-benchmark-plots/index.html', allowEmptyArchive: false
+    publishBenchmarkHtmlReport('build/all-benchmark-plots', 'index.html', 'All Benchmark Plots', 'index.html')
+    linkBenchmarkReportInBuildDescription('build/all-benchmark-plots/index.html', 'All Benchmark Plots')
+  } finally {
+    dir(assembly) { deleteDir() }
+  }
+}
+
 def publishJenkinsTestResults() {
   junit testResults: 'jenkins-test-results-*.xml',
         allowEmptyResults: true
@@ -750,10 +886,8 @@ def publishDualImplementationResults(outputDir, buildId) {
         }
         plots << spec
       }
+      capturePlotReport('dual', outputDir)
       publishBenchmarkPlots(plots)
-      publishBenchmarkHtmlReport(outputDir, 'dual-implementation-plots.html', 'Dual Implementation Plots',
-                                 'dual-implementation-plots.html,*.csv,plots.tsv,run.json,xpact-summary.json,xpact-junit.xml,catalog/report.json,catalog/summary.md,w3c/report.json,w3c/summary.md')
-      linkBenchmarkReportInBuildDescription("${outputDir}/dual-implementation-plots.html", 'Dual Implementation Plots')
     } else {
       echo 'Dual-implementation campaign has no completed plot publication; preserving current diagnostics.'
     }
@@ -868,6 +1002,7 @@ pipeline {
         stash name: 'xpact-source',
               includes: '**/*',
               excludes: 'EIFGENs/**,build/**,dist/**,.git/**'
+        script { initializePlotReport() }
       }
     }
 
@@ -1165,6 +1300,7 @@ pipeline {
         // The isolated implementation builder records Git provenance.
         checkout scm
         script {
+          env.PLOT_REPORT_DUAL = ''
           // A fresh invocation path is kept only in this build's environment.
           env.DUAL_CI_OUTPUT = "build/dual-ci-${env.BUILD_NUMBER}-${System.currentTimeMillis()}"
           env.DUAL_CI_BUILD_ID = env.BUILD_TAG
@@ -1172,7 +1308,7 @@ pipeline {
             runWithJenkinsTestResult('xpact validation', 'correctness and comparison publication') {
               def status = powershell(returnStatus: true, script: '''
                 $ErrorActionPreference = 'Stop'
-                foreach ($TestFile in @('test_implementation_builds.py', 'test_w3c_conformance.py', 'test_dual_catalog.py', 'test_dual_w3c.py', 'test_dual_jenkins_reports.py', 'test_dual_jenkins.py', 'test_jenkins_xpact_summary.py')) {
+                foreach ($TestFile in @('test_implementation_builds.py', 'test_w3c_conformance.py', 'test_dual_catalog.py', 'test_dual_w3c.py', 'test_dual_jenkins_reports.py', 'test_jenkins_plot_report.py', 'test_dual_jenkins.py', 'test_jenkins_xpact_summary.py')) {
                   python -m unittest discover -s tests/python -p $TestFile -v
                   if ($LASTEXITCODE -ne 0) { throw "Dual-implementation runner checks failed: $TestFile" }
                 }
@@ -1215,6 +1351,7 @@ pipeline {
         deleteDir()
         unstash 'xpact-source'
         script {
+          prepareBenchmarkPlotSource('windows', 'build/benchmarks/benchmark-results.tsv', 'same-machine-benchmarks')
           runWithJenkinsTestResult('xpact benchmarks', 'same-machine benchmark publication') {
             powershell '''
               $ErrorActionPreference = "Stop"
@@ -1239,30 +1376,11 @@ pipeline {
       }
       post {
         always {
-          junit testResults: 'build/benchmarks/w3c-xml-conformance/junit.xml',
-                allowEmptyResults: true
           script {
-            writeBenchmarkJUnitReport('build/benchmarks/benchmark-results.tsv',
-                                      'xpact same-machine benchmark rows',
-                                      'same-machine-benchmarks')
-            publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/benchmarks/benchmark-results.tsv',
-                                                             'same-machine-benchmarks',
-                                                             'Benchmark Trends'))
-            publishBenchmarkHtmlReport('build/benchmarks', 'benchmark-plots.html', 'Benchmark Plots')
-            linkBenchmarkReportInBuildDescription('build/benchmarks/benchmark-plots.html', 'Benchmark Plots')
-            publishJenkinsTestResults()
+            publishBenchmarkFamily('windows', 'build/benchmarks', 'benchmark-results.tsv',
+                                   'same-machine-benchmarks', 'Benchmark Trends',
+                                   'xpact same-machine benchmark rows')
           }
-          archiveArtifacts artifacts: '''
-            build/benchmarks/*.tsv,
-            build/benchmarks/*.csv,
-            build/benchmarks/*.html,
-            build/benchmarks/w3c-xml-conformance/*.tsv,
-            build/benchmarks/w3c-xml-conformance/*.json,
-            build/benchmarks/w3c-xml-conformance/*.md,
-            build/benchmarks/w3c-xml-conformance/*.xml,
-            docs/benchmarks.md,
-            docs/performance-analysis.md
-          ''', allowEmptyArchive: true
         }
       }
     }
@@ -1274,6 +1392,7 @@ pipeline {
         deleteDir()
         unstash 'xpact-source'
         script {
+          prepareBenchmarkPlotSource('wsl', 'build/wsl-benchmarks/benchmark-results.tsv', 'wsl-eiffel-gcc-benchmarks')
           runWithJenkinsTestResult('xpact WSL Eiffel GCC benchmarks', 'Linux benchmark publication') {
             powershell '''
               $ErrorActionPreference = "Stop"
@@ -1308,26 +1427,10 @@ pipeline {
       post {
         always {
           script {
-            writeBenchmarkJUnitReport('build/wsl-benchmarks/benchmark-results.tsv',
-                                      'xpact WSL Eiffel GCC benchmark rows',
-                                      'wsl-eiffel-gcc-benchmarks')
-            publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/wsl-benchmarks/benchmark-results.tsv',
-                                                             'wsl-eiffel-gcc-benchmarks',
-                                                             'WSL Eiffel GCC Benchmark Trends'))
-            if (fileExists('build/wsl-benchmarks/benchmark-plots.html')) {
-              publishBenchmarkHtmlReport('build/wsl-benchmarks', 'benchmark-plots.html', 'WSL Eiffel GCC Benchmark Plots')
-              linkBenchmarkReportInBuildDescription('build/wsl-benchmarks/benchmark-plots.html', 'WSL Eiffel GCC Benchmark Plots')
-            }
-            publishJenkinsTestResults()
+            publishBenchmarkFamily('wsl', 'build/wsl-benchmarks', 'benchmark-results.tsv',
+                                   'wsl-eiffel-gcc-benchmarks', 'WSL Eiffel GCC Benchmark Trends',
+                                   'xpact WSL Eiffel GCC benchmark rows')
           }
-          archiveArtifacts artifacts: '''
-            build/wsl-benchmarks/*.tsv,
-            build/wsl-benchmarks/*.csv,
-            build/wsl-benchmarks/*.html,
-            build/wsl-benchmarks/summary.md,
-            build/wsl-benchmarks/metadata.json,
-            build/wsl-benchmarks/logs/**
-          ''', allowEmptyArchive: true
         }
       }
     }
@@ -1339,6 +1442,7 @@ pipeline {
         deleteDir()
         unstash 'xpact-source'
         script {
+          prepareBenchmarkPlotSource('large', 'build/large-xml-benchmarks/large-xml-benchmark-results.tsv', 'large-xml-benchmarks')
           runWithJenkinsTestResult('xpact large XML benchmarks', 'large XML benchmark publication') {
             powershell '''
               $ErrorActionPreference = "Stop"
@@ -1352,22 +1456,10 @@ pipeline {
       post {
         always {
           script {
-            writeBenchmarkJUnitReport('build/large-xml-benchmarks/large-xml-benchmark-results.tsv',
-                                      'xpact large XML benchmark rows',
-                                      'large-xml-benchmarks')
-            publishBenchmarkPlots(writeBenchmarkPlotCsvFiles('build/large-xml-benchmarks/large-xml-benchmark-results.tsv',
-                                                             'large-xml-benchmarks',
-                                                             'Large XML Benchmark Trends'))
-            publishBenchmarkHtmlReport('build/large-xml-benchmarks', 'benchmark-plots.html', 'Large XML Benchmark Plots')
-            linkBenchmarkReportInBuildDescription('build/large-xml-benchmarks/benchmark-plots.html', 'Large XML Benchmark Plots')
-            publishJenkinsTestResults()
+            publishBenchmarkFamily('large', 'build/large-xml-benchmarks', 'large-xml-benchmark-results.tsv',
+                                   'large-xml-benchmarks', 'Large XML Benchmark Trends',
+                                   'xpact large XML benchmark rows')
           }
-          archiveArtifacts artifacts: '''
-            build/large-xml-benchmarks/*.tsv,
-            build/large-xml-benchmarks/*.csv,
-            build/large-xml-benchmarks/*.html,
-            docs/large-xml-benchmarks.md
-          ''', allowEmptyArchive: true
         }
       }
     }
@@ -1391,6 +1483,15 @@ pipeline {
   }
 
   post {
+    always {
+      script {
+        if (env.PLOT_REPORT_TOOLS_READY) {
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            node('built-in') { publishAllBenchmarkPlots() }
+          }
+        }
+      }
+    }
     cleanup {
       script {
         notifyBuildResultByEmail()

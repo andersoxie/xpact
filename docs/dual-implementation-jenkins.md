@@ -64,11 +64,34 @@ W3C plots show correctness counts. A parser's fast incorrect verdict is not a
 throughput improvement. Per-case elapsed times remain in the detailed reports
 and include process startup and file I/O.
 
-The build also publishes **Dual Implementation Plots**, a standalone HTML report
-with current comparisons, directed-control outcomes, failures and source/binary
-identities. Stable plot identifiers allow Jenkins to retain trends across builds.
-The report is linked from the build description and archived as
+The main pipelines publish **All Benchmark Plots**, one HTML page containing the
+dual comparisons, Windows benchmarks, WSL benchmarks and any enabled large-XML
+benchmarks. Each chart has an explanation of its units, calculation, interpretation
+and limits. The dual section also includes directed-control outcomes, failures and
+source/binary identities. Missing or disabled families are identified explicitly;
+missing results do not become zero-valued plots.
+
+The focused dual report remains available as the archived
 `dual-implementation-plots.html`; raw Plot inputs are listed in `plots.tsv`.
+Stable plot identifiers retain Jenkins trends across builds. Both HTML views use
+the same dual chart explanations and values.
+
+For catalog timing, each sample is normalized as `elapsed_ms / iterations * 1000`
+before taking the median. Throughput is the median of
+`document_bytes * iterations / 1048576 / elapsed_seconds`. These are separate
+medians, so with an even sample count they need not be exact reciprocals. The
+dual lane averages the two middle observations for an even number of samples;
+the older benchmark families preserve their lower-middle convention. Neither
+chart displays uncertainty: use the raw pairs to assess small differences.
+
+For W3C, `passed + wrong verdicts + errors + excluded` must equal the suite's
+catalog total for each implementation. Passed means the expected binary verdict,
+not event or canonical-output parity. Wrong verdicts are valid harness results
+that disagree with the profile's expectation; errors mean no valid verdict was
+obtained. Exclusions are profile choices, not successful parses. Read all four
+counts together: fewer wrong verdicts are not an improvement if cases moved into
+errors or exclusions. Directed controls remain separate from these catalog
+counts and can fail even when every applicable catalog case passes.
 
 ## Parameters and local reproduction
 

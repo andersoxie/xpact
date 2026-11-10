@@ -79,4 +79,7 @@ Invoke-GroovyValidation -Name "declarative" -Script "tests\jenkins\validate_decl
 Write-Host "Checking notification behavior with local Pipeline and mail stubs."
 Invoke-GroovyValidation -Name "notifications" -Script "tests\jenkins\test_email_notifications.groovy" `
     -ScriptArguments @($RepoRoot)
+Write-Host "Checking consolidated plot publication with build-scoped local stashes."
+Invoke-GroovyValidation -Name "plots" -Script "tests\jenkins\test_plot_report_publication.groovy" `
+    -ScriptArguments @($RepoRoot)
 Write-Host "Jenkinsfile checks passed. No Jenkins job or SMTP server was contacted."

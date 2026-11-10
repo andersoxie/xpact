@@ -21,6 +21,98 @@ CATALOG_CONTROLS = {"catalog_observed", "catalog_noop", "observed_reuse_recovery
                     "noop_reuse_recovery", "gc_restoration"}
 W3C_CONTROLS = {"raw_utf8", "raw_utf16", "namespace_switch", "reuse_recovery", "gc_restoration"}
 GC_POLICIES = {"xpact": "normal", "xpact-core": "core-managed-off-full-collect"}
+PLOT_EXPLANATIONS = {
+    "dual-catalog-ms-per-1000-documents": (
+        "Each bar is the median time needed to process 1,000 copies of the catalog document. "
+        "For every measured sample, elapsed milliseconds are divided by its document count and "
+        "multiplied by 1,000; the median is then taken separately for each implementation. "
+        "With an even number of samples, this lane averages the two middle values. Lower is faster. "
+        "Normalization keeps a larger calibrated iteration count from looking like a slowdown.",
+        "The workload is one catalog containing 100 items, parsed repeatedly with a reused parser "
+        "and no-op event handlers. Timed work includes process startup, input preparation, parser "
+        "reset/reuse and the implementation's own garbage collection. Xpact uses normal GC; the "
+        "pinned core suspends GC internally and performs full collection on final input. "
+        "Compilation, directed correctness checks and warmups are outside the measured samples.",
+        "Compare bars within this workload and configuration. The result describes end-to-end "
+        "cost under the recorded GC policies, rather than scanner-only speed or a general XML "
+        "ranking. Alternating AB/BA sample order limits systematic ordering bias but does not "
+        "remove machine noise. The bars show medians, not confidence intervals; inspect the raw "
+        "pairs before interpreting a small difference."
+    ),
+    "dual-catalog-mib-per-second": (
+        "Each bar is median throughput in mebibytes per second; one MiB is 1,048,576 bytes. "
+        "For each sample, the calculation is document bytes × documents parsed ÷ 1,048,576 ÷ "
+        "elapsed seconds. The median is taken over those sample rates. Higher is faster. "
+        "The byte count represents the same catalog bytes processed repeatedly, not unique "
+        "documents or disk-read bandwidth.",
+        "This is the same timed experiment as the normalized-time chart: finalized Windows "
+        "executables with assertions discarded, reused parsers, no-op handlers and each engine's "
+        "own GC behavior. Startup, preparation and collection overhead remain in the denominator. "
+        "A failed catalog correctness gate produces no speed value.",
+        "Read the two catalog charts together. Lower normalized time and higher throughput "
+        "both indicate faster processing, but their displayed medians need not be exact "
+        "reciprocals: with an even sample count, averaging the middle times and averaging the "
+        "middle rates are different operations. Neither chart measures memory use or establishes "
+        "performance on other document shapes."
+    ),
+    "dual-w3c-passed": (
+        "Each bar counts catalog cases for which the parser returned the expected binary "
+        "ACCEPT or REJECT verdict. The unit is cases, not percent or elapsed time. Under this "
+        "nonvalidating profile, valid and invalid catalog cases normally require acceptance; "
+        "not-well-formed cases require rejection, subject to the recorded profile expectations.",
+        "More passes are favorable only when comparing the same suite and profile. The "
+        "applicable-case denominator is total catalog cases minus explicit exclusions. "
+        "Passed + wrong verdicts + process errors + exclusions must equal the catalog total "
+        "for each engine. Use the neighboring outcome charts to explain a changed pass count.",
+        "Passing this chart means the tested binary verdicts matched expectations. It does not "
+        "prove event-stream equality, canonical output or every XML feature. Directed controls "
+        "appear separately below, so a campaign can still have failed controls even when all "
+        "applicable catalog cases pass. These counts are independent of case execution speed."
+    ),
+    "dual-w3c-wrong-verdicts": (
+        "Each bar counts cases that produced a valid harness result but disagreed with the "
+        "expected ACCEPT or REJECT outcome. This includes unexpected acceptance of malformed "
+        "XML and unexpected rejection of input the selected profile requires the parser to "
+        "accept. Lower is better; zero means no wrong binary verdicts in this campaign.",
+        "Crashes, timeouts and invalid process output belong to the separate error chart. "
+        "Exclusions also remain separate. A fall in wrong verdicts is an improvement only if "
+        "those cases become passes rather than moving into errors or being excluded. "
+        "Consult the case-level report to see which expectations changed or were violated.",
+        "The suite's expected verdict is the reference, not the other parser's response: "
+        "agreement between two wrong answers remains two failures. No known-failure allowlist "
+        "turns these outcomes into passes. Xpact-core failures remain visible comparison "
+        "evidence; only xpact's outcomes contribute to Jenkins' own test gate."
+    ),
+    "dual-w3c-errors": (
+        "Each bar counts applicable cases for which the harness could not obtain a valid "
+        "binary verdict. Causes include process crashes, launch failures, timeouts, missing "
+        "input or resource I/O failures, and inconsistent process output. Lower is better. "
+        "An ordinary XML rejection with the expected exit/result protocol is a verdict, "
+        "not automatically a process error.",
+        "A fresh executable is started for each applicable W3C case. Its elapsed time includes "
+        "startup and file I/O; this chart counts unsuccessful executions rather than displaying "
+        "parser throughput. Read command, exit-code, stdout and stderr evidence to distinguish "
+        "parser failures from infrastructure failures.",
+        "Case-level errors in a completed campaign remain plotted even when the campaign "
+        "is red. A lane that never completed or could not persist its final report contributes "
+        "no numeric series at all. An absent chart therefore does not mean zero errors. "
+        "Directed-control process errors are listed separately in the control tables."
+    ),
+    "dual-w3c-excluded": (
+        "Each bar counts catalog cases deliberately skipped by the selected conformance "
+        "profile, with a reason recorded for each exclusion. Examples include unsupported "
+        "XML versions or editions and optional-error cases. These are scope decisions, "
+        "not successful parses; exclusions are never counted as passes.",
+        "Both implementations must have the same exclusion count for this comparison to "
+        "be published. This keeps them on a shared profile, while the case-level records "
+        "provide the actual selection and reasons. A larger or smaller bar is not inherently "
+        "better: fewer exclusions expand coverage and can expose new failures.",
+        "When comparing builds, check suite identity and profile changes before attributing "
+        "a change in passed or failed counts to parser behavior. The applicable total is "
+        "catalog cases minus exclusions. There is no blanket assumption that entity cases "
+        "are excluded; use the recorded profile for that specific campaign."
+    ),
+}
 
 
 class ReportsError(ValueError):
@@ -173,7 +265,10 @@ def svg(spec):
         parts += ['<text x="0" y="{}">{}</text>'.format(y + 22, html.escape(label)),
                   '<rect x="175" y="{}" width="{:.3f}" height="32" fill="{}"/>'.format(y, width, color),
                   '<text x="{}" y="{}">{}</text>'.format(185 + width, y + 22, format(value, ".6g"))]
-    return "\n".join(parts + ["</svg></section>"])
+    parts.append("</svg>")
+    parts.extend('<p>{}</p>'.format(html.escape(paragraph))
+                 for paragraph in PLOT_EXPLANATIONS[spec["token"]])
+    return "\n".join(parts + ["</section>"])
 
 
 def html_report(state, lane_reports, plots):
@@ -182,21 +277,28 @@ def html_report(state, lane_reports, plots):
              '<title>Dual implementation plots</title>',
              '<style>body{font:16px system-ui,sans-serif;max-width:1050px;margin:2rem auto;padding:0 1rem;color:#17252a}table{border-collapse:collapse;width:100%;margin:1rem 0}th,td{border:1px solid #ccd4d7;padding:.5rem;text-align:left}svg{width:100%;height:auto}code{overflow-wrap:anywhere}section{margin:2rem 0}p{line-height:1.5}</style>',
              '</head><body><h1>Dual implementation plots</h1>',
-             '<p>Jenkins build: <code>{}</code>. Comparison campaign status: <strong>{}</strong>.</p>'.format(
+             report_body(state, lane_reports, plots), '</body></html>']
+    return "\n".join(parts) + "\n"
+
+
+def report_body(state, lane_reports, plots, *, link_prefix=''):
+    """Render the shared chart fragment; prefix relative evidence links when embedding."""
+    prefix = link_prefix.rstrip('/') + '/' if link_prefix else ''
+    parts = ['<p>Jenkins build: <code>{}</code>. Comparison campaign status: <strong>{}</strong>.</p>'.format(
                  html.escape(state["build_id"]), html.escape(state["status"])),
              '<p>Windows x64; Eiffel finalized with assertions discarded. Assertion-enabled builds run directed controls only.</p>',
              '<table><tr><th>Lane</th><th>Status</th><th>Evidence or infrastructure error</th></tr>']
     for lane in ("catalog", "w3c"):
         row = state["lanes"][lane]
-        evidence = '<a href="{0}/report.json">Report</a> · <a href="{0}/summary.md">Summary</a>'.format(lane) if lane in lane_reports else html.escape(row.get("error", "No completed campaign; no numeric values published."))
+        evidence = '<a href="{0}/report.json">Report</a> · <a href="{0}/summary.md">Summary</a>'.format(html.escape(prefix + lane, quote=True)) if lane in lane_reports else html.escape(row.get("error", "No completed campaign; no numeric values published."))
         parts.append('<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(lane, html.escape(row["status"]), evidence))
     parts += ['</table>',
               '<p>Only xpact contributes to the Jenkins Test Result summary and its test pass/fail decision. Xpact-core remains comparison data in these plots and detailed artifacts.</p>',
               '<p>Catalog timing is normalized per 1,000 documents because calibration can change the iteration count. Throughput is the median of measured pairs. Both engines use no-op handlers; parser reset/reuse and process startup are timed. Core retains internal GC suspension/full collection; the caller requests no additional suspension.</p>',
               '<p>W3C plots show functional outcomes, including red completed campaigns. Wrong verdicts and process errors remain failures; exclusions are never passed. W3C elapsed times include fresh process startup and file I/O and are not compared here as parser throughput. No known-failure allowlist is applied.</p>']
     if state.get("subject_summary"):
-        parts.append('<p>Jenkins xpact test status: <strong>{}</strong>. <a href="xpact-summary.json">Test summary</a>.</p>'.format(
-            html.escape(state["subject_summary"]["status"])))
+        parts.append('<p>Jenkins xpact test status: <strong>{}</strong>. <a href="{}xpact-summary.json">Test summary</a>.</p>'.format(
+            html.escape(state["subject_summary"]["status"]), html.escape(prefix, quote=True)))
     parts.extend(svg(spec) for spec in plots)
     for lane, report in lane_reports.items():
         parts += ['<h2>{} directed controls</h2>'.format(html.escape(lane)),
@@ -213,7 +315,7 @@ def html_report(state, lane_reports, plots):
             parts.append('<tr><td>{}</td><td><code>{}</code></td><td><code>{}</code></td><td>{}</td></tr>'.format(
                 html.escape(engine), html.escape(artifact["source"]["revision"]), html.escape(artifact["executable_sha256"]), html.escape(artifact["gc_policy"])))
         parts.append('</table>')
-    return "\n".join(parts + ['<p>Native DLLs, .NET, external entity processing and general event/canonical-output parity are outside these lanes.</p>', '</body></html>']) + "\n"
+    return "\n".join(parts + ['<p>Native DLLs, .NET, general event/canonical-output parity and full external-resource parity are outside the guarantees of these lanes.</p>']) + "\n"
 
 
 def csv_text(rows, delimiter=","):

@@ -124,6 +124,41 @@ class DualJenkinsReportTests(unittest.TestCase):
         self.assertEqual(self.csv_values("dual-catalog-ms-per-1000-documents"), original_times)
         self.assertEqual(self.csv_values("dual-catalog-mib-per-second"), original_rates)
 
+    def test_each_chart_keeps_its_explanation_next_to_its_unchanged_values(self):
+        plots = reports.catalog_plots(self.lanes["catalog"]) + reports.w3c_plots(self.lanes["w3c"])
+        for spec in plots:
+            with self.subTest(plot=spec["token"]):
+                chart = reports.svg(spec)
+                self.assertEqual(chart.count('<svg '), 1)
+                self.assertEqual(chart.count('<section>'), 1)
+                self.assertEqual(chart.count('</section>'), 1)
+                for paragraph in reports.PLOT_EXPLANATIONS[spec["token"]]:
+                    self.assertIn(reports.html.escape(paragraph), chart)
+                self.assertLess(chart.index('</svg>'), chart.index(reports.html.escape(
+                    reports.PLOT_EXPLANATIONS[spec["token"]][0])))
+                for value in spec["values"]:
+                    self.assertIn('>{}</text>'.format(format(value, '.6g')), chart)
+
+    def test_embedded_report_has_no_document_shell_and_prefixes_all_evidence_links(self):
+        state = state_for(self.lanes)
+        state["subject_summary"] = {"status": "complete"}
+        plots = reports.catalog_plots(self.lanes["catalog"]) + reports.w3c_plots(self.lanes["w3c"])
+        prefix = 'https://jenkins.invalid/job/xpact/42/artifact/build/dual-ci-42-1/'
+        fragment = reports.report_body(state, self.lanes, plots, link_prefix=prefix)
+        self.assertNotIn('<html', fragment)
+        self.assertNotIn('<body', fragment)
+        self.assertNotIn('<h1', fragment)
+        for path in ('catalog/report.json', 'catalog/summary.md', 'w3c/report.json',
+                     'w3c/summary.md', 'xpact-summary.json'):
+            self.assertIn('href="{}{}"'.format(prefix, path), fragment)
+        self.assertEqual(fragment.count('<svg '), 6)
+        escaped = reports.report_body(state, self.lanes, plots, link_prefix='a"&b/')
+        self.assertIn('href="a&quot;&amp;b/catalog/report.json"', escaped)
+        standalone = reports.html_report(state, self.lanes, plots)
+        self.assertEqual(standalone.count('<html '), 1)
+        self.assertEqual(standalone.count('<body>'), 1)
+        self.assertIn('href="catalog/report.json"', standalone)
+
     def test_catalog_infrastructure_failure_omits_its_values_while_red_w3c_still_publishes(self):
         lanes = {"w3c": self.lanes["w3c"]}
         self.assertEqual(self.publish(lanes)["plots"], 4)
