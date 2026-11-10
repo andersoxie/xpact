@@ -808,6 +808,12 @@ pipeline {
     booleanParam(name: 'RUN_LIBEXPAT_NATIVE_SUITE',
                  defaultValue: true,
                  description: 'Build and run upstream libexpat runtests through the xpact adapter.')
+    booleanParam(name: 'RUN_DOTNET_DLL_TESTS',
+                 defaultValue: true,
+                 description: 'Run the C# DLL tests (tests/dotnet/XpactDllTests, 4,308 cases) on the production and assertions DLLs. Needs the .NET 10 SDK.')
+    booleanParam(name: 'RUN_WEBSITE_TESTS',
+                 defaultValue: true,
+                 description: 'Run the website backend end-to-end tests (website/backend, real worker and DLL). Needs the .NET 10 SDK.')
     booleanParam(name: 'RUN_CONTRIBUTED_EXAMPLES',
                  defaultValue: true,
                  description: 'Build and run contributed xpact incremental examples.')
@@ -996,6 +1002,22 @@ pipeline {
               .\\scripts\\run_incremental_shim_audit.ps1 -SkipBuild
             '''
           }
+          if (params.RUN_DOTNET_DLL_TESTS) {
+            runWithJenkinsTestResult('xpact .NET tests', 'C# DLL tests') {
+              powershell '''
+                $ErrorActionPreference = "Stop"
+                .\\scripts\\run_dotnet_tests.ps1 -Suite Dll
+              '''
+            }
+          }
+          if (params.RUN_WEBSITE_TESTS) {
+            runWithJenkinsTestResult('xpact .NET tests', 'website backend tests') {
+              powershell '''
+                $ErrorActionPreference = "Stop"
+                .\\scripts\\run_dotnet_tests.ps1 -Suite Website
+              '''
+            }
+          }
         }
       }
       post {
@@ -1010,7 +1032,10 @@ pipeline {
             build/native-eiffel/xpact_assertions.lib,
             build/native-runtime/*.obj,
             build/chunked-crc/*.tsv,
-            build/incremental-shim-audit/*.tsv
+            build/incremental-shim-audit/*.tsv,
+            build/dotnet-dll-tests/**/summary.txt,
+            build/dotnet-dll-tests/**/results.tsv,
+            build/website-tests/*.trx
           ''', allowEmptyArchive: true
         }
       }

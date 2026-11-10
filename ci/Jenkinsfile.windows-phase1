@@ -826,6 +826,12 @@ pipeline {
     string(name: 'W3C_SUITE_DIRECTORY',
            defaultValue: '',
            description: 'Optional prepared W3C XML suite directory for offline benchmarks. Leave empty to download the pinned, checksum-verified suite.')
+    booleanParam(name: 'RUN_DOTNET_DLL_TESTS',
+                 defaultValue: true,
+                 description: 'Run the C# DLL tests (tests/dotnet/XpactDllTests, 4,308 cases) on the production and assertions DLLs. Needs the .NET 10 SDK.')
+    booleanParam(name: 'RUN_WEBSITE_TESTS',
+                 defaultValue: true,
+                 description: 'Run the website backend end-to-end tests (website/backend, real worker and DLL). Needs the .NET 10 SDK.')
     booleanParam(name: 'RUN_CONTRIBUTED_EXAMPLES',
                  defaultValue: true,
                  description: 'Build and run contributed xpact incremental examples.')
@@ -982,6 +988,42 @@ pipeline {
           script {
             publishJenkinsTestResults()
           }
+        }
+      }
+    }
+
+    stage('.NET DLL and Website Tests') {
+      when { expression { return params.RUN_DOTNET_DLL_TESTS || params.RUN_WEBSITE_TESTS } }
+      steps {
+        script {
+          if (params.RUN_DOTNET_DLL_TESTS) {
+            runWithJenkinsTestResult('xpact .NET tests', 'C# DLL tests') {
+              powershell '''
+                $ErrorActionPreference = "Stop"
+                .\\scripts\\run_dotnet_tests.ps1 -Suite Dll
+              '''
+            }
+          }
+          if (params.RUN_WEBSITE_TESTS) {
+            runWithJenkinsTestResult('xpact .NET tests', 'website backend tests') {
+              powershell '''
+                $ErrorActionPreference = "Stop"
+                .\\scripts\\run_dotnet_tests.ps1 -Suite Website
+              '''
+            }
+          }
+        }
+      }
+      post {
+        always {
+          script {
+            publishJenkinsTestResults()
+          }
+          archiveArtifacts artifacts: '''
+            build/dotnet-dll-tests/**/summary.txt,
+            build/dotnet-dll-tests/**/results.tsv,
+            build/website-tests/*.trx
+          ''', allowEmptyArchive: true
         }
       }
     }
