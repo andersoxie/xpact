@@ -34,7 +34,7 @@ The 9 open mass-xpact issues were closed as "not planned" without verification; 
 - [ ] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test (in progress), load test, worker account (code part); HTTPS and deployment [#210](https://github.com/andersoxie/xpact/issues/210) are the supervisor's.
 - [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
 - [ ] Refile mass-xpact #84, #73, #75 on andersoxie (one issue each).
-- [ ] Before 27 Nov: update `report/ActualReport.md` and `ActualReportShorter.md` with weeks 5-8.
+- [x] Reports updated to 2026-11-10 (weeks 1–8); update again if anything changes before 27 Nov.
 
 ## 4. Setup on a new PC
 

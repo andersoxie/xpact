@@ -4,7 +4,7 @@
 
 > **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** Medieinstitutet
 > **Company:** Bsharp · **Supervisor:** Anders Persson ✏️ · **Internship:** 6 October – 27 November 2026 (eight weeks; build preparation from September)
-> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `student-Mass` · **Report state:** `student-Mass` @ `1280aee` (2026-11-01)
+> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` · **Report state:** `incremental-test` @ `9688e9e` (2026-11-10; `main` is the same commit) · first version: `student-Mass` @ `1280aee` (2026-11-01)
 >
 > ✅ done and verified · 🟡 partly done or waiting · 🔴 open problem · ⏭️ dropped by decision · ✏️ for the student to check or complete
 
@@ -14,9 +14,9 @@
 
 xpact is an XML parser written in Eiffel that offers a C interface compatible with Expat, the most widely used C XML parser. The internship's question, set by the company, was: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?**
 
-In the first four weeks of the eight-week internship, the work moved from making the parser build reliably on Windows, through an assertions-enabled baseline and failure reporting, to large comparisons with Expat 2.8.1. Every problem found was handled the same way: reproduce it, record the exact command and evidence, find the cause, fix it in one focused pull request, and verify the result before closing the issue.
+In the first four weeks of the eight-week internship, the work moved from making the parser build reliably on Windows, through an assertions-enabled baseline and failure reporting, to large comparisons with Expat 2.8.1. The following week went to speed, a second full test run and a public website: chunked input is now parsed incrementally instead of being re-parsed on every call, every test was rerun on the final parser, and a website lets anyone upload XML and test it with xpact. Every problem found was handled the same way: reproduce it, record the exact command and evidence, find the cause, fix it in one focused pull request, and verify the result before closing the issue.
 
-The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now runs with no skips and **0 failures** in both builds, against 1,360 crashes with assertions on at the start; xpact gives **the same verdict as Expat in every comparison made** (4,308 C-API cases, 1,302 chunked configurations); and **82 pull requests and 80 closed issues** document the work. The investigation also showed what is still missing: error positions and some events still differ from Expat, and the native library is 25–40 times slower than Expat because it re-parses its input on every call.
+The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now runs with no skips and **0 failures** in both builds, against 1,360 crashes with assertions on at the start; xpact gives **the same verdict as Expat in every structured comparison made** (4,308 C-API cases, 1,302 chunked configurations, 525 SVG files, 582 UTF-8 fixtures); the worst chunked case went from **50 minutes to 106 ms**; and **126 merged pull requests and 100 closed issues** on the company repository (plus 50 pull requests for the speed work) document the work. The investigation also showed what is still missing: error positions and some events still differ from Expat, ISO-8859-1 input in pieces is still slow, and the library is not thread-safe and is limited to 10 MB documents. Those last two block a 1.0 release.
 
 ---
 
@@ -28,9 +28,12 @@ The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now 
 | ✅ **W3C conformance** | 2,585 / 2,585 cases run, **2,283 checked + 302 "no crash only", 0 failed, 0 errors, 0 skipped** (both builds) |
 | ✅ **Same verdict as Expat 2.8.1** | 4,308 / 4,308 C-API cases (C# DLL tests) · 1,302 / 1,302 chunked configurations (G03) · 2,585 W3C cases through the DLL |
 | ✅ **Failures are reported** | A failing test now exits nonzero in every build (B01), proven by a switchable meta-test (B02) |
-| ✅ **Traceable work** | 89 issues (80 closed), 82 merged pull requests, one report with logs per fix in `reports/issue-NNNN/` |
+| ✅ **Final parser retested** | All 11 test areas and the repository suites rerun on 2026-11-08: no crash, no regression, 3.9 million fuzzed inputs with 0 crashes, no memory leak |
+| ✅ **Traceable work** | 112 issues (100 closed) and 126 merged pull requests on andersoxie/xpact, plus 39 issues and 50 pull requests for the speed work; versions 0.1.0–0.9.0 tagged with a [CHANGELOG](../../CHANGELOG.md) |
+| ✅ **Website** | Upload or paste XML and test it with xpact; Docker image built on GitHub; memory cap and load tested; 🟡 not deployed yet (supervisor's server) |
+| 🟡 **Speed** | Chunked input is incremental now: worst case 50 min → 106 ms, whole documents 4–7× faster. 🔴 ISO-8859-1 in pieces is still quadratic (mass-xpact#84); no fair comparison with native Expat yet |
 | 🟡 **Still differs from Expat** | Error positions, and some events and error codes in edge cases: 6 open findings (#123, #126, #170, #171, #176, #13) |
-| 🔴 **Speed** | The DLL is 25–40× slower than Expat on a whole document, and re-parses markup on every call when input arrives in pieces |
+| 🔴 **Blockers for 1.0** | Not thread-safe (mass-xpact#75); documents over 10 MB are rejected; an Eiffel exception in a DLL call crashes without a trace (mass-xpact#73) |
 
 <details>
 <summary><b>Contents</b></summary>
@@ -58,13 +61,13 @@ The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now 
 ## 1. Introduction
 
 ### 1.1 Background
-The internship took place at **Bsharp**, from 6 October to 27 November 2026 (eight weeks), as part of the System Developer programme at **Medieinstitutet** ✏️, in a team developing **xpact**, an XML parser. The student's role was that of a junior software developer working on **testing and verification**: learning an unfamiliar codebase, building it, running and extending its tests, and reporting and fixing what the tests found. The work followed the company's ten-week student plan (`docs/xpact-student-introduction.md`). In the first four weeks of the internship (to 1 November), weeks 1–7 of that plan were completed. The remaining weeks, to 27 November, are for weeks 8–10: consolidation, this report, the demonstration and the handover.
+The internship took place at **Bsharp**, from 6 October to 27 November 2026 (eight weeks), as part of the System Developer programme at **Medieinstitutet** ✏️, in a team developing **xpact**, an XML parser. The student's role was that of a junior software developer working on **testing and verification**: learning an unfamiliar codebase, building it, running and extending its tests, and reporting and fixing what the tests found. The work followed the company's ten-week student plan (`docs/xpact-student-introduction.md`). In the first four weeks of the internship (to 1 November), weeks 1–7 of that plan were completed, and week 8 (consolidation) by 10 November, together with speed work and a website that the plan did not ask for. The remaining weeks, to 27 November, are for weeks 9–10: this report, the demonstration and the handover.
 
 ### 1.2 Purpose of the report
 The report documents and analyses the technical work: how the problems were found, what caused them, how they were solved and how each solution was verified. It also evaluates what the tests prove and what they do not, and reflects on what was learned.
 
 ### 1.3 Report structure
-Sections 2–5 describe the project, the goals, the tools and the method. Section 6 gives the chronology, and section 7 analyses six selected problems in depth. Sections 8–10 present the testing, the workflow and the results; sections 11–13 reflect, discuss and conclude. The appendices hold the demonstration commands, the result tables tied to builds and the list of contributions.
+Sections 2–5 describe the project, the goals, the tools and the method. Section 6 gives the chronology, and section 7 analyses eight selected problems in depth. Sections 8–10 present the testing, the workflow and the results; sections 11–13 reflect, discuss and conclude. The appendices hold the demonstration commands, the result tables tied to builds and the list of contributions.
 
 ---
 
@@ -117,17 +120,19 @@ The parser must accept every well-formed document and reject every malformed one
 | ✅ | One small, reviewed improvement to the test framework or scripts | done, and more: all W3C cases run (week 6), reviewed and merged by the supervisor | PR [#152](https://github.com/andersoxie/xpact/pull/152), [#177](https://github.com/andersoxie/xpact/pull/177) |
 | 🟡 | A final report and demonstration | this report; demonstration commands in [Appendix A](#appendix-a--demonstration-commands) | |
 | ⏭️ | Optional: run Xpact-core against the same inputs | partly: a dual regression lane (#153); full integration not started | [#153](https://github.com/andersoxie/xpact/issues/153) |
+| ✅ | Week 8: shared fixtures and comparison output, selected SVG or libxml2 cases | done: 247 fixtures in 9 sets, SVG 1.1 (525 files), libxml2 corpus (1,417 files) | [shared-fixtures](../results/shared-fixtures/README.md), [svg11](../results/svg11-2026-11-06/README.md) |
 
 ### 3.3 Scope
 
 | Directly changed | Investigated | Outside the assignment |
 |---|---|---|
-| Build scripts (`scripts/*.ps1`), the test runners, the C# and Python test tools, parser fixes in `src/xp_parser.e` and `src/xp_native_parser.e` (each verified against Expat), documentation | The parser's architecture, Jenkins, the supervisor's incremental-parser prototypes, performance | A new parser core, a production release, Jenkins configuration (the supervisor's), `main` (the student never commits to it) |
+| Build scripts (`scripts/*.ps1`), the test runners, the C# and Python test tools, parser fixes in `src/xp_parser.e` and `src/xp_native_parser.e` (each verified against Expat), incremental parsing of chunked input (week 8), the XPact website (`website/`), Boogie models (`verification/boogie/`), documentation | The parser's architecture, Jenkins, the supervisor's incremental-parser prototypes, heap corruption (mass-xpact#20), thread safety | A new parser core, a production release, the website's server and HTTPS, Jenkins configuration (the supervisor's), `main` (the student never commits to it) |
 
 ### 3.4 Limitations
 - One machine (Windows 11, MSVC). Jenkins runs were made by the supervisor.
 - Parser repairs were meant for experienced developers. From week 6, fixes found by the comparisons were made by the student and verified against Expat, but not separately reviewed by the parser's author before merging into `student-Mass` (see [section 9.4](#94-review-and-continuous-integration)).
-- The time: weeks 1–7 of a ten-week plan were done in the first four of the eight internship weeks; this report describes the state on 1 November 2026.
+- The speed work (week 8) was done in a separate repository, CodTanium/mass-xpact, and brought back as one acceptance-tested change. Its issues there were later closed as "not planned" without verification; the three that matter (#73, #75, #84) were rechecked and are still present.
+- The time: weeks 1–8 of a ten-week plan were done by 10 November; this report describes the state on 10 November 2026 (first version: 1 November).
 
 ---
 
@@ -138,7 +143,9 @@ The parser must accept every well-formed document and reject every malformed one
 | Languages | **Eiffel** (the parser), **C** (the interface, Expat), **C#** (DLL tests), **Python** (W3C harness, comparison tools), **PowerShell** (build and test scripts) | Each is what that part of the project is written in; C# and Python call the DLL the way a real program does |
 | IDEs and editors | EiffelStudio 25.12, Visual Studio 18 Community (MSVC 14.51), VS Code | Eiffel compilation; the C compiler and linker; editing |
 | Build | ECF targets (workbench and finalized), `build_native_eiffel.ps1` with the tiers `Production` and `Assertions`, MSVC backend `msc_vc140` | Two DLLs: assertions off and on |
-| Tests | the Eiffel test matrix (assertions on/off × workbench/finalized), the Python unit suite (210 tests), the W3C runner, a C# P/Invoke test program, Expat's own C tests (`runtests`) | Each tests a different layer (section 8) |
+| Tests | the Eiffel test matrix (assertions on/off × workbench/finalized), the Python unit suite (226 tests), the W3C runner, a C# P/Invoke test program, Expat's own C tests (`runtests`), fuzzing and differential fuzzing against Expat | Each tests a different layer (section 8) |
+| Website | React front end, ASP.NET Core back end, one worker process per document that calls `xpact.dll`; Docker, GitHub Container Registry | Lets people test XML with xpact without building it |
+| Formal checks | **Boogie** (Microsoft's verification language) | Proves selected parser loops terminate and stay in bounds |
 | Reference | **Expat 2.8.1** (`R_2_8_1`), built from source with MSVC; the W3C XML Test Suite 2013-09-23 | Formal comparisons need one fixed reference version |
 | Version control | Git, GitHub (issues, labels, milestones, project board, pull requests), GitHub CLI | Traceability: every change linked to an issue and a report |
 | CI | GitHub Actions (Python harness on every pull request), Jenkins (the supervisor's server) | Automatic checks before and after merging |
@@ -175,7 +182,7 @@ Most findings in weeks 5–7 came from **differential testing**: the same input 
 
 ## 6. Work performed
 
-The internship runs for eight weeks, 6 October – 27 November 2026. Weeks 1–7 of the ten-week plan were done in its first four calendar weeks; weeks 4–7 were started early, as the work allowed. The rest of the internship is for weeks 8–10.
+The internship runs for eight weeks, 6 October – 27 November 2026. Weeks 1–7 of the ten-week plan were done in its first four calendar weeks; weeks 4–7 were started early, as the work allowed. Week 8 followed from 2 to 10 November. The rest of the internship is for weeks 9–10.
 
 | Plan week | When | Main focus | Status |
 |---|---|---|---|
@@ -185,8 +192,9 @@ The internship runs for eight weeks, 6 October – 27 November 2026. Weeks 1–7
 | 4 Input matrix | 26 Oct | Full check of the merged code, G01 (93 W3C cases) | ✅ |
 | 5 Regressions | 26 Oct | C02, C03, C10 compared with Expat (4,308 cases) | ✅ |
 | 6 One improvement | 27–30 Oct | All 2,585 W3C cases run; W3C output; input in pieces | ✅ |
-| 7 Comparison | 31 Oct | G03, A04, the comparison findings fixed | ✅ (one table rerun left) |
-| 8–10 | 2–27 Nov | Consolidation, report, demonstration, handover | 🟡 this report |
+| 7 Comparison | 31 Oct | G03, A04, the comparison findings fixed | ✅ |
+| 8 Consolidate | 2–10 Nov | Shared fixtures, new test sources, speed work, full rerun, website, Boogie | ✅ |
+| 9–10 | 11–27 Nov | Report, demonstration, handover | 🟡 this report |
 
 <details>
 <summary><b>Week 1 – Project familiarisation and environment setup</b></summary>
@@ -247,11 +255,27 @@ The internship runs for eight weeks, 6 October – 27 November 2026. Weeks 1–7
 - Note: [week-07](../notes/weekly/week-07.md).
 </details>
 
+<details>
+<summary><b>Week 8 – Consolidate (and speed, website, Boogie)</b></summary>
+
+- **Tasks:** collect the shared fixtures and comparison output; add selected SVG or libxml2 cases.
+- **Results:**
+  - ✅ **Shared fixtures:** 247 fixtures in 9 sets, each with source and SHA-256 ([manifest](../results/shared-fixtures/README.md)). G03 rerun on the fixed code: 62 / 93 cases fully identical (was 59), none worse.
+  - ✅ **New test sources** against Expat: SVG 1.1 525 / 525 same verdict; Markus Kuhn's UTF-8 test 582 / 582 identical; DTD attacks 104 / 104; pugixml encodings 28 / 28; Expat's own `xmltest` all but 4 cases.
+  - ✅ **Speed work** (section 7.7): chunked input resumes from a checkpoint instead of being re-parsed; about 20 small speed and fix rounds, then an **acceptance run** against the old base, which found two regressions that were fixed before merging (#68, #69).
+  - ✅ **Full rerun on the final parser** (2026-11-08): all 11 test areas and the repository suites, no regression ([results](../results/AlotOfTests-2026-11-08/README.md)).
+  - ✅ **Website** ([#210](https://github.com/andersoxie/xpact/issues/210)): upload or paste XML, documentation, conformance and benchmark pages; Docker image built on GitHub; memory-cap test ([#227](https://github.com/andersoxie/xpact/issues/227)), load test, 10 MB documents (#267). 🟡 Deployment and HTTPS wait for the supervisor's server.
+  - ✅ **Boogie models** (section 7.8, [#252](https://github.com/andersoxie/xpact/issues/252)).
+  - ✅ **Jenkins** now runs the C# DLL tests and the website back-end tests (PR #263); **versions** 0.1.0–0.9.0 tagged afterwards, with a CHANGELOG (#266).
+  - ✅ Branches joined: `student-Mass` fully in `incremental-test` and deleted; `main` = `incremental-test` (2026-11-10).
+- Note: [week-08](../notes/weekly/week-08.md).
+</details>
+
 ---
 
 ## 7. Technical investigations
 
-Six problems, chosen to show different kinds of work: a build problem, a contract failure, a test-framework gap, a parser defect, a test-environment trap and a performance analysis.
+Eight problems, chosen to show different kinds of work: a build problem, a contract failure, a test-framework gap, a parser defect, a test-environment trap, a performance analysis, the performance fix that followed, and a formal check.
 
 ### 7.1 The native DLL would not build on Windows
 - **Problem.** `build_native_eiffel.ps1` stopped with `Cannot find Eiffel runtime include directory`, then with linker errors, then with `The input line is too long`.
@@ -321,13 +345,36 @@ Six problems, chosen to show different kinds of work: a build problem, a contrac
   2. Whole-input passes before tokenizing: decoding, then line ends and character checks.
   3. New memory for every callback: C copies of every name and attribute.
   4. A new string object for every token.
-- **Evaluation.** 🔴 Not fixed. The supervisor has started an incremental parser (`XP_INCREMENTAL_PARSE_SESSION`), but it is a prototype that handles only tags, attributes and text, and the DLL does not use it yet. Finishing it is a design decision for the supervisor; suggestions are in [section 13.2](#132-future-work).
+- **Evaluation (1 November).** 🔴 Not fixed. The supervisor had started an incremental parser (`XP_INCREMENTAL_PARSE_SESSION`), but it was a prototype that handled only tags, attributes and text, and the DLL did not use it. Cause 1 was fixed in week 8 (7.7).
 
-### 7.7 Overall technical findings
+### 7.7 Making chunked input incremental (speed work, week 8)
+- **Problem.** Cause 1 of 7.6: every call re-parsed the stored input from the start. A 131 KB document fed one byte at a time took **50 minutes**.
+- **Approach.** The work was done in a separate repository (CodTanium/mass-xpact) as about 20 small issues, each with its own timing and test evidence: resume parsing from a saved checkpoint, resume UTF-16 decoding, continue long text runs, copy each input chunk once, and drop per-call allocations. Then the whole result was compared with the old base in one **acceptance run**: 15 checks, from the C# DLL tests and Expat's own suite to 80,000 fuzzed parses ([report](../../reports/acceptance-253c81e-vs-45d2f53/report.md)).
+- **What the acceptance run found.** Two regressions caused by the speed work itself: positions between calls pointed inside unfinished markup (26,295 calls worse, #68), and a fix had broken 3 Eiffel contract checks because it was not run with the test matrix (#69). Both were fixed before merging. It also found an old bug (the assertions build died on 7 fuzzed documents, #72, fixed) and three open problems: an exception in a DLL call crashes without a trace (#73), xpact is not thread-safe (#75), and ISO-8859-1 in pieces is still quadratic (#84).
+- **Result**, same PC, alternating runs:
+
+  | Document, piece size | Before | After |
+  |---|---|---|
+  | `doc-rich.xml` (131 KB), 1 byte | 3,024 s (50 min) | 106 ms |
+  | `doc-rich.xml`, 4 KB | 956 ms | 15.5 ms |
+  | `doc-rich.xml`, whole | 107.6 ms | 15.2 ms |
+  | 8 KB of elements, 1 byte (the 7.6 case) | 58 s | 12.2 ms |
+
+  The benchmark rows for the C interface became 4–5× faster. All functional checks stayed the same or came closer to Expat; none got worse.
+- **A trap on the way.** One speed change was parked because a stress run showed heap corruption (mass-xpact#20). Paired runs showed the corruption was already in the base code, so the change was not its cause. The cause is still unknown; 72 / 72 normal runs pass.
+- **Evaluation.** ✅ Cause 1 fixed for UTF-8 and UTF-16. 🔴 ISO-8859-1 input in pieces is still slow (256 KB in 1 KB pieces: 1.6 s, UTF-8 0.011 s). Causes 2–4 of 7.6 remain, and there is no fair speed comparison with native Expat yet. The lesson: an acceptance run over *all* checks found what the per-fix checks had missed.
+
+### 7.8 Boogie models of two parser loops (#252)
+- **Problem.** Two of the bugs found earlier were loops that did not end or went out of bounds (#3 in the start-tag code, mass-xpact#12 in the UTF-16 decoder). Tests found them by chance. Could a proof find them on purpose?
+- **Solution.** Small models of both loops in **Boogie**, a verification language, in `verification/boogie/` (PR #253, [report](../../reports/issue-0252/report.md)).
+- **Verification.** The models of the old code fail at exactly the two known bugs; the models of the current code are proven.
+- **Evaluation.** ✅ It works on real bugs. 🟡 **Open finding:** the proofs need 3 facts that no Eiffel contract states. Adding them as contracts needs its own issue and a rerun of the Eiffel test matrix.
+
+### 7.9 Overall technical findings
 1. **Assertions find real bugs that assertions-off testing hides** (7.2).
-2. **Evidence needs to be checked as carefully as code**: wrong verdict rules (676 false "failures"), tests that exit 0 on failure (7.3), and a suite that tested the wrong library (7.5).
+2. **Evidence needs to be checked as carefully as code**: wrong verdict rules (676 false "failures"), tests that exit 0 on failure (7.3), a suite that tested the wrong library (7.5), and per-fix checks that missed two regressions found by the acceptance run (7.7).
 3. **xpact's verdicts agree with Expat everywhere it was compared.** The remaining differences are in *how* errors are reported (positions, codes, events), not in *whether* a document is accepted.
-4. **Performance is the main open architectural problem** (7.6).
+4. **Performance was the main architectural problem.** For UTF-8 and UTF-16 it is largely solved (7.7). The remaining blockers are thread safety and the 10 MB input limit.
 
 ---
 
@@ -350,7 +397,11 @@ Each test kind checks a different layer, from single Eiffel routines to the C in
 | Reference suite | Expat's own C tests run against xpact (`runtests`) | 399 checks; 38 are known, listed allocator-test failures |
 | Meta | B02 (`XPACT_META_FAIL`) | The framework really reports failures |
 | Library check | A04 (SHA-256 of every loaded DLL) | Tests run against the intended code |
-| Automated | GitHub Actions (Python suite on every pull request), Jenkins | Checks run without a person |
+| Fuzzing | mutated documents through xpact (30 min) and through xpact and Expat side by side (20 min) | No crash or hang on unexpected input; same verdict as Expat |
+| Acceptance | 15 checks comparing the final parser with the old base (7.7) | A large change makes nothing worse |
+| Formal | Boogie models of two loops (7.8) | The loops end and stay in bounds |
+| Website | back-end tests (22), memory-cap test, load test | The website stops runaway documents and handles parallel visitors |
+| Automated | GitHub Actions (Python suite on every pull request), Jenkins (since PR #263 also the C# DLL tests and the website back-end tests) | Checks run without a person |
 
 ### 8.3 Results over time
 
@@ -361,15 +412,20 @@ Each test kind checks a different layer, from single Eiffel routines to the C in
 | 2026-10-22 | assertions on | 1,444 passed, 47 crashed | after #28 |
 | 2026-10-26 | both | ✅ **1,727 / 1,727** | after #80 |
 | 2026-10-28 | both | ✅ **2,585 / 2,585 run, 2,283 checked + 302 no crash only, 0 failed, 0 errors, 0 skipped** | after #146, #148, #151 |
+| 2026-11-08 | both | ✅ the same, case by case | final parser (`incremental-test`), full rerun |
+| 2026-11-10 | both | ✅ the same | rebuilt from `68abdcb` before the merge into `main` |
 
 | Comparison with Expat 2.8.1 | Result |
 |---|---|
 | Verdict, C# DLL tests (4,308 cases, all callback sets and chunkings) | ✅ **4,308 / 4,308** the same |
 | Verdict, G03 (93 cases × 14 ways) | ✅ **1,302 / 1,302** the same |
-| Every field identical (C# tests) | 1,079 → 3,423 after #172; #124 and #125 add more (one table rerun left) |
+| Every field identical, G03 | 59 → **62 / 93** cases on the final code (2026-11-06), none worse |
+| Every field identical (C# tests) | 1,079 → 3,423 after #172; #124 and #125 add more (combined count not remeasured) |
 | Error codes (C# tests, with #124) | ✅ 4,308 / 4,308 |
 | W3C output (432 cases with an expected file) | 359 → **399** right; the rest are XML 1.1 or optional cases, where Expat differs too |
-| W3C in pieces (2,585 documents) | 1,995 → 2,438 → **2,561** the same however they are split |
+| W3C in pieces (2,585 documents) | 1,995 → 2,438 → 2,561 → **2,564** the same however they are split; 0 xpact timeouts since the speed work |
+| New sources (week 8) | SVG 1.1 525 / 525 verdicts · Kuhn UTF-8 582 / 582 identical · DTD attacks 104 / 104 · libxml2 corpus 1,288 / 1,417 the same as Expat |
+| Fuzzing (2026-11-08) | 3,879,031 inputs, 0 crashes, 0 hangs; differential: 3,148,557 documents, same verdict as Expat 99.94 % |
 
 ### 8.4 Example cases
 
@@ -394,13 +450,21 @@ Each test kind checks a different layer, from single Eiffel routines to the C in
 | [#171](https://github.com/andersoxie/xpact/issues/171) | Error column differs where Expat points at the token | defect (positions) |
 | [#176](https://github.com/andersoxie/xpact/issues/176) | `]]` of a forbidden `]]>` delivered as text in pieces | defect (pieces) |
 | [#13](https://github.com/andersoxie/xpact/issues/13) | GC wrapper swallows exceptions | ⏸ on hold, design |
-| [#130](https://github.com/andersoxie/xpact/issues/130), [#131](https://github.com/andersoxie/xpact/issues/131) | Jenkins: "Eiffel Tests" green without a result; SonarQube HTTP 401 | environment (supervisor's server) |
-| F05-1 | Re-parsing on every call (section 7.6) | architecture |
+| [#130](https://github.com/andersoxie/xpact/issues/130), [#131](https://github.com/andersoxie/xpact/issues/131) | Jenkins: "Eiffel Tests" green without a result; SonarQube HTTP 401 (a local scan script exists; the token is invalid) | environment (supervisor's server) |
+| [#211](https://github.com/andersoxie/xpact/issues/211) | Billion-laughs documents: Expat's error now, but ~1.4 s against Expat's 0.1 s; 2 external cases time out | defect (limits) |
+| [#197](https://github.com/andersoxie/xpact/issues/197) | Run the W3C-in-pieces test on several cores | test tooling |
+| mass-xpact#84 | ISO-8859-1 input in pieces is quadratic (7.7) | speed |
+| mass-xpact#73 | An Eiffel exception in a DLL call crashes without a trace | defect (DLL) |
+| mass-xpact#20 | Heap corruption under stress; not reproduced since, cause unknown | ❔ unknown |
+| mass-xpact#75 | Not thread-safe: two threads with their own parsers crash the DLL | 🔴 blocker for 1.0 |
+| 10 MB limit | Documents over 10 MB are rejected | 🔴 blocker for 1.0 (design) |
+
+mass-xpact#20, #73, #75 and #84 were closed there as "not planned" when the repository became a mirror; they are not fixed and still have to be filed on andersoxie/xpact.
 
 ### 8.6 What the tests do and do not show
 - ✅ **They show** that xpact accepts and rejects the same documents as Expat in every compared case, with assertions on, in both builds and however the input is split; that the framework reports failures; and that the tests run against the intended library.
-- 🟡 **They do not show** correctness outside the tested inputs: large real-world files (PubMed), SVG or libxml2 suites, XML 1.1, external entities fed in pieces, or `XML_StopParser`/`XML_ResumeParser`.
-- 🟡 Most results come from one Windows machine; Jenkins confirmed the state of `733688e`.
+- 🟡 **They do not show** correctness outside the tested inputs: documents over 10 MB, XML 1.1, external entities fed in pieces, `XML_StopParser`/`XML_ResumeParser`, or use from several threads (which crashes). Large real-world files were tested up to 9 MB, SVG 1.1 and the libxml2 corpus in week 8.
+- 🟡 Most results come from one Windows machine; no Linux run. Jenkins confirmed the state of `733688e`.
 - 🟡 "Same as Expat" is the goal, but it isn't always the XML standard: for a few positions Expat itself differs between whole and chunked input.
 
 ---
@@ -411,9 +475,13 @@ Each test kind checks a different layer, from single Eiffel routines to the C in
 
 | Branch | Purpose |
 |---|---|
-| `main` | The company's branch. The student never committed to it; the supervisor merged `student-Mass` into it after review (PRs #72, #78, #139, #177). |
-| `student-Mass` | The student's integration branch: every change lands here as one squashed commit. |
-| `fix/<issue>-<name>`, `docs/…` | One short-lived branch per issue, from the latest `student-Mass`. |
+| `main` | The company's branch. The student never committed to it; the supervisor merged `student-Mass` into it after review (PRs #72, #78, #139, #177). Since 2026-11-10 it is the same commit as `incremental-test`. |
+| `student-Mass` | The student's integration branch to 8 November: every change landed here as one squashed commit. Fully contained in `incremental-test`, deleted on 2026-11-10. |
+| `incremental-test` | The work branch since 2026-11-08: the final parser with incremental parsing, the website and the acceptance run. |
+| `fix/<issue>-<name>`, `docs/…` | One short-lived branch per issue, from the latest work branch. |
+| CodTanium/mass-xpact | A separate repository for the speed work (2–5 November); brought back through `student-Mass`. A mirror of andersoxie/xpact since 2026-11-09. |
+
+A lesson from joining the branches: a squash merge between two long-lived branches (PR #261) made GitHub show 195 commits "ahead" although the content was the same. Between `main` and `incremental-test` only merge commits or fast-forwards are used now.
 
 ### 9.2 One issue, one branch, one pull request
 
@@ -434,12 +502,12 @@ GitHub issues with labels (`bug`, `test`, `build`, `regression`, `investigation`
 
 ### 9.4 Review and continuous integration
 - **GitHub Actions** runs the Python harness on every pull request.
-- **Jenkins** (the supervisor's) builds and tests `main`; it passed on `733688e` after the supervisor merged the student's work (PR #177).
+- **Jenkins** (the supervisor's) builds and tests `main`; it passed on `733688e` after the supervisor merged the student's work (PR #177). Since PR #263 it also runs the C# DLL tests (4,308 cases, both DLLs) and the website back-end tests.
 - **Review.** Build fixes and the week-6 improvement were reviewed and merged into `main` by the supervisor. From 2026-10-28, parser fixes were merged into `student-Mass` after the full local check set, without a separate review by the parser's author. That review happens when `student-Mass` is merged into `main`.
 - **Two decisions by the student** made the workflow faster: on 2026-10-31, issues close after a local check without waiting for Jenkins, and the slowest regression test (W3C in pieces) runs only for fixes that touch chunked input.
 
 ### 9.5 Traceability
-Each fix can be followed from the issue (what was wrong) to its report (cause, commands, logs), its pull request (the diff and the test evidence), the squashed commit on `student-Mass`, and the closing comment that repeats the verification. Every result table in this report names its commit and build (Appendix B).
+Each fix can be followed from the issue (what was wrong) to its report (cause, commands, logs), its pull request (the diff and the test evidence), the squashed commit on `student-Mass` (later `incremental-test`), and the closing comment that repeats the verification. Every result table in this report names its commit and build (Appendix B). Since 2026-11-10 every earlier state also has a version number: 0.1.0 (baseline, 14 October) to 0.9.0 (launch candidate, 10 November), each a git tag, described in [`CHANGELOG.md`](../../CHANGELOG.md).
 
 ---
 
@@ -456,24 +524,33 @@ Each fix can be followed from the issue (what was wrong) to its report (cause, c
 - [x] A C# DLL test program and a full comparison with Expat 2.8.1 (4,308 cases)
 - [x] G03 (chunks) and A04 (loaded library)
 - [x] Parser defects fixed and verified against Expat, among them #28, #122, #124, #125, #146 (7 bugs), #148, #154–#159, #165, #172–#175
-- [x] A setup guide, weekly notes 1–7, and one report with logs per fix
+- [x] A setup guide, weekly notes 1–8, and one report with logs per fix
+- [x] Shared fixtures (247 in 9 sets) and six new test sources against Expat, among them SVG 1.1 and the libxml2 corpus
+- [x] Incremental parsing of chunked input, with an acceptance run: worst case 50 min → 106 ms
+- [x] A full rerun of every test on the final parser (2026-11-08), no regression
+- [x] The XPact website, with a Docker image, memory-cap and load tests
+- [x] Boogie models that find two old loop bugs and prove the current loops
+- [x] Jenkins runs the C# and website tests; versions 0.1.0–0.9.0 with a CHANGELOG
+- [x] `main` = `incremental-test` (2026-11-10)
 
 ### 10.2 In numbers
 
-| | |
-|---|---|
-| Issues opened by the student | 89 (80 closed, each with verification) |
-| Pull requests merged into `student-Mass` | 82 |
-| Commits on `student-Mass` since the start of the repository work | 180 |
-| W3C cases run | 1,727 → **2,585** |
-| W3C crashes with assertions on | 1,360 → **0** |
-| Python tests | 178 → **210** |
+| | 1 Nov | **10 Nov** |
+|---|---|---|
+| Issues opened by the student on andersoxie/xpact | 89 (80 closed) | **112 (100 closed)**, each closed with verification |
+| Pull requests merged on andersoxie/xpact | 82 | **126** |
+| Speed work in CodTanium/mass-xpact | – | 39 issues, 50 pull requests |
+| Commits by the student on the work branch | 180 | 307 |
+| W3C cases run | 1,727 → 2,585 | 2,585, 0 failed |
+| W3C crashes with assertions on | 1,360 → 0 | 0 |
+| Python tests | 178 → 210 | **226** |
+| Worst chunked case (131 KB, 1 byte per call) | 50 min | **106 ms** |
 
 ### 10.3 Outstanding
-See [8.5](#85-known-issues). Also: the G03 and C# comparison tables rerun on the final code; one benchmark run for the latest fixes; a parallel version of the slowest test (#197, in progress).
+See [8.5](#85-known-issues). Also: deploying the website (supervisor's server), filing mass-xpact#73, #75 and #84 on andersoxie/xpact, a fair speed test against native Expat, a Linux build, and the 3 missing contracts from the Boogie models.
 
 ### 10.4 Overall
-The main question is answered with evidence. xpact's handling of valid and invalid XML **is consistent**: with Expat, with the W3C expectations, between builds and however the input is split, as far as the tested inputs go. The tests that make this claim checkable are now part of the repository. The remaining differences are documented as findings with reproductions.
+The main question is answered with evidence. xpact's handling of valid and invalid XML **is consistent**: with Expat, with the W3C expectations, between builds and however the input is split, as far as the tested inputs go, and it stayed consistent through the large speed change. The tests that make this claim checkable are now part of the repository, and some of them run in Jenkins. The remaining differences are documented as findings with reproductions.
 
 ---
 
@@ -497,6 +574,8 @@ Working through issues, pull requests and written reports made it possible to wo
 - Long test runs (25 minutes for one test) made each fix slow. I would set up faster checks earlier.
 - I would agree earlier with the supervisor on who reviews parser changes.
 - I would keep the documentation shorter and update it as I go, instead of in large batches.
+- I would run a full acceptance check earlier: in the speed work, checks per fix missed two regressions that the full run found (7.7).
+- Working in two repositories and three branches cost time when joining them; one work branch from the start would have been simpler.
 
 ### 11.6 Using an AI assistant
 Working with Claude Code was productive for exploring code, running repetitive checks and writing reports, but it needed clear rules (one issue, one PR, never commit to `main`, never report a pass without evidence) and checking of its conclusions. ✏️
@@ -504,32 +583,36 @@ Working with Claude Code was productive for exploring code, running repetitive c
 ---
 
 ## 12. Discussion
-The objectives were met for weeks 1–7 of the plan, ahead of schedule. The most valuable investigations were those that **questioned the evidence itself** (7.2, 7.3, 7.5), because they changed what every later result means. The fixes were effective and are checked with numbers before and after, but they rest on one main machine, and parser changes since 2026-10-28 still await the parser author's review.
+The objectives were met for weeks 1–8 of the plan, ahead of schedule. The most valuable investigations were those that **questioned the evidence itself** (7.2, 7.3, 7.5, 7.7), because they changed what every later result means. The fixes were effective and are checked with numbers before and after, but they rest on one main machine, and the parser changes since 2026-10-28 reached `main` together with `incremental-test`, without a separate review of each change by the parser's author.
 
-The results suggest that xpact is now **correct where it matters most** (the verdicts), **close to Expat in details** (most positions and events), and **far from Expat in speed**. The last point is no longer a testing question but an architectural one, and the supervisor's incremental-parser prototype is the right direction.
+The results suggest that xpact is now **correct where it matters most** (the verdicts), **close to Expat in details** (most positions and events), and **much closer to Expat in speed** than on 1 November, with one slow encoding left. What stands between xpact and a 1.0 release is no longer a testing question but two design questions: thread safety and the 10 MB input limit.
 
 ---
 
 ## 13. Conclusion and future work
 
 ### 13.1 Conclusion
-In the first four weeks of the eight-week internship, the project went from a parser that did not build reliably and crashed on 1,360 W3C cases with assertions on, to a parser that runs the whole W3C suite without a failure and gives Expat's verdict in every comparison, with tests and evidence that another developer can rerun. The main question can now be answered with data rather than claims.
+In the first five weeks of the eight-week internship, the project went from a parser that did not build reliably and crashed on 1,360 W3C cases with assertions on, to a parser that runs the whole W3C suite without a failure, gives Expat's verdict in every comparison, parses chunked input incrementally, and can be tried on a website, with tests and evidence that another developer can rerun. The main question can now be answered with data rather than claims.
 
 ### 13.2 Future work
 
-**Follow-up list**, also saved in [`PLAN.md`](../PLAN.md), "Next", item 12:
-- [ ] Rerun the G03 and C# comparison tables on the final code
-- [ ] [#197](https://github.com/andersoxie/xpact/issues/197) run the W3C-in-pieces test on several cores (in progress)
-- [ ] [#176](https://github.com/andersoxie/xpact/issues/176) and the rest of [#123](https://github.com/andersoxie/xpact/issues/123), together
-- [ ] [#170](https://github.com/andersoxie/xpact/issues/170): three single cases are likely quick (error-code mapping)
-- [ ] [#126](https://github.com/andersoxie/xpact/issues/126): raw text for the default handler
+**Follow-up list** (state 2026-11-10; the full list with time estimates is kept outside the repository):
+- [x] ~~Rerun the G03 comparison on the final code~~ (2026-11-06, 62 / 93 identical)
+- [x] ~~Selected SVG or libxml2 cases~~ (week 8)
+- [x] ~~Speed: resume from a saved state instead of replaying~~ (7.7, the "middle path" suggested on 1 November)
+- [ ] File mass-xpact#73, #75, #84 on andersoxie/xpact, one issue each
+- [ ] 🔴 Thread safety (mass-xpact#75) and the 10 MB limit: blockers for 1.0, design decisions for the supervisor
+- [ ] ISO-8859-1 in pieces (mass-xpact#84): copy the UTF-16 resume path
+- [ ] An exception guard on each exported DLL function (mass-xpact#73)
+- [ ] [#176](https://github.com/andersoxie/xpact/issues/176) and the rest of [#123](https://github.com/andersoxie/xpact/issues/123), together; [#170](https://github.com/andersoxie/xpact/issues/170); [#126](https://github.com/andersoxie/xpact/issues/126)
 - [ ] [#171](https://github.com/andersoxie/xpact/issues/171) and [#13](https://github.com/andersoxie/xpact/issues/13): ask the supervisor first
-- [ ] Plan weeks 8–9: selected SVG or libxml2 cases; PubMed files if the correctness checks permit
+- [ ] [#211](https://github.com/andersoxie/xpact/issues/211): billion-laughs documents are stopped, but ~15× slower than Expat
+- [ ] The 3 contracts the Boogie models need (7.8)
+- [ ] [#197](https://github.com/andersoxie/xpact/issues/197) the W3C-in-pieces test on several cores
+- [ ] Website deployment and HTTPS ([#210](https://github.com/andersoxie/xpact/issues/210), the supervisor's server); a low-privilege worker account
+- [ ] A Linux build and a fair speed test against native Expat
 
-**Speed** (for the supervisor to decide):
-1. **Small steps:** keep the decoded and normalized buffer between calls and process only new bytes; check characters while tokenizing; reuse one C buffer for callback strings; use `XP_TOKEN_SLICE` more widely.
-2. **Middle path:** resume from a saved state at markup boundaries, instead of replaying.
-3. **Long path:** finish `XP_INCREMENTAL_PARSE_SESSION` as the production core, guarded by the tests above.
+**Remaining speed work**: the "small steps" from 1 November are still open: check characters while tokenizing instead of in a separate pass, reuse one C buffer for callback strings, and use `XP_TOKEN_SLICE` more widely.
 
 ---
 
@@ -586,6 +669,9 @@ python -m unittest discover -s tests/python -p "test_*.py"
 Short demonstrations of single fixes (each is one command and shows xpact next to Expat):
 - `python -I reports\issue-0172\tools\probe.py <xpact dll> <libexpat dll>` (events before an error)
 - `python -I reports\issue-0175\tools\probe.py <xpact dll> <libexpat dll>` (`SYSTEM ''`)
+- Boogie models: see `verification/boogie/` and its [report](../../reports/issue-0252/report.md) for the commands
+- The full rerun of 2026-11-08: commands in [AlotOfTests-2026-11-08](../results/AlotOfTests-2026-11-08/README.md#-commands)
+- The website: [`website/`](../../website/) (run locally or from the Docker image)
 
 ### Appendix B – Result tables tied to builds
 
@@ -600,6 +686,14 @@ Short demonstrations of single fixes (each is one command and shows xpact next t
 | A04, 15 / 16 runners right | `f985102`, 2026-10-31 | 16 runners, SHA-256 | [A04-loaded-library](../results/A04-loaded-library/README.md) |
 | Fixes #172–#175, #124, #125: before and after | `5af2321` → `32bc80a` | both DLLs, against Expat 2.8.1 | `reports/issue-0172`, `-0173`, `-0174`, `-0175`, `-0124`, `-0125` |
 | Speed measurements (section 7.6) | `32bc80a`-era DLLs, 2026-10-31 | production and assertions DLLs | [week-07 note](../notes/weekly/week-07.md) |
+| G03 rerun, 62 / 93 identical | final code, 2026-11-06 | both DLLs | [G03 runs/final-normal](../results/G03-comparison/README.md) |
+| Acceptance run, 15 checks; speed 50 min → 106 ms | `253c81e` → `45d2f53`, 2026-11-05 | both DLLs, same PC, alternating runs | [acceptance report](../../reports/acceptance-253c81e-vs-45d2f53/report.md) |
+| Full rerun, 11 areas + repository suites | `incremental-test` @ `df75792`, 2026-11-08 | both DLLs; pyexpat 2.7.3 and Expat 2.8.1 | [AlotOfTests-2026-11-08](../results/AlotOfTests-2026-11-08/README.md) |
+| #209 rechecked (58 s → 12.2 ms), #211 rechecked | `df75792`, 2026-11-09 | production DLL | PR #240 |
+| mass-xpact#84, #73, #20, #75 rechecked | 2026-11-09 | production DLL | [week-08 note](../notes/weekly/week-08.md) |
+| Boogie models | `68abdcb`, 2026-11-09 | Boogie | [#252 report](../../reports/issue-0252/report.md) |
+| W3C 2,585, 0 failed | rebuilt from `68abdcb`, 2026-11-10 | both tiers | [week-08 note](../notes/weekly/week-08.md) |
+| Website: memory cap, load test, 10 MB | 2026-11-10 | Release build, real Kestrel server | [#227](https://github.com/andersoxie/xpact/issues/227), [load-test.md](../../website/docs/load-test.md), PR #268 |
 
 ### Appendix C – Main contributions
 
@@ -612,8 +706,14 @@ Short demonstrations of single fixes (each is one command and shows xpact next t
 | Failure reporting | #28, #60, #45 (B01), #46 (B02) | #59, #61, #62, #63 |
 | Test tools and comparisons | #37 (C# DLL tests), #117 (verdict rules), #118 (G01), #121 (Expat comparison), #128 (C02 regressions), #153 (dual lane), #168 (A04), #169 (G03), #179, #180 | #178, #181, #182, #186 |
 | Parser fixes | #146, #148, #151, #154–#159, #165, #172, #122, #175, #174, #173, #124, #125 | #152, #160–#164, #166, #192, #194, #195, #196, #198, #199 |
-| Syncing with `main` | #102, #110, #188 | #103, #111, #189 |
-| Documentation | #183 and others | e.g. #184, #200, #201, #202 |
+| Syncing with `main` | #102, #110, #188 | #103, #111, #189, #251, #261 |
+| Speed work (CodTanium/mass-xpact) | #2, #11, #12, #14, #17, #20, #31–#57, #60, #64, #67–#69, #72 | brought back through `student-Mass` |
+| Shared fixtures and new sources | mass-xpact #81, #85 | |
+| Full rerun and rechecks | #209, #211 | #239, #240, #242 |
+| Website | #210, #227, #267 | #212, #217–#226, #241, #243–#249, #255, #257, #258, #268 |
+| Boogie models | #252 | #253 |
+| Jenkins, SonarQube, versions | #131, #262 | #260, #263, #266 |
+| Documentation | #183 and others | e.g. #184, #200–#204, #256, #259 |
 
 </details>
 
