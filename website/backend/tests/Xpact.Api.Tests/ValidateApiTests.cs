@@ -185,6 +185,27 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
+    public async Task The_memory_cap_stops_a_worker_that_needs_more()
+    {
+        // Nested entities ("billion laughs", #211): under the normal 512 MB cap XPact rejects it,
+        // but on the way its native memory grows past 40 MB. A tiny document needs about 28 MB (#227).
+        var sb = new StringBuilder("<!DOCTYPE r [<!ENTITY a0 \"xxxxxxxxxx\">");
+        for (int i = 1; i < 10; i++)
+            sb.Append($"<!ENTITY a{i} \"").Append(string.Concat(Enumerable.Repeat($"&a{i - 1};", 10))).Append("\">");
+        string laughs = sb.Append("]><r>&a9;</r>").ToString();
+        var capped = Client(("Xpact:WorkerMemoryMb", "40"));
+
+        Assert.Equal(Verdicts.Accepted, (await PostJson(capped, new { xml = "<a/>" })).Verdict);
+        Assert.Equal(Verdicts.Rejected, (await PostJson(Client(), new { xml = laughs })).Verdict);
+
+        var stopped = await PostJson(capped, new { xml = laughs });
+        Assert.True(stopped.Verdict == Verdicts.Crashed, $"{stopped.Verdict}: {stopped.Diagnostic}");
+
+        // The API keeps serving after the worker was stopped.
+        Assert.Equal(Verdicts.Accepted, (await PostJson(capped, new { xml = "<a/>" })).Verdict);
+    }
+
+    [Fact]
     public async Task Results_files_are_served_and_names_are_checked()
     {
         var client = Client();
