@@ -153,6 +153,40 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
+    public async Task Documents_up_to_10_MB_are_accepted()
+    {
+        const int limit = 10 * 1024 * 1024; // the default MaxDocumentBytes and the parser's own limit
+        static byte[] Doc(int size)
+        {
+            // Attributes with quotes and line ends: escaping makes this longer as JSON.
+            var sb = new StringBuilder("<root>\n");
+            const string item = "<i a=\"1\"/>\n";
+            while (sb.Length + item.Length + 7 <= size) sb.Append(item);
+            sb.Append(' ', size - 7 - sb.Length); // pad with whitespace to the exact size (ASCII: 1 byte per char)
+            return Encoding.UTF8.GetBytes(sb.Append("</root>").ToString());
+        }
+        byte[] exact = Doc(limit);
+        Assert.Equal(limit, exact.Length);
+
+        using (var form = new MultipartFormDataContent())
+        {
+            form.Add(new ByteArrayContent(exact), "file", "ten-mb.xml");
+            var response = await Client().PostAsync("/api/validate", form);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(Verdicts.Accepted, (await response.Content.ReadFromJsonAsync<ValidationResult>())!.Verdict);
+        }
+
+        // Pasted text: the JSON body is longer than 10 MB, the document is not.
+        Assert.Equal(Verdicts.Accepted, (await PostJson(Client(), new { xml = Encoding.UTF8.GetString(exact) })).Verdict);
+
+        using (var form = new MultipartFormDataContent())
+        {
+            form.Add(new ByteArrayContent(Doc(limit + 1)), "file", "too-big.xml");
+            Assert.Equal(HttpStatusCode.RequestEntityTooLarge, (await Client().PostAsync("/api/validate", form)).StatusCode);
+        }
+    }
+
+    [Fact]
     public async Task Bad_requests_are_refused()
     {
         var client = Client(("Xpact:MaxDocumentBytes", "1000"));

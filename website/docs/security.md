@@ -12,7 +12,7 @@ The site runs a parser on documents from strangers. These are the protections, a
 | A parser crash taking the site down | One worker **process** per document | `WorkerRunner.cs` | ✅ verdict `crashed` is handled; the worker pattern is the one used by `tests/dotnet/XpactDllTests` |
 | Endless parsing (CPU) | Worker killed after 10 s; below-normal priority | `WorkerRunner.cs` | ✅ `Slow_documents_are_stopped_by_the_timeout` |
 | Memory exhaustion | Windows Job Object, 512 MB per worker | `Workers/JobObject.cs` | ✅ `The_memory_cap_stops_a_worker_that_needs_more` (#227): under a 40 MB cap a nested-entity document stops the worker (`crashed`); the API keeps serving |
-| Huge uploads | Kestrel and form limits at 1 MB + envelope; `413` above | `Program.cs` | ✅ `Bad_requests_are_refused` |
+| Huge uploads | Documents up to 10 MB (the parser's own limit); request body at most 2 × 10 MB + 64 KB (JSON escaping); `413` above. A 10 MB document needs about 175-250 MB in the worker (measured 2026-11-10), below the 512 MB cap | `Program.cs` | ✅ `Bad_requests_are_refused` |
 | Request floods | Rate limit, 30 / min per IP; at most 4 workers at once | `Program.cs` | ✅ `Requests_are_rate_limited_per_client` |
 | One visitor using up the limit for everyone behind a proxy | `X-Forwarded-For` is read from a proxy on this machine or one in `Xpact:KnownProxies` only, so the limit counts each real visitor and visitors cannot fake their address | `Program.cs` | ✅ `Visitors_behind_a_proxy_are_rate_limited_separately` |
 | Reading other files through the results endpoint | Allowed names only: `conformance`, `benchmarks`, `comparison`, `testing` | `Program.cs` | ✅ `Results_files_are_served_and_names_are_checked` |
