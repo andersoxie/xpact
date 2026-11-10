@@ -1,0 +1,52 @@
+Note4 - 2026-11-03 - incremental parsing (#1): v4, v5, findings, GitHub state
+==========================================================================
+
+GITHUB (CodTanium/mass-xpact = where we commit now; andersoxie/xpact = read only)
+- Issue #2: the quadratic chunked parsing (this work). Board: In progress. Label "performance"
+  was created. Milestone "Week 6 - One improvement".
+- Issue #3: separate finding: assertions DLL crashes (0xC0000028, no output) on
+  xmlconf\ibm\not-wf\P68\ibm68n03.xml with ONLY a default handler, any chunk size. Baseline
+  crashes the same: not caused by #2. Cause unknown. Board: Todo.
+
+v4 (fix after the trace diff, events-7/default-7/suspend-*):
+- The old path cuts an unfinished UTF-8 character off non-final input BEFORE deciding reparse
+  deferral (complete_encoded_prefix_count in decoded_input). The resume path decided on the
+  whole buffer, so callbacks were delivered one call earlier in 4 W3C files (Japanese UTF-8,
+  XML 1.1 chars). Fix: should_defer_reparse_callbacks_on_prefix (keep_head + put the <= 3 tail
+  bytes back) and parse only up to that count; XML_GetInputContext gets context_source_count.
+- LESSON: a postcondition like "same_string (old input_buffer.twin)" copies the whole buffer on
+  every call in assertion builds = quadratic again. Use count checks.
+
+v5 (fix found by thinking about uncovered paths, then CONFIRMED with a new trace mode "abort"):
+- XML_StopParser(p, XML_FALSE) inside a callback during a resumed parse: the resumed parse set
+  the error, then the code fell back to the full replay; the stop flag was still set, so the
+  replay reported the abort at 1:0:0 (wrong position) in 1,238 traced documents.
+- Fix: an error in a resumed parse is accepted (parser state = that of a full parse). Fallback
+  only when continue_prefix returns False WITHOUT error (invalid character in new bytes).
+
+EVIDENCE TOOL NOW IN THE REPO: reports\mass-xpact-issue-0002\tools\run-tools.ps1
+  -DllDir <folder with xpact.dll or xpact_assertions.dll> -OutputDir <dir> -Run All|Timing|Trace|Crc
+  builds chunk_time/trace/xpact_chunked_crc into build\mass-xpact-0002-tools once.
+  Trace modes: events, default, suspend, abort (9 runs). Compare trace-sha256.txt files.
+  If you change trace.c or chunk_time.c, delete build\mass-xpact-0002-tools to rebuild.
+  PowerShell: after a cd into build\evidence the relative paths break -> use absolute paths.
+
+v5 RESULTS (before Test 2)
+- traces: 9/9 identical to baseline (production); assertions tier: identical to baseline
+  assertions (both crash on #3's file in default mode).
+- XpactDllTests 4308/4308 both tiers; CRC 54 rows identical both tiers; audit identical;
+  Eiffel matrix ok (4 configs); smoke ok both tiers.
+
+NOT RUN
+- Expat's own runtests (libexpat 2.8.1 C suite): the auto-mode permission check blocked
+  building/running the downloaded Expat source (external code). Source is unpacked in
+  scratchpad\expat-src\expat-2.8.1 if the user allows it:
+  .\scripts\run_libexpat_adapter.ps1 -Mode NativeSuite -ExpatSourceDir <that> -XpactLibrary
+  build\<dir>\native-eiffel\xpact.lib -SkipNativeBuild -SkipXpactBuild -OutputDir build\<dir>\libexpat-native
+  (needs VS CMake on PATH: ...\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin)
+
+NEXT SPEED IDEAS (measured on a 10% sample of Test 2: expat 2.7 s, xpact baseline 316 s,
+xpact v4 89 s). The rest is per-parse cost: Test 2 parses every small document once per split
+point. Look at: parser creation/reset (reset wipes ~15 tables and re-creates predefined
+entities), C_STRING allocations per callback, handler.reset_events per call,
+on_processing_instruction builds diagnostic strings even when diagnostics are off.

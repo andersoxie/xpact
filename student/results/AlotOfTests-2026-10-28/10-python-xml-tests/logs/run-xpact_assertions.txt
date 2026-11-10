@@ -1,0 +1,1750 @@
+pyexpat: C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\build\xpact_assertions\pyexpat.pyd expat_2.8.1
+== CPython 3.14.0 (tags/v3.14.0:ebf955d, Oct 7 2025, 10:15:03) [MSC v.1944 64 bit (AMD64)]
+== Windows-11-10.0.26300-SP0 little-endian
+== Python build: release with_assert JIT (disabled)
+== cwd: C:\Users\masou\AppData\Local\Temp\test_python_worker_112352æ
+== CPU count: 12
+== encodings: locale=cp1252 FS=utf-8
+== resources: all test resources are disabled, use -u option to unskip tests
+
+Using random seed: 3470853425
+0:00:00 Run 10 tests sequentially in a single process (timeout: 10 min)
+0:00:00 [ 1/10] test_pyexpat
+test1 (test.test_pyexpat.BufferTextTest.test1) ... FAIL
+test2 (test.test_pyexpat.BufferTextTest.test2) ... ok
+test3 (test.test_pyexpat.BufferTextTest.test3) ... ok
+test4 (test.test_pyexpat.BufferTextTest.test4) ... ok
+test5 (test.test_pyexpat.BufferTextTest.test5) ... ok
+test6 (test.test_pyexpat.BufferTextTest.test6) ... ok
+test7 (test.test_pyexpat.BufferTextTest.test7) ... ok
+test_buffering_enabled (test.test_pyexpat.BufferTextTest.test_buffering_enabled) ... ok
+test_default_to_disabled (test.test_pyexpat.BufferTextTest.test_default_to_disabled) ... ok
+test_1000_bytes (test.test_pyexpat.ChardataBufferTest.test_1000_bytes) ... ok
+test_1025_bytes (test.test_pyexpat.ChardataBufferTest.test_1025_bytes) ... FAIL
+test_change_size_1 (test.test_pyexpat.ChardataBufferTest.test_change_size_1) ... ok
+test_change_size_2 (test.test_pyexpat.ChardataBufferTest.test_change_size_2) ... FAIL
+test_disabling_buffer (test.test_pyexpat.ChardataBufferTest.test_disabling_buffer) ... ok
+test_unchanged_size (test.test_pyexpat.ChardataBufferTest.test_unchanged_size) ... ok
+test_wrong_size (test.test_pyexpat.ChardataBufferTest.test_wrong_size) ... ok
+test_codes (test.test_pyexpat.ErrorMessageTest.test_codes) ... ok
+test_expaterror (test.test_pyexpat.ErrorMessageTest.test_expaterror) ... ok
+test_ignore_use_foreign_dtd (test.test_pyexpat.ForeignDTDTests.test_ignore_use_foreign_dtd)
+If UseForeignDTD is passed True and a document with an external ... ok
+test_use_foreign_dtd (test.test_pyexpat.ForeignDTDTests.test_use_foreign_dtd)
+If UseForeignDTD is passed True and a document without an external ... FAIL
+test_exception (test.test_pyexpat.HandlerExceptionTest.test_exception) ... ok
+test (test.test_pyexpat.InterningTest.test) ... ok
+test_issue9402 (test.test_pyexpat.InterningTest.test_issue9402) ... ok
+test1 (test.test_pyexpat.MalformedInputTest.test1) ... FAIL
+test2 (test.test_pyexpat.MalformedInputTest.test2) ... FAIL
+test_illegal (test.test_pyexpat.NamespaceSeparatorTest.test_illegal) ... ok
+test_legal (test.test_pyexpat.NamespaceSeparatorTest.test_legal) ... ok
+test_zero_length (test.test_pyexpat.NamespaceSeparatorTest.test_zero_length) ... ok
+test_parent_parser_outlives_its_subparsers__chain (test.test_pyexpat.ParentParserLifetimeTest.test_parent_parser_outlives_its_subparsers__chain) ... ok
+test_parent_parser_outlives_its_subparsers__multiple (test.test_pyexpat.ParentParserLifetimeTest.test_parent_parser_outlives_its_subparsers__multiple) ... ok
+test_parent_parser_outlives_its_subparsers__single (test.test_pyexpat.ParentParserLifetimeTest.test_parent_parser_outlives_its_subparsers__single) ... ok
+test_parse_again (test.test_pyexpat.ParseTest.test_parse_again) ... ok
+test_parse_bytes (test.test_pyexpat.ParseTest.test_parse_bytes) ... FAIL
+test_parse_file (test.test_pyexpat.ParseTest.test_parse_file) ... FAIL
+test_parse_str (test.test_pyexpat.ParseTest.test_parse_str) ... FAIL
+test (test.test_pyexpat.PositionTest.test) ... ok
+test_getter_setter_round_trip (test.test_pyexpat.ReparseDeferralTest.test_getter_setter_round_trip) ... ok
+test_reparse_deferral_disabled (test.test_pyexpat.ReparseDeferralTest.test_reparse_deferral_disabled) ... ok
+test_reparse_deferral_enabled (test.test_pyexpat.ReparseDeferralTest.test_reparse_deferral_enabled) ... ok
+test_buffer_text (test.test_pyexpat.SetAttributeTest.test_buffer_text) ... ok
+test_invalid_attributes (test.test_pyexpat.SetAttributeTest.test_invalid_attributes) ... ok
+test_namespace_prefixes (test.test_pyexpat.SetAttributeTest.test_namespace_prefixes) ... ok
+test_ordered_attributes (test.test_pyexpat.SetAttributeTest.test_ordered_attributes) ... ok
+test_specified_attributes (test.test_pyexpat.SetAttributeTest.test_specified_attributes) ... ok
+test_parse_only_xml_data (test.test_pyexpat.sf1296433Test.test_parse_only_xml_data) ... ok
+
+======================================================================
+FAIL: test1 (test.test_pyexpat.BufferTextTest.test1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 394, in test1
+    self.assertEqual(self.stuff,
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+                     ["<a>", "1", "<b>", "2", "\n", "3", "<c>", "4\n5"],
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     "buffering control not reacting as expected")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['<a>', '1', '<b>', '2\n3', '<c>', '4\n5'] != ['<a>', '1', '<b>', '2', '\n', '3', '<c>', '4\n5']
+
+First differing element 3:
+'2\n3'
+'2'
+
+Second list contains 2 additional elements.
+First extra element 6:
+'<c>'
+
+- ['<a>', '1', '<b>', '2\n3', '<c>', '4\n5']
++ ['<a>', '1', '<b>', '2', '\n', '3', '<c>', '4\n5']
+?                       ++++  ++++
+ : buffering control not reacting as expected
+
+======================================================================
+FAIL: test_1025_bytes (test.test_pyexpat.ChardataBufferTest.test_1025_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 555, in test_1025_bytes
+    self.assertEqual(self.small_buffer_test(1025), 2)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_change_size_2 (test.test_pyexpat.ChardataBufferTest.test_change_size_2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 669, in test_change_size_2
+    self.assertEqual(self.n, 4)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^
+AssertionError: 3 != 4
+
+======================================================================
+FAIL: test_use_foreign_dtd (test.test_pyexpat.ForeignDTDTests.test_use_foreign_dtd)
+If UseForeignDTD is passed True and a document without an external
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 726, in test_use_foreign_dtd
+    self.assertEqual(handler_call_args, [(None, None)])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [(None, 'foreign.dtd')] != [(None, None)]
+
+First differing element 0:
+(None, 'foreign.dtd')
+(None, None)
+
+- [(None, 'foreign.dtd')]
++ [(None, None)]
+
+======================================================================
+FAIL: test1 (test.test_pyexpat.MalformedInputTest.test1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 676, in test1
+    parser.Parse(xml, True)
+    ~~~~~~~~~~~~^^^^^^^^^^^
+xml.parsers.expat.ExpatError: partial character: line 1, column 0
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 679, in test1
+    self.assertEqual(str(e), 'unclosed token: line 2, column 0')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'partial character: line 1, column 0' != 'unclosed token: line 2, column 0'
+- partial character: line 1, column 0
++ unclosed token: line 2, column 0
+
+
+======================================================================
+FAIL: test2 (test.test_pyexpat.MalformedInputTest.test2)
+----------------------------------------------------------------------
+xml.parsers.expat.ExpatError: not well-formed (invalid token): line 1, column 0
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 686, in test2
+    with self.assertRaisesRegex(expat.ExpatError, err_pattern):
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "XML declaration not well-formed: line 1, column \d+" does not match "not well-formed (invalid token): line 1, column 0"
+
+======================================================================
+FAIL: test_parse_bytes (test.test_pyexpat.ParseTest.test_parse_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 238, in test_parse_bytes
+    self._verify_parse_output(operations)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 228, in _verify_parse_output
+    self.assertEqual(operation, expected_operation)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('Entity declaration', ('unparsed_entity'[45 chars]on')) != "Unparsed entity decl: ('unparsed_entity'[36 chars]on')"
+
+======================================================================
+FAIL: test_parse_file (test.test_pyexpat.ParseTest.test_parse_file)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 262, in test_parse_file
+    self._verify_parse_output(operations)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 228, in _verify_parse_output
+    self.assertEqual(operation, expected_operation)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('Entity declaration', ('unparsed_entity'[45 chars]on')) != "Unparsed entity decl: ('unparsed_entity'[36 chars]on')"
+
+======================================================================
+FAIL: test_parse_str (test.test_pyexpat.ParseTest.test_parse_str)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 250, in test_parse_str
+    self._verify_parse_output(operations)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_pyexpat.py", line 228, in _verify_parse_output
+    self.assertEqual(operation, expected_operation)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('Entity declaration', ('unparsed_entity'[45 chars]on')) != "Unparsed entity decl: ('unparsed_entity'[36 chars]on')"
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.091s
+
+FAILED (failures=9)
+test test_pyexpat failed
+0:00:00 [ 1/10/1] test_pyexpat failed (9 failures)
+0:00:00 [ 2/10/1] test_xml_etree
+test_find_with_error (test.test_xml_etree.BadElementPathTest.test_find_with_error) ... ok
+test_find_with_mutating (test.test_xml_etree.BadElementPathTest.test_find_with_mutating) ... ok
+test_findall_with_error (test.test_xml_etree.BadElementPathTest.test_findall_with_error) ... ok
+test_findall_with_mutating (test.test_xml_etree.BadElementPathTest.test_findall_with_mutating) ... ok
+test_findtext_with_error (test.test_xml_etree.BadElementPathTest.test_findtext_with_error) ... ok
+test_findtext_with_falsey_text_attribute (test.test_xml_etree.BadElementPathTest.test_findtext_with_falsey_text_attribute) ... ok
+test_findtext_with_mutating (test.test_xml_etree.BadElementPathTest.test_findtext_with_mutating) ... ok
+test_findtext_with_none_text_attribute (test.test_xml_etree.BadElementPathTest.test_findtext_with_none_text_attribute) ... ok
+test_ass_subscr (test.test_xml_etree.BadElementTest.test_ass_subscr) ... ok
+test_deepcopy_clear (test.test_xml_etree.BadElementTest.test_deepcopy_clear) ... ok
+test_deepcopy_grow (test.test_xml_etree.BadElementTest.test_deepcopy_grow) ... ok
+test_element_get_tail (test.test_xml_etree.BadElementTest.test_element_get_tail) ... ok
+test_element_get_text (test.test_xml_etree.BadElementTest.test_element_get_text) ... ok
+test_extend_mutable_list (test.test_xml_etree.BadElementTest.test_extend_mutable_list) ... ok
+test_extend_mutable_list2 (test.test_xml_etree.BadElementTest.test_extend_mutable_list2) ... ok
+test_recursive_repr (test.test_xml_etree.BadElementTest.test_recursive_repr) ... ok
+test_remove_with_clear_assume_existing (test.test_xml_etree.BadElementTest.test_remove_with_clear_assume_existing) ... ok
+test_remove_with_clear_assume_missing (test.test_xml_etree.BadElementTest.test_remove_with_clear_assume_missing) ... ok
+test_remove_with_mutate_root_assume_existing (test.test_xml_etree.BadElementTest.test_remove_with_mutate_root_assume_existing) ... ok
+test_remove_with_mutate_root_assume_missing (test.test_xml_etree.BadElementTest.test_remove_with_mutate_root_assume_missing) ... ok
+test_subscr (test.test_xml_etree.BadElementTest.test_subscr) ... ok
+test_treebuilder_end (test.test_xml_etree.BadElementTest.test_treebuilder_end) ... ok
+test_treebuilder_start (test.test_xml_etree.BadElementTest.test_treebuilder_start) ... ok
+test___copy__ (test.test_xml_etree.BasicElementTest.test___copy__) ... ok
+test___deepcopy__ (test.test_xml_etree.BasicElementTest.test___deepcopy__) ... ok
+test___init__ (test.test_xml_etree.BasicElementTest.test___init__) ... ok
+test_augmentation_type_errors (test.test_xml_etree.BasicElementTest.test_augmentation_type_errors) ... ok
+test_cyclic_gc (test.test_xml_etree.BasicElementTest.test_cyclic_gc) ... ok
+test_get_keyword_args (test.test_xml_etree.BasicElementTest.test_get_keyword_args) ... ok
+test_pickle (test.test_xml_etree.BasicElementTest.test_pickle) ... ok
+test_pickle_issue18997 (test.test_xml_etree.BasicElementTest.test_pickle_issue18997) ... ok
+test_weakref (test.test_xml_etree.BasicElementTest.test_weakref) ... ok
+test_warning (test.test_xml_etree.BoolTest.test_warning) ... ok
+test_39495_treebuilder_start (test.test_xml_etree.BugsTest.test_39495_treebuilder_start) ... ok
+test_bug_1534630 (test.test_xml_etree.BugsTest.test_bug_1534630) ... ok
+test_bug_200708_close (test.test_xml_etree.BugsTest.test_bug_200708_close) ... ok
+test_bug_200708_newline (test.test_xml_etree.BugsTest.test_bug_200708_newline) ... ok
+test_bug_200709_default_namespace (test.test_xml_etree.BugsTest.test_bug_200709_default_namespace) ... ok
+test_bug_200709_element_comment (test.test_xml_etree.BugsTest.test_bug_200709_element_comment) ... ok
+test_bug_200709_element_insert (test.test_xml_etree.BugsTest.test_bug_200709_element_insert) ... ok
+test_bug_200709_iter_comment (test.test_xml_etree.BugsTest.test_bug_200709_iter_comment) ... ok
+test_bug_200709_register_namespace (test.test_xml_etree.BugsTest.test_bug_200709_register_namespace) ... ok
+test_bug_xmltoolkit21 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit21) ... ok
+test_bug_xmltoolkit25 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit25) ... ok
+test_bug_xmltoolkit28 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit28) ... ok
+test_bug_xmltoolkit39 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit39) ... ok
+test_bug_xmltoolkit54 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit54) ... ok
+test_bug_xmltoolkit55 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit55) ... FAIL
+test_bug_xmltoolkit60 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit60) ... ok
+test_bug_xmltoolkit62 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit62) ... FAIL
+test_bug_xmltoolkit63 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit63) ... ok
+test_bug_xmltoolkitX1 (test.test_xml_etree.BugsTest.test_bug_xmltoolkitX1) ... ok
+test_expat224_utf8_bug (test.test_xml_etree.BugsTest.test_expat224_utf8_bug) ... ok
+test_expat224_utf8_bug_file (test.test_xml_etree.BugsTest.test_expat224_utf8_bug_file) ... ok
+test_issue10777 (test.test_xml_etree.BugsTest.test_issue10777) ... ok
+test_issue123213_correct_extend_exception (test.test_xml_etree.BugsTest.test_issue123213_correct_extend_exception) ... ok
+test_issue6233 (test.test_xml_etree.BugsTest.test_issue6233) ... ok
+test_issue6565 (test.test_xml_etree.BugsTest.test_issue6565) ... ok
+test_lost_elem (test.test_xml_etree.BugsTest.test_lost_elem) ... skipped 'generators are not reentrant'
+test_lost_tail (test.test_xml_etree.BugsTest.test_lost_tail) ... ok
+test_lost_text (test.test_xml_etree.BugsTest.test_lost_text) ... ok
+test_c14n_exclusion (test.test_xml_etree.C14NTest.test_c14n_exclusion) ... ok
+test_simple_roundtrip (test.test_xml_etree.C14NTest.test_simple_roundtrip) ... ok
+test_xml_c14n2 (test.test_xml_etree.C14NTest.test_xml_c14n2) ... 
+  test_xml_c14n2 (test.test_xml_etree.C14NTest.test_xml_c14n2) [out_inNsContent_c14nPrefixQnameXpathElem(PrefixRewrite=sequential,QNameAware=Element,XPathElement)] ... skipped 'QName rewriting in XPath text is not supported in out_inNsContent_c14nPrefixQnameXpathElem'
+  test_xml_c14n2 (test.test_xml_etree.C14NTest.test_xml_c14n2) [out_inNsContent_c14nQnameXpathElem(QNameAware=Element,XPathElement)] ... skipped 'QName rewriting in XPath text is not supported in out_inNsContent_c14nQnameXpathElem'
+  test_xml_c14n2 (test.test_xml_etree.C14NTest.test_xml_c14n2) [out_inNsRedecl_c14nDefault()] ... skipped 'Redeclared namespace handling is not supported in out_inNsRedecl_c14nDefault'
+  test_xml_c14n2 (test.test_xml_etree.C14NTest.test_xml_c14n2) [out_inNsSuperfluous_c14nDefault()] ... skipped 'Redeclared namespace handling is not supported in out_inNsSuperfluous_c14nDefault'
+test_bad_find (test.test_xml_etree.ElementFindTest.test_bad_find) ... ok
+test_find_simple (test.test_xml_etree.ElementFindTest.test_find_simple) ... ok
+test_find_through_ElementTree (test.test_xml_etree.ElementFindTest.test_find_through_ElementTree) ... ok
+test_find_xpath (test.test_xml_etree.ElementFindTest.test_find_xpath) ... ok
+test_findall (test.test_xml_etree.ElementFindTest.test_findall) ... ok
+test_findall_different_nsmaps (test.test_xml_etree.ElementFindTest.test_findall_different_nsmaps) ... ok
+test_findall_wildcard (test.test_xml_etree.ElementFindTest.test_findall_wildcard) ... ok
+test_test_find_with_ns (test.test_xml_etree.ElementFindTest.test_test_find_with_ns) ... ok
+test_basic (test.test_xml_etree.ElementIterTest.test_basic) ... ok
+test_copy (test.test_xml_etree.ElementIterTest.test_copy) ... ok
+test_corners (test.test_xml_etree.ElementIterTest.test_corners) ... ok
+test_iter_by_tag (test.test_xml_etree.ElementIterTest.test_iter_by_tag) ... ok
+test_pickle (test.test_xml_etree.ElementIterTest.test_pickle) ... ok
+test_delslice (test.test_xml_etree.ElementSlicingTest.test_delslice) ... ok
+test_getslice_negative_steps (test.test_xml_etree.ElementSlicingTest.test_getslice_negative_steps) ... ok
+test_getslice_range (test.test_xml_etree.ElementSlicingTest.test_getslice_range) ... ok
+test_getslice_single_index (test.test_xml_etree.ElementSlicingTest.test_getslice_single_index) ... ok
+test_getslice_steps (test.test_xml_etree.ElementSlicingTest.test_getslice_steps) ... ok
+test_issue123213_setslice_exception (test.test_xml_etree.ElementSlicingTest.test_issue123213_setslice_exception) ... ok
+test_setslice_negative_steps (test.test_xml_etree.ElementSlicingTest.test_setslice_negative_steps) ... ok
+test_setslice_range (test.test_xml_etree.ElementSlicingTest.test_setslice_range) ... ok
+test_setslice_single_index (test.test_xml_etree.ElementSlicingTest.test_setslice_single_index) ... ok
+test_setslice_steps (test.test_xml_etree.ElementSlicingTest.test_setslice_steps) ... ok
+test_attlist_default (test.test_xml_etree.ElementTreeTest.test_attlist_default) ... ok
+test_attrib (test.test_xml_etree.ElementTreeTest.test_attrib) ... ok
+test_cdata (test.test_xml_etree.ElementTreeTest.test_cdata) ... ok
+test_children (test.test_xml_etree.ElementTreeTest.test_children) ... ok
+test_constructor (test.test_xml_etree.ElementTreeTest.test_constructor) ... ok
+test_copy (test.test_xml_etree.ElementTreeTest.test_copy) ... ok
+test_custom_builder (test.test_xml_etree.ElementTreeTest.test_custom_builder) ... ok
+test_custom_builder_only_end_ns (test.test_xml_etree.ElementTreeTest.test_custom_builder_only_end_ns) ... ok
+test_doctype_public (test.test_xml_etree.ElementTreeTest.test_doctype_public) ... ok
+test_dump_attribute_order (test.test_xml_etree.ElementTreeTest.test_dump_attribute_order) ... ok
+test_encoding (test.test_xml_etree.ElementTreeTest.test_encoding) ... ERROR
+test_entity (test.test_xml_etree.ElementTreeTest.test_entity) ... FAIL
+test_file_init (test.test_xml_etree.ElementTreeTest.test_file_init) ... ok
+test_html_empty_elems_serialization (test.test_xml_etree.ElementTreeTest.test_html_empty_elems_serialization) ... ok
+test_indent (test.test_xml_etree.ElementTreeTest.test_indent) ... ok
+test_indent_level (test.test_xml_etree.ElementTreeTest.test_indent_level) ... ok
+test_indent_space (test.test_xml_etree.ElementTreeTest.test_indent_space) ... ok
+test_indent_space_caching (test.test_xml_etree.ElementTreeTest.test_indent_space_caching) ... ok
+test_initialize_parser_without_target (test.test_xml_etree.ElementTreeTest.test_initialize_parser_without_target) ... ok
+test_interface (test.test_xml_etree.ElementTreeTest.test_interface) ... ok
+test_issue18347 (test.test_xml_etree.ElementTreeTest.test_issue18347) ... ok
+test_iterparse (test.test_xml_etree.ElementTreeTest.test_iterparse) ... FAIL
+test_iterparse_close (test.test_xml_etree.ElementTreeTest.test_iterparse_close) ... ok
+test_makeelement (test.test_xml_etree.ElementTreeTest.test_makeelement) ... ok
+test_methods (test.test_xml_etree.ElementTreeTest.test_methods) ... ok
+test_namespace (test.test_xml_etree.ElementTreeTest.test_namespace) ... ok
+test_parsefile (test.test_xml_etree.ElementTreeTest.test_parsefile) ... ok
+test_parseliteral (test.test_xml_etree.ElementTreeTest.test_parseliteral) ... ok
+test_path_cache (test.test_xml_etree.ElementTreeTest.test_path_cache) ... ok
+test_processinginstruction (test.test_xml_etree.ElementTreeTest.test_processinginstruction) ... ok
+test_qname (test.test_xml_etree.ElementTreeTest.test_qname) ... ok
+test_set_attribute (test.test_xml_etree.ElementTreeTest.test_set_attribute) ... ok
+test_setroot (test.test_xml_etree.ElementTreeTest.test_setroot) ... ok
+test_simpleops (test.test_xml_etree.ElementTreeTest.test_simpleops) ... ok
+test_tostring_default_namespace (test.test_xml_etree.ElementTreeTest.test_tostring_default_namespace) ... ok
+test_tostring_default_namespace_different_namespace (test.test_xml_etree.ElementTreeTest.test_tostring_default_namespace_different_namespace) ... ok
+test_tostring_default_namespace_original_no_namespace (test.test_xml_etree.ElementTreeTest.test_tostring_default_namespace_original_no_namespace) ... ok
+test_tostring_no_xml_declaration (test.test_xml_etree.ElementTreeTest.test_tostring_no_xml_declaration) ... ok
+test_tostring_xml_declaration (test.test_xml_etree.ElementTreeTest.test_tostring_xml_declaration) ... ok
+test_tostring_xml_declaration_cases (test.test_xml_etree.ElementTreeTest.test_tostring_xml_declaration_cases) ... ok
+test_tostring_xml_declaration_unicode_encoding (test.test_xml_etree.ElementTreeTest.test_tostring_xml_declaration_unicode_encoding) ... ok
+test_tostringlist_default_namespace (test.test_xml_etree.ElementTreeTest.test_tostringlist_default_namespace) ... ok
+test_tostringlist_xml_declaration (test.test_xml_etree.ElementTreeTest.test_tostringlist_xml_declaration) ... ok
+test_tree_write_attribute_order (test.test_xml_etree.ElementTreeTest.test_tree_write_attribute_order) ... ok
+test_writefile (test.test_xml_etree.ElementTreeTest.test_writefile) ... ok
+test_writestring (test.test_xml_etree.ElementTreeTest.test_writestring) ... ok
+test_xpath_tokenizer (test.test_xml_etree.ElementTreeTest.test_xpath_tokenizer) ... ok
+test_Element_subclass_constructor (test.test_xml_etree.ElementTreeTypeTest.test_Element_subclass_constructor) ... ok
+test_Element_subclass_find (test.test_xml_etree.ElementTreeTypeTest.test_Element_subclass_find) ... ok
+test_Element_subclass_new_method (test.test_xml_etree.ElementTreeTypeTest.test_Element_subclass_new_method) ... ok
+test_Element_subclass_trivial (test.test_xml_etree.ElementTreeTypeTest.test_Element_subclass_trivial) ... ok
+test_istype (test.test_xml_etree.ElementTreeTypeTest.test_istype) ... ok
+test_encoding (test.test_xml_etree.IOTest.test_encoding) ... ok
+test_read_from_bytesio (test.test_xml_etree.IOTest.test_read_from_bytesio) ... ok
+test_read_from_stringio (test.test_xml_etree.IOTest.test_read_from_stringio) ... ok
+test_read_from_user_binary_reader (test.test_xml_etree.IOTest.test_read_from_user_binary_reader) ... ok
+test_read_from_user_text_reader (test.test_xml_etree.IOTest.test_read_from_user_text_reader) ... ok
+test_short_empty_elements (test.test_xml_etree.IOTest.test_short_empty_elements) ... ok
+test_tostringlist_invariant (test.test_xml_etree.IOTest.test_tostringlist_invariant) ... ok
+test_write_to_binary_file (test.test_xml_etree.IOTest.test_write_to_binary_file) ... ok
+test_write_to_binary_file_with_bom (test.test_xml_etree.IOTest.test_write_to_binary_file_with_bom) ... ok
+test_write_to_binary_file_with_encoding (test.test_xml_etree.IOTest.test_write_to_binary_file_with_encoding) ... ok
+test_write_to_bytesio (test.test_xml_etree.IOTest.test_write_to_bytesio) ... ok
+test_write_to_filename (test.test_xml_etree.IOTest.test_write_to_filename) ... ok
+test_write_to_filename_as_unicode (test.test_xml_etree.IOTest.test_write_to_filename_as_unicode) ... ok
+test_write_to_filename_with_encoding (test.test_xml_etree.IOTest.test_write_to_filename_with_encoding) ... ok
+test_write_to_stringio (test.test_xml_etree.IOTest.test_write_to_stringio) ... ok
+test_write_to_text_file (test.test_xml_etree.IOTest.test_write_to_text_file) ... ok
+test_write_to_user_binary_writer (test.test_xml_etree.IOTest.test_write_to_user_binary_writer) ... ok
+test_write_to_user_binary_writer_with_bom (test.test_xml_etree.IOTest.test_write_to_user_binary_writer_with_bom) ... ok
+test_write_to_user_text_writer (test.test_xml_etree.IOTest.test_write_to_user_text_writer) ... ok
+test_issue14818 (test.test_xml_etree.KeywordArgsTest.test_issue14818) ... ok
+test_all (test.test_xml_etree.ModuleTest.test_all) ... ok
+test_sanity (test.test_xml_etree.ModuleTest.test_sanity) ... ok
+test_find_with_namespace (test.test_xml_etree.NamespaceParseTest.test_find_with_namespace) ... ok
+test_correct_import_pyET (test.test_xml_etree.NoAcceleratorTest.test_correct_import_pyET) ... ok
+test_error_code (test.test_xml_etree.ParseErrorTest.test_error_code) ... FAIL
+test_error_position (test.test_xml_etree.ParseErrorTest.test_error_position) ... FAIL
+test_subclass (test.test_xml_etree.ParseErrorTest.test_subclass) ... ok
+test_builder_lookup_errors (test.test_xml_etree.TreeBuilderTest.test_builder_lookup_errors) ... ok
+test_doctype (test.test_xml_etree.TreeBuilderTest.test_doctype) ... ok
+test_dummy_builder (test.test_xml_etree.TreeBuilderTest.test_dummy_builder) ... ok
+test_element_factory (test.test_xml_etree.TreeBuilderTest.test_element_factory) ... ok
+test_element_factory_pure_python_subclass (test.test_xml_etree.TreeBuilderTest.test_element_factory_pure_python_subclass) ... ok
+test_element_factory_subclass (test.test_xml_etree.TreeBuilderTest.test_element_factory_subclass) ... ok
+test_late_tail (test.test_xml_etree.TreeBuilderTest.test_late_tail) ... ok
+test_late_tail_mix_pi_comments (test.test_xml_etree.TreeBuilderTest.test_late_tail_mix_pi_comments) ... ok
+test_subclass (test.test_xml_etree.TreeBuilderTest.test_subclass) ... ok
+test_subclass_comment_pi (test.test_xml_etree.TreeBuilderTest.test_subclass_comment_pi) ... ok
+test_treebuilder_comment (test.test_xml_etree.TreeBuilderTest.test_treebuilder_comment) ... ok
+test_treebuilder_elementfactory_none (test.test_xml_etree.TreeBuilderTest.test_treebuilder_elementfactory_none) ... ok
+test_treebuilder_pi (test.test_xml_etree.TreeBuilderTest.test_treebuilder_pi) ... ok
+test_xinclude (test.test_xml_etree.XIncludeTest.test_xinclude) ... ok
+test_xinclude_default (test.test_xml_etree.XIncludeTest.test_xinclude_default) ... ok
+test_xinclude_failures (test.test_xml_etree.XIncludeTest.test_xinclude_failures) ... ok
+test_xinclude_repeated (test.test_xml_etree.XIncludeTest.test_xinclude_repeated) ... ok
+test_constructor_args (test.test_xml_etree.XMLParserTest.test_constructor_args) ... ok
+test_doctype_warning (test.test_xml_etree.XMLParserTest.test_doctype_warning) ... ok
+test_inherited_doctype (test.test_xml_etree.XMLParserTest.test_inherited_doctype)
+Ensure that ordinary usage is not deprecated (Issue 19176) ... ok
+test_parse_string (test.test_xml_etree.XMLParserTest.test_parse_string) ... ok
+test_subclass (test.test_xml_etree.XMLParserTest.test_subclass) ... ok
+test_subclass_doctype (test.test_xml_etree.XMLParserTest.test_subclass_doctype) ... ok
+test_events (test.test_xml_etree.XMLPullParserTest.test_events) ... FAIL
+test_events_comment (test.test_xml_etree.XMLPullParserTest.test_events_comment) ... ok
+test_events_pi (test.test_xml_etree.XMLPullParserTest.test_events_pi) ... ok
+test_events_sequence (test.test_xml_etree.XMLPullParserTest.test_events_sequence) ... ok
+test_feed_while_iterating (test.test_xml_etree.XMLPullParserTest.test_feed_while_iterating) ... ok
+test_flush_reparse_deferral_disabled (test.test_xml_etree.XMLPullParserTest.test_flush_reparse_deferral_disabled) ... FAIL
+test_flush_reparse_deferral_enabled (test.test_xml_etree.XMLPullParserTest.test_flush_reparse_deferral_enabled) ... FAIL
+test_ns_events (test.test_xml_etree.XMLPullParserTest.test_ns_events) ... ok
+test_ns_events_start (test.test_xml_etree.XMLPullParserTest.test_ns_events_start) ... ok
+test_ns_events_start_end (test.test_xml_etree.XMLPullParserTest.test_ns_events_start_end) ... ok
+test_simple_xml (test.test_xml_etree.XMLPullParserTest.test_simple_xml) ... FAIL
+test_simple_xml_chunk_1 (test.test_xml_etree.XMLPullParserTest.test_simple_xml_chunk_1) ... ok
+test_simple_xml_chunk_22 (test.test_xml_etree.XMLPullParserTest.test_simple_xml_chunk_22) ... FAIL
+test_simple_xml_chunk_5 (test.test_xml_etree.XMLPullParserTest.test_simple_xml_chunk_5) ... ok
+test_simple_xml_with_ns (test.test_xml_etree.XMLPullParserTest.test_simple_xml_with_ns) ... FAIL
+test_unknown_event (test.test_xml_etree.XMLPullParserTest.test_unknown_event) ... ok
+
+======================================================================
+ERROR: test_encoding (test.test_xml_etree.ElementTreeTest.test_encoding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1723, in feed
+    self.parser.Parse(data, False)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+xml.parsers.expat.ExpatError: unknown encoding: line 1, column 0
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1202, in test_encoding
+    self.assertEqual(ET.tostring(ET.XML(bxml(encoding))), b'<xml />')
+                                 ~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1352, in XML
+    parser.feed(text)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1725, in feed
+    self._raiseerror(v)
+    ~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1632, in _raiseerror
+    raise err
+xml.etree.ElementTree.ParseError: unknown encoding: line 1, column 0
+
+======================================================================
+FAIL: test_bug_xmltoolkit55 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit55)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 2208, in test_bug_xmltoolkit55
+    with self.assertRaises(ET.ParseError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: ParseError not raised
+
+======================================================================
+FAIL: test_bug_xmltoolkit62 (test.test_xml_etree.BugsTest.test_bug_xmltoolkit62)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 2237, in test_bug_xmltoolkit62
+    self.assertEqual(t.find('.//paragraph').text,
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        'A new cultivar of Begonia plant named \u2018BCT9801BEG\u2019.')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'A new cultivar of Begonia plant named BCT9801BEG.' != 'A new cultivar of Begonia plant named ‘BCT9801BEG’.'
+- A new cultivar of Begonia plant named BCT9801BEG.
++ A new cultivar of Begonia plant named ‘BCT9801BEG’.
+?                                       +          +
+
+
+======================================================================
+FAIL: test_entity (test.test_xml_etree.ElementTreeTest.test_entity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1267, in test_entity
+    self.assertEqual(str(cm.exception),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+            'undefined entity &entity;: line 5, column 10')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'error in processing external entity reference: line 3, column 0' != 'undefined entity &entity;: line 5, column 10'
+- error in processing external entity reference: line 3, column 0
++ undefined entity &entity;: line 5, column 10
+
+
+======================================================================
+FAIL: test_iterparse (test.test_xml_etree.ElementTreeTest.test_iterparse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 686, in test_iterparse
+    self.assertEqual(str(cm.exception),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+            'junk after document element: line 1, column 12')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'not well-formed (invalid token): line 1, column 15' != 'junk after document element: line 1, column 12'
+- not well-formed (invalid token): line 1, column 15
++ junk after document element: line 1, column 12
+
+
+======================================================================
+FAIL: test_error_code (test.test_xml_etree.ParseErrorTest.test_error_code)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 4325, in test_error_code
+    self.assertEqual(self._get_error('foo').code,
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ERRORS.codes[ERRORS.XML_ERROR_SYNTAX])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4 != 2
+
+======================================================================
+FAIL: test_error_position (test.test_xml_etree.ParseErrorTest.test_error_position)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 4319, in test_error_position
+    self.assertEqual(self._get_error('foo').position, (1, 0))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (1, 2) != (1, 0)
+
+First differing element 1:
+2
+0
+
+- (1, 2)
+?     ^
+
++ (1, 0)
+?     ^
+
+
+======================================================================
+FAIL: test_events (test.test_xml_etree.XMLPullParserTest.test_events)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1672, in test_events
+    self.assert_event_tags(parser, [('end', 'element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', 'element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', 'element')
+
+- []
++ [('end', 'element')]
+
+======================================================================
+FAIL: test_flush_reparse_deferral_disabled (test.test_xml_etree.XMLPullParserTest.test_flush_reparse_deferral_disabled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1788, in test_flush_reparse_deferral_disabled
+    self.assert_event_tags(parser, [])  # i.e. no elements started
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [('start', 'doc')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+('start', 'doc')
+
+- [('start', 'doc')]
++ []
+
+======================================================================
+FAIL: test_flush_reparse_deferral_enabled (test.test_xml_etree.XMLPullParserTest.test_flush_reparse_deferral_enabled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1762, in test_flush_reparse_deferral_enabled
+    self.assert_event_tags(parser, [])  # i.e. no elements started
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [('start', 'doc')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+('start', 'doc')
+
+- [('start', 'doc')]
++ []
+
+======================================================================
+FAIL: test_simple_xml (test.test_xml_etree.XMLPullParserTest.test_simple_xml)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1539, in test_simple_xml
+    self.assert_event_tags(parser, [('end', 'element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', 'element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', 'element')
+
+- []
++ [('end', 'element')]
+
+======================================================================
+FAIL: test_simple_xml_chunk_22 (test.test_xml_etree.XMLPullParserTest.test_simple_xml_chunk_22)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1557, in test_simple_xml_chunk_22
+    self.test_simple_xml(chunk_size=22)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1539, in test_simple_xml
+    self.assert_event_tags(parser, [('end', 'element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', 'element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', 'element')
+
+- []
++ [('end', 'element')]
+
+======================================================================
+FAIL: test_simple_xml_with_ns (test.test_xml_etree.XMLPullParserTest.test_simple_xml_with_ns)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1581, in test_simple_xml_with_ns
+    self.assert_event_tags(parser, [('end', '{namespace}element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', '{namespace}element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', '{namespace}element')
+
+- []
++ [('end', '{namespace}element')]
+
+----------------------------------------------------------------------
+Ran 205 tests in 0.442s
+
+FAILED (failures=12, errors=1, skipped=5)
+test test_xml_etree failed
+0:00:00 [ 2/10/2] test_xml_etree failed (1 error, 12 failures)
+0:00:00 [ 3/10/2] test_xml_etree_c
+test_find_with_error (test.test_xml_etree_c.BadElementPathTest.test_find_with_error) ... ok
+test_find_with_mutating (test.test_xml_etree_c.BadElementPathTest.test_find_with_mutating) ... ok
+test_findall_with_error (test.test_xml_etree_c.BadElementPathTest.test_findall_with_error) ... ok
+test_findall_with_mutating (test.test_xml_etree_c.BadElementPathTest.test_findall_with_mutating) ... ok
+test_findtext_with_error (test.test_xml_etree_c.BadElementPathTest.test_findtext_with_error) ... ok
+test_findtext_with_falsey_text_attribute (test.test_xml_etree_c.BadElementPathTest.test_findtext_with_falsey_text_attribute) ... ok
+test_findtext_with_mutating (test.test_xml_etree_c.BadElementPathTest.test_findtext_with_mutating) ... ok
+test_findtext_with_none_text_attribute (test.test_xml_etree_c.BadElementPathTest.test_findtext_with_none_text_attribute) ... ok
+test_ass_subscr (test.test_xml_etree_c.BadElementTest.test_ass_subscr) ... ok
+test_deepcopy_clear (test.test_xml_etree_c.BadElementTest.test_deepcopy_clear) ... ok
+test_deepcopy_grow (test.test_xml_etree_c.BadElementTest.test_deepcopy_grow) ... ok
+test_element_get_tail (test.test_xml_etree_c.BadElementTest.test_element_get_tail) ... ok
+test_element_get_text (test.test_xml_etree_c.BadElementTest.test_element_get_text) ... ok
+test_extend_mutable_list (test.test_xml_etree_c.BadElementTest.test_extend_mutable_list) ... ok
+test_extend_mutable_list2 (test.test_xml_etree_c.BadElementTest.test_extend_mutable_list2) ... ok
+test_recursive_repr (test.test_xml_etree_c.BadElementTest.test_recursive_repr) ... ok
+test_remove_with_clear_assume_existing (test.test_xml_etree_c.BadElementTest.test_remove_with_clear_assume_existing) ... ok
+test_remove_with_clear_assume_missing (test.test_xml_etree_c.BadElementTest.test_remove_with_clear_assume_missing) ... ok
+test_remove_with_mutate_root_assume_existing (test.test_xml_etree_c.BadElementTest.test_remove_with_mutate_root_assume_existing) ... ok
+test_remove_with_mutate_root_assume_missing (test.test_xml_etree_c.BadElementTest.test_remove_with_mutate_root_assume_missing) ... ok
+test_subscr (test.test_xml_etree_c.BadElementTest.test_subscr) ... ok
+test_treebuilder_end (test.test_xml_etree_c.BadElementTest.test_treebuilder_end) ... ok
+test_treebuilder_start (test.test_xml_etree_c.BadElementTest.test_treebuilder_start) ... ok
+test___copy__ (test.test_xml_etree_c.BasicElementTest.test___copy__) ... ok
+test___deepcopy__ (test.test_xml_etree_c.BasicElementTest.test___deepcopy__) ... ok
+test___init__ (test.test_xml_etree_c.BasicElementTest.test___init__) ... ok
+test_augmentation_type_errors (test.test_xml_etree_c.BasicElementTest.test_augmentation_type_errors) ... ok
+test_cyclic_gc (test.test_xml_etree_c.BasicElementTest.test_cyclic_gc) ... ok
+test_get_keyword_args (test.test_xml_etree_c.BasicElementTest.test_get_keyword_args) ... ok
+test_pickle (test.test_xml_etree_c.BasicElementTest.test_pickle) ... ok
+test_pickle_issue18997 (test.test_xml_etree_c.BasicElementTest.test_pickle_issue18997) ... ok
+test_weakref (test.test_xml_etree_c.BasicElementTest.test_weakref) ... ok
+test_warning (test.test_xml_etree_c.BoolTest.test_warning) ... ok
+test_39495_treebuilder_start (test.test_xml_etree_c.BugsTest.test_39495_treebuilder_start) ... ok
+test_bug_1534630 (test.test_xml_etree_c.BugsTest.test_bug_1534630) ... ok
+test_bug_200708_close (test.test_xml_etree_c.BugsTest.test_bug_200708_close) ... ok
+test_bug_200708_newline (test.test_xml_etree_c.BugsTest.test_bug_200708_newline) ... ok
+test_bug_200709_default_namespace (test.test_xml_etree_c.BugsTest.test_bug_200709_default_namespace) ... ok
+test_bug_200709_element_comment (test.test_xml_etree_c.BugsTest.test_bug_200709_element_comment) ... ok
+test_bug_200709_element_insert (test.test_xml_etree_c.BugsTest.test_bug_200709_element_insert) ... ok
+test_bug_200709_iter_comment (test.test_xml_etree_c.BugsTest.test_bug_200709_iter_comment) ... ok
+test_bug_200709_register_namespace (test.test_xml_etree_c.BugsTest.test_bug_200709_register_namespace) ... ok
+test_bug_xmltoolkit21 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit21) ... ok
+test_bug_xmltoolkit25 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit25) ... ok
+test_bug_xmltoolkit28 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit28) ... ok
+test_bug_xmltoolkit39 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit39) ... ok
+test_bug_xmltoolkit54 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit54) ... ok
+test_bug_xmltoolkit55 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit55) ... FAIL
+test_bug_xmltoolkit60 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit60) ... ok
+test_bug_xmltoolkit62 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit62) ... FAIL
+test_bug_xmltoolkit63 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit63) ... ok
+test_bug_xmltoolkitX1 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkitX1) ... ok
+test_expat224_utf8_bug (test.test_xml_etree_c.BugsTest.test_expat224_utf8_bug) ... ok
+test_expat224_utf8_bug_file (test.test_xml_etree_c.BugsTest.test_expat224_utf8_bug_file) ... ok
+test_issue10777 (test.test_xml_etree_c.BugsTest.test_issue10777) ... ok
+test_issue123213_correct_extend_exception (test.test_xml_etree_c.BugsTest.test_issue123213_correct_extend_exception) ... ok
+test_issue6233 (test.test_xml_etree_c.BugsTest.test_issue6233) ... ok
+test_issue6565 (test.test_xml_etree_c.BugsTest.test_issue6565) ... ok
+test_lost_elem (test.test_xml_etree_c.BugsTest.test_lost_elem) ... skipped 'generators are not reentrant'
+test_lost_tail (test.test_xml_etree_c.BugsTest.test_lost_tail) ... ok
+test_lost_text (test.test_xml_etree_c.BugsTest.test_lost_text) ... ok
+test_c14n_exclusion (test.test_xml_etree_c.C14NTest.test_c14n_exclusion) ... ok
+test_simple_roundtrip (test.test_xml_etree_c.C14NTest.test_simple_roundtrip) ... ok
+test_xml_c14n2 (test.test_xml_etree_c.C14NTest.test_xml_c14n2) ... 
+  test_xml_c14n2 (test.test_xml_etree_c.C14NTest.test_xml_c14n2) [out_inNsContent_c14nPrefixQnameXpathElem(PrefixRewrite=sequential,QNameAware=Element,XPathElement)] ... skipped 'QName rewriting in XPath text is not supported in out_inNsContent_c14nPrefixQnameXpathElem'
+  test_xml_c14n2 (test.test_xml_etree_c.C14NTest.test_xml_c14n2) [out_inNsContent_c14nQnameXpathElem(QNameAware=Element,XPathElement)] ... skipped 'QName rewriting in XPath text is not supported in out_inNsContent_c14nQnameXpathElem'
+  test_xml_c14n2 (test.test_xml_etree_c.C14NTest.test_xml_c14n2) [out_inNsRedecl_c14nDefault()] ... skipped 'Redeclared namespace handling is not supported in out_inNsRedecl_c14nDefault'
+  test_xml_c14n2 (test.test_xml_etree_c.C14NTest.test_xml_c14n2) [out_inNsSuperfluous_c14nDefault()] ... skipped 'Redeclared namespace handling is not supported in out_inNsSuperfluous_c14nDefault'
+test_bad_find (test.test_xml_etree_c.ElementFindTest.test_bad_find) ... ok
+test_find_simple (test.test_xml_etree_c.ElementFindTest.test_find_simple) ... ok
+test_find_through_ElementTree (test.test_xml_etree_c.ElementFindTest.test_find_through_ElementTree) ... ok
+test_find_xpath (test.test_xml_etree_c.ElementFindTest.test_find_xpath) ... ok
+test_findall (test.test_xml_etree_c.ElementFindTest.test_findall) ... ok
+test_findall_different_nsmaps (test.test_xml_etree_c.ElementFindTest.test_findall_different_nsmaps) ... ok
+test_findall_wildcard (test.test_xml_etree_c.ElementFindTest.test_findall_wildcard) ... ok
+test_test_find_with_ns (test.test_xml_etree_c.ElementFindTest.test_test_find_with_ns) ... ok
+test_basic (test.test_xml_etree_c.ElementIterTest.test_basic) ... ok
+test_copy (test.test_xml_etree_c.ElementIterTest.test_copy) ... ok
+test_corners (test.test_xml_etree_c.ElementIterTest.test_corners) ... ok
+test_iter_by_tag (test.test_xml_etree_c.ElementIterTest.test_iter_by_tag) ... ok
+test_pickle (test.test_xml_etree_c.ElementIterTest.test_pickle) ... ok
+test_delslice (test.test_xml_etree_c.ElementSlicingTest.test_delslice) ... ok
+test_getslice_negative_steps (test.test_xml_etree_c.ElementSlicingTest.test_getslice_negative_steps) ... ok
+test_getslice_range (test.test_xml_etree_c.ElementSlicingTest.test_getslice_range) ... ok
+test_getslice_single_index (test.test_xml_etree_c.ElementSlicingTest.test_getslice_single_index) ... ok
+test_getslice_steps (test.test_xml_etree_c.ElementSlicingTest.test_getslice_steps) ... ok
+test_issue123213_setslice_exception (test.test_xml_etree_c.ElementSlicingTest.test_issue123213_setslice_exception) ... ok
+test_setslice_negative_steps (test.test_xml_etree_c.ElementSlicingTest.test_setslice_negative_steps) ... ok
+test_setslice_range (test.test_xml_etree_c.ElementSlicingTest.test_setslice_range) ... ok
+test_setslice_single_index (test.test_xml_etree_c.ElementSlicingTest.test_setslice_single_index) ... ok
+test_setslice_steps (test.test_xml_etree_c.ElementSlicingTest.test_setslice_steps) ... ok
+test_attlist_default (test.test_xml_etree_c.ElementTreeTest.test_attlist_default) ... ok
+test_attrib (test.test_xml_etree_c.ElementTreeTest.test_attrib) ... ok
+test_cdata (test.test_xml_etree_c.ElementTreeTest.test_cdata) ... ok
+test_children (test.test_xml_etree_c.ElementTreeTest.test_children) ... ok
+test_constructor (test.test_xml_etree_c.ElementTreeTest.test_constructor) ... ok
+test_copy (test.test_xml_etree_c.ElementTreeTest.test_copy) ... ok
+test_custom_builder (test.test_xml_etree_c.ElementTreeTest.test_custom_builder) ... ok
+test_custom_builder_only_end_ns (test.test_xml_etree_c.ElementTreeTest.test_custom_builder_only_end_ns) ... ok
+test_doctype_public (test.test_xml_etree_c.ElementTreeTest.test_doctype_public) ... ok
+test_dump_attribute_order (test.test_xml_etree_c.ElementTreeTest.test_dump_attribute_order) ... ok
+test_encoding (test.test_xml_etree_c.ElementTreeTest.test_encoding) ... ERROR
+test_entity (test.test_xml_etree_c.ElementTreeTest.test_entity) ... FAIL
+test_file_init (test.test_xml_etree_c.ElementTreeTest.test_file_init) ... ok
+test_html_empty_elems_serialization (test.test_xml_etree_c.ElementTreeTest.test_html_empty_elems_serialization) ... ok
+test_indent (test.test_xml_etree_c.ElementTreeTest.test_indent) ... ok
+test_indent_level (test.test_xml_etree_c.ElementTreeTest.test_indent_level) ... ok
+test_indent_space (test.test_xml_etree_c.ElementTreeTest.test_indent_space) ... ok
+test_indent_space_caching (test.test_xml_etree_c.ElementTreeTest.test_indent_space_caching) ... ok
+test_initialize_parser_without_target (test.test_xml_etree_c.ElementTreeTest.test_initialize_parser_without_target) ... ok
+test_interface (test.test_xml_etree_c.ElementTreeTest.test_interface) ... ok
+test_issue18347 (test.test_xml_etree_c.ElementTreeTest.test_issue18347) ... ok
+test_iterparse (test.test_xml_etree_c.ElementTreeTest.test_iterparse) ... FAIL
+test_iterparse_close (test.test_xml_etree_c.ElementTreeTest.test_iterparse_close) ... ok
+test_makeelement (test.test_xml_etree_c.ElementTreeTest.test_makeelement) ... ok
+test_methods (test.test_xml_etree_c.ElementTreeTest.test_methods) ... ok
+test_namespace (test.test_xml_etree_c.ElementTreeTest.test_namespace) ... ok
+test_parsefile (test.test_xml_etree_c.ElementTreeTest.test_parsefile) ... ok
+test_parseliteral (test.test_xml_etree_c.ElementTreeTest.test_parseliteral) ... ok
+test_path_cache (test.test_xml_etree_c.ElementTreeTest.test_path_cache) ... ok
+test_processinginstruction (test.test_xml_etree_c.ElementTreeTest.test_processinginstruction) ... ok
+test_qname (test.test_xml_etree_c.ElementTreeTest.test_qname) ... ok
+test_set_attribute (test.test_xml_etree_c.ElementTreeTest.test_set_attribute) ... ok
+test_setroot (test.test_xml_etree_c.ElementTreeTest.test_setroot) ... ok
+test_simpleops (test.test_xml_etree_c.ElementTreeTest.test_simpleops) ... ok
+test_tostring_default_namespace (test.test_xml_etree_c.ElementTreeTest.test_tostring_default_namespace) ... ok
+test_tostring_default_namespace_different_namespace (test.test_xml_etree_c.ElementTreeTest.test_tostring_default_namespace_different_namespace) ... ok
+test_tostring_default_namespace_original_no_namespace (test.test_xml_etree_c.ElementTreeTest.test_tostring_default_namespace_original_no_namespace) ... ok
+test_tostring_no_xml_declaration (test.test_xml_etree_c.ElementTreeTest.test_tostring_no_xml_declaration) ... ok
+test_tostring_xml_declaration (test.test_xml_etree_c.ElementTreeTest.test_tostring_xml_declaration) ... ok
+test_tostring_xml_declaration_cases (test.test_xml_etree_c.ElementTreeTest.test_tostring_xml_declaration_cases) ... ok
+test_tostring_xml_declaration_unicode_encoding (test.test_xml_etree_c.ElementTreeTest.test_tostring_xml_declaration_unicode_encoding) ... ok
+test_tostringlist_default_namespace (test.test_xml_etree_c.ElementTreeTest.test_tostringlist_default_namespace) ... ok
+test_tostringlist_xml_declaration (test.test_xml_etree_c.ElementTreeTest.test_tostringlist_xml_declaration) ... ok
+test_tree_write_attribute_order (test.test_xml_etree_c.ElementTreeTest.test_tree_write_attribute_order) ... ok
+test_writefile (test.test_xml_etree_c.ElementTreeTest.test_writefile) ... ok
+test_writestring (test.test_xml_etree_c.ElementTreeTest.test_writestring) ... ok
+test_xpath_tokenizer (test.test_xml_etree_c.ElementTreeTest.test_xpath_tokenizer) ... ok
+test_Element_subclass_constructor (test.test_xml_etree_c.ElementTreeTypeTest.test_Element_subclass_constructor) ... ok
+test_Element_subclass_find (test.test_xml_etree_c.ElementTreeTypeTest.test_Element_subclass_find) ... ok
+test_Element_subclass_new_method (test.test_xml_etree_c.ElementTreeTypeTest.test_Element_subclass_new_method) ... ok
+test_Element_subclass_trivial (test.test_xml_etree_c.ElementTreeTypeTest.test_Element_subclass_trivial) ... ok
+test_istype (test.test_xml_etree_c.ElementTreeTypeTest.test_istype) ... ok
+test_encoding (test.test_xml_etree_c.IOTest.test_encoding) ... ok
+test_read_from_bytesio (test.test_xml_etree_c.IOTest.test_read_from_bytesio) ... ok
+test_read_from_stringio (test.test_xml_etree_c.IOTest.test_read_from_stringio) ... ok
+test_read_from_user_binary_reader (test.test_xml_etree_c.IOTest.test_read_from_user_binary_reader) ... ok
+test_read_from_user_text_reader (test.test_xml_etree_c.IOTest.test_read_from_user_text_reader) ... ok
+test_short_empty_elements (test.test_xml_etree_c.IOTest.test_short_empty_elements) ... ok
+test_tostringlist_invariant (test.test_xml_etree_c.IOTest.test_tostringlist_invariant) ... ok
+test_write_to_binary_file (test.test_xml_etree_c.IOTest.test_write_to_binary_file) ... ok
+test_write_to_binary_file_with_bom (test.test_xml_etree_c.IOTest.test_write_to_binary_file_with_bom) ... ok
+test_write_to_binary_file_with_encoding (test.test_xml_etree_c.IOTest.test_write_to_binary_file_with_encoding) ... ok
+test_write_to_bytesio (test.test_xml_etree_c.IOTest.test_write_to_bytesio) ... ok
+test_write_to_filename (test.test_xml_etree_c.IOTest.test_write_to_filename) ... ok
+test_write_to_filename_as_unicode (test.test_xml_etree_c.IOTest.test_write_to_filename_as_unicode) ... ok
+test_write_to_filename_with_encoding (test.test_xml_etree_c.IOTest.test_write_to_filename_with_encoding) ... ok
+test_write_to_stringio (test.test_xml_etree_c.IOTest.test_write_to_stringio) ... ok
+test_write_to_text_file (test.test_xml_etree_c.IOTest.test_write_to_text_file) ... ok
+test_write_to_user_binary_writer (test.test_xml_etree_c.IOTest.test_write_to_user_binary_writer) ... ok
+test_write_to_user_binary_writer_with_bom (test.test_xml_etree_c.IOTest.test_write_to_user_binary_writer_with_bom) ... ok
+test_write_to_user_text_writer (test.test_xml_etree_c.IOTest.test_write_to_user_text_writer) ... ok
+test_issue14818 (test.test_xml_etree_c.KeywordArgsTest.test_issue14818) ... ok
+test_bpo_31728 (test.test_xml_etree_c.MiscTests.test_bpo_31728) ... skipped 'requires _elementtree'
+test_del_attribute (test.test_xml_etree_c.MiscTests.test_del_attribute) ... skipped 'requires _elementtree'
+test_dict_disappearing_during_get_item (test.test_xml_etree_c.MiscTests.test_dict_disappearing_during_get_item) ... skipped 'requires _elementtree'
+test_disallow_instantiation (test.test_xml_etree_c.MiscTests.test_disallow_instantiation) ... skipped 'requires _elementtree'
+test_immutable_types (test.test_xml_etree_c.MiscTests.test_immutable_types) ... skipped 'requires _elementtree'
+test_iterparse_leaks (test.test_xml_etree_c.MiscTests.test_iterparse_leaks) ... skipped 'requires _elementtree'
+test_length_overflow (test.test_xml_etree_c.MiscTests.test_length_overflow) ... skipped 'requires _elementtree'
+test_parser_ref_cycle (test.test_xml_etree_c.MiscTests.test_parser_ref_cycle) ... skipped 'requires _elementtree'
+test_setstate_leaks (test.test_xml_etree_c.MiscTests.test_setstate_leaks) ... skipped 'requires _elementtree'
+test_trashcan (test.test_xml_etree_c.MiscTests.test_trashcan) ... skipped 'requires _elementtree'
+test_uninitialized_parser (test.test_xml_etree_c.MiscTests.test_uninitialized_parser) ... skipped 'requires _elementtree'
+test_xmlpullparser_leaks (test.test_xml_etree_c.MiscTests.test_xmlpullparser_leaks) ... skipped 'requires _elementtree'
+test_all (test.test_xml_etree_c.ModuleTest.test_all) ... ok
+test_sanity (test.test_xml_etree_c.ModuleTest.test_sanity) ... ok
+test_find_with_namespace (test.test_xml_etree_c.NamespaceParseTest.test_find_with_namespace) ... ok
+test_correct_import_pyET (test.test_xml_etree_c.NoAcceleratorTest.test_correct_import_pyET) ... ok
+test_error_code (test.test_xml_etree_c.ParseErrorTest.test_error_code) ... FAIL
+test_error_position (test.test_xml_etree_c.ParseErrorTest.test_error_position) ... FAIL
+test_subclass (test.test_xml_etree_c.ParseErrorTest.test_subclass) ... ok
+test_element (test.test_xml_etree_c.SizeofTest.test_element) ... skipped 'requires _elementtree'
+test_element_with_attrib (test.test_xml_etree_c.SizeofTest.test_element_with_attrib) ... skipped 'requires _elementtree'
+test_element_with_children (test.test_xml_etree_c.SizeofTest.test_element_with_children) ... skipped 'requires _elementtree'
+test_correct_import_cET (test.test_xml_etree_c.TestAcceleratorImported.test_correct_import_cET) ... skipped 'requires _elementtree'
+test_correct_import_cET_alias (test.test_xml_etree_c.TestAcceleratorImported.test_correct_import_cET_alias) ... skipped 'requires _elementtree'
+test_parser_comes_from_C (test.test_xml_etree_c.TestAcceleratorImported.test_parser_comes_from_C) ... skipped 'requires _elementtree'
+test_alias_working (test.test_xml_etree_c.TestAliasWorking.test_alias_working) ... skipped 'requires _elementtree'
+test_builder_lookup_errors (test.test_xml_etree_c.TreeBuilderTest.test_builder_lookup_errors) ... ok
+test_doctype (test.test_xml_etree_c.TreeBuilderTest.test_doctype) ... ok
+test_dummy_builder (test.test_xml_etree_c.TreeBuilderTest.test_dummy_builder) ... ok
+test_element_factory (test.test_xml_etree_c.TreeBuilderTest.test_element_factory) ... ok
+test_element_factory_pure_python_subclass (test.test_xml_etree_c.TreeBuilderTest.test_element_factory_pure_python_subclass) ... ok
+test_element_factory_subclass (test.test_xml_etree_c.TreeBuilderTest.test_element_factory_subclass) ... ok
+test_late_tail (test.test_xml_etree_c.TreeBuilderTest.test_late_tail) ... ok
+test_late_tail_mix_pi_comments (test.test_xml_etree_c.TreeBuilderTest.test_late_tail_mix_pi_comments) ... ok
+test_subclass (test.test_xml_etree_c.TreeBuilderTest.test_subclass) ... ok
+test_subclass_comment_pi (test.test_xml_etree_c.TreeBuilderTest.test_subclass_comment_pi) ... ok
+test_treebuilder_comment (test.test_xml_etree_c.TreeBuilderTest.test_treebuilder_comment) ... ok
+test_treebuilder_elementfactory_none (test.test_xml_etree_c.TreeBuilderTest.test_treebuilder_elementfactory_none) ... ok
+test_treebuilder_pi (test.test_xml_etree_c.TreeBuilderTest.test_treebuilder_pi) ... ok
+test_xinclude (test.test_xml_etree_c.XIncludeTest.test_xinclude) ... ok
+test_xinclude_default (test.test_xml_etree_c.XIncludeTest.test_xinclude_default) ... ok
+test_xinclude_failures (test.test_xml_etree_c.XIncludeTest.test_xinclude_failures) ... ok
+test_xinclude_repeated (test.test_xml_etree_c.XIncludeTest.test_xinclude_repeated) ... ok
+test_constructor_args (test.test_xml_etree_c.XMLParserTest.test_constructor_args) ... ok
+test_doctype_warning (test.test_xml_etree_c.XMLParserTest.test_doctype_warning) ... ok
+test_inherited_doctype (test.test_xml_etree_c.XMLParserTest.test_inherited_doctype)
+Ensure that ordinary usage is not deprecated (Issue 19176) ... ok
+test_parse_string (test.test_xml_etree_c.XMLParserTest.test_parse_string) ... ok
+test_subclass (test.test_xml_etree_c.XMLParserTest.test_subclass) ... ok
+test_subclass_doctype (test.test_xml_etree_c.XMLParserTest.test_subclass_doctype) ... ok
+test_events (test.test_xml_etree_c.XMLPullParserTest.test_events) ... FAIL
+test_events_comment (test.test_xml_etree_c.XMLPullParserTest.test_events_comment) ... ok
+test_events_pi (test.test_xml_etree_c.XMLPullParserTest.test_events_pi) ... ok
+test_events_sequence (test.test_xml_etree_c.XMLPullParserTest.test_events_sequence) ... ok
+test_feed_while_iterating (test.test_xml_etree_c.XMLPullParserTest.test_feed_while_iterating) ... ok
+test_flush_reparse_deferral_disabled (test.test_xml_etree_c.XMLPullParserTest.test_flush_reparse_deferral_disabled) ... FAIL
+test_flush_reparse_deferral_enabled (test.test_xml_etree_c.XMLPullParserTest.test_flush_reparse_deferral_enabled) ... FAIL
+test_ns_events (test.test_xml_etree_c.XMLPullParserTest.test_ns_events) ... ok
+test_ns_events_start (test.test_xml_etree_c.XMLPullParserTest.test_ns_events_start) ... ok
+test_ns_events_start_end (test.test_xml_etree_c.XMLPullParserTest.test_ns_events_start_end) ... ok
+test_simple_xml (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml) ... FAIL
+test_simple_xml_chunk_1 (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml_chunk_1) ... ok
+test_simple_xml_chunk_22 (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml_chunk_22) ... FAIL
+test_simple_xml_chunk_5 (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml_chunk_5) ... ok
+test_simple_xml_with_ns (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml_with_ns) ... FAIL
+test_unknown_event (test.test_xml_etree_c.XMLPullParserTest.test_unknown_event) ... ok
+
+======================================================================
+ERROR: test_encoding (test.test_xml_etree_c.ElementTreeTest.test_encoding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1723, in feed
+    self.parser.Parse(data, False)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+xml.parsers.expat.ExpatError: unknown encoding: line 1, column 0
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1202, in test_encoding
+    self.assertEqual(ET.tostring(ET.XML(bxml(encoding))), b'<xml />')
+                                 ~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1352, in XML
+    parser.feed(text)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1725, in feed
+    self._raiseerror(v)
+    ~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\etree\ElementTree.py", line 1632, in _raiseerror
+    raise err
+xml.etree.ElementTree.ParseError: unknown encoding: line 1, column 0
+
+======================================================================
+FAIL: test_bug_xmltoolkit55 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit55)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 2208, in test_bug_xmltoolkit55
+    with self.assertRaises(ET.ParseError) as cm:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: ParseError not raised
+
+======================================================================
+FAIL: test_bug_xmltoolkit62 (test.test_xml_etree_c.BugsTest.test_bug_xmltoolkit62)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 2237, in test_bug_xmltoolkit62
+    self.assertEqual(t.find('.//paragraph').text,
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        'A new cultivar of Begonia plant named \u2018BCT9801BEG\u2019.')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'A new cultivar of Begonia plant named BCT9801BEG.' != 'A new cultivar of Begonia plant named ‘BCT9801BEG’.'
+- A new cultivar of Begonia plant named BCT9801BEG.
++ A new cultivar of Begonia plant named ‘BCT9801BEG’.
+?                                       +          +
+
+
+======================================================================
+FAIL: test_entity (test.test_xml_etree_c.ElementTreeTest.test_entity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1267, in test_entity
+    self.assertEqual(str(cm.exception),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+            'undefined entity &entity;: line 5, column 10')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'error in processing external entity reference: line 3, column 0' != 'undefined entity &entity;: line 5, column 10'
+- error in processing external entity reference: line 3, column 0
++ undefined entity &entity;: line 5, column 10
+
+
+======================================================================
+FAIL: test_iterparse (test.test_xml_etree_c.ElementTreeTest.test_iterparse)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 686, in test_iterparse
+    self.assertEqual(str(cm.exception),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+            'junk after document element: line 1, column 12')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'not well-formed (invalid token): line 1, column 15' != 'junk after document element: line 1, column 12'
+- not well-formed (invalid token): line 1, column 15
++ junk after document element: line 1, column 12
+
+
+======================================================================
+FAIL: test_error_code (test.test_xml_etree_c.ParseErrorTest.test_error_code)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 4325, in test_error_code
+    self.assertEqual(self._get_error('foo').code,
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            ERRORS.codes[ERRORS.XML_ERROR_SYNTAX])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 4 != 2
+
+======================================================================
+FAIL: test_error_position (test.test_xml_etree_c.ParseErrorTest.test_error_position)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 4319, in test_error_position
+    self.assertEqual(self._get_error('foo').position, (1, 0))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (1, 2) != (1, 0)
+
+First differing element 1:
+2
+0
+
+- (1, 2)
+?     ^
+
++ (1, 0)
+?     ^
+
+
+======================================================================
+FAIL: test_events (test.test_xml_etree_c.XMLPullParserTest.test_events)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1672, in test_events
+    self.assert_event_tags(parser, [('end', 'element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', 'element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', 'element')
+
+- []
++ [('end', 'element')]
+
+======================================================================
+FAIL: test_flush_reparse_deferral_disabled (test.test_xml_etree_c.XMLPullParserTest.test_flush_reparse_deferral_disabled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1788, in test_flush_reparse_deferral_disabled
+    self.assert_event_tags(parser, [])  # i.e. no elements started
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [('start', 'doc')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+('start', 'doc')
+
+- [('start', 'doc')]
++ []
+
+======================================================================
+FAIL: test_flush_reparse_deferral_enabled (test.test_xml_etree_c.XMLPullParserTest.test_flush_reparse_deferral_enabled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1762, in test_flush_reparse_deferral_enabled
+    self.assert_event_tags(parser, [])  # i.e. no elements started
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [('start', 'doc')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+('start', 'doc')
+
+- [('start', 'doc')]
++ []
+
+======================================================================
+FAIL: test_simple_xml (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1539, in test_simple_xml
+    self.assert_event_tags(parser, [('end', 'element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', 'element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', 'element')
+
+- []
++ [('end', 'element')]
+
+======================================================================
+FAIL: test_simple_xml_chunk_22 (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml_chunk_22)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1557, in test_simple_xml_chunk_22
+    self.test_simple_xml(chunk_size=22)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1539, in test_simple_xml
+    self.assert_event_tags(parser, [('end', 'element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', 'element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', 'element')
+
+- []
++ [('end', 'element')]
+
+======================================================================
+FAIL: test_simple_xml_with_ns (test.test_xml_etree_c.XMLPullParserTest.test_simple_xml_with_ns)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1581, in test_simple_xml_with_ns
+    self.assert_event_tags(parser, [('end', '{namespace}element')])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_xml_etree.py", line 1526, in assert_event_tags
+    self.assertEqual([(action, elem.tag) for action, elem in events],
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     expected)
+                     ^^^^^^^^^
+AssertionError: Lists differ: [] != [('end', '{namespace}element')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('end', '{namespace}element')
+
+- []
++ [('end', '{namespace}element')]
+
+----------------------------------------------------------------------
+Ran 224 tests in 0.410s
+
+FAILED (failures=12, errors=1, skipped=24)
+test test_xml_etree_c failed
+0:00:01 [ 3/10/3] test_xml_etree_c failed (1 error, 12 failures)
+0:00:01 [ 4/10/3] test_sax
+test_1463026_1 (test.test_sax.BytesXmlgenTest.test_1463026_1) ... ok
+test_1463026_1_empty (test.test_sax.BytesXmlgenTest.test_1463026_1_empty) ... ok
+test_1463026_2 (test.test_sax.BytesXmlgenTest.test_1463026_2) ... ok
+test_1463026_2_empty (test.test_sax.BytesXmlgenTest.test_1463026_2_empty) ... ok
+test_1463026_3 (test.test_sax.BytesXmlgenTest.test_1463026_3) ... ok
+test_1463026_3_empty (test.test_sax.BytesXmlgenTest.test_1463026_3_empty) ... ok
+test_5027_1 (test.test_sax.BytesXmlgenTest.test_5027_1) ... ok
+test_5027_2 (test.test_sax.BytesXmlgenTest.test_5027_2) ... ok
+test_no_close_file (test.test_sax.BytesXmlgenTest.test_no_close_file) ... ok
+test_xmlgen_attr_escape (test.test_sax.BytesXmlgenTest.test_xmlgen_attr_escape) ... ok
+test_xmlgen_basic (test.test_sax.BytesXmlgenTest.test_xmlgen_basic) ... ok
+test_xmlgen_basic_empty (test.test_sax.BytesXmlgenTest.test_xmlgen_basic_empty) ... ok
+test_xmlgen_content (test.test_sax.BytesXmlgenTest.test_xmlgen_content) ... ok
+test_xmlgen_content_empty (test.test_sax.BytesXmlgenTest.test_xmlgen_content_empty) ... ok
+test_xmlgen_content_escape (test.test_sax.BytesXmlgenTest.test_xmlgen_content_escape) ... ok
+test_xmlgen_encoding (test.test_sax.BytesXmlgenTest.test_xmlgen_encoding) ... ok
+test_xmlgen_encoding_bytes (test.test_sax.BytesXmlgenTest.test_xmlgen_encoding_bytes) ... ok
+test_xmlgen_fragment (test.test_sax.BytesXmlgenTest.test_xmlgen_fragment) ... ok
+test_xmlgen_ignorable (test.test_sax.BytesXmlgenTest.test_xmlgen_ignorable) ... ok
+test_xmlgen_ignorable_empty (test.test_sax.BytesXmlgenTest.test_xmlgen_ignorable_empty) ... ok
+test_xmlgen_ns (test.test_sax.BytesXmlgenTest.test_xmlgen_ns) ... ok
+test_xmlgen_ns_empty (test.test_sax.BytesXmlgenTest.test_xmlgen_ns_empty) ... ok
+test_xmlgen_pi (test.test_sax.BytesXmlgenTest.test_xmlgen_pi) ... ok
+test_xmlgen_unencodable (test.test_sax.BytesXmlgenTest.test_xmlgen_unencodable) ... ok
+test_handlers (test.test_sax.CDATAHandlerTest.test_handlers) ... FAIL
+test_expat_incomplete (test.test_sax.ErrorReportingTest.test_expat_incomplete) ... ok
+test_expat_inpsource_location (test.test_sax.ErrorReportingTest.test_expat_inpsource_location) ... ok
+test_sax_parse_exception_str (test.test_sax.ErrorReportingTest.test_sax_parse_exception_str) ... ok
+test_expat_attrs_empty (test.test_sax.ExpatReaderTest.test_expat_attrs_empty) ... ok
+test_expat_attrs_wattr (test.test_sax.ExpatReaderTest.test_expat_attrs_wattr) ... ok
+test_expat_binary_file (test.test_sax.ExpatReaderTest.test_expat_binary_file) ... ok
+test_expat_binary_file_bytes_name (test.test_sax.ExpatReaderTest.test_expat_binary_file_bytes_name) ... ok
+test_expat_binary_file_int_name (test.test_sax.ExpatReaderTest.test_expat_binary_file_int_name) ... ok
+test_expat_binary_file_nonascii (test.test_sax.ExpatReaderTest.test_expat_binary_file_nonascii) ... ok
+test_expat_dtdhandler (test.test_sax.ExpatReaderTest.test_expat_dtdhandler) ... ok
+test_expat_entityresolver_default (test.test_sax.ExpatReaderTest.test_expat_entityresolver_default) ... ok
+test_expat_entityresolver_enabled (test.test_sax.ExpatReaderTest.test_expat_entityresolver_enabled) ... ok
+test_expat_external_dtd_default (test.test_sax.ExpatReaderTest.test_expat_external_dtd_default) ... ok
+test_expat_external_dtd_enabled (test.test_sax.ExpatReaderTest.test_expat_external_dtd_enabled) ... ok
+test_expat_incremental (test.test_sax.ExpatReaderTest.test_expat_incremental) ... ok
+test_expat_incremental_reset (test.test_sax.ExpatReaderTest.test_expat_incremental_reset) ... ok
+test_expat_inpsource_byte_stream (test.test_sax.ExpatReaderTest.test_expat_inpsource_byte_stream) ... ok
+test_expat_inpsource_character_stream (test.test_sax.ExpatReaderTest.test_expat_inpsource_character_stream) ... ok
+test_expat_inpsource_filename (test.test_sax.ExpatReaderTest.test_expat_inpsource_filename) ... ok
+test_expat_inpsource_sysid (test.test_sax.ExpatReaderTest.test_expat_inpsource_sysid) ... ok
+test_expat_inpsource_sysid_nonascii (test.test_sax.ExpatReaderTest.test_expat_inpsource_sysid_nonascii) ... ok
+test_expat_locator_noinfo (test.test_sax.ExpatReaderTest.test_expat_locator_noinfo) ... ok
+test_expat_locator_withinfo (test.test_sax.ExpatReaderTest.test_expat_locator_withinfo) ... ok
+test_expat_locator_withinfo_nonascii (test.test_sax.ExpatReaderTest.test_expat_locator_withinfo_nonascii) ... ok
+test_expat_nsattrs_empty (test.test_sax.ExpatReaderTest.test_expat_nsattrs_empty) ... ok
+test_expat_nsattrs_wattr (test.test_sax.ExpatReaderTest.test_expat_nsattrs_wattr) ... ok
+test_expat_text_file (test.test_sax.ExpatReaderTest.test_expat_text_file) ... ok
+test_flush_reparse_deferral_disabled (test.test_sax.ExpatReaderTest.test_flush_reparse_deferral_disabled) ... FAIL
+test_flush_reparse_deferral_enabled (test.test_sax.ExpatReaderTest.test_flush_reparse_deferral_enabled) ... FAIL
+test_handlers (test.test_sax.LexicalHandlerTest.test_handlers) ... ok
+test_make_parser2 (test.test_sax.MakeParserTest.test_make_parser2) ... ok
+test_make_parser3 (test.test_sax.MakeParserTest.test_make_parser3) ... ok
+test_make_parser4 (test.test_sax.MakeParserTest.test_make_parser4) ... ok
+test_make_parser5 (test.test_sax.MakeParserTest.test_make_parser5) ... ok
+test_parseString_bytes (test.test_sax.ParseTest.test_parseString_bytes) ... ok
+test_parseString_text (test.test_sax.ParseTest.test_parseString_text) ... ok
+test_parse_InputSource (test.test_sax.ParseTest.test_parse_InputSource) ... ok
+test_parse_bytes (test.test_sax.ParseTest.test_parse_bytes) ... ok
+test_parse_close_source (test.test_sax.ParseTest.test_parse_close_source) ... ok
+test_parse_path_object (test.test_sax.ParseTest.test_parse_path_object) ... ok
+test_parse_text (test.test_sax.ParseTest.test_parse_text) ... ok
+test_binary_file (test.test_sax.PrepareInputSourceTest.test_binary_file) ... ok
+test_byte_stream (test.test_sax.PrepareInputSourceTest.test_byte_stream) ... ok
+test_character_stream (test.test_sax.PrepareInputSourceTest.test_character_stream) ... ok
+test_path_objects (test.test_sax.PrepareInputSourceTest.test_path_objects) ... ok
+test_string (test.test_sax.PrepareInputSourceTest.test_string) ... ok
+test_system_id (test.test_sax.PrepareInputSourceTest.test_system_id) ... ok
+test_text_file (test.test_sax.PrepareInputSourceTest.test_text_file) ... ok
+test_double_quoteattr (test.test_sax.SaxutilsTest.test_double_quoteattr) ... ok
+test_escape_all (test.test_sax.SaxutilsTest.test_escape_all) ... ok
+test_escape_basic (test.test_sax.SaxutilsTest.test_escape_basic) ... ok
+test_escape_extra (test.test_sax.SaxutilsTest.test_escape_extra) ... ok
+test_make_parser (test.test_sax.SaxutilsTest.test_make_parser) ... ok
+test_quoteattr_basic (test.test_sax.SaxutilsTest.test_quoteattr_basic) ... ok
+test_single_double_quoteattr (test.test_sax.SaxutilsTest.test_single_double_quoteattr) ... ok
+test_single_quoteattr (test.test_sax.SaxutilsTest.test_single_quoteattr) ... ok
+test_unescape_all (test.test_sax.SaxutilsTest.test_unescape_all) ... ok
+test_unescape_amp_extra (test.test_sax.SaxutilsTest.test_unescape_amp_extra) ... ok
+test_unescape_basic (test.test_sax.SaxutilsTest.test_unescape_basic) ... ok
+test_unescape_extra (test.test_sax.SaxutilsTest.test_unescape_extra) ... ok
+test_1463026_1 (test.test_sax.StreamReaderWriterXmlgenTest.test_1463026_1) ... ok
+test_1463026_1_empty (test.test_sax.StreamReaderWriterXmlgenTest.test_1463026_1_empty) ... ok
+test_1463026_2 (test.test_sax.StreamReaderWriterXmlgenTest.test_1463026_2) ... ok
+test_1463026_2_empty (test.test_sax.StreamReaderWriterXmlgenTest.test_1463026_2_empty) ... ok
+test_1463026_3 (test.test_sax.StreamReaderWriterXmlgenTest.test_1463026_3) ... ok
+test_1463026_3_empty (test.test_sax.StreamReaderWriterXmlgenTest.test_1463026_3_empty) ... ok
+test_5027_1 (test.test_sax.StreamReaderWriterXmlgenTest.test_5027_1) ... ok
+test_5027_2 (test.test_sax.StreamReaderWriterXmlgenTest.test_5027_2) ... ok
+test_no_close_file (test.test_sax.StreamReaderWriterXmlgenTest.test_no_close_file) ... ok
+test_xmlgen_attr_escape (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_attr_escape) ... ok
+test_xmlgen_basic (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_basic) ... ok
+test_xmlgen_basic_empty (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_basic_empty) ... ok
+test_xmlgen_content (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_content) ... ok
+test_xmlgen_content_empty (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_content_empty) ... ok
+test_xmlgen_content_escape (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_content_escape) ... ok
+test_xmlgen_encoding (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_encoding) ... ok
+test_xmlgen_encoding_bytes (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_encoding_bytes) ... ok
+test_xmlgen_fragment (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_fragment) ... ok
+test_xmlgen_ignorable (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_ignorable) ... ok
+test_xmlgen_ignorable_empty (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_ignorable_empty) ... ok
+test_xmlgen_ns (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_ns) ... ok
+test_xmlgen_ns_empty (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_ns_empty) ... ok
+test_xmlgen_pi (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_pi) ... ok
+test_xmlgen_unencodable (test.test_sax.StreamReaderWriterXmlgenTest.test_xmlgen_unencodable) ... ok
+test_1463026_1 (test.test_sax.StreamWriterXmlgenTest.test_1463026_1) ... ok
+test_1463026_1_empty (test.test_sax.StreamWriterXmlgenTest.test_1463026_1_empty) ... ok
+test_1463026_2 (test.test_sax.StreamWriterXmlgenTest.test_1463026_2) ... ok
+test_1463026_2_empty (test.test_sax.StreamWriterXmlgenTest.test_1463026_2_empty) ... ok
+test_1463026_3 (test.test_sax.StreamWriterXmlgenTest.test_1463026_3) ... ok
+test_1463026_3_empty (test.test_sax.StreamWriterXmlgenTest.test_1463026_3_empty) ... ok
+test_5027_1 (test.test_sax.StreamWriterXmlgenTest.test_5027_1) ... ok
+test_5027_2 (test.test_sax.StreamWriterXmlgenTest.test_5027_2) ... ok
+test_no_close_file (test.test_sax.StreamWriterXmlgenTest.test_no_close_file) ... ok
+test_xmlgen_attr_escape (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_attr_escape) ... ok
+test_xmlgen_basic (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_basic) ... ok
+test_xmlgen_basic_empty (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_basic_empty) ... ok
+test_xmlgen_content (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_content) ... ok
+test_xmlgen_content_empty (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_content_empty) ... ok
+test_xmlgen_content_escape (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_content_escape) ... ok
+test_xmlgen_encoding (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_encoding) ... ok
+test_xmlgen_encoding_bytes (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_encoding_bytes) ... ok
+test_xmlgen_fragment (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_fragment) ... ok
+test_xmlgen_ignorable (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_ignorable) ... ok
+test_xmlgen_ignorable_empty (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_ignorable_empty) ... ok
+test_xmlgen_ns (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_ns) ... ok
+test_xmlgen_ns_empty (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_ns_empty) ... ok
+test_xmlgen_pi (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_pi) ... ok
+test_xmlgen_unencodable (test.test_sax.StreamWriterXmlgenTest.test_xmlgen_unencodable) ... ok
+test_1463026_1 (test.test_sax.StringXmlgenTest.test_1463026_1) ... ok
+test_1463026_1_empty (test.test_sax.StringXmlgenTest.test_1463026_1_empty) ... ok
+test_1463026_2 (test.test_sax.StringXmlgenTest.test_1463026_2) ... ok
+test_1463026_2_empty (test.test_sax.StringXmlgenTest.test_1463026_2_empty) ... ok
+test_1463026_3 (test.test_sax.StringXmlgenTest.test_1463026_3) ... ok
+test_1463026_3_empty (test.test_sax.StringXmlgenTest.test_1463026_3_empty) ... ok
+test_5027_1 (test.test_sax.StringXmlgenTest.test_5027_1) ... ok
+test_5027_2 (test.test_sax.StringXmlgenTest.test_5027_2) ... ok
+test_no_close_file (test.test_sax.StringXmlgenTest.test_no_close_file) ... ok
+test_xmlgen_attr_escape (test.test_sax.StringXmlgenTest.test_xmlgen_attr_escape) ... ok
+test_xmlgen_basic (test.test_sax.StringXmlgenTest.test_xmlgen_basic) ... ok
+test_xmlgen_basic_empty (test.test_sax.StringXmlgenTest.test_xmlgen_basic_empty) ... ok
+test_xmlgen_content (test.test_sax.StringXmlgenTest.test_xmlgen_content) ... ok
+test_xmlgen_content_empty (test.test_sax.StringXmlgenTest.test_xmlgen_content_empty) ... ok
+test_xmlgen_content_escape (test.test_sax.StringXmlgenTest.test_xmlgen_content_escape) ... ok
+test_xmlgen_encoding (test.test_sax.StringXmlgenTest.test_xmlgen_encoding) ... ok
+test_xmlgen_encoding_bytes (test.test_sax.StringXmlgenTest.test_xmlgen_encoding_bytes) ... ok
+test_xmlgen_fragment (test.test_sax.StringXmlgenTest.test_xmlgen_fragment) ... ok
+test_xmlgen_ignorable (test.test_sax.StringXmlgenTest.test_xmlgen_ignorable) ... ok
+test_xmlgen_ignorable_empty (test.test_sax.StringXmlgenTest.test_xmlgen_ignorable_empty) ... ok
+test_xmlgen_ns (test.test_sax.StringXmlgenTest.test_xmlgen_ns) ... ok
+test_xmlgen_ns_empty (test.test_sax.StringXmlgenTest.test_xmlgen_ns_empty) ... ok
+test_xmlgen_pi (test.test_sax.StringXmlgenTest.test_xmlgen_pi) ... ok
+test_all (test.test_sax.TestModuleAll.test_all) ... ok
+test_1463026_1 (test.test_sax.WriterXmlgenTest.test_1463026_1) ... ok
+test_1463026_1_empty (test.test_sax.WriterXmlgenTest.test_1463026_1_empty) ... ok
+test_1463026_2 (test.test_sax.WriterXmlgenTest.test_1463026_2) ... ok
+test_1463026_2_empty (test.test_sax.WriterXmlgenTest.test_1463026_2_empty) ... ok
+test_1463026_3 (test.test_sax.WriterXmlgenTest.test_1463026_3) ... ok
+test_1463026_3_empty (test.test_sax.WriterXmlgenTest.test_1463026_3_empty) ... ok
+test_5027_1 (test.test_sax.WriterXmlgenTest.test_5027_1) ... ok
+test_5027_2 (test.test_sax.WriterXmlgenTest.test_5027_2) ... ok
+test_no_close_file (test.test_sax.WriterXmlgenTest.test_no_close_file) ... ok
+test_xmlgen_attr_escape (test.test_sax.WriterXmlgenTest.test_xmlgen_attr_escape) ... ok
+test_xmlgen_basic (test.test_sax.WriterXmlgenTest.test_xmlgen_basic) ... ok
+test_xmlgen_basic_empty (test.test_sax.WriterXmlgenTest.test_xmlgen_basic_empty) ... ok
+test_xmlgen_content (test.test_sax.WriterXmlgenTest.test_xmlgen_content) ... ok
+test_xmlgen_content_empty (test.test_sax.WriterXmlgenTest.test_xmlgen_content_empty) ... ok
+test_xmlgen_content_escape (test.test_sax.WriterXmlgenTest.test_xmlgen_content_escape) ... ok
+test_xmlgen_encoding (test.test_sax.WriterXmlgenTest.test_xmlgen_encoding) ... ok
+test_xmlgen_encoding_bytes (test.test_sax.WriterXmlgenTest.test_xmlgen_encoding_bytes) ... ok
+test_xmlgen_fragment (test.test_sax.WriterXmlgenTest.test_xmlgen_fragment) ... ok
+test_xmlgen_ignorable (test.test_sax.WriterXmlgenTest.test_xmlgen_ignorable) ... ok
+test_xmlgen_ignorable_empty (test.test_sax.WriterXmlgenTest.test_xmlgen_ignorable_empty) ... ok
+test_xmlgen_ns (test.test_sax.WriterXmlgenTest.test_xmlgen_ns) ... ok
+test_xmlgen_ns_empty (test.test_sax.WriterXmlgenTest.test_xmlgen_ns_empty) ... ok
+test_xmlgen_pi (test.test_sax.WriterXmlgenTest.test_xmlgen_pi) ... ok
+test_xmlgen_unencodable (test.test_sax.WriterXmlgenTest.test_xmlgen_unencodable) ... ok
+test_filter_basic (test.test_sax.XMLFilterBaseTest.test_filter_basic) ... ok
+test_attrs_empty (test.test_sax.XmlReaderTest.test_attrs_empty) ... ok
+test_attrs_wattr (test.test_sax.XmlReaderTest.test_attrs_wattr) ... ok
+test_nsattrs_empty (test.test_sax.XmlReaderTest.test_nsattrs_empty) ... ok
+test_nsattrs_wattr (test.test_sax.XmlReaderTest.test_nsattrs_wattr) ... ok
+
+======================================================================
+FAIL: test_handlers (test.test_sax.CDATAHandlerTest.test_handlers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_sax.py", line 1555, in test_handlers
+    self.parser.parse(source)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\sax\expatreader.py", line 105, in parse
+    xmlreader.IncrementalParser.parse(self, source)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\sax\xmlreader.py", line 124, in parse
+    self.feed(buffer)
+    ~~~~~~~~~^^^^^^^^
+  File "C:\Users\masou\AppData\Local\Programs\Python\Python314\Lib\xml\sax\expatreader.py", line 211, in feed
+    self._parser.Parse(data, isFinal)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Modules\pyexpat.c", line 313, in CharacterData
+    temp = call_with_frame("CharacterData", __LINE__,
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_sax.py", line 1544, in characters
+    h.assertEqual(t[0], content)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 'Parseable character data' != '\nParseable character data\n'
++ 
+  Parseable character data
++ 
+
+
+======================================================================
+FAIL: test_flush_reparse_deferral_disabled (test.test_sax.ExpatReaderTest.test_flush_reparse_deferral_disabled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_sax.py", line 1255, in test_flush_reparse_deferral_disabled
+    self.assertEqual(result.getvalue(), start)  # i.e. no elements started
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'<?xml version="1.0" encoding="iso-8859-1"?>\n<doc>' != b'<?xml version="1.0" encoding="iso-8859-1"?>\n'
+
+======================================================================
+FAIL: test_flush_reparse_deferral_enabled (test.test_sax.ExpatReaderTest.test_flush_reparse_deferral_enabled)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact3.0\xpact-codex-w3c-xml-conformance-benchmarks\AlotOfTests\10-python-xml-tests\download\cpython\Lib\test\test_sax.py", line 1231, in test_flush_reparse_deferral_enabled
+    self.assertEqual(result.getvalue(), start)  # i.e. no elements started
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'<?xml version="1.0" encoding="iso-8859-1"?>\n<doc>' != b'<?xml version="1.0" encoding="iso-8859-1"?>\n'
+
+----------------------------------------------------------------------
+Ran 186 tests in 0.269s
+
+FAILED (failures=3)
+test test_sax failed
+0:00:01 [ 4/10/4] test_sax failed (3 failures)
+0:00:01 [ 5/10/4] test_minidom
+testAAA (test.test_minidom.MinidomTest.testAAA) ... ok
+testAAB (test.test_minidom.MinidomTest.testAAB) ... ok
+testAddAttr (test.test_minidom.MinidomTest.testAddAttr) ... ok
+testAltNewline (test.test_minidom.MinidomTest.testAltNewline) ... ok
+testAppendChild (test.test_minidom.MinidomTest.testAppendChild) ... ok
+testAppendChildFragment (test.test_minidom.MinidomTest.testAppendChildFragment) ... ok
+testAttrListItem (test.test_minidom.MinidomTest.testAttrListItem) ... ok
+testAttrListItemNS (test.test_minidom.MinidomTest.testAttrListItemNS) ... ok
+testAttrListItems (test.test_minidom.MinidomTest.testAttrListItems) ... ok
+testAttrListKeys (test.test_minidom.MinidomTest.testAttrListKeys) ... ok
+testAttrListKeysNS (test.test_minidom.MinidomTest.testAttrListKeysNS) ... ok
+testAttrListLength (test.test_minidom.MinidomTest.testAttrListLength) ... ok
+testAttrListValues (test.test_minidom.MinidomTest.testAttrListValues) ... ok
+testAttrList__getitem__ (test.test_minidom.MinidomTest.testAttrList__getitem__) ... ok
+testAttrList__setitem__ (test.test_minidom.MinidomTest.testAttrList__setitem__) ... ok
+testAttrModeSetsNonOptionalAttrs (test.test_minidom.MinidomTest.testAttrModeSetsNonOptionalAttrs) ... ok
+testAttrModeSetsParamsAsAttrs (test.test_minidom.MinidomTest.testAttrModeSetsParamsAsAttrs) ... ok
+testAttributeRepr (test.test_minidom.MinidomTest.testAttributeRepr) ... ok
+testBug0777884 (test.test_minidom.MinidomTest.testBug0777884) ... ok
+testBug1433694 (test.test_minidom.MinidomTest.testBug1433694) ... ok
+testChangeAttr (test.test_minidom.MinidomTest.testChangeAttr) ... ok
+testChildNodes (test.test_minidom.MinidomTest.testChildNodes) ... ok
+testCloneAttributeDeep (test.test_minidom.MinidomTest.testCloneAttributeDeep) ... ok
+testCloneAttributeShallow (test.test_minidom.MinidomTest.testCloneAttributeShallow) ... ok
+testCloneDocumentDeep (test.test_minidom.MinidomTest.testCloneDocumentDeep) ... ok
+testCloneDocumentShallow (test.test_minidom.MinidomTest.testCloneDocumentShallow) ... ok
+testCloneDocumentTypeDeepNotOk (test.test_minidom.MinidomTest.testCloneDocumentTypeDeepNotOk) ... ok
+testCloneDocumentTypeDeepOk (test.test_minidom.MinidomTest.testCloneDocumentTypeDeepOk) ... ok
+testCloneDocumentTypeShallowNotOk (test.test_minidom.MinidomTest.testCloneDocumentTypeShallowNotOk) ... ok
+testCloneDocumentTypeShallowOk (test.test_minidom.MinidomTest.testCloneDocumentTypeShallowOk) ... ok
+testCloneElementDeep (test.test_minidom.MinidomTest.testCloneElementDeep) ... ok
+testCloneElementShallow (test.test_minidom.MinidomTest.testCloneElementShallow) ... ok
+testCloneNodeEntity (test.test_minidom.MinidomTest.testCloneNodeEntity) ... ok
+testClonePIDeep (test.test_minidom.MinidomTest.testClonePIDeep) ... ok
+testClonePIShallow (test.test_minidom.MinidomTest.testClonePIShallow) ... ok
+testComment (test.test_minidom.MinidomTest.testComment) ... ok
+testContext (test.test_minidom.MinidomTest.testContext) ... ok
+testCreateAttributeNS (test.test_minidom.MinidomTest.testCreateAttributeNS) ... ok
+testCreateElementNS (test.test_minidom.MinidomTest.testCreateElementNS) ... ok
+testDeepcopiedDocument (test.test_minidom.MinidomTest.testDeepcopiedDocument) ... ok
+testDeleteAttr (test.test_minidom.MinidomTest.testDeleteAttr) ... ok
+testDocRemoveChild (test.test_minidom.MinidomTest.testDocRemoveChild) ... ok
+testDocumentAsyncAttr (test.test_minidom.MinidomTest.testDocumentAsyncAttr) ... ok
+testDocumentElement (test.test_minidom.MinidomTest.testDocumentElement) ... ok
+testElement (test.test_minidom.MinidomTest.testElement) ... ok
+testElementReprAndStr (test.test_minidom.MinidomTest.testElementReprAndStr) ... ok
+testElementReprAndStrUnicode (test.test_minidom.MinidomTest.testElementReprAndStrUnicode) ... ok
+testElementReprAndStrUnicodeNS (test.test_minidom.MinidomTest.testElementReprAndStrUnicodeNS) ... ok
+testEmptyXMLNSValue (test.test_minidom.MinidomTest.testEmptyXMLNSValue) ... ok
+testEncodings (test.test_minidom.MinidomTest.testEncodings) ... ok
+testExceptionOnSpacesInXMLNSValue (test.test_minidom.MinidomTest.testExceptionOnSpacesInXMLNSValue) ... ok
+testFirstChild (test.test_minidom.MinidomTest.testFirstChild) ... ok
+testGetAttrList (test.test_minidom.MinidomTest.testGetAttrList) ... ok
+testGetAttrValues (test.test_minidom.MinidomTest.testGetAttrValues) ... ok
+testGetAttribute (test.test_minidom.MinidomTest.testGetAttribute) ... ok
+testGetAttributeNS (test.test_minidom.MinidomTest.testGetAttributeNS) ... ok
+testGetAttributeNode (test.test_minidom.MinidomTest.testGetAttributeNode) ... ok
+testGetElementsByTagName (test.test_minidom.MinidomTest.testGetElementsByTagName) ... ok
+testGetElementsByTagNameNS (test.test_minidom.MinidomTest.testGetElementsByTagNameNS) ... ok
+testGetEmptyNodeListFromElementsByTagNameNS (test.test_minidom.MinidomTest.testGetEmptyNodeListFromElementsByTagNameNS) ... ok
+testHasAttribute (test.test_minidom.MinidomTest.testHasAttribute) ... ok
+testHasChildNodes (test.test_minidom.MinidomTest.testHasChildNodes) ... ok
+testImportDocumentDeep (test.test_minidom.MinidomTest.testImportDocumentDeep) ... ok
+testImportDocumentShallow (test.test_minidom.MinidomTest.testImportDocumentShallow) ... ok
+testImportDocumentTypeDeep (test.test_minidom.MinidomTest.testImportDocumentTypeDeep) ... ok
+testImportDocumentTypeShallow (test.test_minidom.MinidomTest.testImportDocumentTypeShallow) ... ok
+testInsertBefore (test.test_minidom.MinidomTest.testInsertBefore) ... ok
+testInsertBeforeFragment (test.test_minidom.MinidomTest.testInsertBeforeFragment) ... ok
+testLegalChildren (test.test_minidom.MinidomTest.testLegalChildren) ... ok
+testNamedNodeMapSetItem (test.test_minidom.MinidomTest.testNamedNodeMapSetItem) ... ok
+testNodeListItem (test.test_minidom.MinidomTest.testNodeListItem) ... ok
+testNonZero (test.test_minidom.MinidomTest.testNonZero) ... ok
+testNormalize (test.test_minidom.MinidomTest.testNormalize) ... ok
+testNormalizeCombineAndNextSibling (test.test_minidom.MinidomTest.testNormalizeCombineAndNextSibling) ... ok
+testNormalizeDeleteAndCombine (test.test_minidom.MinidomTest.testNormalizeDeleteAndCombine) ... ok
+testNormalizeDeleteWithNextSibling (test.test_minidom.MinidomTest.testNormalizeDeleteWithNextSibling) ... ok
+testNormalizeDeleteWithPrevSibling (test.test_minidom.MinidomTest.testNormalizeDeleteWithPrevSibling) ... ok
+testNormalizeDeleteWithTwoNonTextSiblings (test.test_minidom.MinidomTest.testNormalizeDeleteWithTwoNonTextSiblings) ... ok
+testNormalizeRecursion (test.test_minidom.MinidomTest.testNormalizeRecursion) ... ok
+testParents (test.test_minidom.MinidomTest.testParents) ... ok
+testParse (test.test_minidom.MinidomTest.testParse) ... ok
+testParseAttributeNamespaces (test.test_minidom.MinidomTest.testParseAttributeNamespaces) ... ok
+testParseAttributes (test.test_minidom.MinidomTest.testParseAttributes) ... ok
+testParseElement (test.test_minidom.MinidomTest.testParseElement) ... ok
+testParseElementNamespaces (test.test_minidom.MinidomTest.testParseElementNamespaces) ... ok
+testParseFromBinaryFile (test.test_minidom.MinidomTest.testParseFromBinaryFile) ... ok
+testParseFromTextFile (test.test_minidom.MinidomTest.testParseFromTextFile) ... ok
+testParseProcessingInstructions (test.test_minidom.MinidomTest.testParseProcessingInstructions) ... ok
+testParseString (test.test_minidom.MinidomTest.testParseString) ... ok
+testPatch1094164 (test.test_minidom.MinidomTest.testPatch1094164) ... ok
+testPickledDocument (test.test_minidom.MinidomTest.testPickledDocument) ... ok
+testProcessingInstruction (test.test_minidom.MinidomTest.testProcessingInstruction) ... ok
+testProcessingInstructionNameError (test.test_minidom.MinidomTest.testProcessingInstructionNameError) ... ok
+testProcessingInstructionRepr (test.test_minidom.MinidomTest.testProcessingInstructionRepr) ... ok
+testRemoveAttr (test.test_minidom.MinidomTest.testRemoveAttr) ... ok
+testRemoveAttrNS (test.test_minidom.MinidomTest.testRemoveAttrNS) ... ok
+testRemoveAttributeNode (test.test_minidom.MinidomTest.testRemoveAttributeNode) ... ok
+testRemoveNamedItem (test.test_minidom.MinidomTest.testRemoveNamedItem) ... ok
+testRemoveNamedItemNS (test.test_minidom.MinidomTest.testRemoveNamedItemNS) ... ok
+testRenameAttribute (test.test_minidom.MinidomTest.testRenameAttribute) ... ok
+testRenameElement (test.test_minidom.MinidomTest.testRenameElement) ... ok
+testRenameOther (test.test_minidom.MinidomTest.testRenameOther) ... ok
+testReplaceChildFragment (test.test_minidom.MinidomTest.testReplaceChildFragment) ... ok
+testReplaceWholeText (test.test_minidom.MinidomTest.testReplaceWholeText) ... ok
+testSchemaType (test.test_minidom.MinidomTest.testSchemaType) ... ok
+testSerializeCommentNodeWithDoubleHyphen (test.test_minidom.MinidomTest.testSerializeCommentNodeWithDoubleHyphen) ... ok
+testSetAttrValueandNodeValue (test.test_minidom.MinidomTest.testSetAttrValueandNodeValue) ... ok
+testSetIdAttribute (test.test_minidom.MinidomTest.testSetIdAttribute) ... ok
+testSetIdAttributeNS (test.test_minidom.MinidomTest.testSetIdAttributeNS) ... ok
+testSetIdAttributeNode (test.test_minidom.MinidomTest.testSetIdAttributeNode) ... ok
+testSiblings (test.test_minidom.MinidomTest.testSiblings) ... ok
+testStandalone (test.test_minidom.MinidomTest.testStandalone) ... ok
+testTextRepr (test.test_minidom.MinidomTest.testTextRepr) ... ok
+testTooManyDocumentElements (test.test_minidom.MinidomTest.testTooManyDocumentElements) ... ok
+testUnlink (test.test_minidom.MinidomTest.testUnlink) ... ok
+testUserData (test.test_minidom.MinidomTest.testUserData) ... ok
+testWholeText (test.test_minidom.MinidomTest.testWholeText) ... ok
+testWriteText (test.test_minidom.MinidomTest.testWriteText) ... ok
+testWriteXML (test.test_minidom.MinidomTest.testWriteXML) ... ok
+test_cdata_parsing (test.test_minidom.MinidomTest.test_cdata_parsing) ... ok
+test_minidom_attribute_order (test.test_minidom.MinidomTest.test_minidom_attribute_order) ... ok
+test_toprettyxml_preserves_content_of_text_node (test.test_minidom.MinidomTest.test_toprettyxml_preserves_content_of_text_node) ... ok
+test_toprettyxml_with_adjacent_text_nodes (test.test_minidom.MinidomTest.test_toprettyxml_with_adjacent_text_nodes) ... ok
+test_toprettyxml_with_attributes_ordered (test.test_minidom.MinidomTest.test_toprettyxml_with_attributes_ordered) ... ok
+test_toprettyxml_with_cdata (test.test_minidom.MinidomTest.test_toprettyxml_with_cdata) ... ok
+test_toprettyxml_with_text_nodes (test.test_minidom.MinidomTest.test_toprettyxml_with_text_nodes) ... ok
+test_toxml_quote_attrib (test.test_minidom.MinidomTest.test_toxml_quote_attrib) ... ok
+test_toxml_quote_text (test.test_minidom.MinidomTest.test_toxml_quote_text) ... ok
+test_toxml_with_attributes_ordered (test.test_minidom.MinidomTest.test_toxml_with_attributes_ordered) ... ok
+
+----------------------------------------------------------------------
+Ran 129 tests in 0.080s
+
+OK
+0:00:01 [ 5/10/4] test_minidom passed
+0:00:01 [ 6/10/4] test_pulldom
+test_comment (test.test_pulldom.PullDOMTestCase.test_comment)
+PullDOM does not receive "comment" events. ... expected failure
+test_end_document (test.test_pulldom.PullDOMTestCase.test_end_document)
+PullDOM does not receive "end-document" events. ... expected failure
+test_expandItem (test.test_pulldom.PullDOMTestCase.test_expandItem)
+Ensure expandItem works as expected. ... ok
+test_external_ges_default (test.test_pulldom.PullDOMTestCase.test_external_ges_default) ... ok
+test_parse (test.test_pulldom.PullDOMTestCase.test_parse)
+Minimal test of DOMEventStream.parse() ... ok
+test_parse_semantics (test.test_pulldom.PullDOMTestCase.test_parse_semantics)
+Test DOMEventStream parsing semantics. ... ok
+testSAX2DOM (test.test_pulldom.SAX2DOMTestCase.testSAX2DOM)
+Ensure SAX2DOM expands nodes as expected. ... ok
+test_basic (test.test_pulldom.SAX2DOMTestCase.test_basic)
+Ensure SAX2DOM can parse from a stream. ... ok
+test_sax2dom_fail (test.test_pulldom.ThoroughTestCase.test_sax2dom_fail)
+SAX2DOM can"t handle a PI before the root element. ... expected failure
+test_thorough_parse (test.test_pulldom.ThoroughTestCase.test_thorough_parse)
+Test some of the hard-to-reach parts of PullDOM. ... ok
+test_thorough_sax2dom (test.test_pulldom.ThoroughTestCase.test_thorough_sax2dom)
+Test some of the hard-to-reach parts of SAX2DOM. ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.021s
+
+OK (expected failures=3)
+0:00:01 [ 6/10/4] test_pulldom passed
+0:00:01 [ 7/10/4] test_xml_dom_minicompat
+test_emptynodelist___add__ (test.test_xml_dom_minicompat.EmptyNodeListTestCase.test_emptynodelist___add__) ... ok
+test_emptynodelist___radd__ (test.test_xml_dom_minicompat.EmptyNodeListTestCase.test_emptynodelist___radd__) ... ok
+test_emptynodelist_item (test.test_xml_dom_minicompat.EmptyNodeListTestCase.test_emptynodelist_item) ... ok
+test_emptynodelist_length (test.test_xml_dom_minicompat.EmptyNodeListTestCase.test_emptynodelist_length) ... ok
+test_nodelist___add__ (test.test_xml_dom_minicompat.NodeListTestCase.test_nodelist___add__) ... ok
+test_nodelist___radd__ (test.test_xml_dom_minicompat.NodeListTestCase.test_nodelist___radd__) ... ok
+test_nodelist_copy (test.test_xml_dom_minicompat.NodeListTestCase.test_nodelist_copy) ... ok
+test_nodelist_deepcopy (test.test_xml_dom_minicompat.NodeListTestCase.test_nodelist_deepcopy) ... ok
+test_nodelist_item (test.test_xml_dom_minicompat.NodeListTestCase.test_nodelist_item) ... ok
+test_nodelist_length (test.test_xml_dom_minicompat.NodeListTestCase.test_nodelist_length) ... ok
+test_nodelist_pickle_roundtrip (test.test_xml_dom_minicompat.NodeListTestCase.test_nodelist_pickle_roundtrip) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.000s
+
+OK
+0:00:01 [ 7/10/4] test_xml_dom_minicompat passed
+0:00:01 [ 8/10/4] test_xml_dom_xmlbuilder
+test_builder (test.test_xml_dom_xmlbuilder.XMLBuilderTest.test_builder) ... ok
+test_entity_resolver (test.test_xml_dom_xmlbuilder.XMLBuilderTest.test_entity_resolver) ... ok
+test_parse_uri (test.test_xml_dom_xmlbuilder.XMLBuilderTest.test_parse_uri) ... ok
+test_parse_with_systemId (test.test_xml_dom_xmlbuilder.XMLBuilderTest.test_parse_with_systemId) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.003s
+
+OK
+0:00:01 [ 8/10/4] test_xml_dom_xmlbuilder passed
+0:00:01 [ 9/10/4] test_xmlrpc
+test_decode (test.test_xmlrpc.BinaryTestCase.test_decode) ... ok
+test_default (test.test_xmlrpc.BinaryTestCase.test_default) ... ok
+test_string (test.test_xmlrpc.BinaryTestCase.test_string) ... ok
+test_cgi_get (test.test_xmlrpc.CGIHandlerTestCase.test_cgi_get) ... ok
+test_cgi_xmlrpc_response (test.test_xmlrpc.CGIHandlerTestCase.test_cgi_xmlrpc_response) ... ok
+test_comparison (test.test_xmlrpc.DateTimeTestCase.test_comparison) ... ok
+test_datetime_datetime (test.test_xmlrpc.DateTimeTestCase.test_datetime_datetime) ... ok
+test_decode (test.test_xmlrpc.DateTimeTestCase.test_decode) ... ok
+test_default (test.test_xmlrpc.DateTimeTestCase.test_default) ... ok
+test_repr (test.test_xmlrpc.DateTimeTestCase.test_repr) ... ok
+test_time (test.test_xmlrpc.DateTimeTestCase.test_time) ... ok
+test_time_struct (test.test_xmlrpc.DateTimeTestCase.test_time_struct) ... ok
+test_time_tuple (test.test_xmlrpc.DateTimeTestCase.test_time_tuple) ... ok
+test_basic (test.test_xmlrpc.FailingServerTestCase.test_basic) ... ok
+test_fail_no_info (test.test_xmlrpc.FailingServerTestCase.test_fail_no_info) ... ok
+test_fail_with_info (test.test_xmlrpc.FailingServerTestCase.test_fail_with_info) ... ok
+test_dotted_attribute (test.test_xmlrpc.FaultTestCase.test_dotted_attribute) ... ok
+test_dump_fault (test.test_xmlrpc.FaultTestCase.test_dump_fault) ... ok
+test_repr (test.test_xmlrpc.FaultTestCase.test_repr) ... ok
+test_bad_gzip_request (test.test_xmlrpc.GzipServerTestCase.test_bad_gzip_request) ... ok
+test_gzip_request (test.test_xmlrpc.GzipServerTestCase.test_gzip_request) ... ok
+test_gzip_response (test.test_xmlrpc.GzipServerTestCase.test_gzip_response) ... ok
+test_gzip_decode_limit (test.test_xmlrpc.GzipUtilTestCase.test_gzip_decode_limit) ... ok
+test_header (test.test_xmlrpc.HeadersServerTestCase.test_header) ... ok
+test_header_empty (test.test_xmlrpc.HeadersServerTestCase.test_header_empty) ... ok
+test_header_items (test.test_xmlrpc.HeadersServerTestCase.test_header_items) ... ok
+test_header_many (test.test_xmlrpc.HeadersServerTestCase.test_header_many) ... ok
+test_header_tuple (test.test_xmlrpc.HeadersServerTestCase.test_header_tuple) ... ok
+test_escape (test.test_xmlrpc.HelperTestCase.test_escape) ... ok
+test_two (test.test_xmlrpc.KeepaliveServerTestCase1.test_two) ... ok
+test_close (test.test_xmlrpc.KeepaliveServerTestCase2.test_close) ... ok
+test_transport (test.test_xmlrpc.KeepaliveServerTestCase2.test_transport) ... ok
+test_empty_path (test.test_xmlrpc.MultiPathServerTestCase.test_empty_path) ... skipped "resource 'walltime' is not enabled"
+test_empty_path_fragment (test.test_xmlrpc.MultiPathServerTestCase.test_empty_path_fragment) ... skipped "resource 'walltime' is not enabled"
+test_empty_path_query (test.test_xmlrpc.MultiPathServerTestCase.test_empty_path_query) ... skipped "resource 'walltime' is not enabled"
+test_invalid_path (test.test_xmlrpc.MultiPathServerTestCase.test_invalid_path) ... skipped "resource 'walltime' is not enabled"
+test_path1 (test.test_xmlrpc.MultiPathServerTestCase.test_path1) ... ok
+test_path2 (test.test_xmlrpc.MultiPathServerTestCase.test_path2) ... ok
+test_path3 (test.test_xmlrpc.MultiPathServerTestCase.test_path3) ... skipped "resource 'walltime' is not enabled"
+test_path_fragment (test.test_xmlrpc.MultiPathServerTestCase.test_path_fragment) ... skipped "resource 'walltime' is not enabled"
+test_path_query (test.test_xmlrpc.MultiPathServerTestCase.test_path_query) ... skipped "resource 'walltime' is not enabled"
+test_path_query_fragment (test.test_xmlrpc.MultiPathServerTestCase.test_path_query_fragment) ... skipped "resource 'walltime' is not enabled"
+test_root_path (test.test_xmlrpc.MultiPathServerTestCase.test_root_path) ... skipped "resource 'walltime' is not enabled"
+test_close (test.test_xmlrpc.ServerProxyTestCase.test_close) ... ok
+test_transport (test.test_xmlrpc.ServerProxyTestCase.test_transport) ... ok
+test_server_encoding (test.test_xmlrpc.SimpleServerEncodingTestCase.test_server_encoding) ... ok
+test_404 (test.test_xmlrpc.SimpleServerTestCase.test_404) ... ok
+test_allow_dotted_names_true (test.test_xmlrpc.SimpleServerTestCase.test_allow_dotted_names_true) ... ok
+test_client_encoding (test.test_xmlrpc.SimpleServerTestCase.test_client_encoding) ... ok
+test_context_manager (test.test_xmlrpc.SimpleServerTestCase.test_context_manager) ... ok
+test_context_manager_method_error (test.test_xmlrpc.SimpleServerTestCase.test_context_manager_method_error) ... ok
+test_dotted_attribute (test.test_xmlrpc.SimpleServerTestCase.test_dotted_attribute) ... ok
+test_introspection1 (test.test_xmlrpc.SimpleServerTestCase.test_introspection1) ... ok
+test_introspection2 (test.test_xmlrpc.SimpleServerTestCase.test_introspection2) ... ok
+test_introspection3 (test.test_xmlrpc.SimpleServerTestCase.test_introspection3) ... ok
+test_introspection4 (test.test_xmlrpc.SimpleServerTestCase.test_introspection4) ... ok
+test_multicall (test.test_xmlrpc.SimpleServerTestCase.test_multicall) ... ok
+test_non_existing_multicall (test.test_xmlrpc.SimpleServerTestCase.test_non_existing_multicall) ... ok
+test_nonascii (test.test_xmlrpc.SimpleServerTestCase.test_nonascii) ... ok
+test_nonascii_methodname (test.test_xmlrpc.SimpleServerTestCase.test_nonascii_methodname) ... ok
+test_partial_post (test.test_xmlrpc.SimpleServerTestCase.test_partial_post) ... ok
+test_simple1 (test.test_xmlrpc.SimpleServerTestCase.test_simple1) ... ok
+test_unicode_host (test.test_xmlrpc.SimpleServerTestCase.test_unicode_host) ... ok
+test_call_dispatch_func (test.test_xmlrpc.SimpleXMLRPCDispatcherTestCase.test_call_dispatch_func)
+Calls the registered instance's `_dispatch` function ... ok
+test_call_instance_func (test.test_xmlrpc.SimpleXMLRPCDispatcherTestCase.test_call_instance_func)
+Calls a registered instance attribute as a function ... ok
+test_call_registered_func (test.test_xmlrpc.SimpleXMLRPCDispatcherTestCase.test_call_registered_func)
+Calls explicitly registered function ... ok
+test_cannot_locate_func (test.test_xmlrpc.SimpleXMLRPCDispatcherTestCase.test_cannot_locate_func)
+Calls a function that the dispatcher cannot locate ... ok
+test_instance_has_no_func (test.test_xmlrpc.SimpleXMLRPCDispatcherTestCase.test_instance_has_no_func)
+Attempts to call nonexistent function on a registered instance ... ok
+test_registered_func_is_none (test.test_xmlrpc.SimpleXMLRPCDispatcherTestCase.test_registered_func_is_none)
+Calls explicitly registered function which is None ... ok
+test_cgihandler_has_use_builtin_types_flag (test.test_xmlrpc.UseBuiltinTypesTestCase.test_cgihandler_has_use_builtin_types_flag) ... ok
+test_use_builtin_types (test.test_xmlrpc.UseBuiltinTypesTestCase.test_use_builtin_types) ... ok
+test_xmlrpcserver_has_use_builtin_types_flag (test.test_xmlrpc.UseBuiltinTypesTestCase.test_xmlrpcserver_has_use_builtin_types_flag) ... ok
+test_bug_1164912 (test.test_xmlrpc.XMLRPCTestCase.test_bug_1164912) ... ok
+test_datetime_before_1900 (test.test_xmlrpc.XMLRPCTestCase.test_datetime_before_1900) ... ok
+test_dump_bad_dict (test.test_xmlrpc.XMLRPCTestCase.test_dump_bad_dict) ... ok
+test_dump_bare_datetime (test.test_xmlrpc.XMLRPCTestCase.test_dump_bare_datetime) ... ok
+test_dump_big_int (test.test_xmlrpc.XMLRPCTestCase.test_dump_big_int) ... ok
+test_dump_big_long (test.test_xmlrpc.XMLRPCTestCase.test_dump_big_long) ... ok
+test_dump_bytes (test.test_xmlrpc.XMLRPCTestCase.test_dump_bytes) ... ok
+test_dump_double (test.test_xmlrpc.XMLRPCTestCase.test_dump_double) ... ok
+test_dump_encoding (test.test_xmlrpc.XMLRPCTestCase.test_dump_encoding) ... ok
+test_dump_load (test.test_xmlrpc.XMLRPCTestCase.test_dump_load) ... ok
+test_dump_none (test.test_xmlrpc.XMLRPCTestCase.test_dump_none) ... ok
+test_dump_recursive_dict (test.test_xmlrpc.XMLRPCTestCase.test_dump_recursive_dict) ... ok
+test_dump_recursive_seq (test.test_xmlrpc.XMLRPCTestCase.test_dump_recursive_seq) ... ok
+test_get_host_info (test.test_xmlrpc.XMLRPCTestCase.test_get_host_info) ... ok
+test_keepalive_disconnect (test.test_xmlrpc.XMLRPCTestCase.test_keepalive_disconnect) ... ok
+test_limit_int (test.test_xmlrpc.XMLRPCTestCase.test_limit_int) ... ok
+test_load_extension_types (test.test_xmlrpc.XMLRPCTestCase.test_load_extension_types) ... ok
+test_load_standard_types (test.test_xmlrpc.XMLRPCTestCase.test_load_standard_types) ... ok
+test_loads_unsupported (test.test_xmlrpc.XMLRPCTestCase.test_loads_unsupported) ... ok
+test_newstyle_class (test.test_xmlrpc.XMLRPCTestCase.test_newstyle_class) ... ok
+test_ssl_presence (test.test_xmlrpc.XMLRPCTestCase.test_ssl_presence) ... ok
+
+----------------------------------------------------------------------
+Ran 93 tests in 4.338s
+
+OK (skipped=9)
+0:00:06 [ 9/10/4] test_xmlrpc passed
+0:00:06 [10/10/4] test_plistlib
+test__all__ (test.test_plistlib.MiscTestCase.test__all__) ... ok
+test_cycles (test.test_plistlib.TestBinaryPlistlib.test_cycles) ... ok
+test_deep_nesting (test.test_plistlib.TestBinaryPlistlib.test_deep_nesting) ... ok
+test_dump_aware_datetime_without_aware_datetime_option (test.test_plistlib.TestBinaryPlistlib.test_dump_aware_datetime_without_aware_datetime_option) ... skipped "Can't find timezone datebase"
+test_dump_duplicates (test.test_plistlib.TestBinaryPlistlib.test_dump_duplicates) ... ok
+test_dump_utc_aware_datetime_without_aware_datetime_option (test.test_plistlib.TestBinaryPlistlib.test_dump_utc_aware_datetime_without_aware_datetime_option) ... ok
+test_identity (test.test_plistlib.TestBinaryPlistlib.test_identity) ... ok
+test_invalid_binary (test.test_plistlib.TestBinaryPlistlib.test_invalid_binary) ... ok
+test_large_timestamp (test.test_plistlib.TestBinaryPlistlib.test_large_timestamp) ... ok
+test_load_aware_datetime (test.test_plistlib.TestBinaryPlistlib.test_load_aware_datetime) ... ok
+test_load_int (test.test_plistlib.TestBinaryPlistlib.test_load_int) ... ok
+test_load_singletons (test.test_plistlib.TestBinaryPlistlib.test_load_singletons) ... ok
+test_nonstandard_refs_size (test.test_plistlib.TestBinaryPlistlib.test_nonstandard_refs_size) ... ok
+test_unsupported (test.test_plistlib.TestBinaryPlistlib.test_unsupported) ... ok
+test_keyed_archive_data (test.test_plistlib.TestKeyedArchive.test_keyed_archive_data) ... ok
+test_appleformatting (test.test_plistlib.TestPlistlib.test_appleformatting) ... ok
+test_appleformattingfromliteral (test.test_plistlib.TestPlistlib.test_appleformattingfromliteral) ... ok
+test_bytearray (test.test_plistlib.TestPlistlib.test_bytearray) ... ok
+test_bytes (test.test_plistlib.TestPlistlib.test_bytes) ... ok
+test_bytesio (test.test_plistlib.TestPlistlib.test_bytesio) ... ok
+test_controlcharacters (test.test_plistlib.TestPlistlib.test_controlcharacters) ... ok
+test_create (test.test_plistlib.TestPlistlib.test_create) ... ok
+test_dict_members (test.test_plistlib.TestPlistlib.test_dict_members) ... ok
+test_dump_aware_datetime (test.test_plistlib.TestPlistlib.test_dump_aware_datetime) ... skipped "Can't find timezone datebase"
+test_dump_aware_datetime_without_aware_datetime_option (test.test_plistlib.TestPlistlib.test_dump_aware_datetime_without_aware_datetime_option) ... skipped "Can't find timezone datebase"
+test_dump_invalid_format (test.test_plistlib.TestPlistlib.test_dump_invalid_format) ... ok
+test_dump_naive_datetime_with_aware_datetime_option (test.test_plistlib.TestPlistlib.test_dump_naive_datetime_with_aware_datetime_option) ... ok
+test_dump_utc_aware_datetime (test.test_plistlib.TestPlistlib.test_dump_utc_aware_datetime) ... ok
+test_dump_utc_aware_datetime_without_aware_datetime_option (test.test_plistlib.TestPlistlib.test_dump_utc_aware_datetime_without_aware_datetime_option) ... ok
+test_indentation_array (test.test_plistlib.TestPlistlib.test_indentation_array) ... ok
+test_indentation_dict (test.test_plistlib.TestPlistlib.test_indentation_dict) ... ok
+test_indentation_dict_mix (test.test_plistlib.TestPlistlib.test_indentation_dict_mix) ... ok
+test_int (test.test_plistlib.TestPlistlib.test_int) ... ok
+test_integer_notations (test.test_plistlib.TestPlistlib.test_integer_notations) ... ok
+test_invalid_type (test.test_plistlib.TestPlistlib.test_invalid_type) ... ok
+test_invalid_uid (test.test_plistlib.TestPlistlib.test_invalid_uid) ... ok
+test_invalidarray (test.test_plistlib.TestPlistlib.test_invalidarray) ... ok
+test_invaliddict (test.test_plistlib.TestPlistlib.test_invaliddict) ... ok
+test_invalidinteger (test.test_plistlib.TestPlistlib.test_invalidinteger) ... ok
+test_invalidreal (test.test_plistlib.TestPlistlib.test_invalidreal) ... ok
+test_io (test.test_plistlib.TestPlistlib.test_io) ... ok
+test_keys_no_string (test.test_plistlib.TestPlistlib.test_keys_no_string) ... ok
+test_keysort (test.test_plistlib.TestPlistlib.test_keysort) ... ok
+test_keysort_bytesio (test.test_plistlib.TestPlistlib.test_keysort_bytesio) ... ok
+test_list_members (test.test_plistlib.TestPlistlib.test_list_members) ... ok
+test_load_aware_datetime (test.test_plistlib.TestPlistlib.test_load_aware_datetime) ... ok
+test_load_invalid_file (test.test_plistlib.TestPlistlib.test_load_invalid_file) ... ok
+test_loads_str_with_binary_fmt (test.test_plistlib.TestPlistlib.test_loads_str_with_binary_fmt) ... ok
+test_loads_str_with_xml_fmt (test.test_plistlib.TestPlistlib.test_loads_str_with_xml_fmt) ... ok
+test_lone_surrogates (test.test_plistlib.TestPlistlib.test_lone_surrogates) ... ok
+test_modified_uid_huge (test.test_plistlib.TestPlistlib.test_modified_uid_huge) ... ok
+test_modified_uid_negative (test.test_plistlib.TestPlistlib.test_modified_uid_negative) ... ok
+test_non_bmp_characters (test.test_plistlib.TestPlistlib.test_non_bmp_characters) ... ok
+test_nondictroot (test.test_plistlib.TestPlistlib.test_nondictroot) ... ok
+test_skipkeys (test.test_plistlib.TestPlistlib.test_skipkeys) ... ok
+test_tuple_members (test.test_plistlib.TestPlistlib.test_tuple_members) ... ok
+test_uid (test.test_plistlib.TestPlistlib.test_uid) ... ok
+test_uid_copy (test.test_plistlib.TestPlistlib.test_uid_copy) ... ok
+test_uid_data (test.test_plistlib.TestPlistlib.test_uid_data) ... ok
+test_uid_eq (test.test_plistlib.TestPlistlib.test_uid_eq) ... ok
+test_uid_hash (test.test_plistlib.TestPlistlib.test_uid_hash) ... ok
+test_uid_index (test.test_plistlib.TestPlistlib.test_uid_index) ... ok
+test_uid_pickle (test.test_plistlib.TestPlistlib.test_uid_pickle) ... ok
+test_uid_repr (test.test_plistlib.TestPlistlib.test_uid_repr) ... ok
+test_xml_encodings (test.test_plistlib.TestPlistlib.test_xml_encodings) ... ok
+test_xml_plist_with_entity_decl (test.test_plistlib.TestPlistlib.test_xml_plist_with_entity_decl) ... ok
+test_lint_status (test.test_plistlib.TestPlutil.test_lint_status) ... skipped 'plutil utility is for Mac os'
+test_octal_and_hex (test.test_plistlib.TestPlutil.test_octal_and_hex) ... skipped 'plutil utility is for Mac os'
+
+----------------------------------------------------------------------
+Ran 68 tests in 0.315s
+
+OK (skipped=5)
+0:00:06 load avg: 0.00 [10/10/4] test_plistlib passed
+
+== Tests result: FAILURE ==
+
+4 tests failed:
+    test_pyexpat test_sax test_xml_etree test_xml_etree_c
+
+6 tests OK.
+
+Total duration: 6.5 sec
+Total tests: run=976 failures=36 skipped=43
+Total test files: run=10/10 failed=4
+Result: FAILURE

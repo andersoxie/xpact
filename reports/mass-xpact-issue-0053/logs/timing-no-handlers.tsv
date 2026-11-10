@@ -1,0 +1,7 @@
+file	chunk	fix51 (before) ms/parse	fix53 (after) ms/parse
+text-25k.xml	16	101.80	1.65
+text-25k.xml	64	26.02	0.93
+text-50k.xml	16	399.28	2.65
+text-50k.xml	64	101.19	1.94
+text-100k.xml	16	1621.91	3.64
+text-100k.xml	64	423.89	3.27

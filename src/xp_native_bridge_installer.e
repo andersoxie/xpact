@@ -16,6 +16,7 @@ feature {NONE} -- Initialization
 		do
 			create live_parser_ids.make (16)
 			create parse_buffers.make (16)
+			create input_chunk.make (Input_chunk_reuse_limit)
 			diagnostic_events_enabled := True
 		ensure
 			no_live_parsers: active_parser_count = 0
@@ -373,12 +374,9 @@ feature -- Parse callbacks
 
 	parse (a_parser, a_bytes: POINTER; a_length: INTEGER; a_is_final: BOOLEAN): INTEGER
 			-- Parse bytes supplied by the native ABI.
-		local
-			l_input: STRING_8
 		do
 			if attached parser_for (a_parser) as l_parser and then valid_bytes (a_bytes, a_length) then
-				l_input := bytes_to_string (a_bytes, a_length)
-				Result := l_parser.parse (l_input, a_is_final)
+				Result := parsed_chunk (l_parser, a_bytes, a_length, a_is_final)
 			else
 				Result := Xml_status_error
 			end
@@ -405,7 +403,7 @@ feature -- Parse callbacks
 		do
 			l_id := pointer_to_integer (a_parser)
 			if attached parser_for (a_parser) as l_parser and then attached parse_buffers.item (l_id) as l_buffer and then a_length >= 0 and then a_length <= l_buffer.count then
-				Result := l_parser.parse (bytes_to_string (l_buffer.item, a_length), a_is_final)
+				Result := parsed_chunk (l_parser, l_buffer.item, a_length, a_is_final)
 			else
 				Result := Xml_status_error
 			end
@@ -538,14 +536,13 @@ feature {NONE} -- Byte conversion
 			-- Copy `a_length' bytes from `a_bytes' into an Eiffel string.
 		require
 			valid_range: valid_bytes (a_bytes, a_length)
-		local
-			l_bytes: C_STRING
 		do
 			if a_length = 0 then
 				create Result.make_empty
 			else
-				create l_bytes.make_by_pointer_and_count (a_bytes, a_length)
-				Result := l_bytes.substring_8 (1, a_length)
+					-- One copy, NUL bytes included; a C_STRING would copy twice (mass-xpact #43).
+				create Result.make (a_length)
+				Result.from_c_substring (a_bytes, 1, a_length)
 			end
 		ensure
 			result_attached: Result /= Void
@@ -600,6 +597,38 @@ feature {NONE} -- Storage
 
 	parse_buffers: HASH_TABLE [MANAGED_POINTER, INTEGER]
 			-- Parse buffers keyed by parser object id.
+
+	input_chunk: STRING_8
+			-- String reused for the bytes of one `parse' call, so that small chunks need no new string.
+
+	input_chunk_in_use: BOOLEAN
+			-- Is a `parse' call reading `input_chunk' right now (a callback may start another parse)?
+
+	Input_chunk_reuse_limit: INTEGER = 65536
+			-- Larger chunks get a string of their own, so that `input_chunk' stays small.
+
+feature {NONE} -- Parsing
+
+	parsed_chunk (a_parser: XP_NATIVE_PARSER; a_bytes: POINTER; a_length: INTEGER; a_is_final: BOOLEAN): INTEGER
+			-- `a_parser.parse' of the `a_length' bytes at `a_bytes'. A small chunk is copied into the reused
+			-- `input_chunk' instead of a new string, unless a parse is already reading it (mass-xpact #46).
+			-- The parser reads its argument only during the call; it keeps copies, not the argument.
+		require
+			parser_attached: a_parser /= Void
+			valid_range: valid_bytes (a_bytes, a_length)
+		local
+			l_chunk: STRING_8
+		do
+			if input_chunk_in_use or else a_length = 0 or else a_length > Input_chunk_reuse_limit then
+				Result := a_parser.parse (bytes_to_string (a_bytes, a_length), a_is_final)
+			else
+				l_chunk := input_chunk
+				l_chunk.from_c_substring (a_bytes, 1, a_length)
+				input_chunk_in_use := True
+				Result := a_parser.parse (l_chunk, a_is_final)
+				input_chunk_in_use := False
+			end
+		end
 
 invariant
 	live_parser_ids_attached: live_parser_ids /= Void

@@ -87,7 +87,9 @@ function Invoke-TimedCommand {
 			Notes = $Notes
 		})
 	}
-	$Rows
+	# The comma keeps a one-row list a list (-Repetitions 1); PowerShell would
+	# otherwise unroll it to a single object, which AddRange rejects.
+	,$Rows
 }
 
 function Get-MedianRow {

@@ -1,0 +1,270 @@
+{
+ "seconds": 60,
+ "seed": 7,
+ "stats": {
+  "documents": 77009,
+  "xpact ACCEPT / expat ACCEPT": 43989,
+  "xpact REJECT / expat REJECT": 32984,
+  "xpact REJECT / expat ACCEPT": 35,
+  "xpact ACCEPT / expat REJECT": 1
+ },
+ "groups": [
+  {
+   "signature": "error: xpact syntax error / expat not well-formed (invalid token)",
+   "count": 8176,
+   "namespaces": false,
+   "original": "<!DOCTYPE e [<!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!ELEMENT e (#PCDATA)>!ATTLIST e toks NMTOKENS #IMPLIED><!ATTLIST a-b en (one|two|three) #IMPLIED><!ATTLIST a-b a CDATA \"  one  two \"><!ELEMENT ñame (#PCDATA|e|f)*><!ATTLIST ñame b CDATA \"\r\n&fromPE;&gt;&fromPE;\n\"><!ATTLIST ñame id ID \"  one  two \"><!ATTLIST ñame no NOTATION (x) #REQUIRED>]><e><ñame></ñame></e>",
+   "minimal": "<Y e!"
+  },
+  {
+   "signature": "events: xpact attlistdecl / expat attlistdecl field 4",
+   "count": 7705,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\"?><!DOCTYPE d [<!ENTITY ent0 \"&gt;&#65;\t'\"><!ELEMENT a-b (#PCDATA|e|f)*><!ATTLIST a-b a CDATA \"hello\"><!ATTLIST a-b a CDATA \"&apos;\n\"><!ATTLIST a-b ref IDREF #REQUIRED><!ELEMENT item (#PCDATA)><!ATTLIST item no NOTATION (x) #REQUIRED><!ATTLIST item ref IDREF \" ]]&ent0;&#x1D11E;\"><!ATTLIST item en (one|two|three) \"  one  two \"><!ELEMENT d (e,f?)+><!ATTLIST d toks NMTOKENS #REQUIRED><!ELEMENT Ω EMPTY><!ATTLIST Ω toks NMTOKENS \"  one  two \"><!ATTLIST Ω b CDATA #FIXED \"𝄞\n&ent0;\"><!ATTLIST Ω id ID #FIXED \"€\"><?pi in subset?><!-- comment in subset -->]><d><a.b a='  two  spaces &ent0;&#65;&ent0;&apos;' en='one'/></d><?after pi?>",
+   "minimal": "<?l \"?><!DOCTYPE d [<!ENTITY e0 \"&gt;&#65;\"><!ELEMENT b (#PCDATA)*><!ATTLIST a a CDATA \"o\"><!ATTLIST a a CDATA \"\n\"><!ATTLIST a r IDREF #REQUIRED><!ELEMENT im (#PCDATA)><!ATTLIST o ON (x) #REQUIRED><!ATTLIST im f IDREF \" E;\"><!ATTLIST item en (one) \" \"><!ELEMENT d (e,f?)+><!ATTLIST d toks NMTOKENS #REQUIRED><!ELEMENT Ω EMPTY><!ATTLIST Ω toks NMTOKENS \"  two \"><!ATTLIST Ω b CDATA #FIXED \"𝄞0;\"><!ATTLIST Ω id ID #FIXED \"€\"><?et?><!-- ct -->]><d>/></d><?afi?>",
+   "xpact_event": [
+    "attlistdecl",
+    "im",
+    "f",
+    "IDREF",
+    " E;",
+    0
+   ],
+   "expat_event": [
+    "attlistdecl",
+    "im",
+    "f",
+    "IDREF",
+    "E;",
+    0
+   ]
+  },
+  {
+   "signature": "events: xpact notationdecl / expat notationdecl field 3",
+   "count": 6399,
+   "namespaces": true,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE e [<!ENTITY ent0 \"&apos;&gt;]]&#x1D11E;\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!NOTATION n0 PUBLIC \"p  q\"><!NOTATION n1 PUBLIC \"p  q\"><!ELEMENT e (e,f?)+><!ATTLIST e no NOTATION (n0|n1) #FIXED \"\r\n\t&fromPE;&apos;\"><!ELEMENT é (e,f?)+><!ATTLIST é b CDATA \"  one  two \"><!ATTLIST é tok NMTOKEN \"𝄞&amp;é€\"><!ATTLIST é no NOTATION (n0|n1) #IMPLIED><!ATTLIST ñame tok NMTOKEN #REQUIRED><!ATTLIST 名前 tok NMTOKEN #IMPLIED><!ATTLIST 名前 id ID \"v\"><!ATTLIST 名前 ref IDREF \"  one  two \">]><e><名前 xmlns=\"urn:d\" toks='  t1   t2 ' a=\"&lt;&ent0;é&fromPE;&gt; \" b='&amp;'>\r\n&ent0;&gt;&ent0;𝄞&amp;</名前></e>\n",
+   "minimal": "<?l ?><!DOCTYPE e [<!ENTITY t0 \"\"><!ENTITY pe \"<>\">%pe;<!NOTATION n0 PUBLIC \"p \"><!ATTLIST é t NMTOKEN \"€\"><!ATTLIST no ON (1) #IMPLIED><!ATTLIST me t NMTOKEN #REQUIRED><!ATTLIST 名前 k NMTOKEN #IMPLIED><!ATTLIST 名前 id ID \"v\"><!ATTLIST 名前 r IDREF \"\">]><e><名前 x=\"d\" toks='' a=\"gt; \">\r\n&ent0;𝄞</名前></e>\n",
+   "xpact_event": [
+    "notationdecl",
+    "n0",
+    null,
+    "p "
+   ],
+   "expat_event": [
+    "notationdecl",
+    "n0",
+    null,
+    "p"
+   ]
+  },
+  {
+   "signature": "events: xpact attlistdecl / expat attlistdecl field 5",
+   "count": 5250,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\"?><!DOCTYPE item [<!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!ELEMENT Ω ANY><!ATTLIST Ω a CDATA #IMPLIED><!ATTLIST Ω a CDATA #IMPLIED><!ATTLIST Ω toks NMTOKENS #FIXED \"é𝄞&quot;\"><!ELEMENT item EMPTY><!ATTLIST item no NOTATION (x) #FIXED \"f\"><!ATTLIST item ref IDREF \"  one  two \"><!ATTLIST item id ID #REQUIRED><!ATTLIST ñame tok NMTOKEN \"  one  two \">]><item><d z=\"&quot;&fromPE;é\" toks=\"  t1   t2 \">&fromPE;&#x1D11E;]]&#65;</d></item><!-- after -->",
+   "minimal": "<?l?><!DOCTYPE t[<!ENTITY % pe \"<!ENTITY E ''>\">%pe;<!ELEMENT Ω ANY><!ATTLIST Ω a CDATA #IMPLIED><!ATTLIST Ω s NMTOKEN #FIXED \"\"><!ELEMENT m EMPTY><!ATTLIST m n (x) \"\"><!ATTLIST i id ID #REQUIRED><!ATTLIST e t NMTOKEN \" \">]><item><d z=\"&PE;é\" s=\"\">&o;</d></item><!---->",
+   "xpact_event": [
+    "attlistdecl",
+    "Ω",
+    "s",
+    "NMTOKEN",
+    "",
+    0
+   ],
+   "expat_event": [
+    "attlistdecl",
+    "Ω",
+    "s",
+    "NMTOKEN",
+    "",
+    1
+   ]
+  },
+  {
+   "signature": "error: xpact unclosed token / expat not well-formed (invalid token)",
+   "count": 2403,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE d [<!ENTITY ent0 \"]]<dx>\r\n</dx>\"><!ENTITY ent1 \"\"'\"><!ENTITY ent2 \"]]€&ent1;\"><!NOTATION n0 PUBLIC \"p\" \"s\"><!NOTATION n1 PUBLIC \"p\" \"s\"><!ATTLIST 名前 c CDATA #IMPLIED><!ATTLIST 名前 a CDATA \"𝄞&gt;  two  spaces &ent2;hello&ent0;\"><!ATTLIST _u tok NMTOKEN #IMPLIED><!ELEMENT item (#PCDATA)><!ATTLIST item ref IDREF \"v\"><!ATTLIST item no NOTATION (n0|n1) \"v\"><!ELEMENT d ANY><!ATTLIST d c CDATA \"]]é&lt;&ent2;\"><!ATTLIST d no NOTATION (n0|n1) #FIXED \"\r\n\t\r\n\"><!ATTLIST d id ID #IMPLIED>]><d><a.b toks=\"  t1   t2 \"></a.b></d><?after pi?>",
+   "minimal": "<? "
+  },
+  {
+   "signature": "events: xpact startns / expat startns field 2",
+   "count": 580,
+   "namespaces": true,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><d><_u xmlns=\"\" toks=\"  ]]>  t2 \" c=\"\"/></d>",
+   "minimal": "<?l?><d><u xmlns=\"\" t=\"\"/></d>",
+   "xpact_event": [
+    "startns",
+    null,
+    ""
+   ],
+   "expat_event": [
+    "startns",
+    null,
+    null
+   ]
+  },
+  {
+   "signature": "error: xpact not well-formed (invalid token) / expat syntax error",
+   "count": 532,
+   "namespaces": true,
+   "original": "<?xml version=\"1.0\"?><!DOCTYPE e [<!NOTATION n0 SYSTEM \"s\"><!ATTLIST e toks NMTOKENS #FIXED \"&#x20AC;&#65;é\"><!ATTLIST e en (one|two|three) #FD \"f\"><!ATTLIST a.b id ID #REQUIRED><!ATTLIST a.b tok NMTOKEN #REQUIRED><!ATTLIST a.b b CDATA #FIXED \"f\"><!ATTLIST _u a CDATA \"v\"><!ATTLIST ñame id ID #REQUIRED>]><e><p:ñame tok=\" t1 \"/></e><?after pi?>",
+   "minimal": ">"
+  },
+  {
+   "signature": "error: xpact unclosed token / expat syntax error",
+   "count": 130,
+   "namespaces": false,
+   "original": "<!DOCTYPE e [<!ENTITY ent0 \" <ex>&#x20AC;>&amp;</ex>\"><!NOTATION n0 PUBLIC \"p  q\"><!ELEMENT e (#PCDATA)><!ATTLIST e a CDATA #IMPLIED><!ATTLIST e ref IDREF #IMPLIED><!ATTLIST e toks NMTOKENS #IMPLIED><?pi in subset?><!-- comment in subset --><e><a.b b=\"&gt;&ent0;&apos;\n\"/></e>\n",
+   "minimal": "<!DOCTYPE ["
+  },
+  {
+   "signature": "error: xpact unknown encoding / expat XML declaration not well-formed",
+   "count": 114,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF<-8\"?><d><a.b z='\r\nhello&apos;' xml:lang=\"\"></a.b></d>\n",
+   "minimal": "<?xml encoding=\"\"?>"
+  },
+  {
+   "signature": "verdict: xpact REJECT (XML declaration not well-formed) / expat ACCEPT ()",
+   "count": 34,
+   "namespaces": false,
+   "original": "<?xml version=\"1x.0\" encoding=\"UTF-8\"?><item><f/></item>",
+   "minimal": "<?xml version=\"\" encoding=\"UTF8\"?><item></item>"
+  },
+  {
+   "signature": "error: xpact not well-formed (invalid token) / expat unclosed token",
+   "count": 23,
+   "namespaces": false,
+   "original": "<e><_u></_u></",
+   "minimal": "<u></"
+  },
+  {
+   "signature": "error: xpact not well-formed (invalid token) / expat junk after document element",
+   "count": 18,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" standalone=\"yes\"?><f><a-b><![CDATA[\t<&>]]></a-b></f><x!-- after -->",
+   "minimal": "<?l?><f><a-b><![CDATA[]]></a-b></f>-"
+  },
+  {
+   "signature": "error: xpact reference to invalid character number / expat not well-formed (invalid token)",
+   "count": 13,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE e [<!ENTITY ent0 \"<ex>&#x20AC;]]hello</ex&#0;<!ENTITY ent1 \"hello&gt;&ent0;<ex></ex>\"><!ELEMENT e EMPTY><!ATTLIST e tok NMTOKEN #IMPLIED><!ATTLIST e b CDATA \"&#x1D11E;\"><!ATTLIST e ref IDREF \"]]&ent1;\">]><e><名前 b=' '/></e><?after pi?>",
+   "minimal": "<?l?><!DOCTYPE e[<!ENTITY t \"&#0;!EN\"l>\""
+  },
+  {
+   "signature": "error: xpact unknown encoding / expat unclosed token",
+   "count": 7,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF-8&<d><e toks='  t1   t2 ' xml:space=\"default\" a=\"&lt;\"/></d><!-- after -->",
+   "minimal": "<?xml encoding=\"\""
+  },
+  {
+   "signature": "error: xpact syntax error / expat junk after document element",
+   "count": 6,
+   "namespaces": true,
+   "original": "<f><e c=''>&lt;&lt;\"</e></f><x-- after -->",
+   "minimal": "<f><e c=''></e></f><x t"
+  },
+  {
+   "signature": "error: xpact XML declaration not well-formed / expat unbound prefix",
+   "count": 4,
+   "namespaces": true,
+   "original": "<?xml version=\"x\"?><!DOCTYPE d [<!ENTITY ent0 \"&quot;\"><!ELEMENT 名前 (#PCDATA)><!ATTLIST 名前 id ID #REQUIRED><!ATTLIST 名前 id ID #REQUIRED><!ATTLIST 名前 id ID #FIXED \"&apos;\"><!ELEMENT a.b (e,f?)+><!ATTLIST a.b c CDATA #REQUIRED><!ATTLIST a.b tok NMTOKEN #IMPLIED><!ATTLIST a.b en (one|two|three) #REQUIRED><!ELEMENT d (e,f?)+><!ATTLIST d ref IDREF \"  one  two \"><!ATTLIST d tok NMTOKEN \"  one  two \"><!ATTLIST d en (one|two|three) #FIXED \"&#x1D11E;&ent0;\">]><d><f xmlns=\"\" p:a='&gt;&ent0;' xml:space='default' a=''><![CDATA[&amp;&quot;\r\n'<&>]]></f></d>",
+   "minimal": "<?xml version=\"x\"?><!DOCTYPE d [<!ENTITY ent0 \"&quot;\"><!ELEMENT 名前 (A)><!ATTLIST 名前D><!ATTLIST 名前 d ID #FIXED \"&apos;\"><!ELEMENT a.b (e,f?)+><!ATTLIST ab en (oneree) #REQUIRED><!ELEMENT d (e,f?)+><!ATTLIST d ref IDREF \"  on;&ent0;\">]><d><f xmlns=\"\" p:a='&gt;&ent0;' xml:sa=''><![C"
+  },
+  {
+   "signature": "error: xpact unclosed token / expat no element found",
+   "count": 3,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE d [<!ENTITY ent0 \"  two  spaces \"><!NOTATION n0 SYSTEM \"s\"><!NOTATION n1 SYSTEM \"s\"><!ELEMENT item (#PCDATA)><!ATTLIST item b CDATA \"  one  two \"><!ATTLIST item toks NMTOKENS #FIXED \"&#65;\r\n\r\n\"><!ATTLIST item tok NMTOKEN #REQUIRED><!ELEMENT d (#PCDATA|e|f)*><!ATTLIST d b CDATA \"  one  two \"><!ATTLIST d c CDATA \"&apos;&#x20AC;&ent0;é\"><!ELEMENT x1 ANY><!ATTLIST x1 no NOTATION (n0|n1) \"  one  two \"><!ATTLIST x1 tok NMTOKEN #REQUIRED><!ATTLIST x1 toks NMTOKENS #IMPLIED><?pi in subs<><!-- comment in subset -->]><d><item c='&lt;&ent0;é&amp;&ent0;' z=\"\r\n\" xml:lang=\"&#x1D11E;\n&#x20AC;\"/></d><?after pi?>",
+   "minimal": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE d [<!ENTITY ent0 \"  tw\"><!NOTATION n0 SYSTEM \"s\"><!NOTATION n1 SYSTEM \"s\"><!ELEMENT item (#PCDATA)><!ATTLIST item b CDATA \"  ono \"><!ATTLIST item toks NMTOKENS #FIXED \"&#65;\r\n\r\n\"><!ATTLIST item tok NMTOKEN #REQUIRED><!ELEMENT d (#PCDATA|e|f)*><!ATTLIST d b CDATA \"  owo \"><!ATTLIST d c CDATA \"&apos;&#x20AC;&ent0;é\"><!ELEMENT x1 ANY><!ATTLIST x1 no NOTATION (n0|n1) \"  one  two \"><!ATTLIST x1ED><!ATTLIST x1 toks NMTOKENS #IMPLIED><?pi in sub><d><iti?>"
+  },
+  {
+   "signature": "error: xpact syntax error / expat entity declared in parameter entity",
+   "count": 3,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE e [<!ENTITY ent0 \"\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!NOTATION n0 SYSTEM \"s\"><!NOTATION n1 PUBLIC \"p  q\"><!ELEMENT e (#PCDATA)><!ELEMENT a-b (#PCDATA|e|f)*><!ATTLIST a-b b CDATA #REQUIRED><!ATTLIST a-b a CDATA \"&#x20AC;éé\"><!ELEMENT _u (#PCDATA)><!ATTLIST _u ref IDREF #REQUIRED><!ATTLIST _u a CDATA \"&quot;𝄞&ent0;&#65;&fromPE;\"><!ELEMENT d ]]>PCDATA)><!ATTLIST d no NOTATION (n0|n1) #REQUIRED><!ATTLIST d tok NMTOKEN \"  one  two \"><!ATTLIST d tok NMTOKEN \"v\">]><e><f xml:lang='&#x1D11E;' xml:space=\"default\" b='&quot;&ent0;&quot;]]'/></e><?after pi?>",
+   "minimal": "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE e [<!ENTITY ent0 \"\"><!ENTITY % pe \"<!ENTITY fromPE 'ext'>\">%pe;<!NOTATION n0 SYSTEM \"s\"><!NOTATION n1 PUBLIC \"p  q\"><!ELEMENT e (#PCDATA)><!ELEMENT a-b (#PCDATA)*><!ATTLIST a-b b CDATA #REQUIRED><!ATTLIST a-b a CDATA \"&#x20AC;éé\"><!ELEMENT _u (ATA)><!ATTLIST _u ref IDREF #REQUIRED><!ATTLIST _u a CDATA \"&quot;𝄞&ent0;&#65;&fromPE;\"><!ELEMENT d ]]>PCDATA)"
+  },
+  {
+   "signature": "error: xpact XML declaration not well-formed / expat not well-formed (invalid token)",
+   "count": 3,
+   "namespaces": false,
+   "original": "<?xml version=\"1x.0\" standalone=\"yes\"?><!DOCTYPE e [<!ENTITY ent0 \"\"]]\"\"><!ENTITY ent1 \"&#x20AC;&ent0;]]&lt;'\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!NOTATION n0 PUBLIC \"p  q\"><!NOTATION n1 SYSTEM \"s\"><!ELEMENT e ANY><!ATTLIST e id ID #FIXED \"f\"><!ELEMENT f EMPTY><!ATTLIST f c CDATA #REQUIRED><!ELEMENT 名前 ANY><!ATTLIST 名前 id ID #IMPLIED><!ATTLIST 名前 toks NMTOKENS \"&#x1D11E;&gt;&quot;&ent0;&lt;&ent1;\"><?pi in subset?><!-- comment in subset -->]><e toks=\"  t1   t2 \" xml:lang='\n  two  spaces &fromPE;' a=\"\"><f a=\"&apos;&ent1;é\" xml:space='default'>'&#x20AC;&lt;  two  spaces &fromPE;</f></e>\n",
+   "minimal": "<?xml version=\"\" standalone=\"yes\"?><'"
+  },
+  {
+   "signature": "error: xpact unknown encoding / expat not well-formed (invalid token)",
+   "count": 3,
+   "namespaces": false,
+   "original": "<?xml version='1.0' encoding='utf-' standalone='no'?><item><_u tok=' t1 ' id='i2'><item z='hello\t&#65;' b=\" \" xml:lang=\"&apos;€\t\">\"<Ω toks=\"  t1   t2 \"></Ω></item><_u c=\"&quot;\n]]\"><!----><!--  two  spaces  \n'--><!----></_u></_u></item><!-- after -->",
+   "minimal": "<?xml version='' encoding='utf' standalone='no'?><\""
+  },
+  {
+   "signature": "error: xpact XML declaration not well-formed / expat entity declared in parameter entity",
+   "count": 2,
+   "namespaces": false,
+   "original": "<?xml version=\"--0\" standalone=\"yes\"?><!DOCTYPE e [<!ENTITY ent0 \"𝄞hello\"><!ENTITY ent1 \"&gt;&ent0; >&ent0;&ent0;<ex>𝄞 \r\n&ent0;&#65;</ex>\"><!ENTITY ent2 \"\n\n&apos;&#x20AC;\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!NOTATION n0 PUBLIC \"p\" \"s\"><!NOTATION n1 SYSTEM \"s\"><!ATTLIST e toks NMTOKENS \"€&quot;&fromPE;é&fromPE;\"><!ELEMENT a.b (e,f?)+><!ATTLIST x1 b CDATA #IMPLIED><!ATTLIST x1 tok NMTOKEN #REQUIRED><!ATTLIST x1 no NOTATION (n0|n1) \"&#x1D11E;&ent1;&gt;&ent2;hello&fromPE;  two  spaces \"><!ATTLIST Ω b CDATA \"  one  two \">]><e/>\n",
+   "minimal": "<?xml version=\"\" standalone=\"yes\"?><!DOCTYPE e [<!ENTITY ent0 \"llo\"><!ENTITY ent1 \"&gC;\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!NOTATION n0 PUBLIC \"p\" \"s\"><!NOTATION n1 SYSTEM \"s\"><!ATTLIST e toks NMTOKENS \"€é&fromPE;\"><!E"
+  },
+  {
+   "signature": "error: xpact entity declared in parameter entity / expat not well-formed (invalid token)",
+   "count": 2,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE item [<!ENTITY ent0 \"&gt;  two  spaces \"><!ENTITY ent1 \"'\n&ent0;]]\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!ATTLIST é a CDATA \"  one  two \"><!ELEMENT item (#PCDATA|e|f)*><!ATTLIST item no NOTATION (x) \"  one  two \"><!ELEMENT d ANY><!ATTLIST d a CDATA #REQUIRED>]><item><Ω z='𝄞' b=\"\"><f xml:lang='&#65;&fromPE;>'apos;'/><d toks='  t1   t2 ' xml:lang=''>]]&quot;]]&fromPE;</d><![CDATA[€>&ent0;hello&#x20AC;<&>]]></Ω></item>\n",
+   "minimal": "<?xml version=\"1.0\" standalone=\"yes\"?><!DOCTYPE item [<!ENTITY ent0 \"]\"><!ENTITY % pe \"<!ENTITY fromPE 'pt'>\">%pe;<!ATTLIST é a CDATA \" \"><!ELEMENT item (#PCDATA|e|f)*><!ATTLIST it NOTATION (x) \"  one  two \"><!ELEMENT d ANY><!ATTLIST d a CDATA #REQUIRED>]><it xml:lang='&#65;&fromPE;>'ap"
+  },
+  {
+   "signature": "error: xpact unclosed token / expat incomplete markup in parameter entity",
+   "count": 2,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE d [<!ENTITY ent0 \"  two  spaces \t&gt;\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-tex'\">%pe;<!NOTATION n0 PUBLIC \"p\" \"s\"><!NOTATION n1 PUBLIC \"p\" \"s\"><!ELEMENT _u (#PCDATA)><!ELEMENT d (#PCDATA|e|f)*><!ATTLIST d c CDATA #IMPLIED><!ATTLIST d id ID #REQUIRED><!ELEMENT Ω (e,f?)+><!ATTLIST Ω c CDATA #REQUIRED><!ATTLIST Ω c CDATA #REQUIRED><?pi in subset?><!-- comment in subset -->]><d xml:space=\"preserve\"/>",
+   "minimal": "<?l?><!DOCTYPE d[<!ENTITY nt0 \"es\"><!ENTITY % pe \"<!ENTITY E 'pex'\">%pe;"
+  },
+  {
+   "signature": "error: xpact unclosed token / expat illegal character(s) in public id",
+   "count": 2,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE e [<!ENTITY ent0 \"&gt;\"><!ENTITY ent1 \"&gt;𝄞&#x1D11E; \"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>\">%pe;<!NOTATION n0 PUBLIC \"p  <!ELEMENT e (#PCDATA)><!ELEMENT _u (#PCDATA)><!ATTLIST 名前 a CDATA \"  one  two \"><?pi in subset?><!-- comment in subset -->]><e><ñame xml:lang=\"\" tok=\" t1 \"></ñame></e><?after pi?>",
+   "minimal": "<?l ?><!DOCTYPE e [<!ENTITY t0 \"PEt'>\">%pe;<!NOTATION n0 PUBLIC \"p前 a A \" "
+  },
+  {
+   "signature": "verdict: xpact ACCEPT () / expat REJECT (not well-formed (invalid token))",
+   "count": 1,
+   "namespaces": false,
+   "original": "<?xml version='1.0' encoding='utf8' standalone='no'?><d><ñame c='&quot;&quot; ' tok=' t1 ' en=' two '><![CDATA[&#x1D11E;&#65;<&>]]>\r\n&apos;</ñame></d>\n",
+   "minimal": "<?xml version='1.0' encoding='utf8' standalone='no'?><d><ñame c='' k='' n=''><![CDATA[]]></ñame></d>"
+  },
+  {
+   "signature": "error: xpact unclosed token / expat reference to invalid character number",
+   "count": 1,
+   "namespaces": false,
+   "original": "<?xml version=\"1.0\"?><!DOCTYPE e [<!NOTATION n0 PUBLIC \"p  q\"><!ATTLIST e no NOTATION (n0) #FIXED \"\t&apos;hello>\"><!ELEMENT item (#PCDATA|e|f)*><!ATTLIST item tok NMTOKEN \"€&apos;hell&#0;><!ATTLIST item no NOTATION (n0) #IMPLIED><!ATTLIST item a CDATA \"  one  two \">]><e><d z=\"]]&apos;&#x1D11E;\"/></e>\n",
+   "minimal": "<?xml version=\"1.0\"?><!DOCTYPE e [<!NOTATION n0 PUBLIC \"p\"><!ATTLIST o NN (n0) #FIXED \";hello>\"><!ELEMENT item (#PCDATA|e|f)*><!ATTLIST item tok NMTOKEN \"€&apos;hell&#0;><!ATitA \" "
+  },
+  {
+   "signature": "verdict: xpact REJECT (unknown encoding) / expat ACCEPT ()",
+   "count": 1,
+   "namespaces": true,
+   "original": "<?xml version='1.0' encoding='utf---' standalone='no'?><d><_u></_u></d><!-- after -->",
+   "minimal": "<?xml version='' encoding='utf' standalone='no'?><d><_u></_u></d><!---->"
+  },
+  {
+   "signature": "error: xpact unknown encoding / expat unbound prefix",
+   "count": 1,
+   "namespaces": true,
+   "original": "<?xml version=\"1.0\" encoding=\"UTF-\"?><e><p:d b=\"\r\n>  two  spaces \" en='one' toks=\"  t1   t2 \">&lt;<x1 xmlns=\"urn:d\" tok=' t1 '/>\t</p:d></e>",
+   "minimal": "<?xml version=\"\" encoding=\"UTF\"?><p:d b=\"\" k=''/>"
+  },
+  {
+   "signature": "error: xpact unclosed token / expat illegal parameter entity reference",
+   "count": 1,
+   "namespaces": true,
+   "original": "<?xml version='1.0' encoding='utf-8' standalone='no'?><!DOCTYPE d [<!ENTITY ent0 \"€\"><!ENTITY ent1 \"&amp;&ent0;&ent0;\"><!ENTITY % pe \"<!ENTITY fromPE 'pe-text'>--%pe;<!ELEMENT a.b EMPTY><!ELEMENT é EMPTY><!ATTLIST é en (one|two|three) #IMPLIED><!ATTLIST é en (one|two|three) \"  one  two \"><!ELEMENT d ANY><!ATTLIST d id ID #IMPLIED><?pi in subset?><!-- comment in subset -->]><d><名前 xmlns:p=\"urn:p\" en=\"one\" toks='  t1   t2 ' xml:lang=\"\"><?pi2 '?><?pi2 hello&quot;\n  two  spaces ?><?pi1 ?>&quot;&fromPE;é€&#x1D11E;</名前></d><!-- after -->",
+   "minimal": "<?l?><!DOCTYPE d[<!ENTITY t0-%pe;<"
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+conf\ibm\xml-1.1\not-wf\P02\ibm02n09.xml call 15 expat ('1', '4', '19', '105') ours ('1', '4', '7', '93') | from ours: b'<![CDATA[ 0x0  \x00'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n32.xml call 16 expat ('1', '4', '24', '112') ours ('1', '4', '7', '95') | from ours: b'<![CDATA[ 0x7f  \x7f]]><'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n36.xml call 16 expat ('1', '4', '22', '112') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x83  \xc2\x83]]'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n38.xml call 16 expat ('1', '4', '22', '112') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x84  \xc2\x84]]'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n39.xml call 16 expat ('1', '4', '22', '112') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x86  \xc2\x86]]'
+conf\ibm\xml-1.1\not-wf\P02\ibm02n41.xml call 16 expat ('1', '4', '22', '112') ours ('1', '4', '6', '96') | from ours: b'<![CDATA[ 0x88  \xc2\x88]]'
+nt-Mass\xmlconf\sun\invalid\not-sa14.xml call 40 expat ('1', '11', '0', '280') ours ('1', '10', '12', '270') | from ours: b'<![CDATA[\n]]><'

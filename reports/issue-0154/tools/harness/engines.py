@@ -174,6 +174,7 @@ def load(dll=None):
             ("XML_ParserCreate", P, [S]), ("XML_ParserCreateNS", P, [S, C.c_char]),
             ("XML_ParserFree", None, [P]), ("XML_SetBase", C.c_int, [P, S]),
             ("XML_Parse", C.c_int, [P, P, C.c_int, C.c_int]),
+            ("XML_GetBuffer", P, [P, C.c_int]), ("XML_ParseBuffer", C.c_int, [P, C.c_int, C.c_int]),
             ("XML_GetErrorCode", C.c_int, [P]), ("XML_ErrorString", S, [C.c_int]),
             ("XML_GetCurrentLineNumber", C.c_ulong, [P]), ("XML_GetCurrentColumnNumber", C.c_ulong, [P]),
             ("XML_SetParamEntityParsing", C.c_int, [P, C.c_int]),
@@ -205,7 +206,8 @@ def _model_c(cp):
 
 
 def parse_xpact(data: bytes, *, path=None, entity_root=None, namespaces=False, split=None, encoding=None,
-                amplification=None, dll=None, external=True, bare=False):
+                amplification=None, dll=None, external=True, bare=False, api="parse"):
+    """api="parse" feeds each chunk with XML_Parse; api="buffer" copies it into XML_GetBuffer and calls XML_ParseBuffer."""
     lib = load(dll)
     rec = Recorder()
     keep = []  # callbacks must outlive the parse
@@ -280,7 +282,17 @@ def parse_xpact(data: bytes, *, path=None, entity_root=None, namespaces=False, s
     ok = 1
     parts = chunks(data, split) or [b""]
     for i, part in enumerate(parts):
-        ok = lib.XML_Parse(parser, part, len(part), 1 if i == len(parts) - 1 else 0)
+        final = 1 if i == len(parts) - 1 else 0
+        if api == "buffer":
+            buffer = lib.XML_GetBuffer(parser, len(part)) if part else None
+            if part and not buffer:
+                ok = 0
+                break
+            if part:
+                C.memmove(buffer, part, len(part))
+            ok = lib.XML_ParseBuffer(parser, len(part), final)
+        else:
+            ok = lib.XML_Parse(parser, part, len(part), final)
         if ok != 1:
             break
     if ok == 1:

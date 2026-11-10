@@ -1,0 +1,2 @@
+Packaged C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\dist\xpact-0.1.0-preview-windows-x64.zip
+SHA256  aa7441abb98a1b4b8a66f120a83010aa783213e5753c4ad28a4f4a8b905f4eaa

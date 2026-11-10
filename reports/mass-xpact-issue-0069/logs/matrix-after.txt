@@ -1,0 +1,8 @@
+== xpact tests: assertions-off / Workbench ==
+xpact Phase 1 tests: ok
+== xpact tests: assertions-off / Finalized ==
+xpact Phase 1 tests: ok
+== xpact tests: assertions-on / Workbench ==
+xpact Phase 1 tests: ok
+== xpact tests: assertions-on / Finalized ==
+xpact Phase 1 tests: ok

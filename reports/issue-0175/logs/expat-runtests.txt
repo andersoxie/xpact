@@ -1,0 +1,144 @@
+﻿> powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_libexpat_adapter.ps1 -Mode NativeSuite -ExpatSourceDir build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat -XpactLibrary build\native-eiffel\xpact.lib -SkipNativeBuild -OutputDir build\fix175\runtests
+libexpat manifest: 399 START_TEST entries -> C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix175\runtests\libexpat-runtests-manifest.tsv
+libexpat expected failures: 86 manifest entries -> C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix175\runtests\libexpat-expected-failures-expanded.tsv
+libexpat parity rows: 152 green patterns, 2 red patterns, 0 blocked rows -> C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix175\runtests\libexpat-parity-expanded.tsv
+-- Building for: Visual Studio 18 2026
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26300.
+-- The C compiler identification is MSVC 19.51.36260.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done (1.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/masou/Desktop/Lia/xpact/xpactGit/build/fix175/runtests/cbuild
+Configured C adapter build: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix175\runtests\cbuild
+libexpat native suite: xpact library C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\native-eiffel\xpact.lib
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/masou/Desktop/Lia/xpact/xpactGit/adapters/libexpat/CMakeLists.txt
+  acc_tests.c
+  alloc_tests.c
+  basic_tests.c
+  misc_tests.c
+  ns_tests.c
+  nsalloc_tests.c
+  Generating Code...
+  chardata.c
+  common.c
+  dummy.c
+  handlers.c
+  memcheck.c
+  structdata.c
+  xpact_isolated_runtests.c
+  xpact_test_shims.c
+  Generating Code...
+  minicheck.c
+  xpact_libexpat_runtests.vcxproj -> C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix175\runtests\cbuild\Debug\xpact_libexpat_runtests.exe
+  Building Custom Rule C:/Users/masou/Desktop/Lia/xpact/xpactGit/adapters/libexpat/CMakeLists.txt
+UpdateCTestConfiguration  from :C:/Users/masou/Desktop/Lia/xpact/xpactGit/build/fix175/runtests/cbuild/DartConfiguration.tcl
+Test project C:/Users/masou/Desktop/Lia/xpact/xpactGit/build/fix175/runtests/cbuild
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: upstream-libexpat-runtests
+
+1: Test command: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix175\runtests\cbuild\Debug\xpact_libexpat_runtests.exe "--timeout" "120"
+1: Working Directory: C:/Users/masou/Desktop/Lia/xpact/xpactGit/build/fix175/runtests/cbuild
+1: Test timeout computed to be: 1800
+1: Expat version: expat_2.8.1
+1: ERROR: Second external parser unexpectedly created
+1: FAIL [chunksize=0 deferral=0]: test_alloc_dtd_copy_default_atts (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\handlers.c:1351)
+1: ERROR: Not all handlers were called
+1: FAIL [chunksize=0 deferral=0]: test_alloc_dtd_default_handling (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:543)
+1: ERROR: Encoding set despite failing allocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_explicit_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:558)
+1: ERROR: Parse succeeded with no reallocation
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:606)
+1: ERROR: Succeeded with no reallocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_ext_entity_realloc_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:632)
+1: ERROR: Parse succeeded despite no reallocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_many_attributes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:677)
+1: ERROR: Parsing worked despite failing reallocation
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_subst_public_entity_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:793)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_attribute_enum_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1003)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_implied_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1053)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_default_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1103)
+1: ERROR: Element handler not fired
+1: FAIL [chunksize=0 deferral=0]: test_alloc_nested_groups (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1311)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_nested_groups (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1346)
+1: ERROR: Element handler flag not raised
+1: FAIL [chunksize=0 deferral=0]: test_alloc_large_group (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1387)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_group_choice (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1421)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_long_attribute_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1516)
+1: ERROR: Memory Fail not faulted
+1: FAIL [chunksize=0 deferral=0]: test_alloc_nested_entities (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\handlers.c:500)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_param_entity_newline (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1735)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_ce_extends_pe (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1781)
+1: ERROR: Parse succeeded despite failing reallocator
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_attributes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1816)
+1: ERROR: Unexpected non-NULL context
+1: FAIL [chunksize=0 deferral=0]: test_alloc_reset_after_external_entity_parser_create_fail (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\handlers.c:1496)
+1: ERROR: check failed: sizeRecordedFor(ptr) == 10
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_size_recorded (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2117)
+1: ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_maximum_amplification (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2169)
+1: ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_threshold (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2196)
+1: ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_getbuffer_unlimited (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2211)
+1: ERROR: Call with NULL parser is NOT supposed to succeed
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_api (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2232)
+1: ERROR: Pre-init XML_ParseBuffer not faulted
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_parse_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:126)
+1: ERROR: Parsing worked despite failing reallocation
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_binding_uri (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:538)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:614)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_longer_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:690)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:958)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:958)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:958)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_4 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:958)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_5 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:958)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_6 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:958)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_7 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:958)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_ge_name (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1241)
+1: ERROR: Parsing worked despite failing reallocations
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_in_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1349)
+1: 90%: Checks: 399, Failed: 38
+1/1 Test #1: upstream-libexpat-runtests .......***Failed  281.15 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) = 281.17 sec
+
+The following tests FAILED:
+	  1 - upstream-libexpat-runtests (Failed)
+Errors while running CTest
+Output from these tests are in: C:/Users/masou/Desktop/Lia/xpact/xpactGit/build/fix175/runtests/cbuild/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+Native libexpat suite completed with 38 expected test failures; see C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix175\runtests\libexpat-native-suite.log.

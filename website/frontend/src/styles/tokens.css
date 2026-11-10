@@ -1,0 +1,92 @@
+/* Design tokens. Every color in the site comes from here; dark mode is its own
+   set of steps (not an automatic inversion). Chart series use the validated
+   reference palette's first three categorical slots. */
+
+:root {
+  color-scheme: light;
+  --bg: #f6f6f4;
+  --surface: #fcfcfb;
+  --surface-2: #f0f0ed;
+  --border: #e2e1dc;
+  --text: #0b0b0b;
+  --text-2: #52514e;
+  --text-3: #7a7974;
+  --accent: #2a78d6;
+  --accent-ink: #ffffff;
+  --accent-soft: #e6f0fb;
+
+  --good: #0f7b3e;
+  --good-soft: #e5f4ea;
+  --bad: #c0302f;
+  --bad-soft: #fbe9e8;
+  --warn: #9a6200;
+  --warn-soft: #fbf1dc;
+
+  --series-1: #2a78d6; /* XPact (Eiffel) */
+  --series-2: #eb6834; /* Expat */
+  --series-3: #1baf7a; /* XPact DLL (C API) */
+
+  --code-bg: #f3f3f0;
+  --mark-line: #fff3c4;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 16px rgb(0 0 0 / 0.04);
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  --max: 1160px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #121211;
+    --surface: #1a1a19;
+    --surface-2: #232321;
+    --border: #33332f;
+    --text: #f0efec;
+    --text-2: #c3c2b7;
+    --text-3: #8e8d85;
+    --accent: #3987e5;
+    --accent-ink: #ffffff;
+    --accent-soft: #1b2a3d;
+    --good: #4cc27a;
+    --good-soft: #15291d;
+    --bad: #f07170;
+    --bad-soft: #351817;
+    --warn: #e3a93a;
+    --warn-soft: #33270f;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --code-bg: #20201e;
+    --mark-line: #4a3f12;
+    --shadow: none;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121211;
+  --surface: #1a1a19;
+  --surface-2: #232321;
+  --border: #33332f;
+  --text: #f0efec;
+  --text-2: #c3c2b7;
+  --text-3: #8e8d85;
+  --accent: #3987e5;
+  --accent-ink: #ffffff;
+  --accent-soft: #1b2a3d;
+  --good: #4cc27a;
+  --good-soft: #15291d;
+  --bad: #f07170;
+  --bad-soft: #351817;
+  --warn: #e3a93a;
+  --warn-soft: #33270f;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --code-bg: #20201e;
+  --mark-line: #4a3f12;
+  --shadow: none;
+}

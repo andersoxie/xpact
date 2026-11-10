@@ -1,0 +1,22 @@
+X general entity SYSTEM ''
+     xpact (['doctype d system=NULL public=NULL', 'entity e param=0 value=NULL system=NULL public=NULL notation=NULL'], 1, 0)
+     expat (['doctype d system=NULL public=NULL', "entity e param=0 value=NULL system='' public=NULL notation=NULL"], 1, 0)
+X general entity PUBLIC 'p' ''
+     xpact (['doctype d system=NULL public=NULL', "entity e param=0 value=NULL system=NULL public='p' notation=NULL"], 1, 0)
+     expat (['doctype d system=NULL public=NULL', "entity e param=0 value=NULL system='' public='p' notation=NULL"], 1, 0)
+X parameter entity SYSTEM ''
+     xpact (['doctype d system=NULL public=NULL', 'entity e param=1 value=NULL system=NULL public=NULL notation=NULL'], 1, 0)
+     expat (['doctype d system=NULL public=NULL', "entity e param=1 value=NULL system='' public=NULL notation=NULL"], 1, 0)
+X unparsed entity SYSTEM '' NDATA
+     xpact (['doctype d system=NULL public=NULL', "notation n system='x' public=NULL", "entity e param=0 value=NULL system=NULL public=NULL notation='n'"], 1, 0)
+     expat (['doctype d system=NULL public=NULL', "notation n system='x' public=NULL", "entity e param=0 value=NULL system='' public=NULL notation='n'"], 1, 0)
+= general entity SYSTEM 'x' (control)
+     xpact (['doctype d system=NULL public=NULL', "entity e param=0 value=NULL system='x' public=NULL notation=NULL"], 1, 0)
+     expat (['doctype d system=NULL public=NULL', "entity e param=0 value=NULL system='x' public=NULL notation=NULL"], 1, 0)
+= NOTATION SYSTEM ''
+     xpact (['doctype d system=NULL public=NULL', "notation n system='' public=NULL"], 1, 0)
+     expat (['doctype d system=NULL public=NULL', "notation n system='' public=NULL"], 1, 0)
+X DOCTYPE SYSTEM ''
+     xpact (['doctype d system=NULL public=NULL'], 1, 0)
+     expat (["doctype d system='' public=NULL"], 1, 0)
+same as Expat: 2 / 7

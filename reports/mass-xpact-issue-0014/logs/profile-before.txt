@@ -1,0 +1,31 @@
+2162 samples (production DLL built with -keep, perf/resume-text-runs @ 10c8b66); F123_1618 is {XP_PARSER}.parse_character_data
+ 16.3%    353  new_exset  [finalized:except.obj]
+ 15.9%    343  exget  [finalized:except.obj]
+ 10.0%    217  {STRING_8}.item
+  3.7%     81  expop  [finalized:except.obj]
+  2.7%     59  {STRING_GENERAL}.reset_hash_codes
+  2.6%     56  {SPECIAL}.copy_data
+  2.5%     55  {STRING_8}.put_code
+  2.5%     53  {XP_PARSER}.has_at
+  2.3%     49  {STRING_8}.append_character
+  2.1%     46  {STRING_8}.item (dispatch)
+  1.9%     42  F123_1618  [Cobj3:big_file_C3_c.obj]
+  1.8%     38  {SPECIAL}.count
+  1.7%     36  {MANAGED_POINTER}.read_natural_8
+  1.4%     31  {XP_PARSER}.note_position
+  1.4%     30  {XP_PARSER}.normalized_input
+  1.4%     30  {STRING_8}.code
+  1.4%     30  {XP_PARSER}.is_xml_character_code
+  1.2%     25  {XP_PARSER}.advance_position_to
+  1.0%     22  {READABLE_STRING_8}.capacity
+  0.9%     20  {XP_PARSER}.is_incomplete_utf8_sequence_at
+  0.8%     18  {SPECIAL}.make_filled
+  0.8%     18  {XP_PARSER}.utf8_character_length
+  0.7%     16  {SPECIAL}.item
+  0.7%     15  {SPECIAL}.count
+  0.6%     14  eif_set  [finalized:malloc.obj]
+  0.6%     14  {READABLE_STRING_8}.make
+  0.6%     13  {READABLE_STRING_8}.make_from_string
+  0.6%     13  {SPECIAL}.put
+  0.6%     12  {XP_PARSER}.scan_name
+  0.5%     11  {XP_PARSER}.bounded_position_index

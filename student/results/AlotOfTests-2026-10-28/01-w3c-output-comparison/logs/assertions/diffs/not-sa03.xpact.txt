@@ -1,0 +1,5 @@
+EXPECTED C:\Users\masou\Desktop\Lia\xpact\w9-latest\build\validation-corpora\w3c-xml-20130923\xmlconf\sun\valid\out\not-sa03.xml
+'<!DOCTYPE attributes [\n<!NOTATION bar SYSTEM \'file:/dev/tty\'>\n<!NOTATION foo PUBLIC \'-//public id//foo\' \'file:/dev/null\'>\n<!NOTATION nonce SYSTEM \'file:/dev/null\'>\n]>\n<attributes cdata="nothing happens to this one!" entities="unparsed-1 unparsed-2" entity="unparsed-1" id="internal42" idref="internal42" idrefs="internal42 internal42 internal42" nmtoken="this-gets-normalized" nmtokens="this also gets normalized" notation="foo" token="b"></attributes>'
+
+GOT (xpact)
+'<!DOCTYPE attributes [\n<!NOTATION bar SYSTEM \'file:/dev/tty\'>\n<!NOTATION foo PUBLIC \'-//public id//foo\' \'file:/dev/null\'>\n<!NOTATION nonce SYSTEM \'file:/dev/null\'>\n]>\n<attributes cdata="nothing happens to this one!" entities="unparsed-1 unparsed-2" entity="unparsed-1" id=" internal42 " idref=" internal42 " idrefs=" internal42   internal42   internal42 " nmtoken="this-gets-normalized" nmtokens="this also gets normalized" notation="foo" token="b"></attributes>'

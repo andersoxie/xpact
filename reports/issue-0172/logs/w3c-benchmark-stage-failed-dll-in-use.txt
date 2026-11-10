@@ -1,0 +1,443 @@
+﻿> powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_benchmarks.ps1 -Iterations 1 -Repetitions 1 -SkipWslC -W3cAllCases -OutputDir build\fix172\benchmarks
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+big_file_C16_c.c
+big_file_C15_c.c
+big_file_E2_c.c
+big_file_C13_c.c
+eref.c
+big_file_C19_c.c
+big_file_C12_c.c
+big_file_C18_c.c
+big_file_C14_c.c
+big_file_C11_c.c
+big_file_C20_c.c
+big_file_C17_c.c
+epoly.c
+esize.c
+big_file_C10_c.c
+eplug.c
+big_file_C9_c.c
+big_file_C8_c.c
+big_file_C6_c.c
+big_file_C7_c.c
+big_file_C5_c.c
+big_file_C4_c.c
+big_file_C3_c.c
+big_file_C2_c.c
+big_file_C1_c.c
+eskelet.c
+enames.c
+evisib.c
+ececil.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Microsoft (R) Incremental Linker Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_benchmarks.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\finalized.lib" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+xpact_benchmarks.res 
+E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+E1\eref.obj C20\Cobj20.lib C19\Cobj19.lib C18\Cobj18.lib C17\Cobj17.lib 
+C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib C13\Cobj13.lib C12\Cobj12.lib 
+C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib C8\Cobj8.lib C7\Cobj7.lib 
+C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib C3\Cobj3.lib C2\Cobj2.lib 
+C1\Cobj1.lib 
+C compilation completed
+Visual Studio C++ x64 environment already loaded (18.10.3)
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+big_file_C18_c.c
+big_file_E2_c.c
+big_file_C16_c.c
+big_file_C19_c.c
+big_file_C11_c.c
+eoption.c
+big_file_C13_c.c
+big_file_C20_c.c
+big_file_C17_c.c
+big_file_C12_c.c
+big_file_C14_c.c
+big_file_C15_c.c
+eref.c
+epoly.c
+esize.c
+eplug.c
+big_file_C10_c.c
+big_file_C9_c.c
+eskelet.c
+enames.c
+evisib.c
+big_file_C8_c.c
+big_file_C7_c.c
+big_file_C6_c.c
+ececil.c
+big_file_C5_c.c
+big_file_C4_c.c
+big_file_C3_c.c
+big_file_C2_c.c
+big_file_C1_c.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Microsoft (R) Incremental Linker Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:CONSOLE -OUT:xpact_benchmarks.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\finalized.lib" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+xpact_benchmarks.res 
+E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+E1\eref.obj E1\eoption.obj C20\Cobj20.lib C19\Cobj19.lib C18\Cobj18.lib 
+C17\Cobj17.lib C16\Cobj16.lib C15\Cobj15.lib C14\Cobj14.lib C13\Cobj13.lib 
+C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib C9\Cobj9.lib C8\Cobj8.lib 
+C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib C4\Cobj4.lib C3\Cobj3.lib 
+C2\Cobj2.lib C1\Cobj1.lib 
+C compilation completed
+Visual Studio C++ x64 environment already loaded (18.10.3)
+xpact_native.c
+xpact_eiffel_runtime_bridge.c
+xpact_eiffel_dllmain.c
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+big_file_C11_c.c
+big_file_C13_c.c
+big_file_C17_c.c
+big_file_C15_c.c
+big_file_C14_c.c
+big_file_E2_c.c
+eoption.c
+big_file_C16_c.c
+big_file_C9_c.c
+big_file_C10_c.c
+big_file_C12_c.c
+big_file_C8_c.c
+eref.c
+epoly.c
+esize.c
+big_file_C7_c.c
+big_file_C6_c.c
+eplug.c
+big_file_C5_c.c
+eskelet.c
+enames.c
+big_file_C2_c.c
+big_file_C1_c.c
+big_file_C4_c.c
+big_file_C3_c.c
+evisib.c
+ececil.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Microsoft (R) Incremental Linker Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+xpact_native_library.res 
+E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+E1\eref.obj E1\eoption.obj C17\Cobj17.lib C16\Cobj16.lib C15\Cobj15.lib 
+C14\Cobj14.lib C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib 
+C9\Cobj9.lib C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib 
+C4\Cobj4.lib C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+   Creating library xpact_native_library.lib and object xpact_native_library.exp
+C compilation completed
+   Creating library C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\native-eiffel\xpact.lib and object C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\native-eiffel\xpact.exp
+Built C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\native-eiffel\xpact.dll (Production)
+xpact_native_c_benchmark.c
+Benchmark medians written to C:\Users\masou\Desktop\Lia\xpact\xpactGit\docs\benchmarks.md
+Raw benchmark rows written to C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix172\benchmarks\benchmark-results.tsv
+| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1 | 2611 | 597.223 | 1.674 | 0.004 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1 | 2611 | 8.507 | 117.545 | 0.293 | Parser object reused; no-op event handler; finalized Eiffel C compilation; calls parse_without_garbage_collection |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled | Phase 1 finalized assertions | 1 | 2611 | 1210.16 | 0.826 | 0.002 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled, GC suspended during parse | Phase 1 finalized assertions | 1 | 2611 | 14.859 | 67.302 | 0.168 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled; calls parse_without_garbage_collection |
+| catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 1 | 2611 | 285.707 | 3.5 | 0.009 | Parser created per document; Python callbacks |
+| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1 | 2611 | 1115.176 | 0.897 | 0.002 | Parser created per document; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1 | 1 | 2611 | 16.159 | 61.884 | 0.154 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1 | 1 | 2611 | 14.403 | 69.431 | 0.173 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL, parser reused | expat_2.8.1 | 1 | 2611 | 17.058 | 58.625 | 0.146 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | expat_2.8.1 | 1 | 2611 | 14.378 | 69.553 | 0.173 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents |
+xpact_w3c_case.c
+Visual Studio C++ x64 environment already loaded (18.10.3)
+xpact_native.c
+xpact_eiffel_runtime_bridge.c
+xpact_eiffel_dllmain.c
+Eiffel C/C++ Compilation Tool - Version: 25.12
+Copyright Eiffel Software 1996-2024. All Rights Reserved.
+
+Preparing C compilation using already configured msc_vc140 C compiler...
+big_file_E2_c.c
+big_file_C13_c.c
+big_file_C15_c.c
+big_file_C10_c.c
+big_file_C14_c.c
+big_file_C11_c.c
+big_file_C9_c.c
+big_file_C8_c.c
+big_file_C16_c.c
+eoption.c
+big_file_C17_c.c
+big_file_C12_c.c
+eref.c
+epoly.c
+esize.c
+big_file_C7_c.c
+eplug.c
+big_file_C6_c.c
+big_file_C5_c.c
+eskelet.c
+big_file_C4_c.c
+enames.c
+evisib.c
+ececil.c
+big_file_C3_c.c
+big_file_C2_c.c
+big_file_C1_c.c
+einit.c
+eparents.c
+        1 file(s) copied.
+emain.c
+Microsoft (R) Windows (R) Resource Compiler Version 10.0.10011.16384
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Microsoft (R) Incremental Linker Version 14.51.36260.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+-STACK:5000000 -NODEFAULTLIB:libc -STACK:5000000 -NODEFAULTLIB:libc -SUBSYSTEM:WINDOWS -OUT:xpact_native_library.exe 
+e1\emain.obj 
+"C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\lib\msc_vc140\finalized.lib" "..\..\..\build\native-eiffel\xpact_native.obj" "..\..\..\build\native-eiffel\xpact_eiffel_runtime_bridge.obj" 
+USER32.lib WS2_32.lib ADVAPI32.lib GDI32.lib SHELL32.lib MSIMG32.lib COMDLG32.lib UUID.lib OLE32.lib OLEAUT32.lib COMCTL32.lib MPR.LIB SHLWAPI.LIB WINSPOOL.LIB 
+xpact_native_library.res 
+E2\Eobj2.lib E1\eparents.obj E1\einit.obj E1\ececil.obj E1\evisib.obj 
+E1\enames.obj E1\eskelet.obj E1\eplug.obj E1\esize.obj E1\epoly.obj 
+E1\eref.obj E1\eoption.obj C17\Cobj17.lib C16\Cobj16.lib C15\Cobj15.lib 
+C14\Cobj14.lib C13\Cobj13.lib C12\Cobj12.lib C11\Cobj11.lib C10\Cobj10.lib 
+C9\Cobj9.lib C8\Cobj8.lib C7\Cobj7.lib C6\Cobj6.lib C5\Cobj5.lib 
+C4\Cobj4.lib C3\Cobj3.lib C2\Cobj2.lib C1\Cobj1.lib 
+   Creating library xpact_native_library.lib and object xpact_native_library.exp
+C compilation completed
+LINK : fatal error LNK1104: cannot open file 'C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\native-eiffel\xpact_assertions.dll'
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: file_argument
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: suspend_gc_during_parse
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: iteration_count
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: has_argument
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+Degree -2: Constructing Polymorphic Table
+Removing Unused Code
+Degree -3: Generating Optimized Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_benchmarks\F_code
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: file_argument
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: suspend_gc_during_parse
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: iteration_count
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+
+Warning code: Obsolete Class
+
+Warning: type relies on obsolete class.
+What to do: update to new class at your earliest convenience. The
+  class is still available but may be removed in the future.
+
+Class: XP_BENCHMARK_ROOT
+Class: XP_BENCHMARK_ROOT
+Feature: has_argument
+Obsolete class: ARGUMENTS
+Obsolete message: Use `ARGUMENTS_32' to manipulate Unicode arguments.
+
+-------------------------------------------------------------------------------
+Degree -2: Constructing Polymorphic Table
+Degree -3: Generating Optimized Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_benchmarks_assertions\F_code
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Degree -2: Constructing Polymorphic Table
+Degree -3: Generating Optimized Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_native_library\F_code
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+Degree 5: Parsing Classes
+Degree 4: Analyzing Inheritance
+Degree 3: Checking Types
+Degree 2: Generating Byte Code
+Degree -2: Constructing Polymorphic Table
+Degree -3: Generating Optimized Code
+System Recompiled.
+You must now run "finish_freezing" in:
+	C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_native_library_assertions\F_code
+Visual C++ command failed with exit code 1104: cd /d 
+"C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGENs\xpact_native_library_assertions\F_code" && link @"C:\Users\masou\Des
+ktop\Lia\xpact\xpactGit\EIFGENs\xpact_native_library_assertions\F_code\xpact_native_library_assertions.dll.lnk"
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\build_native_eiffel.ps1:78 char:3
++         throw "Visual C++ command failed with exit code ${ExitCode}:  ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Visual C++ comm...rtions.dll.lnk":String) [], RuntimeException
+    + FullyQualifiedErrorId : Visual C++ command failed with exit code 1104: cd /d "C:\Users\masou\Desktop\Lia\xpact\x 
+   pactGit\EIFGENs\xpact_native_library_assertions\F_code" && link @"C:\Users\masou\Desktop\Lia\xpact\xpactGit\EIFGEN  
+  s\xpact_native_library_assertions\F_code\xpact_native_library_assertions.dll.lnk"
+ 
+Eiffel-backed Assertions DLL build failed.
+At C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_benchmarks.ps1:206 char:4
++             throw "Eiffel-backed $Tier DLL build failed."
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Eiffel-backed A...L build failed.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Eiffel-backed Assertions DLL build failed.
+ 
+exit=1

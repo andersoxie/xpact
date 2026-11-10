@@ -1,0 +1,23 @@
+{
+ "id": "fuzz-crash-72/min-2150",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 1,
+   "column": 7,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 1,
+   "column": 6,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

@@ -312,13 +312,11 @@ function Resolve-XpactLibrary {
 		}
 		return $ResolvedPath
 	}
-	$WindowsImportLibrary = Join-Path $RepoRoot "build\native\xpact.lib"
-	$SharedObject = Join-Path $RepoRoot "build\native\libxpact.so"
-	if (Test-Path -LiteralPath $WindowsImportLibrary -PathType Leaf) {
-		return $WindowsImportLibrary
-	}
-	if (Test-Path -LiteralPath $SharedObject -PathType Leaf) {
-		return $SharedObject
+	# Only the Eiffel-backed library parses. build\native holds the C bridge alone,
+	# which answers every parse with error 44, so it is never picked by default.
+	$EiffelImportLibrary = Join-Path $RepoRoot "build\native-eiffel\xpact.lib"
+	if (Test-Path -LiteralPath $EiffelImportLibrary -PathType Leaf) {
+		return $EiffelImportLibrary
 	}
 	return $null
 }
@@ -331,7 +329,7 @@ function Invoke-CMakeAdapter {
 		[switch] $RequireBuildTools
 	)
 	if ([string]::IsNullOrWhiteSpace($LibraryPath)) {
-		$Message = "pass -XpactLibrary or set XPACT_EXPAT_LIBRARY after the native ABI exists."
+		$Message = "no xpact library: build build\native-eiffel\xpact.lib with scripts\build_native_eiffel.ps1, or pass -XpactLibrary or set XPACT_EXPAT_LIBRARY."
 		if ($RequireBuildTools) {
 			throw "Cannot run native C suite: $Message"
 		}
@@ -418,10 +416,11 @@ function Invoke-NativeSuite {
 	$LogPath = Join-Path $OutputRoot "libexpat-native-suite.log"
 	"Native libexpat suite has not run: preparing native build and CMake adapter." | Set-Content -LiteralPath $LogPath -Encoding UTF8
 	if (-not $SkipNativeBuild) {
-		Invoke-CheckedCommand "powershell" @("-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "build_native.ps1"), "-Target", "Windows")
+		Invoke-CheckedCommand "powershell" @("-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "build_native_eiffel.ps1"))
 	}
 	$ResolvedLibrary = Resolve-XpactLibrary $LibraryPath
 	$BuildDir = Invoke-CMakeAdapter $ExpatRoot $OutputRoot $ResolvedLibrary -RequireBuildTools
+	Write-Host "libexpat native suite: xpact library $ResolvedLibrary"
 	$CMake = Resolve-BuildTool "cmake" @("C:\Program Files\CMake\bin\cmake.exe")
 	if ($null -eq $CMake) {
 		throw "Cannot run native C suite: cmake is not on PATH."

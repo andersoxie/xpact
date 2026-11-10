@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_default_library_is_the_eiffel_backed_build_never_the_bridge (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_default_library_is_the_eiffel_backed_build_never_the_bridge)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\tests\python\test_libexpat_adapter.py", line 151, in test_default_library_is_the_eiffel_backed_build_never_the_bridge
+    self.assertNotIn(f"-DXPACT_LIBRARY={REPO / 'build/native/xpact.lib'}", configured)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: '-DXPACT_LIBRARY=C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\native\\xpact.lib' unexpectedly found in '-S C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\adapters\\libexpat -B "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\libexpat gate tests 6tzgmgcy\\adapter reports\\cbuild" "-DEXPAT_SOURCE_DIR=C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\libexpat gate tests 6tzgmgcy\\expat source" -DXPACT_LIBRARY=C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\native\\xpact.lib -DXPACT_INCLUDE_DIR=C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\include\n--build "C:\\Users\\masou\\Desktop\\Lia\\xpact\\w10-attr-defaults\\build\\libexpat gate tests 6tzgmgcy\\adapter reports\\cbuild"\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.604s
+
+FAILED (failures=1)

@@ -1,0 +1,5 @@
+== xpact tests: assertions-off / Workbench ==
+FAIL: native Eiffel parser reports skipped entity
+FAIL: native Eiffel parser names skipped entity
+FAIL: native Eiffel parser broadens external entity policy
+xpact Phase 1 tests: FAILED

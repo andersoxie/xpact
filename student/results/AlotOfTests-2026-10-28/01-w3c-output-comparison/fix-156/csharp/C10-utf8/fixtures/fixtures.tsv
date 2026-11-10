@@ -1,0 +1,43 @@
+file	bytes	input_bytes	callbacks	expat	xpact	findings
+utf8-above-10ffff-attribute.xml	13	<r a='\xf4\x90\x80\x80'/>	default	REJECT 4 at 1:6 (byte 6)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-above-10ffff-cdata.xml	23	<r><![CDATA[\xf4\x90\x80\x80]]></r>	default	REJECT 4 at 1:12 (byte 12)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-above-10ffff-comment.xml	18	<r><!--\xf4\x90\x80\x80--></r>	default	REJECT 4 at 1:7 (byte 7)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-above-10ffff-name.xml	8	<r\xf4\x90\x80\x80/>	default	REJECT 4 at 1:2 (byte 2)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-above-10ffff-pi.xml	18	<r><?pi \xf4\x90\x80\x80?></r>	default	REJECT 4 at 1:8 (byte 8)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-above-10ffff-text.xml	11	<r>\xf4\x90\x80\x80</r>	default	REJECT 4 at 1:3 (byte 3)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-bad-continuation-attribute.xml	11	<r a='\xc3('/>	default	REJECT 4 at 1:6 (byte 6)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-bad-continuation-cdata.xml	21	<r><![CDATA[\xc3(]]></r>	default	REJECT 4 at 1:12 (byte 12)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-bad-continuation-comment.xml	16	<r><!--\xc3(--></r>	default	REJECT 4 at 1:7 (byte 7)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-bad-continuation-name.xml	6	<r\xc3(/>	default	REJECT 4 at 1:2 (byte 2)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-bad-continuation-pi.xml	16	<r><?pi \xc3(?></r>	default	REJECT 4 at 1:8 (byte 8)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-bad-continuation-text.xml	9	<r>\xc3(</r>	default	REJECT 4 at 1:3 (byte 3)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-ff-attribute.xml	10	<r a='\xff'/>	default	REJECT 4 at 1:6 (byte 6)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-ff-cdata.xml	20	<r><![CDATA[\xff]]></r>	default	REJECT 4 at 1:12 (byte 12)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-ff-comment.xml	15	<r><!--\xff--></r>	default	REJECT 4 at 1:7 (byte 7)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-ff-name.xml	5	<r\xff/>	default	REJECT 4 at 1:2 (byte 2)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-ff-pi.xml	15	<r><?pi \xff?></r>	default	REJECT 4 at 1:8 (byte 8)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-ff-text.xml	8	<r>\xff</r>	default	REJECT 4 at 1:3 (byte 3)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-lone-continuation-attribute.xml	10	<r a='\x80'/>	default	REJECT 4 at 1:6 (byte 6)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-lone-continuation-cdata.xml	20	<r><![CDATA[\x80]]></r>	default	REJECT 4 at 1:12 (byte 12)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-lone-continuation-comment.xml	15	<r><!--\x80--></r>	default	REJECT 4 at 1:7 (byte 7)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-lone-continuation-name.xml	5	<r\x80/>	default	REJECT 4 at 1:2 (byte 2)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-lone-continuation-pi.xml	15	<r><?pi \x80?></r>	default	REJECT 4 at 1:8 (byte 8)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-lone-continuation-text.xml	8	<r>\x80</r>	default	REJECT 4 at 1:3 (byte 3)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-overlong-attribute.xml	11	<r a='\xc0\xaf'/>	default	REJECT 4 at 1:6 (byte 6)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-overlong-cdata.xml	21	<r><![CDATA[\xc0\xaf]]></r>	default	REJECT 4 at 1:12 (byte 12)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-overlong-comment.xml	16	<r><!--\xc0\xaf--></r>	default	REJECT 4 at 1:7 (byte 7)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-overlong-name.xml	6	<r\xc0\xaf/>	default	REJECT 4 at 1:2 (byte 2)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-overlong-pi.xml	16	<r><?pi \xc0\xaf?></r>	default	REJECT 4 at 1:8 (byte 8)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-overlong-text.xml	9	<r>\xc0\xaf</r>	default	REJECT 4 at 1:3 (byte 3)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-surrogate-attribute.xml	12	<r a='\xed\xa0\x80'/>	default	REJECT 4 at 1:6 (byte 6)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-surrogate-cdata.xml	22	<r><![CDATA[\xed\xa0\x80]]></r>	default	REJECT 4 at 1:12 (byte 12)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-surrogate-comment.xml	17	<r><!--\xed\xa0\x80--></r>	default	REJECT 4 at 1:7 (byte 7)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-surrogate-name.xml	7	<r\xed\xa0\x80/>	default	REJECT 4 at 1:2 (byte 2)	REJECT 4 at 1:0 (byte 0)	#122
+utf8-surrogate-pi.xml	17	<r><?pi \xed\xa0\x80?></r>	default	REJECT 4 at 1:8 (byte 8)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-surrogate-text.xml	10	<r>\xed\xa0\x80</r>	default	REJECT 4 at 1:3 (byte 3)	REJECT 4 at 1:0 (byte 0)	#122, #123
+utf8-valid-e9-attribute.xml	11	<r a='\xc3\xa9'/>	none	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	-
+utf8-valid-e9-cdata.xml	21	<r><![CDATA[\xc3\xa9]]></r>	none	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	-
+utf8-valid-e9-comment.xml	16	<r><!--\xc3\xa9--></r>	none	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	-
+utf8-valid-e9-name.xml	6	<r\xc3\xa9/>	none	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	-
+utf8-valid-e9-pi.xml	16	<r><?pi \xc3\xa9?></r>	none	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	-
+utf8-valid-e9-text.xml	9	<r>\xc3\xa9</r>	none	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	-

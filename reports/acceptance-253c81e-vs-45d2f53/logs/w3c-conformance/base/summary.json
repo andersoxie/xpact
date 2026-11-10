@@ -1,0 +1,53 @@
+{
+  "suite_version": "20130923",
+  "source": "https://www.w3.org/XML/Test/xmlts20130923.zip",
+  "archive_sha256": null,
+  "source_mode": "local-directory",
+  "known_failures_file": "C:\\xpact\\xpact-student-Mass\\build\\wt-253c81e\\benchmarks\\w3c-known-failures.tsv",
+  "known_failures_listed": 0,
+  "suite_directory": "C:\\xpact\\xpact-student-Mass\\xmlconf",
+  "executables": {
+    "Finalized": "C:\\xpact\\xpact-student-Mass\\build\\wt-253c81e\\EIFGENs\\xpact_benchmarks\\F_code\\xpact_benchmarks.exe",
+    "FinalizedAssertions": "C:\\xpact\\xpact-student-Mass\\build\\wt-253c81e\\EIFGENs\\xpact_benchmarks_assertions\\F_code\\xpact_benchmarks.exe"
+  },
+  "catalog_cases": 2585,
+  "profile": "XML 1.0 fifth edition; namespaces unless NAMESPACE=no; nonvalidating; external-resource cases included; local suite root supplied to each engine; binary verdicts only",
+  "engines": [
+    {
+      "engine": "Finalized",
+      "total": 2585,
+      "passed": 1974,
+      "no_crash_only": 0,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 611,
+      "accepted": 958,
+      "rejected": 1016,
+      "known": 0,
+      "unexpected": 0,
+      "elapsed_ms": 21839.141
+    },
+    {
+      "engine": "FinalizedAssertions",
+      "total": 2585,
+      "passed": 1974,
+      "no_crash_only": 0,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 611,
+      "accepted": 958,
+      "rejected": 1016,
+      "known": 0,
+      "unexpected": 0,
+      "elapsed_ms": 33801.414
+    }
+  ],
+  "expectation_adjustments": [
+    {
+      "case_id": "rmt-e2e-38",
+      "catalog_expected": "REJECT",
+      "expected": "ACCEPT",
+      "reason": "XML 1.0 fifth edition permits this 1.1 text declaration without non-1.0 features; fourth-edition erratum E10 reverses second-edition E38: https://www.w3.org/XML/xml-V10-4e-errata#E10"
+    }
+  ]
+}

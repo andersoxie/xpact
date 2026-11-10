@@ -1,0 +1,36 @@
+AV 1 at  xpact.dll+8787
+ read address ffffffffffffffff
+ rax=23492fcbea8 rbx=0 rcx=2 rdx=234930ac9b8 rsi=1023492fcbf08 rdi=9d4
+ r8=1000000000000000 r9=60 r10=7ff9e3b10000 r11=7ff9e4332e43 r12=8000 r13=1000000000000000 r14=4449 r15=1023492fcbf08 rsp=efd257eab0 rbp=4449
+stack:
+  xpact.dll+8787
+  xpact.dll+896e
+  xpact.dll+95e3
+  xpact.dll+8132
+  xpact.dll+a152
+  xpact.dll+12bff
+  xpact.dll+109fd
+  xpact.dll+36dc4d
+  xpact.dll+6bdfa2
+  xpact.dll+698090
+  xpact.dll+685b9d
+  xpact.dll+6854aa
+  xpact.dll+67b5d0
+  xpact.dll+672e00
+  xpact.dll+670936
+  xpact.dll+66bbbb
+  xpact.dll+6c961f
+  xpact.dll+6c82c3
+  xpact.dll+7ce995
+  xpact.dll+1c00
+  xpact_libexpat_runtests.exe+3163d
+  xpact_libexpat_runtests.exe+229f9
+  xpact_libexpat_runtests.exe+1f1f8
+  xpact_libexpat_runtests.exe+2fb24
+  xpact_libexpat_runtests.exe+30e15
+  xpact_libexpat_runtests.exe+33389
+  xpact_libexpat_runtests.exe+332a2
+  xpact_libexpat_runtests.exe+3315e
+  xpact_libexpat_runtests.exe+333fe
+  KERNEL32.DLL+2dda7
+  ntdll.dll+7ee4c

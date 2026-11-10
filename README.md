@@ -98,6 +98,8 @@ Start here, then read:
    replacement plan.
 17. [Jenkins email notifications](docs/jenkins-email-notifications.md) for
    setting recipients for failed and unstable builds.
+18. [Speed work: session notes](docs/notes/README.md) for the 2026-11 speed
+   fixes, their issues and PRs, the merge order, and how to repeat the checks.
 
 ## Build And Verify
 

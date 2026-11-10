@@ -1,0 +1,65 @@
+file             mode    handlers |                    xpact |                    expat | events
+records-1mb.xml  whole   none     | ACCEPT   0.2419s   34.9MB | ACCEPT   0.0096s   18.5MB |  
+records-1mb.xml  whole   all      | ACCEPT   0.5051s   48.3MB | ACCEPT   0.0367s   29.4MB | same 
+records-1mb.xml  every:65536 none     | ACCEPT    2.271s   41.8MB | ACCEPT   0.0087s   18.9MB |  
+records-1mb.xml  every:65536 all      | ACCEPT   3.5546s   54.5MB | ACCEPT   0.0392s   28.9MB | same 
+records-5mb.xml  whole   none     | ACCEPT   1.2193s   54.3MB | ACCEPT   0.0448s   22.9MB |  
+records-5mb.xml  whole   all      | ACCEPT   2.6078s  121.7MB | ACCEPT   0.1784s   73.1MB | same 
+records-5mb.xml  every:65536 none     | ACCEPT  63.9999s   73.5MB | ACCEPT   0.0426s   26.9MB |  
+records-5mb.xml  every:65536 all      | ACCEPT  95.3108s  138.5MB | ACCEPT   0.1941s   77.3MB | same 
+records-9mb.xml  whole   none     | ACCEPT   2.2638s   74.4MB | ACCEPT   0.0711s   26.7MB |  
+records-9mb.xml  whole   all      | ACCEPT   5.5498s  195.1MB | ACCEPT   0.3327s  118.2MB | same 
+records-9mb.xml  every:65536 none     | ACCEPT  224.3892s   94.5MB | ACCEPT   0.0951s   35.0MB |  
+records-9mb.xml  every:65536 all      | ACCEPT  277.7665s  187.0MB | ACCEPT   0.3896s  125.5MB | same 
+records-20mb.xml whole   none     | REJECT   0.8296s  101.4MB | ACCEPT   0.1844s   38.0MB |  out of memory
+records-20mb.xml whole   all      | REJECT   0.8828s  101.4MB | ACCEPT   1.0282s  239.7MB |  out of memory
+records-20mb.xml every:65536 none     | REJECT  276.606s  109.9MB | ACCEPT   0.1941s   57.2MB |  out of memory
+records-20mb.xml every:65536 all      | TIMEOUT        s       MB | ACCEPT    1.049s  260.1MB |  
+text-1mb.xml     whole   none     | REJECT   0.1475s   27.4MB | REJECT   0.0011s   18.7MB |  not well-formed (invalid token)
+text-1mb.xml     whole   all      | REJECT   0.1505s   27.8MB | REJECT   0.0017s   18.7MB |  not well-formed (invalid token)
+text-1mb.xml     every:65536 none     | REJECT   0.0122s   23.8MB | REJECT   0.0015s   18.8MB |  not well-formed (invalid token)
+text-1mb.xml     every:65536 all      | REJECT   0.0113s   24.1MB | REJECT   0.0013s   19.0MB |  not well-formed (invalid token)
+text-5mb.xml     whole   none     | REJECT   0.7618s   48.6MB | REJECT   0.0015s   23.1MB |  not well-formed (invalid token)
+text-5mb.xml     whole   all      | REJECT   0.7296s   54.1MB | REJECT   0.0014s   23.1MB |  not well-formed (invalid token)
+text-5mb.xml     every:65536 none     | REJECT   0.0155s   32.7MB | REJECT   0.0051s   27.5MB |  not well-formed (invalid token)
+text-5mb.xml     every:65536 all      | REJECT   0.0187s   32.9MB | REJECT    0.005s   27.7MB |  not well-formed (invalid token)
+text-9mb.xml     whole   none     | REJECT   1.4608s   70.5MB | REJECT   0.0014s   27.4MB |  not well-formed (invalid token)
+text-9mb.xml     whole   all      | REJECT   1.3606s   80.3MB | REJECT   0.0013s   27.7MB |  not well-formed (invalid token)
+text-9mb.xml     every:65536 none     | REJECT   0.0175s   41.5MB | REJECT   0.0077s   36.5MB |  not well-formed (invalid token)
+text-9mb.xml     every:65536 all      | REJECT   0.0192s   41.5MB | REJECT   0.0071s   36.4MB |  not well-formed (invalid token)
+text-20mb.xml    whole   none     | REJECT   1.0491s  108.1MB | REJECT   0.0011s   39.5MB |  out of memory
+text-20mb.xml    whole   all      | REJECT   1.0229s  108.2MB | REJECT   0.0013s   39.6MB |  out of memory
+text-20mb.xml    every:65536 none     | REJECT   0.0246s   65.5MB | REJECT   0.0124s   60.5MB |  not well-formed (invalid token)
+text-20mb.xml    every:65536 all      | REJECT   0.0252s   65.9MB | REJECT    0.014s   60.5MB |  not well-formed (invalid token)
+ns-1mb.xml       whole   none     | ACCEPT   0.9171s   34.1MB | ACCEPT   0.0088s   18.6MB |  
+ns-1mb.xml       whole   all      | ACCEPT   1.3424s   64.1MB | ACCEPT   0.0875s   40.4MB | same 
+ns-1mb.xml       every:65536 none     | ACCEPT   9.3101s   39.0MB | ACCEPT   0.0111s   18.7MB |  
+ns-1mb.xml       every:65536 all      | ACCEPT  10.6286s   66.9MB | ACCEPT   0.0874s   40.8MB | same 
+ns-5mb.xml       whole   none     | ACCEPT   4.6314s   54.1MB | ACCEPT   0.0445s   22.6MB |  
+ns-5mb.xml       whole   all      | ACCEPT   6.7634s  195.5MB | ACCEPT   0.5159s  125.3MB | same 
+ns-5mb.xml       every:65536 none     | ACCEPT  192.8239s   69.7MB | ACCEPT   0.0465s   26.9MB |  
+ns-5mb.xml       every:65536 all      | ACCEPT  214.3043s  199.2MB | ACCEPT   0.3474s  129.4MB | same 
+ns-9mb.xml       whole   none     | ACCEPT    6.554s   74.1MB | ACCEPT   0.0614s   26.9MB |  
+ns-9mb.xml       whole   all      | ACCEPT   9.9174s  325.4MB | ACCEPT   0.9595s  210.7MB | same 
+ns-9mb.xml       every:65536 none     | TIMEOUT        s       MB | ACCEPT   0.0699s   34.9MB |  
+ns-9mb.xml       every:65536 all      | TIMEOUT        s       MB | ACCEPT   0.7352s  219.4MB |  
+ns-20mb.xml      whole   none     | REJECT    0.693s  101.0MB | ACCEPT   0.1315s   37.8MB |  out of memory
+ns-20mb.xml      whole   all      | REJECT     0.71s  101.0MB | ACCEPT   2.0883s  446.5MB |  out of memory
+ns-20mb.xml      every:65536 none     | TIMEOUT        s       MB | ACCEPT   0.1381s   57.0MB |  
+ns-20mb.xml      every:65536 all      | TIMEOUT        s       MB | ACCEPT   2.2176s  466.7MB |  
+nested-1mb.xml   whole   none     | ACCEPT   0.2994s   27.9MB | ACCEPT   0.0084s   18.6MB |  
+nested-1mb.xml   whole   all      | ACCEPT   0.6486s   53.6MB | ACCEPT   0.0562s   33.0MB | same 
+nested-1mb.xml   every:65536 none     | ACCEPT   3.6626s   42.0MB | ACCEPT   0.0087s   18.6MB |  
+nested-1mb.xml   every:65536 all      | ACCEPT   4.6129s   61.4MB | ACCEPT    0.054s   33.2MB | same 
+nested-5mb.xml   whole   none     | ACCEPT   1.4014s   52.1MB | ACCEPT   0.0378s   22.6MB |  
+nested-5mb.xml   whole   all      | ACCEPT   3.0256s  150.3MB | ACCEPT   0.2828s   94.0MB | same 
+nested-5mb.xml   every:65536 none     | ACCEPT  75.7799s   70.9MB | ACCEPT   0.0379s   26.9MB |  
+nested-5mb.xml   every:65536 all      | ACCEPT  102.2093s  157.1MB | ACCEPT   0.3525s   97.8MB | same 
+nested-9mb.xml   whole   none     | ACCEPT   3.1281s   73.7MB | ACCEPT   0.0778s   26.5MB |  
+nested-9mb.xml   whole   all      | ACCEPT   6.9058s  242.9MB | ACCEPT    0.646s  154.2MB | same 
+nested-9mb.xml   every:65536 none     | ACCEPT  268.7528s  106.3MB | ACCEPT   0.1029s   34.9MB |  
+nested-9mb.xml   every:65536 all      | TIMEOUT        s       MB | ACCEPT   0.5314s  162.3MB |  
+nested-20mb.xml  whole   none     | REJECT   0.6845s  100.5MB | ACCEPT   0.1487s   37.8MB |  out of memory
+nested-20mb.xml  whole   all      | REJECT   0.7656s  100.8MB | ACCEPT   1.4881s  321.6MB |  out of memory
+nested-20mb.xml  every:65536 none     | TIMEOUT        s       MB | ACCEPT   0.1484s   56.8MB |  
+nested-20mb.xml  every:65536 all      | TIMEOUT        s       MB | ACCEPT   1.3329s  340.7MB |  

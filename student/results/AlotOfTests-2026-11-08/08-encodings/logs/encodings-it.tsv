@@ -1,0 +1,147 @@
+id	status	expected	spec	xpact	xpact_message	expat	expat_message	problems
+utf8	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-bom	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-no-decl	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf16le-bom	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf16be-bom	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf16le-no-bom	pass	ACCEPT	(Expat)	ACCEPT		ACCEPT		
+utf16be-no-bom	pass	ACCEPT	(Expat)	ACCEPT		ACCEPT		
+utf16le-decl-utf16le	pass	ACCEPT	(Expat)	ACCEPT		ACCEPT		
+utf16-unpaired-high-surrogate	FAIL	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	no element found	error 4 vs Expat 3
+utf16-unpaired-low-surrogate	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf16-odd-length	pass	REJECT	REJECT	REJECT	unclosed token	REJECT	unclosed token	
+latin1	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+us-ascii	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+us-ascii-high-byte	pass	REJECT	(Expat)	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+windows-1252-no-handler	pass	REJECT	REJECT	REJECT	unknown encoding	ACCEPT		
+unknown-encoding	pass	REJECT	REJECT	REJECT	unknown encoding	REJECT	python LookupError: unknown encoding: x-nonsense	
+create-latin1-overrides-utf8	FAIL	ACCEPT	(Expat)	ACCEPT		ACCEPT		events differ from Expat
+create-utf8-overrides-latin1	FAIL	REJECT	REJECT	ACCEPT		REJECT	not well-formed (invalid token)	verdict ACCEPT (expected REJECT)
+create-utf16-on-utf8	FAIL	REJECT	(Expat)	REJECT	encoding specified in XML declaration is incorrect	REJECT	not well-formed (invalid token)	error 19 vs Expat 4
+bom-utf8-decl-utf16	FAIL	REJECT	(Expat)	ACCEPT		REJECT	encoding specified in XML declaration is incorrect	verdict ACCEPT (expected REJECT)
+utf8-overlong-2-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-2-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-2-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-2-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-2-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-2-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-3-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-3-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-3-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-3-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-3-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-3-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-4-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-4-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-4-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-4-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-4-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-overlong-4-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-surrogate-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-surrogate-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-surrogate-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-surrogate-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-surrogate-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-surrogate-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-above-10ffff-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-above-10ffff-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-above-10ffff-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-above-10ffff-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-above-10ffff-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-above-10ffff-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-f5-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-f5-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-f5-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-f5-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-f5-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-f5-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-ff-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-ff-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-ff-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-ff-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-ff-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-byte-ff-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-lone-continuation-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-lone-continuation-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-lone-continuation-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-lone-continuation-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-lone-continuation-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-lone-continuation-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-2-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-2-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-2-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-2-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-2-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-2-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-3-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-3-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-3-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-3-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-3-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-3-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-4-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-4-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-4-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-4-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-4-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-truncated-4-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-fffe-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-fffe-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-fffe-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-fffe-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-fffe-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-fffe-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-ffff-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-ffff-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-ffff-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-ffff-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-ffff-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-ffff-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-c1-control-0x85-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-comment	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-pi	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-control-0x01-in-text	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-control-0x01-in-attribute	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-control-0x01-in-comment	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-control-0x01-in-pi	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-control-0x01-in-cdata	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-control-0x01-in-name	pass	REJECT	REJECT	REJECT	not well-formed (invalid token)	REJECT	not well-formed (invalid token)	
+utf8-U+007F-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+007F-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+007F-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0080-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0080-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0080-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+07FF-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+07FF-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+07FF-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0800-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0800-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0800-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+D7FF-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+D7FF-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+D7FF-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+E000-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+E000-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+E000-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+FFFD-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+FFFD-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+FFFD-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10000-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10000-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10000-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10FFFF-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10FFFF-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10FFFF-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-x0	pass	REJECT	REJECT	REJECT	reference to invalid character number	REJECT	reference to invalid character number	
+charref-x9	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-xD7FF	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-xD800	pass	REJECT	REJECT	REJECT	reference to invalid character number	REJECT	reference to invalid character number	
+charref-xFFFE	pass	REJECT	REJECT	REJECT	reference to invalid character number	REJECT	reference to invalid character number	
+charref-x10FFFF	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-x110000	pass	REJECT	REJECT	REJECT	reference to invalid character number	REJECT	reference to invalid character number	
+charref-99999999999	pass	REJECT	REJECT	REJECT	reference to invalid character number	REJECT	reference to invalid character number	
+charref-x85	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		

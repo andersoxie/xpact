@@ -1,0 +1,12 @@
+test_build_failure_clears_previous_native_run_log (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_build_failure_clears_previous_native_run_log) ... ok
+test_crash_and_unexpected_results_cannot_borrow_expected_failure_status (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_crash_and_unexpected_results_cannot_borrow_expected_failure_status) ... ok
+test_default_library_is_the_eiffel_backed_build_never_the_bridge (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_default_library_is_the_eiffel_backed_build_never_the_bridge) ... ok
+test_expected_failure_has_successful_jenkins_wrapper_exit_and_visible_output (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_expected_failure_has_successful_jenkins_wrapper_exit_and_visible_output) ... ok
+test_failure_retry_sequence_replaces_logs_and_preserves_each_verdict (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_failure_retry_sequence_replaces_logs_and_preserves_each_verdict) ... ok
+test_log_persistence_failure_is_fatal_and_restores_process_environment (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_log_persistence_failure_is_fatal_and_restores_process_environment) ... ok
+test_shared_assertion_helper_uses_declared_test_source_and_rejects_ambiguity (tests.python.test_libexpat_adapter.NativeSuiteGateTests.test_shared_assertion_helper_uses_declared_test_source_and_rejects_ambiguity) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 14.325s
+
+OK

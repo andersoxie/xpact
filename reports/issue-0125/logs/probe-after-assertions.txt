@@ -1,0 +1,49 @@
+= b'<root><child></root>' dflt whole 
+   xpact (['d:<root>', 'd:<child>'], 7, 15) 
+   expat (['d:<root>', 'd:<child>'], 7, 15)
+= b'<root><child></root>' dflt bytes 
+   xpact (['d:<root>', 'd:<child>'], 7, 15) 
+   expat (['d:<root>', 'd:<child>'], 7, 15)
+= b'<root><child></root>' elem whole 
+   xpact (['s:root', 's:child'], 7, 15) 
+   expat (['s:root', 's:child'], 7, 15)
+= b'<root><child></root>' elem bytes 
+   xpact (['s:root', 's:child'], 7, 15) 
+   expat (['s:root', 's:child'], 7, 15)
+= b'<a></b>' dflt whole 
+   xpact (['d:<a>'], 7, 5) 
+   expat (['d:<a>'], 7, 5)
+= b'<a></b>' dflt bytes 
+   xpact (['d:<a>'], 7, 5) 
+   expat (['d:<a>'], 7, 5)
+= b'<a></b>' elem whole 
+   xpact (['s:a'], 7, 5) 
+   expat (['s:a'], 7, 5)
+= b'<a></b>' elem bytes 
+   xpact (['s:a'], 7, 5) 
+   expat (['s:a'], 7, 5)
+= b'<a>t</b>' dflt whole 
+   xpact (['d:<a>', 'd:t'], 7, 6) 
+   expat (['d:<a>', 'd:t'], 7, 6)
+= b'<a>t</b>' dflt bytes 
+   xpact (['d:<a>', 'd:t'], 7, 6) 
+   expat (['d:<a>', 'd:t'], 7, 6)
+= b'<a>t</b>' elem whole 
+   xpact (['s:a', 'd:t'], 7, 6) 
+   expat (['s:a', 'd:t'], 7, 6)
+= b'<a>t</b>' elem bytes 
+   xpact (['s:a', 'd:t'], 7, 6) 
+   expat (['s:a', 'd:t'], 7, 6)
+= b'<a><b></a></b>' dflt whole 
+   xpact (['d:<a>', 'd:<b>'], 7, 8) 
+   expat (['d:<a>', 'd:<b>'], 7, 8)
+= b'<a><b></a></b>' dflt bytes 
+   xpact (['d:<a>', 'd:<b>'], 7, 8) 
+   expat (['d:<a>', 'd:<b>'], 7, 8)
+= b'<a><b></a></b>' elem whole 
+   xpact (['s:a', 's:b'], 7, 8) 
+   expat (['s:a', 's:b'], 7, 8)
+= b'<a><b></a></b>' elem bytes 
+   xpact (['s:a', 's:b'], 7, 8) 
+   expat (['s:a', 's:b'], 7, 8)
+same as Expat: 16 / 16

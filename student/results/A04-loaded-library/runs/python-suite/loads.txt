@@ -1,0 +1,24 @@
+# A04 python-suite: C:\Users\masou\AppData\Local\Programs\Python\Python314\python.exe -m unittest discover -s tests/python -p test_*.py
+# 413 processes, 941.4 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     none
+
+## processes started (image [sha256 when under the repository])
+   194 x C:\Program Files\Git\mingw64\bin\git.exe
+    69 x C:\Windows\System32\cmd.exe
+    36 x C:\Windows\System32\conhost.exe
+    23 x build\libexpat isolation tests fif9c5fv\compiled\Debug\isolation_fixture.exe
+    18 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+    12 x C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe
+    11 x C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\Tracker.exe
+    10 x C:\Program Files\Git\mingw64\libexec\git-core\git.exe
+     8 x C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe
+     7 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\link.exe
+     6 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe
+     6 x C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\rc.exe
+     6 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cvtres.exe
+     3 x C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe
+     2 x C:\Users\masou\AppData\Local\Programs\Python\Python314\python.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\vctip.exe
+     1 x build\libexpat defaults tests 6rg4in2w\compiled\Debug\test_defaults_fixture.exe

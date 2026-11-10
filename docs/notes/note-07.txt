@@ -1,0 +1,48 @@
+Note7 - 2026-11-03 - parallel Test 2 (#5) and UTF-16 resume (#7)
+================================================================
+
+RULE CHANGE: Jenkins is dropped. Close issues after local verification (memory: no-jenkins).
+#2 closed. Board: In progress -> Done when verified.
+
+#5 PARALLEL TEST 2 (PR #6, branch perf/parallel-test2 from student-Mass)
+- reports/issue-0165/tools/run.py --jobs N (default cpu count). Per-thread Pool pair
+  (Pool is not thread-safe), largest cases first, rows in suite order -> byte-identical TSV.
+- Output goes to reports\issue-0165\tools\logs\ (untracked).
+- 15:30 -> 5:02. Largest-first gave nothing because the floor was 2 UTF-16 cases at the
+  300 s timeout -> found by timing single cases (scratchpad\time_cases.py).
+- Branches without #5: `git show perf/parallel-test2:reports/issue-0165/tools/run.py >
+  reports/issue-0165/tools/run_par.py` and delete it afterwards.
+
+#7 UTF-16 RESUME (PR #8, branch perf/resume-utf16, STACKED on perf/incremental-parsing)
+- xp_native_parser.e: decoded_buffer/decoded_raw_count/resume_utf16(_little_endian),
+  resume_source (input_buffer or decoded_buffer), append_decoded_utf16, is_resumable_utf16_input,
+  clear_decoded_buffer. Enabled after a legacy call whose decoded l_input is UTF-16 by signature,
+  explicit_encoding = Void, input_buffer.count >= 4.
+- Results: 313 KB UTF-16 256-byte pieces 70.5 s -> 0.18 s; Test 2 (16 jobs) 99 s production,
+  257 s assertions; only pr-xml-little / pr-xml-utf-16 rows changed (TIMEOUT -> stable).
+- Merge order for the user: #4, then retarget #8 to student-Mass, then #8. #6 independent.
+
+VERIFICATION RECIPE (all ~15 min with Test 2 parallel)
+1. build both tiers to build\<x>\native-eiffel(-assertions)
+2. XpactDllTests --dll ... --out build\evidence\<x>\...; cmp results.tsv with the previous build
+3. run-tools.ps1 -DllDir ... -OutputDir build\evidence\<x>\prod -Run All; asrt -Run Trace;
+   diff trace-sha256.txt / chunked-crc.tsv
+4. Expat suite (Note6), new -OutputDir
+5. Test 2 --jobs 16 both tiers; diff TSV with the previous build
+6. Eiffel matrix (no 2>&1)
+- Don't run heavy things in parallel with the Expat suite or timings.
+
+#9 W3C RUNNER --jobs (PR #10, branch perf/parallel-w3c-runner from student-Mass)
+- default 1 (summed elapsed_ms feeds benchmarks: 34.6 s -> 64.0 s under 16 jobs).
+- 40 s -> 9 s; results identical except elapsed_ms. Unit tests: run with
+  python -I -m unittest discover -s tests/python -p "test_w3c_conformance.py"
+  (plain "-m unittest tests/python/x.py" fails under -I).
+- Engine exe: EIFGENs\xpact_benchmarks\F_code\xpact_benchmarks.exe (built 2026-10-27).
+- Edit trap: an Edit anchor that also matches inside another test splits that test; check
+  the diff of test files.
+- HELD DECISION for the user: make --jobs the default / use it in run_benchmarks.ps1?
+
+NEXT
+- Per-callback cost in the C bridge (#5 in improvement.txt): biggest remaining Test 2 cost
+  (ctypes callbacks + C_STRING per name/attr).
+- Resume for Latin-1/ASCII (decode per byte is trivial; same pattern as UTF-16).

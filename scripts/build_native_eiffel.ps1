@@ -139,8 +139,16 @@ if ($OldCompiler -notlike "msc*") {
 try {
 	$SavedErrorActionPreference = $ErrorActionPreference
 	$ErrorActionPreference = "Continue"
+	$EcStarted = Get-Date
 	try {
-		ec -batch -clean -finalize -keep -config tests\xpact_native_library.ecf -target $EiffelTarget
+		# -keep only for the assertions tier: it keeps the assertion code and a
+		# per-routine exception frame in every finalized routine, even where the
+		# target disables all assertions.
+		[string[]] $FinalizeArgs = @("-finalize")
+		if ($BuildTier -eq "Assertions") {
+			$FinalizeArgs += "-keep"
+		}
+		ec -batch -clean @FinalizeArgs -config tests\xpact_native_library.ecf -target $EiffelTarget
 		$EiffelExitCode = $LASTEXITCODE
 	} finally {
 		$ErrorActionPreference = $SavedErrorActionPreference
@@ -150,6 +158,14 @@ try {
 	}
 
 	$FinalCode = Join-Path $RepoRoot "EIFGENs\$EiffelTarget\F_code"
+	# `ec` exits 0 even when it rejects its options; it then generates nothing and the
+	# steps below would link the previous build's C (mass-xpact #15). `ec` writes
+	# Makefile.SH on every finalize, so it must be newer than this run's start.
+	$GeneratedMakefile = Join-Path $FinalCode "Makefile.SH"
+	if (-not (Test-Path -LiteralPath $GeneratedMakefile -PathType Leaf) -or
+		(Get-Item -LiteralPath $GeneratedMakefile).LastWriteTime -lt $EcStarted.AddSeconds(-2)) {
+		throw "Eiffel native library target compilation for $BuildTier generated no new C code (see the ec output above)."
+	}
 	Push-Location $FinalCode
 	try {
 		$SavedErrorActionPreference = $ErrorActionPreference

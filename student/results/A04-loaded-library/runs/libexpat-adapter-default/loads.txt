@@ -1,0 +1,17 @@
+# A04 libexpat-adapter-default: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_libexpat_adapter.ps1 -Mode NativeSuite -ExpatSourceDir C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat -OutputDir build\a04\adapter-default -SkipNativeBuild
+# 567 processes, 910.6 s, exit 1, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+   288 x xpact_libexpat_runtests.exe -> build\native\xpact.dll [bridge-only, f65b09225e2c1a0d]
+
+## processes started (image [sha256 when under the repository])
+   288 x build\a04\adapter-default\cbuild\Debug\xpact_libexpat_runtests.exe [016b7a943dcb97dd]
+   264 x C:\Windows\System32\conhost.exe
+     4 x C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\Tracker.exe
+     3 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\link.exe
+     2 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe
+     2 x C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe
+     1 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\vctip.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe

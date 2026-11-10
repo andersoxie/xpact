@@ -1,0 +1,236 @@
+For XPact, I would build a website that acts as both a public XML validation tool and a demonstration of the XPact parser.
+
+The visitor shouldn't need to install XPact, understand Eiffel, or know how the parser works. They should simply be able to visit the website, upload an XML file, and see what XPact does with it.
+
+I'd design the architecture around five main components.
+1. Overall website architecture
+Users
+
+Developers · Students · XML users
+
+
+1. Frontend — XPact website
+React + TypeScript
+
+XML Validator
+
+Upload and test XML
+
+Documentation
+
+API and usage guides
+
+Benchmarks
+
+Performance results
+
+GitHub
+
+Source code and releases
+
+
+
+HTTPS / REST API
+
+2. Backend — ASP.NET Core
+C#
+File uploads · API endpoints · Validation · Results
+
+
+3. XPact integration / Worker
+
+Runs parser jobs separately from the web server
+
+
+4. XPact parser
+Eiffel + C
+Native library · XML parsing · Parser events · Errors
+
+
+5. Results and monitoring
+
+JSON responses · Logs · Performance measurements
+
+
+2. What should the actual website contain?
+I'd suggest these pages:
+
+
+
+
+
+
+
+
+
+Home page
+
+Introduce XPact, explain what it does, its relationship to Expat and its current development status.
+- What is XPact?
+- What problem does it solve?
+- Try the XML validator
+
+
+
+
+
+
+
+
+
+
+
+
+XML Validator — the main feature
+
+This is the most important page.
+- Upload an XML file.
+- Paste XML directly into an editor.
+- Click Validate.
+- See accepted or rejected.
+- Display error messages and line/column information where available.
+
+
+
+
+
+
+
+
+
+
+
+
+Documentation
+
+Explain how developers can use XPact in their own applications.
+- C API documentation
+- Installation
+- Examples
+- Supported features
+- Known limitations
+
+
+
+
+
+
+
+
+
+
+
+
+Benchmarks and conformance
+
+Show the project's technical progress.
+- W3C conformance results
+- Valid versus invalid XML tests
+- Performance benchmarks
+- Supported XML standard
+- Known failures and limitations
+
+
+
+
+
+
+
+
+
+
+
+
+Project / GitHub
+
+Provide access to the source code, releases, issues and development roadmap.
+
+
+
+3. Recommended technology stack
+Layer	Technology	Responsibility
+Frontend	React + TypeScript	Website interface
+Styling	CSS / Tailwind	Design
+Backend	C# + ASP.NET Core	REST API
+Parser integration	C ABI / P/Invoke	Connect C# to XPact
+Parser	Eiffel + C	Actual XML parsing
+Worker	Separate process	Isolated parser execution
+Hosting	Azure App Service / Windows VM	Run application
+Version control	GitHub	Source code
+
+You don't need a database initially. If you later want user accounts, saved results, historical test runs or public statistics, you could introduce PostgreSQL or SQL Server.
+4. Example: What happens when someone uploads XML?
+Imagine a developer visits the website and uploads example.xml.
+1. Frontend
+   
+   The browser sends the XML file to your backend.
+2. ASP.NET Core API
+   
+   Checks the upload, size and request limits.
+3. XPact worker
+   
+   Receives the XML data and calls the XPact native library.
+4. XPact parser
+   
+   Processes the document and returns the parsing result.
+5. Backend
+   
+   Converts the result into a structured JSON response.
+6. Frontend
+   
+   Displays the result to the visitor.
+For example:
+{
+  "parser": "XPact",
+  "valid": false,
+  "duration_ms": 12.4,
+  "error": {
+    "message": "Mismatched tag",
+    "line": 4,
+    "column": 9
+  }
+}
+
+
+The response is illustrative; the actual fields depend on XPact's capabilities.
+5. Hosting architecture
+For the first public version, I would keep hosting relatively simple.
+Cloud hosting
+Suggested starting point: Azure
+Azure App Service / Windows VM
+
+Hosts ASP.NET Core API and website
+
+
+XPact worker
+
+Runs the Windows-compatible XPact build
+
+
+XPact.dll
+
+Native Eiffel/C parser
+
+
+For a first deployment, a Windows VM may be simpler than App Service if your native library requires particular runtime dependencies or build configuration. You should also isolate parser execution, limit CPU and memory, and prevent uploaded XML from accessing local files or external network resources.
+6. How I would divide the development into phases
+Phase	Deliverable
+1	XPact native library works reliably
+2	ASP.NET Core API can call XPact
+3	Postman tests for the API
+4	React website with XML upload
+5	Display parsing errors and results
+6	Documentation and benchmark pages
+7	Public deployment and security testing
+
+My overall recommendation
+I would make the website a technical showcase for XPact, not just an XML upload tool.
+
+The most valuable parts would be:
+1. Try XPact: Let people test their own XML documents.
+2. Understand XPact: Explain the parser and its API.
+3. Measure XPact: Publish conformance and performance results.
+4. Use XPact: Show developers how to integrate it into their own software.
+That gives the project three audiences: developers who want to use the parser, people who want to test XML, and technical reviewers who want evidence of its correctness and performance.
+
+And architecturally, keep XPact independent. The website should be one client of the parser, not something XPact depends on.

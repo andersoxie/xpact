@@ -451,6 +451,36 @@ class ReportAndCliTests(TemporarySuite):
         self.assertEqual(report["source_mode"], "local-directory")
         self.assertIsNone(report["archive_sha256"])
 
+    def test_parallel_jobs_report_the_same_results_in_catalog_order(self):
+        self.catalog("".join(f'<TEST ID="c{i}" TYPE="{"valid" if i % 2 else "not-wf"}" URI="c{i}.xml"/>'
+                             for i in range(12)))
+        for i in range(12):
+            self.write(f"c{i}.xml", "<r/>" if i % 3 else "<r>")
+        executable = self.root / "parser.exe"
+        executable.touch()
+
+        def verdict(command, **_):
+            # The verdict depends on the input only, as with a real parser.
+            if Path(command[2]).read_text() == "<r/>":
+                return subprocess.CompletedProcess(command, 0, b"XPACT_CONFORMANCE\tACCEPT\n", b"")
+            return subprocess.CompletedProcess(command, 1, b"XPACT_CONFORMANCE\tREJECT\n", b"")
+
+        rows = {}
+        for jobs in ("1", "4"):
+            output = self.root / f"reports-{jobs}"
+            with mock.patch.object(runner.subprocess, "run", side_effect=verdict), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(runner.main(["--suite-dir", str(self.suite), "--output-dir", str(output),
+                                              "--engine", f"xpact={executable}", "--jobs", jobs]), 1)
+            with open(output / "results.tsv", encoding="utf-8") as source:
+                rows[jobs] = [{key: value for key, value in row.items() if key != "elapsed_ms"}
+                              for row in csv.DictReader(source, delimiter="\t")]
+        self.assertEqual([row["case_id"] for row in rows["4"]], [f"c{i}" for i in range(12)])
+        self.assertEqual(rows["4"], rows["1"])
+
+    def test_jobs_must_be_positive(self):
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            runner.main(["--suite-dir", str(self.suite), "--engine", "xpact=x", "--jobs", "0"])
+
     def test_setup_failure_replaces_stale_junit_with_visible_error(self):
         self.output.mkdir()
         (self.output / "junit.xml").write_text("stale successful report")

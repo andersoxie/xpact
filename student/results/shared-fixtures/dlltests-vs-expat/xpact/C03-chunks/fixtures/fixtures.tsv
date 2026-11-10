@@ -1,0 +1,5 @@
+file	bytes	input_bytes	callbacks	expat	xpact	findings
+cr-attribute.xml	12	<r a='x\x0dy'/>	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126
+cr-crlf.xml	9	<r>\x0d\x0a</r>	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126
+cr-last-byte.xml	5	<r/>\x0d	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126
+cr-lone.xml	8	<r>\x0d</r>	default	ACCEPT 0 at 0:0 (byte 0)	ACCEPT 0 at 0:0 (byte 0)	#126

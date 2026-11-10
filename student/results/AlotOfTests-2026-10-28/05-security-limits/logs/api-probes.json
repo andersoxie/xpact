@@ -1,0 +1,174 @@
+[
+ {
+  "probe": "XML_Parse len = -1 (CVE-2024-45490)",
+  "expected (Expat)": [
+   0,
+   41
+  ],
+  "xpact": [
+   0,
+   41
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_Parse NULL buffer, len 5",
+  "expected (Expat)": [
+   0,
+   41
+  ],
+  "xpact": [
+   0,
+   41
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_ParseBuffer without XML_GetBuffer",
+  "expected (Expat)": [
+   0,
+   42
+  ],
+  "xpact": [
+   0,
+   42
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_GetBuffer(-1)",
+  "expected (Expat)": [
+   false,
+   1
+  ],
+  "xpact": [
+   false,
+   1
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_GetBuffer(2^31-1)",
+  "expected (Expat)": [
+   false,
+   1
+  ],
+  "xpact": [
+   false,
+   1
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_ResumeParser before parsing",
+  "expected (Expat)": [
+   0,
+   34
+  ],
+  "xpact": [
+   0,
+   34
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_ResumeParser after abort (CVE-2024-50602)",
+  "expected (Expat)": [
+   0,
+   34
+  ],
+  "xpact": [
+   0,
+   34
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_StopParser before parsing",
+  "expected (Expat)": [
+   0,
+   44
+  ],
+  "xpact": [
+   0,
+   44
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_StopParser after finish",
+  "expected (Expat)": [
+   0,
+   36
+  ],
+  "xpact": [
+   0,
+   36
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_Parse after the final buffer",
+  "expected (Expat)": [
+   0,
+   36
+  ],
+  "xpact": [
+   0,
+   36
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_ParserFree(NULL)",
+  "expected (Expat)": "no crash",
+  "xpact": "no crash",
+  "status": "pass"
+ },
+ {
+  "probe": "XML_ParserReset after an error, parse again",
+  "expected (Expat)": [
+   1,
+   0
+  ],
+  "xpact": [
+   1,
+   0
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "XML_SetEncoding after parsing started",
+  "expected (Expat)": [
+   0,
+   "status only"
+  ],
+  "xpact": [
+   0,
+   "status only"
+  ],
+  "status": "pass"
+ },
+ {
+  "probe": "suspend in a handler, resume twice",
+  "expected (Expat)": [
+   2,
+   2,
+   1,
+   [
+    "d",
+    "e"
+   ]
+  ],
+  "xpact": [
+   2,
+   2,
+   1,
+   [
+    "d",
+    "e"
+   ]
+  ],
+  "status": "pass"
+ }
+]

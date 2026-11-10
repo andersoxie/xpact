@@ -1,0 +1,18 @@
+00-smoke                         1 verified, 1 error
+01-skip-reparse-tag-spaces       1 verified, 0 errors
+02-direct-start-tag-name         1 verified, 0 errors
+03-A-before-fix                  2 verified, 1 error
+03-B-after-fix                   3 verified, 0 errors
+03-C-contract-as-written         2 verified, 1 error
+04-UA-before-fix                 0 verified, 1 error
+04-UB-after-fix                  1 verified, 0 errors
+04-UC-contract-as-written        0 verified, 3 errors
+
+--- error lines ---
+models/00-smoke.bpl(8,11): Error: a postcondition could not be proved on this return path
+models/03-direct-start-tag-attributes.bpl(133,5): Error: this assertion could not be proved
+models/03-direct-start-tag-attributes.bpl(43,5): Error: this loop invariant could not be proved on entry
+models/04-append-decoded-utf16.bpl(68,5): Error: this assertion could not be proved
+models/04-append-decoded-utf16.bpl(39,5): Error: this loop invariant could not be proved on entry
+models/04-append-decoded-utf16.bpl(48,5): Error: a precondition for this call could not be proved
+models/04-append-decoded-utf16.bpl(53,9): Error: a precondition for this call could not be proved

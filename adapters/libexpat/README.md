@@ -58,6 +58,13 @@ header.
 On Windows, pass the import `.lib` as `XPACT_LIBRARY`. On Unix-like systems,
 pass the shared object or static archive.
 
+Without `-XpactLibrary` (and without `XPACT_EXPAT_LIBRARY`) the adapter uses
+`build\native-eiffel\xpact.lib`, and `-Mode NativeSuite` without
+`-SkipNativeBuild` builds it first with `build_native_eiffel.ps1`. It never
+picks `build\native\xpact.lib` by itself: that is the C bridge without the
+Eiffel parser, and every parse through it fails with error 44. The suite log
+names the library it used (`libexpat native suite: xpact library ...`).
+
 The expected-failure list no longer allows a suite-wide `*/*` wildcard. It now
 contains specific source/name patterns for the remaining red parity gaps, while
 `adapters/libexpat/parity.tsv` records green and red rows for the

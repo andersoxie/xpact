@@ -1,0 +1,282 @@
+{
+ "id": "fuzz-piece-dependent-74/fuzz-19463",
+ "status": "error code differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 1,
+   "column": 20,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 9,
+   "message": "junk after document element",
+   "line": 1,
+   "column": 17,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 20,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 1,
+    "column": 17,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 3
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 20,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 1,
+    "column": 17,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 3
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 20,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 1,
+    "column": 17,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 3
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 20,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 1,
+    "column": 17,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 3
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 20,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 1,
+    "column": 17,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 3
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 20,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 9,
+    "message": "junk after document element",
+    "line": 1,
+    "column": 17,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 3,
+    "events_a": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "events_b": [
+     [
+      "chars",
+      "\n"
+     ],
+     [
+      "end",
+      "doc"
+     ]
+    ],
+    "count_a": 3,
+    "count_b": 3
+   }
+  }
+ }
+}

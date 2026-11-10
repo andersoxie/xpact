@@ -1,0 +1,26 @@
+# A04 eiffel-matrix: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_eiffel_test_matrix.ps1
+# 429 processes, 959.6 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     none
+
+## processes started (image [sha256 when under the repository])
+   182 x C:\Windows\System32\cmd.exe
+    75 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe
+    54 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\nmake.exe
+    40 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\lib.exe
+    34 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\link.exe
+    14 x C:\Windows\System32\reg.exe
+     4 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\ec.exe
+     4 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\finish_freezing.exe
+     4 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\x2c.exe
+     3 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+     3 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\emake.exe
+     3 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cvtres.exe
+     2 x C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe
+     2 x C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\rc.exe
+     1 x C:\Windows\System32\doskey.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\vctip.exe
+     1 x EIFGENs\xpact_tests\W_code\xpact_tests.exe [a1645145bc2e38e1]
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\quick_finalize.exe
+     1 x EIFGENs\xpact_tests_assertions\F_code\xpact_tests.exe [c838950907bc690c]

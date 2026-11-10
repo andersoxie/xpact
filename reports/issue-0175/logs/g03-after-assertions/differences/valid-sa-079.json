@@ -1,0 +1,1502 @@
+{
+ "id": "valid-sa-079",
+ "path": "xmltest\\valid\\sa\\079.xml",
+ "expected": "ACCEPT",
+ "counted": true,
+ "namespaces": true,
+ "status": "events differ",
+ "whole": {
+  "xpact": {
+   "verdict": "ACCEPT",
+   "error": 0,
+   "message": "",
+   "line": 0,
+   "column": 0,
+   "events": [
+    [
+     "startdoctype",
+     "doc",
+     null,
+     null,
+     1
+    ],
+    [
+     "elementdecl",
+     "doc",
+     [
+      3,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "attlistdecl",
+     "doc",
+     "a",
+     "CDATA",
+     "v",
+     0
+    ],
+    [
+     "enddoctype"
+    ],
+    [
+     "start",
+     "doc",
+     [
+      "a",
+      "v"
+     ]
+    ],
+    [
+     "end",
+     "doc"
+    ]
+   ],
+   "seconds": 0.0003,
+   "peak_mb": 30.3
+  },
+  "expat": {
+   "verdict": "ACCEPT",
+   "error": 0,
+   "message": "",
+   "line": 0,
+   "column": 0,
+   "events": [
+    [
+     "startdoctype",
+     "doc",
+     null,
+     null,
+     1
+    ],
+    [
+     "elementdecl",
+     "doc",
+     [
+      3,
+      0,
+      null,
+      []
+     ]
+    ],
+    [
+     "attlistdecl",
+     "doc",
+     "a",
+     "CDATA",
+     "v",
+     1
+    ],
+    [
+     "enddoctype"
+    ],
+    [
+     "start",
+     "doc",
+     [
+      "a",
+      "v"
+     ]
+    ],
+    [
+     "end",
+     "doc"
+    ]
+   ],
+   "seconds": 0.0001,
+   "peak_mb": 17.7
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "ACCEPT",
+    "error": 0,
+    "message": "",
+    "line": 0,
+    "column": 0,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 2,
+    "events_a": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      0
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "events_b": [
+     [
+      "startdoctype",
+      "doc",
+      null,
+      null,
+      1
+     ],
+     [
+      "elementdecl",
+      "doc",
+      [
+       3,
+       0,
+       null,
+       []
+      ]
+     ],
+     [
+      "attlistdecl",
+      "doc",
+      "a",
+      "CDATA",
+      "v",
+      1
+     ],
+     [
+      "enddoctype"
+     ],
+     [
+      "start",
+      "doc",
+      [
+       "a",
+       "v"
+      ]
+     ]
+    ],
+    "count_a": 6,
+    "count_b": 6
+   }
+  }
+ },
+ "xpact_chunkings_unlike_whole": {},
+ "expat_chunkings_unlike_whole": {}
+}

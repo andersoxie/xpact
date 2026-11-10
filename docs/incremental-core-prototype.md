@@ -3,6 +3,10 @@
 `XP_INCREMENTAL_PARSE_SESSION` is the first isolated prototype for the true
 incremental parser core. It is not wired into `XP_NATIVE_PARSER` yet.
 
+> Since mass-xpact #2, `XP_NATIVE_PARSER` resumes the existing `XP_PARSER` from a
+> checkpoint instead of parsing the whole buffer again; see
+> [incremental-resume.md](incremental-resume.md). This prototype is not used by it.
+
 The point of this step is to establish a state-owned parsing shape before
 moving production behavior away from accumulated-buffer replay.
 

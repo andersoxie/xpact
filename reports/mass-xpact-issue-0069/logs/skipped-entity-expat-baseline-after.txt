@@ -1,0 +1,34 @@
+== Expat 2.8.1
+doc 1 pe-parsing 0: status 1 code 0
+doc 1 pe-parsing 1: status 1 code 0
+skipped:e:0
+doc 2 pe-parsing 0: status 1 code 0
+skipped:e:0
+doc 2 pe-parsing 1: status 1 code 0
+skipped:undeclared:0
+doc 3 pe-parsing 0: status 1 code 0
+skipped:undeclared:0
+doc 3 pe-parsing 1: status 1 code 0
+== 253c81e
+skipped:en:0
+doc 1 pe-parsing 0: status 1 code 0
+skipped:en:0
+doc 1 pe-parsing 1: status 1 code 0
+doc 2 pe-parsing 0: status 0 code 21
+skipped:pe:1
+doc 2 pe-parsing 1: status 1 code 0
+doc 3 pe-parsing 0: status 0 code 21
+skipped:pe:1
+skipped:undeclared:0
+doc 3 pe-parsing 1: status 1 code 0
+== after (fix69)
+doc 1 pe-parsing 0: status 1 code 0
+doc 1 pe-parsing 1: status 1 code 0
+skipped:e:0
+doc 2 pe-parsing 0: status 1 code 0
+skipped:e:0
+doc 2 pe-parsing 1: status 1 code 0
+skipped:undeclared:0
+doc 3 pe-parsing 0: status 1 code 0
+skipped:undeclared:0
+doc 3 pe-parsing 1: status 1 code 0

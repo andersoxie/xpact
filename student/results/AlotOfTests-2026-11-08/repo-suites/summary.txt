@@ -1,0 +1,7 @@
+dll-tests-build rc=0 seconds=3
+dll-tests-normal rc=0 seconds=1
+dll-tests-assertions rc=0 seconds=0
+python-suite rc=0 seconds=34
+eiffel-matrix rc=0 seconds=59
+w3c-all-lanes-and-benchmarks rc=1 seconds=0 (first try: -EiffelBuild list passed as one string through -File; not run)
+w3c-all-lanes-and-benchmarks rc=0 seconds=159 (rerun with -Command)

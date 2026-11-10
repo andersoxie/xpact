@@ -33,6 +33,8 @@ for line in sys.stdin:
     kw = {k: job[k] for k in ("entity_root", "namespaces", "split", "encoding", "external", "bare") if job.get(k) is not None}
     if engine == "xpact" and job.get("amplification") is not None:
         kw["amplification"] = job["amplification"]
+    if engine == "xpact" and job.get("api"):
+        kw["api"] = job["api"]
     if job.get("explain_split"):
         # whole vs one chunking mode: verdicts, error codes and the first differing event
         kw.pop("split", None)

@@ -1,0 +1,23 @@
+{
+ "id": "G01-w3c/x-ibm-1-0.5-valid-P04-ibm04av01.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 5,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 5,
+   "column": 23,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

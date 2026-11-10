@@ -1,0 +1,41 @@
+Note9 - 2026-11-04 - production DLL finalized without -keep (#14, PR #16)
+=========================================================================
+
+#14 (PR #16, branch perf/finalize-without-keep from student-Mass, INDEPENDENT of the other PRs)
+- build_native_eiffel.ps1 passed -keep for BOTH tiers -> every routine had assertion code +
+  exception frame (36 % of whole-parse time in new_exset/exget/expop). Now -keep only for Assertions.
+- 3.5x faster whole parse (pr-xml-utf-8 61 -> 17 ms), DLL 9.9 -> 1.5 MB, Test 2 (16 jobs, on #11) 46 -> 30 s.
+- Verified A (student-Mass + fix) and B (#11 + fix): DLL tests, Expat 399/38, traces, CRC, Test 2, edge.
+- Builds: build\nokeep\ (A, both tiers), build\textrun-nokeep\ (B, production only).
+- The dated timing numbers in the #2/#7/#11 reports were all measured WITH -keep.
+
+#15 (Todo): ec exits 0 on invalid options -> script relinks stale F_code silently.
+- TRAP: a PowerShell if/else that returns @("-finalize") gives a scalar string; splatting it
+  passes characters. Use [string[]] $x = @(...); $x += ...
+- Check build logs for "System Recompiled." before trusting a build.
+
+PROFILER (no admin needed) - reports\mass-xpact-issue-0014\logs\tools\
+- build.ps1 relinks EIFGENs\xpact_native_library\F_code into scratchpad\prof with -MAP
+  (edit $Out); sampler.exe <file> <reps> <out> [split] samples RIP every ~1-6 ms;
+  report.py <map> <F_code> <samples> maps to {CLASS}.feature.
+- F_code must be the same build as the map (it is overwritten by every production build).
+- python: uv's python.exe (Store stub on PATH). DLL paths for engines.load: cygpath -aw.
+
+#17 INLINING (PR #18, branch perf/eiffel-inlining, STACKED on #16)
+- ECF production target: inlining=true, inlining_size=4, array_optimization=true.
+- 15-20 % whole parse (pr-xml-utf-8 17.6 -> 14.2 ms); size 10 same, 30 slower. Test 2 no change.
+- Builds: build\inlineA (student-Mass+#14+#17), build\inline4 (#11+#14+#17).
+- Stack sampler: scratchpad\prof\sampler2.c (RtlVirtualUnwind) + scratchpad\stacks.py
+  (inclusive %, or callers of a feature with a 4th arg). Not yet copied into a report.
+- run-tools.ps1 lives only on the #4 line: git checkout perf/resume-text-runs -- reports/mass-xpact-issue-0002/tools,
+  run, then git rm -r -q -f reports/mass-xpact-issue-0002/tools.
+
+MERGE ORDER: #4 -> retarget #8 -> #8 -> retarget #13 -> #13. #6, #10 independent.
+#16 independent -> then retarget #18 to student-Mass -> #18.
+
+NEXT (profile after #14, whole parse of pr-xml-utf-8)
+- STRING_8.item 17 % (with dispatch wrapper): hot loops index STRING_8 per character; use
+  the area (SPECIAL) directly or a cached `l_area` in the scanners (has_at, parse_character_data).
+- reset_hash_codes 6 % from append_character: append into a SPECIAL / reuse buffers.
+- note_position 3.5 %, normalized_input 2.7 %, C_STRING.read_substring_into 2.3 %.
+- Then per-call overhead, default-handler carry, Latin-1 resume, the 73 edge diffs.

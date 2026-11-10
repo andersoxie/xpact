@@ -1,0 +1,2 @@
+<!DOCTYPE d [<!ATTLIST e a CDATA "dflt"><!ENTITY x SYSTEM "e.ent">]>
+<d>&x;<e/></d>
