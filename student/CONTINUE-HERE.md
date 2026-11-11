@@ -27,7 +27,7 @@
 | Website Docker image | ✅ `ghcr.io/andersoxie/xpact-website:website-2026-11-11-1` (= `latest`, digest `sha256:60dec845…`) from release `website-2026-11-11-1` (incremental-test @ `95f140b`), PR #315; container checks pass, Low-integrity worker works in the container · 🟡 under a 40 MB cap the container worker dies of a stack overflow instead of reporting out of memory ([#316](https://github.com/andersoxie/xpact/issues/316), low impact) |
 | Website proxy | ✅ untrusted proxy logged, `KnownNetworks` (#312); the real proxy setting is chosen at deployment ([docker.md](../website/docs/docker.md#behind-a-reverse-proxy)) |
 | Website deployment | 🟡 not online: HTTPS, domain, `AllowedHosts` = Anders ([#210](https://github.com/andersoxie/xpact/issues/210)) |
-| Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias) · 🔴 SonarQube #131 needs a new `squ_` token |
+| Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias), [#318](https://github.com/andersoxie/xpact/issues/318) (`fix.ps1` merge commits into `incremental-test`, refuses `main`), [#319](https://github.com/andersoxie/xpact/issues/319) (DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL=1` blocks rebuilds) · 🔴 SonarQube #131 needs a new `squ_` token |
 
 ## 3. Next (in this order)
 
@@ -43,9 +43,9 @@
 ## 4. Setup on a new PC
 
 1. Clone `https://github.com/andersoxie/xpact`, `git checkout incremental-test` (or `git pull` if already cloned).
-2. Build the DLLs: `.\website\scripts\build-dll.ps1` (EiffelStudio 25.12 + MSVC `msc_vc140`). Write down the SHA-256 of both DLLs and check it again after each test run.
+2. Build the DLLs: `.\website\scripts\build-dll.ps1` (EiffelStudio 25.12 + MSVC `msc_vc140`). Write down the SHA-256 of both DLLs and check it again after each test run. Then set `$env:XPACT_FROZEN_DLL = "1"`: any runner that would rebuild them stops instead (#319).
 3. Python: if `python` on PATH is the Microsoft Store alias, set `XPACT_PYTHON` to a real `python.exe` (#308). Run the Python suite with that interpreter: `python -m unittest discover -s tests/python`.
-4. Website checks: `.\website\scripts\test.ps1` (expect 37/37 + frontend build); run the site: `.\website\scripts\dev.ps1`,
+4. Website checks: `.\website\scripts\test.ps1` (expect 42/42 + frontend build; 42/42 on 2026-11-11 @ `af7eaf1`); run the site: `.\website\scripts\dev.ps1`,
    or `.\website\scripts\publish.ps1` then `website\dist\Xpact.Api.exe --urls http://localhost:5099`. In Windows PowerShell 5.1 run `publish.ps1` in its own process (an npm notice on stderr stops it otherwise).
 5. W3C + benchmarks on the DLL you built: `.\scripts\run_benchmarks.ps1 -EiffelBuild Finalized,FinalizedAssertions -W3cAllCases -SkipWslC -UseExistingNativeDll -NoDocsUpdate -W3cSuiteDirectory <xmlconf>` (#302).
 6. C# DLL tests: `dotnet build tests\dotnet\XpactDllTests -c Release -o <dir>`, then `<dir>\XpactDllTests.exe --dll <xpact.dll> --out <dir>` for both DLLs (4,308 cases).

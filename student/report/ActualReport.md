@@ -631,7 +631,7 @@ flowchart LR
     B --> R["Report<br/>reports/issue-NNNN/<br/>+ logs"]
     R --> V["Verification<br/>both builds,<br/>vs Expat"]
     V --> P["Pull request<br/>Refs #NNN,<br/>test evidence"]
-    P --> M["Squash into<br/>student-Mass"]
+    P --> M["Merge commit into<br/>incremental-test<br/>(squash into student-Mass<br/>until 10 Nov)"]
     M --> C["Check after merge,<br/>then close the issue"]
 ```
 
