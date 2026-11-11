@@ -18,7 +18,7 @@
 |---|---|
 | Parser | unchanged since the full test rerun 2026-11-08 ✅ ([results](results/AlotOfTests-2026-11-08/README.md)) |
 | Website quality check 2026-11-11 | ✅ Lighthouse accessibility 100 (light + dark), speed 98-100; ZAP 0 medium; W3C HTML 0/0; 27/27 backend tests ([PLAN](PLAN.md#-website-quality-check-2026-11-11)) |
-| Website security review 2026-11-11 | ✅ findings 3-7 fixed (PR #288, #287); 🟡 findings 1-2 open ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)) |
+| Website security review 2026-11-11 | ✅ findings 3-7 fixed (PR #288, #287); 🟡 finding 2 open; finding 1 fixed (#295) ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)) |
 | Website Docker checklist | ✅ 5/5 on GitHub windows-2022 (PR #285) |
 | Website deployment | 🟡 not online; HTTPS, domain, `AllowedHosts` = Anders (#210) |
 | Jenkins Groovy tests (Anders, PR #280) | ✅ run locally 2026-11-11: plots 16/16, email 19/19; `validate_declarative` needs Jenkins jars |
@@ -31,7 +31,7 @@
 ## 3. Next (in this order)
 
 - [ ] **#211:** rerun its documents on the current DLL; close it if they stop with code 43 quickly. ~1 h
-- [ ] **Website finding 1:** memory cap must fail closed. ~2 h
+- [x] ✅ **Website finding 1:** memory cap fails closed (#295, 28/28 tests).
 - [ ] **Website finding 2:** worker slot wait with timeout (503) and a queue cap. ~4-6 h
 - [ ] **#273:** exception guard on every exported DLL function. ~1 day
 - [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard). 15 min

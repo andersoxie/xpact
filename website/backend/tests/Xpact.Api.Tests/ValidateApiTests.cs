@@ -4,6 +4,8 @@ using System.Net.Http.Json;
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using Xpact.Contracts;
 
 namespace Xpact.Api.Tests;
@@ -240,6 +242,41 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
 
         // The API keeps serving after the worker was stopped.
         Assert.Equal(Verdicts.Accepted, (await PostJson(capped, new { xml = "<a/>" })).Verdict);
+    }
+
+    /// <summary>A limiter that cannot set the memory cap, like a server where Job Objects are refused.</summary>
+    private sealed class FailingLimiter : Xpact.Api.Workers.IWorkerLimiter
+    {
+        public System.Diagnostics.Process? Worker { get; private set; }
+
+        public IDisposable Limit(System.Diagnostics.Process process, long memoryLimitBytes)
+        {
+            // Our own handle: the runner disposes its Process object before the test looks.
+            Worker = System.Diagnostics.Process.GetProcessById(process.Id);
+            _ = Worker.Handle;
+            throw new System.ComponentModel.Win32Exception(5); // ERROR_ACCESS_DENIED
+        }
+    }
+
+    [Fact]
+    public async Task Worker_is_stopped_when_the_memory_cap_cannot_be_set()
+    {
+        // Website finding 1 (security.md): the memory cap must fail closed.
+        var limiter = new FailingLimiter();
+        var client = _factory.WithWebHostBuilder(b => b.ConfigureTestServices(s =>
+            s.AddSingleton<Xpact.Api.Workers.IWorkerLimiter>(limiter))).CreateClient();
+
+        var result = await PostJson(client, new { xml = "<a/>" });
+
+        Assert.Equal(Verdicts.Error, result.Verdict);
+        Assert.False(result.WellFormed);
+        Assert.Contains("could not limit the parser process", result.Diagnostic);
+        Assert.DoesNotContain("Access is denied", result.Diagnostic);   // details stay in the server log
+        Assert.NotNull(limiter.Worker);
+        Assert.True(limiter.Worker!.HasExited, "the uncapped worker must be killed");
+
+        // The normal limiter still works.
+        Assert.Equal(Verdicts.Accepted, (await PostJson(Client(), new { xml = "<a/>" })).Verdict);
     }
 
     [Fact]

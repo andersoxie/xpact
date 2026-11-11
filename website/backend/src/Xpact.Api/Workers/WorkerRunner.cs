@@ -26,11 +26,13 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
     private readonly XpactOptions _options;
     private readonly ILogger<WorkerRunner> _log;
     private readonly SemaphoreSlim _slots;
+    private readonly IWorkerLimiter _limiter;
 
-    public WorkerRunner(IOptions<XpactOptions> options, ILogger<WorkerRunner> log)
+    public WorkerRunner(IOptions<XpactOptions> options, ILogger<WorkerRunner> log, IWorkerLimiter limiter)
     {
         _options = options.Value;
         _log = log;
+        _limiter = limiter;
         _slots = new SemaphoreSlim(Math.Max(1, _options.MaxConcurrentWorkers));
     }
 
@@ -88,17 +90,33 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
                      "--chunk", request.ChunkSize.ToString(), "--max-events", _options.MaxEvents.ToString() })
             start.ArgumentList.Add(arg);
 
-        using var job = new JobObject((long)_options.WorkerMemoryMb * 1024 * 1024);
         using var process = new Process { StartInfo = start };
         process.Start();
+
+        // Fail closed: a worker without its memory cap never gets the document. The worker is idle
+        // until the document arrives on stdin, so stopping it here is safe.
+        IDisposable limit;
         try
         {
-            job.Assign(process);
+            limit = _limiter.Limit(process, (long)_options.WorkerMemoryMb * 1024 * 1024);
+        }
+        catch (Exception e)
+        {
+            Kill(process);
+            process.WaitForExit(5000);
+            _log.LogError(e, "Could not put the worker under its {Mb} MB memory cap; request refused", _options.WorkerMemoryMb);
+            return Failure(Verdicts.Error, "The server could not limit the parser process, so the document was not parsed. Please try again later.");
+        }
+        using var job = limit;
+
+        try
+        {
             process.PriorityClass = ProcessPriorityClass.BelowNormal;
         }
         catch (Exception e)
         {
-            _log.LogWarning(e, "Could not limit the worker process");
+            // A lower priority is only politeness to other requests, not a safety limit.
+            _log.LogWarning(e, "Could not lower the worker priority");
         }
 
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
