@@ -5,6 +5,13 @@ during the July 2026 review. Items are ordered by risk and expected impact.
 Correctness and trustworthy test results should be established before benchmark
 numbers are used to guide lower-level optimization.
 
+> **Status note (2026-11-11):** the boxes below were never updated after the
+> July review, so an empty box does **not** mean the item is still open. Many
+> items were fixed later and are tracked as task IDs A-H in
+> [docs/xpact-student-introduction.md](docs/xpact-student-introduction.md),
+> with status in [student/PLAN.md](student/PLAN.md) and the fix reports in
+> [reports/README.md](reports/README.md). Check there before working on an item.
+
 ## P0: correctness and memory safety
 
 ### Prevent the native final-input shortcut from skipping validation

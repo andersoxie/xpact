@@ -34,3 +34,18 @@ The site runs a parser on documents from strangers. These are the protections, a
 | Nested entity expansion ("billion laughs") is rejected after ~7 s as "syntax error"; Expat rejects it in ~0.1 s as "amplification limit breached" | ⬜ open | [#211](https://github.com/andersoxie/xpact/issues/211) · [report](../../reports/issue-0211/report.md) |
 
 The website itself is safe from this finding: the time limit and memory cap contain it.
+
+## Findings from the code review 2026-11-11
+
+Code review of `website/` on `incremental-test` @ `7667a16`. ⚠️ **From reading the code only: none of these is tested or confirmed yet.**
+Also checked the same day: `dotnet list package --vulnerable --include-transitive` (4 projects) and `npm audit` found no vulnerable packages; a search of all tracked files found no secrets. The Aikido "High" secret alerts are SHA-256 checksums of source files in `benchmarks/results/*.json` and `reports/**/*.json` (key name contains "token"), so false positives.
+
+| # | Level | Finding | Where | Suggested fix | Status |
+|---|---|---|---|---|---|
+| 1 | Medium | The memory cap fails open: the worker starts first and is put under the Job Object afterwards; if that fails, only a warning is logged and the worker runs with no cap | `Workers/WorkerRunner.cs:92-101` | Stop the worker and return an error (fail closed) | ⬜ suspected |
+| 2 | Medium | One visitor can keep all 4 workers busy: 30 slow requests/min (billion laughs ~7 s, #211, or 1-byte pieces) = 210-300 worker-seconds per minute, the 4 workers have 240. Waiting requests queue with no limit or timeout, each holding up to ~20 MB in the API (no memory cap there) | `WorkerRunner.cs:45`, `Program.cs:20` | Wait for a worker with a timeout (503), cap the queue, and/or limit worker time per IP | ⬜ suspected |
+| 3 | Low | Up to 300 characters of the worker's error output and raw error messages go back to the visitor (can contain paths or stack traces) | `WorkerRunner.cs:118`, `Program.cs:104` | Generic message to the visitor, details in the server log | ⬜ suspected |
+| 4 | Low | The worker gets all of the API's environment variables | `WorkerRunner.cs:76` | Clear the worker's environment, pass only what it needs | ⬜ suspected |
+| 5 | Low | Any `Host` header is accepted (`AllowedHosts: "*"`) | `appsettings.json` | Set the real domain at deployment | ⬜ open |
+| 6 | Low | No HSTS header | `Program.cs` | Add `Strict-Transport-Security` together with HTTPS (supervisor) | ⬜ open |
+| 7 | Info | The CSP still allows inline styles (`style-src 'unsafe-inline'`); scripts stay strict | `Program.cs:59` | Optional | ⬜ open |
