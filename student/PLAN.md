@@ -227,13 +227,33 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 **State 2026-11-11 (read first):**
 
-- [x] `main` contains all of `incremental-test` (checked 2026-11-11). `main` has 3 Jenkins-plot commits (up to PR #280) that `incremental-test` lacks: bring them in with a merge-commit PR.
+- [ ] `main` vs `incremental-test` (2026-11-11, after the website PRs): `main` has 3 Jenkins-plot commits (up to PR #280) that `incremental-test` lacks; `incremental-test` has 11 commits (PRs #282, #285, #287, #288) that `main` lacks. Sync both ways with merge commits (the student and supervisor merge into `main`).
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and the load test ([#255](https://github.com/andersoxie/xpact/issues/255)), 2026-11-10.
-- [ ] Website: the code-review findings of 2026-11-11 ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)), first 1-2; low-privilege worker account (code part ours, account on the supervisor's server). HTTPS and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's.
-- [ ] Open issues on andersoxie (17 on 2026-11-11): #281, #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
+- [x] ✅ **Website checked and fixed (2026-11-11)**: see "Website quality check" below. Merged: PR #282 (docs, #281), #285 (Docker checklist, #284), #288 (security findings 3-6, #283), #287 (quality, #286).
+- [ ] Website: code-review findings 1-2 ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)): memory cap fails open, one visitor can keep all 4 workers busy; low-privilege worker account (code part ours, account on the supervisor's server). HTTPS, domain and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's; **set `AllowedHosts` to the real domain at deployment**, or the site answers 400.
+- [ ] Aikido: mark the 14 checksum alerts as false positives (student, in the Aikido dashboard).
+- [ ] Open issues on andersoxie (16 on 2026-11-11): #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
 - [x] Refile mass-xpact #84, #73, #75 on andersoxie: [#272](https://github.com/andersoxie/xpact/issues/272), [#273](https://github.com/andersoxie/xpact/issues/273), [#274](https://github.com/andersoxie/xpact/issues/274). #20 stays inconclusive and is not refiled.
 - [x] `report/ActualReport.md` and `ActualReportShorter.md` updated with week 8 (PR #269, state 2026-11-10). Refresh again if anything changes before the hand-in (27 November).
 - Items 0-13 below are history and older to-dos; item 12 is replaced by this list where they overlap.
+
+### ✅ Website quality check (2026-11-11)
+
+Local Release build of `incremental-test`, all 5 pages, Edge (headless). Details and evidence: [reports/issue-0286](../reports/issue-0286/report.md); server fixes: [reports/issue-0283](../reports/issue-0283/report.md); Docker: [website/docs/docker.md](../website/docs/docker.md).
+
+| Tool | Before | After |
+|---|---|---|
+| Lighthouse accessibility | 89-91 | **100** on all 5 pages, light and dark |
+| Lighthouse speed | 87-94 | **98-100** |
+| Lighthouse best practices / SEO | 100 / 100 | 100 / 100 |
+| OWASP ZAP (security scan) | 2 medium | **0** |
+| W3C HTML validator | 0 errors, 11 warnings | **0 / 0** |
+| W3C CSS validator, ESLint | 0 errors | 0 errors |
+| Phone layout | OK | OK |
+| Backend tests | 22 / 22 | **27 / 27** |
+| Docker checklist (5 checks) | not checked | ✅ all pass (GitHub windows-2022) |
+
+Not checked yet (need the public site): PageSpeed Insights, GTmetrix, Google Search Console, SSL Labs, Mozilla Observatory, SecurityHeaders.com, BrowserStack. SonarQube: #131 (token).
 
 0. ✅ **Speed work (2026-11-03/04, [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact)):** status table, merge order and the notes of every step in [`docs/notes/README.md`](../docs/notes/README.md); the reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304).
    - [x] Parallel Test 2 (#6), W3C runner `--jobs` (#10), session notes and reports (#19, #22): merged 2026-11-04

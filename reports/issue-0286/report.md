@@ -64,3 +64,4 @@ PageSpeed Insights, GTmetrix, WebPageTest, Google Search Console, Bing Webmaster
 
 - `website/scripts/test.ps1`: backend 23 / 23 passed, frontend type check and build passed.
 - Lighthouse, ZAP and vnu reruns on the fixed site: see Summary and the files in this folder.
+- After merging #288 and #287 together (merge commit `6da9a54`): `website/scripts/test.ps1` **27 / 27** backend tests passed, frontend build passed.

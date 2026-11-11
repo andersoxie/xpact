@@ -29,6 +29,8 @@ Four gaps from the 2026-11-11 code review of `website/` (security.md findings 3-
 | This branch, `dotnet test website\backend\Xpact.Web.slnx -c Release` | **26 / 26 passed** ([backend-tests.txt](backend-tests.txt)) |
 | Published site, `ASPNETCORE_ENVIRONMENT=Production`, `http://localhost:5099` | pages load (Lighthouse run of #286 used this build first) |
 
+- After merging #288 and #287 together (merge commit `6da9a54`): `website/scripts/test.ps1` **27 / 27** backend tests passed, frontend build passed.
+
 ## Limitations
 
 - The new tests were not run against the old code to watch them fail first.
