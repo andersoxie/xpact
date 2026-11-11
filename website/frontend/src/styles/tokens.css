@@ -10,8 +10,9 @@
   --border: #e2e1dc;
   --text: #0b0b0b;
   --text-2: #52514e;
-  --text-3: #7a7974;
-  --accent: #2a78d6;
+  --text-3: #6b6a65; /* 4.75:1 or more on every light surface */
+  --accent: #1f6cc4; /* text and links: 4.5:1 on every light surface */
+  --accent-strong: #1f6cc4; /* button background, white text 5.2:1 */
   --accent-ink: #ffffff;
   --accent-soft: #e6f0fb;
 
@@ -47,7 +48,8 @@
     --text: #f0efec;
     --text-2: #c3c2b7;
     --text-3: #8e8d85;
-    --accent: #3987e5;
+    --accent: #5b9cf0;
+    --accent-strong: #2a6cc0;
     --accent-ink: #ffffff;
     --accent-soft: #1b2a3d;
     --good: #4cc27a;
@@ -74,7 +76,8 @@
   --text: #f0efec;
   --text-2: #c3c2b7;
   --text-3: #8e8d85;
-  --accent: #3987e5;
+  --accent: #5b9cf0;
+  --accent-strong: #2a6cc0;
   --accent-ink: #ffffff;
   --accent-soft: #1b2a3d;
   --good: #4cc27a;

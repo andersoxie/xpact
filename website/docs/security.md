@@ -16,7 +16,7 @@ The site runs a parser on documents from strangers. These are the protections, a
 | Request floods | Rate limit, 30 / min per IP; at most 4 workers at once | `Program.cs` | ✅ `Requests_are_rate_limited_per_client` |
 | One visitor using up the limit for everyone behind a proxy | `X-Forwarded-For` is read from a proxy on this machine or one in `Xpact:KnownProxies` only, so the limit counts each real visitor and visitors cannot fake their address | `Program.cs` | ✅ `Visitors_behind_a_proxy_are_rate_limited_separately` |
 | Reading other files through the results endpoint | Allowed names only: `conformance`, `benchmarks`, `comparison`, `testing` | `Program.cs` | ✅ `Results_files_are_served_and_names_are_checked` |
-| Click-jacking, MIME sniffing, leaking referrers | `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a strict CSP | `Program.cs` | ✅ `Security_headers_are_set` |
+| Click-jacking, MIME sniffing, leaking referrers | `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a strict CSP without `'unsafe-inline'` and with `base-uri`, `form-action`, `object-src`; `Permissions-Policy`, `Cross-Origin-Opener-Policy`; no `Server` header | `Program.cs` | ✅ `Security_headers_are_set`; OWASP ZAP 2.17.0: 0 medium/high ([#286](https://github.com/andersoxie/xpact/issues/286)) |
 | Storing visitors' documents | Nothing is written to disk; the document goes to the worker on stdin; logs record size, build, verdict and time only | `WorkerRunner.cs` | ✅ by design (code review) |
 
 ## Known gaps before a public deployment
@@ -44,8 +44,8 @@ Also checked the same day: `dotnet list package --vulnerable --include-transitiv
 |---|---|---|---|---|---|
 | 1 | Medium | The memory cap fails open: the worker starts first and is put under the Job Object afterwards; if that fails, only a warning is logged and the worker runs with no cap | `Workers/WorkerRunner.cs:92-101` | Stop the worker and return an error (fail closed) | ⬜ suspected |
 | 2 | Medium | One visitor can keep all 4 workers busy: 30 slow requests/min (billion laughs ~7 s, #211, or 1-byte pieces) = 210-300 worker-seconds per minute, the 4 workers have 240. Waiting requests queue with no limit or timeout, each holding up to ~20 MB in the API (no memory cap there) | `WorkerRunner.cs:45`, `Program.cs:20` | Wait for a worker with a timeout (503), cap the queue, and/or limit worker time per IP | ⬜ suspected |
-| 3 | Low | Up to 300 characters of the worker's error output and raw error messages go back to the visitor (can contain paths or stack traces) | `WorkerRunner.cs:118`, `Program.cs:104` | Generic message to the visitor, details in the server log | ⬜ suspected |
-| 4 | Low | The worker gets all of the API's environment variables | `WorkerRunner.cs:76` | Clear the worker's environment, pass only what it needs | ⬜ suspected |
-| 5 | Low | Any `Host` header is accepted (`AllowedHosts: "*"`) | `appsettings.json` | Set the real domain at deployment | ⬜ open |
-| 6 | Low | No HSTS header | `Program.cs` | Add `Strict-Transport-Security` together with HTTPS (supervisor) | ⬜ open |
-| 7 | Info | The CSP still allows inline styles (`style-src 'unsafe-inline'`); scripts stay strict | `Program.cs:59` | Optional | ⬜ open |
+| 3 | Low | Up to 300 characters of the worker's error output and raw error messages go back to the visitor (can contain paths or stack traces) | `WorkerRunner.cs:118`, `Program.cs:104` | Generic message to the visitor, details in the server log | ✅ fixed, tested (#283, PR #288) |
+| 4 | Low | The worker gets all of the API's environment variables | `WorkerRunner.cs:76` | Clear the worker's environment, pass only what it needs | ✅ fixed, tested (#283, PR #288) |
+| 5 | Low | Any `Host` header is accepted (`AllowedHosts: "*"`) | `appsettings.json` | Set the real domain at deployment | ✅ localhost only (#283, PR #288); **set the real domain at deployment** |
+| 6 | Low | No HSTS header | `Program.cs` | Add `Strict-Transport-Security` together with HTTPS (supervisor) | ✅ sent on HTTPS outside Development (#283, PR #288) |
+| 7 | Info | The CSP still allows inline styles (`style-src 'unsafe-inline'`); scripts stay strict | `Program.cs:59` | Optional | ✅ removed (#286, PR #287); ZAP 0 medium |

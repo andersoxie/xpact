@@ -1,0 +1,3 @@
+# XPact website: every page may be indexed; the API is not a page.
+User-agent: *
+Disallow: /api/

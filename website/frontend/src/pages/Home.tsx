@@ -35,7 +35,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="section grid grid-4">
+      <div className="section grid grid-4">
         <Stat
           label="W3C test cases"
           value={prod ? fmt.format(prod.total) : "…"}
@@ -52,6 +52,31 @@ export function Home() {
           sub="document × chunking pairs"
         />
         <Stat label="Builds" value="2" sub="production · assertions checked" />
+      </div>
+
+      <section className="section grid grid-3">
+        <div className="card">
+          <h2 className="h3">What is XPact?</h2>
+          <p className="muted">
+            A non-validating XML 1.0 (5th edition) parser. It reads a document and reports what it finds as events
+            (start tag, text, end tag …), or stops at the first error with a code, a line and a column.
+          </p>
+        </div>
+        <div className="card">
+          <h2 className="h3">What problem does it solve?</h2>
+          <p className="muted">
+            Parsers read untrusted input, so their bugs matter. XPact is built so its correctness can be checked: by
+            contracts inside the code, by the W3C conformance suite, and by comparing every result with Expat.
+          </p>
+        </div>
+        <div className="card">
+          <h2 className="h3">How does it relate to Expat?</h2>
+          <p className="muted">
+            <code>xpact.dll</code> exports the Expat C API (<code>XML_ParserCreate</code>, <code>XML_Parse</code>, the
+            handler setters …), so a program written for Expat can use XPact. Its behaviour is measured against Expat
+            2.8.1.
+          </p>
+        </div>
       </section>
 
       {testing.data && (
@@ -98,31 +123,6 @@ export function Home() {
         </>
       )}
 
-      <section className="section grid grid-3">
-        <div className="card">
-          <h3>What is XPact?</h3>
-          <p className="muted">
-            A non-validating XML 1.0 (5th edition) parser. It reads a document and reports what it finds as events
-            (start tag, text, end tag …), or stops at the first error with a code, a line and a column.
-          </p>
-        </div>
-        <div className="card">
-          <h3>What problem does it solve?</h3>
-          <p className="muted">
-            Parsers read untrusted input, so their bugs matter. XPact is built so its correctness can be checked: by
-            contracts inside the code, by the W3C conformance suite, and by comparing every result with Expat.
-          </p>
-        </div>
-        <div className="card">
-          <h3>How does it relate to Expat?</h3>
-          <p className="muted">
-            <code>xpact.dll</code> exports the Expat C API (<code>XML_ParserCreate</code>, <code>XML_Parse</code>, the
-            handler setters …), so a program written for Expat can use XPact. Its behaviour is measured against Expat
-            2.8.1.
-          </p>
-        </div>
-      </section>
-
       <section className="section grid grid-2">
         <div className="card">
           <h2>Current status</h2>
@@ -134,7 +134,7 @@ export function Home() {
             <Todo>Error codes and events identical to Expat in every case (most match; see the open issues)</Todo>
             <Done>Fast incremental parsing through the DLL: 131 KB fed byte by byte in 0.1 s (was 50 min)</Done>
             <Done>Billion-laughs protection as in Expat (amplification rule, error 43)</Done>
-            <Todo>ISO-8859-1 input in small pieces is still slow (mass-xpact#84)</Todo>
+            <Todo>ISO-8859-1 input in small pieces is still slow (issue #272)</Todo>
           </ul>
           <p className="small muted" style={{ marginTop: 10 }}>
             Details and evidence: <Link to="/benchmarks">Benchmarks and conformance</Link> ·{" "}
@@ -166,7 +166,7 @@ function MetricStat({ metric }: { metric: Metric }) {
 function Done({ children }: { children: React.ReactNode }) {
   return (
     <li>
-      <span className="tick" aria-label="done">
+      <span className="tick" role="img" aria-label="done">
         ✅
       </span>
       <span>{children}</span>
@@ -177,7 +177,7 @@ function Done({ children }: { children: React.ReactNode }) {
 function Todo({ children }: { children: React.ReactNode }) {
   return (
     <li>
-      <span className="todo" aria-label="to do">
+      <span className="todo" role="img" aria-label="to do">
         ⬜
       </span>
       <span>{children}</span>
