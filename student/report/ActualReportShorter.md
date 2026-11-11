@@ -128,7 +128,7 @@ flowchart LR
 
 ## 6. Workflow
 - `main` belongs to the company; the student never committed to it.
-- Each change was its own `fix/…` branch, then a report with logs, then a pull request, squash-merged into the work branch: `student-Mass` until 8 November, then `incremental-test`.
+- Each change was its own `fix/…` branch, then a report with logs, then a pull request into the work branch: squash-merged into `student-Mass` until 8 November, then into `incremental-test`, with a merge commit (never squash) since 10 November.
 - The supervisor reviewed and merged `student-Mass` into `main`, and Jenkins passed (PR #177). On 2026-11-10 `main` became the same commit as `incremental-test`.
 - Small pull requests kept every change reviewable, easy to revert, and easy to trace from issue to commit. Since 2026-11-10 earlier states also have version numbers (0.1.0–0.9.0, [CHANGELOG](../../CHANGELOG.md)).
 

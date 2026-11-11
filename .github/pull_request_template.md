@@ -1,6 +1,7 @@
 Refs #
-<!-- "Closes #" does not close the issue: pull requests go into student-Mass,
-     not the default branch main. Close the issue by hand after merging.
+<!-- "Closes #" does not close the issue: pull requests go into incremental-test,
+     not the default branch main (never target main). Merge with a merge commit,
+     never squash. Close the issue by hand after checking the merged commit.
      student/tools/fix.ps1 finish writes this description for you. -->
 
 ## What changed

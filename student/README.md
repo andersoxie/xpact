@@ -5,7 +5,7 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-> **Updated 2026-11-10 (week 8)** · work branch is **`incremental-test`** (andersoxie/xpact, since 2026-11-08); `student-Mass` is contained in it.
+> **Updated 2026-11-11 (week 8)** · work branch is **`incremental-test`** (andersoxie/xpact, since 2026-11-08); `student-Mass` was contained in it and deleted 2026-11-10.
 > Weeks 1-7 ✅, week 8 🟡 · state and next steps: [CONTINUE-HERE.md](CONTINUE-HERE.md), [PLAN.md](PLAN.md) ("Next", "Known problems"), [week-08](notes/weekly/week-08.md).
 
 ## Start here
@@ -57,8 +57,8 @@ step by hand, as described in [VERSIONING.md](VERSIONING.md#fixps1-in-windows-po
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | The project in plain words (written 2026-10-21 as `guide.txt`, updated) |
 | [`PLAN.md`](PLAN.md) | Live plan and status |
-| [`VERSIONING.md`](VERSIONING.md) | How every fix is made: issue, branch, report, pull request, squash merge, revert |
-| [`tools/fix.ps1`](tools/fix.ps1) | Runs and checks those steps (`start`, `finish`, `merge`, `revert`, `status`) |
+| [`VERSIONING.md`](VERSIONING.md) | How every fix is made: issue, branch, report, pull request, merge commit, revert |
+| [`tools/fix.ps1`](tools/fix.ps1) | Runs and checks those steps (`start`, `finish`, `merge`, `revert`, `status`); base `incremental-test`, refuses `main` (#318) |
 | [`git/commit-template.txt`](git/commit-template.txt) | Commit message template (asks for `Refs #<issue>`) |
 | [`history/`](history/) | Weeks 1–2 before this repository: error reports, build fix notes, the old fixes as patches |
 | [`baseline/`](baseline/) | The week 2 assertions-enabled baseline: script, event trace, logs, BASELINE.md |
@@ -81,9 +81,9 @@ Outside this folder:
 | Branch | Purpose |
 |---|---|
 | `main` | The teacher's code. Never commit to it directly. |
-| `incremental-test` | Current work branch since 2026-11-08 (contains all of `student-Mass`). Fixes land here as one squashed commit. |
-| `student-Mass` | Earlier integration branch (until 2026-11-08), kept for history. |
-| `fix/<issue>-<name>` | One short-lived branch per issue, e.g. `fix/7-msvc-c-backend`, made by `fix.ps1 start` from the latest `student-Mass` and deleted by `fix.ps1 merge` |
+| `incremental-test` | Current work branch since 2026-11-08 (contains all of `student-Mass`). Fixes land here as one merge commit per pull request (never squash, since 2026-11-10). |
+| `student-Mass` | Earlier integration branch (until 2026-11-08); fully contained in `incremental-test`, deleted 2026-11-10. |
+| `fix/<issue>-<name>` | One short-lived branch per issue, e.g. `fix/7-msvc-c-backend`, made by `fix.ps1 start` from the latest `incremental-test` and deleted by `fix.ps1 merge` |
 
 A `fix/...` branch that still exists belongs to an open pull request, or was merged and not
 deleted yet (the list is in [PLAN.md](PLAN.md), "Next" item 12).
@@ -99,22 +99,22 @@ cd C:\xpact\xpact-student-Mass
 #   change, test, save the logs next to the report, add "## Verification",
 #   add a row to reports\README.md, commit (the template asks for "Refs #7")
 .\student\tools\fix.ps1 finish                                # checks, pushes, opens the pull request
-.\student\tools\fix.ps1 merge                                 # squash-merges into student-Mass
+.\student\tools\fix.ps1 merge                                 # merge commit into incremental-test
 ```
 
 After merging:
 
-- The pull request goes into `student-Mass`, not the default branch `main`, so
+- The pull request goes into `incremental-test`, not the default branch `main`, so
   "Closes #7" does **not** close the issue. Comment "Fixed in `<sha>` (PR #N)"
   on the issue and close it by hand.
 - Update [PLAN.md](PLAN.md) when a planned task changes state, and write the
   week's note in [`notes/weekly/`](notes/weekly/).
 - Parser changes (`src/`): at first they waited for the parser's developer. Since
-  2026-10-28 they are merged into `student-Mass` after the full check set (both builds, compared
-  with Expat 2.8.1; see each `reports/issue-NNNN/report.md`); the supervisor reviews them when he
-  merges `student-Mass` into `main`.
-- An issue is closed after the result is checked locally on `student-Mass`; no Jenkins run is
-  needed (student decision, 2026-10-31).
+  2026-10-28 they are merged into the work branch (`student-Mass`, now `incremental-test`) after
+  the full check set (both builds, compared with Expat 2.8.1; see each `reports/issue-NNNN/report.md`);
+  the supervisor reviews them when `incremental-test` goes into `main`.
+- An issue is closed after the result is checked locally on the merged `incremental-test` commit;
+  no Jenkins run is needed (student decision, 2026-10-31; Jenkins dropped 2026-11-03).
 
 ## What every result must record
 

@@ -11,7 +11,7 @@ The versions up to 0.9.0 were assigned **afterwards** (2026-11-10) to commits th
 
 | Version | Date | Commit | In one line |
 |---|---|---|---|
-| [Unreleased](#unreleased-on-incremental-test-after-090) | 2026-11-11 | `incremental-test` | DLL exception guard and thread safety, website hardening, fair speed test |
+| [Unreleased](#unreleased-on-incremental-test-after-090) | 2026-11-11 | `incremental-test` | DLL exception guard and thread safety, website hardening and new Docker image, fair speed test, script safety |
 | [0.9.0](#090--2026-11-10) | 2026-11-10 | `1b8696f` | Launch candidate: website hardening tests, .NET tests in Jenkins, `main` = `incremental-test` |
 | [0.8.0](#080--2026-11-09) | 2026-11-09 | `68abdcb` | Boogie proofs of two parser loops; main's Gobo benchmark work merged |
 | [0.7.0](#070--2026-11-09) | 2026-11-09 | `f067a9d` | Final parser fully retested; website release and Docker image |
@@ -31,7 +31,9 @@ Not tagged yet. The Eiffel parser classes are unchanged; the DLL bridge changed.
 - **Website:** memory cap fails closed (#295), per-visitor worker cap and queue timeout/cap with 429/503 (#297), worker with no privileges at Low integrity, started suspended (#299).
 - **Speed:** fair test against native Expat 2.8.1 through the same C API, median 18× slower, 0 checksum mismatches (#275, PR #276).
 - **Tooling:** `run_benchmarks.ps1 -UseExistingNativeDll -NoDocsUpdate` (#302); evidence logs under `reports/` are committed (#306); benchmark scripts stop early on the Windows Store python alias, `XPACT_PYTHON` (#308).
-- **Findings:** #211 rechecked (right error, ~1.5 s); #293 entity depth > 32 rejected as "syntax error".
+- **Website:** an untrusted reverse proxy is logged, proxy ranges allowed, settings validated (#312, PR #313); pages show the fair speed result, thread and exception status and current limits (PR #314); Docker image `website-2026-11-11-1` shipped (PR #315, #317).
+- **Tooling:** `fix.ps1` merges with a merge commit into `incremental-test`, refuses `main`, reverts merge commits (#318, PR #321); `build_native_eiffel.ps1` prints the DLL's SHA-256 before/after and `XPACT_FROZEN_DLL=1` stops any runner from rebuilding it (#319, PR #322).
+- **Findings:** #211 rechecked (right error, ~1.5 s); #293 entity depth > 32 rejected as "syntax error"; #316 under a 40 MB cap the container worker can end in a stack overflow instead of "out of memory".
 
 ## 0.9.0 – 2026-11-10
 
