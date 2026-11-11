@@ -1,0 +1,42 @@
+XPACT SPEED: WHAT EACH CHANGE GAINS AND COSTS (for the supervisor)
+=================================================================
+Fair test on 10 Nov 2026 (andersoxie/xpact #275, PR #276): xpact gives the same results
+as Expat 2.8.1 but is about 18x slower. With every change below the results stay correct,
+as long as all tests pass again after each one. The speed gains are ESTIMATES from an
+earlier profile until we measure them.
+
+Builds tested: xpact.dll and xpact_assertions.dll rebuilt clean (finalized) on 2026-11-10
+from 658a8eb; the parser source is identical in the current incremental-test (7667a16)
+and main (f0553e9). Expat 2.8.1 libexpat.dll: Release build of tag R_2_8_1 (2026-11-06).
+
+1. Fix ISO-8859-1 in pieces (#272)                         [LOW RISK]
+   Gain: that case goes from a timeout (over 15 min) to under a second
+   Lose: nothing real; it reuses the UTF-16 path that already works
+
+2. Read characters directly                                [MEDIUM RISK]
+   Gain: about 15-30 % faster everywhere
+   Lose: harder-to-read code; off-by-one mistakes are easier to make (tests catch them)
+
+3. Reuse memory instead of new strings                     [MEDIUM RISK]
+   Gain: about 10-20 % faster, most on text, namespaces and DTDs
+   Lose: simpler code; text could be overwritten while still in use
+
+4. Cheaper input in small pieces                           [MEDIUM RISK]
+   Gain: up to about 2x faster when programs feed tiny pieces
+   Lose: more special cases; this area already broke twice (#68, #69)
+
+5. Hand programs pointers, not copies                      [HIGH RISK]
+   Gain: up to 2-4x faster when the program uses callbacks
+   Lose: safety; Eiffel moves memory around, so a mistake gives random crashes that the
+         tests may miss
+
+All together:   from about 18x slower to maybe 3-5x slower (estimate); never equal.
+Not lost:       correctness, the Expat-compatible API, the assertions build.
+Suggested:      1 -> profile (about a day) -> 2 and 3 in the busiest code
+                -> 4 if the profile says so -> 5 only if speed matters more than safety.
+Decision needed: how much code simplicity and safety margin is the speed worth?
+
+Note: the percentages for changes 2 and 3 are rough. They come from the shares of time
+in the old profile, not from measuring each change.
+
+Details: whatToChoose.txt, README.md and summary.md in this folder.

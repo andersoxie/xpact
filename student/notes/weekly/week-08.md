@@ -58,4 +58,5 @@
 - [ ] Website: review findings 1-2; worker under a low-privilege account (code part ours, account on the supervisor's server). HTTPS: the supervisor.
 - [ ] Open issues on andersoxie (16 on 2026-11-11): #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13. (#227 closed 2026-11-10; #281, #283, #284, #286 closed 2026-11-11.)
 - [x] Refile mass-xpact#84, #73, #75 on andersoxie: #272, #273, #274.
+- [x] ✅ Fair speed test vs Expat 2.8.1 (#275): xpact median 18× slower, 0 checksum mismatches, ISO-8859-1 in pieces quadratic → [results](../../results/fair-speed-2026-11-10/README.md)
 - [x] Update [`ActualReport.md`](../../report/ActualReport.md) and `ActualReportShorter.md` with week 8 (PR #269). Hand-in 27 November.

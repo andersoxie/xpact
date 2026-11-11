@@ -22,7 +22,7 @@ xpact is an XML parser written in Eiffel with a C interface compatible with **Ex
 | ✅ Failures are reported | A failing test exits nonzero in every build, proven by a meta-test |
 | ✅ Traceable | 112 issues (100 closed) and 126 merged pull requests, plus 50 for the speed work; versions 0.1.0–0.9.0 |
 | ✅ Website | Upload XML and test it with xpact; 🟡 not deployed yet |
-| 🟡 Speed | Chunked input is incremental: 50 min → 106 ms. 🔴 ISO-8859-1 in pieces is still slow |
+| 🟡 Speed | Chunked input is incremental: 50 min → 106 ms. Against native Expat 2.8.1: median **18× slower**, same events in every cell ([results](../results/fair-speed-2026-11-10/README.md)). 🔴 ISO-8859-1 in pieces is still slow (#272) |
 | 🟡 Details differ | Error positions and a few events and error codes (6 open findings) |
 | 🔴 Blockers for 1.0 | Not thread-safe; documents over 10 MB rejected; DLL crash without a trace on an Eiffel exception |
 
@@ -136,8 +136,8 @@ flowchart LR
 
 | Open | What |
 |---|---|
-| 🔴 mass-xpact#75, 10 MB limit | Not thread-safe; documents over 10 MB rejected: blockers for 1.0 |
-| 🔴 mass-xpact#84, #73 | ISO-8859-1 in pieces is slow; an Eiffel exception in a DLL call crashes without a trace (both still to be filed on andersoxie) |
+| 🔴 #274, 10 MB limit | Not thread-safe; documents over 10 MB rejected: blockers for 1.0 |
+| 🔴 #272, #273 | ISO-8859-1 in pieces is slow (16 B and 1 B pieces of 1 MB time out); an Eiffel exception in a DLL call crashes without a trace |
 | 🔴 [#123](https://github.com/andersoxie/xpact/issues/123), [#126](https://github.com/andersoxie/xpact/issues/126), [#170](https://github.com/andersoxie/xpact/issues/170), [#171](https://github.com/andersoxie/xpact/issues/171), [#176](https://github.com/andersoxie/xpact/issues/176) | Events, raw text, error codes, positions and `]]>` in pieces still differ from Expat |
 | 🟡 [#211](https://github.com/andersoxie/xpact/issues/211) | Billion-laughs documents are stopped with Expat's error, but ~15× slower |
 | ⏸ [#13](https://github.com/andersoxie/xpact/issues/13) | The GC wrapper swallows exceptions (a design question) |

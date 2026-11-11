@@ -235,6 +235,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 - [ ] Website: code-review findings 1-2 ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)): memory cap fails open, one visitor can keep all 4 workers busy; low-privilege worker account (code part ours, account on the supervisor's server). HTTPS, domain and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's; **set `AllowedHosts` to the real domain at deployment**, or the site answers 400.
 - [ ] Aikido: mark the 14 checksum alerts as false positives (student, in the Aikido dashboard).
 - [ ] Open issues on andersoxie (16 on 2026-11-11): #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
+- [x] ✅ Fair speed test vs Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275), PR #276): median 18× slower, 0 checksum mismatches → [results](results/fair-speed-2026-11-10/README.md)
 - [x] Refile mass-xpact #84, #73, #75 on andersoxie: [#272](https://github.com/andersoxie/xpact/issues/272), [#273](https://github.com/andersoxie/xpact/issues/273), [#274](https://github.com/andersoxie/xpact/issues/274). #20 stays inconclusive and is not refiled.
 - [x] `report/ActualReport.md` and `ActualReportShorter.md` updated with week 8 (PR #269, state 2026-11-10). Refresh again if anything changes before the hand-in (27 November).
 - Items 0-13 below are history and older to-dos; item 12 is replaced by this list where they overlap.
