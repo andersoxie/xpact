@@ -1,7 +1,7 @@
 # Internship Report (short version): Building Confidence in an XML Parser
 
-> **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** Medieinstitutet
-> **Company:** Bsharp · **Supervisor:** Anders Persson ✏️ · **Internship:** 6 October – 27 November 2026 (eight weeks)
+> **Student:** Masoud Dehdar · **Programme:** Software Developer .NET · **University:** Medieinstitutet
+> **Company:** Bsharp · **Supervisor:** Anders Persson · **Internship:** 6 October – 27 November 2026 (eight weeks)
 > **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` @ `9688e9e` (2026-11-10, = `main`) · **Full report:** [ActualReport.md](ActualReport.md)
 >
 > ✅ done and verified · 🟡 partly done · 🔴 open · ⏭️ dropped by decision · ✏️ for the student to complete
@@ -53,7 +53,7 @@ flowchart LR
 - Expat 2.8.1 and the W3C XML Test Suite as references
 - React, ASP.NET Core and Docker for the website; Boogie for two formal proofs
 
-**AI:** Claude Code was used as an AI assistant throughout (code, tests, reports). The student set the goals and made the decisions. ✏️ *Adjust to your university's rules.*
+**AI:** Claude Code was used as an AI assistant throughout (code, tests, reports). The student set the goals and made the decisions. In the student's own estimate, this raised their efficiency about 100×.
 
 **Method, for every problem:**
 1. Reproduce it with the exact command.

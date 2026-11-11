@@ -2,8 +2,8 @@
 
 ## A technical investigation of the xpact parser: build, assertions, conformance and comparison with Expat
 
-> **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** Medieinstitutet
-> **Company:** Bsharp · **Supervisor:** Anders Persson ✏️ · **Internship:** 6 October – 27 November 2026 (eight weeks; build preparation from September)
+> **Student:** Masoud Dehdar · **Programme:** Software Developer .NET · **University:** Medieinstitutet
+> **Company:** Bsharp · **Supervisor:** Anders Persson · **Internship:** 6 October – 27 November 2026 (eight weeks; build preparation from September)
 > **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` · **Report state:** `incremental-test` @ `470effb` (2026-11-11) · first version: `student-Mass` @ `1280aee` (2026-11-01)
 >
 > ✅ done and verified · 🟡 partly done or waiting · 🔴 open problem · ⏭️ dropped by decision · ✏️ for the student to check or complete
@@ -201,7 +201,7 @@ The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now 
 ## 1. Introduction
 
 ### 1.1 Background
-The internship took place at **Bsharp**, from 6 October to 27 November 2026 (eight weeks), as part of the System Developer programme at **Medieinstitutet** ✏️, in a team developing **xpact**, an XML parser. The student's role was that of a junior software developer working on **testing and verification**: learning an unfamiliar codebase, building it, running and extending its tests, and reporting and fixing what the tests found. The work followed the company's ten-week student plan (`docs/xpact-student-introduction.md`). In the first four weeks of the internship (to 1 November), weeks 1–7 of that plan were completed, and week 8 (consolidation) by 10 November, together with speed work and a website that the plan did not ask for. The remaining weeks, to 27 November, are for weeks 9–10: this report, the demonstration and the handover.
+The internship took place at **Bsharp**, from 6 October to 27 November 2026 (eight weeks), as part of the Software Developer .NET programme at **Medieinstitutet**, in a team developing **xpact**, an XML parser. The student's role was that of a junior software developer working on **testing and verification**: learning an unfamiliar codebase, building it, running and extending its tests, and reporting and fixing what the tests found. The work followed the company's ten-week student plan (`docs/xpact-student-introduction.md`). In the first four weeks of the internship (to 1 November), weeks 1–7 of that plan were completed, and week 8 (consolidation) by 10 November, together with speed work and a website that the plan did not ask for. The remaining weeks, to 27 November, are for weeks 9–10: this report, the demonstration and the handover.
 
 ### 1.2 Purpose of the report
 The report documents and analyses the technical work: how the problems were found, what caused them, how they were solved and how each solution was verified. It also evaluates what the tests prove and what they do not, and reflects on what was learned.
@@ -291,8 +291,8 @@ The parser must accept every well-formed document and reject every malformed one
 | CI | GitHub Actions (Python harness on every pull request), Jenkins (the supervisor's server) | Automatic checks before and after merging |
 | AI tools | **Claude Code** (Anthropic), used as a coding assistant | See 4.1 |
 
-### 4.1 Use of AI tools ✏️
-Claude Code was used throughout the internship as an AI assistant: to read and explain unfamiliar code, run builds and tests, write probes and comparison scripts, propose and write fixes, and draft reports and documentation, including this report. The student set the goals and priorities, made the decisions (for example which issues to fix, when Jenkins was needed, and when to stop and pause), checked the results, and handed in the work. Every change went through an issue, a written report with evidence and a pull request, so each claim in this report can be checked in the repository. ✏️ *Adjust this section to your university's rules on AI use.*
+### 4.1 Use of AI tools
+Claude Code was used throughout the internship as an AI assistant: to read and explain unfamiliar code, run builds and tests, write probes and comparison scripts, propose and write fixes, and draft reports and documentation, including this report. The student set the goals and priorities, made the decisions (for example which issues to fix, when Jenkins was needed, and when to stop and pause), checked the results, and handed in the work. Every change went through an issue, a written report with evidence and a pull request, so each claim in this report can be checked in the repository.
 
 ---
 
@@ -720,7 +720,7 @@ Working through issues, pull requests and written reports made it possible to wo
 - Working in two repositories and three branches cost time when joining them; one work branch from the start would have been simpler.
 
 ### 11.6 Using an AI assistant
-Working with Claude Code was productive for exploring code, running repetitive checks and writing reports, but it needed clear rules (one issue, one PR, never commit to `main`, never report a pass without evidence) and checking of its conclusions. ✏️
+Working with Claude Code was productive for exploring code, running repetitive checks and writing reports, but it needed clear rules (one issue, one PR, never commit to `main`, never report a pass without evidence) and checking of its conclusions. In my own estimate, working this way raised my efficiency about **100×**: work that would have taken me weeks alone (reading an unfamiliar Eiffel code base, building test tools, running and comparing millions of test cases, writing evidence reports) took days.
 
 ---
 
