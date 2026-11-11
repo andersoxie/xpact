@@ -1,9 +1,31 @@
-/* Exercises the real Jenkinsfile helpers with build-scoped, in-memory stashes. */
+/* Exercises the real Jenkinsfile helpers with build-scoped, in-memory stashes.
+ * The env boundary models Jenkins' property-only access; this is not a live sandbox/CPS test.
+ */
 import org.codehaus.groovy.runtime.InvokerHelper
 
+// A Map would incorrectly allow env[name], hiding the rejected Object getAt/putAt calls.
+class PlotEnvironment extends GroovyObjectSupport {
+    private final Map values
+
+    PlotEnvironment(Map initial) { values = new LinkedHashMap(initial) }
+
+    Object getProperty(String name) { this.@values.get(name) }
+    void setProperty(String name, Object value) { this.@values.put(name, String.valueOf(value)) }
+    Object getAt(String name) {
+        throw new UnsupportedOperationException('Jenkins env getAt requires unsafe script approval')
+    }
+    void putAt(String name, Object value) {
+        throw new UnsupportedOperationException('Jenkins env putAt requires unsafe script approval')
+    }
+
+    Map snapshot() { new LinkedHashMap(this.@values) }
+    void restore(Map saved) { this.@values.clear(); this.@values.putAll(saved) }
+}
+
 class PlotReportFixture {
-    final Map env = [BUILD_TAG: 'jenkins-xpact-123', BUILD_NUMBER: '123',
-                     BUILD_URL: 'https://jenkins.invalid/job/xpact/123/']
+    final PlotEnvironment env = new PlotEnvironment([
+        BUILD_TAG: 'jenkins-xpact-123', BUILD_NUMBER: '123',
+        BUILD_URL: 'https://jenkins.invalid/job/xpact/123/'])
     final Map params = [RUN_BENCHMARKS: true, RUN_WSL_EIFFEL_BENCHMARKS: true,
                         RUN_LARGE_XML_BENCHMARKS: true, LARGE_XML_FILE: 'fixture.xml']
     final Map currentBuild = [:]
@@ -73,12 +95,12 @@ class PlotReportFixture {
     }
 
     void withEnvironment(List entries, Closure body) {
-        Map before = new LinkedHashMap(env)
+        Map before = env.snapshot()
         entries.each { entry ->
             def parts = entry.toString().split('=', 2)
-            env[parts[0]] = parts[1]
+            env."${parts[0]}" = parts[1]
         }
-        try { body.call() } finally { env.clear(); env.putAll(before) }
+        try { body.call() } finally { env.restore(before) }
     }
 
     void powershell(String body) {
@@ -90,7 +112,7 @@ class PlotReportFixture {
             if (failRender) { throw new IOException('simulated render failure') }
             String prefix = "${env.REPORT_ASSEMBLY}/build/jenkins-plot-snapshots/"
             rendered << files.findAll { path, value -> path.startsWith(prefix) }.values().sort()
-            renderSettings << new LinkedHashMap(env)
+            renderSettings << env.snapshot()
             files['build/all-benchmark-plots/index.html'] = 'consolidated current report'
         } else if (body.contains('$SnapshotPath')) {
             files.remove("build/jenkins-plot-snapshots/${env.REPORT_LANE}.json".toString())
@@ -109,6 +131,25 @@ class PlotReportFixture {
 
 File root = new File(args ? args[0] : '.').canonicalFile
 int checks = 0
+
+// Negative controls ensure this fixture rejects both original env indexing operations.
+def boundary = new PlotEnvironment([PLOT_REPORT_WINDOWS: 'previous-build'])
+def lane = 'windows'
+try {
+    boundary["PLOT_REPORT_${lane.toUpperCase()}"] = 'current-build'
+    assert false: 'The environment fixture accepted the original putAt write'
+} catch (UnsupportedOperationException expected) {
+    assert expected.message.contains('putAt')
+}
+try {
+    def ignored = boundary["PLOT_REPORT_${lane.toUpperCase()}"]
+    assert false: 'The environment fixture accepted the original getAt read'
+} catch (UnsupportedOperationException expected) {
+    assert expected.message.contains('getAt')
+}
+assert boundary.PLOT_REPORT_WINDOWS == 'previous-build'
+println 'PASS environment boundary: original indexed writes and reads are rejected without changing state'
+
 ['windows-phase1', 'all-tests'].each { String name ->
     Class pipelineClass = new GroovyClassLoader().parseClass(new File(root, "ci/Jenkinsfile.${name}"))
 
