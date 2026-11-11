@@ -90,8 +90,10 @@ Nested entity expansion is rejected after ~7 s as "syntax error"; Expat stops it
 - [ ] The Postman collection was not run in Postman; the same requests are covered by the xUnit tests.
 - [ ] The benchmark numbers on the site are from `docs/benchmarks.md` (2026-06-21); they are not re-measured.
 
+*Update 2026-11-11:* forwarded headers are done (#224); the memory cap is tested (#227) and a load test is done ([load-test.md](../../website/docs/load-test.md), #255). HTTPS is the supervisor's. The list above is the state when this report was written.
+
 ## 6. Next
 
-- [ ] Review and merge the pull request into `student-Mass`
+- [x] Review and merge the pull request into `student-Mass` *(done: PR #212, 2026-11-02)*
 - [ ] Decide on hosting (a Windows VM, as the guide suggests) and deploy
 - [ ] [#211](https://github.com/andersoxie/xpact/issues/211) in the parser

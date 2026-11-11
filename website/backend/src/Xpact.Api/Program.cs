@@ -46,6 +46,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
     foreach (string proxy in xpact.KnownProxies) o.KnownProxies.Add(IPAddress.Parse(proxy));
 });
 
+// HSTS: browsers that saw the site over HTTPS keep using HTTPS for a year. Sent only on HTTPS
+// requests outside Development; behind a proxy, X-Forwarded-Proto tells the API the visitor used HTTPS.
+builder.Services.AddHsts(o => o.MaxAge = TimeSpan.FromDays(365));
 builder.Services.AddSingleton<IWorkerRunner, WorkerRunner>();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(o => o.AddPolicy("dev", p => p.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
@@ -65,6 +68,7 @@ builder.Services.AddRateLimiter(o =>
 var app = builder.Build();
 
 app.UseForwardedHeaders();
+if (!app.Environment.IsDevelopment()) app.UseHsts();
 app.UseExceptionHandler();
 app.Use(async (context, next) =>
 {
@@ -115,7 +119,7 @@ api.MapGet("/info", (IOptions<XpactOptions> options) =>
 });
 
 api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions<XpactOptions> options,
-    CancellationToken cancellationToken) =>
+    ILogger<Program> log, CancellationToken cancellationToken) =>
 {
     var o = options.Value;
     ValidateInput input;
@@ -125,7 +129,10 @@ api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions
     }
     catch (Exception e) when (e is Microsoft.AspNetCore.Http.BadHttpRequestException or InvalidDataException or JsonException)
     {
-        return Problem(StatusCodes.Status400BadRequest, "Unreadable request", e.Message);
+        // The exception text stays in the log; the visitor gets a fixed message.
+        log.LogInformation("Unreadable request: {Error}", e.Message);
+        return Problem(StatusCodes.Status400BadRequest, "Unreadable request",
+            "The request could not be read. Send JSON, a form with a 'file' or 'xml' field, or the raw XML.");
     }
 
     if (input.Document is null)

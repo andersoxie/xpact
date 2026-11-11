@@ -83,6 +83,7 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
             // An empty working folder: the worker never needs to see the server's files.
             WorkingDirectory = Path.GetTempPath(),
         };
+        LimitEnvironment(start.Environment);
         foreach (string arg in new[] { "--dll", dll, "--build", request.Build,
                      "--chunk", request.ChunkSize.ToString(), "--max-events", _options.MaxEvents.ToString() })
             start.ArgumentList.Add(arg);
@@ -111,12 +112,16 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
             await process.WaitForExitAsync(timeout.Token);
             string output = await stdout;
             string errors = await stderr;
+            // The worker's error output can name server paths or show a stack trace:
+            // it goes to the server log only, never to the visitor.
+            if (!string.IsNullOrWhiteSpace(errors))
+                _log.LogWarning("Worker error output ({Build}): {Errors}", request.Build, Trim(errors));
 
             if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
             {
                 string code = $"0x{process.ExitCode & 0xFFFFFFFF:X8}";
                 return Failure(Verdicts.Crashed,
-                    $"The parser process stopped with exit code {code} before giving a result. {Trim(errors)}".Trim());
+                    $"The parser process stopped with exit code {code} before giving a result.");
             }
             return JsonSerializer.Deserialize<ValidationResult>(output, Json)
                 ?? Failure(Verdicts.Error, "The parser returned an empty result.");
@@ -130,12 +135,31 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
         {
             // The worker died while we were still writing the document.
             Kill(process);
-            return Failure(Verdicts.Crashed, $"The parser process stopped while reading the document ({e.Message}).");
+            _log.LogWarning(e, "Worker stopped while reading the document");
+            return Failure(Verdicts.Crashed, "The parser process stopped while reading the document.");
         }
         finally
         {
             Kill(process);
         }
+    }
+
+    /// <summary>
+    /// The only environment variables the worker keeps: what Windows and the .NET host need to start a
+    /// process. Everything else the API has (connection strings, keys, tokens) is removed, so the
+    /// process that parses strangers' XML never sees it.
+    /// </summary>
+    private static readonly HashSet<string> WorkerEnvironment = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "SystemRoot", "windir", "SystemDrive", "ComSpec", "PATH", "PATHEXT", "TEMP", "TMP",
+        "NUMBER_OF_PROCESSORS", "PROCESSOR_ARCHITECTURE", "ProgramFiles", "ProgramW6432", "ProgramData",
+        "USERPROFILE", "LOCALAPPDATA", "APPDATA", "DOTNET_ROOT",
+    };
+
+    public static void LimitEnvironment(IDictionary<string, string?> environment)
+    {
+        foreach (string name in environment.Keys.Where(k => !WorkerEnvironment.Contains(k)).ToList())
+            environment.Remove(name);
     }
 
     private static void Kill(Process process)

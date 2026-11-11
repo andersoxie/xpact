@@ -600,7 +600,7 @@ In the first five weeks of the eight-week internship, the project went from a pa
 - [x] ~~Rerun the G03 comparison on the final code~~ (2026-11-06, 62 / 93 identical)
 - [x] ~~Selected SVG or libxml2 cases~~ (week 8)
 - [x] ~~Speed: resume from a saved state instead of replaying~~ (7.7, the "middle path" suggested on 1 November)
-- [ ] File mass-xpact#73, #75, #84 on andersoxie/xpact, one issue each
+- [x] ~~File mass-xpact#73, #75, #84 on andersoxie/xpact, one issue each~~ (#273, #274, #272)
 - [ ] 🔴 Thread safety (mass-xpact#75) and the 10 MB limit: blockers for 1.0, design decisions for the supervisor
 - [ ] ISO-8859-1 in pieces (mass-xpact#84): copy the UTF-16 resume path
 - [ ] An exception guard on each exported DLL function (mass-xpact#73)
