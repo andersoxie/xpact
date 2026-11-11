@@ -153,8 +153,18 @@ api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions
         return Problem(StatusCodes.Status400BadRequest, "Bad chunk size",
             $"Use 0 for the whole document, or a size of at least {o.MinChunkSize} byte(s).");
 
-    var result = await runner.RunAsync(new ParseRequest(input.Document, build, chunk), cancellationToken);
-    return Results.Ok(result);
+    // The same address the rate limiter uses (X-Forwarded-For only from trusted proxies).
+    string client = http.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    try
+    {
+        var result = await runner.RunAsync(new ParseRequest(input.Document, build, chunk, client), cancellationToken);
+        return Results.Ok(result);
+    }
+    catch (WorkerBusyException busy)
+    {
+        http.HttpContext.Response.Headers.RetryAfter = busy.RetryAfterSeconds.ToString();
+        return Problem(busy.StatusCode, busy.Title, busy.Message);
+    }
 }).RequireRateLimiting("validate").DisableAntiforgery();
 
 // Conformance and benchmark numbers, exported from the repository's reports by scripts/export-data.py.

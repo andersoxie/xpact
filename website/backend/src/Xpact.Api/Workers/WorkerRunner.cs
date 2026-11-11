@@ -5,8 +5,20 @@ using Xpact.Contracts;
 
 namespace Xpact.Api.Workers;
 
-/// <summary>What the caller asks the worker to do.</summary>
-public sealed record ParseRequest(byte[] Document, string Build, int ChunkSize);
+/// <summary>What the caller asks the worker to do. <paramref name="Client"/> is the visitor's IP (per-client cap).</summary>
+public sealed record ParseRequest(byte[] Document, string Build, int ChunkSize, string Client = "unknown");
+
+/// <summary>
+/// The request was not run because no worker could be given to it: 429 (this client already uses its
+/// share) or 503 (all workers busy, the queue is full or the wait timed out).
+/// </summary>
+public sealed class WorkerBusyException(int statusCode, string title, string detail, int retryAfterSeconds)
+    : Exception(detail)
+{
+    public int StatusCode { get; } = statusCode;
+    public string Title { get; } = title;
+    public int RetryAfterSeconds { get; } = retryAfterSeconds;
+}
 
 public interface IWorkerRunner
 {
@@ -27,6 +39,8 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
     private readonly ILogger<WorkerRunner> _log;
     private readonly SemaphoreSlim _slots;
     private readonly IWorkerLimiter _limiter;
+    private readonly Dictionary<string, int> _perClient = new();
+    private int _waiting;
 
     public WorkerRunner(IOptions<XpactOptions> options, ILogger<WorkerRunner> log, IWorkerLimiter limiter)
     {
@@ -44,18 +58,84 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
         string worker = XpactOptions.Resolve(_options.WorkerPath);
         var clock = Stopwatch.StartNew();
 
-        await _slots.WaitAsync(cancellationToken);
+        if (!TryEnterClient(request.Client))
+        {
+            _log.LogInformation("Client {Client} already uses {Max} worker(s); request refused", request.Client, _options.MaxWorkersPerClient);
+            throw new WorkerBusyException(StatusCodes.Status429TooManyRequests, "Too many documents at once",
+                $"You already have {_options.MaxWorkersPerClient} document(s) being checked. Wait until they finish.", 5);
+        }
         try
         {
-            ValidationResult result = await RunWorkerAsync(worker, dll, request, cancellationToken);
-            result.TotalMs = Math.Round(clock.Elapsed.TotalMilliseconds, 3);
-            _log.LogInformation("Parsed {Bytes} bytes with {Build}: {Verdict} in {Ms} ms",
-                request.Document.Length, request.Build, result.Verdict, result.TotalMs);
-            return result;
+            await WaitForSlotAsync(cancellationToken);
+            try
+            {
+                ValidationResult result = await RunWorkerAsync(worker, dll, request, cancellationToken);
+                result.TotalMs = Math.Round(clock.Elapsed.TotalMilliseconds, 3);
+                _log.LogInformation("Parsed {Bytes} bytes with {Build}: {Verdict} in {Ms} ms",
+                    request.Document.Length, request.Build, result.Verdict, result.TotalMs);
+                return result;
+            }
+            finally
+            {
+                _slots.Release();
+            }
         }
         finally
         {
-            _slots.Release();
+            LeaveClient(request.Client);
+        }
+    }
+
+    /// <summary>
+    /// Take a worker slot: at once if one is free; otherwise wait in a queue of at most
+    /// <see cref="XpactOptions.MaxQueuedRequests"/> for at most <see cref="XpactOptions.QueueWaitSeconds"/>.
+    /// </summary>
+    private async Task WaitForSlotAsync(CancellationToken cancellationToken)
+    {
+        if (_slots.Wait(0)) return;
+
+        if (Interlocked.Increment(ref _waiting) > Math.Max(0, _options.MaxQueuedRequests))
+        {
+            Interlocked.Decrement(ref _waiting);
+            _log.LogWarning("Worker queue full ({Max} waiting); request refused", _options.MaxQueuedRequests);
+            throw Busy("The server is busy: too many documents are waiting. Please try again in a moment.");
+        }
+        bool entered;
+        try
+        {
+            entered = await _slots.WaitAsync(TimeSpan.FromSeconds(Math.Max(0, _options.QueueWaitSeconds)), cancellationToken);
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _waiting);
+        }
+        if (!entered)
+        {
+            _log.LogWarning("No worker free within {Seconds} s; request refused", _options.QueueWaitSeconds);
+            throw Busy($"The server is busy: no parser was free within {_options.QueueWaitSeconds} s. Please try again in a moment.");
+        }
+    }
+
+    private WorkerBusyException Busy(string detail) =>
+        new(StatusCodes.Status503ServiceUnavailable, "Server busy", detail, Math.Max(1, _options.TimeoutSeconds));
+
+    private bool TryEnterClient(string client)
+    {
+        lock (_perClient)
+        {
+            _perClient.TryGetValue(client, out int running);
+            if (running >= Math.Max(1, _options.MaxWorkersPerClient)) return false;
+            _perClient[client] = running + 1;
+            return true;
+        }
+    }
+
+    private void LeaveClient(string client)
+    {
+        lock (_perClient)
+        {
+            if (_perClient.TryGetValue(client, out int running) && running > 1) _perClient[client] = running - 1;
+            else _perClient.Remove(client);
         }
     }
 

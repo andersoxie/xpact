@@ -14,6 +14,8 @@ How many visitors the website handles at once before answers get slow.
 
 - ✅ **No request failed** at any level: every answer was `accepted`.
 - The site does about **40 requests/s** for tiny documents and **31 requests/s** for a 100 KB document.
+> ⚠️ Since #297 one IP may use only 2 workers at once (`MaxWorkersPerClient`), waits at most 15 s and the queue holds 32. To repeat this load test from one machine, start the API with `--Xpact:MaxWorkersPerClient=64 --Xpact:MaxQueuedRequests=64`, otherwise most requests get 429.
+
 - Up to **4 visitors at once** each wait about 0.1 s. Above 4 the extra requests queue: the wait grows in a straight line (32 at once: about 0.8-1 s each).
 - The cost is mostly starting one worker process per document (~90 ms), not parsing.
 
