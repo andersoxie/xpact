@@ -60,6 +60,12 @@ public sealed class XpactOptions
     /// </summary>
     public string[] KnownProxies { get; set; } = [];
 
+    /// <summary>
+    /// Networks (CIDR, e.g. "10.0.0.0/24") whose proxies are trusted like <see cref="KnownProxies"/>:
+    /// for a proxy whose address changes, such as a load balancer or a Docker network.
+    /// </summary>
+    public string[] KnownNetworks { get; set; } = [];
+
     /// <summary>Resolve a configured path against the API folder.</summary>
     public static string Resolve(string path) =>
         Path.IsPathRooted(path) ? path : Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, path));

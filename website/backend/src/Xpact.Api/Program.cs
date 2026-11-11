@@ -39,11 +39,23 @@ builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompress
 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = maxBody);
 
 // Behind IIS or nginx the visitor's address arrives in X-Forwarded-For. Only a proxy on this
-// machine or one listed in KnownProxies is believed, so a visitor cannot pick their own address.
+// machine, one listed in KnownProxies or one inside KnownNetworks is believed, so a visitor cannot
+// pick their own address. A wrong entry stops the start with a message naming it.
 builder.Services.Configure<ForwardedHeadersOptions>(o =>
 {
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    foreach (string proxy in xpact.KnownProxies) o.KnownProxies.Add(IPAddress.Parse(proxy));
+    foreach (string proxy in xpact.KnownProxies)
+    {
+        if (!IPAddress.TryParse(proxy, out IPAddress? address))
+            throw new InvalidOperationException($"Xpact:KnownProxies: '{proxy}' is not an IP address.");
+        o.KnownProxies.Add(address);
+    }
+    foreach (string network in xpact.KnownNetworks)
+    {
+        if (!System.Net.IPNetwork.TryParse(network, out System.Net.IPNetwork range))
+            throw new InvalidOperationException($"Xpact:KnownNetworks: '{network}' is not a network such as 10.0.0.0/24.");
+        o.KnownIPNetworks.Add(range);
+    }
 });
 
 // HSTS: browsers that saw the site over HTTPS keep using HTTPS for a year. Sent only on HTTPS
@@ -71,6 +83,23 @@ builder.Services.AddRateLimiter(o =>
 var app = builder.Build();
 
 app.UseForwardedHeaders();
+// A proxy that is not trusted is silently ignored: every visitor then looks like the proxy, and the
+// rate limit and the per-visitor worker cap apply to all of them together. Say so in the log, once
+// per proxy address, naming the setting to change.
+var untrustedProxies = new System.Collections.Concurrent.ConcurrentDictionary<string, bool>();
+app.Use(async (context, next) =>
+{
+    if (context.Request.Headers.ContainsKey("X-Forwarded-For")
+        && context.Connection.RemoteIpAddress is { } proxy && !IPAddress.IsLoopback(proxy)
+        && untrustedProxies.Count < 100 && untrustedProxies.TryAdd(proxy.ToString(), true))
+    {
+        context.RequestServices.GetRequiredService<ILogger<Program>>().LogWarning(
+            "X-Forwarded-For from {Proxy} was ignored: that address is not trusted. If it is your reverse proxy, " +
+            "add it to Xpact:KnownProxies (or its range to Xpact:KnownNetworks); until then all visitors behind it " +
+            "share one rate limit and one worker share.", proxy.ToString());
+    }
+    await next();
+});
 if (!app.Environment.IsDevelopment()) app.UseHsts();
 app.UseExceptionHandler();
 app.Use(async (context, next) =>

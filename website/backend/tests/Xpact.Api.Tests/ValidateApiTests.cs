@@ -2,10 +2,12 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xpact.Contracts;
 
 namespace Xpact.Api.Tests;
@@ -492,6 +494,81 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.1")).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.2")).StatusCode);
         Assert.Equal(HttpStatusCode.TooManyRequests, (await From("203.0.113.1")).StatusCode);
+    }
+
+    /// <summary>Makes every request arrive from <paramref name="proxy"/>, before any other middleware.</summary>
+    private sealed class FromProxy(IPAddress proxy) : Microsoft.AspNetCore.Hosting.IStartupFilter
+    {
+        public Action<Microsoft.AspNetCore.Builder.IApplicationBuilder> Configure(
+            Action<Microsoft.AspNetCore.Builder.IApplicationBuilder> next) => app =>
+        {
+            app.Use(async (context, inner) => { context.Connection.RemoteIpAddress = proxy; await inner(); });
+            next(app);
+        };
+    }
+
+    private sealed class CollectingLogger : ILoggerProvider, ILogger
+    {
+        public System.Collections.Concurrent.ConcurrentQueue<string> Messages { get; } = new();
+        public ILogger CreateLogger(string categoryName) => this;
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Warning;
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            if (IsEnabled(logLevel)) Messages.Enqueue(formatter(state, exception));
+        }
+        public void Dispose() { }
+    }
+
+    [Theory]
+    [InlineData(null, null, false)]                     // proxy not trusted: one shared limit + a warning
+    [InlineData("198.51.100.7", null, true)]            // KnownProxies
+    [InlineData(null, "198.51.100.0/24", true)]         // KnownNetworks
+    public async Task Only_trusted_proxies_pass_on_the_visitor_address(string? proxy, string? network, bool trusted)
+    {
+        var log = new CollectingLogger();
+        var client = _factory.WithWebHostBuilder(b =>
+        {
+            b.UseSetting("Xpact:RequestsPerMinute", "1");
+            if (proxy is not null) b.UseSetting("Xpact:KnownProxies:0", proxy);
+            if (network is not null) b.UseSetting("Xpact:KnownNetworks:0", network);
+            b.ConfigureTestServices(s =>
+            {
+                s.AddSingleton<Microsoft.AspNetCore.Hosting.IStartupFilter>(new FromProxy(IPAddress.Parse("198.51.100.7")));
+                s.AddSingleton<ILoggerProvider>(log);
+            });
+        }).CreateClient();
+        Task<HttpResponseMessage> From(string visitor)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/validate") { Content = JsonContent.Create(new { xml = "<a/>" }) };
+            request.Headers.Add("X-Forwarded-For", visitor);
+            return client.SendAsync(request);
+        }
+
+        Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.1")).StatusCode);
+        var second = await From("203.0.113.2");
+        bool warned = log.Messages.Any(m => m.Contains("198.51.100.7") && m.Contains("Xpact:KnownProxies"));
+        if (trusted)
+        {
+            Assert.Equal(HttpStatusCode.OK, second.StatusCode);      // two visitors, two limits
+            Assert.False(warned, string.Join(" | ", log.Messages));
+        }
+        else
+        {
+            Assert.Equal(HttpStatusCode.TooManyRequests, second.StatusCode); // both look like the proxy
+            Assert.True(warned, "expected a warning naming the untrusted proxy");
+        }
+    }
+
+    [Theory]
+    [InlineData("Xpact:KnownProxies:0", "10.0.0.300", "is not an IP address")]
+    [InlineData("Xpact:KnownNetworks:0", "10.0.0.0/99", "is not a network")]
+    public void A_mistyped_proxy_setting_stops_the_start_with_a_clear_message(string key, string value, string message)
+    {
+        var factory = _factory.WithWebHostBuilder(b => b.UseSetting(key, value));
+        var error = Assert.ThrowsAny<Exception>(() => factory.CreateClient().GetAsync("/api/health").GetAwaiter().GetResult());
+        Assert.Contains(message, error.ToString());
     }
 
     [Fact]
