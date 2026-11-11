@@ -103,6 +103,8 @@ jobs:
           $s = Send 5102 '<a/>';  "40 MB cap, tiny document: verdict=$($s.verdict)"
           $c = Send 5102 $laughs; "40 MB cap, nested entities: verdict=$($c.verdict) code=$($c.error.code)"
           $after = Send 5102 '<a/>'; "40 MB cap, afterwards: verdict=$($after.verdict)"
+          # The worker's own error output goes to the server log only (#283): show it, to see where memory ran out.
+          docker logs capped 2>&1 | Select-String -Pattern "Worker error output|warn|fail" -Context 0,12 | Select-Object -First 3
           docker rm -f normal capped | Out-Null
           if ($n.verdict -ne "rejected") { throw "expected rejected under the 512 MB cap" }
           if ($s.verdict -ne "accepted") { throw "a tiny document must still work under a 40 MB cap" }
