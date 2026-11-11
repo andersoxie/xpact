@@ -69,7 +69,44 @@ jobs:
           "verdict=$($a.verdict)"
           if ($a.verdict -ne "accepted") { docker logs xpact; throw "expected accepted" }
           if ((Invoke-WebRequest -UseBasicParsing http://localhost:5099/).StatusCode -ne 200) { throw "home page did not load" }
+
+          # website/docs/docker.md checklist (#284): both builds available, container healthy.
+          foreach ($b in $info.builds) { if (-not $b.available) { throw "build $($b.name) is not available" } }
+          $health = ""
+          foreach ($i in 1..30) {
+            $health = docker inspect -f "{{.State.Health.Status}}" xpact
+            if ($health -eq "healthy") { break }
+            Start-Sleep 5
+          }
+          "health=$health"
+          if ($health -ne "healthy") { docker logs xpact; throw "the container did not become healthy" }
           docker rm -f xpact
+
+      - name: Memory cap inside the container (Job Object nested in the container's job)
+        shell: pwsh
+        run: |
+          # Nested entities, 10 levels x 10 (#211, #227): rejected under the normal 512 MB cap,
+          # but the worker needs more than 40 MB on the way, so a 40 MB cap must stop it ("crashed").
+          $sb = [Text.StringBuilder]::new('<!DOCTYPE r [<!ENTITY a0 "xxxxxxxxxx">')
+          foreach ($i in 1..9) { [void]$sb.Append("<!ENTITY a$i `"").Append(("&a$($i - 1);" * 10)).Append('">') }
+          $laughs = $sb.Append(']><r>&a9;</r>').ToString()
+          function Start-Site($name, $port, [string[]] $extra) {
+            docker run -d --name $name -p "${port}:8080" --memory 4g @extra "${env:IMAGE}:latest" | Out-Null
+            foreach ($i in 1..60) { try { Invoke-RestMethod "http://localhost:$port/api/health" | Out-Null; return } catch { Start-Sleep 2 } }
+            docker logs $name; throw "$name did not start"
+          }
+          function Send($port, $xml) { Invoke-RestMethod -Method Post -Uri "http://localhost:$port/api/validate" -ContentType "application/xml" -Body $xml }
+          Start-Site normal 5101 @()
+          Start-Site capped 5102 @("-e", "Xpact__WorkerMemoryMb=40")
+          $n = Send 5101 $laughs; "512 MB cap: verdict=$($n.verdict)"
+          $s = Send 5102 '<a/>';  "40 MB cap, tiny document: verdict=$($s.verdict)"
+          $c = Send 5102 $laughs; "40 MB cap, nested entities: verdict=$($c.verdict)"
+          $after = Send 5102 '<a/>'; "40 MB cap, afterwards: verdict=$($after.verdict)"
+          docker rm -f normal capped | Out-Null
+          if ($n.verdict -ne "rejected") { throw "expected rejected under the 512 MB cap" }
+          if ($s.verdict -ne "accepted") { throw "a tiny document must still work under a 40 MB cap" }
+          if ($c.verdict -ne "crashed") { throw "expected the 40 MB cap to stop the worker (crashed), got $($c.verdict)" }
+          if ($after.verdict -ne "accepted") { throw "the site must keep serving after the worker was stopped" }
 
       - name: Publish to GitHub Container Registry
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/incremental-test'
