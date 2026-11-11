@@ -279,6 +279,92 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(Verdicts.Accepted, (await PostJson(Client(), new { xml = "<a/>" })).Verdict);
     }
 
+    /// <summary>Holds each worker (before it gets its document) until the test opens the gate; then the real Job Object.</summary>
+    private sealed class GateLimiter : Xpact.Api.Workers.IWorkerLimiter
+    {
+        private readonly ManualResetEventSlim _open = new(false);
+        private readonly SemaphoreSlim _held = new(0);
+
+        public IDisposable Limit(System.Diagnostics.Process process, long memoryLimitBytes)
+        {
+            _held.Release();
+            _open.Wait(TimeSpan.FromSeconds(60));
+            return new Xpact.Api.Workers.JobObjectWorkerLimiter().Limit(process, memoryLimitBytes);
+        }
+
+        public Task<bool> WaitUntilHeldAsync() => _held.WaitAsync(TimeSpan.FromSeconds(30));
+        public void Open() => _open.Set();
+    }
+
+    private HttpClient GatedClient(GateLimiter gate, params (string Key, string Value)[] settings) =>
+        _factory.WithWebHostBuilder(b =>
+        {
+            foreach (var (key, value) in settings) b.UseSetting(key, value);
+            b.ConfigureTestServices(s => s.AddSingleton<Xpact.Api.Workers.IWorkerLimiter>(gate));
+        }).CreateClient();
+
+    [Fact]
+    public async Task One_client_cannot_take_more_than_its_share_of_workers()
+    {
+        // Website finding 2 (security.md): one visitor must not keep every worker busy.
+        var gate = new GateLimiter();
+        var client = GatedClient(gate, ("Xpact:MaxWorkersPerClient", "1"), ("Xpact:MaxConcurrentWorkers", "4"));
+
+        var first = client.PostAsJsonAsync("/api/validate", new { xml = "<a/>" });
+        Assert.True(await gate.WaitUntilHeldAsync(), "the first worker did not start");
+
+        var second = await client.PostAsJsonAsync("/api/validate", new { xml = "<b/>" });
+        Assert.Equal(HttpStatusCode.TooManyRequests, second.StatusCode);
+        Assert.NotNull(second.Headers.RetryAfter);
+        Assert.Contains("Too many documents at once", await second.Content.ReadAsStringAsync());
+
+        gate.Open();
+        Assert.Equal(HttpStatusCode.OK, (await first).StatusCode);
+        // Its share is free again once the first document is done.
+        Assert.Equal(Verdicts.Accepted, (await PostJson(client, new { xml = "<c/>" })).Verdict);
+    }
+
+    [Fact]
+    public async Task Waiting_for_a_worker_ends_with_503_after_the_queue_wait()
+    {
+        var gate = new GateLimiter();
+        var client = GatedClient(gate, ("Xpact:MaxConcurrentWorkers", "1"), ("Xpact:MaxWorkersPerClient", "10"),
+            ("Xpact:QueueWaitSeconds", "1"));
+
+        var first = client.PostAsJsonAsync("/api/validate", new { xml = "<a/>" });
+        Assert.True(await gate.WaitUntilHeldAsync(), "the first worker did not start");
+
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        var second = await client.PostAsJsonAsync("/api/validate", new { xml = "<b/>" });
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, second.StatusCode);
+        Assert.NotNull(second.Headers.RetryAfter);
+        Assert.Contains("no parser was free within 1 s", await second.Content.ReadAsStringAsync());
+        Assert.InRange(clock.Elapsed.TotalSeconds, 0.9, 10);
+
+        gate.Open();
+        Assert.Equal(HttpStatusCode.OK, (await first).StatusCode);
+    }
+
+    [Fact]
+    public async Task A_full_queue_refuses_at_once_with_503()
+    {
+        var gate = new GateLimiter();
+        var client = GatedClient(gate, ("Xpact:MaxConcurrentWorkers", "1"), ("Xpact:MaxWorkersPerClient", "10"),
+            ("Xpact:MaxQueuedRequests", "0"), ("Xpact:QueueWaitSeconds", "30"));
+
+        var first = client.PostAsJsonAsync("/api/validate", new { xml = "<a/>" });
+        Assert.True(await gate.WaitUntilHeldAsync(), "the first worker did not start");
+
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        var second = await client.PostAsJsonAsync("/api/validate", new { xml = "<b/>" });
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, second.StatusCode);
+        Assert.Contains("too many documents are waiting", await second.Content.ReadAsStringAsync());
+        Assert.True(clock.Elapsed.TotalSeconds < 5, $"refused after {clock.Elapsed.TotalSeconds:F1} s, not at once");
+
+        gate.Open();
+        Assert.Equal(HttpStatusCode.OK, (await first).StatusCode);
+    }
+
     [Fact]
     public async Task Results_files_are_served_and_names_are_checked()
     {
