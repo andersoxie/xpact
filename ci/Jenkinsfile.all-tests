@@ -663,11 +663,12 @@ def linkBenchmarkReportInBuildDescription(artifactPath, label) {
 }
 
 // Snapshots are stashed before another stage can clear the workspace.
+// Jenkins env is an object: use property access to stay within the Groovy sandbox.
 def initializePlotReport() {
   env.PLOT_REPORT_TOOLS_READY = ''
   ['dual', 'windows', 'wsl', 'large'].each { lane ->
-    env["PLOT_REPORT_${lane.toUpperCase()}"] = ''
-    env["PLOT_INPUT_${lane.toUpperCase()}"] = ''
+    env."PLOT_REPORT_${lane.toUpperCase()}" = ''
+    env."PLOT_INPUT_${lane.toUpperCase()}" = ''
   }
   stash name: 'xpact-plot-report-tools',
         includes: 'scripts/jenkins_plot_report.py,scripts/dual_jenkins_reports.py',
@@ -676,8 +677,8 @@ def initializePlotReport() {
 }
 
 def prepareBenchmarkPlotSource(lane, tsvPath, reportPrefix) {
-  env["PLOT_INPUT_${lane.toUpperCase()}"] = ''
-  env["PLOT_REPORT_${lane.toUpperCase()}"] = ''
+  env."PLOT_INPUT_${lane.toUpperCase()}" = ''
+  env."PLOT_REPORT_${lane.toUpperCase()}" = ''
   // Keep history, but never mistake a previous build's current values for this run.
   withEnv(["PLOT_CURRENT_TSV=${tsvPath}", "PLOT_CURRENT_PREFIX=${safeReportToken(reportPrefix)}"]) {
     powershell '''
@@ -697,11 +698,11 @@ def prepareBenchmarkPlotSource(lane, tsvPath, reportPrefix) {
       }
     '''
   }
-  env["PLOT_INPUT_${lane.toUpperCase()}"] = env.BUILD_TAG
+  env."PLOT_INPUT_${lane.toUpperCase()}" = env.BUILD_TAG
 }
 
 def capturePlotReport(lane, sourceDir, manifest = '') {
-  env["PLOT_REPORT_${lane.toUpperCase()}"] = ''
+  env."PLOT_REPORT_${lane.toUpperCase()}" = ''
   try {
     if (manifest && !fileExists(manifest)) {
       return
@@ -731,12 +732,12 @@ def capturePlotReport(lane, sourceDir, manifest = '') {
     }
   }
   // Publish ownership only after persistence, stash and local staging cleanup succeed.
-  env["PLOT_REPORT_${lane.toUpperCase()}"] = env.BUILD_TAG
+  env."PLOT_REPORT_${lane.toUpperCase()}" = env.BUILD_TAG
 }
 
 def publishBenchmarkFamily(lane, sourceDir, resultFile, reportPrefix, groupName, suiteName) {
   try {
-    if (env["PLOT_INPUT_${lane.toUpperCase()}"] == env.BUILD_TAG) {
+    if (env."PLOT_INPUT_${lane.toUpperCase()}" == env.BUILD_TAG) {
       if (lane == 'windows') {
         junit testResults: "${sourceDir}/w3c-xml-conformance/junit.xml", allowEmptyResults: true
       }
@@ -767,7 +768,7 @@ def publishAllBenchmarkPlots() {
     dir(assembly) {
       unstash 'xpact-plot-report-tools'
       ['dual', 'windows', 'wsl', 'large'].each { lane ->
-        if (env["PLOT_REPORT_${lane.toUpperCase()}"] == env.BUILD_TAG) {
+        if (env."PLOT_REPORT_${lane.toUpperCase()}" == env.BUILD_TAG) {
           unstash "xpact-plot-report-${lane}"
         }
       }
