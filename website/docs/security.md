@@ -16,7 +16,7 @@ The site runs a parser on documents from strangers. These are the protections, a
 | Request floods | Rate limit, 30 / min per IP; at most 4 workers at once | `Program.cs` | ✅ `Requests_are_rate_limited_per_client` |
 | One visitor using up the limit for everyone behind a proxy | `X-Forwarded-For` is read from a proxy on this machine or one in `Xpact:KnownProxies` only, so the limit counts each real visitor and visitors cannot fake their address | `Program.cs` | ✅ `Visitors_behind_a_proxy_are_rate_limited_separately` |
 | Reading other files through the results endpoint | Allowed names only: `conformance`, `benchmarks`, `comparison`, `testing` | `Program.cs` | ✅ `Results_files_are_served_and_names_are_checked` |
-| Click-jacking, MIME sniffing, leaking referrers | `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a strict CSP | `Program.cs` | ✅ `Security_headers_are_set` |
+| Click-jacking, MIME sniffing, leaking referrers | `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a strict CSP without `'unsafe-inline'` and with `base-uri`, `form-action`, `object-src`; `Permissions-Policy`, `Cross-Origin-Opener-Policy`; no `Server` header | `Program.cs` | ✅ `Security_headers_are_set`; OWASP ZAP 2.17.0: 0 medium/high ([#286](https://github.com/andersoxie/xpact/issues/286)) |
 | Storing visitors' documents | Nothing is written to disk; the document goes to the worker on stdin; logs record size, build, verdict and time only | `WorkerRunner.cs` | ✅ by design (code review) |
 
 ## Known gaps before a public deployment

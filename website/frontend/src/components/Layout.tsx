@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { AUTHOR, LINKS } from "../data/site";
 
 const NAV = [
@@ -9,6 +9,20 @@ const NAV = [
   { to: "/benchmarks", label: "Benchmarks" },
   { to: "/project", label: "Project" },
 ];
+
+/** One title per page: search results, browser tabs and screen readers can tell the pages apart. */
+function usePageTitle() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    let path = pathname;
+    while (path.length > 1 && path.endsWith("/")) path = path.slice(0, -1);
+    const page = NAV.find((item) => item.to === path);
+    let title = "Page not found";
+    if (path === "/") title = "";
+    else if (page) title = page.label;
+    document.title = title ? `${title} · XPact XML Parser` : "XPact XML Parser";
+  }, [pathname]);
+}
 
 type Theme = "light" | "dark" | "system";
 
@@ -36,6 +50,7 @@ function useTheme(): [Theme, () => void] {
 
 export function Layout() {
   const [theme, nextTheme] = useTheme();
+  usePageTitle();
   const themeLabel = theme === "system" ? "◐ Auto" : theme === "light" ? "☀ Light" : "☾ Dark";
 
   return (

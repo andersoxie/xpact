@@ -37,12 +37,12 @@ export function Benchmarks() {
 
       {c && prod && (
         <>
-          <section className="grid grid-4">
+          <div className="grid grid-4">
             <Stat label="W3C cases run" value={fmt.format(prod.total)} sub={`suite ${c.suite.version}`} />
             <Stat label="Verdict matches W3C" value={fmt.format(prod.passed)} sub="checked cases, each build" />
             <Stat label="No crash (either verdict allowed)" value={fmt.format(prod.noCrashOnly)} sub="optional errors, XML 1.1" />
             <Stat label="Failed · errors · skipped" value={`${prod.failed} · ${prod.errors} · ${prod.skipped}`} sub="both builds" />
-          </section>
+          </div>
 
           <section className="section">
             <h2>W3C XML conformance</h2>

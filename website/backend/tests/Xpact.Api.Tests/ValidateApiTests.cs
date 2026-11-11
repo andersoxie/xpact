@@ -280,5 +280,23 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         var response = await Client().GetAsync("/api/health");
         Assert.Equal("nosniff", response.Headers.GetValues("X-Content-Type-Options").Single());
         Assert.Equal("DENY", response.Headers.GetValues("X-Frame-Options").Single());
+
+        // OWASP ZAP findings of 2026-11-11: no 'unsafe-inline', and the directives without a fallback are set.
+        string csp = response.Headers.GetValues("Content-Security-Policy").Single();
+        Assert.DoesNotContain("unsafe-inline", csp);
+        foreach (string directive in new[] { "base-uri 'self'", "form-action 'self'", "object-src 'none'", "frame-ancestors 'none'" })
+            Assert.Contains(directive, csp);
+        Assert.Contains("camera=()", response.Headers.GetValues("Permissions-Policy").Single());
+        Assert.Equal("same-origin", response.Headers.GetValues("Cross-Origin-Opener-Policy").Single());
+    }
+
+    [Fact]
+    public async Task Responses_are_compressed_when_the_browser_asks()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/info");
+        request.Headers.AcceptEncoding.ParseAdd("br");
+        var response = await Client().SendAsync(request);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("br", response.Content.Headers.ContentEncoding.Single());
     }
 }
