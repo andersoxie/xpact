@@ -202,8 +202,16 @@ profile, offline setup, and detailed reports.
 > `build\benchmarks\benchmarks.md`). These scripts also rebuild the DLL unless told
 > not to: `run_large_xml_benchmarks.ps1`, `run_chunked_crc_harness.ps1`,
 > `run_incremental_shim_audit.ps1`, `package_windows_release.ps1` (`-SkipBuild`)
-> and `run_libexpat_adapter.ps1` (`-SkipNativeBuild`). Check the DLL's SHA-256
+> and `run_libexpat_adapter.ps1` (`-SkipNativeBuild`); so do
+> `website\scripts\build-dll.ps1` and `student\baseline\run_baseline.ps1` (on
+> purpose). `run_large_xml_benchmarks.ps1` also rewrites
+> `docs\large-xml-benchmarks.md` unless `-NoPublishDocs`. Check the DLL's SHA-256
 > before and after a run.
+>
+> **Freeze the tested DLL (#319):** `build_native_eiffel.ps1` prints the DLL it
+> replaces with its SHA-256 before and after. Set `$env:XPACT_FROZEN_DLL = "1"`
+> before a test run and any runner that tries to rebuild stops at once with an
+> error instead of replacing the DLL (child scripts inherit the variable).
 >
 > **Python (#308):** `run_benchmarks.ps1` and `run_large_xml_benchmarks.ps1` use
 > `$env:XPACT_PYTHON` if set, otherwise `python` from PATH. They stop at once if

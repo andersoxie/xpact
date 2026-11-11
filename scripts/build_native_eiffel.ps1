@@ -12,6 +12,20 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $OutputRoot = Join-Path $RepoRoot $OutputDir
 $EcfObjectRoot = Join-Path $RepoRoot "build\native-eiffel"
+
+# Many runners call this script unless they get a skip flag (#319). Say which DLL
+# is replaced, and refuse when the caller froze the tested DLL ("build once, test
+# many"): set XPACT_FROZEN_DLL=1 before a test run; child scripts inherit it.
+$TargetDll = Join-Path $OutputRoot $(if ($BuildTier -eq "Assertions") { "xpact_assertions.dll" } else { "xpact.dll" })
+function Get-DllHash([string] $Path) {
+	if (Test-Path -LiteralPath $Path -PathType Leaf) { (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash } else { "(none)" }
+}
+if ($env:XPACT_FROZEN_DLL -and $env:XPACT_FROZEN_DLL -ne "0") {
+	throw "XPACT_FROZEN_DLL is set: refusing to rebuild $TargetDll (SHA-256 $(Get-DllHash $TargetDll)). Pass the runner's skip flag (-SkipBuild, -UseExistingNativeDll, -SkipNativeBuild) or clear XPACT_FROZEN_DLL."
+}
+$OldDllHash = Get-DllHash $TargetDll
+Write-Host "build_native_eiffel: replaces $TargetDll ($BuildTier); SHA-256 before: $OldDllHash"
+
 New-Item -ItemType Directory -Force -Path $OutputRoot, $EcfObjectRoot | Out-Null
 
 . (Join-Path $PSScriptRoot "import_msvc_environment.ps1")
@@ -208,7 +222,7 @@ Set-Content -Path $DllLink -Value $Response
 
 $LinkCommand = "cd /d `"$FinalCode`" && link @`"$DllLink`""
 Invoke-VcCommand $LinkCommand
-Write-Host "Built $Dll ($BuildTier)"
+Write-Host "Built $Dll ($BuildTier); SHA-256 before: $OldDllHash, after: $(Get-DllHash $Dll)"
 
 if (-not $SkipSmoke) {
 	$SmokeExe = Join-Path $OutputRoot $SmokeName
