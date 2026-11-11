@@ -103,5 +103,86 @@
       "mibPerSecond": 24.845,
       "notes": "MSVC x64; linked through include/xpact.h and build\\native-eiffel\\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents"
     }
-  ]
+  ],
+  "fairSpeed": {
+    "source": "https://github.com/andersoxie/xpact/blob/incremental-test/student/results/fair-speed-2026-11-10/README.md",
+    "check": "https://github.com/andersoxie/xpact/blob/incremental-test/reports/issue-0276-check/README.md",
+    "generated": "2026-11-10 (old DLL); rechecked 2026-11-11 after #273/#274: whole documents unchanged, 1-byte pieces 2-4 % slower",
+    "cells": 200,
+    "notCompared": 4,
+    "medianRatio": 18.2,
+    "checksumMismatches": 0,
+    "wholeDocument1MB": [
+      {
+        "shape": "attributes",
+        "callbacks": false,
+        "ratio": 2.6,
+        "xpactMs": 20.361,
+        "expatMs": 7.7943
+      },
+      {
+        "shape": "attributes",
+        "callbacks": true,
+        "ratio": 10.5,
+        "xpactMs": 89.5552,
+        "expatMs": 8.5495
+      },
+      {
+        "shape": "dtd",
+        "callbacks": false,
+        "ratio": 12.6,
+        "xpactMs": 107.3668,
+        "expatMs": 8.5297
+      },
+      {
+        "shape": "dtd",
+        "callbacks": true,
+        "ratio": 19.1,
+        "xpactMs": 177.8401,
+        "expatMs": 9.3095
+      },
+      {
+        "shape": "elements",
+        "callbacks": false,
+        "ratio": 5.6,
+        "xpactMs": 46.8575,
+        "expatMs": 8.3729
+      },
+      {
+        "shape": "elements",
+        "callbacks": true,
+        "ratio": 17.2,
+        "xpactMs": 161.2406,
+        "expatMs": 9.3622
+      },
+      {
+        "shape": "namespaces",
+        "callbacks": false,
+        "ratio": 15.9,
+        "xpactMs": 156.7722,
+        "expatMs": 9.8306
+      },
+      {
+        "shape": "namespaces",
+        "callbacks": true,
+        "ratio": 20.1,
+        "xpactMs": 212.6516,
+        "expatMs": 10.5799
+      },
+      {
+        "shape": "text",
+        "callbacks": false,
+        "ratio": 8.3,
+        "xpactMs": 12.2273,
+        "expatMs": 1.4695
+      },
+      {
+        "shape": "text",
+        "callbacks": true,
+        "ratio": 19.8,
+        "xpactMs": 46.23,
+        "expatMs": 2.3316
+      }
+    ]
+  }
 }

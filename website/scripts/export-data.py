@@ -22,6 +22,9 @@ W3C_REPORT = REPO / "reports" / "latest-2026-10-28"
 BENCHMARKS = REPO / "reports" / "acceptance-253c81e-vs-45d2f53" / "logs" / "speed" / "bench3-ours-1-table.md"
 COMPARISON = REPO / "student" / "results" / "G03-comparison" / "README.md"
 ALOT = REPO / "student" / "results" / "AlotOfTests-2026-11-08"
+# Fair speed test (#275): xpact.dll and libexpat.dll through the same C API, 2026-11-10.
+FAIR = REPO / "student" / "results" / "fair-speed-2026-11-10"
+FAIR_CHECK = REPO / "reports" / "issue-0276-check" / "README.md"
 
 LANES = [
     ("core", "XML 1.0 5th edition", "W3C verdict", 1974),
@@ -77,6 +80,41 @@ def benchmarks() -> dict:
         "generated": generated_text,
         "workload": "the same UTF-8 catalog document with 100 <item> elements; median of 3 process-level runs",
         "rows": rows,
+        "fairSpeed": fair_speed(),
+    }
+
+
+def fair_speed() -> dict:
+    """xpact / Expat time ratios from the fair speed test (#275): 1.0 = as fast, 18 = 18 times slower."""
+    import csv
+    import statistics
+    cells: dict[tuple, dict] = {}
+    with (FAIR / "results.tsv").open(encoding="utf-8") as handle:
+        for row in csv.DictReader(handle, delimiter="	"):
+            if row["engine"] in ("xpact", "expat"):
+                cells.setdefault((row["file"], row["chunk"], row["callbacks"]), {})[row["engine"]] = row
+    ratios, mismatches, not_compared, whole = [], 0, 0, []
+    for (file, chunk, callbacks), pair in sorted(cells.items()):
+        x, e = pair.get("xpact"), pair.get("expat")
+        if not x or not e or x["status"] != "1" or e["status"] != "1" or not x["median_ms"] or not e["median_ms"]:
+            not_compared += 1
+            continue
+        if callbacks == "1" and x["checksum"] != e["checksum"]:
+            mismatches += 1
+        ratio = float(x["median_ms"]) / float(e["median_ms"])
+        ratios.append(ratio)
+        if chunk == "0" and x["size"] == "1MB" and x["encoding"] == "utf8":
+            whole.append({"shape": x["shape"], "callbacks": callbacks == "1", "ratio": round(ratio, 1),
+                          "xpactMs": float(x["median_ms"]), "expatMs": float(e["median_ms"])})
+    return {
+        "source": link(FAIR / "README.md"),
+        "check": link(FAIR_CHECK),
+        "generated": "2026-11-10 (old DLL); rechecked 2026-11-11 after #273/#274: whole documents unchanged, 1-byte pieces 2-4 % slower",
+        "cells": len(ratios),
+        "notCompared": not_compared,
+        "medianRatio": round(statistics.median(ratios), 1),
+        "checksumMismatches": mismatches,
+        "wholeDocument1MB": whole,
     }
 
 
