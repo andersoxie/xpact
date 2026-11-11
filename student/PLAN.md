@@ -227,7 +227,9 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 **State 2026-11-11 (read first):**
 
-- [ ] `main` vs `incremental-test` (2026-11-11, after the website PRs): `main` has 3 Jenkins-plot commits (up to PR #280) that `incremental-test` lacks; `incremental-test` has 11 commits (PRs #282, #285, #287, #288) that `main` lacks. Sync both ways with merge commits (the student and supervisor merge into `main`).
+- [x] `main` and `incremental-test` synced 2026-11-11 (#290): PR #291 brought `main` (Jenkins plot fix) in, then `main` was fast-forwarded to `75600aa` (0 / 0; student approved).
+- [ ] **#211 may already be fixed** (code 43 amplification rule merged; website test saw "rejected" in 1.35 s): rerun its documents, close if fixed.
+- [x] Handover to PC2: [CONTINUE-HERE.md](CONTINUE-HERE.md) and [notes/left-to-do-2026-11-11.md](notes/left-to-do-2026-11-11.md).
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and the load test ([#255](https://github.com/andersoxie/xpact/issues/255)), 2026-11-10.
 - [x] ✅ **Website checked and fixed (2026-11-11)**: see "Website quality check" below. Merged: PR #282 (docs, #281), #285 (Docker checklist, #284), #288 (security findings 3-6, #283), #287 (quality, #286).
 - [ ] Website: code-review findings 1-2 ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)): memory cap fails open, one visitor can keep all 4 workers busy; low-privilege worker account (code part ours, account on the supervisor's server). HTTPS, domain and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's; **set `AllowedHosts` to the real domain at deployment**, or the site answers 400.
