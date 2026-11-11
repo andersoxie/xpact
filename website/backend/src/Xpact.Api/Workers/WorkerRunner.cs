@@ -39,14 +39,17 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
     private readonly ILogger<WorkerRunner> _log;
     private readonly SemaphoreSlim _slots;
     private readonly IWorkerLimiter _limiter;
+    private readonly IWorkerLauncher _launcher;
     private readonly Dictionary<string, int> _perClient = new();
     private int _waiting;
 
-    public WorkerRunner(IOptions<XpactOptions> options, ILogger<WorkerRunner> log, IWorkerLimiter limiter)
+    public WorkerRunner(IOptions<XpactOptions> options, ILogger<WorkerRunner> log, IWorkerLimiter limiter,
+        IWorkerLauncher launcher)
     {
         _options = options.Value;
         _log = log;
         _limiter = limiter;
+        _launcher = launcher;
         _slots = new SemaphoreSlim(Math.Max(1, _options.MaxConcurrentWorkers));
     }
 
@@ -155,26 +158,29 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
         if (!File.Exists(worker)) return Failure(Verdicts.Error, "The parser worker is not installed on the server.");
         if (!File.Exists(dll)) return Failure(Verdicts.Error, $"The '{request.Build}' parser build is not installed on the server.");
 
-        var start = new ProcessStartInfo(worker)
+        var environment = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+        foreach (System.Collections.DictionaryEntry e in Environment.GetEnvironmentVariables())
+            environment[(string)e.Key] = (string?)e.Value;
+        LimitEnvironment(environment);
+        string[] arguments = { "--dll", dll, "--build", request.Build,
+            "--chunk", request.ChunkSize.ToString(), "--max-events", _options.MaxEvents.ToString() };
+
+        // Started suspended (below-normal priority, Low integrity unless configured off): it runs no code
+        // until it is under its memory cap. Fail closed: if it cannot be started that way, nothing is parsed.
+        WorkerProcess started;
+        try
         {
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
             // An empty working folder: the worker never needs to see the server's files.
-            WorkingDirectory = Path.GetTempPath(),
-        };
-        LimitEnvironment(start.Environment);
-        foreach (string arg in new[] { "--dll", dll, "--build", request.Build,
-                     "--chunk", request.ChunkSize.ToString(), "--max-events", _options.MaxEvents.ToString() })
-            start.ArgumentList.Add(arg);
+            started = _launcher.Start(worker, arguments, environment, Path.GetTempPath());
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e, "Could not start the worker with reduced rights; request refused");
+            return Failure(Verdicts.Error, "The server could not start the parser safely, so the document was not parsed. Please try again later.");
+        }
+        using WorkerProcess owned = started;
+        Process process = started.Process;
 
-        using var process = new Process { StartInfo = start };
-        process.Start();
-
-        // Fail closed: a worker without its memory cap never gets the document. The worker is idle
-        // until the document arrives on stdin, so stopping it here is safe.
         IDisposable limit;
         try
         {
@@ -188,25 +194,25 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
             return Failure(Verdicts.Error, "The server could not limit the parser process, so the document was not parsed. Please try again later.");
         }
         using var job = limit;
-
         try
         {
-            process.PriorityClass = ProcessPriorityClass.BelowNormal;
+            started.Resume();
         }
         catch (Exception e)
         {
-            // A lower priority is only politeness to other requests, not a safety limit.
-            _log.LogWarning(e, "Could not lower the worker priority");
+            Kill(process);
+            _log.LogError(e, "Could not resume the worker");
+            return Failure(Verdicts.Error, "The server could not start the parser safely, so the document was not parsed. Please try again later.");
         }
 
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(_options.TimeoutSeconds));
         try
         {
-            Task<string> stdout = process.StandardOutput.ReadToEndAsync(timeout.Token);
-            Task<string> stderr = process.StandardError.ReadToEndAsync(timeout.Token);
-            await process.StandardInput.BaseStream.WriteAsync(request.Document, timeout.Token);
-            process.StandardInput.Close();
+            Task<string> stdout = started.StandardOutput.ReadToEndAsync(timeout.Token);
+            Task<string> stderr = started.StandardError.ReadToEndAsync(timeout.Token);
+            await started.StandardInput.WriteAsync(request.Document, timeout.Token);
+            started.StandardInput.Close();
             await process.WaitForExitAsync(timeout.Token);
             string output = await stdout;
             string errors = await stderr;

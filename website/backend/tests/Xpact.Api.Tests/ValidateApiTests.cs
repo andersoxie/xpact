@@ -365,6 +365,98 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(HttpStatusCode.OK, (await first).StatusCode);
     }
 
+    /// <summary>Records the suspended worker's integrity level and privileges, then sets the real Job Object.</summary>
+    private sealed class InspectingLimiter : Xpact.Api.Workers.IWorkerLimiter
+    {
+        public int Integrity { get; private set; }
+        public int Privileges { get; private set; }
+
+        public IDisposable Limit(System.Diagnostics.Process process, long memoryLimitBytes)
+        {
+            Integrity = Xpact.Api.Workers.WorkerLauncher.IntegrityLevel(process);
+            Privileges = Xpact.Api.Workers.WorkerLauncher.PrivilegeCount(process);
+            return new Xpact.Api.Workers.JobObjectWorkerLimiter().Limit(process, memoryLimitBytes);
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Worker_runs_at_low_integrity_without_privileges(bool lowIntegrity)
+    {
+        var limiter = new InspectingLimiter();
+        var client = _factory.WithWebHostBuilder(b =>
+        {
+            b.UseSetting("Xpact:WorkerLowIntegrity", lowIntegrity.ToString());
+            b.ConfigureTestServices(s => s.AddSingleton<Xpact.Api.Workers.IWorkerLimiter>(limiter));
+        }).CreateClient();
+
+        Assert.Equal(Verdicts.Accepted, (await PostJson(client, new { xml = "<a><b/></a>" })).Verdict);
+        if (lowIntegrity)
+        {
+            Assert.Equal(0x1000, limiter.Integrity);          // SECURITY_MANDATORY_LOW_RID
+            Assert.True(limiter.Privileges <= 1, $"{limiter.Privileges} privileges"); // only SeChangeNotify
+        }
+        else
+        {
+            Assert.True(limiter.Integrity >= 0x2000, $"integrity 0x{limiter.Integrity:X}"); // Medium or more
+        }
+    }
+
+    [Theory]
+    [InlineData(true, false, false)]   // Low: cannot write to the account's TEMP folder
+    [InlineData(false, false, true)]   // control: the same command at normal integrity can
+    [InlineData(true, true, true)]     // control: Low can write to LocalLow, so the command itself works
+    public async Task A_low_integrity_process_cannot_write_to_the_api_accounts_files(bool lowIntegrity, bool localLow, bool canWrite)
+    {
+        // The launcher itself, with cmd.exe instead of the worker: try to create a file in the
+        // account's TEMP folder (Medium integrity), as code that took over the worker might.
+        string folder = localLow
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow")
+            : Path.GetTempPath();
+        string file = Path.Combine(folder, $"xpact-low-{Guid.NewGuid():N}.txt");
+        Assert.DoesNotContain(' ', file); // cmd /c quoting below assumes no spaces
+        string cmd = Path.Combine(Environment.SystemDirectory, "cmd.exe");
+        var environment = new Dictionary<string, string?>
+        {
+            ["SystemRoot"] = Environment.GetEnvironmentVariable("SystemRoot"),
+        };
+        var launcher = new Xpact.Api.Workers.WorkerLauncher(lowIntegrity);
+        using (var started = launcher.Start(cmd, ["/d", "/c", $"echo x>{file}"], environment, Path.GetTempPath()))
+        {
+            started.StandardInput.Close();
+            started.Resume();
+            await started.Process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
+        }
+        try
+        {
+            Assert.Equal(canWrite, File.Exists(file));
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+    }
+
+    private sealed class FailingLauncher : Xpact.Api.Workers.IWorkerLauncher
+    {
+        public Xpact.Api.Workers.WorkerProcess Start(string path, IReadOnlyList<string> arguments,
+            IDictionary<string, string?> environment, string workingDirectory) =>
+            throw new System.ComponentModel.Win32Exception(1314); // ERROR_PRIVILEGE_NOT_HELD
+    }
+
+    [Fact]
+    public async Task Nothing_is_parsed_when_the_worker_cannot_be_started_with_reduced_rights()
+    {
+        var client = _factory.WithWebHostBuilder(b => b.ConfigureTestServices(s =>
+            s.AddSingleton<Xpact.Api.Workers.IWorkerLauncher>(new FailingLauncher()))).CreateClient();
+
+        var result = await PostJson(client, new { xml = "<a/>" });
+        Assert.Equal(Verdicts.Error, result.Verdict);
+        Assert.Contains("could not start the parser safely", result.Diagnostic);
+        Assert.DoesNotContain("privilege", result.Diagnostic, StringComparison.OrdinalIgnoreCase);
+    }
+
     [Fact]
     public async Task Results_files_are_served_and_names_are_checked()
     {

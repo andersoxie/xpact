@@ -24,6 +24,12 @@ public sealed class XpactOptions
     /// <summary>Memory cap per worker process (Windows Job Object).</summary>
     public int WorkerMemoryMb { get; set; } = 512;
 
+    /// <summary>
+    /// Start the worker with no privileges and the Low integrity level, so it cannot write to the
+    /// API account's files, registry or processes. Only turn off on a host where this cannot work.
+    /// </summary>
+    public bool WorkerLowIntegrity { get; set; } = true;
+
     /// <summary>Workers running at once; further requests wait for a free slot.</summary>
     public int MaxConcurrentWorkers { get; set; } = 4;
 

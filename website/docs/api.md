@@ -93,6 +93,7 @@ All in `backend/src/Xpact.Api/appsettings.json`, section `Xpact`:
 | `MaxDocumentBytes` | 10,485,760 |
 | `TimeoutSeconds` | 10 |
 | `WorkerMemoryMb` | 512 |
+| `WorkerLowIntegrity` | `true`: worker with no privileges at Low integrity; turn off only on a host where this cannot work |
 | `MaxConcurrentWorkers` | 4 |
 | `MaxWorkersPerClient` | 2: workers one IP may use at once (more → 429) |
 | `QueueWaitSeconds` | 15: longest wait for a free worker (then 503) |

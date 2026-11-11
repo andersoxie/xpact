@@ -19,6 +19,7 @@
 | Parser | unchanged since the full test rerun 2026-11-08 ✅ ([results](results/AlotOfTests-2026-11-08/README.md)) |
 | Website quality check 2026-11-11 | ✅ Lighthouse accessibility 100 (light + dark), speed 98-100; ZAP 0 medium; W3C HTML 0/0; 27/27 backend tests ([PLAN](PLAN.md#-website-quality-check-2026-11-11)) |
 | Website security review 2026-11-11 | ✅ findings 3-7 fixed (PR #288, #287); findings 1-2 fixed (#295, #297) ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)) |
+| Website worker rights | ✅ no privileges, Low integrity, started suspended (#299) |
 | Website Docker checklist | ✅ 5/5 on GitHub windows-2022 (PR #285) |
 | Website deployment | 🟡 not online; HTTPS, domain, `AllowedHosts` = Anders (#210) |
 | Jenkins Groovy tests (Anders, PR #280) | ✅ run locally 2026-11-11: plots 16/16, email 19/19; `validate_declarative` needs Jenkins jars |
