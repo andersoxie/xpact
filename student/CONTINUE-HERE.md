@@ -21,7 +21,9 @@
 | PR #253, issue #252 (Boogie models) | ✅ merged; finds both old loop bugs, proves current code; 3 unstated facts open |
 | Website | ✅ built, Docker image `website-2026-11-09-*`; 🟡 not deployed |
 | Website memory cap and load test | ✅ #227 (closed), load test #255 ([load-test.md](../website/docs/load-test.md)) |
-| Website security review 2026-11-11 | 🟡 7 findings from reading the code, not tested yet ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)) |
+| Website security review 2026-11-11 | ✅ findings 3-7 fixed and tested (PR #288, #287); 🟡 1-2 open ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)) |
+| Website quality check 2026-11-11 | ✅ Lighthouse accessibility 100, speed 98-100; ZAP 0 medium; W3C HTML 0/0; 27/27 tests ([PLAN](PLAN.md#-website-quality-check-2026-11-11)) |
+| Website Docker checklist | ✅ all 5 checks pass on GitHub (PR #285) |
 | [#272](https://github.com/andersoxie/xpact/issues/272) slow ISO-8859-1 in pieces (was mass-xpact#84) | 🔴 still present (0.116 / 0.421 / 1.634 s for 64/128/256 KB) |
 | [#273](https://github.com/andersoxie/xpact/issues/273) DLL crash without trace (was mass-xpact#73) | 🔴 still present (code unchanged) |
 | [#274](https://github.com/andersoxie/xpact/issues/274) thread safety (was mass-xpact#75) | 🔴 not fixed |
@@ -38,8 +40,11 @@
   - Expat DLL: `build\` is not committed; build it with `reports\issue-0121\expat-build.cmd` (Release). Build xpact once, record SHA-256 of all three DLLs.
   - Starting points: `benchmarks/libexpat_c_benchmark.c`, `benchmarks/xpact_native_c_benchmark.c`. Estimate ~1 day work, 1–2 h machine time.
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and the load test (#255), 2026-11-10.
-- [ ] Website: fix review findings 1-2 (memory cap fails open, one visitor can fill all 4 workers), worker account (code part). HTTPS and deployment [#210](https://github.com/andersoxie/xpact/issues/210) are the supervisor's.
-- [ ] Open issues on andersoxie (17 on 2026-11-11): #281, #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
+- [x] Website check and fixes 2026-11-11: PR #282, #285, #287, #288 merged.
+- [ ] Website: fix review findings 1-2 (memory cap fails open, one visitor can fill all 4 workers), worker account (code part). HTTPS and deployment [#210](https://github.com/andersoxie/xpact/issues/210) are the supervisor's; he must set `AllowedHosts` to the real domain.
+- [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard).
+- [ ] `main` ↔ `incremental-test`: 3 commits only on `main`, 11 only on `incremental-test` (2026-11-11).
+- [ ] Open issues on andersoxie (16 on 2026-11-11): #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
 - [x] Refile mass-xpact #84, #73, #75 on andersoxie: #272, #273, #274.
 - [x] Reports updated to 2026-11-10 (weeks 1–8); update again if anything changes before 27 Nov.
 
