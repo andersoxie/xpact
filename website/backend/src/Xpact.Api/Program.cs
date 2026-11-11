@@ -18,7 +18,24 @@ var xpact = builder.Configuration.GetSection(XpactOptions.Section).Get<XpactOpti
 // where escaping (quotes, line ends) can make a document up to twice as long, so the body may be 2x the document.
 // The document itself is still checked against MaxDocumentBytes below.
 long maxBody = 2L * xpact.MaxDocumentBytes + 64 * 1024;
-builder.Services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = maxBody);
+builder.Services.Configure<KestrelServerOptions>(o =>
+{
+    o.Limits.MaxRequestBodySize = maxBody;
+    o.AddServerHeader = false; // no "Server: Kestrel": do not advertise the server software
+});
+
+// Brotli/gzip for the page, its script and CSS, and the JSON results (about 300 KB less per first visit).
+// No response carries a secret, so compression over HTTPS does not open a BREACH-style leak.
+builder.Services.AddResponseCompression(o =>
+{
+    o.EnableForHttps = true;
+    o.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes
+        .Concat(["image/svg+xml", "application/problem+json"]);
+});
+builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.BrotliCompressionProviderOptions>(
+    o => o.Level = System.IO.Compression.CompressionLevel.Optimal);
+builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProviderOptions>(
+    o => o.Level = System.IO.Compression.CompressionLevel.Optimal);
 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = maxBody);
 
 // Behind IIS or nginx the visitor's address arrives in X-Forwarded-For. Only a proxy on this
@@ -29,6 +46,12 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
     foreach (string proxy in xpact.KnownProxies) o.KnownProxies.Add(IPAddress.Parse(proxy));
 });
 
+// HSTS: browsers that saw the site over HTTPS keep using HTTPS for a year. Sent only on HTTPS
+// requests outside Development; behind a proxy, X-Forwarded-Proto tells the API the visitor used HTTPS.
+builder.Services.AddHsts(o => o.MaxAge = TimeSpan.FromDays(365));
+builder.Services.AddSingleton<IWorkerLimiter, JobObjectWorkerLimiter>();
+builder.Services.AddSingleton<IWorkerLauncher>(sp =>
+    new WorkerLauncher(sp.GetRequiredService<IOptions<XpactOptions>>().Value.WorkerLowIntegrity));
 builder.Services.AddSingleton<IWorkerRunner, WorkerRunner>();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(o => o.AddPolicy("dev", p => p.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
@@ -48,6 +71,7 @@ builder.Services.AddRateLimiter(o =>
 var app = builder.Build();
 
 app.UseForwardedHeaders();
+if (!app.Environment.IsDevelopment()) app.UseHsts();
 app.UseExceptionHandler();
 app.Use(async (context, next) =>
 {
@@ -55,14 +79,21 @@ app.Use(async (context, next) =>
     headers["X-Content-Type-Options"] = "nosniff";
     headers["Referrer-Policy"] = "no-referrer";
     headers["X-Frame-Options"] = "DENY";
+    // React sets style props through the DOM (element.style), which CSP allows, so inline styles need no
+    // 'unsafe-inline'. base-uri, form-action and object-src do not fall back to default-src: set them too.
     headers["Content-Security-Policy"] =
-        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'";
+        "default-src 'self'; img-src 'self' data:; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; " +
+        "base-uri 'self'; form-action 'self'; object-src 'none'";
+    headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
+    headers["Cross-Origin-Opener-Policy"] = "same-origin";
+    headers["Cross-Origin-Resource-Policy"] = "same-origin";
     await next();
 });
 if (app.Environment.IsDevelopment()) app.UseCors("dev");
 app.UseRateLimiter();
+app.UseResponseCompression();
 app.UseDefaultFiles();
-app.UseStaticFiles();
+app.UseStaticFiles(SiteFiles.Options);
 
 var api = app.MapGroup("/api");
 
@@ -91,7 +122,7 @@ api.MapGet("/info", (IOptions<XpactOptions> options) =>
 });
 
 api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions<XpactOptions> options,
-    CancellationToken cancellationToken) =>
+    ILogger<Program> log, CancellationToken cancellationToken) =>
 {
     var o = options.Value;
     ValidateInput input;
@@ -101,7 +132,10 @@ api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions
     }
     catch (Exception e) when (e is Microsoft.AspNetCore.Http.BadHttpRequestException or InvalidDataException or JsonException)
     {
-        return Problem(StatusCodes.Status400BadRequest, "Unreadable request", e.Message);
+        // The exception text stays in the log; the visitor gets a fixed message.
+        log.LogInformation("Unreadable request: {Error}", e.Message);
+        return Problem(StatusCodes.Status400BadRequest, "Unreadable request",
+            "The request could not be read. Send JSON, a form with a 'file' or 'xml' field, or the raw XML.");
     }
 
     if (input.Document is null)
@@ -121,8 +155,18 @@ api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions
         return Problem(StatusCodes.Status400BadRequest, "Bad chunk size",
             $"Use 0 for the whole document, or a size of at least {o.MinChunkSize} byte(s).");
 
-    var result = await runner.RunAsync(new ParseRequest(input.Document, build, chunk), cancellationToken);
-    return Results.Ok(result);
+    // The same address the rate limiter uses (X-Forwarded-For only from trusted proxies).
+    string client = http.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    try
+    {
+        var result = await runner.RunAsync(new ParseRequest(input.Document, build, chunk, client), cancellationToken);
+        return Results.Ok(result);
+    }
+    catch (WorkerBusyException busy)
+    {
+        http.HttpContext.Response.Headers.RetryAfter = busy.RetryAfterSeconds.ToString();
+        return Problem(busy.StatusCode, busy.Title, busy.Message);
+    }
 }).RequireRateLimiting("validate").DisableAntiforgery();
 
 // Conformance and benchmark numbers, exported from the repository's reports by scripts/export-data.py.
@@ -138,12 +182,32 @@ api.MapGet("/results/{name}", (string name, IOptions<XpactOptions> options) =>
 
 // The React site, when it has been built into wwwroot (scripts/publish.ps1).
 if (File.Exists(Path.Combine(app.Environment.WebRootPath ?? "wwwroot", "index.html")))
-    app.MapFallbackToFile("index.html");
+    app.MapFallbackToFile("index.html", SiteFiles.Options);
 
 app.Run();
 
 static IResult Problem(int status, string title, string detail) =>
     Results.Problem(statusCode: status, title: title, detail: detail);
+
+/// <summary>Browser caching for the React site.</summary>
+internal static class SiteFiles
+{
+    /// <summary>
+    /// Files under /assets/ have a content hash in their name (Vite), so a new build gets new names:
+    /// browsers may keep them for a year. Everything else (index.html, favicon, robots.txt) is checked
+    /// on every visit, so a new release shows up at once.
+    /// </summary>
+    public static readonly StaticFileOptions Options = new()
+    {
+        OnPrepareResponse = context =>
+        {
+            context.Context.Response.Headers.CacheControl =
+                context.Context.Request.Path.StartsWithSegments("/assets")
+                    ? "public, max-age=31536000, immutable"
+                    : "no-cache";
+        },
+    };
+}
 
 /// <summary>The three accepted request shapes: multipart form, JSON, or a raw XML body.</summary>
 internal sealed record ValidateInput(byte[]? Document, string? Build, int? ChunkSize)

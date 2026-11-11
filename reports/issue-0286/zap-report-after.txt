@@ -1,0 +1,4 @@
+﻿OWASP ZAP 2.17.0 quick scan (spider + active scan) of http://localhost:5099/
+Informational  Information Disclosure - Suspicious Comments (1 instances)
+Informational  Modern Web Application (1 instances)
+Informational  User Agent Fuzzer (5 instances)

@@ -1,0 +1,24 @@
+== old xpact.dll (02b7f95b)
+-------------------------------------------------------------------------------
+RUN-TIME            root's set-up          main entry point vanished:   
+<0000000000000000>                         Eiffel run-time panic.        Bye
+-------------------------------------------------------------------------------
+xpact_native_library: dumping core to generate debugging information...
+exit=0
+== old xpact_assertions.dll (3efee772)
+Traceback (most recent call last):
+  File "C:\xpact\xpact-student-Mass\reports\issue-0273\inprocess.py", line 27, in <module>
+OSError: [WinError -1073741569] Windows Error 0xc00000ff
+exit=0
+== new xpact.dll (3ab5c4e8)
+1. laughs under 40 MB: status=0 code=1 (out of memory)
+2. failed parser answers: again status=0 code=1 line=1 col=0
+3. new parsers after the failure: 200/200 parsed
+PASS
+exit=0
+== new xpact_assertions.dll (96af5a72)
+1. laughs under 40 MB: status=0 code=1 (out of memory)
+2. failed parser answers: again status=0 code=1 line=1 col=0
+3. new parsers after the failure: 200/200 parsed
+PASS
+exit=0

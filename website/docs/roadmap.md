@@ -17,7 +17,8 @@ The 7 phases from [guide.txt](../guide.txt), section 6.
 ## Next
 
 - [ ] Choose the host (Windows VM suggested by the guide) and deploy `website/dist`
-- [ ] HTTPS, forwarded headers, a low-privilege worker account ([security.md](security.md#known-gaps-before-a-public-deployment))
+- [ ] A low-privilege worker account ([security.md](security.md#known-gaps-before-a-public-deployment)). Forwarded headers are done (#224); HTTPS is the supervisor's.
+- [ ] Fix the code-review findings 1-2 ([security.md](security.md#findings-from-the-code-review-2026-11-11)) before the site goes public
 - [x] Open a GitHub issue for the entity-expansion finding: [#211](https://github.com/andersoxie/xpact/issues/211) ([report](../../reports/issue-0211/report.md))
 - [ ] Fix #211 in the parser (not part of the website)
 - [ ] Compare with Expat live: an optional second worker that runs the same document through `libexpat.dll` and shows both results side by side

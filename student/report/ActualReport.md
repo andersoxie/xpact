@@ -31,9 +31,9 @@ The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now 
 | ✅ **Final parser retested** | All 11 test areas and the repository suites rerun on 2026-11-08: no crash, no regression, 3.9 million fuzzed inputs with 0 crashes, no memory leak |
 | ✅ **Traceable work** | 112 issues (100 closed) and 126 merged pull requests on andersoxie/xpact, plus 39 issues and 50 pull requests for the speed work; versions 0.1.0–0.9.0 tagged with a [CHANGELOG](../../CHANGELOG.md) |
 | ✅ **Website** | Upload or paste XML and test it with xpact; Docker image built on GitHub; memory cap and load tested; 🟡 not deployed yet (supervisor's server) |
-| 🟡 **Speed** | Chunked input is incremental now: worst case 50 min → 106 ms, whole documents 4–7× faster. 🔴 ISO-8859-1 in pieces is still quadratic (#272). Fair test against native Expat 2.8.1 (#275, 2026-11-10): xpact median **18× slower** (9–20× whole document, 21–43× in 1-byte pieces), same events in every cell ([results](../results/fair-speed-2026-11-10/README.md)) |
+| 🟡 **Speed** | Chunked input is incremental now: worst case 50 min → 106 ms, whole documents 4–7× faster. 🔴 ISO-8859-1 in pieces is still quadratic (mass-xpact#84); no fair comparison with native Expat yet |
 | 🟡 **Still differs from Expat** | Error positions, and some events and error codes in edge cases: 6 open findings (#123, #126, #170, #171, #176, #13) |
-| 🔴 **Blockers for 1.0** | Not thread-safe (#274); documents over 10 MB are rejected; an Eiffel exception in a DLL call crashes without a trace (#273) |
+| 🔴 **Blockers for 1.0** | Not thread-safe (mass-xpact#75); documents over 10 MB are rejected; an Eiffel exception in a DLL call crashes without a trace (mass-xpact#73) |
 
 <details>
 <summary><b>Contents</b></summary>
@@ -131,7 +131,7 @@ The parser must accept every well-formed document and reject every malformed one
 ### 3.4 Limitations
 - One machine (Windows 11, MSVC). Jenkins runs were made by the supervisor.
 - Parser repairs were meant for experienced developers. From week 6, fixes found by the comparisons were made by the student and verified against Expat, but not separately reviewed by the parser's author before merging into `student-Mass` (see [section 9.4](#94-review-and-continuous-integration)).
-- The speed work (week 8) was done in a separate repository, CodTanium/mass-xpact, and brought back as one acceptance-tested change. Its issues there were later closed as "not planned" without verification; the three that matter (#73, #75, #84) were rechecked, are still present and were refiled on andersoxie/xpact as #273, #274 and #272 (2026-11-10).
+- The speed work (week 8) was done in a separate repository, CodTanium/mass-xpact, and brought back as one acceptance-tested change. Its issues there were later closed as "not planned" without verification; the three that matter (#73, #75, #84) were rechecked and are still present.
 - The time: weeks 1–8 of a ten-week plan were done by 10 November; this report describes the state on 10 November 2026 (first version: 1 November).
 
 ---
@@ -362,7 +362,7 @@ Eight problems, chosen to show different kinds of work: a build problem, a contr
 
   The benchmark rows for the C interface became 4–5× faster. All functional checks stayed the same or came closer to Expat; none got worse.
 - **A trap on the way.** One speed change was parked because a stress run showed heap corruption (mass-xpact#20). Paired runs showed the corruption was already in the base code, so the change was not its cause. The cause is still unknown; 72 / 72 normal runs pass.
-- **Evaluation.** ✅ Cause 1 fixed for UTF-8 and UTF-16. 🔴 ISO-8859-1 input in pieces is still slow (256 KB in 1 KB pieces: 1.6 s, UTF-8 0.011 s). Causes 2–4 of 7.6 remain. The fair comparison with native Expat 2.8.1 followed on 2026-11-10 (#275): xpact is a median 18× slower, ISO-8859-1 in 16-byte or 1-byte pieces times out ([results](../results/fair-speed-2026-11-10/README.md)). The lesson: an acceptance run over *all* checks found what the per-fix checks had missed.
+- **Evaluation.** ✅ Cause 1 fixed for UTF-8 and UTF-16. 🔴 ISO-8859-1 input in pieces is still slow (256 KB in 1 KB pieces: 1.6 s, UTF-8 0.011 s). Causes 2–4 of 7.6 remain, and there is no fair speed comparison with native Expat yet. The lesson: an acceptance run over *all* checks found what the per-fix checks had missed.
 
 ### 7.8 Boogie models of two parser loops (#252)
 - **Problem.** Two of the bugs found earlier were loops that did not end or went out of bounds (#3 in the start-tag code, mass-xpact#12 in the UTF-16 decoder). Tests found them by chance. Could a proof find them on purpose?
@@ -453,13 +453,13 @@ Each test kind checks a different layer, from single Eiffel routines to the C in
 | [#130](https://github.com/andersoxie/xpact/issues/130), [#131](https://github.com/andersoxie/xpact/issues/131) | Jenkins: "Eiffel Tests" green without a result; SonarQube HTTP 401 (a local scan script exists; the token is invalid) | environment (supervisor's server) |
 | [#211](https://github.com/andersoxie/xpact/issues/211) | Billion-laughs documents: Expat's error now, but ~1.4 s against Expat's 0.1 s; 2 external cases time out | defect (limits) |
 | [#197](https://github.com/andersoxie/xpact/issues/197) | Run the W3C-in-pieces test on several cores | test tooling |
-| [#272](https://github.com/andersoxie/xpact/issues/272) (was mass-xpact#84) | ISO-8859-1 input in pieces is quadratic (7.7); in the 2026-11-10 speed test 16 B and 1 B pieces of 1 MB time out | speed |
-| [#273](https://github.com/andersoxie/xpact/issues/273) (was mass-xpact#73) | An Eiffel exception in a DLL call crashes without a trace | defect (DLL) |
+| mass-xpact#84 | ISO-8859-1 input in pieces is quadratic (7.7) | speed |
+| mass-xpact#73 | An Eiffel exception in a DLL call crashes without a trace | defect (DLL) |
 | mass-xpact#20 | Heap corruption under stress; not reproduced since, cause unknown | ❔ unknown |
-| [#274](https://github.com/andersoxie/xpact/issues/274) (was mass-xpact#75) | Not thread-safe: two threads with their own parsers crash the DLL | 🔴 blocker for 1.0 |
+| mass-xpact#75 | Not thread-safe: two threads with their own parsers crash the DLL | 🔴 blocker for 1.0 |
 | 10 MB limit | Documents over 10 MB are rejected | 🔴 blocker for 1.0 (design) |
 
-mass-xpact#20, #73, #75 and #84 were closed there as "not planned" when the repository became a mirror; they are not fixed. #73, #75 and #84 were refiled on andersoxie/xpact as #273, #274 and #272 (2026-11-10); #20 stays inconclusive.
+mass-xpact#20, #73, #75 and #84 were closed there as "not planned" when the repository became a mirror; they are not fixed and still have to be filed on andersoxie/xpact.
 
 ### 8.6 What the tests do and do not show
 - ✅ **They show** that xpact accepts and rejects the same documents as Expat in every compared case, with assertions on, in both builds and however the input is split; that the framework reports failures; and that the tests run against the intended library.
@@ -547,7 +547,7 @@ Each fix can be followed from the issue (what was wrong) to its report (cause, c
 | Worst chunked case (131 KB, 1 byte per call) | 50 min | **106 ms** |
 
 ### 10.3 Outstanding
-See [8.5](#85-known-issues). Also: deploying the website (supervisor's server), a Linux build, and the 3 missing contracts from the Boogie models.
+See [8.5](#85-known-issues). Also: deploying the website (supervisor's server), filing mass-xpact#73, #75 and #84 on andersoxie/xpact, a fair speed test against native Expat, a Linux build, and the 3 missing contracts from the Boogie models.
 
 ### 10.4 Overall
 The main question is answered with evidence. xpact's handling of valid and invalid XML **is consistent**: with Expat, with the W3C expectations, between builds and however the input is split, as far as the tested inputs go, and it stayed consistent through the large speed change. The tests that make this claim checkable are now part of the repository, and some of them run in Jenkins. The remaining differences are documented as findings with reproductions.
@@ -600,19 +600,17 @@ In the first five weeks of the eight-week internship, the project went from a pa
 - [x] ~~Rerun the G03 comparison on the final code~~ (2026-11-06, 62 / 93 identical)
 - [x] ~~Selected SVG or libxml2 cases~~ (week 8)
 - [x] ~~Speed: resume from a saved state instead of replaying~~ (7.7, the "middle path" suggested on 1 November)
-- [x] ✅ Filed mass-xpact#73, #75, #84 on andersoxie/xpact as #273, #274, #272 (2026-11-10)
-- [ ] 🔴 Thread safety (#274) and the 10 MB limit: blockers for 1.0, design decisions for the supervisor
-- [ ] ISO-8859-1 in pieces (#272): copy the UTF-16 resume path
-- [ ] An exception guard on each exported DLL function (#273)
+- [x] ~~File mass-xpact#73, #75, #84 on andersoxie/xpact, one issue each~~ (#273, #274, #272)
+- [ ] 🔴 Thread safety (mass-xpact#75) and the 10 MB limit: blockers for 1.0, design decisions for the supervisor
+- [ ] ISO-8859-1 in pieces (mass-xpact#84): copy the UTF-16 resume path
+- [ ] An exception guard on each exported DLL function (mass-xpact#73)
 - [ ] [#176](https://github.com/andersoxie/xpact/issues/176) and the rest of [#123](https://github.com/andersoxie/xpact/issues/123), together; [#170](https://github.com/andersoxie/xpact/issues/170); [#126](https://github.com/andersoxie/xpact/issues/126)
 - [ ] [#171](https://github.com/andersoxie/xpact/issues/171) and [#13](https://github.com/andersoxie/xpact/issues/13): ask the supervisor first
 - [ ] [#211](https://github.com/andersoxie/xpact/issues/211): billion-laughs documents are stopped, but ~15× slower than Expat
 - [ ] The 3 contracts the Boogie models need (7.8)
 - [ ] [#197](https://github.com/andersoxie/xpact/issues/197) the W3C-in-pieces test on several cores
 - [ ] Website deployment and HTTPS ([#210](https://github.com/andersoxie/xpact/issues/210), the supervisor's server); a low-privilege worker account
-- [x] ✅ Fair speed test against native Expat 2.8.1 (#275, 2026-11-10): median 18× slower, 0 checksum mismatches → [results](../results/fair-speed-2026-11-10/README.md)
-- [ ] Speed: profile the callback and 1-byte cases, then read by index and reuse buffers (leads in [mass-xpact-issue-0014](../../reports/mass-xpact-issue-0014/report.md))
-- [ ] A Linux build
+- [ ] A Linux build and a fair speed test against native Expat
 
 **Remaining speed work**: the "small steps" from 1 November are still open: check characters while tokenizing instead of in a separate pass, reuse one C buffer for callback strings, and use `XP_TOKEN_SLICE` more widely.
 
@@ -694,7 +692,6 @@ Short demonstrations of single fixes (each is one command and shows xpact next t
 | #209 rechecked (58 s → 12.2 ms), #211 rechecked | `df75792`, 2026-11-09 | production DLL | PR #240 |
 | mass-xpact#84, #73, #20, #75 rechecked | 2026-11-09 | production DLL | [week-08 note](../notes/weekly/week-08.md) |
 | Boogie models | `68abdcb`, 2026-11-09 | Boogie | [#252 report](../../reports/issue-0252/report.md) |
-| Fair speed test vs Expat 2.8.1: median 18× slower, 0 checksum mismatches | `658a8eb`, 2026-11-10 | production + assertions DLL, PC2 | [results](../results/fair-speed-2026-11-10/README.md), PR #276 |
 | W3C 2,585, 0 failed | rebuilt from `68abdcb`, 2026-11-10 | both tiers | [week-08 note](../notes/weekly/week-08.md) |
 | Website: memory cap, load test, 10 MB | 2026-11-10 | Release build, real Kestrel server | [#227](https://github.com/andersoxie/xpact/issues/227), [load-test.md](../../website/docs/load-test.md), PR #268 |
 

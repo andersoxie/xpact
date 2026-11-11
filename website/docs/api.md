@@ -81,7 +81,8 @@ Returned as [RFC 9457 problem details](https://www.rfc-editor.org/rfc/rfc9457) (
 |---|---|
 | `400` | no document, an unknown build, a negative chunk size, or an unreadable request |
 | `413` | the document is larger than the limit (10 MB by default) |
-| `429` | more than 30 requests per minute from one IP |
+| `429` | more than 30 requests per minute from one IP, or this IP already has 2 documents being checked (`Retry-After` header) |
+| `503` | all workers busy: no worker free within 15 s, or more than 32 requests already waiting (`Retry-After` header) |
 
 ## Limits
 
@@ -92,7 +93,11 @@ All in `backend/src/Xpact.Api/appsettings.json`, section `Xpact`:
 | `MaxDocumentBytes` | 10,485,760 |
 | `TimeoutSeconds` | 10 |
 | `WorkerMemoryMb` | 512 |
+| `WorkerLowIntegrity` | `true`: worker with no privileges at Low integrity; turn off only on a host where this cannot work |
 | `MaxConcurrentWorkers` | 4 |
+| `MaxWorkersPerClient` | 2: workers one IP may use at once (more → 429) |
+| `QueueWaitSeconds` | 15: longest wait for a free worker (then 503) |
+| `MaxQueuedRequests` | 32: requests that may wait at once (more → 503 at once) |
 | `RequestsPerMinute` | 30 |
 | `MaxEvents` | 200 |
 | `KnownProxies` | `[]`: reverse proxies (IP addresses) whose `X-Forwarded-For` is trusted, besides one on the same machine |

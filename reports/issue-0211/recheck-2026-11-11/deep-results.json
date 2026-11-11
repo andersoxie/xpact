@@ -1,0 +1,37 @@
+[
+ {
+  "levels": 31,
+  "xpact": "accepted",
+  "xpact_code": null,
+  "xpact_msg": null,
+  "expat": "accepted"
+ },
+ {
+  "levels": 32,
+  "xpact": "accepted",
+  "xpact_code": null,
+  "xpact_msg": null,
+  "expat": "accepted"
+ },
+ {
+  "levels": 33,
+  "xpact": "rejected",
+  "xpact_code": 2,
+  "xpact_msg": "syntax error",
+  "expat": "accepted"
+ },
+ {
+  "levels": 40,
+  "xpact": "rejected",
+  "xpact_code": 2,
+  "xpact_msg": "syntax error",
+  "expat": "accepted"
+ },
+ {
+  "levels": 48,
+  "xpact": "rejected",
+  "xpact_code": 2,
+  "xpact_msg": "syntax error",
+  "expat": "accepted"
+ }
+]

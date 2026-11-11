@@ -43,7 +43,7 @@ export function Project() {
         <div className="grid grid-4">
           {WORK.map((w) => (
             <a key={w.area} className="card" href={w.href} style={{ color: "inherit" }}>
-              <h3 style={{ color: "var(--accent)" }}>{w.area} ↗</h3>
+              <h2 className="h3" style={{ color: "var(--accent)" }}>{w.area} ↗</h2>
               <p className="muted small">{w.what}</p>
             </a>
           ))}
@@ -119,7 +119,7 @@ export function Project() {
 function LinkCard({ title, href, text }: { title: string; href: string; text: string }) {
   return (
     <a className="card" href={href} style={{ color: "inherit" }}>
-      <h3 style={{ color: "var(--accent)" }}>{title} ↗</h3>
+      <h2 className="h3" style={{ color: "var(--accent)" }}>{title} ↗</h2>
       <p className="muted small">{text}</p>
     </a>
   );

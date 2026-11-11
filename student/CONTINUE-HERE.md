@@ -1,49 +1,57 @@
 # Continue here
 
-> Short and current: state on **2026-11-10** (week 8 of 8). Start with `git fetch --all`, then read
-> [PLAN.md](PLAN.md) ("Next", "Known problems") and [week-08](notes/weekly/week-08.md).
-> Rules: the repo's `CLAUDE.md` and [VERSIONING.md](VERSIONING.md).
+> Short and current: state on **2026-11-11, evening** (week 8 of 8). Handover from PC1 to **PC2**.
+> Start with `git fetch --all`, then read this file, [the full to-do list](notes/left-to-do-2026-11-11.md)
+> and [PLAN.md](PLAN.md) ("Next"). Rules: the repo's `CLAUDE.md` and [VERSIONING.md](VERSIONING.md).
 
 ## 1. Branches
 
-- Work branch: **`incremental-test`** on andersoxie/xpact (`origin`), since 2026-11-08. Not `student-Mass`.
-- `student-Mass` is fully contained in `incremental-test` (0 missing; `incremental-test` has 153 more).
-- `main` has 2 commits not in `incremental-test` (PR #254, Jenkins plots, 9 Nov). The student plans to merge
-  `incremental-test` into `main` on 2026-11-11. Claude never merges into or pushes to `main`.
-- CodTanium/mass-xpact is a mirror of andersoxie/xpact since 2026-11-09 (default `incremental-test`).
+- Work branch: **`incremental-test`** on andersoxie/xpact (`origin`). Not `student-Mass` (deleted), not CodTanium/mass-xpact.
+- `main` and `incremental-test` were equal on 2026-11-11 (`75600aa`, 0 / 0): PR #291 brought `main` in, then `main`
+  was fast-forwarded (student approved this one merge into `main`). After this handover PR, `incremental-test` is ahead
+  again; Claude asks before touching `main`.
+- Every PR merges with a **merge commit**, never squash.
 
 ## 2. State
 
 | Area | State |
 |---|---|
-| Full test rerun 2026-11-08 | ✅ no regression ([results](results/AlotOfTests-2026-11-08/README.md)); parser source unchanged since |
-| PR #251 (`main` into `incremental-test`) | ✅ Python tests 226 OK (212 before) |
-| PR #253, issue #252 (Boogie models) | ✅ merged; finds both old loop bugs, proves current code; 3 unstated facts open |
-| Website | ✅ built, Docker image `website-2026-11-09-*`; 🟡 not deployed |
-| mass-xpact#84 slow ISO-8859-1 in pieces | 🔴 still present (0.116 / 0.421 / 1.634 s for 64/128/256 KB) |
-| mass-xpact#73 DLL crash without trace | 🔴 still present (code unchanged) |
-| mass-xpact#20 heap corruption | ❔ not reproduced, inconclusive; cause unknown |
-| mass-xpact#75 thread safety | 🔴 not fixed |
-| SonarQube #131 | 🟡 student has a token; local scan tried 2026-11-10 |
+| Parser | unchanged since the full test rerun 2026-11-08 ✅ ([results](results/AlotOfTests-2026-11-08/README.md)) |
+| Website quality check 2026-11-11 | ✅ Lighthouse accessibility 100 (light + dark), speed 98-100; ZAP 0 medium; W3C HTML 0/0; 27/27 backend tests ([PLAN](PLAN.md#-website-quality-check-2026-11-11)) |
+| Website security review 2026-11-11 | ✅ findings 3-7 fixed (PR #288, #287); findings 1-2 fixed (#295, #297) ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)) |
+| Website worker rights | ✅ no privileges, Low integrity, started suspended (#299) |
+| Website Docker checklist | ✅ 5/5 on GitHub windows-2022 (PR #285) |
+| Website deployment | 🟡 not online; HTTPS, domain, `AllowedHosts` = Anders (#210) |
+| Jenkins Groovy tests (Anders, PR #280) | ✅ run locally 2026-11-11: plots 16/16, email 19/19; `validate_declarative` needs Jenkins jars |
+| [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces slow | 🔴 still present |
+| [#273](https://github.com/andersoxie/xpact/issues/273) DLL crash without trace | ✅ fixed: exceptions in a DLL call now return an error code ([report](../reports/issue-0273/report.md)) |
+| [#274](https://github.com/andersoxie/xpact/issues/274) not thread-safe | ✅ safe from many threads (calls take turns, no speed cost); 🟡 parallel parsing needs a multi-threaded runtime: ask Anders ([report](../reports/issue-0274/report.md)) |
+| [#211](https://github.com/andersoxie/xpact/issues/211) billion laughs | 🟡 rechecked 2026-11-11 on a fresh DLL: right error (code 43) ✅, still ~1.5 s vs Expat ~0.1 s ([recheck](../reports/issue-0211/recheck-2026-11-11/README.md)) |
+| [#293](https://github.com/andersoxie/xpact/issues/293) entity depth > 32 (found in the #211 recheck) | 🔴 well-formed documents nested 33+ levels rejected as "syntax error"; Expat accepts |
+| SonarQube #131 | 🔴 token gives HTTP 401; needs a new `squ_` token (log in at sonarqube.bsharp.se → My Account → Security) |
 
-The 9 open mass-xpact issues were closed as "not planned" without verification; the rows above are rechecks.
+## 3. Next (in this order)
 
-## 3. Next
+- [x] ✅ **Website finding 1:** memory cap fails closed (#295, 28/28 tests).
+- [x] ✅ **#211:** rerun on the current DLL (2026-11-11): code 43 ✅, but ~1.5 s (not "well under a second"), so left open. Ask Anders whether 1.5 s is acceptable.
+- [x] ✅ **Website finding 2:** 2 workers per IP (429), 15 s wait and a queue of 32 (503) (#297, 31/31 tests).
+- [x] ✅ **#273:** exception guard on all 49 native entry points (out of memory → `XML_ERROR_NO_MEMORY`).
+- [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard). 15 min
+- [ ] PR #276 (fair speed test, #275): review and merge, run it on an idle PC.
+- [ ] Before 27 Nov: refresh `report/ActualReport.md` and `ActualReportShorter.md` with the work after 2026-11-10.
+- Everything else, with times: [notes/left-to-do-2026-11-11.md](notes/left-to-do-2026-11-11.md).
 
-- [x] `main` = `incremental-test` (2026-11-10).
-- [x] ✅ **Fair speed test, xpact vs native Expat 2.8.1** ([#275](https://github.com/andersoxie/xpact/issues/275), done 2026-11-10): xpact 9–20× slower whole document (callbacks on), 21–43× in 1-byte pieces, median 18×; 0 checksum mismatches; ISO-8859-1 in pieces quadratic (#272). → [results](results/fair-speed-2026-11-10/README.md)
-  - Open an issue first. One C harness that loads `libexpat.dll` or `xpact.dll` through the same `expat.h` API (LoadLibrary), event checksum so both do the same work.
-  - Matrix: 5 shapes (elements, attributes, text, DTD + entities, namespaces) × 10 KB / 1 MB / 10 MB × whole, 64 KB, 4 KB, 256, 16, 1 byte × callbacks on/off, UTF-8; UTF-16 and ISO-8859-1 on one shape; assertions DLL on a subset. Median of 5+, alternating, warm-up.
-  - Expat DLL: `build\` is not committed; build it with `reports\issue-0121\expat-build.cmd` (Release). Build xpact once, record SHA-256 of all three DLLs.
-  - Starting points: `benchmarks/libexpat_c_benchmark.c`, `benchmarks/xpact_native_c_benchmark.c`. Estimate ~1 day work, 1–2 h machine time.
-- [ ] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test (in progress), load test, worker account (code part); HTTPS and deployment [#210](https://github.com/andersoxie/xpact/issues/210) are the supervisor's.
-- [ ] Open issues on andersoxie (12): #227, #210, #197, #211, #176, #171, #170, #126, #123, #131, #130, #13.
-- [x] ✅ Refiled mass-xpact #84, #73, #75 on andersoxie as [#272](https://github.com/andersoxie/xpact/issues/272), [#273](https://github.com/andersoxie/xpact/issues/273), [#274](https://github.com/andersoxie/xpact/issues/274) (2026-11-10).
-- [x] Reports updated to 2026-11-10 (weeks 1–8); update again if anything changes before 27 Nov.
+## 4. Setup on PC2
 
-## 4. Setup on a new PC
-
-1. Clone `https://github.com/andersoxie/xpact`, `git checkout incremental-test`.
+1. Clone `https://github.com/andersoxie/xpact`, `git checkout incremental-test` (or `git pull` if already cloned).
 2. Build the DLLs: `.\website\scripts\build-dll.ps1` (EiffelStudio 25.12 + MSVC `msc_vc140`).
-3. Website checks: `.\website\scripts\test.ps1`; run the site: `.\website\scripts\dev.ps1`.
-4. Skip the 45-minute W3C-in-pieces test unless a fix touches chunked input.
+3. Website checks: `.\website\scripts\test.ps1` (expect 27/27 + frontend build); run the site: `.\website\scripts\dev.ps1`,
+   or `.\website\scripts\publish.ps1` then `website\dist\Xpact.Api.exe --urls http://localhost:5099`.
+4. Jenkins Groovy tests: install Apache Groovy (6.0.0 used) + Java 21, then from the repo root
+   `groovy tests\jenkins\test_plot_report_publication.groovy` and `groovy tests\jenkins\test_email_notifications.groovy`.
+5. Website audit tools (nothing to install in the repo): `npx lighthouse@12 <url>` (set `CHROME_PATH` to Edge or Chrome),
+   `npm i vnu-jar` + `java -jar vnu.jar` (HTML/CSS), OWASP ZAP 2.17.0 cross-platform zip from
+   `gh release download -R zaproxy/zaproxy`, then `java -jar zap-2.17.0.jar -cmd -quickurl <url> -quickout report.json`.
+   How the 2026-11-11 check was done: [reports/issue-0286](../reports/issue-0286/report.md).
+6. Windows 11 **Home** cannot run Windows containers: Docker checks run in the GitHub workflow `website-docker.yml`.
+7. Skip the 45-minute W3C-in-pieces test unless a fix touches chunked input.

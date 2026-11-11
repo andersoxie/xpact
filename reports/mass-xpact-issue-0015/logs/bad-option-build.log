@@ -1,0 +1,24 @@
+﻿Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+xpact_native.c
+xpact_eiffel_runtime_bridge.c
+xpact_eiffel_dllmain.c
+ISE EiffelStudio version 25.12.9.8922 - win64
+
+C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\ec.exe: incorrect options
+
+Unknown option `-'.
+powershell.exe : Eiffel native library target compilation for Production generated no new C code (see the ec output 
+above).
+At line:1 char:557
++ ... tWriteTime; powershell.exe -NoProfile -File scripts\_t15_bad_option.p ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Eiffel native l... output above).:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\xpact\xpact-student-Mass\scripts\_t15_bad_option.ps1:160 char:3
++         throw "Eiffel native library target compilation for $BuildTie ...
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Eiffel native l... output above).:String) [], RuntimeException
+    + FullyQualifiedErrorId : Eiffel native library target compilation for Production generated no new C code (see the 
+    ec output above).
+ 

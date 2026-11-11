@@ -1,0 +1,5 @@
+﻿OWASP ZAP 2.17.0 quick scan (spider + active scan) of http://localhost:5099/
+Medium         CSP: Failure to Define Directive with No Fallback (1 instances)
+Medium         CSP: style-src unsafe-inline (1 instances)
+Informational  Information Disclosure - Suspicious Comments (1 instances)
+Informational  Modern Web Application (1 instances)

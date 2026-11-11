@@ -41,6 +41,10 @@ Implemented and verified now:
   reports for both finalized assertion modes and Jenkins publication.
 - An opt-in large XML benchmark runner for caller-supplied, pre-decompressed
   real corpora.
+- Safe use from several threads, each with its own parsers: calls take turns
+  inside the single-threaded Eiffel runtime, so they do not run in parallel (#274).
+- An internal Eiffel exception (for example out of memory) makes the call fail
+  with an error code instead of ending the process (#273).
 
 The upstream Expat 2.8.1 manifest currently has 399 `START_TEST(...)` entries.
 The expected-failure list expands to 86 rows:
@@ -66,7 +70,9 @@ Before calling xpact a credible drop-in replacement, the project still needs:
 - Linux/WSL packaging for an Eiffel-backed `libxpact.so`;
 - broader consumer ABI coverage across compilers and build systems;
 - a release decision on whether allocator-injection semantics are intentionally
-  unsupported or emulated at the C ABI boundary.
+  unsupported or emulated at the C ABI boundary;
+- parallel parsing on several threads: needs a multi-threaded Eiffel runtime
+  build (today calls are serialized, #274).
 
 ## Reading Order
 
@@ -188,6 +194,16 @@ Run benchmarks including the W3C XML conformance suite:
 The suite runs by default in both Jenkins benchmark pipelines. See
 [W3C conformance benchmarks](docs/w3c-xml-conformance.md) for the supported
 profile, offline setup, and detailed reports.
+
+> **Testing a DLL you already built (#302):** by default `run_benchmarks.ps1`
+> rebuilds `build\native-eiffel\*.dll` and rewrites `docs\benchmarks.md`. To test
+> the exact DLL you built and checked, and keep the docs, add
+> `-UseExistingNativeDll -NoDocsUpdate` (the page then goes to
+> `build\benchmarks\benchmarks.md`). These scripts also rebuild the DLL unless told
+> not to: `run_large_xml_benchmarks.ps1`, `run_chunked_crc_harness.ps1`,
+> `run_incremental_shim_audit.ps1`, `package_windows_release.ps1` (`-SkipBuild`)
+> and `run_libexpat_adapter.ps1` (`-SkipNativeBuild`). Check the DLL's SHA-256
+> before and after a run.
 
 Run the additional Eiffel/GCC comparison inside WSL2 (requires Linux
 EiffelStudio and Gobo Eiffel in that distribution):

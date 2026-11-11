@@ -34,12 +34,15 @@ try
 }
 catch (Exception e)
 {
+    // The details (DLL path, stack trace) go to stderr, which the API writes to its log;
+    // the visitor gets a generic message.
+    Console.Error.WriteLine(e);
     result = new ValidationResult
     {
         Build = options.Build,
         Verdict = Verdicts.Error,
         InputBytes = input.Length,
-        Diagnostic = $"{e.GetType().Name}: {e.Message}",
+        Diagnostic = "The parser could not run on the server (internal error).",
     };
 }
 

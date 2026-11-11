@@ -79,8 +79,10 @@ Behind a reverse proxy (IIS, nginx) on another address, add that address to `Xpa
 
 ## Check after the first run
 
-- [ ] `docker build` succeeds (base image tag matches the host)
-- [ ] `docker ps` shows the container as `healthy`
-- [ ] `curl.exe http://localhost:5099/api/info` shows both builds `"available":true`
-- [ ] `curl.exe -X POST http://localhost:5099/api/validate -H "Content-Type: application/xml" --data "<root/>junk"` gives `rejected`, code 9 (the worker and DLL run inside the container)
-- [ ] The memory cap still works inside the container (the worker's Job Object is nested in the container's own job)
+Checked by the `Website Docker image` workflow on every PR that touches the Dockerfile or the workflow (#284). First full pass: 2026-11-11, [run 42928039862](https://github.com/andersoxie/xpact/actions/runs/42928039862) (image `website-2026-11-09-4`, windows-2022): both builds available, `<root/>junk` rejected with code 9, `healthy`, and a 40 MB cap stops a nested-entity document (`crashed`) while the site keeps serving.
+
+- [x] `docker build` succeeds (base image tag matches the host)
+- [x] `docker ps` shows the container as `healthy`
+- [x] `curl.exe http://localhost:5099/api/info` shows both builds `"available":true`
+- [x] `curl.exe -X POST http://localhost:5099/api/validate -H "Content-Type: application/xml" --data "<root/>junk"` gives `rejected`, code 9 (the worker and DLL run inside the container)
+- [x] The memory cap still works inside the container (the worker's Job Object is nested in the container's own job)
