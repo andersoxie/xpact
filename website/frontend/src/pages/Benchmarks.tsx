@@ -112,6 +112,53 @@ export function Benchmarks() {
         </section>
       )}
 
+      {benchmarks.data?.fairSpeed && (
+        <section className="section">
+          <h2>Speed against native Expat 2.8.1</h2>
+          <p className="muted">
+            Both DLLs loaded by the same C program through the same <code>expat.h</code> API, 5 shapes × 3 sizes × 6
+            piece sizes, callbacks on and off. A ratio of 1 means as fast; 18 means 18 times slower.
+          </p>
+          <div className="grid grid-3">
+            <Stat label="Median ratio, xpact / Expat" value={`${benchmarks.data.fairSpeed.medianRatio}×`} sub={`over ${fmt.format(benchmarks.data.fairSpeed.cells)} measured cells`} />
+            <Stat label="Event checksum mismatches" value={fmt.format(benchmarks.data.fairSpeed.checksumMismatches)} sub="both parsers did the same work" />
+            <Stat label="Not compared" value={fmt.format(benchmarks.data.fairSpeed.notCompared)} sub="ISO-8859-1 in 1-16 byte pieces timed out (#272)" />
+          </div>
+          <div className="card" style={{ marginTop: 16 }}>
+            <h3 className="h3">Whole 1 MB documents (UTF-8)</h3>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Shape</th>
+                    <th className="num">Callbacks off</th>
+                    <th className="num">Callbacks on</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...new Set(benchmarks.data.fairSpeed.wholeDocument1MB.map((r) => r.shape))].map((shape) => {
+                    const cell = (on: boolean) =>
+                      benchmarks.data!.fairSpeed!.wholeDocument1MB.find((r) => r.shape === shape && r.callbacks === on);
+                    return (
+                      <tr key={shape}>
+                        <td>{shape}</td>
+                        <td className="num">{cell(false) ? `${cell(false)!.ratio}×` : "–"}</td>
+                        <td className="num">{cell(true) ? `${cell(true)!.ratio}×` : "–"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="small muted" style={{ marginTop: 10, marginBottom: 0 }}>
+              Measured {benchmarks.data.fairSpeed.generated}. <a href={benchmarks.data.fairSpeed.source}>Fair speed report</a>
+              {" · "}
+              <a href={benchmarks.data.fairSpeed.check}>Recheck after #273/#274</a>
+            </p>
+          </div>
+        </section>
+      )}
+
       {benchmarks.data && (
         <section className="section">
           <h2>Speed</h2>

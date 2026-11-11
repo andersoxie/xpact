@@ -241,12 +241,30 @@ curl -H "Content-Type: application/json" \\
                   <tr>
                     <td>Input declared ISO-8859-1 and fed in pieces is decoded again on every call</td>
                     <td>1 MB in 1 KB pieces: 46 s (Expat 0.2 s). UTF-8 and UTF-16 input in pieces is linear</td>
-                    <td><a href={LINKS.massIssue(84)}>mass-xpact#84</a></td>
+                    <td><a href={LINKS.issue(272)}>#272</a></td>
                   </tr>
                   <tr>
-                    <td>The DLL is not thread-safe</td>
-                    <td>Two threads, each with its own parser, crash it; use one thread at a time (Expat allows this)</td>
-                    <td><a href={LINKS.massIssue(75)}>mass-xpact#75</a></td>
+                    <td>Threads take turns</td>
+                    <td>
+                      Several threads, each with its own parser, are safe since #274, but their calls run one at a time
+                      (Expat parses in parallel)
+                    </td>
+                    <td><a href={LINKS.issue(304)}>#304</a></td>
+                  </tr>
+                  <tr>
+                    <td>Speed</td>
+                    <td>A median of 18 times slower than native Expat 2.8.1 through the same C API (see Benchmarks)</td>
+                    <td><a href={LINKS.issue(275)}>#275</a></td>
+                  </tr>
+                  <tr>
+                    <td>Entities nested more than 32 levels deep</td>
+                    <td>Rejected as &quot;syntax error&quot;; Expat accepts them</td>
+                    <td><a href={LINKS.issue(293)}>#293</a></td>
+                  </tr>
+                  <tr>
+                    <td>Billion-laughs documents</td>
+                    <td>Stopped with Expat&apos;s error, but after about 1.5 s (Expat about 0.1 s)</td>
+                    <td><a href={LINKS.issue(211)}>#211</a></td>
                   </tr>
                   <tr>
                     <td>Some error codes differ from Expat</td>

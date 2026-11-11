@@ -93,6 +93,17 @@ export interface Benchmarks {
     mibPerSecond: number;
     notes: string;
   }[];
+  /** Fair speed test (#275): xpact.dll vs libexpat.dll through the same C API; ratio = xpact time / Expat time. */
+  fairSpeed?: {
+    source: string;
+    check: string;
+    generated: string;
+    cells: number;
+    notCompared: number;
+    medianRatio: number;
+    checksumMismatches: number;
+    wholeDocument1MB: { shape: string; callbacks: boolean; ratio: number; xpactMs: number; expatMs: number }[];
+  };
 }
 
 export interface Metric {
