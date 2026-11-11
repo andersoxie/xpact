@@ -11,6 +11,7 @@ The versions up to 0.9.0 were assigned **afterwards** (2026-11-10) to commits th
 
 | Version | Date | Commit | In one line |
 |---|---|---|---|
+| [Unreleased](#unreleased-on-incremental-test-after-090) | 2026-11-11 | `incremental-test` | DLL exception guard and thread safety, website hardening, fair speed test |
 | [0.9.0](#090--2026-11-10) | 2026-11-10 | `1b8696f` | Launch candidate: website hardening tests, .NET tests in Jenkins, `main` = `incremental-test` |
 | [0.8.0](#080--2026-11-09) | 2026-11-09 | `68abdcb` | Boogie proofs of two parser loops; main's Gobo benchmark work merged |
 | [0.7.0](#070--2026-11-09) | 2026-11-09 | `f067a9d` | Final parser fully retested; website release and Docker image |
@@ -20,6 +21,17 @@ The versions up to 0.9.0 were assigned **afterwards** (2026-11-10) to commits th
 | [0.3.0](#030--2026-10-28) | 2026-10-28 | `293918f` | All 2,585 W3C cases run, 7 parser bugs fixed |
 | [0.2.0](#020--2026-10-23) | 2026-10-23 | `9e1747d` | Build and test-runner fixes; first student merge into `main` (#72) |
 | [0.1.0](#010--2026-10-14) | 2026-10-14 | `fee611a` | Baseline: the supervisor's XPact and the W3C benchmark runner |
+
+## Unreleased (on `incremental-test` after 0.9.0)
+
+Not tagged yet. The Eiffel parser classes are unchanged; the DLL bridge changed.
+
+- **DLL:** an Eiffel exception inside a call (e.g. out of memory) returns `XML_ERROR_NO_MEMORY` / `XML_ERROR_UNEXPECTED_STATE` instead of ending the process without a trace; `XPACT_EXCEPTION_TRACE=1` prints the trace (#273, PR #301).
+- **DLL:** safe from several threads, each with its own parsers: calls into the single-threaded Eiffel runtime take turns; no single-thread cost (#274, PR #303). Parallel parsing is an open question (#304).
+- **Website:** memory cap fails closed (#295), per-visitor worker cap and queue timeout/cap with 429/503 (#297), worker with no privileges at Low integrity, started suspended (#299).
+- **Speed:** fair test against native Expat 2.8.1 through the same C API, median 18× slower, 0 checksum mismatches (#275, PR #276).
+- **Tooling:** `run_benchmarks.ps1 -UseExistingNativeDll -NoDocsUpdate` (#302); evidence logs under `reports/` are committed (#306); benchmark scripts stop early on the Windows Store python alias, `XPACT_PYTHON` (#308).
+- **Findings:** #211 rechecked (right error, ~1.5 s); #293 entity depth > 32 rejected as "syntax error".
 
 ## 0.9.0 – 2026-11-10
 

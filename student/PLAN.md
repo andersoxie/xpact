@@ -225,19 +225,22 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 
 ## ➡️ Next
 
-**State 2026-11-11 (read first):**
+**State 2026-11-11, night (read first):**
 
 - [x] `main` and `incremental-test` synced 2026-11-11 (#290): PR #291 brought `main` (Jenkins plot fix) in, then `main` was fast-forwarded to `75600aa` (0 / 0; student approved).
-- [ ] **#211 may already be fixed** (code 43 amplification rule merged; website test saw "rejected" in 1.35 s): rerun its documents, close if fixed.
+- [x] ✅ #211 rechecked on a fresh DLL (PR #294): code 43 ✅, ~1.5 s vs Expat ~0.1 s 🟡, left open for the supervisor; found [#293](https://github.com/andersoxie/xpact/issues/293) (entity depth > 32 → "syntax error").
 - [x] Handover to PC2: [CONTINUE-HERE.md](CONTINUE-HERE.md) and [notes/left-to-do-2026-11-11.md](notes/left-to-do-2026-11-11.md).
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and the load test ([#255](https://github.com/andersoxie/xpact/issues/255)), 2026-11-10.
 - [x] ✅ **Website checked and fixed (2026-11-11)**: see "Website quality check" below. Merged: PR #282 (docs, #281), #285 (Docker checklist, #284), #288 (security findings 3-6, #283), #287 (quality, #286).
-- [ ] Website: code-review findings 1-2 ([security.md](../website/docs/security.md#findings-from-the-code-review-2026-11-11)): memory cap fails open, one visitor can keep all 4 workers busy; low-privilege worker account (code part ours, account on the supervisor's server). HTTPS, domain and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's; **set `AllowedHosts` to the real domain at deployment**, or the site answers 400.
+- [x] ✅ Website code-review findings 1-2 fixed: memory cap fails closed (#295, PR #296), per-visitor worker cap + queue timeout/cap (#297, PR #298); worker with no privileges at Low integrity (#299, PR #300).
+- [ ] Website: HTTPS, domain and deployment ([#210](https://github.com/andersoxie/xpact/issues/210)) are the supervisor's; **set `AllowedHosts` to the real domain at deployment**, or the site answers 400. Optional: a separate Windows account for the worker.
+- [x] ✅ DLL: [#273](https://github.com/andersoxie/xpact/issues/273) exceptions → error code (PR #301); [#274](https://github.com/andersoxie/xpact/issues/274) safe from many threads, calls serialized (PR #303); parallel parsing → question [#304](https://github.com/andersoxie/xpact/issues/304).
+- [x] ✅ Tooling: [#302](https://github.com/andersoxie/xpact/issues/302) `-UseExistingNativeDll -NoDocsUpdate` (PR #305); [#306](https://github.com/andersoxie/xpact/issues/306) report logs committed (PR #307); [#308](https://github.com/andersoxie/xpact/issues/308) Store python alias (PR #309).
 - [ ] Aikido: mark the 14 checksum alerts as false positives (student, in the Aikido dashboard).
-- [ ] Open issues on andersoxie (16 on 2026-11-11): #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
-- [x] ✅ Fair speed test vs Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275), PR #276): median 18× slower, 0 checksum mismatches → [results](results/fair-speed-2026-11-10/README.md)
+- [ ] Open issues on andersoxie (15 on 2026-11-11 night): #304, #293, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
+- [x] ✅ Fair speed test vs Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275), PR #276): median 18× slower, 0 checksum mismatches → [results](results/fair-speed-2026-11-10/README.md); after #273/#274: whole documents unchanged, 1-byte pieces 2-4 % ([check](../reports/issue-0276-check/README.md)). Rerun the full matrix on an idle PC before quoting final numbers.
 - [x] Refile mass-xpact #84, #73, #75 on andersoxie: [#272](https://github.com/andersoxie/xpact/issues/272), [#273](https://github.com/andersoxie/xpact/issues/273), [#274](https://github.com/andersoxie/xpact/issues/274). #20 stays inconclusive and is not refiled.
-- [x] `report/ActualReport.md` and `ActualReportShorter.md` updated with week 8 (PR #269, state 2026-11-10). Refresh again if anything changes before the hand-in (27 November).
+- [x] `report/ActualReport.md` and `ActualReportShorter.md` updated with 2026-11-11 (website findings, worker rights, #273, #274, #275, tooling).
 - Items 0-13 below are history and older to-dos; item 12 is replaced by this list where they overlap.
 
 ### ✅ Website quality check (2026-11-11)

@@ -1,6 +1,14 @@
 # Versioning workflow
 
-> **Last updated:** 2026-10-22 · describes `student-Mass` @ `76ac272`
+> **Last updated:** 2026-11-11 · the rules below were written for `student-Mass` (2026-10-22); the box says what changed since.
+
+> ### ✅ Current rules (2026-11-11, these win over anything older below)
+> - **Branch:** all work goes into **`incremental-test`** on andersoxie/xpact. `student-Mass` was deleted. **Never touch `main`.**
+> - **Merging:** every pull request is merged with a **merge commit, never squash** (`gh pr merge <n> --merge`). Do **not** use `fix.ps1 merge`: it squashes. Between `main` and `incremental-test` only merge commits or fast-forward.
+> - **Who merges:** since 2026-11-11 Claude merges its own verified pull requests into `incremental-test` (student's decision), then pulls, reruns the checks on the merged commit and only then closes the issue.
+> - **Conflicts:** merge `incremental-test` into the fix branch (a merge commit), never rebase a pushed branch.
+> - **Evidence:** logs under `reports/` are committed (`.gitignore` exception since #306). Benchmark/W3C runs on a tested DLL: `run_benchmarks.ps1 -UseExistingNativeDll -NoDocsUpdate` (#302).
+> - Rules 1, 2, 5 and 7 below still apply; in rules 3 and 6 read `incremental-test` for `student-Mass`. Rule 4: the issue number in the commit subject (`... (#273)`) counts as well as a `Refs #273` line; both are found with `git log --grep "#273"`.
 
 Every fix should be **traceable** (you can see which issue it belongs to and
 why it was made), **tested** (the evidence is in the repository) and **easy to
@@ -15,16 +23,17 @@ revert** (one commit undoes it). This page describes how that is done on
 2. **One issue per fix.** Every fix starts from a GitHub issue that describes
    the problem.
 3. **One branch per fix:** `fix/<issue>-<short-name>`, e.g.
-   `fix/2-include-fallback`, always created from the latest `student-Mass`.
+   `fix/2-include-fallback`, always created from the latest `incremental-test`
+   (was `student-Mass` until 2026-11-10).
 4. **Every commit names its issue** with `Refs #<issue>` on the last line.
 5. **Every fix has its own folder** `reports/issue-<NNNN>/` (issue number padded
    to four digits, e.g. `reports/issue-0002/`). It holds `report.md` with a
    `## Verification` section (the exact command, the result and the exit
    status) and the logs as `<what>.txt`. Add the fix to the index in
    [`reports/README.md`](../reports/README.md).
-6. **Every fix goes through a pull request** into `student-Mass`, and is
-   **squash-merged**. So each fix becomes exactly one commit on `student-Mass`,
-   with the pull request number in its subject.
+6. **Every fix goes through a pull request** into `incremental-test` and is
+   merged with a **merge commit** (never squash, since 2026-11-10). Until then
+   pull requests into `student-Mass` were squash-merged.
 7. **Undo with `git revert`, never by rewriting history.** No force pushes and
    no `git reset` on `student-Mass`. A revert is a fix of its own, with its own
    branch, report and pull request.
@@ -93,7 +102,9 @@ git branch -D fix/29-w3c-assertions
 
 ## Who merges, and pull requests that build on each other
 
-- **Claude opens pull requests but does not merge them.** The student reviews
+- ⚠️ *Changed 2026-11-11: Claude now merges its own verified pull requests into
+  `incremental-test` with a merge commit (see the box at the top).* Before that:
+  **Claude opens pull requests but does not merge them.** The student reviews
   the diff and the test evidence, then merges (`gh pr merge <n> --squash` or
   the button on GitHub). This is the review step of `CLAUDE.md` ("Review the
   diff before committing or merging").
