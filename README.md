@@ -204,6 +204,10 @@ profile, offline setup, and detailed reports.
 > `run_incremental_shim_audit.ps1`, `package_windows_release.ps1` (`-SkipBuild`)
 > and `run_libexpat_adapter.ps1` (`-SkipNativeBuild`). Check the DLL's SHA-256
 > before and after a run.
+>
+> **Python (#308):** `run_benchmarks.ps1` and `run_large_xml_benchmarks.ps1` use
+> `$env:XPACT_PYTHON` if set, otherwise `python` from PATH. They stop at once if
+> that is the Microsoft Store alias (`...\WindowsApps\python.exe`).
 
 Run the additional Eiffel/GCC comparison inside WSL2 (requires Linux
 EiffelStudio and Gobo Eiffel in that distribution):
