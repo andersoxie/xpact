@@ -80,6 +80,12 @@ Package the Windows-only native release with:
 .\scripts\package_windows_release.ps1
 ```
 
+Threads (#274): every trampoline in `xpact_eiffel_runtime_bridge.c` holds one
+process-wide, re-entrant lock while it is inside Eiffel, because the Eiffel runtime
+is built with `concurrency support="none"`. Several threads, each with its own
+parser, are safe (they take turns); a handler may call back into xpact on its own
+thread. Measured cost for a single thread: none (median of 5 alternating runs).
+
 Internal failures (#273): every entry feature of `XP_NATIVE_BRIDGE_INSTALLER` has a
 `rescue`/`retry` guard. An Eiffel exception inside a DLL call (for example "No more memory",
 or a contract violation in `xpact_assertions.dll`) no longer ends the process: the call

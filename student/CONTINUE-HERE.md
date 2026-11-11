@@ -25,7 +25,7 @@
 | Jenkins Groovy tests (Anders, PR #280) | ✅ run locally 2026-11-11: plots 16/16, email 19/19; `validate_declarative` needs Jenkins jars |
 | [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces slow | 🔴 still present |
 | [#273](https://github.com/andersoxie/xpact/issues/273) DLL crash without trace | ✅ fixed: exceptions in a DLL call now return an error code ([report](../reports/issue-0273/report.md)) |
-| [#274](https://github.com/andersoxie/xpact/issues/274) not thread-safe | 🔴 not fixed |
+| [#274](https://github.com/andersoxie/xpact/issues/274) not thread-safe | ✅ safe from many threads (calls take turns, no speed cost); 🟡 parallel parsing needs a multi-threaded runtime: ask Anders ([report](../reports/issue-0274/report.md)) |
 | [#211](https://github.com/andersoxie/xpact/issues/211) billion laughs | 🟡 rechecked 2026-11-11 on a fresh DLL: right error (code 43) ✅, still ~1.5 s vs Expat ~0.1 s ([recheck](../reports/issue-0211/recheck-2026-11-11/README.md)) |
 | [#293](https://github.com/andersoxie/xpact/issues/293) entity depth > 32 (found in the #211 recheck) | 🔴 well-formed documents nested 33+ levels rejected as "syntax error"; Expat accepts |
 | SonarQube #131 | 🔴 token gives HTTP 401; needs a new `squ_` token (log in at sonarqube.bsharp.se → My Account → Security) |
