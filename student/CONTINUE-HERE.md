@@ -24,7 +24,7 @@
 | Website deployment | 🟡 not online; HTTPS, domain, `AllowedHosts` = Anders (#210) |
 | Jenkins Groovy tests (Anders, PR #280) | ✅ run locally 2026-11-11: plots 16/16, email 19/19; `validate_declarative` needs Jenkins jars |
 | [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces slow | 🔴 still present |
-| [#273](https://github.com/andersoxie/xpact/issues/273) DLL crash without trace | 🔴 still present |
+| [#273](https://github.com/andersoxie/xpact/issues/273) DLL crash without trace | ✅ fixed: exceptions in a DLL call now return an error code ([report](../reports/issue-0273/report.md)) |
 | [#274](https://github.com/andersoxie/xpact/issues/274) not thread-safe | 🔴 not fixed |
 | [#211](https://github.com/andersoxie/xpact/issues/211) billion laughs | 🟡 rechecked 2026-11-11 on a fresh DLL: right error (code 43) ✅, still ~1.5 s vs Expat ~0.1 s ([recheck](../reports/issue-0211/recheck-2026-11-11/README.md)) |
 | [#293](https://github.com/andersoxie/xpact/issues/293) entity depth > 32 (found in the #211 recheck) | 🔴 well-formed documents nested 33+ levels rejected as "syntax error"; Expat accepts |
@@ -35,7 +35,7 @@
 - [x] ✅ **Website finding 1:** memory cap fails closed (#295, 28/28 tests).
 - [x] ✅ **#211:** rerun on the current DLL (2026-11-11): code 43 ✅, but ~1.5 s (not "well under a second"), so left open. Ask Anders whether 1.5 s is acceptable.
 - [x] ✅ **Website finding 2:** 2 workers per IP (429), 15 s wait and a queue of 32 (503) (#297, 31/31 tests).
-- [ ] **#273:** exception guard on every exported DLL function. ~1 day
+- [x] ✅ **#273:** exception guard on all 49 native entry points (out of memory → `XML_ERROR_NO_MEMORY`).
 - [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard). 15 min
 - [ ] PR #276 (fair speed test, #275): review and merge, run it on an idle PC.
 - [ ] Before 27 Nov: refresh `report/ActualReport.md` and `ActualReportShorter.md` with the work after 2026-11-10.
