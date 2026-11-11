@@ -25,12 +25,13 @@
 | [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces slow | 🔴 still present |
 | [#273](https://github.com/andersoxie/xpact/issues/273) DLL crash without trace | 🔴 still present |
 | [#274](https://github.com/andersoxie/xpact/issues/274) not thread-safe | 🔴 not fixed |
-| [#211](https://github.com/andersoxie/xpact/issues/211) billion laughs | ❓ maybe already fixed (code 43 rule merged; website test saw "rejected" in 1.35 s): **recheck first** |
+| [#211](https://github.com/andersoxie/xpact/issues/211) billion laughs | 🟡 rechecked 2026-11-11 on a fresh DLL: right error (code 43) ✅, still ~1.5 s vs Expat ~0.1 s ([recheck](../reports/issue-0211/recheck-2026-11-11/README.md)) |
+| [#293](https://github.com/andersoxie/xpact/issues/293) entity depth > 32 (found in the #211 recheck) | 🔴 well-formed documents nested 33+ levels rejected as "syntax error"; Expat accepts |
 | SonarQube #131 | 🔴 token gives HTTP 401; needs a new `squ_` token (log in at sonarqube.bsharp.se → My Account → Security) |
 
 ## 3. Next (in this order)
 
-- [ ] **#211:** rerun its documents on the current DLL; close it if they stop with code 43 quickly. ~1 h
+- [x] ✅ **#211:** rerun on the current DLL (2026-11-11): code 43 ✅, but ~1.5 s (not "well under a second"), so left open. Ask Anders whether 1.5 s is acceptable.
 - [ ] **Website finding 1:** memory cap must fail closed. ~2 h
 - [ ] **Website finding 2:** worker slot wait with timeout (503) and a queue cap. ~4-6 h
 - [ ] **#273:** exception guard on every exported DLL function. ~1 day
