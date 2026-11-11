@@ -34,6 +34,9 @@ if ($Repetitions -le 0) {
 }
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
+# Check Python before any long build step (#308).
+. (Join-Path $PSScriptRoot "resolve_python.ps1")
+$Python = Resolve-XpactPython
 $OutputRoot = Join-Path $RepoRoot $OutputDir
 New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
 $W3cOutputRoot = Join-Path $OutputRoot "w3c-xml-conformance"
@@ -328,7 +331,6 @@ if (-not $SkipBuild) {
 	}
 }
 
-$Python = (Get-Command python -ErrorAction Stop).Source
 $PythonVersion = (& $Python --version 2>&1 | Out-String).Trim()
 $ExpatVersion = (& $Python (Join-Path $RepoRoot "benchmarks\libexpat_py_benchmark.py") --version 2>&1 | Out-String).Trim()
 $DocumentBytes = Get-SampleDocumentBytes
