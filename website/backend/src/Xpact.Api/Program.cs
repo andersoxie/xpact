@@ -50,6 +50,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
 // requests outside Development; behind a proxy, X-Forwarded-Proto tells the API the visitor used HTTPS.
 builder.Services.AddHsts(o => o.MaxAge = TimeSpan.FromDays(365));
 builder.Services.AddSingleton<IWorkerLimiter, JobObjectWorkerLimiter>();
+builder.Services.AddSingleton<IWorkerLauncher>(sp =>
+    new WorkerLauncher(sp.GetRequiredService<IOptions<XpactOptions>>().Value.WorkerLowIntegrity));
 builder.Services.AddSingleton<IWorkerRunner, WorkerRunner>();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(o => o.AddPolicy("dev", p => p.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
