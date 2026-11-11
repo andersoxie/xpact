@@ -1,0 +1,50 @@
+{
+  "expat_version": "expat_2.8.5",
+  "rows": [
+    {
+      "levels": 3,
+      "input_bytes": 181,
+      "expands_to_bytes": 10000,
+      "xpact": "accepted",
+      "xpact_ms": 232,
+      "expat": "accepted",
+      "expat_ms": 0
+    },
+    {
+      "levels": 4,
+      "input_bytes": 225,
+      "expands_to_bytes": 100000,
+      "xpact": "accepted",
+      "xpact_ms": 139,
+      "expat": "accepted",
+      "expat_ms": 2
+    },
+    {
+      "levels": 5,
+      "input_bytes": 269,
+      "expands_to_bytes": 1000000,
+      "xpact": "accepted",
+      "xpact_ms": 340,
+      "expat": "accepted",
+      "expat_ms": 16
+    },
+    {
+      "levels": 6,
+      "input_bytes": 313,
+      "expands_to_bytes": 10000000,
+      "xpact": "rejected (amplification limit breached)",
+      "xpact_ms": 1536,
+      "expat": "rejected (limit on input amplification factor (from DTD and entities) breached)",
+      "expat_ms": 98
+    },
+    {
+      "levels": 8,
+      "input_bytes": 401,
+      "expands_to_bytes": 1000000000,
+      "xpact": "rejected (amplification limit breached)",
+      "xpact_ms": 1537,
+      "expat": "rejected (limit on input amplification factor (from DTD and entities) breached)",
+      "expat_ms": 98
+    }
+  ]
+}
