@@ -101,4 +101,5 @@ All in `backend/src/Xpact.Api/appsettings.json`, section `Xpact`:
 | `RequestsPerMinute` | 30 |
 | `MaxEvents` | 200 |
 | `KnownProxies` | `[]`: reverse proxies (IP addresses) whose `X-Forwarded-For` is trusted, besides one on the same machine |
+| `KnownNetworks` | `[]`: networks (CIDR, e.g. `10.0.0.0/24`) whose proxies are trusted; for a proxy whose address changes. Setup table: [docker.md](docker.md#behind-a-reverse-proxy) |
 | `Builds` | `production` → `native/xpact.dll`, `assertions` → `native/xpact_assertions.dll` |

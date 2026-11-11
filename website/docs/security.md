@@ -24,6 +24,8 @@ The site runs a parser on documents from strangers. These are the protections, a
 
 - [ ] HTTPS: terminate TLS at the host (IIS, a reverse proxy or App Service). Kestrel runs plain HTTP here. **Handled by the supervisor on the server.**
 - [x] Behind a proxy, configure forwarded headers, so the rate limit sees the real client IP ([#224](https://github.com/andersoxie/xpact/issues/224)): automatic for a proxy on the same machine; list other proxies in `Xpact:KnownProxies`.
+- [x] A proxy that is not trusted is no longer silent: the log names it once and says which setting to change; `Xpact:KnownNetworks` for proxies in a range; a mistyped address stops the start ([docker.md](docker.md#behind-a-reverse-proxy)). Tests: `Only_trusted_proxies_pass_on_the_visitor_address`, `A_mistyped_proxy_setting_stops_the_start_with_a_clear_message`.
+- [ ] **At deployment:** choose the proxy setting from the table in [docker.md](docker.md#behind-a-reverse-proxy) (supervisor's server).
 - [x] Test the memory cap with a document that actually reaches it ([#227](https://github.com/andersoxie/xpact/issues/227)).
 - [x] ✅ The worker runs with **no privileges at Low integrity** (#299, [report](../../reports/issue-0299/report.md)): it cannot write to the API account's files, registry or processes. A separate low-privilege Windows account (needs the hosting/supervisor) would add more; optional.
 - [x] Load test: how many visitors at once before the 4-worker queue becomes slow ([load-test.md](load-test.md): ~31-40 requests/s, no failures up to 32 at once).

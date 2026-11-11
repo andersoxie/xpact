@@ -75,7 +75,17 @@ docker run -d -p 5099:8080 `
   xpact-website
 ```
 
-Behind a reverse proxy (IIS, nginx) on another address, add that address to `Xpact__KnownProxies__0`, or the rate limit counts all visitors as one ([security.md](security.md)).
+### Behind a reverse proxy
+
+The site must know each visitor's real address, or the rate limit (30 per minute) and the per-visitor worker share (2 of 4) apply to **all visitors together**. Which setting you need:
+
+| Setup | Setting |
+|---|---|
+| IIS on the same machine (ASP.NET Core Module), or nginx on the same machine | nothing: a proxy on this machine is trusted automatically |
+| A proxy on another machine with a fixed address | `Xpact__KnownProxies__0=<its address>` (more: `__1`, `__2`, …) |
+| A proxy whose address changes (load balancer, a Docker network: IIS on the host in front of this container) | `Xpact__KnownNetworks__0=<range>`, e.g. `172.16.0.0/12` for Docker's default networks |
+
+If it is not set up, the server log says so once per proxy address: *"X-Forwarded-For from … was ignored: that address is not trusted …"*. A mistyped address stops the start with a message naming it.
 
 ## Check after the first run
 
