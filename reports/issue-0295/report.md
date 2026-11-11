@@ -15,7 +15,7 @@
 | Run | Result |
 |---|---|
 | New test on **fail-open** code (temporary change, reverted) | ❌ fails as it should: verdict `accepted`, expected `error` |
-| `test.ps1` with the fix | ✅ 28/28 backend tests, frontend build ok ([log](test-website-2026-11-11.log)) |
+| `test.ps1` with the fix | ✅ 28/28 backend tests, frontend build ok ([log](test-website-2026-11-11.txt)) |
 
 ## Limitations
 - The failure is simulated with a test limiter; a real `AssignProcessToJobObject` failure was not produced on this PC.
