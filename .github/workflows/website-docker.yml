@@ -22,7 +22,7 @@ permissions:
   packages: write
 
 env:
-  WEBSITE_RELEASE: website-2026-11-09-4
+  WEBSITE_RELEASE: website-2026-11-11-1
   IMAGE: ghcr.io/andersoxie/xpact-website
 
 jobs:
@@ -86,7 +86,8 @@ jobs:
         shell: pwsh
         run: |
           # Nested entities, 10 levels x 10 (#211, #227): rejected under the normal 512 MB cap,
-          # but the worker needs more than 40 MB on the way, so a 40 MB cap must stop it ("crashed").
+          # but the worker needs more than 40 MB on the way, so a 40 MB cap must stop it. Since #273 the DLL
+          # reports that as XML_ERROR_NO_MEMORY (rejected, code 1); before, the worker died ("crashed").
           $sb = [Text.StringBuilder]::new('<!DOCTYPE r [<!ENTITY a0 "xxxxxxxxxx">')
           foreach ($i in 1..9) { [void]$sb.Append("<!ENTITY a$i `"").Append(("&a$($i - 1);" * 10)).Append('">') }
           $laughs = $sb.Append(']><r>&a9;</r>').ToString()
@@ -100,12 +101,12 @@ jobs:
           Start-Site capped 5102 @("-e", "Xpact__WorkerMemoryMb=40")
           $n = Send 5101 $laughs; "512 MB cap: verdict=$($n.verdict)"
           $s = Send 5102 '<a/>';  "40 MB cap, tiny document: verdict=$($s.verdict)"
-          $c = Send 5102 $laughs; "40 MB cap, nested entities: verdict=$($c.verdict)"
+          $c = Send 5102 $laughs; "40 MB cap, nested entities: verdict=$($c.verdict) code=$($c.error.code)"
           $after = Send 5102 '<a/>'; "40 MB cap, afterwards: verdict=$($after.verdict)"
           docker rm -f normal capped | Out-Null
           if ($n.verdict -ne "rejected") { throw "expected rejected under the 512 MB cap" }
           if ($s.verdict -ne "accepted") { throw "a tiny document must still work under a 40 MB cap" }
-          if ($c.verdict -ne "crashed") { throw "expected the 40 MB cap to stop the worker (crashed), got $($c.verdict)" }
+          if ($c.verdict -ne "rejected" -or $c.error.code -ne 1) { throw "expected the 40 MB cap to stop the document with out of memory (rejected, code 1), got $($c.verdict) $($c.error.code)" }
           if ($after.verdict -ne "accepted") { throw "the site must keep serving after the worker was stopped" }
 
       - name: Publish to GitHub Container Registry

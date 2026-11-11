@@ -89,7 +89,7 @@ If it is not set up, the server log says so once per proxy address: *"X-Forwarde
 
 ## Check after the first run
 
-Checked by the `Website Docker image` workflow on every PR that touches the Dockerfile or the workflow (#284). First full pass: 2026-11-11, [run 42928039862](https://github.com/andersoxie/xpact/actions/runs/42928039862) (image `website-2026-11-09-4`, windows-2022): both builds available, `<root/>junk` rejected with code 9, `healthy`, and a 40 MB cap stops a nested-entity document (`crashed`) while the site keeps serving.
+Checked by the `Website Docker image` workflow on every PR that touches the Dockerfile or the workflow (#284). First full pass: 2026-11-11, [run 42928039862](https://github.com/andersoxie/xpact/actions/runs/42928039862) (image `website-2026-11-09-4`, windows-2022): both builds available, `<root/>junk` rejected with code 9, `healthy`, and a 40 MB cap stops a nested-entity document (`crashed`) while the site keeps serving. From `website-2026-11-11-1` (with #273) the same document is stopped with **`rejected`, code 1 (out of memory)** instead of `crashed`; the workflow checks that.
 
 - [x] `docker build` succeeds (base image tag matches the host)
 - [x] `docker ps` shows the container as `healthy`
