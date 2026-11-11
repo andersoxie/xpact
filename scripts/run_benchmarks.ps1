@@ -6,6 +6,11 @@ param(
 	[ValidateSet("Finalized", "FinalizedAssertions", "Workbench")]
 	[string[]] $EiffelBuild = @("Finalized", "FinalizedAssertions"),
 	[switch] $SkipBuild,
+	# Use the DLLs already in build\native-eiffel (built and tested before) instead of rebuilding them;
+	# the Eiffel benchmark programs are still built. Stops if a DLL is missing (#302).
+	[switch] $UseExistingNativeDll,
+	# Write the benchmark page only to the output folder, not to docs\benchmarks.md (#302).
+	[switch] $NoDocsUpdate,
 	[switch] $SkipWslC,
 	[switch] $SkipNativeXpactC,
 	[string] $W3cSuiteDirectory = "",
@@ -191,6 +196,16 @@ function Invoke-VcCommand {
 
 # DLL tiers built during this run, so that -W3cAllCases does not build one twice.
 $BuiltNativeTiers = @{}
+$BuildNativeDll = -not $SkipBuild -and -not $UseExistingNativeDll
+if ($UseExistingNativeDll) {
+	foreach ($Library in @("xpact.dll", "xpact_assertions.dll")) {
+		$Existing = Join-Path $RepoRoot "build\native-eiffel\$Library"
+		if (Test-Path -LiteralPath $Existing -PathType Leaf) {
+			$Hash = (Get-FileHash -LiteralPath $Existing -Algorithm SHA256).Hash
+			Write-Host "Using existing $Library (SHA-256 $Hash), not rebuilding it"
+		}
+	}
+}
 
 function Get-W3cEntityChecker {
 	# Build the Expat-API W3C checker against the DLL tier that matches an Eiffel build.
@@ -199,7 +214,7 @@ function Get-W3cEntityChecker {
 	$Library = if ($Tier -eq "Production") { "xpact" } else { "xpact_assertions" }
 	$NativeRoot = Join-Path $RepoRoot "build\native-eiffel"
 	$Dll = Join-Path $NativeRoot "$Library.dll"
-	if (-not $SkipBuild -and -not $BuiltNativeTiers.ContainsKey($Tier)) {
+	if ($BuildNativeDll -and -not $BuiltNativeTiers.ContainsKey($Tier)) {
 		# Build and compiler output goes to the host; the function returns only the checker path.
 		& powershell -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "build_native_eiffel.ps1") -BuildTier $Tier | Out-Host
 		if ($LASTEXITCODE -ne 0) {
@@ -368,7 +383,7 @@ if (-not $SkipNativeXpactC) {
 		$WindowsNativeRoot = Join-Path $RepoRoot "build\native-eiffel"
 		$WindowsNativeLib = Join-Path $WindowsNativeRoot "xpact.lib"
 		$WindowsNativeDll = Join-Path $WindowsNativeRoot "xpact.dll"
-		if (-not $SkipBuild) {
+		if ($BuildNativeDll) {
 			& powershell -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "build_native_eiffel.ps1") -SkipSmoke
 			if ($LASTEXITCODE -ne 0) {
 				throw "Eiffel-backed Windows DLL build failed."
@@ -616,7 +631,13 @@ if (-not [string]::IsNullOrWhiteSpace($ExistingHistory)) {
 	}
 }
 
-$Markdown | Set-Content -LiteralPath $MarkdownPath -Encoding UTF8
+# Always keep a copy with the run's output; docs\benchmarks.md only without -NoDocsUpdate (#302).
+$Markdown | Set-Content -LiteralPath (Join-Path $OutputRoot "benchmarks.md") -Encoding UTF8
+if ($NoDocsUpdate) {
+	Write-Host "Benchmark page written to $(Join-Path $OutputRoot 'benchmarks.md'); docs\benchmarks.md unchanged (-NoDocsUpdate)"
+} else {
+	$Markdown | Set-Content -LiteralPath $MarkdownPath -Encoding UTF8
+}
 
 Write-Host "Benchmark medians written to $MarkdownPath"
 Write-Host "Raw benchmark rows written to $TsvPath"

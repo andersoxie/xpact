@@ -195,6 +195,16 @@ The suite runs by default in both Jenkins benchmark pipelines. See
 [W3C conformance benchmarks](docs/w3c-xml-conformance.md) for the supported
 profile, offline setup, and detailed reports.
 
+> **Testing a DLL you already built (#302):** by default `run_benchmarks.ps1`
+> rebuilds `build\native-eiffel\*.dll` and rewrites `docs\benchmarks.md`. To test
+> the exact DLL you built and checked, and keep the docs, add
+> `-UseExistingNativeDll -NoDocsUpdate` (the page then goes to
+> `build\benchmarks\benchmarks.md`). These scripts also rebuild the DLL unless told
+> not to: `run_large_xml_benchmarks.ps1`, `run_chunked_crc_harness.ps1`,
+> `run_incremental_shim_audit.ps1`, `package_windows_release.ps1` (`-SkipBuild`)
+> and `run_libexpat_adapter.ps1` (`-SkipNativeBuild`). Check the DLL's SHA-256
+> before and after a run.
+
 Run the additional Eiffel/GCC comparison inside WSL2 (requires Linux
 EiffelStudio and Gobo Eiffel in that distribution):
 

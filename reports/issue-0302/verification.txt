@@ -1,0 +1,12 @@
+rc=0
+DLL before: adae03d277752a2c 75f43a5b8ee7726a 
+DLL after:  adae03d277752a2c 75f43a5b8ee7726a 
+docs before 74e1012589e9b0d0 after 74e1012589e9b0d0
+Using existing xpact.dll (SHA-256 ADAE03D277752A2C996A83E3F0FEFB57C9EFD6747A6D2709CC5B5DAA28A3E8A5), not rebuilding it
+Using existing xpact_assertions.dll (SHA-256 75F43A5B8EE7726A059CF9FEF0396183762184FBDDA52B55FCF2E4AEC6A755BC), not rebuilding it
+Benchmark page written to C:\xpact\xpact-student-Mass\build\benchmarks\benchmarks.md; docs\benchmarks.md unchanged (-NoDocsUpdate)
+{"engine": "Finalized", "total": 2585, "passed": 2283, "no_crash_only": 302, "failed": 0, "errors": 0, "skipped": 0, "accepted": 1
+{"engine": "FinalizedAssertions", "total": 2585, "passed": 2283, "no_crash_only": 302, "failed": 0, "errors": 0, "skipped": 0, "ac
+build/benchmarks/benchmarks.md
+
+[exited with code 0]
