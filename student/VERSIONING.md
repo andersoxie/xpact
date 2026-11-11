@@ -7,7 +7,7 @@
 > - **Merging:** every pull request is merged with a **merge commit, never squash** (`gh pr merge <n> --merge`). `fix.ps1 merge` does the same since #318 (before that it squashed into `student-Mass`); it refuses `-Base main` and a pull request whose base is not `incremental-test`. Between `main` and `incremental-test` only merge commits or fast-forward.
 > - **Who merges:** since 2026-11-11 Claude merges its own verified pull requests into `incremental-test` (student's decision), then pulls, reruns the checks on the merged commit and only then closes the issue.
 > - **Conflicts:** merge `incremental-test` into the fix branch (a merge commit), never rebase a pushed branch.
-> - **Evidence:** logs under `reports/` are committed (`.gitignore` exception since #306). Benchmark/W3C runs on a tested DLL: `run_benchmarks.ps1 -UseExistingNativeDll -NoDocsUpdate` (#302).
+> - **Evidence:** logs under `reports/` are committed (`.gitignore` exception since #306). Benchmark/W3C runs on a tested DLL: `run_benchmarks.ps1 -UseExistingNativeDll -NoDocsUpdate` (#302), with `$env:XPACT_FROZEN_DLL = "1"` so no runner can rebuild the DLL by accident (#319).
 > - Rules 1, 2, 5 and 7 below still apply; in rules 3 and 6 read `incremental-test` for `student-Mass`. Rule 4: the issue number in the commit subject (`... (#273)`) counts as well as a `Refs #273` line; both are found with `git log --grep "#273"`.
 
 Every fix should be **traceable** (you can see which issue it belongs to and
