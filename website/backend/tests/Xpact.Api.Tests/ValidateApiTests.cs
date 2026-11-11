@@ -236,9 +236,11 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(Verdicts.Rejected, (await PostJson(Client(), new { xml = laughs })).Verdict);
 
         var stopped = await PostJson(capped, new { xml = laughs });
-        Assert.True(stopped.Verdict == Verdicts.Crashed, $"{stopped.Verdict}: {stopped.Diagnostic}");
-        // The worker's own error output ("PANIC: main entry point vanished") stays in the server log (#283).
-        Assert.DoesNotContain("PANIC", stopped.Diagnostic);
+        // Since #273 the DLL catches the Eiffel "No more memory" exception and reports Expat's
+        // XML_ERROR_NO_MEMORY; before, the worker died with "PANIC: main entry point vanished" (crashed).
+        Assert.True(stopped.Verdict == Verdicts.Rejected, $"{stopped.Verdict}: {stopped.Diagnostic}");
+        Assert.Equal(1, stopped.Error!.Code);          // XML_ERROR_NO_MEMORY
+        Assert.DoesNotContain("PANIC", stopped.Diagnostic ?? "");
 
         // The API keeps serving after the worker was stopped.
         Assert.Equal(Verdicts.Accepted, (await PostJson(capped, new { xml = "<a/>" })).Verdict);
