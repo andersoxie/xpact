@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xpact.Contracts;
 
@@ -234,6 +235,8 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
 
         var stopped = await PostJson(capped, new { xml = laughs });
         Assert.True(stopped.Verdict == Verdicts.Crashed, $"{stopped.Verdict}: {stopped.Diagnostic}");
+        // The worker's own error output ("PANIC: main entry point vanished") stays in the server log (#283).
+        Assert.DoesNotContain("PANIC", stopped.Diagnostic);
 
         // The API keeps serving after the worker was stopped.
         Assert.Equal(Verdicts.Accepted, (await PostJson(capped, new { xml = "<a/>" })).Verdict);
@@ -272,6 +275,63 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.1")).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.2")).StatusCode);
         Assert.Equal(HttpStatusCode.TooManyRequests, (await From("203.0.113.1")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Unreadable_requests_get_a_fixed_message()
+    {
+        var response = await Client().PostAsync("/api/validate",
+            new StringContent("{\"xml\": broken", Encoding.UTF8, "application/json"));
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        string body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("The request could not be read.", body);
+        Assert.DoesNotContain("Path:", body);       // System.Text.Json puts "Path: $.xml | LineNumber..." in its message
+        Assert.DoesNotContain("LineNumber", body);
+    }
+
+    [Fact]
+    public void The_worker_gets_only_system_environment_variables()
+    {
+        var environment = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PATH"] = @"C:\Windows\System32",
+            ["SystemRoot"] = @"C:\Windows",
+            ["TEMP"] = @"C:\Temp",
+            ["ConnectionStrings__Db"] = "Server=db;Password=secret",
+            ["XPACT_API_KEY"] = "secret",
+        };
+        Xpact.Api.Workers.WorkerRunner.LimitEnvironment(environment);
+        Assert.Equal(new[] { "PATH", "SystemRoot", "TEMP" }, environment.Keys.OrderBy(k => k, StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public async Task Unknown_host_names_are_refused()
+    {
+        var client = Client();
+        client.DefaultRequestHeaders.Host = "attacker.example";
+        Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync("/api/health")).StatusCode);
+
+        var allowed = Client(("AllowedHosts", "xpact.example"));
+        allowed.DefaultRequestHeaders.Host = "xpact.example";
+        Assert.Equal(HttpStatusCode.OK, (await allowed.GetAsync("/api/health")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Hsts_is_sent_on_https_outside_development()
+    {
+        var production = _factory.WithWebHostBuilder(b =>
+        {
+            b.UseEnvironment("Production");
+            b.UseSetting("AllowedHosts", "xpact.example");
+        });
+        var https = production.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://xpact.example") });
+        var response = await https.GetAsync("/api/health");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.StartsWith("max-age=31536000", response.Headers.GetValues("Strict-Transport-Security").Single());
+
+        // Plain HTTP never gets the header (browsers ignore it there anyway).
+        var http = production.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("http://xpact.example") });
+        Assert.False((await http.GetAsync("/api/health")).Headers.Contains("Strict-Transport-Security"));
     }
 
     [Fact]
