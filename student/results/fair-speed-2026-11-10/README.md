@@ -50,3 +50,5 @@ python -I benchmarks/fair_speed/summarize.py build/speed/results.tsv student/res
 - [ ] Only start/end element and character data callbacks; other handlers (comments, PIs, DTD declarations) not timed.
 - [ ] Generated inputs, not real-world documents (the catalog runs cover those).
 - [ ] Error inputs not timed; Expat's own build options (e.g. `XML_DTD`, `XML_GE`) are the defaults of its CMake Release build.
+
+> **2026-11-11:** after #273 (exception guards) and #274 (call lock) the DLL was checked again with this harness: no cost on whole documents, about 2–4 % on 1-byte pieces ([check](../../../reports/issue-0276-check/README.md)).
