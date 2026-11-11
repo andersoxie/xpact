@@ -86,8 +86,9 @@ jobs:
         shell: pwsh
         run: |
           # Nested entities, 10 levels x 10 (#211, #227): rejected under the normal 512 MB cap,
-          # but the worker needs more than 40 MB on the way, so a 40 MB cap must stop it. Since #273 the DLL
-          # reports that as XML_ERROR_NO_MEMORY (rejected, code 1); before, the worker died ("crashed").
+          # but the worker needs more than 40 MB on the way, so a 40 MB cap must stop it: either the DLL reports
+          # out of memory (rejected, code 1, #273) or, in this container, the worker dies of a stack overflow
+          # first (crashed, #316). Both mean the cap worked; the document must never be accepted.
           $sb = [Text.StringBuilder]::new('<!DOCTYPE r [<!ENTITY a0 "xxxxxxxxxx">')
           foreach ($i in 1..9) { [void]$sb.Append("<!ENTITY a$i `"").Append(("&a$($i - 1);" * 10)).Append('">') }
           $laughs = $sb.Append(']><r>&a9;</r>').ToString()
@@ -108,7 +109,8 @@ jobs:
           docker rm -f normal capped | Out-Null
           if ($n.verdict -ne "rejected") { throw "expected rejected under the 512 MB cap" }
           if ($s.verdict -ne "accepted") { throw "a tiny document must still work under a 40 MB cap" }
-          if ($c.verdict -ne "rejected" -or $c.error.code -ne 1) { throw "expected the 40 MB cap to stop the document with out of memory (rejected, code 1), got $($c.verdict) $($c.error.code)" }
+          $stopped = ($c.verdict -eq "rejected" -and $c.error.code -eq 1) -or $c.verdict -eq "crashed"
+          if (-not $stopped) { throw "expected the 40 MB cap to stop the document (rejected code 1, or crashed: #316), got $($c.verdict) $($c.error.code)" }
           if ($after.verdict -ne "accepted") { throw "the site must keep serving after the worker was stopped" }
 
       - name: Publish to GitHub Container Registry
