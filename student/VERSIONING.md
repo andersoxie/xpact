@@ -4,7 +4,7 @@
 
 > ### ✅ Current rules (2026-11-11, these win over anything older below)
 > - **Branch:** all work goes into **`incremental-test`** on andersoxie/xpact. `student-Mass` was deleted. **Never touch `main`.**
-> - **Merging:** every pull request is merged with a **merge commit, never squash** (`gh pr merge <n> --merge`). Do **not** use `fix.ps1 merge`: it squashes. Between `main` and `incremental-test` only merge commits or fast-forward.
+> - **Merging:** every pull request is merged with a **merge commit, never squash** (`gh pr merge <n> --merge`). `fix.ps1 merge` does the same since #318 (before that it squashed into `student-Mass`); it refuses `-Base main` and a pull request whose base is not `incremental-test`. Between `main` and `incremental-test` only merge commits or fast-forward.
 > - **Who merges:** since 2026-11-11 Claude merges its own verified pull requests into `incremental-test` (student's decision), then pulls, reruns the checks on the merged commit and only then closes the issue.
 > - **Conflicts:** merge `incremental-test` into the fix branch (a merge commit), never rebase a pushed branch.
 > - **Evidence:** logs under `reports/` are committed (`.gitignore` exception since #306). Benchmark/W3C runs on a tested DLL: `run_benchmarks.ps1 -UseExistingNativeDll -NoDocsUpdate` (#302).
@@ -45,7 +45,7 @@ revert** (one commit undoes it). This page describes how that is done on
 ```powershell
 cd C:\xpact\xpact-student-Mass
 
-# 1. Branch from the latest student-Mass (also creates reports\issue-0002\)
+# 1. Branch from the latest incremental-test (also creates reports\issue-0002\)
 .\student\tools\fix.ps1 start -Issue 2 -Name include-fallback
 
 # 2. Change the code, then test it and save the log
@@ -61,7 +61,7 @@ git commit
 # 5. Check, push and open the pull request
 .\student\tools\fix.ps1 finish
 
-# 6. When the checks on the pull request pass, squash-merge it
+# 6. When the checks on the pull request pass, merge it (merge commit, never squash)
 .\student\tools\fix.ps1 merge
 ```
 
@@ -74,13 +74,13 @@ the commit to use if the fix ever has to be reverted.
 In Windows PowerShell 5.1 the script stops as soon as git writes to stderr,
 which git also does for normal messages ("Already on 'student-Mass'", push
 progress). Until the script is fixed, run the same steps by hand. This is how
-#29 was done:
+#29 was done, updated to the current branch and merge rule (#318):
 
 ```powershell
 # start
 git fetch --prune origin
-git switch student-Mass
-git merge --ff-only origin/student-Mass
+git switch incremental-test
+git merge --ff-only origin/incremental-test
 git switch -c fix/29-w3c-assertions
 mkdir reports\issue-0029
 
@@ -89,15 +89,15 @@ mkdir reports\issue-0029
 # finish: check yourself that every commit says "Refs #29" and that the
 # report has a "## Verification" section, then
 git push -u origin fix/29-w3c-assertions
-gh pr create --repo andersoxie/xpact --base student-Mass --head fix/29-w3c-assertions --title "<subject>" --body-file <file>
+gh pr create --repo andersoxie/xpact --base incremental-test --head fix/29-w3c-assertions --title "<subject>" --body-file <file>
 #   body: "Refs #29", the commit list, a link to the report, the revert command
 
-# merge, after the checks pass
-gh pr merge <pr> --repo andersoxie/xpact --squash --subject "<subject> (#<pr>)" --body "Refs #29"
-git switch student-Mass
+# merge, after the checks pass (merge commit, never --squash)
+gh pr merge <pr> --repo andersoxie/xpact --merge --body "Refs #29"
+git switch incremental-test
 git pull --ff-only
 git push origin --delete fix/29-w3c-assertions
-git branch -D fix/29-w3c-assertions
+git branch -d fix/29-w3c-assertions
 ```
 
 ## Who merges, and pull requests that build on each other
@@ -132,7 +132,9 @@ git branch -D fix/29-w3c-assertions
 ```
 
 The original commit stays in the history, so the reason for both the fix and
-the revert remains visible.
+the revert remains visible. `-Commit` may be a merge commit (every pull request
+since 2026-11-10): `fix.ps1 revert` then reverts it against its first parent
+(`git revert -m 1`), which undoes the whole pull request (#318).
 
 ## Finding things later
 

@@ -2,7 +2,7 @@
 param(
 	# start  - create a fix branch for an issue from the base branch
 	# finish - check the branch, push it and open a pull request
-	# merge  - squash-merge the pull request into the base branch
+	# merge  - merge the pull request into the base branch with a merge commit (never squash, #318)
 	# revert - create a fix branch that reverts one merged fix
 	# status - show the current fix branch and its pull request
 	[Parameter(Mandatory = $true, Position = 0)]
@@ -14,7 +14,8 @@ param(
 	[string] $Name,
 	# Commit to revert (revert only), e.g. 9eb18bd.
 	[string] $Commit,
-	[string] $Base = "student-Mass",
+	# Work branch since 2026-11-08 (student-Mass was deleted). main is refused.
+	[string] $Base = "incremental-test",
 	[string] $Repo = "andersoxie/xpact"
 )
 
@@ -30,6 +31,11 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+# CLAUDE.md: never merge anything into main, never touch main.
+if ($Base -ieq "main") {
+	throw "fix.ps1 does not work on main. Use -Base incremental-test (the default)."
+}
 
 $Gh = (Get-Command gh -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source -First 1)
 if (-not $Gh) {
@@ -129,7 +135,11 @@ switch ($Action) {
 		$Branch = "fix/$Issue-revert-$Short"
 		Invoke-Git @("switch", "-c", $Branch) | Out-Null
 		$Message = "Revert `"$Subject`"`n`nThis reverts commit $("$(Invoke-Git @("rev-parse", $Short))".Trim()).`n`nRefs #$Issue"
-		Invoke-Git @("revert", "--no-edit", $Short) | Out-Null
+		# A merged pull request is a merge commit: revert it against its first parent (the base branch).
+		$Parents = @("$(Invoke-Git @("log", "-1", "--format=%P", $Short))".Trim() -split " " | Where-Object { $_ })
+		$RevertArgs = @("revert", "--no-edit")
+		if ($Parents.Count -gt 1) { $RevertArgs += @("-m", "1") }
+		Invoke-Git ($RevertArgs + $Short) | Out-Null
 		Invoke-Git @("commit", "--amend", "-m", $Message) | Out-Null
 		Write-Host "On $Branch with a revert of $Short ($Subject)."
 		Write-Host "Next: test, add to $(Get-ReportDirectory $Issue)/report.md why it was reverted, commit, then: fix.ps1 finish"
@@ -207,12 +217,17 @@ After merging, this pull request is one squashed commit on ``$Base``. Revert it 
 			throw "No open pull request for $Branch. Run: fix.ps1 finish"
 		}
 		$Title = "$(Invoke-Gh @("pr", "view", $Number, "--repo", $Repo, "--json", "title", "--jq", ".title"))".Trim()
-		# One squashed commit per fix: easy to find, easy to revert.
-		Invoke-Gh @("pr", "merge", $Number, "--repo", $Repo, "--squash",
-			"--subject", "$Title (#$Number)", "--body", "Refs #$BranchIssue") | Out-Null
+		$PrBase = "$(Invoke-Gh @("pr", "view", $Number, "--repo", $Repo, "--json", "baseRefName", "--jq", ".baseRefName"))".Trim()
+		if ($PrBase -ne $Base) {
+			throw "Pull request #$Number goes into '$PrBase', not '$Base'. Not merged."
+		}
+		# One merge commit per fix (CLAUDE.md: never squash). Revert it with fix.ps1 revert (uses -m 1).
+		Invoke-Gh @("pr", "merge", $Number, "--repo", $Repo, "--merge",
+			"--subject", "Merge pull request #$Number`: $Title", "--body", "Refs #$BranchIssue") | Out-Null
 		Update-Base
 		Invoke-Git @("push", "origin", "--delete", $Branch) | Out-Null
-		Invoke-Git @("branch", "-D", $Branch) | Out-Null
+		# -d, not -D: refuses to drop a branch whose commits are not in the base.
+		Invoke-Git @("branch", "-d", $Branch) | Out-Null
 		$Merged = "$(Invoke-Git @("log", "-1", "--format=%h %s"))".Trim()
 		Write-Host "Merged into ${Base}: $Merged"
 		Write-Host "To revert later: fix.ps1 revert -Issue $BranchIssue -Commit $($Merged.Split(' ')[0])"
