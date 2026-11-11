@@ -88,7 +88,7 @@ Record important problems, investigations, fixes, and test results.
 
 
 Merging
-[ ] Merge PRs with a merge commit, never a squash (until the student says otherwise, 2026-11-10). Do not use fix.ps1 merge: it squashes.
+[ ] Merge PRs with a merge commit. No more squash merges (student, 2026-11-12). fix.ps1 merge uses a merge commit since #318 and may be used.
 [ ] Between main and incremental-test: only merge commits or fast-forward.
 
 Working faster
