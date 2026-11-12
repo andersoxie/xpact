@@ -154,12 +154,12 @@ Update a row when its status changes; move it to "Solved" below, never delete it
 | ❔ Heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20): not reproduced (72 / 72 normal runs pass; 12 stressed runs all hit the 300 s timeout = inconclusive) | 2026-11-09 | ❔ unknown | [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) (closed without verification) | keep listed as open |
 | 🔴 Not thread-safe (`xpact.ecf` has `concurrency none`) | 2026-11-09 | ✔ | [mass-xpact#75](https://github.com/CodTanium/mass-xpact/issues/75) | not fixed |
 | Boogie proof needs 3 facts that no contract states | [#252](https://github.com/andersoxie/xpact/issues/252) report | ✔ | [#252](https://github.com/andersoxie/xpact/issues/252) (PR #253 merged) | decide whether to add contracts |
-| Jenkins and SonarQube: the student has a token from the supervisor; a local scan is tried 2026-11-10 | | ❓ | [#131](https://github.com/andersoxie/xpact/issues/131) | verify the scan result |
+| ✅ SonarQube: student's own token works (2026-11-12); 196 issues → **0** after #325-#332; left: 3 hotspots (student has no review rights) and the coverage condition of the gate | [summary](../reports/sonarqube-2026-11-12/README.md) | ✔ | [#131](https://github.com/andersoxie/xpact/issues/131) | close #131; hotspots → supervisor |
 | Heap corruption under GC stress and heavy load in `test_deep_nested_attribute_entity` (access violation in the GC, or a wrong `undefined entity` / `unclosed token`); **pre-existing**: at equal load `student-Mass` as it was crashes 2 in 12, the same as the speed PRs | Expat 2.8.1 suite with `EIF_MEMORY_SCAVENGE=65536`, `EIF_FULL_COLLECTION_PERIOD=1`, 12 runs in parallel, 2026-11-04 | ❔ unknown; a `0x01` (`True`) at an address a `HASH_TABLE [BOOLEAN, STRING_8]` array once used; ❓ suspected: a stale reference, maybe in the Eiffel runtime | [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) | check whether it happens without the GC stress settings ([report](../reports/mass-xpact-issue-0020/report.md)) |
 | Billion laughs: **fixed** in mass-xpact #60 (Expat's amplification rule, code 43; all 8 test documents match Expat). Left: very strict custom settings, mass-xpact#61 | website security tests, 2026-11-02 | ✔ fixed cap and missing error mapping | [#211](https://github.com/andersoxie/xpact/issues/211), [mass-xpact#60](https://github.com/CodTanium/mass-xpact/issues/60) | the andersoxie issue can be closed after review |
 | GC-suspended parses swallow exceptions | B03 analysis; crashes without a trace | ✔ (swallowing) · ❓ (lost traces) | [#13](https://github.com/andersoxie/xpact/issues/13) | ⏸ **on hold** (student, 2026-10-22); parser developer |
 | Jenkins "Eiffel Tests" turns green without printing a test result | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt); stage unchanged on 2026-10-26 | ✔ on the student PC (stale exe) · ❔ on Jenkins | [#130](https://github.com/andersoxie/xpact/issues/130) | supervisor's pipeline |
-| SonarQube `HTTP 401` on Jenkins | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt) | ❓ suspected: server token | [#131](https://github.com/andersoxie/xpact/issues/131) | supervisor renews the token |
+| SonarQube `HTTP 401` on Jenkins | [#73 log](../reports/issue-0073/jenkins-log-2026-10-23.txt) | ✔ the old token was not valid; a new one works (2026-11-12) | [#131](https://github.com/andersoxie/xpact/issues/131) | Jenkins itself not rechecked (Jenkins dropped) |
 | Malformed UTF-8: no events before the error | Expat comparison | ✔ same check as #122 (confirmed in #172) | [#123](https://github.com/andersoxie/xpact/issues/123) | 🟡 598 → 133 cases with the #172 fix; left: CDATA with the default handler (Expat delivers `<![CDATA[` first); planned together with #176 |
 | Default handler gets LF instead of the raw CR | Expat comparison | ❓ suspected: fed from the normalized input | [#126](https://github.com/andersoxie/xpact/issues/126) | investigate |
 | Error code differs from Expat on 14 W3C cases (verdict right) | G03 comparison, 2026-10-31 | ❔ unknown, probably several code paths | [#170](https://github.com/andersoxie/xpact/issues/170) | 🟡 full comparison (3,061 W3C files, 2026-11-05): 361 code and 1,152 position differences; **verdicts 24 → 4** with mass-xpact [#64](https://github.com/CodTanium/mass-xpact/issues/64) (external entities without a handler); left: `eduni/misc/008`, `eduni/xml-1.1/008`, `ibm69n05`, `xmltest/not-wf/not-sa/002` |
@@ -226,7 +226,13 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 ## ➡️ Next
 
-**State 2026-11-11, night (read first):**
+**State 2026-11-12 (read first):**
+
+- [x] ✅ **SonarQube (2026-11-12):** scan works with the student's token; issues 196 → **0** in eight PRs (SonarQube issue 1-8 = [#325](https://github.com/andersoxie/xpact/issues/325)-[#332](https://github.com/andersoxie/xpact/issues/332), PRs #333-#340), duplication 14 % → 0 %; Python suite 239 OK, website 42/42. [Summary](../reports/sonarqube-2026-11-12/README.md).
+- [ ] SonarQube: 3 security hotspots need someone with review rights (supervisor); quality gate fails only on "coverage of new code" (send a `coverage.py` report, or agree to drop that condition).
+- [ ] Close [#131](https://github.com/andersoxie/xpact/issues/131) (the 401 is solved; the classifier blocked Claude from closing it).
+
+**State 2026-11-11, night:**
 
 - [x] `main` and `incremental-test` synced 2026-11-11 (#290): PR #291 brought `main` (Jenkins plot fix) in, then `main` was fast-forwarded to `75600aa` (0 / 0; student approved).
 - [x] ✅ #211 rechecked on a fresh DLL (PR #294): code 43 ✅, ~1.5 s vs Expat ~0.1 s 🟡, left open for the supervisor; found [#293](https://github.com/andersoxie/xpact/issues/293) (entity depth > 32 → "syntax error").
