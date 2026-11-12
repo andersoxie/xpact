@@ -19,3 +19,6 @@ __pycache__/
 !student/**/*.log
 # Evidence logs saved with a report are committed too (#306)
 !reports/**/*.log
+
+# SonarScanner work directory (local scans, #325)
+.scannerwork/

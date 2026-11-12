@@ -1,6 +1,6 @@
 # Continue here
 
-> Short and current: state on **2026-11-11, night** (week 8 of 8). Hand-in: **27 November 2026**.
+> Short and current: state on **2026-11-12** (week 8 of 8). Hand-in: **27 November 2026**.
 > Start with `git fetch --all`, then read this file, [the full to-do list](notes/left-to-do-2026-11-11.md)
 > and [PLAN.md](PLAN.md) ("Next"). Rules: the repo's `CLAUDE.md` and [VERSIONING.md](VERSIONING.md) (box at the top).
 
@@ -27,7 +27,8 @@
 | Website Docker image | ✅ `ghcr.io/andersoxie/xpact-website:website-2026-11-11-1` (= `latest`, digest `sha256:60dec845…`) from release `website-2026-11-11-1` (incremental-test @ `95f140b`), PR #315; container checks pass, Low-integrity worker works in the container · 🟡 under a 40 MB cap the container worker dies of a stack overflow instead of reporting out of memory ([#316](https://github.com/andersoxie/xpact/issues/316), low impact) |
 | Website proxy | ✅ untrusted proxy logged, `KnownNetworks` (#312); the real proxy setting is chosen at deployment ([docker.md](../website/docs/docker.md#behind-a-reverse-proxy)) |
 | Website deployment | 🟡 not online: HTTPS, domain, `AllowedHosts` = Anders ([#210](https://github.com/andersoxie/xpact/issues/210)) |
-| Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias), [#318](https://github.com/andersoxie/xpact/issues/318) (`fix.ps1` merge commits into `incremental-test`, refuses `main`), [#319](https://github.com/andersoxie/xpact/issues/319) (DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL=1` blocks rebuilds) · 🔴 SonarQube #131 needs a new `squ_` token |
+| Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias), [#318](https://github.com/andersoxie/xpact/issues/318) (`fix.ps1` merge commits into `incremental-test`, refuses `main`), [#319](https://github.com/andersoxie/xpact/issues/319) (DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL=1` blocks rebuilds) |
+| SonarQube | ✅ scan works with the student's token (2026-11-12); **196 → 0 issues**, duplication 14 % → 0 % (#325-#332, PRs #333-#340) ([summary](../reports/sonarqube-2026-11-12/README.md)) · 🟡 3 hotspots need review rights · 🔴 gate: no coverage report yet · run: `student\tools\sonar\run-sonar.ps1 -Scanner %USERPROFILE%\tools\sonar\sonar-scanner-7.0.2.4839-windows-x64\bin\sonar-scanner.bat` |
 
 ## 3. Next (in this order)
 
