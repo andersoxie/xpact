@@ -16,6 +16,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from typing import cast
 import shutil
 import subprocess
 import sys
@@ -27,6 +28,8 @@ from urllib.request import url2pathname, urlopen
 import xml.etree.ElementTree as ET
 from xml.parsers import expat
 import zipfile
+
+DEFAULT_RECOMMENDATION = "XML1.0"
 
 
 SUITE_VERSION = "20130923"
@@ -67,7 +70,7 @@ class Case:
     expected: str
     skip_reason: str = ""
     description: str = ""
-    recommendation: str = "XML1.0"
+    recommendation: str = DEFAULT_RECOMMENDATION
     lane: str = "core"
     lane_expected: str = ""
     entities: bool = False
@@ -149,10 +152,10 @@ def expectation(attributes: dict[str, str]) -> tuple[str, str]:
     if kind not in {"valid", "invalid", "not-wf", "error"}:
         raise ValueError(f"Unknown test TYPE: {kind}")
     expected = "REJECT" if kind == "not-wf" else "ACCEPT"
-    recommendation = attributes.get("RECOMMENDATION", "XML1.0")
+    recommendation = attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION)
     if recommendation.startswith(("XML1.1", "NS1.1")):
         return expected, "XML 1.1 / Namespaces 1.1 is outside this profile"
-    if recommendation not in {"XML1.0", "XML1.0-errata2e", "XML1.0-errata3e", "XML1.0-errata4e", "NS1.0", "NS1.0-errata1e"}:
+    if recommendation not in {DEFAULT_RECOMMENDATION, "XML1.0-errata2e", "XML1.0-errata3e", "XML1.0-errata4e", "NS1.0", "NS1.0-errata1e"}:
         raise ValueError(f"Unknown RECOMMENDATION: {recommendation}")
     if "VERSION" in attributes and "1.0" not in attributes["VERSION"].split():
         return expected, "Case does not apply to XML 1.0"
@@ -169,7 +172,7 @@ def expectation(attributes: dict[str, str]) -> tuple[str, str]:
 def out_of_profile_lane(attributes: dict[str, str]) -> tuple[str, str]:
     """Return the --all-cases lane and expected verdict ("ANY" = either) for an out-of-profile case."""
     kind = attributes["TYPE"]
-    recommendation = attributes.get("RECOMMENDATION", "XML1.0")
+    recommendation = attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION)
     if recommendation.startswith(("XML1.1", "NS1.1")) or (
             "VERSION" in attributes and "1.0" not in attributes["VERSION"].split()):
         return "xml-1.1", "ANY"
@@ -249,7 +252,7 @@ def load_catalog(suite_dir: Path) -> list[Case]:
             entity_path = root / FORWARD_VERSION_ENTITY
             if (not skip_reason and identifier == FORWARD_VERSION_CASE_ID
                     and attributes["TYPE"] == "not-wf"
-                    and attributes.get("RECOMMENDATION", "XML1.0") == "XML1.0-errata2e"
+                    and attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION) == "XML1.0-errata2e"
                     and attributes.get("ENTITIES", "none") == "general"
                     and namespace == "yes"
                     and path.relative_to(root).as_posix() == FORWARD_VERSION_DOCUMENT
@@ -259,7 +262,7 @@ def load_catalog(suite_dir: Path) -> list[Case]:
                 expected, adjustment = "ACCEPT", FORWARD_VERSION_REASON
             cases.append(Case(identifier, path, attributes["TYPE"], namespace == "yes",
                               expected, skip_reason, " ".join(element.itertext()).strip(),
-                              attributes.get("RECOMMENDATION", "XML1.0"), lane, lane_expected,
+                              attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION), lane, lane_expected,
                               attributes.get("ENTITIES", "none") != "none", catalog_expected, adjustment))
         for child in element:
             visit(child, current_base)
@@ -272,7 +275,8 @@ def load_catalog(suite_dir: Path) -> list[Case]:
 
 def lane_variant(case: Case) -> Case:
     """The case as run by --all-cases in its own lane: lane expectation, no skip reason."""
-    return replace(case, expected=case.lane_expected, skip_reason="")
+    # The stubs type replace() as a generic dataclass instance; it returns a Case (S5886).
+    return cast(Case, replace(case, expected=case.lane_expected, skip_reason=""))
 
 
 def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir: Path,
@@ -410,7 +414,14 @@ def no_crash_only(row: Result) -> bool:
 
 def xml_text(value: str) -> str:
     # Malformed-input diagnostics may contain NUL or invalid XML characters.
-    return re.sub(r"[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]", "?", value)
+    return "".join(ch if is_xml_char(ch) else "?" for ch in value)
+
+
+def is_xml_char(ch: str) -> bool:
+    """XML 1.0 Char production: #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]."""
+    code = ord(ch)
+    return (code in (0x9, 0xA, 0xD) or 0x20 <= code <= 0xD7FF or 0xE000 <= code <= 0xFFFD
+            or 0x10000 <= code <= 0x10FFFF)
 
 
 def tsv_row(row: Result) -> dict:

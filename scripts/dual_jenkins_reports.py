@@ -9,6 +9,18 @@ import re
 import statistics
 import tempfile
 
+TABLE_END = '</table>'
+
+
+def overall_status(statuses):
+    """Campaign status from lane statuses: any failed lane fails it, then any lane with failures."""
+    statuses = set(statuses)
+    if "failed" in statuses:
+        return "failed"
+    if "complete_with_failures" in statuses:
+        return "complete_with_failures"
+    return "complete"
+
 
 ENGINES = ("xpact", "xpact-core")
 LABELS = ("xpact", "pinned Xpact-core")
@@ -292,7 +304,7 @@ def report_body(state, lane_reports, plots, *, link_prefix=''):
         row = state["lanes"][lane]
         evidence = '<a href="{0}/report.json">Report</a> · <a href="{0}/summary.md">Summary</a>'.format(html.escape(prefix + lane, quote=True)) if lane in lane_reports else html.escape(row.get("error", "No completed campaign; no numeric values published."))
         parts.append('<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(lane, html.escape(row["status"]), evidence))
-    parts += ['</table>',
+    parts += [TABLE_END,
               '<p>Only xpact contributes to the Jenkins Test Result summary and its test pass/fail decision. Xpact-core remains comparison data in these plots and detailed artifacts.</p>',
               '<p>Catalog timing is normalized per 1,000 documents because calibration can change the iteration count. Throughput is the median of measured pairs. Both engines use no-op handlers; parser reset/reuse and process startup are timed. Core retains internal GC suspension/full collection; the caller requests no additional suspension.</p>',
               '<p>W3C plots show functional outcomes, including red completed campaigns. Wrong verdicts and process errors remain failures; exclusions are never passed. W3C elapsed times include fresh process startup and file I/O and are not compared here as parser throughput. No known-failure allowlist is applied.</p>']
@@ -309,12 +321,12 @@ def report_body(state, lane_reports, plots, *, link_prefix=''):
                 sum(case["status"] == "PASS" for case in row["cases"]),
                 sum(case["status"] == "FAIL" for case in row["cases"]),
                 html.escape(row.get("qualification_error", ""))))
-        parts += ['</table>', '<table><tr><th>Implementation</th><th>Source revision</th><th>Executable SHA-256</th><th>GC policy</th></tr>']
+        parts += [TABLE_END, '<table><tr><th>Implementation</th><th>Source revision</th><th>Executable SHA-256</th><th>GC policy</th></tr>']
         for engine in ENGINES:
             artifact = report["artifacts"][engine]
             parts.append('<tr><td>{}</td><td><code>{}</code></td><td><code>{}</code></td><td>{}</td></tr>'.format(
                 html.escape(engine), html.escape(artifact["source"]["revision"]), html.escape(artifact["executable_sha256"]), html.escape(artifact["gc_policy"])))
-        parts.append('</table>')
+        parts.append(TABLE_END)
     return "\n".join(parts + ['<p>Native DLLs, .NET, general event/canonical-output parity and full external-resource parity are outside the guarantees of these lanes.</p>']) + "\n"
 
 
@@ -357,9 +369,7 @@ def publish_reports(output_dir, state, lane_reports):
                 plots.extend(catalog_plots(lane_reports[lane]) if lane == "catalog" else w3c_plots(lane_reports[lane]))
             elif lane in lane_reports or row["status"] != "failed":
                 raise ReportsError("An incomplete lane cannot supply numeric plot values")
-        expected_status = ("failed" if any(row["status"] == "failed" for row in state["lanes"].values())
-                           else "complete_with_failures" if any(row["status"] == "complete_with_failures" for row in state["lanes"].values())
-                           else "complete")
+        expected_status = overall_status(row["status"] for row in state["lanes"].values())
         if state["status"] != expected_status:
             raise ReportsError("Overall campaign status contradicts lane states")
         manifest = [["sourceFile", "csvFileName", "group", "title", "yaxis"]]

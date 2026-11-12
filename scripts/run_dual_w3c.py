@@ -19,10 +19,14 @@ import build_implementations as builds
 import run_w3c_conformance as w3c
 from prepare_xpact_core import DependencyError
 
+RUN_JSON = "run.json"
+REPORT_JSON = "report.json"
+SUMMARY_MD = "summary.md"
+
 
 QUALIFICATION_CASES = ("raw_utf8", "raw_utf16", "namespace_switch", "reuse_recovery", "gc_restoration")
 GC_POLICIES = {"xpact": "normal", "xpact-core": "core-managed-off-full-collect"}
-FINAL_REPORTS = ("report.json", "summary.md", "comparison.tsv", "suite-manifest.json")
+FINAL_REPORTS = (REPORT_JSON, SUMMARY_MD, "comparison.tsv", "suite-manifest.json")
 
 
 class LaneError(RuntimeError):
@@ -178,7 +182,7 @@ def publish_reports(run_root, report, rows, results, metadata, manifest):
         writer.writerows(rows)
         (run_root / "comparison.tsv").write_text(buffer.getvalue(), encoding="utf-8")
         builds.write_json_atomic(run_root / "suite-manifest.json", manifest)
-        builds.write_json_atomic(run_root / "report.json", report)
+        builds.write_json_atomic(run_root / REPORT_JSON, report)
         lines = ["# Dual W3C: finalized, assertions discarded", "", "Status: " + report["status"], "",
                  "Profile: " + w3c.PROFILE, "",
                  "| Implementation | Cases | Passed | Failed | Errors | Excluded |",
@@ -202,7 +206,7 @@ def publish_reports(run_root, report, rows, results, metadata, manifest):
                   "Assertions-on builds supply directed audit controls; the full catalog runs on assertions-off builds.",
                   "Core's internal GC policy is retained; incoming caller GC state is restored.",
                   "This profile does not cover external entities, canonical output, full event equality or native DLLs.", ""]
-        (run_root / "summary.md").write_text("\n".join(lines), encoding="utf-8")
+        (run_root / SUMMARY_MD).write_text("\n".join(lines), encoding="utf-8")
     except BaseException:
         clear_reports(run_root)
         raise
@@ -226,7 +230,7 @@ def run_lane(repo_root, run_root, *, suite_dir=None, offline=False, timeout_seco
     run_root.mkdir(parents=True)
     state = {"schema_version": 1, "status": "running", "lane": "w3c-finalized-assertions-off", "builds": []}
     try:
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         suite, provenance = prepare_suite(repo_root, run_root, suite_dir, offline)
         before = suite_snapshot(suite)
         cases = w3c.load_catalog(suite)
@@ -273,7 +277,7 @@ def run_lane(repo_root, run_root, *, suite_dir=None, offline=False, timeout_seco
             raise LaneError("W3C build/identity gate failed; see run.json")
         verify_sources(repo_root, audits, artifacts)
         state.update(status="executing", catalog_cases=len(cases), source=provenance)
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         results = []
         for implementation, artifact in artifacts.items():
             verify_artifact(artifact)
@@ -323,12 +327,12 @@ def run_lane(repo_root, run_root, *, suite_dir=None, offline=False, timeout_seco
                                 "different_outcome": sum(not row["agreement"] for row in rows)}}
         publish_reports(run_root, report, rows, results, metadata, manifest)
         state["status"] = status
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         return report
     except BaseException as error:
         clear_reports(run_root)
         state.update(status="failed", error=str(error))
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         raise
 
 
@@ -353,7 +357,7 @@ def main(argv=None):
     except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
         print("Dual W3C could not complete: " + str(error), file=sys.stderr)
         return 2
-    print("{}: {}".format(report["status"], run / "summary.md"), flush=True)
+    print("{}: {}".format(report["status"], run / SUMMARY_MD), flush=True)
     return 0 if report["status"] == "complete" else 1
 
 

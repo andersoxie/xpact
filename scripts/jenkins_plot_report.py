@@ -13,6 +13,8 @@ from urllib.parse import quote, urlsplit
 
 import dual_jenkins_reports as dual
 
+CHART_DIV = '<div class="chart">'
+
 
 LANES = {"dual": "Dual implementation comparisons", "windows": "Windows same-machine benchmarks",
          "wsl": "WSL Eiffel and GCC benchmarks", "large": "Large XML benchmarks"}
@@ -52,7 +54,7 @@ def dual_plots(state, reports):
         elif row["status"] != "failed" or lane in reports:
             raise ValueError("Incomplete dual lane supplied values")
     statuses = [row["status"] for row in state["lanes"].values()]
-    expected = "failed" if "failed" in statuses else "complete_with_failures" if "complete_with_failures" in statuses else "complete"
+    expected = dual.overall_status(statuses)
     if state["status"] != expected or state["publication"]["plots"] != len(plots):
         raise ValueError("Dual publication contradicts campaign state")
     return plots
@@ -293,7 +295,7 @@ def render(build_id, input_dir, output, build_url="", disabled=()):
         source = packet["source_dir"]
         if lane == "dual":
             plots = dual_plots(packet["state"], packet["reports"])
-            parts.append('<div class="chart">' + dual.report_body(packet["state"], packet["reports"], plots,
+            parts.append(CHART_DIV + dual.report_body(packet["state"], packet["reports"], plots,
                          link_prefix=url_for(source) + "/") + '</div>')
         else:
             raw_url = url_for(source + "/" + RESULTS[lane])
@@ -308,10 +310,10 @@ def render(build_id, input_dir, output, build_url="", disabled=()):
                 chart["values"] = [number(value) for value in chart["values"]]
                 if not chart["labels"] or len(set(chart["labels"])) != len(chart["labels"]) or len(chart["labels"]) != len(chart["values"]):
                     raise ValueError("Snapshot has mismatched or duplicate engine values")
-                parts += ['<article><h3>{}</h3>'.format(esc(chart["title"])), '<div class="chart">' + bar_chart(chart) + '</div>',
+                parts += ['<article><h3>{}</h3>'.format(esc(chart["title"])), CHART_DIV + bar_chart(chart) + '</div>',
                           current_explanation(lane, chart), observation_table(chart),
                           '<p><a href="{}">Exact Jenkins plot CSV</a></p>'.format(esc(url_for(chart["source"]))),
-                          '<div class="chart">' + history_chart(chart, packet["history"]) + '</div></article>']
+                          CHART_DIV + history_chart(chart, packet["history"]) + '</div></article>']
         parts.append('</section>')
     parts += [paragraphs("The Jenkins Plot plugin retains its existing trend series. This page consolidates their current values and the available benchmark history without changing the build's test verdicts. The recorded source reports remain the evidence for each measurement."), '</main></body></html>']
     dual.replace_text(output, "\n".join(parts) + "\n")

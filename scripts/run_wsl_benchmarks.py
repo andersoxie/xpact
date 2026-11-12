@@ -17,6 +17,10 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
+
+EIFFEL_LOG = "-eiffel.log"
+C_LOG = "-c.log"
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -47,7 +51,7 @@ class Engine:
     arguments: tuple
     version: str
     notes: str
-    environment: dict = None
+    environment: Optional[dict] = None
 
 
 def positive_integer(value):
@@ -144,7 +148,7 @@ def require_linux_executable(path, name, elf=False):
         raise BenchmarkError("{} is not executable: {}".format(name, path))
 
 
-def check_prerequisites(repo_root, compilers=("EiffelStudio", "Gobo")):
+def check_prerequisites(compilers=("EiffelStudio", "Gobo")):
     if not sys.platform.startswith("linux"):
         raise BenchmarkError("Run this script with Linux Python inside WSL2, not Windows Python.")
     environment = clean_environment()
@@ -205,7 +209,7 @@ def record_gobo_build(project, spec, tools):
         raise BenchmarkError("Gobo generation did not create {}".format(script))
     script_text = script.read_text(encoding="utf-8")
     commands = [line for line in script_text.splitlines()
-                if not line.lstrip().startswith("#") and re.search(r"\s-(?:c|o)\s", line)]
+                if not line.lstrip().startswith("#") and re.search(r"\s-[co]\s", line)]
     if not commands:
         raise BenchmarkError("Cannot identify Gobo's C compiler in {}".format(script))
     compiler_paths = set()
@@ -244,8 +248,8 @@ def build_gobo(repo_root, output_dir, spec, tools):
     # A successful generation must produce a fresh script, and a successful C build
     # must produce a fresh executable. Neither may survive a failed rebuild.
     for path in executables + scripts + [
-            output_dir / "logs" / ("Gobo-" + spec.name + "-eiffel.log"),
-            output_dir / "logs" / ("Gobo-" + spec.name + "-c.log")]:
+            output_dir / "logs" / ("Gobo-" + spec.name + EIFFEL_LOG),
+            output_dir / "logs" / ("Gobo-" + spec.name + C_LOG)]:
         if path.exists():
             path.unlink()
     command = [tools["gec"], "--finalize", "--gc=boehm", "--cc=no",
@@ -253,7 +257,7 @@ def build_gobo(repo_root, output_dir, spec, tools):
     print("Building Gobo Eiffel {} with Linux GCC...".format(spec.name), flush=True)
     try:
         run_checked(command, cwd=project, env=tools["gobo_environment"],
-                    log_path=output_dir / "logs" / ("Gobo-" + spec.name + "-eiffel.log"))
+                    log_path=output_dir / "logs" / ("Gobo-" + spec.name + EIFFEL_LOG))
         generated = [script for script in scripts if script.is_file()]
         if len(generated) != 1:
             raise BenchmarkError("Gobo generation must create one fresh xpact_benchmarks.sh in "
@@ -263,7 +267,7 @@ def build_gobo(repo_root, output_dir, spec, tools):
         script = record_gobo_build(code_directory, spec, tools)
         # Execute with -e: some gec versions do not propagate failure from the C backend.
         run_checked([tools["sh"], "-e", script], cwd=code_directory, env=tools["gobo_environment"],
-                    log_path=output_dir / "logs" / ("Gobo-" + spec.name + "-c.log"))
+                    log_path=output_dir / "logs" / ("Gobo-" + spec.name + C_LOG))
         if not executable.is_file():
             raise BenchmarkError("Gobo build did not create {}".format(executable))
         require_linux_executable(executable, "Gobo benchmark", elf=True)
@@ -319,7 +323,7 @@ def build_eiffel(repo_root, output_dir, spec, tools):
     project.mkdir(parents=True, exist_ok=True)
     code_directory = project / "EIFGENs" / spec.target / spec.code_directory
     executable = code_directory / "xpact_benchmarks"
-    for suffix in ("-eiffel.log", "-c.log"):
+    for suffix in (EIFFEL_LOG, C_LOG):
         previous_log = output_dir / "logs" / (spec.name + suffix)
         if previous_log.exists():
             previous_log.unlink()
@@ -335,11 +339,11 @@ def build_eiffel(repo_root, output_dir, spec, tools):
                     "-target", spec.target, "-project_path", project])
     print("Building Eiffel {} with Linux GCC...".format(spec.name), flush=True)
     run_checked(command, cwd=repo_root, env=tools["environment"],
-                log_path=output_dir / "logs" / (spec.name + "-eiffel.log"))
+                log_path=output_dir / "logs" / (spec.name + EIFFEL_LOG))
     if not code_directory.is_dir():
         raise BenchmarkError("Eiffel generation did not create {}".format(code_directory))
     run_checked([tools["finish_freezing"]], cwd=code_directory, env=tools["environment"],
-                log_path=output_dir / "logs" / (spec.name + "-c.log"))
+                log_path=output_dir / "logs" / (spec.name + C_LOG))
     if not executable.is_file():
         raise BenchmarkError("Eiffel build did not create {}".format(executable))
     require_linux_executable(executable, "Eiffel benchmark", elf=True)
@@ -503,7 +507,7 @@ def run_benchmarks(args):
         if "Gobo" in args.eiffel_compiler and "Workbench" in args.eiffel_build:
             raise BenchmarkError("Gobo supports Finalized and FinalizedAssertions; select only "
                                  "EiffelStudio with --eiffel-compiler EiffelStudio to benchmark Workbench")
-        tools = check_prerequisites(REPO_ROOT, args.eiffel_compiler)
+        tools = check_prerequisites(args.eiffel_compiler)
         specs = build_specs(args.eiffel_build)
         engines = []
         for compiler in args.eiffel_compiler:
