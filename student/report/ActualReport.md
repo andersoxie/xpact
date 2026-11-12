@@ -129,7 +129,7 @@ The **fair speed test** ([#275](https://github.com/andersoxie/xpact/issues/275))
 | Security | No external entities, memory cap (fails closed), timeout, rate limit, per-visitor worker cap, security headers, worker with no privileges at Low integrity; all 7 code-review findings fixed |
 | Quality check (11 Nov) | Lighthouse accessibility **100** (light and dark), speed **98-100**, best practices and SEO **100** · OWASP ZAP **0** findings · W3C HTML **0** errors ([report](../../reports/issue-0286/report.md)) |
 | Tested | Load test, memory-cap test, Docker checklist on GitHub, **42/42** backend tests |
-| Delivery | Docker image `ghcr.io/andersoxie/xpact-website` built on GitHub from a release zip (`website-2026-11-11-1`); a new build with the SonarQube accessibility fixes is prepared ([#345](https://github.com/andersoxie/xpact/issues/345)) |
+| Delivery | Docker image `ghcr.io/andersoxie/xpact-website` built and tested on GitHub from a release zip; current build `website-2026-11-12-1` with the SonarQube accessibility fixes ([#345](https://github.com/andersoxie/xpact/issues/345)) |
 
 ### 📝 Reports and communication
 
@@ -767,7 +767,7 @@ In the first five weeks of the eight-week internship, the project went from a pa
 - [ ] [#197](https://github.com/andersoxie/xpact/issues/197) the W3C-in-pieces test on several cores
 - [x] ✅ Website code-review findings 1-7 and a worker with no privileges at Low integrity (#295, #297, #299, 2026-11-11)
 - [ ] Website deployment and HTTPS ([#210](https://github.com/andersoxie/xpact/issues/210), the supervisor's server); optionally a separate worker account
-- [ ] Website build `website-2026-11-12-1` with the accessibility fixes: built and smoke-tested, release and Docker image to follow ([#345](https://github.com/andersoxie/xpact/issues/345))
+- [x] ✅ Website build `website-2026-11-12-1` with the accessibility fixes: release and Docker image `latest`, tested in the container ([#345](https://github.com/andersoxie/xpact/issues/345), 2026-11-12)
 - [x] ✅ SonarQube: 196 issues → 0 ([#325](https://github.com/andersoxie/xpact/issues/325)–[#332](https://github.com/andersoxie/xpact/issues/332), 2026-11-12); SHA-1 hotspot resolved ([#342](https://github.com/andersoxie/xpact/issues/342))
 - [ ] SonarQube: mark the 2 remaining hotspots "Safe" (reasons in [#342](../../reports/issue-0342/report.md)); send a Python coverage report so the quality gate can pass
 - [x] ✅ Fair speed test against native Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275)): median 18× slower, 0 checksum mismatches → [results](../results/fair-speed-2026-11-10/README.md); rerun on an idle PC before quoting final numbers

@@ -233,8 +233,8 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 - [x] ✅ #131 closed (student's permission). SHA-1 hotspot resolved ([#342](https://github.com/andersoxie/xpact/issues/342), PR #343); 2 hotspots left to mark Safe in the UI.
 - [x] ✅ `main` synced with `incremental-test` (PR #344, merge commit, student's explicit request, 2026-11-12).
 - [x] ✅ Hand-in report updated to 2026-11-12 ([#346](https://github.com/andersoxie/xpact/issues/346)); ✏️ reflection still in the student's own words.
-- [ ] Website build `website-2026-11-12-1` ([#345](https://github.com/andersoxie/xpact/issues/345)): built and smoke-tested; release by the student, then the `WEBSITE_RELEASE` bump.
-- [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard; no access for Claude).
+- [x] ✅ Website build `website-2026-11-12-1` shipped ([#345](https://github.com/andersoxie/xpact/issues/345), PR #348): release + image `latest` (digest `08b77a5b…`), container smoke and memory-cap tests passed ([report](../reports/issue-0345/report.md)).
+- [ ] ⏸ Aikido: mark the 14 checksum alerts as false positives (put aside by the student, 2026-11-12).
 
 **State 2026-11-11, night:**
 
