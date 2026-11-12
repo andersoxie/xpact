@@ -7,7 +7,7 @@
 ## 1. Branches
 
 - Work branch: **`incremental-test`** on andersoxie/xpact (`origin`). Not `student-Mass` (deleted), not CodTanium/mass-xpact.
-- `main` was last synced with `incremental-test` on 2026-11-11 (`75600aa`); `incremental-test` is ahead since. Claude asks before touching `main`.
+- `main` was synced with `incremental-test` on 2026-11-12 (PR #344, merge commit `266401f`; same files as `incremental-test` @ `a840029`). Claude asks before touching `main` again.
 - Every PR merges with a **merge commit**, never squash. Claude merges its own verified PRs into `incremental-test`, pulls, rechecks on the merged commit, then closes the issue.
 
 ## 2. State
@@ -32,12 +32,12 @@
 
 ## 3. Next (in this order)
 
-- [ ] **Hand-in report** (before 27 Nov): refresh `report/ActualReport.md` and `ActualReportShorter.md` with 2026-11-11 (website 1-2 + worker rights, #273, #274, #275, #211/#293, tooling). 2-3 h
+- [x] ✅ **Hand-in report** updated to 2026-11-12 (#346): numbers recounted, SonarQube, tooling, `main` sync. Left for the student: the ✏️ reflection sections in your own words, then the demonstration.
 - [ ] **Ask Anders in one go:** #304 parallel parsing, #293 depth limit, #211 1.5 s, #171, #13, #210 deployment, licence. See [left-to-do §3](notes/left-to-do-2026-11-11.md#3-questions-for-anders-ask-in-one-go).
 - [ ] **#272** ISO-8859-1 in pieces (copy the UTF-16 resume path). 1-2 days
 - [ ] Same behaviour as Expat: #123, #126, #176, #170. 1-2 days each
 - [ ] Rerun the full fair speed matrix (#275) on an **idle** PC before quoting final numbers. 1-2 h machine time
-- [ ] Next website build: rebuild + test, zip `website\dist` with `BUILD-INFO.txt`, create release `website-<date>-<n>` (`--prerelease`, full 40-character `--target`), set `WEBSITE_RELEASE` in `.github/workflows/website-docker.yml` (see docker.md)
+- [ ] **Website build `website-2026-11-12-1`** (#345): built, smoke-tested, zip ready; student runs `gh release create` (the classifier blocks Claude), then Claude pushes branch `fix/345-website-release-2026-11-12` (sets `WEBSITE_RELEASE`) and the Docker workflow publishes the image.
 - [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard). 15 min
 - [x] ✅ Website findings 1-2, worker rights; #273; #274; #275 merged; #302, #306, #308 (all 2026-11-11)
 
