@@ -17,6 +17,8 @@ import uuid
 
 from prepare_xpact_core import DependencyError, prepare_dependency, run_git
 
+RUN_JSON = "run.json"
+
 
 class BuildError(RuntimeError):
     """No verified build artifact can be published."""
@@ -332,7 +334,7 @@ def main(argv=None):
     run_root.mkdir()
     state = {"schema_version": 1, "status": "running", "results": []}
     try:
-        write_json_atomic(run_root / "run.json", state)
+        write_json_atomic(run_root / RUN_JSON, state)
         tools, environment, compiler_metadata = toolchain()
         selected = ("xpact", "xpact-core") if args.implementation == "both" else (args.implementation,)
         for implementation in selected:
@@ -349,11 +351,11 @@ def main(argv=None):
         state.update(status="failed", error=str(error))
         print(str(error), file=sys.stderr)
     try:
-        write_json_atomic(run_root / "run.json", state)
+        write_json_atomic(run_root / RUN_JSON, state)
     except OSError as error:
         print("Cannot publish run status: " + str(error), file=sys.stderr)
         return 1
-    print("Build results: " + str(run_root / "run.json"), flush=True)
+    print("Build results: " + str(run_root / RUN_JSON), flush=True)
     return 0 if state["status"] == "verified" else 1
 
 

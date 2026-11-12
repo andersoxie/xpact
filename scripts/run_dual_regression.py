@@ -30,8 +30,19 @@ import uuid
 import build_implementations as builds
 from prepare_xpact_core import DependencyError
 
+RUN_JSON = "run.json"
+SUMMARY_MD = "summary.md"
+
 IMPLEMENTATIONS = ("xpact", "xpact-core")
-R, T = ["start:r", "end:r"], ["start:root", "end:root"]
+def start_event(name):
+    return "start:" + name
+
+
+def end_event(name):
+    return "end:" + name
+
+
+R, T = [start_event("r"), end_event("r")], [start_event("root"), end_event("root")]
 
 
 def escaped(data):
@@ -48,23 +59,23 @@ def cases():
     rows = [
         ("c02-valid", "c02", b"<root/>", True, T),
         ("c02-valid-pair", "c02", b"<root></root>", True, T),
-        ("c02-text", "c02", b"<root>hi</root>", True, ["start:root", text(b"hi"), "end:root"]),
+        ("c02-text", "c02", b"<root>hi</root>", True, [start_event("root"), text(b"hi"), end_event("root")]),
         ("c02-empty", "c02", b"", False, None),
         ("c02-incomplete", "c02", b"<root>", False, None),
         ("c02-mismatched", "c02", b"<root><child></root>", False, None),
         ("c02-trailing-junk", "c02", b"<root/>junk", False, None),
-        ("cr-crlf", "cr", b"<r>\r\n</r>", True, ["start:r", text(b"\n"), "end:r"]),
-        ("cr-lone", "cr", b"<r>\r</r>", True, ["start:r", text(b"\n"), "end:r"]),
+        ("cr-crlf", "cr", b"<r>\r\n</r>", True, [start_event("r"), text(b"\n"), end_event("r")]),
+        ("cr-lone", "cr", b"<r>\r</r>", True, [start_event("r"), text(b"\n"), end_event("r")]),
         ("cr-last-byte", "cr", b"<r/>\r", True, R),
         ("cr-attribute", "cr", b"<r a='x\ry'/>", True, R),
         ("elem-nested", "basic", b"<a><b/><c>t</c></a>", True,
-         ["start:a", "start:b", "end:b", "start:c", text(b"t"), "end:c", "end:a"]),
-        ("attr-two", "basic", b"<a x='1' y=\"2\"/>", True, ["start:a", "end:a"]),
+         [start_event("a"), start_event("b"), end_event("b"), start_event("c"), text(b"t"), end_event("c"), end_event("a")]),
+        ("attr-two", "basic", b"<a x='1' y=\"2\"/>", True, [start_event("a"), end_event("a")]),
         ("attr-duplicate", "basic", b"<a x='1' x='2'/>", False, None),
         ("attr-unquoted", "basic", b"<a x=1/>", False, None),
-        ("text-entities", "basic", b"<a>&lt;&amp;&gt;</a>", True, ["start:a", text(b"<&>"), "end:a"]),
-        ("text-charrefs", "basic", b"<a>&#65;&#x42;</a>", True, ["start:a", text(b"AB"), "end:a"]),
-        ("text-whitespace", "basic", b"<a> x \n y </a>", True, ["start:a", text(b" x \n y "), "end:a"]),
+        ("text-entities", "basic", b"<a>&lt;&amp;&gt;</a>", True, [start_event("a"), text(b"<&>"), end_event("a")]),
+        ("text-charrefs", "basic", b"<a>&#65;&#x42;</a>", True, [start_event("a"), text(b"AB"), end_event("a")]),
+        ("text-whitespace", "basic", b"<a> x \n y </a>", True, [start_event("a"), text(b" x \n y "), end_event("a")]),
         ("text-undefined-entity", "basic", b"<a>&nope;</a>", False, None),
     ]
     sequences = [("valid-e9", b"\xc3\xa9", True), ("bad-continuation", b"\xc3(", False),
@@ -79,9 +90,9 @@ def cases():
             events = None
             if valid:
                 if place == "name":
-                    events = ["start:r" + escaped(seq), "end:r" + escaped(seq)]
+                    events = [start_event("r") + escaped(seq), end_event("r") + escaped(seq)]
                 elif place in ("text", "cdata"):
-                    events = ["start:r", text(seq), "end:r"]
+                    events = [start_event("r"), text(seq), end_event("r")]
                 else:
                     events = R
             rows.append(("utf8-%s-%s" % (seq_name, place), "utf8", before + seq + after, valid, events))
@@ -89,14 +100,14 @@ def cases():
 
 
 LIFECYCLE = [  # step, accepted, events (must match DR_REGRESSION_ROOT.lifecycle)
-    ("1-valid", True, ["start:root", text(b"hi"), "end:root"]),
+    ("1-valid", True, [start_event("root"), text(b"hi"), end_event("root")]),
     ("2-mismatched", False, None),
-    ("3-valid-after-failure", True, ["start:root", text(b"hi"), "end:root"]),
+    ("3-valid-after-failure", True, [start_event("root"), text(b"hi"), end_event("root")]),
     ("4-incomplete", False, None),
-    ("5-valid-after-incomplete", True, ["start:a", "start:b", "end:b", text(b"t"), "end:a"]),
-    ("6-partial-then-final", True, ["start:root", text(b"hi"), "end:root"]),
+    ("5-valid-after-incomplete", True, [start_event("a"), start_event("b"), end_event("b"), text(b"t"), end_event("a")]),
+    ("6-partial-then-final", True, [start_event("root"), text(b"hi"), end_event("root")]),
     ("7-bad-utf8", False, None),
-    ("8-valid-after-bad-utf8", True, ["start:r", text(b"ok"), "end:r"]),
+    ("8-valid-after-bad-utf8", True, [start_event("r"), text(b"ok"), end_event("r")]),
     ("9-empty", False, None),
     ("10-valid-after-empty", True, T),
 ]
@@ -156,7 +167,7 @@ def judge(accepted, expected_events, verdict, events):
 def run_lane(repo_root, run_root, offline, timeout):
     state = {"schema_version": 1, "status": "running", "lane": "dual-regression",
              "started": datetime.now(timezone.utc).isoformat()}
-    builds.write_json_atomic(run_root / "run.json", state)
+    builds.write_json_atomic(run_root / RUN_JSON, state)
     fixtures = run_root / "fixtures"
     fixtures.mkdir()
     all_cases = cases()
@@ -191,7 +202,7 @@ def run_lane(repo_root, run_root, offline, timeout):
                                  if verdict != "MISSING" else "MISSING",
                                  "expected_events": " | ".join(events) if events else "",
                                  "events": observed, "error": error})
-            code, out, err = run_exe(artifact["executable"], ["--lifecycle"], phase / implementation, timeout)
+            code, out, _ = run_exe(artifact["executable"], ["--lifecycle"], phase / implementation, timeout)
             steps = parse_lines(out, "XPACT_LIFECYCLE")
             for step, accepted, events in LIFECYCLE:
                 verdict, observed, error = steps.get(step, ("CRASH" if code not in (0, None) else "MISSING", "", ""))
@@ -215,7 +226,7 @@ def run_lane(repo_root, run_root, offline, timeout):
                  builds={k: {"executable": v["executable"], "executable_sha256": v["executable_sha256"],
                              "revision": v["source"]["revision"], "configuration": v["build"]["configuration"]}
                          for k, v in executables.items()})
-    builds.write_json_atomic(run_root / "run.json", state)
+    builds.write_json_atomic(run_root / RUN_JSON, state)
     if xpact_missing:
         return 2
     return 0 if not xpact_failures else 1
@@ -273,7 +284,7 @@ def write_reports(run_root, rows, lifecycle_rows, executables, build_errors):
         lines.append("| %s | %s | %d | %s | %s | `%s` | %s |" % (
             b, case, len(group), result, ", ".join(r["chunking"] for r in group[:4]),
             first["events"].replace("|", "·") or "-", first["error"].replace("|", "/") or "-"))
-    (run_root / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (run_root / SUMMARY_MD).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def main(argv=None):
@@ -290,10 +301,10 @@ def main(argv=None):
     try:
         code = run_lane(root, run_root, args.offline, args.timeout)
     except (builds.BuildError, DependencyError, OSError, ValueError, KeyError) as error:
-        builds.write_json_atomic(run_root / "run.json", {"schema_version": 1, "status": "failed", "error": str(error)})
+        builds.write_json_atomic(run_root / RUN_JSON, {"schema_version": 1, "status": "failed", "error": str(error)})
         print("Dual regression could not complete: " + str(error), file=sys.stderr)
         return 2
-    print("Complete: " + str(run_root / "summary.md"))
+    print("Complete: " + str(run_root / SUMMARY_MD))
     return code
 
 

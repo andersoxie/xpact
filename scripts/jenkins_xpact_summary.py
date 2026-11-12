@@ -34,7 +34,14 @@ def clear_summary(output_dir):
 
 
 def _text(value):
-    return re.sub(r"[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]", "?", str(value))
+    # XML 1.0 Char production; anything else becomes "?" (an explicit check, not a regex class).
+    return "".join(ch if _is_xml_char(ch) else "?" for ch in str(value))
+
+
+def _is_xml_char(ch):
+    code = ord(ch)
+    return (code in (0x9, 0xA, 0xD) or 0x20 <= code <= 0xD7FF or 0xE000 <= code <= 0xFFFD
+            or 0x10000 <= code <= 0x10FFFF)
 
 
 def _error_suite(lane, context, error):
@@ -224,16 +231,16 @@ def _publish_summary(output_dir, lane_reports, lane_states, *, selected_lanes=("
         try:
             for suite in _control_suites(directories[lane], lane, report, repo_root):
                 suites.append(suite)
-        except (SummaryError, OSError, ValueError, KeyError, TypeError) as error:
+        except (OSError, ValueError, KeyError, TypeError) as error:  # SummaryError is a ValueError
             infrastructure = True
             suites.append(_error_suite(lane, "directed-controls", error))
         if lane == "w3c":
             try:
                 suites.append(_w3c_suite(directories[lane], report))
-            except (SummaryError, OSError, ValueError, KeyError, TypeError, ET.ParseError) as error:
+            except (OSError, ValueError, KeyError, TypeError, ET.ParseError) as error:
                 infrastructure = True
                 suites.append(_error_suite(lane, "full-catalog", error))
-    totals = {field: 0 for field in ("tests", "passed", "failures", "errors", "skipped")}
+    totals = dict.fromkeys(("tests", "passed", "failures", "errors", "skipped"), 0)
     elapsed = 0.0
     for suite in suites:
         counts, duration = _case_counts(suite)
@@ -246,7 +253,12 @@ def _publish_summary(output_dir, lane_reports, lane_states, *, selected_lanes=("
     for field in ("tests", "failures", "errors", "skipped"):
         suites.set(field, str(totals[field]))
     suites.set("time", "{:.6f}".format(elapsed))
-    status = ("failed" if infrastructure else "complete_with_failures" if totals["failures"] or totals["errors"] else "complete")
+    if infrastructure:
+        status = "failed"
+    elif totals["failures"] or totals["errors"]:
+        status = "complete_with_failures"
+    else:
+        status = "complete"
     summary = {"schema_version": 1, "implementation": "xpact", "status": status,
                "junit": JUNIT_FILE, "summary": SUMMARY_FILE, **totals}
     ET.indent(suites)

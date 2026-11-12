@@ -16,6 +16,10 @@ import build_implementations as builds
 import compare_eiffel_benchmarks as paired
 from prepare_xpact_core import DependencyError
 
+RUN_JSON = "run.json"
+REPORT_JSON = "report.json"
+SUMMARY_MD = "summary.md"
+
 
 QUALIFICATION_CASES = ("catalog_observed", "catalog_noop", "observed_reuse_recovery",
                        "noop_reuse_recovery", "gc_restoration")
@@ -144,10 +148,10 @@ def publish_reports(run_root, report):
                                          dir=run_root, prefix=".summary-", suffix=".tmp", delete=False) as stream:
             temporary = Path(stream.name)
             stream.write(summary_markdown(report))
-        builds.write_json_atomic(run_root / "report.json", report)
-        temporary.replace(run_root / "summary.md")
+        builds.write_json_atomic(run_root / REPORT_JSON, report)
+        temporary.replace(run_root / SUMMARY_MD)
     except BaseException:
-        for name in ("report.json", "summary.md"):
+        for name in (REPORT_JSON, SUMMARY_MD):
             (run_root / name).unlink(missing_ok=True)
         raise
     finally:
@@ -163,7 +167,7 @@ def run_lane(repo_root, run_root, *, offline=False, iterations=1000, pairs=6,
     state = {"schema_version": 1, "status": "running", "lane": "catalog-finalized-assertions-off",
              "builds": []}
     try:
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         tools, environment, compiler_metadata = builds.toolchain()
         artifacts, audits, qualification = {}, {}, []
         for assertions in (True, False):
@@ -195,7 +199,7 @@ def run_lane(repo_root, run_root, *, offline=False, iterations=1000, pairs=6,
             raise LaneError("Catalog correctness/build gate failed; see per-build errors in run.json")
         verify_sources(repo_root, audits, artifacts)
         state["status"] = "qualified"
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         for artifact in artifacts.values():
             verify_artifact(artifact)
         comparison_dir = run_root / "comparison"
@@ -207,7 +211,7 @@ def run_lane(repo_root, run_root, *, offline=False, iterations=1000, pairs=6,
                      "--timeout-seconds", str(sample_timeout_seconds)]
         state["status"] = "measuring"
         state["comparison_arguments"] = arguments
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         if paired.main(arguments) != 0:
             raise LaneError("Catalog paired measurement failed")
         comparison = json.loads((comparison_dir / "comparison.json").read_text(encoding="utf-8"))
@@ -221,14 +225,14 @@ def run_lane(repo_root, run_root, *, offline=False, iterations=1000, pairs=6,
                   "artifacts": artifacts, "qualification": qualification, "comparison": comparison}
         publish_reports(run_root, report)
         state["status"] = "complete"
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         return report
     except BaseException as error:
-        for name in ("report.json", "summary.md"):
+        for name in (REPORT_JSON, SUMMARY_MD):
             (run_root / name).unlink(missing_ok=True)
         paired.clear_reports(run_root / "comparison")
         state.update(status="failed", error=str(error))
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         raise
 
 
@@ -251,7 +255,7 @@ def main(argv=None):
     except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
         print("Dual catalog failed: " + str(error), file=sys.stderr)
         return 1
-    print("Complete: " + str(run / "summary.md"), flush=True)
+    print("Complete: " + str(run / SUMMARY_MD), flush=True)
     return 0
 
 
