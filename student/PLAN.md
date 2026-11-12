@@ -230,7 +230,11 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 - [x] ✅ **SonarQube (2026-11-12):** scan works with the student's token; issues 196 → **0** in eight PRs (SonarQube issue 1-8 = [#325](https://github.com/andersoxie/xpact/issues/325)-[#332](https://github.com/andersoxie/xpact/issues/332), PRs #333-#340), duplication 14 % → 0 %; Python suite 239 OK, website 42/42. [Summary](../reports/sonarqube-2026-11-12/README.md).
 - [ ] SonarQube: 3 security hotspots need someone with review rights (supervisor); quality gate fails only on "coverage of new code" (send a `coverage.py` report, or agree to drop that condition).
-- [ ] Close [#131](https://github.com/andersoxie/xpact/issues/131) (the 401 is solved; the classifier blocked Claude from closing it).
+- [x] ✅ #131 closed (student's permission). SHA-1 hotspot resolved ([#342](https://github.com/andersoxie/xpact/issues/342), PR #343); 2 hotspots left to mark Safe in the UI.
+- [x] ✅ `main` synced with `incremental-test` (PR #344, merge commit, student's explicit request, 2026-11-12).
+- [x] ✅ Hand-in report updated to 2026-11-12 ([#346](https://github.com/andersoxie/xpact/issues/346)); ✏️ reflection still in the student's own words.
+- [ ] Website build `website-2026-11-12-1` ([#345](https://github.com/andersoxie/xpact/issues/345)): built and smoke-tested; release by the student, then the `WEBSITE_RELEASE` bump.
+- [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard; no access for Claude).
 
 **State 2026-11-11, night:**
 

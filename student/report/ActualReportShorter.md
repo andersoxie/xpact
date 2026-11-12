@@ -2,14 +2,14 @@
 
 > **Student:** Masoud Dehdar · **Programme:** Software Developer .NET · **University:** Medieinstitutet
 > **Company:** Bsharp · **Supervisor:** Anders Persson · **Internship:** 6 October – 27 November 2026 (eight weeks)
-> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` @ `9688e9e` (2026-11-10, = `main`) · **Full report:** [ActualReport.md](ActualReport.md)
+> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` @ `a840029` (2026-11-12, = `main` after PR #344) · **Full report:** [ActualReport.md](ActualReport.md)
 >
 > ✅ done and verified · 🟡 partly done · 🔴 open · ⏭️ dropped by decision · ✏️ for the student to complete
 
 ---
 
 ## Abstract
-xpact is an XML parser written in Eiffel with a C interface compatible with **Expat**, the standard C XML parser. The internship asked: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?** In the first four weeks of the eight-week internship at Bsharp, the work went from making the parser build on Windows, through an assertions-enabled baseline and reliable failure reporting, to large comparisons with Expat 2.8.1. The next week brought incremental parsing of chunked input, a full rerun of every test on the final parser, and a website for testing XML with xpact. Every problem was reproduced, explained, fixed in one focused pull request and verified before its issue was closed. Result: the whole W3C conformance suite (**2,585 cases**) runs with **0 failures**, xpact gives **the same verdict as Expat in every structured comparison**, and the worst chunked case went from **50 minutes to 106 ms**. Error positions and some events still differ from Expat. On the last day the two DLL blockers were fixed: an internal exception now returns an error code instead of crashing, and the DLL is safe from several threads (calls take turns). Parallel parsing and the 10 MB input limit remain design questions for a 1.0 release.
+xpact is an XML parser written in Eiffel with a C interface compatible with **Expat**, the standard C XML parser. The internship asked: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?** In the first four weeks of the eight-week internship at Bsharp, the work went from making the parser build on Windows, through an assertions-enabled baseline and reliable failure reporting, to large comparisons with Expat 2.8.1. The next week brought incremental parsing of chunked input, a full rerun of every test on the final parser, and a website for testing XML with xpact. Every problem was reproduced, explained, fixed in one focused pull request and verified before its issue was closed. Result: the whole W3C conformance suite (**2,585 cases**) runs with **0 failures**, xpact gives **the same verdict as Expat in every structured comparison**, and the worst chunked case went from **50 minutes to 106 ms**. Error positions and some events still differ from Expat. On the last day the two DLL blockers were fixed: an internal exception now returns an error code instead of crashing, and the DLL is safe from several threads (calls take turns). A SonarQube scan of the scripts and the website went from 196 issues to 0. Parallel parsing and the 10 MB input limit remain design questions for a 1.0 release.
 
 ## 🚦 At a glance
 
@@ -20,8 +20,9 @@ xpact is an XML parser written in Eiffel with a C interface compatible with **Ex
 | ✅ Same verdict as Expat | 4,308 / 4,308 C-API cases · 1,302 / 1,302 chunked configurations · 525 / 525 SVG files |
 | ✅ Final parser retested | Every test rerun on 2026-11-08: no regression, 3.9 million fuzzed inputs, 0 crashes |
 | ✅ Failures are reported | A failing test exits nonzero in every build, proven by a meta-test |
-| ✅ Traceable | 112 issues (100 closed) and 126 merged pull requests, plus 50 for the speed work; versions 0.1.0–0.9.0 |
-| ✅ Website | Upload XML and test it with xpact; all 7 review findings fixed, worker with no privileges at Low integrity; 🟡 not deployed yet |
+| ✅ Traceable | 146 issues (129 closed) and 168 merged pull requests by the student (2026-11-12), plus 50 for the speed work; versions 0.1.0–0.9.0 |
+| ✅ Code quality | SonarQube: **196 → 0 issues**, 0 bugs, 0 vulnerabilities, duplicated code 14 % → 0 %; 🟡 2 security hotspots to mark "Safe", gate needs a coverage report |
+| ✅ Website | Upload XML and test it with xpact; all 7 review findings fixed, worker with no privileges at Low integrity; 42/42 backend tests; Docker image on GitHub; 🟡 not deployed yet |
 | 🟡 Speed | Chunked input is incremental: 50 min → 106 ms. Against native Expat 2.8.1: median **18× slower**, same events in every cell ([results](../results/fair-speed-2026-11-10/README.md)). 🔴 ISO-8859-1 in pieces is still slow (#272) |
 | 🟡 Details differ | Error positions and a few events and error codes (6 open findings) |
 | 🟡 Blockers for 1.0 | ✅ exception → error code (#273); ✅ safe from several threads (#274). Open: parallel parsing (#304), documents over 10 MB |
@@ -49,7 +50,7 @@ flowchart LR
 **Tools:**
 - Eiffel, C, C#, Python and PowerShell
 - EiffelStudio 25.12 and Visual Studio 18 (MSVC)
-- Git and GitHub, GitHub Actions and Jenkins
+- Git and GitHub, GitHub Actions and Jenkins; SonarQube for code quality
 - Expat 2.8.1 and the W3C XML Test Suite as references
 - React, ASP.NET Core and Docker for the website; Boogie for two formal proofs
 
@@ -76,7 +77,7 @@ flowchart LR
 | 6 Improvement | All 2,585 W3C cases | ✅ 0 failed; merged by the supervisor, Jenkins passed |
 | 7 Comparison | G03 (chunks), A04 (library check) | ✅ 1,302 / 1,302 same verdicts; findings fixed |
 | 8 Consolidate (2–10 Nov) | Fixtures, new sources, speed, full rerun, website, Boogie | ✅ 247 fixtures; 50 min → 106 ms; no regression; `main` = `incremental-test` |
-| 9–10 (11–27 Nov) | Report, demonstration, handover | 🟡 this report |
+| 9–10 (11–27 Nov) | DLL blockers, website hardening, code quality, report, demonstration, handover | ✅ #273, #274 fixed; fair speed test; SonarQube 196 → 0; `main` synced again (12 Nov) · 🟡 this report, the demonstration |
 
 ## 4. Four investigations
 
@@ -123,11 +124,13 @@ flowchart LR
 | Expat's own C tests | Expat's own expectations | 399 checks, 38 known failures |
 | B02 meta-test, A04 library check | the tests themselves can be trusted | ✅ |
 | Website: memory cap, load test | runaway documents stopped, parallel visitors | ✅ ~31–40 requests/s, 0 failures up to 32 at once |
+| Python suite (test tools themselves) | the runners and report scripts | ✅ 239 / 239 |
+| SonarQube (scripts and website) | code quality and security rules | ✅ 196 → 0 issues; 🟡 2 hotspots to review |
 
 **Limits:** most runs were on one Windows machine; no Linux. Not tested or not working: documents over 10 MB, parallel parsing (several threads work since #274 but take turns), XML 1.1, and external entities fed in pieces.
 
 ## 6. Workflow
-- `main` belongs to the company; the student never committed to it.
+- `main` belongs to the company; the student never committed to it directly. It received the work only through reviewed merges (PR #177, and the syncs of 10 and 12 November, PR #344).
 - Each change was its own `fix/…` branch, then a report with logs, then a pull request into the work branch: squash-merged into `student-Mass` until 8 November, then into `incremental-test`, with a merge commit (never squash) since 10 November.
 - The supervisor reviewed and merged `student-Mass` into `main`, and Jenkins passed (PR #177). On 2026-11-10 `main` became the same commit as `incremental-test`.
 - Small pull requests kept every change reviewable, easy to revert, and easy to trace from issue to commit. Since 2026-11-10 earlier states also have version numbers (0.1.0–0.9.0, [CHANGELOG](../../CHANGELOG.md)).
@@ -144,6 +147,8 @@ flowchart LR
 | 🟡 [#211](https://github.com/andersoxie/xpact/issues/211) | Billion-laughs documents are stopped with Expat's error, but ~15× slower |
 | ⏸ [#13](https://github.com/andersoxie/xpact/issues/13) | The GC wrapper swallows exceptions (a design question) |
 | 🟡 [#210](https://github.com/andersoxie/xpact/issues/210) | Website deployment and HTTPS (the supervisor's server) |
+| 🟡 [#345](https://github.com/andersoxie/xpact/issues/345) | New website build with the accessibility fixes: built and tested, release and Docker image to follow |
+| 🟡 [#342](https://github.com/andersoxie/xpact/issues/342) | SonarQube: 2 security hotspots to mark "Safe"; a coverage report for the quality gate |
 
 ## 8. Reflection ✏️
 > *Draft. Rewrite it in your own words.*
