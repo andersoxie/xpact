@@ -102,7 +102,10 @@ def _hash_tree_entry(source_dir: Path, entry: str, digest) -> None:
         content = path.read_bytes()
     except OSError as exc:
         raise DependencyError(f"Cannot verify dependency source {path}: {exc}") from exc
-    actual_blob = hashlib.sha1(b"blob " + str(len(content)).encode("ascii") + b"\0" + content).hexdigest()
+    # Git's own blob id is SHA-1 by definition; it identifies, it does not protect. The
+    # security check is the SHA-256 source digest below (SonarQube hotspot S4790, #342).
+    actual_blob = hashlib.sha1(b"blob " + str(len(content)).encode("ascii") + b"\0" + content,
+                               usedforsecurity=False).hexdigest()
     if actual_blob != object_id:
         raise DependencyError(f"Xpact-core tracked file bytes differ from the pinned commit: {name}")
     digest.update(mode.encode("ascii") + b" " + name.encode("utf-8", "surrogateescape") + b"\0")
