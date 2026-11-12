@@ -11,7 +11,6 @@ interface Props {
   onFile(file: File): void;
   /** 1-based line to mark (the error line), or 0. */
   markLine: number;
-  readOnlyNote?: string;
 }
 
 /**
@@ -27,6 +26,8 @@ export const XmlEditor = forwardRef<XmlEditorHandle, Props>(function XmlEditor(
   const highlight = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const lines = value.split("\n");
+  // Keyed by line number: a stable identity for each row (SonarQube S6479, #329).
+  const numbered = lines.map((text, index) => ({ number: index + 1, text }));
 
   useImperativeHandle(ref, () => ({
     goToLine(line: number) {
@@ -69,16 +70,18 @@ export const XmlEditor = forwardRef<XmlEditorHandle, Props>(function XmlEditor(
       onDrop={onDrop}
     >
       <div className="gutter" ref={gutter} aria-hidden="true">
-        {lines.map((_, i) => (
-          <div key={i} className={i + 1 === markLine ? "err" : undefined}>
-            {i + 1}
+        {numbered.map((row) => (
+          <div key={row.number} className={row.number === markLine ? "err" : undefined}>
+            {row.number}
           </div>
         ))}
       </div>
       <div className="area">
         <div className="highlight" ref={highlight} aria-hidden="true">
-          {lines.map((line, i) => (
-            <div key={i}>{i + 1 === markLine ? <span className="line-mark">{line || " "}</span> : line || " "}</div>
+          {numbered.map((row) => (
+            <div key={row.number}>
+              {row.number === markLine ? <span className="line-mark">{row.text || " "}</span> : row.text || " "}
+            </div>
           ))}
         </div>
         <textarea

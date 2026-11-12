@@ -116,7 +116,7 @@ export function Project() {
   );
 }
 
-function LinkCard({ title, href, text }: { title: string; href: string; text: string }) {
+function LinkCard({ title, href, text }: Readonly<{ title: string; href: string; text: string }>) {
   return (
     <a className="card" href={href} style={{ color: "inherit" }}>
       <h2 className="h3" style={{ color: "var(--accent)" }}>{title} ↗</h2>

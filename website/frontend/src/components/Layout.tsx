@@ -26,6 +26,10 @@ function usePageTitle() {
 
 type Theme = "light" | "dark" | "system";
 
+// Lookup tables instead of nested ternaries (SonarQube S3358, #329).
+const NEXT_THEME: Record<Theme, Theme> = { system: "light", light: "dark", dark: "system" };
+const THEME_LABEL: Record<Theme, string> = { system: "◐ Auto", light: "☀ Light", dark: "☾ Dark" };
+
 function useTheme(): [Theme, () => void] {
   const [theme, setTheme] = useState<Theme>(() => {
     try {
@@ -44,14 +48,14 @@ function useTheme(): [Theme, () => void] {
       // Storage may be blocked; the theme still applies for this visit.
     }
   }, [theme]);
-  const next = () => setTheme((t) => (t === "system" ? "light" : t === "light" ? "dark" : "system"));
+  const next = () => setTheme((t) => NEXT_THEME[t]);
   return [theme, next];
 }
 
 export function Layout() {
   const [theme, nextTheme] = useTheme();
   usePageTitle();
-  const themeLabel = theme === "system" ? "◐ Auto" : theme === "light" ? "☀ Light" : "☾ Dark";
+  const themeLabel = THEME_LABEL[theme];
 
   return (
     <>
