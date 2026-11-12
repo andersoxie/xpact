@@ -1,0 +1,41 @@
+#316 cap sweep, 2026-11-12, student PC (Windows 11 Home), incremental-test @ fff0d2d
+Worker: website\dist\Xpact.Worker.exe (release website-2026-11-12-1), DLL website\dist\native\xpact.dll (ADAE03D277752A2C)
+Document: nested entities 10 levels x 10, as in the "Memory cap inside the container" workflow step
+Cap: Job Object ProcessMemoryLimit, flags 0x100 | 0x2000 | 0x400 (same as the API); one worker per run
+Columns: outcome (peak process memory in the job)
+
+== Unchanged worker
+cap 12 MB: none/exit0xC0000005(peak 12MB), none/exit0xC0000005(peak 12MB), STACKOVERFLOW(peak 12MB), none/exit0xC0000005(peak 12MB)
+cap 14 MB: STACKOVERFLOW(peak 14MB), none/exit0x80131506(peak 14MB), STACKOVERFLOW(peak 14MB), STACKOVERFLOW(peak 14MB)
+cap 16 MB: error/exit0x0(peak 14MB), error/exit0x0(peak 15MB), error/exit0x0(peak 14MB), error/exit0x0(peak 15MB)
+cap 18 MB: STACKOVERFLOW(peak 18MB), STACKOVERFLOW(peak 18MB), STACKOVERFLOW(peak 18MB), STACKOVERFLOW(peak 18MB)
+cap 20 MB: STACKOVERFLOW(peak 20MB), STACKOVERFLOW(peak 20MB), STACKOVERFLOW(peak 20MB), STACKOVERFLOW(peak 20MB)
+cap 22 MB: STACKOVERFLOW(peak 22MB), STACKOVERFLOW(peak 22MB), STACKOVERFLOW(peak 22MB), STACKOVERFLOW(peak 22MB)
+cap 24 MB: none/exit0xC0000005(peak 24MB), none/exit0xC0000005(peak 24MB), none/exit0xC0000005(peak 24MB), STACKOVERFLOW(peak 24MB)
+cap 26 MB: none/exit0xC0000005(peak 26MB), none/exit0xC0000005(peak 26MB), none/exit0xC0000005(peak 26MB), STACKOVERFLOW(peak 26MB)
+cap 30 MB: rejected-1(peak 27MB) x5
+cap 34 MB: rejected-1(peak 30-31MB) x5
+cap 38 MB: rejected-1(peak 34-35MB) x5
+cap 40 MB: rejected-1(peak 38-39MB) x5
+cap 42 MB: rejected-1(peak 38-39MB) x5
+cap 46 MB: rejected-1(peak 44MB) x5
+
+== Experiment (not committed): parse on a thread with a 16 MB stack, 8 MB committed before parsing
+cap 12 MB: STACKOVERFLOW, exit0xC0000005, STACKOVERFLOW, exit0xC0000005
+cap 14 MB: error/exit0x0 x4
+cap 16 MB: error/exit0x0 x4
+cap 18 MB: exit0xC0000005, error/exit0x0, exit0xC0000005, STACKOVERFLOW
+cap 20 MB: STACKOVERFLOW, exit0xC0000005, STACKOVERFLOW, exit0xC0000005
+cap 22 MB: error/exit0x0 x3, exit0xC0000005
+cap 24 MB: error/exit0x0 x4
+cap 26 MB: STACKOVERFLOW x4
+cap 30 MB: STACKOVERFLOW x3, rejected-1
+cap 40 MB: rejected-1 x4
+cap 46 MB: rejected-1 x4
+
+== Stack overflow run with XPACT_EXCEPTION_TRACE=1, cap 22 MB, unchanged worker
+exit 0xC00000FD; stdout empty; stderr (1 line): "Stack overflow."
+
+== GitHub Actions, same image website-2026-11-12-1, 40 MB cap in the container
+run 43138345877 (PR #348): 40 MB cap, nested entities: verdict=rejected code=1
+run 43138936736 (publish): 40 MB cap, nested entities: verdict=crashed; worker error output: "Stack overflow."

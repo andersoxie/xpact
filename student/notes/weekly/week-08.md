@@ -42,14 +42,14 @@
 | W3C runner, all 2,585 cases, both builds, rebuilt from `68abdcb` | ✅ 0 failed, 0 errors (same as 2026-11-08) |
 | [#227](https://github.com/andersoxie/xpact/issues/227) memory cap | ✅ test added: a nested-entity document under a 40 MB cap stops the worker; backend 21/21 three times |
 | Website load test | ✅ ~40 requests/s (tiny), ~31/s (100 KB), 0 failures up to 32 at once ([load-test.md](../../../website/docs/load-test.md)) |
-| SonarQube local scan (#131) | ⏳ script ready, needs the student's token |
+| SonarQube local scan (#131) | ⏳ script ready, needs the student's token · ✅ solved 2026-11-12, see [week 9](week-09.md) |
 
 ## Blocked
 - Website deployment ([#210](https://github.com/andersoxie/xpact/issues/210)), HTTPS and the low-privilege worker account
   are on the supervisor's server.
 - SonarQube [#131](https://github.com/andersoxie/xpact/issues/131) (HTTP 401 in Jenkins): the student has a token from
-  the supervisor; a local scan is being tried today.
-- `main` has 2 commits not in `incremental-test` (PR #254, Jenkins plots, 9 November).
+  the supervisor; a local scan is being tried today. ✅ Solved 2026-11-12 with the student's own token ([week 9](week-09.md)).
+- `main` has 2 commits not in `incremental-test` (PR #254, Jenkins plots, 9 November). ✅ brought in 2026-11-11 (PR #291); `main` = `incremental-test` since 2026-11-12.
 
 ## Next
 - [x] Merge `incremental-test` into `main`: `main` contains all of `incremental-test` (checked 2026-11-11).
