@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using Xpact.Contracts;
 using Xpact.Worker;
@@ -30,6 +31,7 @@ ValidationResult result;
 try
 {
     Native.Load(options.DllPath);
+    WarmUp(options);
     result = Parse(input, options);
 }
 catch (Exception e)
@@ -49,6 +51,51 @@ catch (Exception e)
 Console.Out.WriteLine(JsonSerializer.Serialize(result, WorkerJson.Options));
 Console.Out.Flush();
 return 0;
+
+// #316: under a small memory cap the parse can use all the memory the Job Object allows. If .NET
+// then loads a type or JIT-compiles a method for the first time (JSON output, the error path,
+// a finalizer), that fails inside the runtime and the worker dies with "Stack overflow." or an
+// access violation instead of reporting code 1. So run every path once now, while memory is free.
+static void WarmUp(WorkerOptions options)
+{
+    foreach (string doc in new[] { "<w a='1'><!--c--><?p d?>t</w>", "<w>" })
+    {
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(doc);
+        _ = JsonSerializer.Serialize(Parse(bytes, options with { ChunkSize = 0 }), WorkerJson.Options);
+        _ = JsonSerializer.Serialize(Parse(bytes, options with { ChunkSize = 4 }), WorkerJson.Options);
+    }
+    Console.Out.Flush();
+    Console.Error.Flush();
+    GC.Collect();
+    GC.WaitForPendingFinalizers();
+    GC.Collect();
+}
+
+static unsafe int Feed(IntPtr parser, byte[] buffer, int length, int chunkSize, ValidationResult result)
+{
+    fixed (byte* p = buffer)
+    {
+        if (chunkSize <= 0)
+        {
+            result.ParseCalls = 1;
+            return Native.XML_Parse(parser, p, length, 1);
+        }
+        // Feed the document in pieces, as a network client would. The verdict
+        // must not depend on where the pieces are cut.
+        int status = Native.StatusOk;
+        int offset = 0;
+        bool final = false;
+        while (status == Native.StatusOk && !final)
+        {
+            int piece = Math.Min(chunkSize, length - offset);
+            final = offset + piece >= length;
+            result.ParseCalls++;
+            status = Native.XML_Parse(parser, p + offset, piece, final ? 1 : 0);
+            offset += piece;
+        }
+        return status;
+    }
+}
 
 static unsafe ValidationResult Parse(byte[] input, WorkerOptions options)
 {
@@ -85,30 +132,20 @@ static unsafe ValidationResult Parse(byte[] input, WorkerOptions options)
         byte[] buffer = new byte[input.Length + 1];
         input.CopyTo(buffer, 0);
 
-        int status = Native.StatusOk;
+        // #316: memory held back from the parser. If the parse uses everything the cap allows,
+        // freeing this right after leaves room for .NET to build and print the result.
+        const int ReserveBytes = 4 * 1024 * 1024;
+        IntPtr reserve = Marshal.AllocHGlobal(ReserveBytes);
+        new Span<byte>((void*)reserve, ReserveBytes).Fill(0); // touch every page, so it is really committed
+        int status;
         var clock = Stopwatch.StartNew();
-        fixed (byte* p = buffer)
+        try
         {
-            if (options.ChunkSize <= 0)
-            {
-                result.ParseCalls = 1;
-                status = Native.XML_Parse(parser, p, input.Length, 1);
-            }
-            else
-            {
-                // Feed the document in pieces, as a network client would. The verdict
-                // must not depend on where the pieces are cut.
-                int offset = 0;
-                while (status == Native.StatusOk)
-                {
-                    int length = Math.Min(options.ChunkSize, input.Length - offset);
-                    bool final = offset + length >= input.Length;
-                    result.ParseCalls++;
-                    status = Native.XML_Parse(parser, p + offset, length, final ? 1 : 0);
-                    offset += length;
-                    if (final) break;
-                }
-            }
+            status = Feed(parser, buffer, input.Length, options.ChunkSize, result);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(reserve);
         }
         clock.Stop();
         EventRecorder.Finish();

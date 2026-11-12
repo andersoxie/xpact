@@ -24,7 +24,7 @@
 | [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces | 🔴 quadratic, still present |
 | Website security | ✅ review findings 1-7 fixed (#295, #297, #283, #286); ✅ worker with no privileges at Low integrity (#299) ([security.md](../website/docs/security.md)) |
 | Website quality | ✅ Lighthouse 100, ZAP 0 medium, W3C HTML 0/0 (#286); 42/42 backend tests; pages show the fair speed result and current limits (#314) |
-| Website Docker image | ✅ `ghcr.io/andersoxie/xpact-website:website-2026-11-12-1` (= `latest`, digest `sha256:08b77a5b…`) from release `website-2026-11-12-1` (`a840029`: accessibility #328, React #329, same DLLs), PR #348; container smoke and memory-cap tests pass ([report](../reports/issue-0345/report.md)) · 🟡 under a small memory cap the worker can crash in native code (stack overflow / access violation) instead of reporting out of memory: a race, investigated, not fixed ([#316](https://github.com/andersoxie/xpact/issues/316), [report](../reports/issue-0316/report.md); WinDbg installed for the next step) |
+| Website Docker image | ✅ `ghcr.io/andersoxie/xpact-website:website-2026-11-12-1` (= `latest`, digest `sha256:08b77a5b…`) from release `website-2026-11-12-1` (`a840029`: accessibility #328, React #329, same DLLs), PR #348; container smoke and memory-cap tests pass ([report](../reports/issue-0345/report.md)) · ✅ small memory cap crash fixed in the worker: cause was .NET loading types at the cap, not the DLL ([#316](https://github.com/andersoxie/xpact/issues/316), [report](../reports/issue-0316/report.md)) · ✅ 10 MB upload no longer freezes the page ([#352](https://github.com/andersoxie/xpact/issues/352), [#353](https://github.com/andersoxie/xpact/issues/353), [report](../reports/issue-0352/report.md)) · both need the next website release |
 | Website proxy | ✅ untrusted proxy logged, `KnownNetworks` (#312); the real proxy setting is chosen at deployment ([docker.md](../website/docs/docker.md#behind-a-reverse-proxy)) |
 | Website deployment | 🟡 not online: HTTPS, domain, `AllowedHosts` = Anders ([#210](https://github.com/andersoxie/xpact/issues/210)) |
 | Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias), [#318](https://github.com/andersoxie/xpact/issues/318) (`fix.ps1` merge commits into `incremental-test`, refuses `main`), [#319](https://github.com/andersoxie/xpact/issues/319) (DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL=1` blocks rebuilds) |
@@ -39,7 +39,8 @@
 - [ ] Rerun the full fair speed matrix (#275) on an **idle** PC before quoting final numbers. 1-2 h machine time
 - [x] ✅ Website build `website-2026-11-12-1` shipped (#345, PR #348). Next build: same steps (see the [#345 report](../reports/issue-0345/report.md)); the student runs `gh release create`.
 - [ ] ⏸ Aikido: mark the 14 checksum alerts as false positives (put aside, 2026-11-12).
-- [ ] #316 with WinDbg (parked): DLL with symbols in a separate folder, one run at a 20 MB cap under `cdb`, read the native stack ([report](../reports/issue-0316/report.md)).
+- [x] ✅ #316 found with WinDbg and fixed in the worker (2026-11-12, [report](../reports/issue-0316/report.md)); #352/#353 10 MB upload fixed (PR #354)
+- [ ] Next website release with #316 + #352/#353; then let the Docker memory-cap check require code 1 again
 - [x] ✅ Weekly note [week 9](notes/weekly/week-09.md).
 - [x] ✅ Website findings 1-2, worker rights; #273; #274; #275 merged; #302, #306, #308 (all 2026-11-11)
 
