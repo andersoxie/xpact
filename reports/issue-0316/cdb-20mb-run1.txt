@@ -1,0 +1,165 @@
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.031 seconds
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 46
+
+Microsoft (R) Windows Debugger Version 10.0.29680.1004 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: "c:\xpact\xpact-student-Mass\website\dist\Xpact.Worker.exe" --dll "c:\xpact\xpact-student-Mass\website\dist\native\xpact.dll" 
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*
+Symbol search path is: srv*
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+(69fc.8a74): Break instruction exception - code 80000003 (first chance)
+ntdll!RtlGetReturnAddressHijackTarget+0xa45:
+00007ffe`48cf5245 cc              int     3
+0:000> cdb: Reading initial command 'sxd av; sxd eh; .sleep 4000; g; .echo ===EXCEPTION; .lastevent; r; .echo ===STACK; kn 120; .echo ===MODULES; lm; q'
+(69fc.8a74): Unknown exception - code 04242420 (first chance)
+(69fc.8a74): C++ EH exception - code e06d7363 (first chance)
+(69fc.90d4): Stack overflow - code c00000fd (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+===EXCEPTION
+Last event: 69fc.90d4: Stack overflow - code c00000fd (first chance)
+  debugger time: Thu Nov 12 22:58:29.319 2026 (UTC + 1:00)
+rax=000000d71797b038 rbx=00000223beaf0000 rcx=00000223beaf0000
+rdx=0000000050000163 rsi=000000000000000d rdi=00000000000000d0
+rip=00007ffe48c660bf rsp=000000d71797af10 rbp=0000000000000001
+ r8=0000000000000001  r9=00000000000000d0 r10=00000fffb6ecc072
+r11=000000d71797b0c8 r12=00000000000000c0 r13=0000000000000000
+r14=0000000050000163 r15=0000000050000163
+iopl=0         nv up ei pl nz na po nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010202
+ntdll!RtlQueryWnfStateDataWithExplicitScope+0x4cf:
+00007ffe`48c660bf 4489442444      mov     dword ptr [rsp+44h],r8d ss:000000d7`1797af54=00000000
+===STACK
+ # Child-SP          RetAddr               Call Site
+00 000000d7`1797af10 00007ffe`48c2572d     ntdll!RtlQueryWnfStateDataWithExplicitScope+0x4cf
+01 000000d7`1797b040 00007ffe`48c01cfb     ntdll!RtlSizeHeap+0x20dd
+02 000000d7`1797b0d0 00007ffe`48c213b0     ntdll!RtlAllocateHeap+0xabb
+03 000000d7`1797b230 00007ffe`48c67126     ntdll!RtlGetUserInfoHeap+0x1220
+04 000000d7`1797b290 00007ffe`48c2572d     ntdll!RtlQueryWnfStateDataWithExplicitScope+0x1536
+05 000000d7`1797b3c0 00007ffe`48c01cfb     ntdll!RtlSizeHeap+0x20dd
+06 000000d7`1797b450 00007ffe`45d750d9     ntdll!RtlAllocateHeap+0xabb
+07 000000d7`1797b5b0 00007ffd`b76ca4ab     ucrtbase!malloc_base+0x39
+08 000000d7`1797b5e0 00007ffd`b75f6569     coreclr!operator new+0x1f [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\heap\new_scalar.cpp @ 36]
+09 (Inline Function) --------`--------     coreclr!MethodTable::MethodDataObject::operator new+0x34 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtable.h @ 3379]
+0a (Inline Function) --------`--------     coreclr!MethodTable::GetMethodDataHelper+0x2e5 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtable.cpp @ 7386]
+0b (Inline Function) --------`--------     coreclr!MethodTable::GetMethodData+0x2e5 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtable.cpp @ 7416]
+0c (Inline Function) --------`--------     coreclr!MethodTable::MethodIterator::Init+0x2e5 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtable.cpp @ 7503]
+0d (Inline Function) --------`--------     coreclr!MethodTable::MethodIterator::{ctor}+0x2e5 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtable.cpp @ 7462]
+0e (Inline Function) --------`--------     coreclr!MethodTableBuilder::ImportParentMethods+0x3f3 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtablebuilder.cpp @ 1099]
+0f 000000d7`1797b610 00007ffd`b75853d3     coreclr!MethodTableBuilder::BuildMethodTableThrowing+0x1cd9 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtablebuilder.cpp @ 1640]
+10 000000d7`1797b890 00007ffd`b756b520     coreclr!ClassLoader::CreateTypeHandleForTypeDefThrowing+0x11b3 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\methodtablebuilder.cpp @ 12920]
+11 000000d7`1797dc60 00007ffd`b756ce7e     coreclr!ClassLoader::CreateTypeHandleForTypeKey+0x64 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 2644]
+12 (Inline Function) --------`--------     coreclr!ClassLoader::DoIncrementalLoad+0x716 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 2591]
+13 000000d7`1797dd40 00007ffd`b759a0d4     coreclr!ClassLoader::LoadTypeHandleForTypeKey_Body+0x155e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 3318]
+14 000000d7`1797e540 00007ffd`b759ccff     coreclr!ClassLoader::LoadTypeHandleForTypeKey+0x174 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 3049]
+15 000000d7`1797e5d0 00007ffd`b759d52c     coreclr!ClassLoader::LoadTypeDefThrowing+0x38f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 1968]
+16 000000d7`1797e700 00007ffd`b759eed8     coreclr!ClassLoader::LoadTypeDefOrRefThrowing+0x41c [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 2137]
+17 000000d7`1797e800 00007ffd`b75969ed     coreclr!SigPointer::GetTypeHandleThrowing+0x15d8 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\siginfo.cpp @ 1750]
+18 (Inline Function) --------`--------     coreclr!ZapSig::DecodeType+0x95 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\zapsig.cpp @ 724]
+19 000000d7`1797ea40 00007ffd`b759685e     coreclr!LoadDynamicInfoEntry+0x17d [D:\a\_work\1\s\src\runtime\src\coreclr\vm\jitinterface.cpp @ 13709]
+1a 000000d7`1797ef70 00007ffd`b76dd848     coreclr!Module::FixupNativeEntry+0x66 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.cpp @ 3644]
+1b 000000d7`1797efa0 00007ffd`b760480d     coreclr!Module::FixupDelayListAux<Module *,int (__cdecl Module::*)(READYTORUN_IMPORT_SECTION *,unsigned __int64,unsigned __int64 *,int)>+0x98 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.inl @ 457]
+1c (Inline Function) --------`--------     coreclr!Module::FixupDelayList+0x4f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.inl @ 360]
+1d 000000d7`1797f030 00007ffd`b7603070     coreclr!ReadyToRunInfo::GetEntryPoint+0xccd [D:\a\_work\1\s\src\runtime\src\coreclr\vm\readytoruninfo.cpp @ 1257]
+1e (Inline Function) --------`--------     coreclr!MethodDesc::GetPrecompiledR2RCode+0x37 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 500]
+1f (Inline Function) --------`--------     coreclr!MethodDesc::GetPrecompiledCode+0x3c [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 440]
+20 (Inline Function) --------`--------     coreclr!MethodDesc::PrepareILBasedCode+0x22e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 405]
+21 (Inline Function) --------`--------     coreclr!MethodDesc::PrepareCode+0x22e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 312]
+22 000000d7`1797f140 00007ffd`b7602b63     coreclr!CodeVersionManager::PublishVersionableCodeIfNecessary+0x4b0 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\codeversion.cpp @ 1740]
+23 000000d7`1797f340 00007ffd`b760239f     coreclr!MethodDesc::DoPrestub+0x5a3 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 2238]
+24 000000d7`1797f430 00007ffd`b76c9605     coreclr!PreStubWorker+0x4ff [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 1981]
+25 000000d7`1797f5a0 00007ffd`7e2fb4bc     coreclr!ThePreStub+0x55 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\amd64\ThePreStubAMD64.asm @ 20]
+26 000000d7`1797f650 00007ffd`b76c8743     System_Private_CoreLib!System.GC.RunFinalizers+0x8c [/_/src/runtime/src/coreclr/System.Private.CoreLib/src/System/GC.CoreCLR.cs @ 326]
+27 000000d7`1797f730 00007ffd`b755bfe2     coreclr!CallDescrWorkerInternal+0x83 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\amd64\CallDescrWorkerAMD64.asm @ 74]
+28 000000d7`1797f770 00007ffd`b7652935     coreclr!DispatchCallSimple+0x66 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\callhelpers.cpp @ 242]
+29 000000d7`1797f800 00007ffd`b765283a     coreclr!FinalizerThread::FinalizeAllObjects+0x55 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\finalizerthread.cpp @ 257]
+2a 000000d7`1797f860 00007ffd`b763f9a2     coreclr!FinalizerThread::FinalizerThreadWorker+0x16a [D:\a\_work\1\s\src\runtime\src\coreclr\vm\finalizerthread.cpp @ 471]
+2b (Inline Function) --------`--------     coreclr!ManagedThreadBase_DispatchInner+0xd [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 6862]
+2c 000000d7`1797fab0 00007ffd`b763f8bf     coreclr!ManagedThreadBase_DispatchMiddle+0x5e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 6906]
+2d 000000d7`1797fb50 00007ffd`b7653e58     coreclr!ManagedThreadBase_DispatchOuter+0x7b [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 7065]
+2e (Inline Function) --------`--------     coreclr!ManagedThreadBase::KickOff+0x1f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 7104]
+2f 000000d7`1797fbc0 00007ffe`4714dda7     coreclr!FinalizerThread::FinalizerThreadStart+0xc8 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\finalizerthread.cpp @ 522]
+30 000000d7`1797fcc0 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+31 000000d7`1797fcf0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+===MODULES
+start             end                 module name
+00000223`beab0000 00000223`beab8000   Xpact_Worker   (deferred)             
+00000223`bef30000 00000223`bef3e000   System_Runtime   (deferred)             
+00000223`bef40000 00000223`bef48000   Xpact_Contracts   (deferred)             
+00000223`bef50000 00000223`bef58000   System_Text_Encoding_Extensions   (deferred)             
+00007ff6`58770000 00007ff6`5879d000   apphost    (deferred)             
+00007ffd`7d300000 00007ffd`7d4cb000   System_Text_Json   (deferred)             
+00007ffd`7e040000 00007ffd`7ef83000   System_Private_CoreLib   (service symbols: CLR Symbols with PDB: C:\ProgramData\dbg\sym\System.Private.CoreLib.pdb\B15AE6F34D3AE17E512B8AAC5A1F72BB1\System.Private.CoreLib.pdb)        
+00007ffd`82a60000 00007ffd`82c28000   xpact      (deferred)             
+00007ffd`b7540000 00007ffd`b79ba000   coreclr    (private pdb symbols)  C:\ProgramData\dbg\sym\coreclr.pdb\99CF4D13E662494DB0BC948160CCE0B21\coreclr.pdb
+00007ffd`f2e20000 00007ffd`f2e47000   System_Console   (deferred)             
+00007ffd`fdc00000 00007ffd`fdc19000   System_Runtime_InteropServices   (deferred)             
+00007ffe`24db0000 00007ffe`24df6000   System_Collections   (deferred)             
+00007ffe`24f00000 00007ffe`25103000   clrjit     (deferred)             
+00007ffe`25f20000 00007ffe`25f7f000   hostpolicy   (deferred)             
+00007ffe`2b8e0000 00007ffe`2b8f2000   System_Threading   (deferred)             
+00007ffe`2b900000 00007ffe`2b95f000   hostfxr    (deferred)             
+00007ffe`449e0000 00007ffe`449fb000   kernel_appcore   (deferred)             
+00007ffe`45d70000 00007ffe`45ebc000   ucrtbase   (pdb symbols)          C:\ProgramData\dbg\sym\ucrtbase.pdb\66A3E8DFB8B886146544529E6A6DD4F41\ucrtbase.pdb
+00007ffe`45ed0000 00007ffe`45f73000   msvcp_win   (deferred)             
+00007ffe`46260000 00007ffe`46669000   KERNELBASE   (deferred)             
+00007ffe`46670000 00007ffe`4671c000   bcryptPrimitives   (deferred)             
+00007ffe`46730000 00007ffe`46859000   gdi32full   (deferred)             
+00007ffe`46860000 00007ffe`46887000   win32u     (deferred)             
+00007ffe`46990000 00007ffe`46aa8000   RPCRT4     (deferred)             
+00007ffe`46ab0000 00007ffe`46b59000   msvcrt     (deferred)             
+00007ffe`46bf0000 00007ffe`46dce000   USER32     (deferred)             
+00007ffe`470e0000 00007ffe`47111000   IMM32      (deferred)             
+00007ffe`47120000 00007ffe`471eb000   KERNEL32   (export symbols)       C:\WINDOWS\System32\KERNEL32.DLL
+00007ffe`471f0000 00007ffe`479a0000   SHELL32    (deferred)             
+00007ffe`47a80000 00007ffe`47c19000   ole32      (deferred)             
+00007ffe`47d60000 00007ffe`47e3a000   OLEAUT32   (deferred)             
+00007ffe`47e40000 00007ffe`47ee8000   sechost    (deferred)             
+00007ffe`47ef0000 00007ffe`47fac000   ADVAPI32   (deferred)             
+00007ffe`48130000 00007ffe`484d5000   combase    (deferred)             
+00007ffe`48b40000 00007ffe`48b6b000   GDI32      (deferred)             
+00007ffe`48bd0000 00007ffe`48e3c000   ntdll      (export symbols)       C:\WINDOWS\SYSTEM32\ntdll.dll
+quit:
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\atlmfc.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\concurrency.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\cpp_rest.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\ObjectiveC.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\stl.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Data.Json.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Media.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\windows.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\winrt.natvis'

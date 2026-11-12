@@ -1,0 +1,39 @@
+#316 fix sweep, 2026-11-12, student PC (Windows 11 Home), branch fix/316-worker-warmup (from incremental-test @ 439ed26)
+DLL website\dist\native\xpact.dll (ADAE03D2..., unchanged). Command: powershell -File sweep316.ps1 -WorkerDir <dir> -Label <name> (5 runs per cap)
+OLD = website\dist worker (release website-2026-11-12-1); NEW1 = warm-up only; NEW2 = warm-up + 4 MB reserve + TieredCompilation off (committed)
+
+== OLD (c:\xpact\xpact-student-Mass\website\dist)
+cap 12 MB: exit0xC0000005(12) x3, STACKOVERFLOW(12) x2
+cap 14 MB: STACKOVERFLOW(14) x4, exit0x80131506(14) x1
+cap 16 MB: error(15) x5
+cap 18 MB: STACKOVERFLOW(18) x5
+cap 20 MB: STACKOVERFLOW(20) x3, exit0xC0000005(20) x2
+cap 22 MB: STACKOVERFLOW(22) x5
+cap 24 MB: exit0xC0000005(24) x2, STACKOVERFLOW(24) x3
+cap 26 MB: STACKOVERFLOW(26) x4, exit0x80131506(26) x1
+cap 30 MB: rejected-1(27) x5
+cap 40 MB: rejected-1(39) x3, rejected-1(38) x2
+== NEW1 (scratch worker-new)
+cap 12 MB: timeout x5
+cap 14 MB: STACKOVERFLOW(14) x2, exit0x80131506(14) x3
+cap 16 MB: error(14) x4, error(15) x1
+cap 18 MB: STACKOVERFLOW(18) x5
+cap 20 MB: rejected-1(20) x2, exit0xC0000005(20) x3
+cap 22 MB: STACKOVERFLOW(22) x5
+cap 24 MB: STACKOVERFLOW(24) x1, exit0xC0000005(24) x4
+cap 26 MB: STACKOVERFLOW(26) x3, rejected-1(26) x2
+cap 30 MB: rejected-1(27) x5
+cap 40 MB: rejected-1(39) x5
+== NEW2 (scratch worker-new2)
+cap 12 MB: error(11) x5
+cap 14 MB: error(11) x5
+cap 16 MB: error(15) x5
+cap 18 MB: error(15) x5
+cap 20 MB: error(19) x5
+cap 22 MB: error(19) x5
+cap 24 MB: error(23) x5
+cap 26 MB: error(23) x5
+cap 30 MB: rejected-1(30) x5
+cap 40 MB: rejected-1(40) x5
+
+NEW2 'error' at caps < 30 MB: stderr 'System.OutOfMemoryException: Insufficient memory...' (caught, verdict error, exit 0)

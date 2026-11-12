@@ -1,0 +1,14 @@
+Plan 2026-11-12 (work local, cheap) - status at end of session
+
+A. #316 crash under small memory cap
+  [x] Native stack under cdb at 20 MB cap, 3 runs (no symbols needed) -> reports/issue-0316/cdb-20mb-run*.txt
+  [x] Cause confirmed: .NET (CoreCLR) loads types / JIT / finalizers at the cap; not the DLL, not recursion
+  [x] Fix in worker: warm-up + 4 MB reserve + TieredCompilation off (branch fix/316-worker-warmup)
+  [x] Cap sweep old vs new: 0 crashes in 50 runs -> reports/issue-0316/fix-sweep-2026-11-12.txt
+  [ ] Next website release, then Docker memory-cap check may require code 1 again
+
+B. ~10 MB upload on the website
+  [x] Reproduced: page freezes (editor DOM per line) = #352; assertions/1-byte pieces time out = #353
+  [x] Fixed: read-only 256 KB preview; timeout hint. PR #354 merged into incremental-test, issues closed
+  [ ] Question for Anders: raise TimeoutSeconds for the assertions build?
+  [ ] Ship in the next website release
