@@ -43,7 +43,7 @@ def parse_tokenizer_only(document: bytes, iterations: int) -> int:
     return 0
 
 
-def main() -> int:
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iterations", type=int, default=1000)
     parser.add_argument("--mode", choices=("callbacks", "tokenizer"), default="callbacks")
@@ -53,7 +53,7 @@ def main() -> int:
 
     if args.version:
         print(expat.EXPAT_VERSION)
-        return 0
+        return
 
     if args.iterations <= 0:
         raise SystemExit("--iterations must be positive")
@@ -67,8 +67,7 @@ def main() -> int:
         f"libexpat pyexpat {args.mode} parsed {args.iterations} documents "
         f"({len(document)} bytes each, {events} callback events)."
     )
-    return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()  # exit status 0; bad input exits 1 through SystemExit (#327)
