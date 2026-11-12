@@ -270,6 +270,11 @@ def load_catalog(suite_dir: Path) -> list[Case]:
     return cases
 
 
+def lane_variant(case: Case) -> Case:
+    """The case as run by --all-cases in its own lane: lane expectation, no skip reason."""
+    return replace(case, expected=case.lane_expected, skip_reason="")
+
+
 def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir: Path,
              *, diagnostic_dir: Path | None = None, suite_root: Path | None = None,
              extra_arguments: tuple[str, ...] = ()) -> Result:
@@ -583,14 +588,16 @@ def main(argv: list[str] | None = None) -> int:
             for engine, executable in engines.items():
                 print(f"W3C XML: {engine}: {len(cases)} catalog cases", flush=True)
 
-                def run_one(case: Case) -> Result:
+                # engine and executable are bound as defaults: the loop variables are not
+                # read later by a closure (SonarQube S1515, #326).
+                def run_one(case: Case, engine: str = engine, executable: Path = executable) -> Result:
                     work_dir = Path(work)
                     if args.jobs > 1:
                         # A crash log per job: parallel crashes never share one exception_trace.log.
                         work_dir = work_dir / f"job-{threading.get_ident()}"
                         work_dir.mkdir(exist_ok=True)
                     if args.all_cases and case.skip_reason:
-                        lane_case = replace(case, expected=case.lane_expected, skip_reason="")
+                        lane_case = lane_variant(case)
                         if case.entities:
                             return run_case(lane_case, engine, entity_engines[engine], args.timeout, work_dir,
                                             extra_arguments=("--entity-root", str(suite_dir)))
