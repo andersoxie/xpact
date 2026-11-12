@@ -7,6 +7,11 @@ import { SAMPLES } from "../data/samples";
 
 const fmtBytes = (n: number) => (n >= 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.round(n / 1024)} KB`);
 
+// A larger file is not put into the editor in full: one gutter and one highlight row per line
+// froze the browser on a 10 MB file (~200,000 lines). The editor shows a read-only preview; the
+// whole file is still sent to the parser.
+const PREVIEW_BYTES = 256 * 1024;
+
 export function Validator() {
   const [text, setText] = useState(SAMPLES[0].xml);
   // An uploaded file is sent with its original bytes until the text is edited.
@@ -20,6 +25,7 @@ export function Validator() {
   const [info, setInfo] = useState<ServerInfo | null>(null);
   const editor = useRef<XmlEditorHandle>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const preview = file !== null && file.size > PREVIEW_BYTES;
 
   useEffect(() => {
     getInfo()
@@ -36,7 +42,7 @@ export function Validator() {
     }
     setFile(f);
     // Shown as UTF-8 for reading; the parser still gets the file's own bytes.
-    setText(await f.text());
+    setText(f.size > PREVIEW_BYTES ? await f.slice(0, PREVIEW_BYTES).text() : await f.text());
   }
 
   function onPick(e: ChangeEvent<HTMLInputElement>) {
@@ -111,7 +117,13 @@ export function Validator() {
             {file && (
               <span className="file-chip" title="The original bytes of this file are sent to the parser">
                 📄 {file.name} · {fmtBytes(file.size)}
-                <button aria-label="Use the editor text instead" onClick={() => setFile(null)}>
+                <button
+                  aria-label="Use the editor text instead"
+                  onClick={() => {
+                    if (preview) setText(""); // the preview is only the start of the file
+                    setFile(null);
+                  }}
+                >
                   ×
                 </button>
               </span>
@@ -122,12 +134,20 @@ export function Validator() {
             ref={editor}
             value={text}
             markLine={markLine}
+            readOnly={preview}
             onFile={(f) => void loadFile(f)}
             onChange={(v) => {
               setText(v);
               setFile(null); // edited: send the text, not the file
             }}
           />
+
+          {preview && file && (
+            <p className="muted small" style={{ marginTop: 8 }}>
+              Large file: the editor shows the first {fmtBytes(PREVIEW_BYTES)}, read-only. The whole file (
+              {fmtBytes(file.size)}) is sent to the parser. Errors after the preview are reported by line and column.
+            </p>
+          )}
 
           <div className="options">
             <label>

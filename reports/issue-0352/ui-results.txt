@@ -1,0 +1,6 @@
+OLD doc1.xml: load 4888 ms, gutter rows 19611, eval 3 ms, validate 2502 ms -> ✓Well-formed: accepted; no note; readOnly=false
+NEW doc1.xml: load 763 ms, gutter rows 5142, eval 3 ms, validate 1893 ms -> ✓Well-formed: accepted; note shown; readOnly=true
+OLD doc10mib.xml FAIL page.click: Timeout 30000ms exceeded.
+NEW doc10mib.xml: load 745 ms, gutter rows 5142, eval 2 ms, validate 4402 ms -> ✓Well-formed: accepted; note shown; readOnly=true
+production | ✕Not well-formed: rejectednot well-formed (invalid token) code 4line 196080, column 44 · byte 9,999,999 Show in editor
+assertions | !Stopped: time limit reachedLarge documents take longer with the assertions build (about 10× slower) and with small pieces (one parser call per piece). For a document of several MB, use the production build in one piece or pieces of 4096 bytes or more.The pars

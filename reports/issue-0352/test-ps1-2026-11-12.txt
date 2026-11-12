@@ -1,0 +1,2 @@
+Passed!  - Failed:     0, Passed:    42, Skipped:     0, Total:    42, Duration: 50 s - Xpact.Api.Tests.dll (net10.0)
+All website checks passed.
