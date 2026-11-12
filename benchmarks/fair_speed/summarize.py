@@ -32,7 +32,7 @@ def main():
     lines.append("# Fair speed test: xpact vs native Expat 2.8.1\n")
     lines.append("Median time per parse, xpact / Expat (1.0 = as fast; 2.0 = xpact twice as slow). "
                  "Same harness, same `expat.h` API, both DLLs loaded with `LoadLibrary`.\n")
-    allr = [v for v in ratios.values()]
+    allr = list(ratios.values())
     if allr:
         lines.append(f"**Cells measured:** {len(allr)} · **median ratio** {statistics.median(allr):.2f} · "
                      f"best {min(allr):.2f} · worst {max(allr):.2f} · checksum mismatches {len(mismatch)} · "

@@ -70,9 +70,9 @@ def main():
         for e in todo:                                   # warm-up and calibration
             r = run(a.exe, dlls[e], f, chunk, cb, ns, 1)
             if r is None:
-                rows[e] = dict(status="TIMEOUT", note=f"warm-up over {TIMEOUT_S} s")
+                rows[e] = {"status": "TIMEOUT", "note": f"warm-up over {TIMEOUT_S} s"}
             elif r[0] == "CRASH":
-                rows[e] = dict(status="CRASH", code=r[1], note="warm-up")
+                rows[e] = {"status": "CRASH", "code": r[1], "note": "warm-up"}
             else:
                 single = r[3] / 1000
                 plan[e] = (1 if single > SLOW_S else max(1, round(TARGET_S / max(single, 1e-6))), r)
@@ -91,10 +91,10 @@ def main():
         for e in plan:
             ms = [t[0][3] for t in times[e]]
             last = times[e][-1][0] if times[e] else plan[e][1]
-            rows[e] = dict(status=last[0], code=last[1], checksum=last[2], iterations=plan[e][0],
-                           median_ms=f"{statistics.median(ms):.4f}" if ms else "", min_ms=f"{min(ms):.4f}" if ms else "",
-                           max_ms=f"{max(ms):.4f}" if ms else "", runs=len(ms),
-                           note="1 run (slow)" if len(ms) == 1 else "")
+            rows[e] = {"status": last[0], "code": last[1], "checksum": last[2], "iterations": plan[e][0],
+                       "median_ms": f"{statistics.median(ms):.4f}" if ms else "", "min_ms": f"{min(ms):.4f}" if ms else "",
+                       "max_ms": f"{max(ms):.4f}" if ms else "", "runs": len(ms),
+                       "note": "1 run (slow)" if len(ms) == 1 else ""}
         for e in todo:
             w.writerow(dict(file=f.name, shape=shape, size=size, encoding=enc, chunk=chunk, callbacks=cb, engine=e,
                             **rows[e]))
