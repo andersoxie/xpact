@@ -22,7 +22,7 @@ permissions:
   packages: write
 
 env:
-  WEBSITE_RELEASE: website-2026-11-11-1
+  WEBSITE_RELEASE: website-2026-11-12-1
   IMAGE: ghcr.io/andersoxie/xpact-website
 
 jobs:
