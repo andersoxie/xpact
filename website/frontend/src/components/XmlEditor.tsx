@@ -11,6 +11,8 @@ interface Props {
   onFile(file: File): void;
   /** 1-based line to mark (the error line), or 0. */
   markLine: number;
+  /** Show the text without editing (the preview of a large file). */
+  readOnly?: boolean;
 }
 
 /**
@@ -18,7 +20,7 @@ interface Props {
  * Dropping a file on it hands the File to the page (the original bytes are kept).
  */
 export const XmlEditor = forwardRef<XmlEditorHandle, Props>(function XmlEditor(
-  { value, onChange, onFile, markLine },
+  { value, onChange, onFile, markLine, readOnly = false },
   ref,
 ) {
   const textarea = useRef<HTMLTextAreaElement>(null);
@@ -87,6 +89,7 @@ export const XmlEditor = forwardRef<XmlEditorHandle, Props>(function XmlEditor(
         <textarea
           ref={textarea}
           value={value}
+          readOnly={readOnly}
           spellCheck={false}
           autoCapitalize="off"
           autoComplete="off"
