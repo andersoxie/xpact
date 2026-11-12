@@ -148,6 +148,7 @@ flowchart LR
 | ⏸ [#13](https://github.com/andersoxie/xpact/issues/13) | The GC wrapper swallows exceptions (a design question) |
 | 🟡 [#210](https://github.com/andersoxie/xpact/issues/210) | Website deployment and HTTPS (the supervisor's server) |
 | 🟡 [#342](https://github.com/andersoxie/xpact/issues/342) | SonarQube: 2 security hotspots to mark "Safe"; a coverage report for the quality gate |
+| 🟡 [#316](https://github.com/andersoxie/xpact/issues/316) | Under a small memory cap the worker sometimes crashes in native code instead of reporting out of memory (a race; low impact; next: WinDbg) |
 
 ## 8. Reflection ✏️
 > *Draft. Rewrite it in your own words.*
