@@ -23,6 +23,7 @@ export function BarChart({ bars, legend, caption }: Props) {
   const max = Math.max(...bars.map((b) => b.value), 1);
   return (
     <figure style={{ margin: 0 }}>
+      {caption && <figcaption className="sr-only">{caption}</figcaption>}
       {legend && legend.length > 1 && (
         <div className="legend">
           {legend.map((l) => (
@@ -33,7 +34,7 @@ export function BarChart({ bars, legend, caption }: Props) {
           ))}
         </div>
       )}
-      <div className="bar-chart" role="img" aria-label={caption}>
+      <div className="bar-chart">
         {bars.map((b) => (
           <div className="bar-row" key={b.label} title={b.title ?? `${b.label}: ${b.display ?? b.value}`}>
             <span className="name">{b.label}</span>

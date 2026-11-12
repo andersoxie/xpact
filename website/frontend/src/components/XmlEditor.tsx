@@ -58,7 +58,8 @@ export const XmlEditor = forwardRef<XmlEditorHandle, Props>(function XmlEditor(
   }
 
   return (
-    <div
+    <section
+      aria-label="XML editor: type or paste XML, or drop a .xml file"
       className={`editor${dragging ? " dragging" : ""}`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -93,6 +94,6 @@ export const XmlEditor = forwardRef<XmlEditorHandle, Props>(function XmlEditor(
         />
       </div>
       {dragging && <div className="drop-hint">Drop the XML file to test it</div>}
-    </div>
+    </section>
   );
 });

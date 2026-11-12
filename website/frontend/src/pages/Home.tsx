@@ -169,9 +169,10 @@ function MetricStat({ metric }: { metric: Metric }) {
 function Done({ children }: { children: React.ReactNode }) {
   return (
     <li>
-      <span className="tick" role="img" aria-label="done">
+      <span className="tick" aria-hidden="true">
         ✅
       </span>
+      <span className="sr-only">Done: </span>
       <span>{children}</span>
     </li>
   );
@@ -180,9 +181,10 @@ function Done({ children }: { children: React.ReactNode }) {
 function Todo({ children }: { children: React.ReactNode }) {
   return (
     <li>
-      <span className="todo" role="img" aria-label="to do">
+      <span className="todo" aria-hidden="true">
         ⬜
       </span>
+      <span className="sr-only">To do: </span>
       <span>{children}</span>
     </li>
   );
