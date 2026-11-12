@@ -131,7 +131,7 @@ export function Validator() {
 
           <div className="options">
             <label>
-              Parser build
+              <span>Parser build</span>
               <select value={build} onChange={(e) => setBuild(e.target.value)}>
                 {(info?.builds ?? [{ name: "production", available: true }]).map((b) => (
                   <option key={b.name} value={b.name} disabled={!b.available}>
@@ -142,7 +142,7 @@ export function Validator() {
               </select>
             </label>
             <label>
-              Feed the document
+              <span>Feed the document</span>
               <select value={chunked ? "chunks" : "whole"} onChange={(e) => setChunked(e.target.value === "chunks")}>
                 <option value="whole">In one piece</option>
                 <option value="chunks">In pieces (streaming)</option>
@@ -150,7 +150,7 @@ export function Validator() {
             </label>
             {chunked && (
               <label>
-                Piece size (bytes)
+                <span>Piece size (bytes)</span>
                 <input
                   type="number"
                   min={1}

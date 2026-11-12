@@ -55,7 +55,10 @@
 - [x] Merge `incremental-test` into `main`: `main` contains all of `incremental-test` (checked 2026-11-11).
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and load test (2026-11-10).
 - [x] Website checked and fixed (2026-11-11): Lighthouse accessibility 89-91 → 100, speed 87-94 → 98-100, ZAP 2 medium → 0, W3C HTML 0/0, 27/27 backend tests; Docker checklist passes. PRs #282, #285, #287, #288 ([PLAN](../../PLAN.md#-website-quality-check-2026-11-11)).
-- [ ] Website: review findings 1-2; worker under a low-privilege account (code part ours, account on the supervisor's server). HTTPS: the supervisor.
-- [ ] Open issues on andersoxie (16 on 2026-11-11): #275, #274, #273, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13. (#227 closed 2026-11-10; #281, #283, #284, #286 closed 2026-11-11.)
+- [x] ✅ Website review findings 1-2 (#295, #297) and worker with no privileges at Low integrity (#299), 2026-11-11. HTTPS and deployment: the supervisor.
+- [x] ✅ DLL: #273 exception → error code, #274 safe from several threads (2026-11-11); parallel parsing → question #304.
+- [x] ✅ #211 rechecked (code 43 ✅, ~1.5 s 🟡); found #293. Tooling: #302, #306, #308.
+- [ ] Open issues on andersoxie (15 on 2026-11-11 night): #304, #293, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13. (Closed 2026-11-11: #273, #274, #275, #281, #283, #284, #286, #295, #297, #299, #302, #306, #308.)
 - [x] Refile mass-xpact#84, #73, #75 on andersoxie: #272, #273, #274.
-- [x] Update [`ActualReport.md`](../../report/ActualReport.md) and `ActualReportShorter.md` with week 8 (PR #269). Hand-in 27 November.
+- [x] ✅ Fair speed test vs Expat 2.8.1 (#275): xpact median 18× slower, 0 checksum mismatches, ISO-8859-1 in pieces quadratic → [results](../../results/fair-speed-2026-11-10/README.md)
+- [x] Update [`ActualReport.md`](../../report/ActualReport.md) and `ActualReportShorter.md` with 2026-11-11. Hand-in 27 November.

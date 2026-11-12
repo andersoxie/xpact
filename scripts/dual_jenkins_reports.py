@@ -9,6 +9,18 @@ import re
 import statistics
 import tempfile
 
+TABLE_END = '</table>'
+
+
+def overall_status(statuses):
+    """Campaign status from lane statuses: any failed lane fails it, then any lane with failures."""
+    statuses = set(statuses)
+    if "failed" in statuses:
+        return "failed"
+    if "complete_with_failures" in statuses:
+        return "complete_with_failures"
+    return "complete"
+
 
 ENGINES = ("xpact", "xpact-core")
 LABELS = ("xpact", "pinned Xpact-core")
@@ -154,6 +166,23 @@ def validate_artifacts(report, profile):
             raise ReportsError("Plot provenance lacks source or executable identity")
 
 
+def _control_row_failed(row, profile, expected):
+    """Check one directed-control row; True when it records a failure."""
+    if row["status"] != ("qualified" if profile == "catalog" else "executed"):
+        raise ReportsError("Directed controls were not executed")
+    if row.get("qualification_error"):
+        if profile == "catalog" or row["cases"]:
+            raise ReportsError("Control process errors cannot supply passing qualification")
+        return True
+    cases = row["cases"]
+    names = [case["case_id"] for case in cases]
+    if len(names) != len(expected) or set(names) != expected:
+        raise ReportsError("Directed control matrix is incomplete or duplicated")
+    if any(case["status"] not in ("PASS", "FAIL") for case in cases):
+        raise ReportsError("Invalid directed control outcome")
+    return any(case["status"] == "FAIL" for case in cases)
+
+
 def validate_controls(report, profile):
     expected = CATALOG_CONTROLS if profile == "catalog" else W3C_CONTROLS
     rows = report["qualification"]
@@ -162,24 +191,27 @@ def validate_controls(report, profile):
             or any(type(row["assertions"]) is not bool for row in rows)):
         raise ReportsError("Directed controls must cover both assertion modes for both implementations")
     has_failures = False
-    for row in rows:
-        if row["status"] != ("qualified" if profile == "catalog" else "executed"):
-            raise ReportsError("Directed controls were not executed")
-        if row.get("qualification_error"):
-            if profile == "catalog" or row["cases"]:
-                raise ReportsError("Control process errors cannot supply passing qualification")
-            has_failures = True
-            continue
-        cases = row["cases"]
-        names = [case["case_id"] for case in cases]
-        if len(names) != len(expected) or set(names) != expected:
-            raise ReportsError("Directed control matrix is incomplete or duplicated")
-        if any(case["status"] not in ("PASS", "FAIL") for case in cases):
-            raise ReportsError("Invalid directed control outcome")
-        has_failures |= any(case["status"] == "FAIL" for case in cases)
+    for row in rows:  # every row is checked, also after the first failure
+        has_failures |= _control_row_failed(row, profile, expected)
     if profile == "catalog" and has_failures:
         raise ReportsError("A failed catalog correctness gate cannot supply benchmark values")
     return has_failures
+
+
+def _checked_catalog_pair(row, index, document_bytes):
+    """Check one catalog measurement pair; return its iteration count."""
+    iterations = count(row["Iterations"], positive=True)
+    if (row["Workload"] != "catalog" or row["Pair"] != index
+            or row["Order"] != ("AB" if index % 2 else "BA")
+            or row["DocumentBytes"] != document_bytes):
+        raise ReportsError("Catalog plot data changed workload, input or pair sequence")
+    for prefix in ("Baseline", "Candidate"):
+        elapsed = positive_number(row[prefix + "ElapsedMs"])
+        rate = positive_number(row[prefix + "MiBPerSecond"])
+        computed_rate = document_bytes * iterations / (1024 * 1024) / (elapsed / 1000)
+        if not math.isclose(rate, computed_rate, rel_tol=1e-9):
+            raise ReportsError("Catalog throughput contradicts elapsed time and document count")
+    return iterations
 
 
 def catalog_plots(report):
@@ -193,20 +225,7 @@ def catalog_plots(report):
     if len(rows) != pairs:
         raise ReportsError("Catalog measurement pairs are incomplete")
     document_bytes = count(report["input"]["bytes"], positive=True)
-    iteration_counts = set()
-    for index, row in enumerate(rows, 1):
-        iterations = count(row["Iterations"], positive=True)
-        iteration_counts.add(iterations)
-        if (row["Workload"] != "catalog" or row["Pair"] != index
-                or row["Order"] != ("AB" if index % 2 else "BA")
-                or row["DocumentBytes"] != document_bytes):
-            raise ReportsError("Catalog plot data changed workload, input or pair sequence")
-        for prefix in ("Baseline", "Candidate"):
-            elapsed = positive_number(row[prefix + "ElapsedMs"])
-            rate = positive_number(row[prefix + "MiBPerSecond"])
-            computed_rate = document_bytes * iterations / (1024 * 1024) / (elapsed / 1000)
-            if not math.isclose(rate, computed_rate, rel_tol=1e-9):
-                raise ReportsError("Catalog throughput contradicts elapsed time and document count")
+    iteration_counts = {_checked_catalog_pair(row, index, document_bytes) for index, row in enumerate(rows, 1)}
     if len(iteration_counts) != 1:
         raise ReportsError("Catalog pairs use different iteration counts")
     normalized, rates = [], []
@@ -292,7 +311,7 @@ def report_body(state, lane_reports, plots, *, link_prefix=''):
         row = state["lanes"][lane]
         evidence = '<a href="{0}/report.json">Report</a> · <a href="{0}/summary.md">Summary</a>'.format(html.escape(prefix + lane, quote=True)) if lane in lane_reports else html.escape(row.get("error", "No completed campaign; no numeric values published."))
         parts.append('<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(lane, html.escape(row["status"]), evidence))
-    parts += ['</table>',
+    parts += [TABLE_END,
               '<p>Only xpact contributes to the Jenkins Test Result summary and its test pass/fail decision. Xpact-core remains comparison data in these plots and detailed artifacts.</p>',
               '<p>Catalog timing is normalized per 1,000 documents because calibration can change the iteration count. Throughput is the median of measured pairs. Both engines use no-op handlers; parser reset/reuse and process startup are timed. Core retains internal GC suspension/full collection; the caller requests no additional suspension.</p>',
               '<p>W3C plots show functional outcomes, including red completed campaigns. Wrong verdicts and process errors remain failures; exclusions are never passed. W3C elapsed times include fresh process startup and file I/O and are not compared here as parser throughput. No known-failure allowlist is applied.</p>']
@@ -309,12 +328,12 @@ def report_body(state, lane_reports, plots, *, link_prefix=''):
                 sum(case["status"] == "PASS" for case in row["cases"]),
                 sum(case["status"] == "FAIL" for case in row["cases"]),
                 html.escape(row.get("qualification_error", ""))))
-        parts += ['</table>', '<table><tr><th>Implementation</th><th>Source revision</th><th>Executable SHA-256</th><th>GC policy</th></tr>']
+        parts += [TABLE_END, '<table><tr><th>Implementation</th><th>Source revision</th><th>Executable SHA-256</th><th>GC policy</th></tr>']
         for engine in ENGINES:
             artifact = report["artifacts"][engine]
             parts.append('<tr><td>{}</td><td><code>{}</code></td><td><code>{}</code></td><td>{}</td></tr>'.format(
                 html.escape(engine), html.escape(artifact["source"]["revision"]), html.escape(artifact["executable_sha256"]), html.escape(artifact["gc_policy"])))
-        parts.append('</table>')
+        parts.append(TABLE_END)
     return "\n".join(parts + ['<p>Native DLLs, .NET, general event/canonical-output parity and full external-resource parity are outside the guarantees of these lanes.</p>']) + "\n"
 
 
@@ -338,39 +357,52 @@ def replace_text(path, content):
             staged.unlink(missing_ok=True)
 
 
+def _lane_plots(lane, row, lane_reports):
+    """Plots of one completed lane; nothing for a failed lane without evidence."""
+    if row["status"] in ("complete", "complete_with_failures"):
+        if lane not in lane_reports or lane_reports[lane]["status"] != row["status"]:
+            raise ReportsError("Completed lane evidence is missing or has a different status")
+        return catalog_plots(lane_reports[lane]) if lane == "catalog" else w3c_plots(lane_reports[lane])
+    if lane in lane_reports or row["status"] != "failed":
+        raise ReportsError("An incomplete lane cannot supply numeric plot values")
+    return []
+
+
+def _campaign_plots(state, lane_reports):
+    """Check the terminal campaign state against its lanes; return the plots of completed lanes."""
+    if not state["build_id"] or not isinstance(state["build_id"], str):
+        raise ReportsError("A Jenkins build owner is required")
+    if state["status"] not in ("complete", "complete_with_failures", "failed"):
+        raise ReportsError("Only terminal campaign states can publish plot values")
+    if set(state["lanes"]) != {"catalog", "w3c"} or set(lane_reports) - {"catalog", "w3c"}:
+        raise ReportsError("Unknown or missing dual campaign lane")
+    plots = []
+    for lane, row in state["lanes"].items():
+        plots.extend(_lane_plots(lane, row, lane_reports))
+    if state["status"] != overall_status(row["status"] for row in state["lanes"].values()):
+        raise ReportsError("Overall campaign status contradicts lane states")
+    return plots
+
+
+def _write_plot(output_dir, spec):
+    """Write one plot CSV; return its manifest row."""
+    path = output_dir / (spec["token"] + ".csv")
+    replace_text(path, csv_text([LABELS, [format(value, ".17g") for value in spec["values"]]]))
+    try:
+        source = path.resolve().relative_to(Path.cwd().resolve()).as_posix()
+    except ValueError:
+        source = path.resolve().as_posix()
+    return [source, "plot-" + spec["token"] + ".csv", spec["group"], spec["title"], spec["yaxis"]]
+
+
 def publish_reports(output_dir, state, lane_reports):
     """Publish only completed lane data; the orchestrator owns the fresh directory."""
     output_dir = Path(output_dir)
     clear_reports(output_dir)
     try:
-        if not state["build_id"] or not isinstance(state["build_id"], str):
-            raise ReportsError("A Jenkins build owner is required")
-        if state["status"] not in ("complete", "complete_with_failures", "failed"):
-            raise ReportsError("Only terminal campaign states can publish plot values")
-        if set(state["lanes"]) != {"catalog", "w3c"} or set(lane_reports) - {"catalog", "w3c"}:
-            raise ReportsError("Unknown or missing dual campaign lane")
-        plots = []
-        for lane, row in state["lanes"].items():
-            if row["status"] in ("complete", "complete_with_failures"):
-                if lane not in lane_reports or lane_reports[lane]["status"] != row["status"]:
-                    raise ReportsError("Completed lane evidence is missing or has a different status")
-                plots.extend(catalog_plots(lane_reports[lane]) if lane == "catalog" else w3c_plots(lane_reports[lane]))
-            elif lane in lane_reports or row["status"] != "failed":
-                raise ReportsError("An incomplete lane cannot supply numeric plot values")
-        expected_status = ("failed" if any(row["status"] == "failed" for row in state["lanes"].values())
-                           else "complete_with_failures" if any(row["status"] == "complete_with_failures" for row in state["lanes"].values())
-                           else "complete")
-        if state["status"] != expected_status:
-            raise ReportsError("Overall campaign status contradicts lane states")
+        plots = _campaign_plots(state, lane_reports)
         manifest = [["sourceFile", "csvFileName", "group", "title", "yaxis"]]
-        for spec in plots:
-            path = output_dir / (spec["token"] + ".csv")
-            replace_text(path, csv_text([LABELS, [format(value, ".17g") for value in spec["values"]]]))
-            try:
-                source = path.resolve().relative_to(Path.cwd().resolve()).as_posix()
-            except ValueError:
-                source = path.resolve().as_posix()
-            manifest.append([source, "plot-" + spec["token"] + ".csv", spec["group"], spec["title"], spec["yaxis"]])
+        manifest += [_write_plot(output_dir, spec) for spec in plots]
         replace_text(output_dir / HTML_REPORT, html_report(state, lane_reports, plots))
         # The manifest is the last published file, so a partial export is not consumable.
         replace_text(output_dir / MANIFEST, csv_text(manifest, delimiter="\t"))

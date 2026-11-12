@@ -1,0 +1,14 @@
+bench rc=0
+dll adae03d277752a2c -> adae03d277752a2c
+{"engine": "Finalized", "total": 2585, "passed": 2283, "no_crash_only": 302, "failed": 0, "errors": 0, "skippe
+{"engine": "FinalizedAssertions", "total": 2585, "passed": 2283, "no_crash_only": 302, "failed": 0, "errors": 
+Ran 239 tests in 44.477s
+
+OK
+ M .vscode/settings.json
+ M README.md
+ M scripts/run_benchmarks.ps1
+ M scripts/run_large_xml_benchmarks.ps1
+?? scripts/resolve_python.ps1
+
+[exited with code 0]

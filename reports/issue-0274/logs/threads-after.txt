@@ -1,0 +1,18 @@
+== xpact (adae03d277752a2c)
+threads 1, parses 2000: expected result 2000, wrong 0
+threads 2, parses 4000: expected result 4000, wrong 0
+threads 4, parses 8000: expected result 8000, wrong 0
+threads 8, parses 16000: expected result 16000, wrong 0
+threads 16, parses 32000: expected result 32000, wrong 0
+threads 1, parses 2000: expected result 2000, wrong 0
+threads 8, parses 16000: expected result 16000, wrong 0
+stress: failed runs 0 / 40
+== xpact_assertions (75f43a5b8ee7726a)
+threads 1, parses 2000: expected result 2000, wrong 0
+threads 2, parses 4000: expected result 4000, wrong 0
+threads 4, parses 8000: expected result 8000, wrong 0
+threads 8, parses 16000: expected result 16000, wrong 0
+threads 16, parses 32000: expected result 32000, wrong 0
+threads 1, parses 2000: expected result 2000, wrong 0
+threads 8, parses 16000: expected result 16000, wrong 0
+stress: failed runs 0 / 40

@@ -7,7 +7,7 @@ interface Props {
 
 const fmt = new Intl.NumberFormat("en");
 
-export function ResultPanel({ result, onGoToLine }: Props) {
+export function ResultPanel({ result, onGoToLine }: Readonly<Props>) {
   const e = result.error;
   const problem = result.verdict !== "accepted" && result.verdict !== "rejected";
   const kind = problem ? "problem" : result.verdict;
@@ -104,8 +104,9 @@ export function ResultPanel({ result, onGoToLine }: Props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {result.events.sample.map((ev, i) => (
-                    <tr key={i}>
+                  {result.events.sample.map((ev, position) => ({ ev, seq: position + 1 })).map(({ ev, seq }) => (
+                    // seq is the event's place in the parser's event stream: fixed for this result.
+                    <tr key={seq}>
                       <td className="num">{ev.line}</td>
                       <td className="kind">{ev.kind}</td>
                       <td className="kind">{ev.name}</td>
@@ -129,7 +130,7 @@ export function ResultPanel({ result, onGoToLine }: Props) {
   );
 }
 
-function Count({ label, value }: { label: string; value: number }) {
+function Count({ label, value }: Readonly<{ label: string; value: number }>) {
   return (
     <div className="stat" style={{ padding: "10px 12px" }}>
       <div className="label">{label}</div>

@@ -51,6 +51,9 @@ the conformance cases. `-SkipBuild` reuses existing benchmark executables;
 these must have been compiled with the conformance command support.
 `-SkipW3cConformance` explicitly omits the suite for a local throughput run.
 The Jenkins pipelines do not pass this switch.
+`-UseExistingNativeDll` keeps the DLLs in `build\native-eiffel` instead of
+rebuilding them (the run prints their SHA-256), and `-NoDocsUpdate` writes the
+benchmark page only to the output folder instead of `docs\benchmarks.md` (#302).
 
 To rerun only conformance against an already built executable:
 

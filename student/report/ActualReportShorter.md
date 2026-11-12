@@ -1,7 +1,7 @@
 # Internship Report (short version): Building Confidence in an XML Parser
 
-> **Student:** Masoud Dehdar ✏️ · **Programme:** System Developer ✏️ · **University:** Medieinstitutet
-> **Company:** Bsharp · **Supervisor:** Anders Persson ✏️ · **Internship:** 6 October – 27 November 2026 (eight weeks)
+> **Student:** Masoud Dehdar · **Programme:** Software Developer .NET · **University:** Medieinstitutet
+> **Company:** Bsharp · **Supervisor:** Anders Persson · **Internship:** 6 October – 27 November 2026 (eight weeks)
 > **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` @ `9688e9e` (2026-11-10, = `main`) · **Full report:** [ActualReport.md](ActualReport.md)
 >
 > ✅ done and verified · 🟡 partly done · 🔴 open · ⏭️ dropped by decision · ✏️ for the student to complete
@@ -9,7 +9,7 @@
 ---
 
 ## Abstract
-xpact is an XML parser written in Eiffel with a C interface compatible with **Expat**, the standard C XML parser. The internship asked: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?** In the first four weeks of the eight-week internship at Bsharp, the work went from making the parser build on Windows, through an assertions-enabled baseline and reliable failure reporting, to large comparisons with Expat 2.8.1. The next week brought incremental parsing of chunked input, a full rerun of every test on the final parser, and a website for testing XML with xpact. Every problem was reproduced, explained, fixed in one focused pull request and verified before its issue was closed. Result: the whole W3C conformance suite (**2,585 cases**) runs with **0 failures**, xpact gives **the same verdict as Expat in every structured comparison**, and the worst chunked case went from **50 minutes to 106 ms**. Error positions and some events still differ from Expat; thread safety and the 10 MB input limit block a 1.0 release.
+xpact is an XML parser written in Eiffel with a C interface compatible with **Expat**, the standard C XML parser. The internship asked: **how can we demonstrate that xpact handles valid and invalid XML consistently, with assertions enabled?** In the first four weeks of the eight-week internship at Bsharp, the work went from making the parser build on Windows, through an assertions-enabled baseline and reliable failure reporting, to large comparisons with Expat 2.8.1. The next week brought incremental parsing of chunked input, a full rerun of every test on the final parser, and a website for testing XML with xpact. Every problem was reproduced, explained, fixed in one focused pull request and verified before its issue was closed. Result: the whole W3C conformance suite (**2,585 cases**) runs with **0 failures**, xpact gives **the same verdict as Expat in every structured comparison**, and the worst chunked case went from **50 minutes to 106 ms**. Error positions and some events still differ from Expat. On the last day the two DLL blockers were fixed: an internal exception now returns an error code instead of crashing, and the DLL is safe from several threads (calls take turns). Parallel parsing and the 10 MB input limit remain design questions for a 1.0 release.
 
 ## 🚦 At a glance
 
@@ -21,10 +21,10 @@ xpact is an XML parser written in Eiffel with a C interface compatible with **Ex
 | ✅ Final parser retested | Every test rerun on 2026-11-08: no regression, 3.9 million fuzzed inputs, 0 crashes |
 | ✅ Failures are reported | A failing test exits nonzero in every build, proven by a meta-test |
 | ✅ Traceable | 112 issues (100 closed) and 126 merged pull requests, plus 50 for the speed work; versions 0.1.0–0.9.0 |
-| ✅ Website | Upload XML and test it with xpact; 🟡 not deployed yet |
-| 🟡 Speed | Chunked input is incremental: 50 min → 106 ms. 🔴 ISO-8859-1 in pieces is still slow |
+| ✅ Website | Upload XML and test it with xpact; all 7 review findings fixed, worker with no privileges at Low integrity; 🟡 not deployed yet |
+| 🟡 Speed | Chunked input is incremental: 50 min → 106 ms. Against native Expat 2.8.1: median **18× slower**, same events in every cell ([results](../results/fair-speed-2026-11-10/README.md)). 🔴 ISO-8859-1 in pieces is still slow (#272) |
 | 🟡 Details differ | Error positions and a few events and error codes (6 open findings) |
-| 🔴 Blockers for 1.0 | Not thread-safe; documents over 10 MB rejected; DLL crash without a trace on an Eiffel exception |
+| 🟡 Blockers for 1.0 | ✅ exception → error code (#273); ✅ safe from several threads (#274). Open: parallel parsing (#304), documents over 10 MB |
 
 ---
 
@@ -53,7 +53,7 @@ flowchart LR
 - Expat 2.8.1 and the W3C XML Test Suite as references
 - React, ASP.NET Core and Docker for the website; Boogie for two formal proofs
 
-**AI:** Claude Code was used as an AI assistant throughout (code, tests, reports). The student set the goals and made the decisions. ✏️ *Adjust to your university's rules.*
+**AI:** Claude Code was used as an AI assistant throughout (code, tests, reports). The student set the goals and made the decisions. In the student's own estimate, this raised their efficiency about 100×.
 
 **Method, for every problem:**
 1. Reproduce it with the exact command.
@@ -124,11 +124,11 @@ flowchart LR
 | B02 meta-test, A04 library check | the tests themselves can be trusted | ✅ |
 | Website: memory cap, load test | runaway documents stopped, parallel visitors | ✅ ~31–40 requests/s, 0 failures up to 32 at once |
 
-**Limits:** most runs were on one Windows machine; no Linux. Not tested or not working: documents over 10 MB, use from several threads (crashes), XML 1.1, and external entities fed in pieces.
+**Limits:** most runs were on one Windows machine; no Linux. Not tested or not working: documents over 10 MB, parallel parsing (several threads work since #274 but take turns), XML 1.1, and external entities fed in pieces.
 
 ## 6. Workflow
 - `main` belongs to the company; the student never committed to it.
-- Each change was its own `fix/…` branch, then a report with logs, then a pull request, squash-merged into the work branch: `student-Mass` until 8 November, then `incremental-test`.
+- Each change was its own `fix/…` branch, then a report with logs, then a pull request into the work branch: squash-merged into `student-Mass` until 8 November, then into `incremental-test`, with a merge commit (never squash) since 10 November.
 - The supervisor reviewed and merged `student-Mass` into `main`, and Jenkins passed (PR #177). On 2026-11-10 `main` became the same commit as `incremental-test`.
 - Small pull requests kept every change reviewable, easy to revert, and easy to trace from issue to commit. Since 2026-11-10 earlier states also have version numbers (0.1.0–0.9.0, [CHANGELOG](../../CHANGELOG.md)).
 
@@ -136,8 +136,10 @@ flowchart LR
 
 | Open | What |
 |---|---|
-| 🔴 mass-xpact#75, 10 MB limit | Not thread-safe; documents over 10 MB rejected: blockers for 1.0 |
-| 🔴 mass-xpact#84, #73 | ISO-8859-1 in pieces is slow; an Eiffel exception in a DLL call crashes without a trace (both still to be filed on andersoxie) |
+| 🟡 #304, 10 MB limit | Parallel parsing (calls are serialized since #274); documents over 10 MB rejected: design decisions for 1.0 |
+| 🔴 #272 | ISO-8859-1 in pieces is slow (16 B and 1 B pieces of 1 MB time out) |
+| 🔴 #293 | Entities nested more than 32 levels deep: "syntax error" where Expat accepts (supervisor decision) |
+| ✅ #273, #274 | Fixed 2026-11-11: exception → error code; safe from several threads |
 | 🔴 [#123](https://github.com/andersoxie/xpact/issues/123), [#126](https://github.com/andersoxie/xpact/issues/126), [#170](https://github.com/andersoxie/xpact/issues/170), [#171](https://github.com/andersoxie/xpact/issues/171), [#176](https://github.com/andersoxie/xpact/issues/176) | Events, raw text, error codes, positions and `]]>` in pieces still differ from Expat |
 | 🟡 [#211](https://github.com/andersoxie/xpact/issues/211) | Billion-laughs documents are stopped with Expat's error, but ~15× slower |
 | ⏸ [#13](https://github.com/andersoxie/xpact/issues/13) | The GC wrapper swallows exceptions (a design question) |
@@ -149,7 +151,7 @@ flowchart LR
 The most useful habits were to **reproduce first** and to **keep the expected result separate from the actual one**. Several times the first explanation was wrong, and the evidence itself had to be checked: crashes scored as passes, tests that exited 0 on failure, a suite testing the wrong library, and per-fix checks that missed two regressions. Compared with university exercises, the hard parts were the size of an unfamiliar codebase, the build environment, and other people's work landing at the same time. Next time I would set up faster checks and a full acceptance run earlier, agree earlier on who reviews parser changes, and keep one work branch from the start.
 
 ## 9. Conclusion
-In the first five weeks of the internship, xpact went from a parser that crashed on 1,360 W3C cases with assertions on, to one that runs the whole suite without a failure, gives Expat's verdict in every comparison, parses chunked input incrementally and can be tried on a website, with tests another developer can rerun. The main question can now be answered with evidence. What's left is detail (positions, events), one slow encoding, and two design questions for the supervisor: thread safety and the 10 MB limit.
+In the first five weeks of the internship, xpact went from a parser that crashed on 1,360 W3C cases with assertions on, to one that runs the whole suite without a failure, gives Expat's verdict in every comparison, parses chunked input incrementally and can be tried on a website, with tests another developer can rerun. The main question can now be answered with evidence. What's left is detail (positions, events), one slow encoding, and design questions for the supervisor: parallel parsing, the 10 MB limit and the entity depth limit.
 
 ## References
 [1] W3C, *XML 1.0 (Fifth Edition)*, 2008. https://www.w3.org/TR/xml/ · [2] W3C, *XML Conformance Test Suites* 20130923. https://www.w3.org/XML/Test/ · [3] libexpat 2.8.1. https://github.com/libexpat/libexpat · [4] B. Meyer, *Object-Oriented Software Construction*, 2nd ed., Prentice Hall, 1997. The full list is in [ActualReport.md](ActualReport.md#14-references).

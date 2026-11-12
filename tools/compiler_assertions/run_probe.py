@@ -93,36 +93,43 @@ def build(compiler, selection, output, environment):
     executables = [path / "assertion_probe" for path in candidates]
     scripts = [path / "assertion_probe.sh" for path in candidates] if compiler == "Gobo" else []
     for artifact in executables + scripts:
-        if artifact.exists():
-            artifact.unlink()
+        artifact.unlink(missing_ok=True)
     print("Building {} {}...".format(compiler, selection), flush=True)
     try:
         if compiler == "Gobo":
-            checked(["gec", "--finalize", "--gc=boehm", "--cc=no", config], directory,
-                    environment, directory / "eiffel.log")
-            generated = [script for script in scripts if script.is_file()]
-            if len(generated) != 1:
-                raise RuntimeError("Gobo did not create exactly one fresh build script")
-            code = generated[0].parent
-            checked(["sh", "-e", generated[0]], code, environment, directory / "c.log")
+            code = compile_gobo(config, directory, scripts, environment)
         else:
-            command = ["ec", "-batch", "-clean", "-finalize"]
-            if selection != "all_off":
-                command.append("-keep")
-            command.extend(["-config", config, "-target", "assertion_probe", "-project_path", directory])
-            checked(command, directory, environment, directory / "eiffel.log")
-            code = candidates[0]
-            checked(["finish_freezing"], code, environment, directory / "c.log")
+            code = compile_eiffelstudio(config, selection, directory, candidates[0], environment)
         executable = code / "assertion_probe"
         with executable.open("rb") as stream:
             if stream.read(4) != b"\x7fELF":
                 raise RuntimeError("Compiler did not produce a native Linux probe")
     except BaseException:
-        for executable in executables:
-            if executable.exists():
-                executable.unlink()
+        for stale in executables:
+            stale.unlink(missing_ok=True)
         raise
     return executable, directory
+
+
+def compile_gobo(config, directory, scripts, environment):
+    """gec, then its one generated C build script; return the code directory."""
+    checked(["gec", "--finalize", "--gc=boehm", "--cc=no", config], directory,
+            environment, directory / "eiffel.log")
+    generated = [script for script in scripts if script.is_file()]
+    if len(generated) != 1:
+        raise RuntimeError("Gobo did not create exactly one fresh build script")
+    code = generated[0].parent
+    checked(["sh", "-e", generated[0]], code, environment, directory / "c.log")
+    return code
+
+
+def compile_eiffelstudio(config, selection, directory, code, environment):
+    """ec -finalize (with -keep unless all assertions are off), then finish_freezing."""
+    command = ["ec", "-batch", "-clean", "-finalize"] + (["-keep"] if selection != "all_off" else [])
+    command.extend(["-config", config, "-target", "assertion_probe", "-project_path", directory])
+    checked(command, directory, environment, directory / "eiffel.log")
+    checked(["finish_freezing"], code, environment, directory / "c.log")
+    return code
 
 
 def investigate(args):
@@ -133,12 +140,7 @@ def investigate(args):
         report.unlink()
     if not sys.platform.startswith("linux"):
         raise RuntimeError("Run with Linux Python in the configured compiler environment")
-    environment = {key: value for key, value in os.environ.items()
-                   if not key.startswith(("GOBO_CLI_", "GOBO_DEFAULT_"))}
-    for key in ("LD_LIBRARY_PATH", "LD_PRELOAD", "LIBRARY_PATH", "CPATH", "C_INCLUDE_PATH",
-                "CPLUS_INCLUDE_PATH", "BOEHM_GC"):
-        environment.pop(key, None)
-    environment.update(GOBO_CC="gcc", GOBO_EIFFEL="ge", LC_ALL="C")
+    environment = probe_environment()
     results = {"generated_utc": datetime.now(timezone.utc).isoformat(),
                "platform": platform.platform(), "compilers": {}, "cases": [],
                "source_sha256": {path.name: hashlib.sha256(path.read_bytes()).hexdigest()
@@ -152,23 +154,44 @@ def investigate(args):
                                output, environment, output / (compiler + "-version.log"))}
         for selection in args.selection:
             executable, directory = build(compiler, selection, output, environment)
-            for mode, tag in TAGS.items():
-                result = run([executable, mode], directory, environment, directory / (mode + ".log"), 15)
-                completed = "PROBE_COMPLETED " + mode in result.stdout
-                detected = result.returncode != 0 and tag in result.stdout and not completed
-                if not detected and not (result.returncode == 0 and completed):
-                    raise RuntimeError("Unrelated probe failure for {} {} {}; see {}".format(
-                        compiler, selection, mode, directory / (mode + ".log")))
-                expected = selection == "all_on" or (selection == "supplier_only" and mode == "pre")
-                row = {"compiler": compiler, "selection": selection, "assertion": mode,
-                       "expected_violation": expected, "detected_violation": detected,
-                       "matches_requested_setting": detected == expected,
-                       "exit_code": result.returncode, "diagnostic": result.stdout}
-                results["cases"].append(row)
-                print("{} {} {}: {} (requested {})".format(
-                    compiler, selection, mode, "detected" if detected else "completed",
-                    "detection" if expected else "no detection"), flush=True)
+            results["cases"] += [probe_case(compiler, selection, mode, tag, executable, directory, environment)
+                                 for mode, tag in TAGS.items()]
     results["all_requested_checks_match"] = all(row["matches_requested_setting"] for row in results["cases"])
+    write_report(results, output, report)
+    print("Diagnostic results written to {}".format(report), flush=True)
+
+
+def probe_environment():
+    """The caller's environment without loader/compiler overrides that would change what is measured."""
+    environment = {key: value for key, value in os.environ.items()
+                   if not key.startswith(("GOBO_CLI_", "GOBO_DEFAULT_"))}
+    for key in ("LD_LIBRARY_PATH", "LD_PRELOAD", "LIBRARY_PATH", "CPATH", "C_INCLUDE_PATH",
+                "CPLUS_INCLUDE_PATH", "BOEHM_GC"):
+        environment.pop(key, None)
+    environment.update(GOBO_CC="gcc", GOBO_EIFFEL="ge", LC_ALL="C")
+    return environment
+
+
+def probe_case(compiler, selection, mode, tag, executable, directory, environment):
+    """Run one assertion mode; the row says whether the violation was detected as requested."""
+    result = run([executable, mode], directory, environment, directory / (mode + ".log"), 15)
+    completed = "PROBE_COMPLETED " + mode in result.stdout
+    detected = result.returncode != 0 and tag in result.stdout and not completed
+    if not detected and not (result.returncode == 0 and completed):
+        raise RuntimeError("Unrelated probe failure for {} {} {}; see {}".format(
+            compiler, selection, mode, directory / (mode + ".log")))
+    expected = selection == "all_on" or (selection == "supplier_only" and mode == "pre")
+    print("{} {} {}: {} (requested {})".format(
+        compiler, selection, mode, "detected" if detected else "completed",
+        "detection" if expected else "no detection"), flush=True)
+    return {"compiler": compiler, "selection": selection, "assertion": mode,
+            "expected_violation": expected, "detected_violation": detected,
+            "matches_requested_setting": detected == expected,
+            "exit_code": result.returncode, "diagnostic": result.stdout}
+
+
+def write_report(results, output, report):
+    """Write results.json atomically: a stopped run never leaves a partial report."""
     descriptor, staging = tempfile.mkstemp(prefix=".assertion-report-", dir=output)
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
@@ -177,7 +200,6 @@ def investigate(args):
         Path(staging).replace(report)
     finally:
         Path(staging).unlink(missing_ok=True)
-    print("Diagnostic results written to {}".format(report), flush=True)
 
 
 def main():

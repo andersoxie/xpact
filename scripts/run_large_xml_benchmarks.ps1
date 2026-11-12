@@ -28,6 +28,9 @@ if ($MaxFileBytes -le 0) {
 }
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
+# Check Python before any long build step (#308).
+. (Join-Path $PSScriptRoot "resolve_python.ps1")
+$Python = Resolve-XpactPython
 $OutputRoot = Join-Path $RepoRoot $OutputDir
 New-Item -ItemType Directory -Force -Path $OutputRoot | Out-Null
 
@@ -172,7 +175,6 @@ if (-not (Test-Path -LiteralPath $XpactExe -PathType Leaf)) {
 
 $Rows = New-Object System.Collections.Generic.List[object]
 $Notes = New-Object System.Collections.Generic.List[string]
-$Python = (Get-Command python -ErrorAction Stop).Source
 $PythonVersion = (& $Python --version 2>&1 | Out-String).Trim()
 $PyExpatVersion = (& $Python (Join-Path $RepoRoot "benchmarks\libexpat_py_benchmark.py") --version 2>&1 | Out-String).Trim()
 $XpactVersion = if ($EiffelBuild -eq "Finalized") { "Phase 1 finalized" } else { "Phase 1 workbench" }

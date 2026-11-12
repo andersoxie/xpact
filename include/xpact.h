@@ -14,6 +14,18 @@
  * This header tracks the Expat 2.8.1 public surface. The Eiffel parser core is
  * still being brought up behind this ABI, so some entry points are declarations
  * for the native export layer rather than completed implementations.
+ *
+ * Threads (#274): xpact.dll may be called from several threads, each with its
+ * own parsers (as with libexpat, one parser must not be used by two threads at
+ * once). The Eiffel runtime inside is single-threaded, so the DLL lets only one
+ * call run at a time: parsers on different threads are safe but do not parse in
+ * parallel. A handler may call back into xpact on its own thread; it must not
+ * wait for another thread that is calling xpact (that thread waits for the
+ * handler to return).
+ *
+ * Internal failures (#273): an Eiffel exception inside a call (for example out
+ * of memory) makes that call fail with XML_ERROR_NO_MEMORY or
+ * XML_ERROR_UNEXPECTED_STATE instead of ending the process; free that parser.
  */
 
 #ifndef XMLCALL

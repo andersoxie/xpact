@@ -1,0 +1,169 @@
+WHAT TO CHOOSE: making xpact faster, and what it costs
+=====================================================
+State: 2026-11-10. Based on the fair speed test (andersoxie/xpact #275, PR #276)
+and the earlier profile (reports/mass-xpact-issue-0014/logs/profile-after.txt).
+Marks: [measured] = shown by a profile or test; [guess] = our reading, not yet profiled.
+
+
+1. THE RESULT IN ONE LINE
+-------------------------
+xpact gives the same results as Expat 2.8.1 in every test, but is about 18x slower
+(median of 200 measured cells).
+
+  Whole document, callbacks on ..... 9-20x slower
+  Whole document, callbacks off .... 2.3-16x slower
+  Input 1 byte at a time ........... 21-43x slower
+  10 MB of nested elements ......... 1,492 ms vs 89 ms
+  ISO-8859-1 in pieces (#272) ...... 157x to timeout (over 15 minutes; Expat 35 ms)
+  Assertions build ................. another 9-22x slower than production
+
+
+2. WHY WE ARE SLOWER (3 STEPS BACK)
+-----------------------------------
+Step back 1: what a parser does
+  It reads the document one character at a time and decides for each one what it is
+  (tag, name, attribute, text). A 10 MB file means 10 million small decisions.
+  Speed = the cost of one decision x 10 million.
+
+Step back 2: how each one decides
+  Expat (C):      looks at the byte straight in memory with a pointer, about one machine
+                  step. Copies nothing; hands the program pointers into the input.
+  xpact (Eiffel): asks for each character through a function call (STRING_8.item),
+                  and builds every name and text as a new string, character by character.
+
+Step back 3: the root cause
+  xpact is written for safety and readability (checked access, managed memory, objects).
+  Expat is written for speed (raw pointers, almost no copies, about 25 years of tuning).
+  Where xpact's time goes [measured]:
+    ~17 %  reading characters one call at a time (item)
+    ~10 %  building strings character by character
+    ~10 %  allocating memory for those strings
+     ~8 %  tracking line/column positions, checking UTF-8
+  This base cost is part of every point below.
+
+
+3. WHY EACH POINT IS SLOWER (2 STEPS FORWARD)
+---------------------------------------------
+Callbacks off (2.3-16x)
+  Only the base cost. Attributes are the best case; namespaces the worst, because each
+  name is looked up and rebuilt. [base cost measured; namespace detail guess]
+
+Callbacks on (9-20x)
+  Each event must reach C code. xpact turns its strings into new C strings first;
+  Expat hands over pointers it already has. More events = more copies. [guess]
+
+Small pieces, 1 byte (21-43x)
+  On every call xpact saves its state, keeps the unfinished input and re-checks whether
+  a character or tag was cut off. Expat just keeps its place. [partly measured]
+
+DTD and entities (17-19x)
+  Each entity reference builds its replacement text as a new string and parses it
+  again. Expat reads the stored text in place. [guess]
+
+Namespaces (18-20x)
+  Each prefixed name is split, its URI looked up, and the name rebuilt as uri|name:
+  up to three new strings per element. [guess]
+
+Text (12-20x)
+  Long text is copied character by character before it is passed on. Expat passes it
+  straight from the input. [measured: string building in the profile]
+
+ISO-8859-1 in pieces (157x to timeout)
+  A bug, not the base cost: the time grows with the square of the input size, so
+  something is redone from the start on each call (probably the conversion to UTF-8).
+  [cause unknown, #272]
+
+Assertions build (another 9-22x)
+  Every contract is checked on every call. That is what this build is for. [by design]
+
+
+4. THE PICTURE (EASY VERSION)
+-----------------------------
+Think of the document as a book both parsers read out loud.
+  Expat reads straight from the page with its finger. Asked "what was that word?",
+        it points at the page.
+  xpact copies every letter into its own notebook first, checks each one carefully,
+        then reads from the notebook. Asked, it writes the word on a new piece of paper.
+xpact's way is careful and tidy, but slow. Expat's way is fast, but one slip of the
+finger and it reads the wrong line. Each fix below makes xpact read more like Expat.
+
+
+5. THE FIXES: WHAT EACH ONE DOES, HOW WE DO IT, HOW EXPAT DOES IT, WHAT WE GIVE UP, RISK
+-----------------------------------------------------------------------------------------
+
+FIX 1: Read the letters directly
+  What it does:  reads each letter straight from the input instead of asking for it
+  xpact now:     asks "give me letter number 5" through a function, for every letter
+  Expat:         looks at the letter directly in memory (fastest possible step)
+  We give up:    easy-to-read code; it starts to look like C instead of clean Eiffel;
+                 contracts over byte positions are harder to write
+  Risk:          MEDIUM - off-by-one mistakes, or splitting a special character (like é)
+
+FIX 2: Reuse the same notepad
+  What it does:  uses one piece of memory again and again instead of making new ones
+  xpact now:     makes a new string ("a new piece of paper") for every name and text
+  Expat:         mostly makes no new strings; uses what is already in memory
+  We give up:    simplicity; today each value is its own safe copy, after the change
+                 you must remember "this is only valid until the next step"
+  Risk:          MEDIUM - old text overwritten while someone still needs it
+
+FIX 3: Point instead of copy when telling the program
+  What it does:  when xpact reports "I found tag X", it points at the text, no copy
+  xpact now:     copies every name and text into a new C string before handing it over
+  Expat:         hands over a pointer to text it already has
+  We give up:    safety; Eiffel cleans up memory by itself and sometimes MOVES things.
+                 If we point at something and Eiffel moves it, the pointer shows junk.
+  Risk:          HIGH - random crashes, sometimes long after the call, very hard to find
+                 (and #273 already means a crash leaves no trace)
+
+FIX 4: Less work when the input comes in small pieces
+  What it does:  makes each "here is the next piece" call cheaper
+  xpact now:     saves its place, keeps the unfinished part and re-checks for cut-off
+                 letters or tags on every call
+  Expat:         just remembers its place and keeps reading
+  We give up:    simple code; more saved state and more special cases at piece borders
+  Risk:          MEDIUM - this part already broke twice (#68 wrong positions,
+                 #69 broken contract checks)
+
+FIX 5: Fix the ISO-8859-1 slowdown (#272)
+  What it does:  stops xpact redoing the same work over and over for this format
+  xpact now:     gets much slower as the file grows; 16-byte and 1-byte pieces of a
+                 1 MB file take over 15 minutes
+  Expat:         converts each piece once: 35 ms
+  We give up:    almost nothing; copy the UTF-16 path that already works
+  Risk:          LOW
+
+
+6. DOWNSIDES FOR THE WHOLE PROJECT
+----------------------------------
+- Smaller safety margin: xpact is safe because of how it is written. Faster code moves
+  toward C style. Still Eiffel, still safer than C, but the gap gets smaller. Fuzzing
+  (0 crashes in 3.9 million inputs) would have to be redone.
+- Harder to read and change: readable code is one of xpact's selling points.
+- Contracts and Boogie proofs get harder and would have to be redone for new loops.
+- Regression risk: every fix touches the core loop all tests depend on; each needs the
+  full acceptance run (W3C, C-API, chunked, fuzzing), not just a smoke test.
+- Time: weeks, not days. About 2.5 weeks of the internship are left; reports due 27 Nov.
+- Diminishing returns: Eiffel's runtime keeps a gap. Best case perhaps 3-5x slower than
+  Expat, not equal. [guess]
+
+
+7. WHAT WE DON'T LOSE
+---------------------
+- Correctness: the tests catch wrong results; they must stay at 0 failures before merge.
+- The API: programs still load xpact instead of Expat. Pointers valid only during a
+  callback are already the rule in Expat's own API.
+- The assertions build: it keeps checking contracts and catches many new bugs in testing.
+
+
+8. SUGGESTED ORDER
+------------------
+  [ ] 1. LOW risk    Fix #272 (safe, big win for that case)
+  [ ] 2. LOW risk    Profile first: measure exactly where the time goes
+  [ ] 3. MEDIUM      Fixes 1 and 2, only in the busiest parts (text, names)
+  [ ] 4. HIGH        Fix 3 only if the supervisor decides speed matters more than safety;
+                     rerun fuzzing afterwards
+  [ ] Fix 4 when the profile shows piece handling is still a main cost
+
+Decision for the supervisor: should xpact become fast, or stay safe and readable?
+(Same kind of design decision as thread safety #274 and the 10 MB limit.)

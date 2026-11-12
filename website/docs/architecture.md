@@ -19,9 +19,10 @@ The website follows the five components of [guide.txt](../guide.txt). The rule f
 1. **Frontend:** the browser sends the document. An uploaded file goes as `multipart/form-data` with its **original bytes**, so UTF-16 or ISO-8859-1 files reach the parser unchanged. Pasted text goes as JSON (UTF-8).
 2. **API:**
    - checks the rate limit (30 / min per IP), the size (≤ 10 MB), the build name and the chunk size
-   - waits for a free worker slot (max 4 at once)
+   - at most 2 workers per IP at once (more → 429), then waits for a free worker slot (max 4 at once) for at most 15 s, in a queue of at most 32 (else 503)
 3. **API → worker:**
-   - starts `Xpact.Worker.exe` in an empty working folder, at below-normal priority, inside a **Windows Job Object** (512 MB memory cap; the job kills the process when its handle closes)
+   - starts `Xpact.Worker.exe` **suspended**, in an empty working folder, at below-normal priority, with **no privileges at Low integrity** (it cannot write to the API account's files, registry or processes)
+   - puts it in a **Windows Job Object** (512 MB memory cap; the job kills the process when its handle closes), then lets it run
    - writes the document to the worker's stdin
 4. **Worker → parser:**
    - loads the chosen DLL and calls `XML_ParserCreate(NULL)`, then sets the start, end, character-data, comment and PI handlers

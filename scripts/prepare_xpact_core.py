@@ -87,6 +87,31 @@ def _reject_links(path: Path, root: Path) -> None:
     raise DependencyError(f"Dependency path is outside its expected root: {path}")
 
 
+def _hash_tree_entry(source_dir: Path, entry: str, digest) -> None:
+    """Check one ls-tree entry's bytes against its blob id and add it to the source digest."""
+    descriptor, name = entry.split("\t", 1)
+    mode, kind, object_id = descriptor.split(" ")
+    if kind != "blob" or mode not in ("100644", "100755"):
+        raise DependencyError(f"Unsupported dependency tree entry {mode} {kind}: {name}")
+    relative = Path(name)
+    if relative.is_absolute() or ".." in relative.parts:
+        raise DependencyError(f"Invalid dependency tree path: {name}")
+    path = source_dir / relative
+    _reject_links(path, source_dir)
+    try:
+        content = path.read_bytes()
+    except OSError as exc:
+        raise DependencyError(f"Cannot verify dependency source {path}: {exc}") from exc
+    # Git's own blob id is SHA-1 by definition; it identifies, it does not protect. The
+    # security check is the SHA-256 source digest below (SonarQube hotspot S4790, #342).
+    actual_blob = hashlib.sha1(b"blob " + str(len(content)).encode("ascii") + b"\0" + content,
+                               usedforsecurity=False).hexdigest()
+    if actual_blob != object_id:
+        raise DependencyError(f"Xpact-core tracked file bytes differ from the pinned commit: {name}")
+    digest.update(mode.encode("ascii") + b" " + name.encode("utf-8", "surrogateescape") + b"\0")
+    digest.update(hashlib.sha256(content).digest())
+
+
 def verify_checkout(source_dir: Path, lock: dict) -> dict:
     """Verify HEAD, origin, all tracked bytes, and absence of generated/extra files."""
     source_dir = Path(source_dir).absolute()
@@ -106,26 +131,8 @@ def verify_checkout(source_dir: Path, lock: dict) -> dict:
     digest = hashlib.sha256()
     entries = run_git(["ls-tree", "-r", "-z", "--full-tree", "HEAD"], source_dir).split("\0")
     for entry in entries:
-        if not entry:
-            continue
-        descriptor, name = entry.split("\t", 1)
-        mode, kind, object_id = descriptor.split(" ")
-        if kind != "blob" or mode not in ("100644", "100755"):
-            raise DependencyError(f"Unsupported dependency tree entry {mode} {kind}: {name}")
-        relative = Path(name)
-        if relative.is_absolute() or ".." in relative.parts:
-            raise DependencyError(f"Invalid dependency tree path: {name}")
-        path = source_dir / relative
-        _reject_links(path, source_dir)
-        try:
-            content = path.read_bytes()
-        except OSError as exc:
-            raise DependencyError(f"Cannot verify dependency source {path}: {exc}") from exc
-        actual_blob = hashlib.sha1(b"blob " + str(len(content)).encode("ascii") + b"\0" + content).hexdigest()
-        if actual_blob != object_id:
-            raise DependencyError(f"Xpact-core tracked file bytes differ from the pinned commit: {name}")
-        digest.update(mode.encode("ascii") + b" " + name.encode("utf-8", "surrogateescape") + b"\0")
-        digest.update(hashlib.sha256(content).digest())
+        if entry:
+            _hash_tree_entry(source_dir, entry, digest)
     for name in [lock["library"], *lock["required_paths"]]:
         path = source_dir / name
         _reject_links(path, source_dir)

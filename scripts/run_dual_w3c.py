@@ -19,10 +19,14 @@ import build_implementations as builds
 import run_w3c_conformance as w3c
 from prepare_xpact_core import DependencyError
 
+RUN_JSON = "run.json"
+REPORT_JSON = "report.json"
+SUMMARY_MD = "summary.md"
+
 
 QUALIFICATION_CASES = ("raw_utf8", "raw_utf16", "namespace_switch", "reuse_recovery", "gc_restoration")
 GC_POLICIES = {"xpact": "normal", "xpact-core": "core-managed-off-full-collect"}
-FINAL_REPORTS = ("report.json", "summary.md", "comparison.tsv", "suite-manifest.json")
+FINAL_REPORTS = (REPORT_JSON, SUMMARY_MD, "comparison.tsv", "suite-manifest.json")
 
 
 class LaneError(RuntimeError):
@@ -135,6 +139,26 @@ def verify_case_input(case, suite, snapshot):
         raise LaneError("W3C input bytes changed during execution: " + case.id)
 
 
+def _check_result(result, case):
+    """One engine's result agrees with its case: expectations, exclusion, verdict and exit code."""
+    if result.expected != case.expected or result.kind != case.kind or result.known:
+        raise LaneError("W3C result expectations changed or a failure was suppressed")
+    if ((result.catalog_expected or result.expected) != (case.catalog_expected or case.expected)
+            or result.expectation_adjustment != case.expectation_adjustment):
+        raise LaneError("W3C catalog expectation adjustment changed for one implementation")
+    if case.skip_reason:
+        if result.status != "skipped" or result.actual != "not-run" or result.message != case.skip_reason:
+            raise LaneError("W3C profile exclusion changed for one implementation")
+        return
+    if result.status not in ("passed", "failed", "error"):
+        raise LaneError("An applicable W3C case was not executed")
+    if result.status in ("passed", "failed") and (
+            result.actual not in ("ACCEPT", "REJECT")
+            or (result.status == "passed") != (result.actual == case.expected)
+            or result.exit_code != (0 if result.actual == "ACCEPT" else 1)):
+        raise LaneError("W3C verdict, status and process exit code are inconsistent")
+
+
 def comparison_rows(cases, results):
     indexed = {(row.engine, row.case_id): row for row in results}
     expected = {(engine, case.id) for engine in GC_POLICIES for case in cases}
@@ -143,22 +167,8 @@ def comparison_rows(cases, results):
     rows = []
     for case in cases:
         own, core = (indexed[(engine, case.id)] for engine in GC_POLICIES)
-        for result in (own, core):
-            if result.expected != case.expected or result.kind != case.kind or result.known:
-                raise LaneError("W3C result expectations changed or a failure was suppressed")
-            if ((result.catalog_expected or result.expected) != (case.catalog_expected or case.expected)
-                    or result.expectation_adjustment != case.expectation_adjustment):
-                raise LaneError("W3C catalog expectation adjustment changed for one implementation")
-            if case.skip_reason:
-                if result.status != "skipped" or result.actual != "not-run" or result.message != case.skip_reason:
-                    raise LaneError("W3C profile exclusion changed for one implementation")
-            elif result.status not in ("passed", "failed", "error"):
-                raise LaneError("An applicable W3C case was not executed")
-            elif result.status in ("passed", "failed"):
-                if (result.actual not in ("ACCEPT", "REJECT")
-                        or (result.status == "passed") != (result.actual == case.expected)
-                        or result.exit_code != (0 if result.actual == "ACCEPT" else 1)):
-                    raise LaneError("W3C verdict, status and process exit code are inconsistent")
+        _check_result(own, case)
+        _check_result(core, case)
         rows.append({"case_id": case.id, "kind": case.kind, "namespaces": case.namespaces,
                      "expected": case.expected, "skip_reason": case.skip_reason,
                      "catalog_expected": case.catalog_expected or case.expected,
@@ -178,7 +188,7 @@ def publish_reports(run_root, report, rows, results, metadata, manifest):
         writer.writerows(rows)
         (run_root / "comparison.tsv").write_text(buffer.getvalue(), encoding="utf-8")
         builds.write_json_atomic(run_root / "suite-manifest.json", manifest)
-        builds.write_json_atomic(run_root / "report.json", report)
+        builds.write_json_atomic(run_root / REPORT_JSON, report)
         lines = ["# Dual W3C: finalized, assertions discarded", "", "Status: " + report["status"], "",
                  "Profile: " + w3c.PROFILE, "",
                  "| Implementation | Cases | Passed | Failed | Errors | Excluded |",
@@ -202,7 +212,7 @@ def publish_reports(run_root, report, rows, results, metadata, manifest):
                   "Assertions-on builds supply directed audit controls; the full catalog runs on assertions-off builds.",
                   "Core's internal GC policy is retained; incoming caller GC state is restored.",
                   "This profile does not cover external entities, canonical output, full event equality or native DLLs.", ""]
-        (run_root / "summary.md").write_text("\n".join(lines), encoding="utf-8")
+        (run_root / SUMMARY_MD).write_text("\n".join(lines), encoding="utf-8")
     except BaseException:
         clear_reports(run_root)
         raise
@@ -213,6 +223,91 @@ def clear_reports(run_root):
         (run_root / name).unlink(missing_ok=True)
     for name in w3c.REPORT_FILES:
         (run_root / "conformance" / name).unlink(missing_ok=True)
+
+
+def _suite_manifest(suite, before, cases):
+    return {"suite": str(suite), **before, "cases": [
+        {"case_id": case.id, "path": str(case.path.relative_to(suite)), "kind": case.kind,
+         "namespaces": case.namespaces, "expected": case.expected, "skip_reason": case.skip_reason,
+         "catalog_expected": case.catalog_expected or case.expected,
+         "expectation_adjustment": case.expectation_adjustment,
+         "input_sha256": before["files"].get(case.path.relative_to(suite).as_posix())}
+        for case in cases]}
+
+
+def _qualified_build(repo_root, phase, implementation, assertions, toolchain, offline):
+    """Build, authenticate and run the directed controls; return (row, artifact), artifact None on failure."""
+    tools, environment, compiler_metadata = toolchain
+    row = {"implementation": implementation, "assertions": assertions, "status": "failed"}
+    try:
+        built = builds.build_one(repo_root, phase, implementation, tools, environment,
+                                 compiler_metadata, offline=offline, profile="w3c", assertions=assertions)
+        artifact = json.loads(Path(built["manifest"]).read_text(encoding="utf-8"))
+        validate_build(artifact, implementation, assertions)
+        controls = []
+        try:
+            output, code = run_qualification(artifact["executable"], env=environment,
+                                             cwd=phase / implementation,
+                                             log_path=phase / implementation / "qualification.log")
+            controls = validate_qualification(output, artifact, code)
+        except LaneError as error:
+            # The build identity is already authenticated. A broken
+            # directed control must remain visible without hiding
+            # thousands of independently executed catalog results.
+            row["qualification_error"] = str(error)
+        verify_artifact(artifact)
+        row.update(status="executed", manifest=built["manifest"], cases=controls)
+        return row, artifact
+    except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
+        row["error"] = str(error)
+        return row, None
+
+
+def _qualify_all(repo_root, run_root, state, offline):
+    """Both implementations in both assertion modes; rows go to state["builds"]."""
+    toolchain = builds.toolchain()
+    artifacts, audits, qualification = {}, {}, []
+    for assertions in (True, False):
+        phase = run_root / ("audit" if assertions else "primary")
+        phase.mkdir()
+        for implementation in GC_POLICIES:
+            row, artifact = _qualified_build(repo_root, phase, implementation, assertions, toolchain, offline)
+            if artifact is not None:
+                qualification.append(row)
+                (audits if assertions else artifacts)[implementation] = artifact
+            state["builds"].append(row)
+    return artifacts, audits, qualification
+
+
+def _execute_engine(implementation, artifact, cases, suite, before, run_root, timeout_seconds):
+    """Every catalog case on one engine; each input is checked before and after its run."""
+    verify_artifact(artifact)
+    if suite_snapshot(suite) != before:
+        raise LaneError("W3C suite bytes changed before engine execution")
+    work = run_root / "work" / implementation
+    work.mkdir(parents=True)
+    print("W3C {}: {} catalog cases".format(implementation, len(cases)), flush=True)
+    results = []
+    for index, case in enumerate(cases, 1):
+        case_work = work / "{:04d}-{}".format(index, hashlib.sha256(case.id.encode()).hexdigest()[:12])
+        if not case.skip_reason:
+            case_work.mkdir()
+        verify_case_input(case, suite, before)
+        results.append(w3c.run_case(case, implementation, Path(artifact["executable"]),
+                                   timeout_seconds, case_work, diagnostic_dir=case_work, suite_root=suite))
+        verify_case_input(case, suite, before)
+        if index % 250 == 0:
+            print("  {}: {}/{}".format(implementation, index, len(cases)), flush=True)
+    return results
+
+
+def _engine_summary(implementation, results):
+    group = [row for row in results if row.engine == implementation]
+    return {"engine": implementation, "total": len(group),
+            "passed": sum(row.status == "passed" for row in group),
+            "failed": sum(row.status == "failed" for row in group),
+            "errors": sum(row.status == "error" for row in group),
+            "skipped": sum(row.status == "skipped" for row in group)}
 
 
 def run_lane(repo_root, run_root, *, suite_dir=None, offline=False, timeout_seconds=10):
@@ -226,90 +321,32 @@ def run_lane(repo_root, run_root, *, suite_dir=None, offline=False, timeout_seco
     run_root.mkdir(parents=True)
     state = {"schema_version": 1, "status": "running", "lane": "w3c-finalized-assertions-off", "builds": []}
     try:
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         suite, provenance = prepare_suite(repo_root, run_root, suite_dir, offline)
         before = suite_snapshot(suite)
         cases = w3c.load_catalog(suite)
         if not any(not case.skip_reason for case in cases):
             raise LaneError("W3C catalog contains no applicable cases")
-        manifest = {"suite": str(suite), **before, "cases": [
-            {"case_id": case.id, "path": str(case.path.relative_to(suite)), "kind": case.kind,
-             "namespaces": case.namespaces, "expected": case.expected, "skip_reason": case.skip_reason,
-             "catalog_expected": case.catalog_expected or case.expected,
-             "expectation_adjustment": case.expectation_adjustment,
-             "input_sha256": before["files"].get(case.path.relative_to(suite).as_posix())}
-            for case in cases]}
-        tools, environment, compiler_metadata = builds.toolchain()
-        artifacts, audits, qualification = {}, {}, []
-        for assertions in (True, False):
-            phase = run_root / ("audit" if assertions else "primary")
-            phase.mkdir()
-            for implementation in GC_POLICIES:
-                row = {"implementation": implementation, "assertions": assertions, "status": "failed"}
-                try:
-                    built = builds.build_one(repo_root, phase, implementation, tools, environment,
-                                             compiler_metadata, offline=offline, profile="w3c", assertions=assertions)
-                    artifact = json.loads(Path(built["manifest"]).read_text(encoding="utf-8"))
-                    validate_build(artifact, implementation, assertions)
-                    controls = []
-                    try:
-                        output, code = run_qualification(artifact["executable"], env=environment,
-                                                         cwd=phase / implementation,
-                                                         log_path=phase / implementation / "qualification.log")
-                        controls = validate_qualification(output, artifact, code)
-                    except LaneError as error:
-                        # The build identity is already authenticated. A broken
-                        # directed control must remain visible without hiding
-                        # thousands of independently executed catalog results.
-                        row["qualification_error"] = str(error)
-                    verify_artifact(artifact)
-                    row.update(status="executed", manifest=built["manifest"], cases=controls)
-                    qualification.append(row)
-                    (audits if assertions else artifacts)[implementation] = artifact
-                except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
-                    row["error"] = str(error)
-                state["builds"].append(row)
+        manifest = _suite_manifest(suite, before, cases)
+        artifacts, audits, qualification = _qualify_all(repo_root, run_root, state, offline)
         if any(row["status"] != "executed" for row in state["builds"]):
             raise LaneError("W3C build/identity gate failed; see run.json")
         verify_sources(repo_root, audits, artifacts)
         state.update(status="executing", catalog_cases=len(cases), source=provenance)
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         results = []
         for implementation, artifact in artifacts.items():
-            verify_artifact(artifact)
-            if suite_snapshot(suite) != before:
-                raise LaneError("W3C suite bytes changed before engine execution")
-            work = run_root / "work" / implementation
-            work.mkdir(parents=True)
-            print("W3C {}: {} catalog cases".format(implementation, len(cases)), flush=True)
-            for index, case in enumerate(cases, 1):
-                case_key = "{:04d}-{}".format(index, hashlib.sha256(case.id.encode()).hexdigest()[:12])
-                case_work = work / case_key
-                if not case.skip_reason:
-                    case_work.mkdir()
-                verify_case_input(case, suite, before)
-                results.append(w3c.run_case(case, implementation, Path(artifact["executable"]),
-                                           timeout_seconds, case_work, diagnostic_dir=case_work, suite_root=suite))
-                verify_case_input(case, suite, before)
-                if index % 250 == 0:
-                    print("  {}: {}/{}".format(implementation, index, len(cases)), flush=True)
+            results += _execute_engine(implementation, artifact, cases, suite, before, run_root, timeout_seconds)
         rows = comparison_rows(cases, results)
         if suite_snapshot(suite) != before:
             raise LaneError("W3C suite bytes changed during execution")
         verify_sources(repo_root, audits, artifacts)
         for artifact in artifacts.values():
             verify_artifact(artifact)
-        summaries = []
-        for implementation in GC_POLICIES:
-            group = [row for row in results if row.engine == implementation]
-            summaries.append({"engine": implementation, "total": len(group),
-                              "passed": sum(row.status == "passed" for row in group),
-                              "failed": sum(row.status == "failed" for row in group),
-                              "errors": sum(row.status == "error" for row in group),
-                              "skipped": sum(row.status == "skipped" for row in group)})
-        failures = any(row.status in ("failed", "error") for row in results)
-        failures = failures or any(row.get("qualification_error") for row in qualification)
-        failures = failures or any(case["status"] == "FAIL" for row in qualification for case in row["cases"])
+        summaries = [_engine_summary(implementation, results) for implementation in GC_POLICIES]
+        failures = (any(row.status in ("failed", "error") for row in results)
+                    or any(row.get("qualification_error") for row in qualification)
+                    or any(case["status"] == "FAIL" for row in qualification for case in row["cases"]))
         status = "complete_with_failures" if failures else "complete"
         metadata = {"suite_version": w3c.SUITE_VERSION, "source": w3c.SUITE_URL, **provenance,
                     "suite_directory": str(suite), "suite_sha256": before["sha256"], "catalog_cases": len(cases),
@@ -323,12 +360,12 @@ def run_lane(repo_root, run_root, *, suite_dir=None, offline=False, timeout_seco
                                 "different_outcome": sum(not row["agreement"] for row in rows)}}
         publish_reports(run_root, report, rows, results, metadata, manifest)
         state["status"] = status
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         return report
     except BaseException as error:
         clear_reports(run_root)
         state.update(status="failed", error=str(error))
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         raise
 
 
@@ -353,7 +390,7 @@ def main(argv=None):
     except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
         print("Dual W3C could not complete: " + str(error), file=sys.stderr)
         return 2
-    print("{}: {}".format(report["status"], run / "summary.md"), flush=True)
+    print("{}: {}".format(report["status"], run / SUMMARY_MD), flush=True)
     return 0 if report["status"] == "complete" else 1
 
 

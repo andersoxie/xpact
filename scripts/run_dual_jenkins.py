@@ -13,15 +13,14 @@ import jenkins_xpact_summary as subject
 import run_dual_catalog as catalog
 import run_dual_w3c as w3c
 
+RUN_JSON = "run.json"
+
 
 class CampaignError(RuntimeError):
     """A build cannot publish a complete dual-implementation campaign."""
 
 
-def validate_arguments(output_dir, suite_dir, build_id, iterations, pairs, warmups,
-                       min_sample_seconds, timeout_seconds, sample_timeout_seconds):
-    if not isinstance(build_id, str) or not build_id.strip() or any(ord(c) < 32 for c in build_id):
-        raise CampaignError("A nonempty Jenkins build identity without control characters is required")
+def _check_numbers(iterations, pairs, warmups, min_sample_seconds, timeout_seconds, sample_timeout_seconds):
     for name, value in (("iterations", iterations), ("pairs", pairs), ("warmups", warmups),
                         ("sample_timeout_seconds", sample_timeout_seconds)):
         if type(value) is not int or value <= 0:
@@ -30,6 +29,13 @@ def validate_arguments(output_dir, suite_dir, build_id, iterations, pairs, warmu
                                     ("timeout_seconds", timeout_seconds, False)):
         if not math.isfinite(value) or value < 0 or (value == 0 and not allow_zero):
             raise CampaignError(name + " must be finite and " + ("nonnegative" if allow_zero else "positive"))
+
+
+def validate_arguments(output_dir, suite_dir, build_id, iterations, pairs, warmups,
+                       min_sample_seconds, timeout_seconds, sample_timeout_seconds):
+    if not isinstance(build_id, str) or not build_id.strip() or any(ord(c) < 32 for c in build_id):
+        raise CampaignError("A nonempty Jenkins build identity without control characters is required")
+    _check_numbers(iterations, pairs, warmups, min_sample_seconds, timeout_seconds, sample_timeout_seconds)
     if suite_dir is not None:
         supplied = Path(suite_dir).resolve()
         if output_dir.is_relative_to(supplied) or supplied.is_relative_to(output_dir):
@@ -50,7 +56,7 @@ def run_campaign(repo_root, output_dir, *, build_id, offline=False, suite_dir=No
         "w3c": {"status": "pending", "report": "w3c/report.json"}}}
     lane_reports = {}
     try:
-        builds.write_json_atomic(output_dir / "run.json", state)
+        builds.write_json_atomic(output_dir / RUN_JSON, state)
         invocations = (
             ("catalog", catalog.run_lane, {
                 "offline": offline, "iterations": iterations, "pairs": pairs,
@@ -61,28 +67,14 @@ def run_campaign(repo_root, output_dir, *, build_id, offline=False, suite_dir=No
         for name, run_lane, options in invocations:
             row = state["lanes"][name]
             row["status"] = "running"
-            builds.write_json_atomic(output_dir / "run.json", state)
+            builds.write_json_atomic(output_dir / RUN_JSON, state)
             print("Jenkins dual lane: " + name, flush=True)
-            try:
-                report = run_lane(repo_root, output_dir / name, **options)
-                allowed = ("complete", "complete_with_failures") if name == "w3c" else ("complete",)
-                if report.get("status") not in allowed:
-                    raise CampaignError("Child lane did not return a completed report: " + name)
-                report_file = output_dir / row["report"]
-                row["report_sha256"] = builds.file_sha256(report_file)
-                row["status"] = report["status"]
+            report = _run_child_lane(name, run_lane, options, row, repo_root, output_dir)
+            if report is not None:
                 lane_reports[name] = report
-            except Exception as error:
-                # An incomplete lane must not hide independently executable
-                # evidence from the other lane. Interruptions still propagate.
-                row.update(status="failed", error=type(error).__name__ + ": " + str(error))
-                # Windows PowerShell 5 can promote native stderr to a terminating
-                # error before our own-only gate has evaluated the evidence.
-                print("Comparison lane {} recorded an error: {}".format(name, row["error"]), flush=True)
-            builds.write_json_atomic(output_dir / "run.json", state)
+            builds.write_json_atomic(output_dir / RUN_JSON, state)
         statuses = [row["status"] for row in state["lanes"].values()]
-        state["status"] = ("failed" if "failed" in statuses else
-                           "complete_with_failures" if "complete_with_failures" in statuses else "complete")
+        state["status"] = reports.overall_status(statuses)
         state["subject_summary"] = subject.publish_summary(
             output_dir, lane_reports, state["lanes"], repo_root=repo_root)
         if (state["subject_summary"].get("implementation") != "xpact"
@@ -90,23 +82,48 @@ def run_campaign(repo_root, output_dir, *, build_id, offline=False, suite_dir=No
                 or state["subject_summary"]["status"] not in ("complete", "complete_with_failures", "failed")):
             raise CampaignError("Invalid xpact test summary identity or status")
         state["publication"] = reports.publish_reports(output_dir, state, lane_reports)
-        builds.write_json_atomic(output_dir / "run.json", state)
+        builds.write_json_atomic(output_dir / RUN_JSON, state)
         return state
     except BaseException as error:
-        state.pop("publication", None)
-        state.pop("subject_summary", None)
-        state.update(status="failed", error=type(error).__name__ + ": " + str(error))
-        cleanup_errors = []
-        for clear in (reports.clear_reports, subject.clear_summary):
-            try:
-                clear(output_dir)
-            except Exception as cleanup_error:
-                # Even locked files cannot leave a publishable owner state.
-                cleanup_errors.append(type(cleanup_error).__name__ + ": " + str(cleanup_error))
-        if cleanup_errors:
-            state["cleanup_error"] = "; ".join(cleanup_errors)
-        builds.write_json_atomic(output_dir / "run.json", state)
+        _record_campaign_failure(state, output_dir, error)
         raise
+
+
+def _run_child_lane(name, run_lane, options, row, repo_root, output_dir):
+    """Run one comparison lane; record its status in row. None when the lane failed."""
+    try:
+        report = run_lane(repo_root, output_dir / name, **options)
+        allowed = ("complete", "complete_with_failures") if name == "w3c" else ("complete",)
+        if report.get("status") not in allowed:
+            raise CampaignError("Child lane did not return a completed report: " + name)
+        row["report_sha256"] = builds.file_sha256(output_dir / row["report"])
+        row["status"] = report["status"]
+        return report
+    except Exception as error:
+        # An incomplete lane must not hide independently executable
+        # evidence from the other lane. Interruptions still propagate.
+        row.update(status="failed", error=type(error).__name__ + ": " + str(error))
+        # Windows PowerShell 5 can promote native stderr to a terminating
+        # error before our own-only gate has evaluated the evidence.
+        print("Comparison lane {} recorded an error: {}".format(name, row["error"]), flush=True)
+        return None
+
+
+def _record_campaign_failure(state, output_dir, error):
+    """Withdraw everything publishable and persist the failed owner state."""
+    state.pop("publication", None)
+    state.pop("subject_summary", None)
+    state.update(status="failed", error=type(error).__name__ + ": " + str(error))
+    cleanup_errors = []
+    for clear in (reports.clear_reports, subject.clear_summary):
+        try:
+            clear(output_dir)
+        except Exception as cleanup_error:
+            # Even locked files cannot leave a publishable owner state.
+            cleanup_errors.append(type(cleanup_error).__name__ + ": " + str(cleanup_error))
+    if cleanup_errors:
+        state["cleanup_error"] = "; ".join(cleanup_errors)
+    builds.write_json_atomic(output_dir / RUN_JSON, state)
 
 
 def main(argv=None):
@@ -135,7 +152,7 @@ def main(argv=None):
         return 2
     status = state["subject_summary"]["status"]
     print("xpact tests: {}; comparison: {}; {}".format(
-        status, state["status"], args.output_dir / "run.json"), flush=True)
+        status, state["status"], args.output_dir / RUN_JSON), flush=True)
     return {"complete": 0, "complete_with_failures": 1, "failed": 2}[status]
 
 

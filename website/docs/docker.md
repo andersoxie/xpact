@@ -75,11 +75,21 @@ docker run -d -p 5099:8080 `
   xpact-website
 ```
 
-Behind a reverse proxy (IIS, nginx) on another address, add that address to `Xpact__KnownProxies__0`, or the rate limit counts all visitors as one ([security.md](security.md)).
+### Behind a reverse proxy
+
+The site must know each visitor's real address, or the rate limit (30 per minute) and the per-visitor worker share (2 of 4) apply to **all visitors together**. Which setting you need:
+
+| Setup | Setting |
+|---|---|
+| IIS on the same machine (ASP.NET Core Module), or nginx on the same machine | nothing: a proxy on this machine is trusted automatically |
+| A proxy on another machine with a fixed address | `Xpact__KnownProxies__0=<its address>` (more: `__1`, `__2`, …) |
+| A proxy whose address changes (load balancer, a Docker network: IIS on the host in front of this container) | `Xpact__KnownNetworks__0=<range>`, e.g. `172.16.0.0/12` for Docker's default networks |
+
+If it is not set up, the server log says so once per proxy address: *"X-Forwarded-For from … was ignored: that address is not trusted …"*. A mistyped address stops the start with a message naming it.
 
 ## Check after the first run
 
-Checked by the `Website Docker image` workflow on every PR that touches the Dockerfile or the workflow (#284). First full pass: 2026-11-11, [run 42928039862](https://github.com/andersoxie/xpact/actions/runs/42928039862) (image `website-2026-11-09-4`, windows-2022): both builds available, `<root/>junk` rejected with code 9, `healthy`, and a 40 MB cap stops a nested-entity document (`crashed`) while the site keeps serving.
+Checked by the `Website Docker image` workflow on every PR that touches the Dockerfile or the workflow (#284). First full pass: 2026-11-11, [run 42928039862](https://github.com/andersoxie/xpact/actions/runs/42928039862) (image `website-2026-11-09-4`, windows-2022): both builds available, `<root/>junk` rejected with code 9, `healthy`, and a 40 MB cap stops a nested-entity document (`crashed`) while the site keeps serving. With `website-2026-11-11-1` (#273) the same document gives **`rejected`, code 1 (out of memory)** on a normal PC, but inside the container still `crashed`: there the worker dies of a stack overflow before the heap limit is reached ([#316](https://github.com/andersoxie/xpact/issues/316)). Both mean the cap stopped the document; the workflow accepts either and checks that the site keeps serving.
 
 - [x] `docker build` succeeds (base image tag matches the host)
 - [x] `docker ps` shows the container as `healthy`

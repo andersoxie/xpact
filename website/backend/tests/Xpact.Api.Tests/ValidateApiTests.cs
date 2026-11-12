@@ -2,8 +2,12 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xpact.Contracts;
 
 namespace Xpact.Api.Tests;
@@ -234,12 +238,227 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(Verdicts.Rejected, (await PostJson(Client(), new { xml = laughs })).Verdict);
 
         var stopped = await PostJson(capped, new { xml = laughs });
-        Assert.True(stopped.Verdict == Verdicts.Crashed, $"{stopped.Verdict}: {stopped.Diagnostic}");
-        // The worker's own error output ("PANIC: main entry point vanished") stays in the server log (#283).
-        Assert.DoesNotContain("PANIC", stopped.Diagnostic);
+        // Since #273 the DLL catches the Eiffel "No more memory" exception and reports Expat's
+        // XML_ERROR_NO_MEMORY; before, the worker died with "PANIC: main entry point vanished" (crashed).
+        Assert.True(stopped.Verdict == Verdicts.Rejected, $"{stopped.Verdict}: {stopped.Diagnostic}");
+        Assert.Equal(1, stopped.Error!.Code);          // XML_ERROR_NO_MEMORY
+        Assert.DoesNotContain("PANIC", stopped.Diagnostic ?? "");
 
         // The API keeps serving after the worker was stopped.
         Assert.Equal(Verdicts.Accepted, (await PostJson(capped, new { xml = "<a/>" })).Verdict);
+    }
+
+    /// <summary>A limiter that cannot set the memory cap, like a server where Job Objects are refused.</summary>
+    private sealed class FailingLimiter : Xpact.Api.Workers.IWorkerLimiter
+    {
+        public System.Diagnostics.Process? Worker { get; private set; }
+
+        public IDisposable Limit(System.Diagnostics.Process process, long memoryLimitBytes)
+        {
+            // Our own handle: the runner disposes its Process object before the test looks.
+            Worker = System.Diagnostics.Process.GetProcessById(process.Id);
+            _ = Worker.Handle;
+            throw new System.ComponentModel.Win32Exception(5); // ERROR_ACCESS_DENIED
+        }
+    }
+
+    [Fact]
+    public async Task Worker_is_stopped_when_the_memory_cap_cannot_be_set()
+    {
+        // Website finding 1 (security.md): the memory cap must fail closed.
+        var limiter = new FailingLimiter();
+        var client = _factory.WithWebHostBuilder(b => b.ConfigureTestServices(s =>
+            s.AddSingleton<Xpact.Api.Workers.IWorkerLimiter>(limiter))).CreateClient();
+
+        var result = await PostJson(client, new { xml = "<a/>" });
+
+        Assert.Equal(Verdicts.Error, result.Verdict);
+        Assert.False(result.WellFormed);
+        Assert.Contains("could not limit the parser process", result.Diagnostic);
+        Assert.DoesNotContain("Access is denied", result.Diagnostic);   // details stay in the server log
+        Assert.NotNull(limiter.Worker);
+        Assert.True(limiter.Worker!.HasExited, "the uncapped worker must be killed");
+
+        // The normal limiter still works.
+        Assert.Equal(Verdicts.Accepted, (await PostJson(Client(), new { xml = "<a/>" })).Verdict);
+    }
+
+    /// <summary>Holds each worker (before it gets its document) until the test opens the gate; then the real Job Object.</summary>
+    private sealed class GateLimiter : Xpact.Api.Workers.IWorkerLimiter
+    {
+        private readonly ManualResetEventSlim _open = new(false);
+        private readonly SemaphoreSlim _held = new(0);
+
+        public IDisposable Limit(System.Diagnostics.Process process, long memoryLimitBytes)
+        {
+            _held.Release();
+            _open.Wait(TimeSpan.FromSeconds(60));
+            return new Xpact.Api.Workers.JobObjectWorkerLimiter().Limit(process, memoryLimitBytes);
+        }
+
+        public Task<bool> WaitUntilHeldAsync() => _held.WaitAsync(TimeSpan.FromSeconds(30));
+        public void Open() => _open.Set();
+    }
+
+    private HttpClient GatedClient(GateLimiter gate, params (string Key, string Value)[] settings) =>
+        _factory.WithWebHostBuilder(b =>
+        {
+            foreach (var (key, value) in settings) b.UseSetting(key, value);
+            b.ConfigureTestServices(s => s.AddSingleton<Xpact.Api.Workers.IWorkerLimiter>(gate));
+        }).CreateClient();
+
+    [Fact]
+    public async Task One_client_cannot_take_more_than_its_share_of_workers()
+    {
+        // Website finding 2 (security.md): one visitor must not keep every worker busy.
+        var gate = new GateLimiter();
+        var client = GatedClient(gate, ("Xpact:MaxWorkersPerClient", "1"), ("Xpact:MaxConcurrentWorkers", "4"));
+
+        var first = client.PostAsJsonAsync("/api/validate", new { xml = "<a/>" });
+        Assert.True(await gate.WaitUntilHeldAsync(), "the first worker did not start");
+
+        var second = await client.PostAsJsonAsync("/api/validate", new { xml = "<b/>" });
+        Assert.Equal(HttpStatusCode.TooManyRequests, second.StatusCode);
+        Assert.NotNull(second.Headers.RetryAfter);
+        Assert.Contains("Too many documents at once", await second.Content.ReadAsStringAsync());
+
+        gate.Open();
+        Assert.Equal(HttpStatusCode.OK, (await first).StatusCode);
+        // Its share is free again once the first document is done.
+        Assert.Equal(Verdicts.Accepted, (await PostJson(client, new { xml = "<c/>" })).Verdict);
+    }
+
+    [Fact]
+    public async Task Waiting_for_a_worker_ends_with_503_after_the_queue_wait()
+    {
+        var gate = new GateLimiter();
+        var client = GatedClient(gate, ("Xpact:MaxConcurrentWorkers", "1"), ("Xpact:MaxWorkersPerClient", "10"),
+            ("Xpact:QueueWaitSeconds", "1"));
+
+        var first = client.PostAsJsonAsync("/api/validate", new { xml = "<a/>" });
+        Assert.True(await gate.WaitUntilHeldAsync(), "the first worker did not start");
+
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        var second = await client.PostAsJsonAsync("/api/validate", new { xml = "<b/>" });
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, second.StatusCode);
+        Assert.NotNull(second.Headers.RetryAfter);
+        Assert.Contains("no parser was free within 1 s", await second.Content.ReadAsStringAsync());
+        Assert.InRange(clock.Elapsed.TotalSeconds, 0.9, 10);
+
+        gate.Open();
+        Assert.Equal(HttpStatusCode.OK, (await first).StatusCode);
+    }
+
+    [Fact]
+    public async Task A_full_queue_refuses_at_once_with_503()
+    {
+        var gate = new GateLimiter();
+        var client = GatedClient(gate, ("Xpact:MaxConcurrentWorkers", "1"), ("Xpact:MaxWorkersPerClient", "10"),
+            ("Xpact:MaxQueuedRequests", "0"), ("Xpact:QueueWaitSeconds", "30"));
+
+        var first = client.PostAsJsonAsync("/api/validate", new { xml = "<a/>" });
+        Assert.True(await gate.WaitUntilHeldAsync(), "the first worker did not start");
+
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        var second = await client.PostAsJsonAsync("/api/validate", new { xml = "<b/>" });
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, second.StatusCode);
+        Assert.Contains("too many documents are waiting", await second.Content.ReadAsStringAsync());
+        Assert.True(clock.Elapsed.TotalSeconds < 5, $"refused after {clock.Elapsed.TotalSeconds:F1} s, not at once");
+
+        gate.Open();
+        Assert.Equal(HttpStatusCode.OK, (await first).StatusCode);
+    }
+
+    /// <summary>Records the suspended worker's integrity level and privileges, then sets the real Job Object.</summary>
+    private sealed class InspectingLimiter : Xpact.Api.Workers.IWorkerLimiter
+    {
+        public int Integrity { get; private set; }
+        public int Privileges { get; private set; }
+
+        public IDisposable Limit(System.Diagnostics.Process process, long memoryLimitBytes)
+        {
+            Integrity = Xpact.Api.Workers.WorkerLauncher.IntegrityLevel(process);
+            Privileges = Xpact.Api.Workers.WorkerLauncher.PrivilegeCount(process);
+            return new Xpact.Api.Workers.JobObjectWorkerLimiter().Limit(process, memoryLimitBytes);
+        }
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Worker_runs_at_low_integrity_without_privileges(bool lowIntegrity)
+    {
+        var limiter = new InspectingLimiter();
+        var client = _factory.WithWebHostBuilder(b =>
+        {
+            b.UseSetting("Xpact:WorkerLowIntegrity", lowIntegrity.ToString());
+            b.ConfigureTestServices(s => s.AddSingleton<Xpact.Api.Workers.IWorkerLimiter>(limiter));
+        }).CreateClient();
+
+        Assert.Equal(Verdicts.Accepted, (await PostJson(client, new { xml = "<a><b/></a>" })).Verdict);
+        if (lowIntegrity)
+        {
+            Assert.Equal(0x1000, limiter.Integrity);          // SECURITY_MANDATORY_LOW_RID
+            Assert.True(limiter.Privileges <= 1, $"{limiter.Privileges} privileges"); // only SeChangeNotify
+        }
+        else
+        {
+            Assert.True(limiter.Integrity >= 0x2000, $"integrity 0x{limiter.Integrity:X}"); // Medium or more
+        }
+    }
+
+    [Theory]
+    [InlineData(true, false, false)]   // Low: cannot write to the account's TEMP folder
+    [InlineData(false, false, true)]   // control: the same command at normal integrity can
+    [InlineData(true, true, true)]     // control: Low can write to LocalLow, so the command itself works
+    public async Task A_low_integrity_process_cannot_write_to_the_api_accounts_files(bool lowIntegrity, bool localLow, bool canWrite)
+    {
+        // The launcher itself, with cmd.exe instead of the worker: try to create a file in the
+        // account's TEMP folder (Medium integrity), as code that took over the worker might.
+        string folder = localLow
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow")
+            : Path.GetTempPath();
+        string file = Path.Combine(folder, $"xpact-low-{Guid.NewGuid():N}.txt");
+        Assert.DoesNotContain(' ', file); // cmd /c quoting below assumes no spaces
+        string cmd = Path.Combine(Environment.SystemDirectory, "cmd.exe");
+        var environment = new Dictionary<string, string?>
+        {
+            ["SystemRoot"] = Environment.GetEnvironmentVariable("SystemRoot"),
+        };
+        var launcher = new Xpact.Api.Workers.WorkerLauncher(lowIntegrity);
+        using (var started = launcher.Start(cmd, ["/d", "/c", $"echo x>{file}"], environment, Path.GetTempPath()))
+        {
+            started.StandardInput.Close();
+            started.Resume();
+            await started.Process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
+        }
+        try
+        {
+            Assert.Equal(canWrite, File.Exists(file));
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+    }
+
+    private sealed class FailingLauncher : Xpact.Api.Workers.IWorkerLauncher
+    {
+        public Xpact.Api.Workers.WorkerProcess Start(string path, IReadOnlyList<string> arguments,
+            IDictionary<string, string?> environment, string workingDirectory) =>
+            throw new System.ComponentModel.Win32Exception(1314); // ERROR_PRIVILEGE_NOT_HELD
+    }
+
+    [Fact]
+    public async Task Nothing_is_parsed_when_the_worker_cannot_be_started_with_reduced_rights()
+    {
+        var client = _factory.WithWebHostBuilder(b => b.ConfigureTestServices(s =>
+            s.AddSingleton<Xpact.Api.Workers.IWorkerLauncher>(new FailingLauncher()))).CreateClient();
+
+        var result = await PostJson(client, new { xml = "<a/>" });
+        Assert.Equal(Verdicts.Error, result.Verdict);
+        Assert.Contains("could not start the parser safely", result.Diagnostic);
+        Assert.DoesNotContain("privilege", result.Diagnostic, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -275,6 +494,81 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.1")).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.2")).StatusCode);
         Assert.Equal(HttpStatusCode.TooManyRequests, (await From("203.0.113.1")).StatusCode);
+    }
+
+    /// <summary>Makes every request arrive from <paramref name="proxy"/>, before any other middleware.</summary>
+    private sealed class FromProxy(IPAddress proxy) : Microsoft.AspNetCore.Hosting.IStartupFilter
+    {
+        public Action<Microsoft.AspNetCore.Builder.IApplicationBuilder> Configure(
+            Action<Microsoft.AspNetCore.Builder.IApplicationBuilder> next) => app =>
+        {
+            app.Use(async (context, inner) => { context.Connection.RemoteIpAddress = proxy; await inner(); });
+            next(app);
+        };
+    }
+
+    private sealed class CollectingLogger : ILoggerProvider, ILogger
+    {
+        public System.Collections.Concurrent.ConcurrentQueue<string> Messages { get; } = new();
+        public ILogger CreateLogger(string categoryName) => this;
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Warning;
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            if (IsEnabled(logLevel)) Messages.Enqueue(formatter(state, exception));
+        }
+        public void Dispose() { }
+    }
+
+    [Theory]
+    [InlineData(null, null, false)]                     // proxy not trusted: one shared limit + a warning
+    [InlineData("198.51.100.7", null, true)]            // KnownProxies
+    [InlineData(null, "198.51.100.0/24", true)]         // KnownNetworks
+    public async Task Only_trusted_proxies_pass_on_the_visitor_address(string? proxy, string? network, bool trusted)
+    {
+        var log = new CollectingLogger();
+        var client = _factory.WithWebHostBuilder(b =>
+        {
+            b.UseSetting("Xpact:RequestsPerMinute", "1");
+            if (proxy is not null) b.UseSetting("Xpact:KnownProxies:0", proxy);
+            if (network is not null) b.UseSetting("Xpact:KnownNetworks:0", network);
+            b.ConfigureTestServices(s =>
+            {
+                s.AddSingleton<Microsoft.AspNetCore.Hosting.IStartupFilter>(new FromProxy(IPAddress.Parse("198.51.100.7")));
+                s.AddSingleton<ILoggerProvider>(log);
+            });
+        }).CreateClient();
+        Task<HttpResponseMessage> From(string visitor)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/validate") { Content = JsonContent.Create(new { xml = "<a/>" }) };
+            request.Headers.Add("X-Forwarded-For", visitor);
+            return client.SendAsync(request);
+        }
+
+        Assert.Equal(HttpStatusCode.OK, (await From("203.0.113.1")).StatusCode);
+        var second = await From("203.0.113.2");
+        bool warned = log.Messages.Any(m => m.Contains("198.51.100.7") && m.Contains("Xpact:KnownProxies"));
+        if (trusted)
+        {
+            Assert.Equal(HttpStatusCode.OK, second.StatusCode);      // two visitors, two limits
+            Assert.False(warned, string.Join(" | ", log.Messages));
+        }
+        else
+        {
+            Assert.Equal(HttpStatusCode.TooManyRequests, second.StatusCode); // both look like the proxy
+            Assert.True(warned, "expected a warning naming the untrusted proxy");
+        }
+    }
+
+    [Theory]
+    [InlineData("Xpact:KnownProxies:0", "10.0.0.300", "is not an IP address")]
+    [InlineData("Xpact:KnownNetworks:0", "10.0.0.0/99", "is not a network")]
+    public void A_mistyped_proxy_setting_stops_the_start_with_a_clear_message(string key, string value, string message)
+    {
+        var factory = _factory.WithWebHostBuilder(b => b.UseSetting(key, value));
+        var error = Assert.ThrowsAny<Exception>(() => factory.CreateClient().GetAsync("/api/health").GetAwaiter().GetResult());
+        Assert.Contains(message, error.ToString());
     }
 
     [Fact]

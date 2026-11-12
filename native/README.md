@@ -79,3 +79,20 @@ Package the Windows-only native release with:
 ```powershell
 .\scripts\package_windows_release.ps1
 ```
+
+Threads (#274): every trampoline in `xpact_eiffel_runtime_bridge.c` holds one
+process-wide, re-entrant lock while it is inside Eiffel, because the Eiffel runtime
+is built with `concurrency support="none"`. Several threads, each with its own
+parser, are safe (they take turns); a handler may call back into xpact on its own
+thread. Measured cost for a single thread: none (median of 5 alternating runs).
+
+Internal failures (#273): every entry feature of `XP_NATIVE_BRIDGE_INSTALLER` has a
+`rescue`/`retry` guard. An Eiffel exception inside a DLL call (for example "No more memory",
+or a contract violation in `xpact_assertions.dll`) no longer ends the process: the call
+returns Expat's failure value (`XML_STATUS_ERROR`, `NULL`, `0`), and the parser is marked
+failed. A failed parser answers only `XML_GetErrorCode` (`XML_ERROR_NO_MEMORY` for out of
+memory, otherwise `XML_ERROR_UNEXPECTED_STATE`) and must be freed with `XML_ParserFree`;
+other parsers keep working. Set the environment variable `XPACT_EXCEPTION_TRACE=1` to print
+the Eiffel exception trace to stderr when this happens. Before #273 such an exception jumped
+into the finished `DllMain` frame (`xpact_eiffel_dllmain.c`) and the process died with
+`0xC00000FF` or "PANIC: main entry point vanished", without a trace.

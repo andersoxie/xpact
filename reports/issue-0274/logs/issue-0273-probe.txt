@@ -1,0 +1,4 @@
+1. laughs under 40 MB: status=0 code=1 (out of memory)
+2. failed parser answers: again status=0 code=1 line=1 col=0
+3. new parsers after the failure: 200/200 parsed
+PASS

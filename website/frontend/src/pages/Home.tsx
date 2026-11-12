@@ -134,6 +134,9 @@ export function Home() {
             <Todo>Error codes and events identical to Expat in every case (most match; see the open issues)</Todo>
             <Done>Fast incremental parsing through the DLL: 131 KB fed byte by byte in 0.1 s (was 50 min)</Done>
             <Done>Billion-laughs protection as in Expat (amplification rule, error 43)</Done>
+            <Done>An internal error in the DLL returns an error code instead of ending the program (#273)</Done>
+            <Done>Safe to use from several threads, each with its own parser; calls take turns (#274)</Done>
+            <Todo>Speed: a median of 18 times slower than native Expat through the same C API (#275)</Todo>
             <Todo>ISO-8859-1 input in small pieces is still slow (issue #272)</Todo>
           </ul>
           <p className="small muted" style={{ marginTop: 10 }}>
@@ -157,29 +160,31 @@ export function Home() {
   );
 }
 
-function MetricStat({ metric }: { metric: Metric }) {
+function MetricStat({ metric }: Readonly<{ metric: Metric }>) {
   const number = typeof metric.value === "number" ? fmt.format(metric.value) : metric.value;
   const value = metric.approx ? `≈ ${number}` : number;
   return <Stat label={`${metric.icon} ${metric.label}`} value={value} sub={metric.sub} long={value.length > 11} result={metric.result} />;
 }
 
-function Done({ children }: { children: React.ReactNode }) {
+function Done({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <li>
-      <span className="tick" role="img" aria-label="done">
+      <span className="tick" aria-hidden="true">
         ✅
       </span>
+      <span className="sr-only">Done: </span>
       <span>{children}</span>
     </li>
   );
 }
 
-function Todo({ children }: { children: React.ReactNode }) {
+function Todo({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <li>
-      <span className="todo" role="img" aria-label="to do">
+      <span className="todo" aria-hidden="true">
         ⬜
       </span>
+      <span className="sr-only">To do: </span>
       <span>{children}</span>
     </li>
   );

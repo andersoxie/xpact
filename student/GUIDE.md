@@ -1,5 +1,9 @@
 # The whole project in plain words
 
+> **Workflow updated 2026-11-11:** the work branch is `incremental-test` (not `student-Mass`), pull
+> requests merge with a merge commit (never squash), `main` is never touched. Sections 6-7 still
+> show week 4: the current state is in [CONTINUE-HERE.md](CONTINUE-HERE.md).
+>
 > **Updated 2026-10-26 (week 4).** Read sections 1-3 once. After that you
 > mostly need [section 7, what to do next](#7-what-you-do-next). The live
 > status is in [PLAN.md](PLAN.md); this page explains how it all fits.
@@ -98,8 +102,8 @@ or native, load the C compiler once per window (see the [setup guide](report/set
 `package_windows_release.ps1`, `run_phase1.ps1`.
 
 **Your own tools:** `student\baseline\run_baseline.ps1` (the baseline, `-LogDir`
-for a rerun) and `student\tools\fix.ps1` (broken in PowerShell 5.1: do its
-steps by hand, [VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51)).
+for a rerun) and `student\tools\fix.ps1` (works in PowerShell 5.1 when run plainly, without
+`2>&1`; otherwise do its steps by hand, [VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51)).
 
 ## 6. What works and what is broken
 
@@ -145,11 +149,11 @@ test), 3 (C02), 4 (C03, xpact side), 5 (C10, xpact side), all through the
 ## 8. How to do one piece of work (every time)
 
 1. One GitHub issue per problem or task, with a milestone and labels.
-2. Branch `fix/<issue>-<name>` from `student-Mass` (never work on `main`).
+2. Branch `fix/<issue>-<name>` from `incremental-test` (never work on `main`).
 3. Write down the **expected** result **before** you run anything.
 4. Run it. Save the log. Write down the actual result and the exit code.
 5. Report in `reports\issue-NNNN\report.md`, logs next to it.
-6. Pull request into `student-Mass`; **you** review and squash-merge it.
+6. Pull request into `incremental-test`; merge it with a **merge commit**, never squash (Claude merges its own verified pull requests since 2026-11-11).
 7. Check the result, then close the issue by hand; update [PLAN.md](PLAN.md) and the weekly note.
 
 Every result records: the input (or its hash), the git commit, the build and
