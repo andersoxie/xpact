@@ -147,7 +147,6 @@ flowchart LR
 | 🟡 [#211](https://github.com/andersoxie/xpact/issues/211) | Billion-laughs documents are stopped with Expat's error, but ~15× slower |
 | ⏸ [#13](https://github.com/andersoxie/xpact/issues/13) | The GC wrapper swallows exceptions (a design question) |
 | 🟡 [#210](https://github.com/andersoxie/xpact/issues/210) | Website deployment and HTTPS (the supervisor's server) |
-| 🟡 [#345](https://github.com/andersoxie/xpact/issues/345) | New website build with the accessibility fixes: built and tested, release and Docker image to follow |
 | 🟡 [#342](https://github.com/andersoxie/xpact/issues/342) | SonarQube: 2 security hotspots to mark "Safe"; a coverage report for the quality gate |
 
 ## 8. Reflection ✏️

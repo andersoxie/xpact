@@ -24,7 +24,7 @@
 | [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces | 🔴 quadratic, still present |
 | Website security | ✅ review findings 1-7 fixed (#295, #297, #283, #286); ✅ worker with no privileges at Low integrity (#299) ([security.md](../website/docs/security.md)) |
 | Website quality | ✅ Lighthouse 100, ZAP 0 medium, W3C HTML 0/0 (#286); 42/42 backend tests; pages show the fair speed result and current limits (#314) |
-| Website Docker image | ✅ `ghcr.io/andersoxie/xpact-website:website-2026-11-11-1` (= `latest`, digest `sha256:60dec845…`) from release `website-2026-11-11-1` (incremental-test @ `95f140b`), PR #315; container checks pass, Low-integrity worker works in the container · 🟡 under a 40 MB cap the container worker dies of a stack overflow instead of reporting out of memory ([#316](https://github.com/andersoxie/xpact/issues/316), low impact) |
+| Website Docker image | ✅ `ghcr.io/andersoxie/xpact-website:website-2026-11-12-1` (= `latest`, digest `sha256:08b77a5b…`) from release `website-2026-11-12-1` (`a840029`: accessibility #328, React #329, same DLLs), PR #348; container smoke and memory-cap tests pass ([report](../reports/issue-0345/report.md)) · 🟡 under a 40 MB cap the container worker can die of a stack overflow instead of reporting out of memory ([#316](https://github.com/andersoxie/xpact/issues/316), low impact) |
 | Website proxy | ✅ untrusted proxy logged, `KnownNetworks` (#312); the real proxy setting is chosen at deployment ([docker.md](../website/docs/docker.md#behind-a-reverse-proxy)) |
 | Website deployment | 🟡 not online: HTTPS, domain, `AllowedHosts` = Anders ([#210](https://github.com/andersoxie/xpact/issues/210)) |
 | Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias), [#318](https://github.com/andersoxie/xpact/issues/318) (`fix.ps1` merge commits into `incremental-test`, refuses `main`), [#319](https://github.com/andersoxie/xpact/issues/319) (DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL=1` blocks rebuilds) |
@@ -37,8 +37,8 @@
 - [ ] **#272** ISO-8859-1 in pieces (copy the UTF-16 resume path). 1-2 days
 - [ ] Same behaviour as Expat: #123, #126, #176, #170. 1-2 days each
 - [ ] Rerun the full fair speed matrix (#275) on an **idle** PC before quoting final numbers. 1-2 h machine time
-- [ ] **Website build `website-2026-11-12-1`** (#345): built, smoke-tested, zip ready; student runs `gh release create` (the classifier blocks Claude), then Claude pushes branch `fix/345-website-release-2026-11-12` (sets `WEBSITE_RELEASE`) and the Docker workflow publishes the image.
-- [ ] Aikido: mark the 14 checksum alerts as false positives (student, dashboard). 15 min
+- [x] ✅ Website build `website-2026-11-12-1` shipped (#345, PR #348). Next build: same steps (see the [#345 report](../reports/issue-0345/report.md)); the student runs `gh release create`.
+- [ ] ⏸ Aikido: mark the 14 checksum alerts as false positives (put aside, 2026-11-12).
 - [x] ✅ Website findings 1-2, worker rights; #273; #274; #275 merged; #302, #306, #308 (all 2026-11-11)
 
 ## 4. Setup on a new PC
