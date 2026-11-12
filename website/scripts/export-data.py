@@ -14,17 +14,19 @@ WEBSITE = Path(__file__).resolve().parent.parent
 REPO = WEBSITE.parent
 DATA = WEBSITE / "data"
 GITHUB = "https://github.com/andersoxie/xpact/blob/incremental-test/"
+README_MD = "README.md"
+SUMMARY_JSON = "summary.json"
 
 # W3C runner, all lanes, rerun on incremental-test 2026-11-08. The DLL external-entity lane
 # (247 cases) was not rerun; it stays from 2026-10-28.
 W3C_RUN = REPO / "student" / "results" / "AlotOfTests-2026-11-08" / "repo-suites" / "w3c"
 W3C_REPORT = REPO / "reports" / "latest-2026-10-28"
 BENCHMARKS = REPO / "reports" / "acceptance-253c81e-vs-45d2f53" / "logs" / "speed" / "bench3-ours-1-table.md"
-COMPARISON = REPO / "student" / "results" / "G03-comparison" / "README.md"
+COMPARISON = REPO / "student" / "results" / "G03-comparison" / README_MD
 ALOT = REPO / "student" / "results" / "AlotOfTests-2026-11-08"
 # Fair speed test (#275): xpact.dll and libexpat.dll through the same C API, 2026-11-10.
 FAIR = REPO / "student" / "results" / "fair-speed-2026-11-10"
-FAIR_CHECK = REPO / "reports" / "issue-0276-check" / "README.md"
+FAIR_CHECK = REPO / "reports" / "issue-0276-check" / README_MD
 
 LANES = [
     ("core", "XML 1.0 5th edition", "W3C verdict", 1974),
@@ -39,10 +41,10 @@ def link(path: Path) -> str:
 
 
 def conformance() -> dict:
-    summary = json.loads((W3C_RUN / "summary.json").read_text(encoding="utf-8"))
-    dll = json.loads((W3C_REPORT / "dll-entity-lane" / "summary.json").read_text(encoding="utf-8"))
+    summary = json.loads((W3C_RUN / SUMMARY_JSON).read_text(encoding="utf-8"))
+    dll = json.loads((W3C_REPORT / "dll-entity-lane" / SUMMARY_JSON).read_text(encoding="utf-8"))
     return {
-        "source": link(W3C_RUN.parent.parent / "README.md"),
+        "source": link(W3C_RUN.parent.parent / README_MD),
         "date": "2026-11-08",
         "suite": {"name": "W3C XML Conformance Test Suite", "version": summary["suite_version"],
                   "url": summary["source"], "cases": summary["catalog_cases"]},
@@ -107,7 +109,7 @@ def fair_speed() -> dict:
             whole.append({"shape": x["shape"], "callbacks": callbacks == "1", "ratio": round(ratio, 1),
                           "xpactMs": float(x["median_ms"]), "expatMs": float(e["median_ms"])})
     return {
-        "source": link(FAIR / "README.md"),
+        "source": link(FAIR / README_MD),
         "check": link(FAIR_CHECK),
         "generated": "2026-11-10 (old DLL); rechecked 2026-11-11 after #273/#274: whole documents unchanged, 1-byte pieces 2-4 % slower",
         "cells": len(ratios),
@@ -119,7 +121,7 @@ def fair_speed() -> dict:
 
 
 def comparison() -> dict:
-    run = json.loads((COMPARISON.parent / "runs" / "final-normal" / "summary.json").read_text(encoding="utf-8"))
+    run = json.loads((COMPARISON.parent / "runs" / "final-normal" / SUMMARY_JSON).read_text(encoding="utf-8"))
     verdicts = run["verdicts_by_config"]
     same_verdict = run["config_pairs"] if all(verdicts["xpact"][c] == verdicts["expat"][c] for c in verdicts["xpact"]) else None
     return {
@@ -138,7 +140,7 @@ def fmt(number: int) -> str:
 
 def testing() -> dict:
     # AlotOfTests rerun on incremental-test (2026-11-08): one summary.json built by collect.py from the logs.
-    s = json.loads((ALOT / "summary.json").read_text(encoding="utf-8"))
+    s = json.loads((ALOT / SUMMARY_JSON).read_text(encoding="utf-8"))
     w3c = next(b for b in conformance()["builds"] if b["build"] == "production")
     calls, fuzz, diff = s["xml_parse_calls"], s["fuzzing"], s["differential"]
     pieces = s["w3c_pieces"]["assertions"]
@@ -158,7 +160,7 @@ def testing() -> dict:
 
     both_builds_same = all(s["w3c_pieces"][b]["xpact_crash_or_timeout"] == 0 for b in ("normal", "assertions"))
     return {
-        "source": link(ALOT / "README.md"),
+        "source": link(ALOT / README_MD),
         "date": s["date"],
         "revision": "incremental-test",
         "note": "Rerun on 2026-11-08 on the final parser (incremental-test), both builds.",
