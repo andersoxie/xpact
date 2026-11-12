@@ -164,6 +164,53 @@ def judge(accepted, expected_events, verdict, events):
     return "PASS"
 
 
+def _build_or_record(label, build_errors, repo_root, phase, implementation, toolchain, offline, assertions):
+    """The built artifact, or None with the first error line recorded under label."""
+    tools, environment, compiler_metadata = toolchain
+    try:
+        built = builds.build_one(repo_root, phase, implementation, tools, environment, compiler_metadata,
+                                 offline=offline, profile="regression", assertions=assertions)
+    except (builds.BuildError, DependencyError, OSError, ValueError) as error:
+        # One engine's build failure must not hide the other engine's results.
+        build_errors[label] = str(error).splitlines()[0][:400]
+        print("%-28s BUILD FAILED: %s" % (label, build_errors[label]), flush=True)
+        return None
+    return json.loads(Path(built["manifest"]).read_text(encoding="utf-8"))
+
+
+def _case_rows(label, executable, all_cases, fixtures, work, timeout):
+    """Every case under every chunking for one build, each judged against its expected result."""
+    rows = []
+    for name, group, data, accepted, events in all_cases:
+        names = chunkings(data)
+        traces = trace_case(executable, fixtures / (name + ".xml"), names, work, timeout)
+        for chunking in names:
+            verdict, observed, error = traces.get(chunking, ("MISSING", "", ""))
+            result = judge(accepted, events, verdict, observed) if verdict != "MISSING" else "MISSING"
+            rows.append({"build": label, "case": name, "group": group, "chunking": chunking,
+                         "input": escaped(data), "expected": "ACCEPT" if accepted else "REJECT",
+                         "verdict": verdict, "result": result,
+                         "expected_events": " | ".join(events) if events else "",
+                         "events": observed, "error": error})
+    return rows
+
+
+def _lifecycle_rows(label, executable, work, timeout):
+    """The reused-parser lifecycle steps for one build."""
+    code, out, _ = run_exe(executable, ["--lifecycle"], work, timeout)
+    steps = parse_lines(out, "XPACT_LIFECYCLE")
+    absent = "CRASH" if code not in (0, None) else "MISSING"
+    rows = []
+    for step, accepted, events in LIFECYCLE:
+        verdict, observed, error = steps.get(step, (absent, "", ""))
+        rows.append({"build": label, "step": step,
+                     "expected": "ACCEPT" if accepted else "REJECT", "verdict": verdict,
+                     "result": judge(accepted, events, verdict, observed),
+                     "expected_events": " | ".join(events) if events else "",
+                     "events": observed, "error": error})
+    return rows
+
+
 def run_lane(repo_root, run_root, offline, timeout):
     state = {"schema_version": 1, "status": "running", "lane": "dual-regression",
              "started": datetime.now(timezone.utc).isoformat()}
@@ -180,56 +227,36 @@ def run_lane(repo_root, run_root, offline, timeout):
         phase.mkdir()
         for implementation in IMPLEMENTATIONS:
             label = "%s/%s" % (implementation, "assertions-on" if assertions else "assertions-off")
-            try:
-                built = builds.build_one(repo_root, phase, implementation, tools, environment, compiler_metadata,
-                                         offline=offline, profile="regression", assertions=assertions)
-            except (builds.BuildError, DependencyError, OSError, ValueError) as error:
-                # One engine's build failure must not hide the other engine's results.
-                build_errors[label] = str(error).splitlines()[0][:400]
-                print("%-28s BUILD FAILED: %s" % (label, build_errors[label]), flush=True)
+            artifact = _build_or_record(label, build_errors, repo_root, phase, implementation,
+                                        (tools, environment, compiler_metadata), offline, assertions)
+            if artifact is None:
                 continue
-            artifact = json.loads(Path(built["manifest"]).read_text(encoding="utf-8"))
             executables[label] = artifact
-            for name, group, data, accepted, events in all_cases:
-                names = chunkings(data)
-                traces = trace_case(artifact["executable"], fixtures / (name + ".xml"), names,
-                                    phase / implementation, timeout)
-                for chunking in names:
-                    verdict, observed, error = traces.get(chunking, ("MISSING", "", ""))
-                    rows.append({"build": label, "case": name, "group": group, "chunking": chunking,
-                                 "input": escaped(data), "expected": "ACCEPT" if accepted else "REJECT",
-                                 "verdict": verdict, "result": judge(accepted, events, verdict, observed)
-                                 if verdict != "MISSING" else "MISSING",
-                                 "expected_events": " | ".join(events) if events else "",
-                                 "events": observed, "error": error})
-            code, out, _ = run_exe(artifact["executable"], ["--lifecycle"], phase / implementation, timeout)
-            steps = parse_lines(out, "XPACT_LIFECYCLE")
-            for step, accepted, events in LIFECYCLE:
-                verdict, observed, error = steps.get(step, ("CRASH" if code not in (0, None) else "MISSING", "", ""))
-                lifecycle_rows.append({"build": label, "step": step,
-                                       "expected": "ACCEPT" if accepted else "REJECT", "verdict": verdict,
-                                       "result": judge(accepted, events, verdict, observed),
-                                       "expected_events": " | ".join(events) if events else "",
-                                       "events": observed, "error": error})
-            print("%-28s %d chunked runs" % (label, sum(1 for r in rows if r["build"] == label)), flush=True)
+            work = phase / implementation
+            case_rows = _case_rows(label, artifact["executable"], all_cases, fixtures, work, timeout)
+            rows += case_rows
+            lifecycle_rows += _lifecycle_rows(label, artifact["executable"], work, timeout)
+            print("%-28s %d chunked runs" % (label, len(case_rows)), flush=True)
     if not rows:
         raise ValueError("no implementation could be built: " + json.dumps(build_errors))
     write_reports(run_root, rows, lifecycle_rows, executables, build_errors)
-    xpact_failures = [r for r in rows + lifecycle_rows if r["build"].startswith("xpact/") and r["result"] != "PASS"]
-    xpact_missing = [label for label in build_errors if label.startswith("xpact/")]
-    if xpact_missing:
-        status = "incomplete"
-    else:
-        status = "complete" if not xpact_failures else "complete_with_failures"
+    status, exit_code = _lane_outcome(rows + lifecycle_rows, build_errors)
     state.update(status=status, build_errors=build_errors,
                  finished=datetime.now(timezone.utc).isoformat(),
                  builds={k: {"executable": v["executable"], "executable_sha256": v["executable_sha256"],
                              "revision": v["source"]["revision"], "configuration": v["build"]["configuration"]}
                          for k, v in executables.items()})
     builds.write_json_atomic(run_root / RUN_JSON, state)
-    if xpact_missing:
-        return 2
-    return 0 if not xpact_failures else 1
+    return exit_code
+
+
+def _lane_outcome(all_rows, build_errors):
+    """(status, exit code) from xpact's own rows: a missing xpact build 2, a failure 1, else 0."""
+    if any(label.startswith("xpact/") for label in build_errors):
+        return "incomplete", 2
+    if any(r["build"].startswith("xpact/") and r["result"] != "PASS" for r in all_rows):
+        return "complete_with_failures", 1
+    return "complete", 0
 
 
 def write_tsv(path, rows):
@@ -240,6 +267,34 @@ def write_tsv(path, rows):
     path.write_text(buffer.getvalue(), encoding="utf-8")
 
 
+def _lifecycle_table(lifecycle_rows, builds_seen):
+    def cell(build, step):
+        r = next(x for x in lifecycle_rows if x["build"] == build and x["step"] == step)
+        return r["verdict"] + ("" if r["result"] == "PASS" else " ❌ " + r["result"])
+
+    lines = ["", "## Lifecycle (one reused parser)", "",
+             "| Step | Expected | " + " | ".join(builds_seen) + " |", "|---|---|" + "---|" * len(builds_seen)]
+    lines += ["| %s | %s | %s |" % (step, "ACCEPT" if accepted else "REJECT", " | ".join(cell(b, step) for b in builds_seen))
+              for step, accepted, _ in LIFECYCLE]
+    return lines
+
+
+def _failure_table(rows):
+    """The first 60 distinct (build, case, result) groups that are not PASS."""
+    lines = ["", "## Cases that are not PASS (first 60 distinct case/build/result)", "",
+             "| Build | Case | Runs | Result | Chunkings (first 4) | Observed events | Error |", "|---|---|---|---|---|---|---|"]
+    seen = {}
+    for r in rows:
+        if r["result"] != "PASS":
+            seen.setdefault((r["build"], r["case"], r["result"]), []).append(r)
+    for (b, case, result), group in list(seen.items())[:60]:
+        first = group[0]
+        lines.append("| %s | %s | %d | %s | %s | `%s` | %s |" % (
+            b, case, len(group), result, ", ".join(r["chunking"] for r in group[:4]),
+            first["events"].replace("|", "·") or "-", first["error"].replace("|", "/") or "-"))
+    return lines
+
+
 def write_reports(run_root, rows, lifecycle_rows, executables, build_errors):
     from collections import Counter
     write_tsv(run_root / "cases.tsv", rows)
@@ -248,11 +303,10 @@ def write_reports(run_root, rows, lifecycle_rows, executables, build_errors):
     lines = ["# Dual regression lane: functional cases, whole and chunked", "",
              "Expected results are written in `run_dual_regression.py`, independently of both parsers.", "",
              "## Builds", "", "| Build | Revision | Configuration | SHA-256 |", "|---|---|---|---|"]
-    for label, a in executables.items():
-        lines.append("| %s | `%s` | %s | `%s…` |" % (label, a["source"]["revision"][:12],
-                                                   a["build"]["configuration"], a["executable_sha256"][:12]))
-    for label, error in build_errors.items():
-        lines.append("| %s | build failed | %s | |" % (label, error.replace("|", "/")))
+    lines += ["| %s | `%s` | %s | `%s…` |" % (label, a["source"]["revision"][:12],
+                                            a["build"]["configuration"], a["executable_sha256"][:12])
+              for label, a in executables.items()]
+    lines += ["| %s | build failed | %s | |" % (label, error.replace("|", "/")) for label, error in build_errors.items()]
     results = ["PASS", "WRONG-VERDICT", "WRONG-EVENTS", "CRASH", "TIMEOUT", "MISSING"]
     lines += ["", "## Results per build (every chunking)", "",
               "| Build | Runs | " + " | ".join(results) + " |", "|---" * (len(results) + 2) + "|"]
@@ -260,30 +314,13 @@ def write_reports(run_root, rows, lifecycle_rows, executables, build_errors):
         c = Counter(r["result"] for r in rows if r["build"] == b)
         lines.append("| %s | %d | %s |" % (b, sum(c.values()), " | ".join(str(c[x]) for x in results)))
     lines += ["", "## Per group", "", "| Build | Group | Runs | Not PASS |", "|---|---|---|---|"]
+    groups = list(dict.fromkeys(r["group"] for r in rows))
     for b in builds_seen:
-        for g in dict.fromkeys(r["group"] for r in rows):
+        for g in groups:
             sel = [r for r in rows if r["build"] == b and r["group"] == g]
             lines.append("| %s | %s | %d | %d |" % (b, g, len(sel), sum(r["result"] != "PASS" for r in sel)))
-    lines += ["", "## Lifecycle (one reused parser)", "",
-              "| Step | Expected | " + " | ".join(builds_seen) + " |", "|---|---|" + "---|" * len(builds_seen)]
-    for step, accepted, _ in LIFECYCLE:
-        cells = []
-        for b in builds_seen:
-            r = next(x for x in lifecycle_rows if x["build"] == b and x["step"] == step)
-            cells.append(r["verdict"] + ("" if r["result"] == "PASS" else " ❌ " + r["result"]))
-        lines.append("| %s | %s | %s |" % (step, "ACCEPT" if accepted else "REJECT", " | ".join(cells)))
-    lines += ["", "## Cases that are not PASS (first 60 distinct case/build/result)", "",
-              "| Build | Case | Runs | Result | Chunkings (first 4) | Observed events | Error |", "|---|---|---|---|---|---|---|"]
-    seen = {}
-    for r in rows:
-        if r["result"] != "PASS":
-            key = (r["build"], r["case"], r["result"])
-            seen.setdefault(key, []).append(r)
-    for (b, case, result), group in list(seen.items())[:60]:
-        first = group[0]
-        lines.append("| %s | %s | %d | %s | %s | `%s` | %s |" % (
-            b, case, len(group), result, ", ".join(r["chunking"] for r in group[:4]),
-            first["events"].replace("|", "·") or "-", first["error"].replace("|", "/") or "-"))
+    lines += _lifecycle_table(lifecycle_rows, builds_seen)
+    lines += _failure_table(rows)
     (run_root / SUMMARY_MD).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 

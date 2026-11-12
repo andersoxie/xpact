@@ -44,60 +44,90 @@ def cells(inputs, with_assertions):
                 yield f, shape, size, enc, chunk, cb, ns, engines
 
 
-def main():
+def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument("exe"); ap.add_argument("inputs", type=Path); ap.add_argument("tsv", type=Path)
     ap.add_argument("--xpact", required=True); ap.add_argument("--expat", required=True); ap.add_argument("--assertions")
     ap.add_argument("--only", default="")
-    a = ap.parse_args()
+    return ap.parse_args()
+
+
+def finished_cells(tsv):
+    """(file, chunk, callbacks, engine) already in the TSV: a stopped run resumes after them."""
+    if not tsv.exists():
+        return set()
+    with tsv.open(encoding="utf-8") as source:
+        return {(r["file"], r["chunk"], r["callbacks"], r["engine"]) for r in csv.DictReader(source, delimiter="\t")}
+
+
+def calibrate(run_cell, todo):
+    """Warm-up run per engine: (plan {engine: (iterations, warm-up result)}, rows of engines that failed)."""
+    plan, rows = {}, {}
+    for e in todo:
+        r = run_cell(e, 1)
+        if r is None:
+            rows[e] = {"status": "TIMEOUT", "note": f"warm-up over {TIMEOUT_S} s"}
+        elif r[0] == "CRASH":
+            rows[e] = {"status": "CRASH", "code": r[1], "note": "warm-up"}
+        else:
+            single = r[3] / 1000
+            plan[e] = (1 if single > SLOW_S else max(1, round(TARGET_S / max(single, 1e-6))), r)
+    return plan, rows
+
+
+def measure(run_cell, plan):
+    """ROUNDS rounds, the engine order alternating; a slow engine's warm-up is its one measurement."""
+    times = {e: [] for e in plan}
+    for k in range(ROUNDS):
+        order = list(plan) if k % 2 == 0 else list(reversed(plan))
+        for e in order:
+            sample = one_sample(run_cell, e, plan[e], times[e])
+            if sample is not None:
+                times[e].append(sample)
+    return times
+
+
+def one_sample(run_cell, engine, plan_entry, samples):
+    """(result, iterations) of one measured round, or None when nothing is recorded this round."""
+    it, first = plan_entry
+    if it == 1 and first[3] / 1000 > SLOW_S:  # slow: the warm-up is the measurement, recorded once
+        return None if samples else (first, 1)
+    r = run_cell(engine, it)
+    return (r, it) if r is not None and r[0] != "CRASH" else None
+
+
+def result_row(plan_entry, samples):
+    ms = [t[0][3] for t in samples]
+    last = samples[-1][0] if samples else plan_entry[1]
+    return {"status": last[0], "code": last[1], "checksum": last[2], "iterations": plan_entry[0],
+            "median_ms": f"{statistics.median(ms):.4f}" if ms else "", "min_ms": f"{min(ms):.4f}" if ms else "",
+            "max_ms": f"{max(ms):.4f}" if ms else "", "runs": len(ms),
+            "note": "1 run (slow)" if len(ms) == 1 else ""}
+
+
+def main():
+    a = parse_args()
     dlls = {"xpact": a.xpact, "expat": a.expat, "assertions": a.assertions}
-    done = set()
-    if a.tsv.exists():
-        for r in csv.DictReader(a.tsv.open(encoding="utf-8"), delimiter="\t"):
-            done.add((r["file"], r["chunk"], r["callbacks"], r["engine"]))
+    done = finished_cells(a.tsv)
     new = not a.tsv.exists()
     out = a.tsv.open("a", newline="", encoding="utf-8")
     w = csv.DictWriter(out, FIELDS, delimiter="\t")
     if new:
         w.writeheader()
     for f, shape, size, enc, chunk, cb, ns, engines in cells(a.inputs, bool(a.assertions)):
-        if a.only and a.only not in f.name:
-            continue
         todo = [e for e in engines if (f.name, str(chunk), str(cb), e) not in done]
-        if not todo:
+        if (a.only and a.only not in f.name) or not todo:
             continue
-        plan, rows = {}, {}
-        for e in todo:                                   # warm-up and calibration
-            r = run(a.exe, dlls[e], f, chunk, cb, ns, 1)
-            if r is None:
-                rows[e] = {"status": "TIMEOUT", "note": f"warm-up over {TIMEOUT_S} s"}
-            elif r[0] == "CRASH":
-                rows[e] = {"status": "CRASH", "code": r[1], "note": "warm-up"}
-            else:
-                single = r[3] / 1000
-                plan[e] = (1 if single > SLOW_S else max(1, round(TARGET_S / max(single, 1e-6))), r)
-        times = {e: [] for e in plan}
-        for k in range(ROUNDS):
-            order = list(plan) if k % 2 == 0 else list(reversed(plan))
-            for e in order:
-                it, first = plan[e]
-                if it == 1 and first[3] / 1000 > SLOW_S:  # slow: the warm-up is the measurement
-                    if not times[e]:
-                        times[e].append((first, 1))
-                    continue
-                r = run(a.exe, dlls[e], f, chunk, cb, ns, it)
-                if r is not None and r[0] != "CRASH":
-                    times[e].append((r, it))
-        for e in plan:
-            ms = [t[0][3] for t in times[e]]
-            last = times[e][-1][0] if times[e] else plan[e][1]
-            rows[e] = {"status": last[0], "code": last[1], "checksum": last[2], "iterations": plan[e][0],
-                       "median_ms": f"{statistics.median(ms):.4f}" if ms else "", "min_ms": f"{min(ms):.4f}" if ms else "",
-                       "max_ms": f"{max(ms):.4f}" if ms else "", "runs": len(ms),
-                       "note": "1 run (slow)" if len(ms) == 1 else ""}
+
+        def run_cell(engine, iterations, f=f, chunk=chunk, cb=cb, ns=ns):
+            return run(a.exe, dlls[engine], f, chunk, cb, ns, iterations)
+
+        plan, rows = calibrate(run_cell, todo)
+        times = measure(run_cell, plan)
+        rows.update({e: result_row(plan[e], times[e]) for e in plan})
         for e in todo:
-            w.writerow(dict(file=f.name, shape=shape, size=size, encoding=enc, chunk=chunk, callbacks=cb, engine=e,
-                            **rows[e]))
+            w.writerow({"file": f.name, "shape": shape, "size": size, "encoding": enc, "chunk": chunk,
+                        "callbacks": cb, "engine": e, **rows[e]})
         out.flush()
         xs = {e: rows[e].get("median_ms", rows[e].get("status")) for e in todo}
         print(f"{f.name} chunk={chunk} cb={cb} {xs}", flush=True)

@@ -199,12 +199,77 @@ def makefile_settings(code_directory):
     path = code_directory / "Makefile"
     assignments = {}
     for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-        match = re.match(r"^(CC|CPP|CFLAGS|CPPFLAGS|LDFLAGS|CCLDFLAGS|EIFLIB)\s*=\s*(.*)$", line)
+        # No "\s*(.*)" after "=": two quantifiers over the same spaces backtrack (S8786).
+        match = re.match(r"^(CC|CPP|CFLAGS|CPPFLAGS|LDFLAGS|CCLDFLAGS|EIFLIB)\s*=(.*)$", line)
         if match:
-            assignments[match[1]] = match[2]
+            assignments[match[1]] = match[2].lstrip()
     if assignments.get("CC", "").strip().lower() not in ("cl", "cl.exe"):
         raise BuildError("Eiffel did not generate the expected MSVC build: " + repr(assignments))
     return assignments
+
+
+# profile -> (ECF folder, ECF file, base target, executable suffix)
+PROFILE_LAYOUT = {
+    "probe": ("tools/implementation_probe", "probe.ecf", "probe", "_build_probe"),
+    "catalog": ("benchmarks/dual_catalog", "catalog.ecf", "catalog", "_catalog_benchmark"),
+    "regression": ("benchmarks/dual_regression", "regression.ecf", "regression", "_regression"),
+    "w3c": ("benchmarks/dual_w3c", "conformance.ecf", "conformance", "_w3c_conformance"),
+}
+
+
+def _source_identity(root, implementation, offline, fingerprint):
+    """(source record, revision) of the implementation being built."""
+    source_status = run_git(["status", "--porcelain", "--untracked-files=all"], root)
+    if implementation == "xpact-core":
+        source = prepare_dependency(root, offline=offline)
+        return source, source["revision"]
+    revision = run_git(["rev-parse", "HEAD"], root).strip()
+    source = {"repository": run_git(["remote", "get-url", "origin"], root).strip(),
+              "revision": revision, "source_dir": str(root), "source_sha256": fingerprint,
+              "worktree_dirty": bool(source_status)}
+    return source, revision
+
+
+def _build_core_helper(core, destination, tools, build_environment):
+    """Compile Xpact-core's Shift-JIS helper with MSVC; set its environment; return its record."""
+    build_environment.update({"XPACT_CORE": str(core),
+                              "XPACT_INCLUDE": str(core / "contrib/xpact/include"),
+                              "C_SHIFT_JIS_SUBSET": str(core / "C-tools/shift_jis_subset")})
+    # Upstream's ECF supplies this codec's archive only on Unix. Build the
+    # same pinned C source for MSVC outside the immutable source checkout.
+    helper_source = core / "C-tools/shift_jis_subset/src/shift_jis_subset.c"
+    helper_object = destination / "shift_jis_subset.obj"
+    helper_command = [tools["cl"], "/nologo", "/O2", "/MT", "/c",
+                      "/I" + str(core / "C-tools/shift_jis_subset/include"),
+                      str(helper_source), "/Fo:" + str(helper_object)]
+    run_checked(helper_command, cwd=destination, env=build_environment,
+                log_path=destination / "shift-jis.log")
+    build_environment["XPACT_SHIFT_JIS_OBJECT"] = str(helper_object)
+    return {"source": str(helper_source), "source_sha256": file_sha256(helper_source),
+            "object": str(helper_object), "object_sha256": file_sha256(helper_object),
+            "command": helper_command}
+
+
+def _validate_identity(profile, output, implementation, revision, configuration):
+    if profile == "catalog":
+        validate_catalog_identity(output, implementation, revision, configuration)
+    elif profile == "w3c":
+        validate_w3c_identity(output, implementation, revision, configuration)
+    elif profile == "regression":
+        validate_regression_identity(output, implementation, revision, configuration)
+    else:
+        validate_probe(output, implementation, revision, configuration)
+
+
+def _verify_unchanged(root, implementation, profile, fingerprint, source, revision):
+    """The inputs, dependency and revision are the ones the build started from."""
+    if source_fingerprint(root, implementation, profile) != fingerprint:
+        raise BuildError("Build inputs changed while compiling " + implementation)
+    if implementation == "xpact-core":
+        if prepare_dependency(root, offline=True) != source:
+            raise BuildError("Pinned dependency changed while compiling")
+    elif run_git(["rev-parse", "HEAD"], root).strip() != revision:
+        raise BuildError("Repository revision changed while compiling")
 
 
 def build_one(repo_root, run_root, implementation, tools, environment, compiler_metadata,
@@ -219,58 +284,22 @@ def build_one(repo_root, run_root, implementation, tools, environment, compiler_
     manifest = destination / "build.json"
     configuration = "finalized/assertions-{}/msvc-x64".format("on" if assertions else "off")
     fingerprint = source_fingerprint(root, implementation, profile)
-    source_status = run_git(["status", "--porcelain", "--untracked-files=all"], root)
-    if implementation == "xpact-core":
-        source = prepare_dependency(root, offline=offline)
-        revision = source["revision"]
-    else:
-        revision = run_git(["rev-parse", "HEAD"], root).strip()
-        source = {"repository": run_git(["remote", "get-url", "origin"], root).strip(),
-                  "revision": revision, "source_dir": str(root), "source_sha256": fingerprint,
-                  "worktree_dirty": bool(source_status)}
+    source, revision = _source_identity(root, implementation, offline, fingerprint)
     generated = destination / "metadata"
     write_identity(generated, implementation, revision, configuration)
     build_environment = dict(environment)
     build_environment.update({"XPACT_SOURCE_ROOT": str(root), "XPACT_PROBE_METADATA": str(generated)})
     helpers = []
     if implementation == "xpact-core":
-        core = Path(source["source_dir"])
-        build_environment.update({"XPACT_CORE": str(core),
-                                  "XPACT_INCLUDE": str(core / "contrib/xpact/include"),
-                                  "C_SHIFT_JIS_SUBSET": str(core / "C-tools/shift_jis_subset")})
-        # Upstream's ECF supplies this codec's archive only on Unix. Build the
-        # same pinned C source for MSVC outside the immutable source checkout.
-        helper_source = core / "C-tools/shift_jis_subset/src/shift_jis_subset.c"
-        helper_object = destination / "shift_jis_subset.obj"
-        helper_command = [tools["cl"], "/nologo", "/O2", "/MT", "/c",
-                          "/I" + str(core / "C-tools/shift_jis_subset/include"),
-                          str(helper_source), "/Fo:" + str(helper_object)]
-        run_checked(helper_command, cwd=destination, env=build_environment,
-                    log_path=destination / "shift-jis.log")
-        helpers.append({"source": str(helper_source), "source_sha256": file_sha256(helper_source),
-                        "object": str(helper_object), "object_sha256": file_sha256(helper_object),
-                        "command": helper_command})
-        build_environment["XPACT_SHIFT_JIS_OBJECT"] = str(helper_object)
-    suffix = {"probe": "_build_probe", "catalog": "_catalog_benchmark", "w3c": "_w3c_conformance",
-              "regression": "_regression"}[profile]
+        helpers.append(_build_core_helper(Path(source["source_dir"]), destination, tools, build_environment))
+    folder, ecf_name, target_base, suffix = PROFILE_LAYOUT[profile]
     name = implementation.replace("-", "_") + suffix
     project = destination / "project"
     project.mkdir()
-    if profile == "probe":
-        ecf = root / "tools/implementation_probe" / implementation.replace("-", "_") / "probe.ecf"
-        target = "probe"
-    elif profile == "catalog":
-        ecf = root / "benchmarks/dual_catalog" / implementation.replace("-", "_") / "catalog.ecf"
-        target = "catalog_assertions" if assertions else "catalog"
-    elif profile == "regression":
-        ecf = root / "benchmarks/dual_regression" / implementation.replace("-", "_") / "regression.ecf"
-        target = "regression_assertions" if assertions else "regression"
-    else:
-        ecf = root / "benchmarks/dual_w3c" / implementation.replace("-", "_") / "conformance.ecf"
-        target = "conformance_assertions" if assertions else "conformance"
-    command = [tools["ec"], "-batch", "-clean", "-finalize"]
-    if assertions:
-        command.append("-keep")
+    ecf = root / folder / implementation.replace("-", "_") / ecf_name
+    # The probe has one target; the other profiles have an *_assertions twin.
+    target = target_base + "_assertions" if assertions and profile != "probe" else target_base
+    command = [tools["ec"], "-batch", "-clean", "-finalize"] + (["-keep"] if assertions else [])
     command += ["-config", str(ecf), "-target", target, "-project_path", str(project)]
     print("Building {} ({})".format(implementation, configuration), flush=True)
     run_checked(command, cwd=root, env=build_environment, log_path=destination / "eiffel.log")
@@ -285,22 +314,8 @@ def build_one(repo_root, run_root, implementation, tools, environment, compiler_
     output = run_checked(verification_command, cwd=destination, env=build_environment,
                          log_path=destination / ("probe.log" if profile == "probe" else "identity.log"),
                          timeout=30)
-    if profile == "catalog":
-        validate_catalog_identity(output, implementation, revision, configuration)
-    elif profile == "w3c":
-        validate_w3c_identity(output, implementation, revision, configuration)
-    elif profile == "regression":
-        validate_regression_identity(output, implementation, revision, configuration)
-    else:
-        validate_probe(output, implementation, revision, configuration)
-    if source_fingerprint(root, implementation, profile) != fingerprint:
-        raise BuildError("Build inputs changed while compiling " + implementation)
-    if implementation == "xpact-core":
-        verified = prepare_dependency(root, offline=True)
-        if verified != source:
-            raise BuildError("Pinned dependency changed while compiling")
-    elif run_git(["rev-parse", "HEAD"], root).strip() != revision:
-        raise BuildError("Repository revision changed while compiling")
+    _validate_identity(profile, output, implementation, revision, configuration)
+    _verify_unchanged(root, implementation, profile, fingerprint, source, revision)
     metadata = {
         "schema_version": 1, "status": "verified", "implementation": implementation,
         "profile": profile,
