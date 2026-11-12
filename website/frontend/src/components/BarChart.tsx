@@ -19,7 +19,7 @@ interface Props {
  * Horizontal bars on one shared linear scale, starting at zero.
  * Every bar is labelled with its value, so colour is never the only cue.
  */
-export function BarChart({ bars, legend, caption }: Props) {
+export function BarChart({ bars, legend, caption }: Readonly<Props>) {
   const max = Math.max(...bars.map((b) => b.value), 1);
   return (
     <figure style={{ margin: 0 }}>

@@ -9,7 +9,7 @@ interface Props {
 }
 
 /** A single headline number. */
-export function Stat({ label, value, sub, long, result }: Props) {
+export function Stat({ label, value, sub, long, result }: Readonly<Props>) {
   return (
     <div className="stat">
       <div className="label">{label}</div>

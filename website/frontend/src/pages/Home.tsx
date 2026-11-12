@@ -160,13 +160,13 @@ export function Home() {
   );
 }
 
-function MetricStat({ metric }: { metric: Metric }) {
+function MetricStat({ metric }: Readonly<{ metric: Metric }>) {
   const number = typeof metric.value === "number" ? fmt.format(metric.value) : metric.value;
   const value = metric.approx ? `≈ ${number}` : number;
   return <Stat label={`${metric.icon} ${metric.label}`} value={value} sub={metric.sub} long={value.length > 11} result={metric.result} />;
 }
 
-function Done({ children }: { children: React.ReactNode }) {
+function Done({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <li>
       <span className="tick" aria-hidden="true">
@@ -178,7 +178,7 @@ function Done({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Todo({ children }: { children: React.ReactNode }) {
+function Todo({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <li>
       <span className="todo" aria-hidden="true">
