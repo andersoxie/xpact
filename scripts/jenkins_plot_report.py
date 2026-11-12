@@ -39,6 +39,17 @@ def relative_source(path):
     return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
 
 
+def _dual_lane_plots(lane, row, reports):
+    if row["status"] in ("complete", "complete_with_failures"):
+        report = reports[lane]
+        if report["status"] != row["status"]:
+            raise ValueError("Dual report status differs from run state")
+        return dual.catalog_plots(report) if lane == "catalog" else dual.w3c_plots(report)
+    if row["status"] != "failed" or lane in reports:
+        raise ValueError("Incomplete dual lane supplied values")
+    return []
+
+
 def dual_plots(state, reports):
     if state["status"] not in ("complete", "complete_with_failures", "failed") or not state.get("publication"):
         raise ValueError("No terminal dual plot publication")
@@ -46,18 +57,91 @@ def dual_plots(state, reports):
         raise ValueError("Incomplete dual lane state")
     plots = []
     for lane, row in state["lanes"].items():
-        if row["status"] in ("complete", "complete_with_failures"):
-            report = reports[lane]
-            if report["status"] != row["status"]:
-                raise ValueError("Dual report status differs from run state")
-            plots.extend(dual.catalog_plots(report) if lane == "catalog" else dual.w3c_plots(report))
-        elif row["status"] != "failed" or lane in reports:
-            raise ValueError("Incomplete dual lane supplied values")
+        plots.extend(_dual_lane_plots(lane, row, reports))
     statuses = [row["status"] for row in state["lanes"].values()]
     expected = dual.overall_status(statuses)
     if state["status"] != expected or state["publication"]["plots"] != len(plots):
         raise ValueError("Dual publication contradicts campaign state")
     return plots
+
+
+def _capture_dual(source_dir, build_id):
+    """The dual campaign state and the reports it vouches for (by SHA-256)."""
+    state = json.loads((source_dir / "run.json").read_text(encoding="utf-8"))
+    if state["build_id"] != build_id:
+        raise ValueError("Dual results belong to a different build")
+    reports = {}
+    for name, row in state["lanes"].items():
+        if name not in ("catalog", "w3c"):
+            raise ValueError("Unknown dual lane")
+        if row["status"] in ("complete", "complete_with_failures"):
+            reports[name] = _vouched_report(source_dir, name, row)
+    dual_plots(state, reports)
+    if not (source_dir / dual.MANIFEST).is_file() or not (source_dir / dual.HTML_REPORT).is_file():
+        raise ValueError("Dual publication files are missing")
+    return {"state": state, "reports": reports}
+
+
+def _vouched_report(source_dir, name, row):
+    data = (source_dir / name / "report.json").read_bytes()
+    if row["report"] != name + "/report.json" or hashlib.sha256(data).hexdigest() != row["report_sha256"]:
+        raise ValueError("Dual report differs from persisted campaign evidence")
+    return json.loads(data)
+
+
+def _workload(row):
+    return row.get("Benchmark") or row.get("CorpusId")
+
+
+def _capture_benchmarks(lane, source_dir, manifest):
+    """Charts checked against the raw measurements, plus the history, for one benchmark lane."""
+    if manifest is None:
+        raise ValueError("A current plot manifest is required")
+    raw = read_tsv(source_dir / RESULTS[lane])
+    measured = [row for row in raw if row.get("Engine") and row.get("ElapsedMs", "").strip().lower() not in ("", "not measured")]
+    unmeasured = [row for row in raw if row.get("Engine") and row not in measured]
+    charts = [_checked_chart(spec, source_dir, measured) for spec in read_tsv(Path(manifest))]
+    if not charts or len({c["workload"] for c in charts}) != len(charts):
+        raise ValueError("Missing or duplicate current workload plots")
+    if {chart["workload"] for chart in charts} != {_workload(row) for row in measured}:
+        raise ValueError("Manifest omits a measured workload")
+    return {"charts": charts, "history": _read_history(source_dir), "unmeasured": unmeasured}
+
+
+def _checked_chart(spec, source_dir, measured):
+    """One plot CSV, checked: one value per measured engine, equal to the median of its raw samples."""
+    path = Path(spec["sourceFile"])
+    path.resolve().relative_to(source_dir.resolve())
+    with path.open(encoding="utf-8-sig", newline="") as stream:
+        rows = list(csv.reader(stream))
+    if len(rows) != 2 or not rows[0] or len(rows[0]) != len(rows[1]) or len(set(rows[0])) != len(rows[0]):
+        raise ValueError("Expected one current value for each unique engine")
+    workload = spec["title"].removesuffix(" median elapsed time")
+    observations = [row for row in measured if _workload(row) == workload]
+    values = [number(cell) for cell in rows[1]]
+    if not observations or spec["yaxis"] != "Median elapsed ms":
+        raise ValueError("Unrecognized elapsed-time plot or missing workload evidence")
+    if set(rows[0]) != {row["Engine"] for row in observations}:
+        raise ValueError("Plot omits a measured engine")
+    for engine, value in zip(rows[0], values):
+        samples = sorted(number(row["ElapsedMs"]) for row in observations if row["Engine"] == engine)
+        if not samples or not math.isclose(value, samples[(len(samples) - 1) // 2], abs_tol=0.000501):
+            raise ValueError("Plot value differs from current raw measurements")
+    return {"title": spec["title"], "workload": workload, "labels": rows[0],
+            "values": values, "source": relative_source(path), "observations": observations}
+
+
+def _read_history(source_dir):
+    history_path = source_dir / "benchmark-history.tsv"
+    history = read_tsv(history_path) if history_path.is_file() else []
+    seen = set()
+    for row in history:
+        key = (row["Build"], row["Benchmark"], row["Engine"])
+        if not all(key) or key in seen:
+            raise ValueError("Invalid or duplicate history observation")
+        seen.add(key)
+        row["MedianElapsedMs"] = number(row["MedianElapsedMs"])
+    return history
 
 
 def capture(lane, build_id, source_dir, output, manifest=None):
@@ -71,66 +155,9 @@ def capture(lane, build_id, source_dir, output, manifest=None):
     if not build_id or lane not in LANES:
         raise ValueError("A known lane and current build identity are required")
     if lane == "dual":
-        state = json.loads((source_dir / "run.json").read_text(encoding="utf-8"))
-        if state["build_id"] != build_id:
-            raise ValueError("Dual results belong to a different build")
-        reports = {}
-        for name, row in state["lanes"].items():
-            if name not in ("catalog", "w3c"):
-                raise ValueError("Unknown dual lane")
-            if row["status"] in ("complete", "complete_with_failures"):
-                path = source_dir / name / "report.json"
-                data = path.read_bytes()
-                if row["report"] != name + "/report.json" or hashlib.sha256(data).hexdigest() != row["report_sha256"]:
-                    raise ValueError("Dual report differs from persisted campaign evidence")
-                reports[name] = json.loads(data)
-        dual_plots(state, reports)
-        if not (source_dir / dual.MANIFEST).is_file() or not (source_dir / dual.HTML_REPORT).is_file():
-            raise ValueError("Dual publication files are missing")
-        packet.update(state=state, reports=reports)
+        packet.update(_capture_dual(source_dir, build_id))
     else:
-        if manifest is None:
-            raise ValueError("A current plot manifest is required")
-        raw = read_tsv(source_dir / RESULTS[lane])
-        measured = [row for row in raw if row.get("Engine") and row.get("ElapsedMs", "").strip().lower() not in ("", "not measured")]
-        unmeasured = [row for row in raw if row.get("Engine") and row not in measured]
-        specs = read_tsv(Path(manifest))
-        charts = []
-        for spec in specs:
-            path = Path(spec["sourceFile"])
-            path.resolve().relative_to(source_dir.resolve())
-            with path.open(encoding="utf-8-sig", newline="") as stream:
-                rows = list(csv.reader(stream))
-            if len(rows) != 2 or not rows[0] or len(rows[0]) != len(rows[1]) or len(set(rows[0])) != len(rows[0]):
-                raise ValueError("Expected one current value for each unique engine")
-            workload = spec["title"].removesuffix(" median elapsed time")
-            observations = [row for row in measured if (row.get("Benchmark") or row.get("CorpusId")) == workload]
-            values = [number(cell) for cell in rows[1]]
-            if not observations or spec["yaxis"] != "Median elapsed ms":
-                raise ValueError("Unrecognized elapsed-time plot or missing workload evidence")
-            expected_engines = {row["Engine"] for row in measured if (row.get("Benchmark") or row.get("CorpusId")) == workload}
-            if set(rows[0]) != expected_engines:
-                raise ValueError("Plot omits a measured engine")
-            for engine, value in zip(rows[0], values):
-                samples = sorted(number(row["ElapsedMs"]) for row in observations if row["Engine"] == engine)
-                if not samples or not math.isclose(value, samples[(len(samples) - 1) // 2], abs_tol=0.000501):
-                    raise ValueError("Plot value differs from current raw measurements")
-            charts.append({"title": spec["title"], "workload": workload, "labels": rows[0],
-                           "values": values, "source": relative_source(path), "observations": observations})
-        if not charts or len({c["workload"] for c in charts}) != len(charts):
-            raise ValueError("Missing or duplicate current workload plots")
-        if {chart["workload"] for chart in charts} != {row.get("Benchmark") or row.get("CorpusId") for row in measured}:
-            raise ValueError("Manifest omits a measured workload")
-        history_path = source_dir / "benchmark-history.tsv"
-        history = read_tsv(history_path) if history_path.is_file() else []
-        seen = set()
-        for row in history:
-            key = (row["Build"], row["Benchmark"], row["Engine"])
-            if not all(key) or key in seen:
-                raise ValueError("Invalid or duplicate history observation")
-            seen.add(key)
-            row["MedianElapsedMs"] = number(row["MedianElapsedMs"])
-        packet.update(charts=charts, history=history, unmeasured=unmeasured)
+        packet.update(_capture_benchmarks(lane, source_dir, manifest))
     dual.replace_text(output, json.dumps(packet, ensure_ascii=False, allow_nan=False, indent=2) + "\n")
     return packet
 
@@ -199,6 +226,33 @@ def current_explanation(lane, chart):
     return paragraphs(*texts)
 
 
+def _engine_history_svg(index, engine, rows, builds):
+    """SVG parts for one engine's small chart: label, band, then points joined where builds are adjacent."""
+    series = {row["Build"]: number(row["MedianElapsedMs"]) for row in rows if row["Engine"] == engine}
+    ordered = [(build, series[build]) for build in builds if build in series]
+    low, high = min(series.values()), max(series.values())
+    y = index * 98 + 19
+    first, last = ordered[0], ordered[-1]
+    delta = "" if first[1] == 0 else " ({:+.1f}%)".format((last[1] / first[1] - 1) * 100)
+    label = "#{} {:.6g} ms → #{} {:.6g} ms{}".format(*first, *last, delta)
+    parts = ['<text x="8" y="{}">{}</text>'.format(y, esc(engine)),
+             '<rect x="8" y="{}" width="460" height="38" fill="#edf1f3"/>'.format(y + 12),
+             '<text x="490" y="{}">{}</text>'.format(y + 38, esc(label))]
+    color = COLORS[index % len(COLORS)]
+    previous = None
+    for build_index, build in enumerate(builds):
+        if build not in series:
+            previous = None  # a gap, never a zero
+            continue
+        x = 8 + build_index / (len(builds) - 1) * 460
+        py = y + 50 - ((series[build] - low) / (high - low) * 38 if high > low else 19)
+        if previous:
+            parts.append('<line x1="{:.2f}" y1="{:.2f}" x2="{:.2f}" y2="{:.2f}" stroke="{}" stroke-width="2"/>'.format(*previous, x, py, color))
+        parts.append('<circle cx="{:.2f}" cy="{:.2f}" r="3" fill="{}"><title>Build {}: {:.6g} ms</title></circle>'.format(x, py, color, esc(build), series[build]))
+        previous = (x, py)
+    return parts
+
+
 def history_chart(chart, history):
     rows = [row for row in history if row["Benchmark"] == chart["workload"]]
     builds = sorted({row["Build"] for row in rows}, key=lambda b: (0, int(b)) if b.isdigit() else (1, b))
@@ -211,33 +265,10 @@ def history_chart(chart, history):
     engines = sorted({row["Engine"] for row in rows})
     parts.append('<svg viewBox="0 0 1000 {}" role="img" aria-label="{} elapsed time across builds">'.format(98 * len(engines), esc(chart["workload"])))
     for index, engine in enumerate(engines):
-        series = {row["Build"]: number(row["MedianElapsedMs"]) for row in rows if row["Engine"] == engine}
-        ordered = [(build, series[build]) for build in builds if build in series]
-        low, high = min(series.values()), max(series.values())
-        y = index * 98 + 19
-        first, last = ordered[0], ordered[-1]
-        delta = "" if first[1] == 0 else " ({:+.1f}%)".format((last[1] / first[1] - 1) * 100)
-        label = "#{} {:.6g} ms → #{} {:.6g} ms{}".format(*first, *last, delta)
-        parts += ['<text x="8" y="{}">{}</text>'.format(y, esc(engine)),
-                  '<rect x="8" y="{}" width="460" height="38" fill="#edf1f3"/>'.format(y + 12),
-                  '<text x="490" y="{}">{}</text>'.format(y + 38, esc(label))]
-        previous = None
-        for build_index, build in enumerate(builds):
-            if build not in series:
-                previous = None
-                continue
-            x = 8 + build_index / (len(builds) - 1) * 460
-            py = y + 50 - ((series[build] - low) / (high - low) * 38 if high > low else 19)
-            color = COLORS[index % len(COLORS)]
-            if previous:
-                parts.append('<line x1="{:.2f}" y1="{:.2f}" x2="{:.2f}" y2="{:.2f}" stroke="{}" stroke-width="2"/>'.format(*previous, x, py, color))
-            parts.append('<circle cx="{:.2f}" cy="{:.2f}" r="3" fill="{}"><title>Build {}: {:.6g} ms</title></circle>'.format(x, py, color, esc(build), series[build]))
-            previous = (x, py)
+        parts += _engine_history_svg(index, engine, rows, builds)
     parts += ['</svg>', '<details><summary>History values</summary><div class="table-scroll"><table><tr><th>Build</th><th>Engine</th><th>Elapsed ms</th></tr>']
-    for build in builds:
-        for row in rows:
-            if row["Build"] == build:
-                parts.append("<tr><td>{}</td><td>{}</td><td>{}</td></tr>".format(esc(build), esc(row["Engine"]), esc(row["MedianElapsedMs"])))
+    parts += ["<tr><td>{}</td><td>{}</td><td>{}</td></tr>".format(esc(build), esc(row["Engine"]), esc(row["MedianElapsedMs"]))
+              for build in builds for row in rows if row["Build"] == build]
     return "\n".join(parts + ["</table></div></details>"])
 
 
@@ -256,17 +287,8 @@ th{background:#eff4f7}code{overflow-wrap:anywhere}details{margin:18px 0}summary{
 """
 
 
-def render(build_id, input_dir, output, build_url="", disabled=()):
-    output = Path(output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.unlink(missing_ok=True)
-    if not build_id:
-        raise ValueError("A current build identity is required")
-    if build_url and (urlsplit(build_url).scheme not in ("http", "https") or not urlsplit(build_url).netloc):
-        raise ValueError("Build URL must be HTTP or HTTPS")
-    local_prefix = Path(os.path.relpath(Path.cwd(), output.resolve().parent)).as_posix() + "/"
-    def url_for(path):
-        return artifact_url(path, build_url, local_prefix)
+def _load_packets(input_dir, build_id, disabled, url_for):
+    """Snapshots of this build, one per enabled lane."""
     packets = {}
     for path in sorted(Path(input_dir).glob("*.json")):
         packet = json.loads(path.read_text(encoding="utf-8"))
@@ -279,6 +301,44 @@ def render(build_id, input_dir, output, build_url="", disabled=()):
         if lane == "dual" and packet["state"]["build_id"] != build_id:
             raise ValueError("Dual campaign and snapshot have different build identities")
         packets[lane] = packet
+    return packets
+
+
+def _benchmark_section(lane, packet, url_for):
+    """HTML parts for one benchmark lane: links, unmeasured engines, then each chart."""
+    source = packet["source_dir"]
+    raw_url = url_for(source + "/" + RESULTS[lane])
+    history_link = (' · <a href="{}">Stored build history</a>'.format(esc(url_for(source + "/benchmark-history.tsv")))
+                    if packet["history"] else "")
+    parts = ['<p><a href="{}">Raw measurements</a>{}</p>'.format(esc(raw_url), history_link)]
+    parts += ['<p class="notice">Not measured: {}. {} No numeric value is plotted.</p>'.format(esc(row["Engine"]), esc(row.get("Notes", "")))
+              for row in packet.get("unmeasured", [])]
+    if not packet["charts"] or len({chart["workload"] for chart in packet["charts"]}) != len(packet["charts"]):
+        raise ValueError("Snapshot has missing or duplicate charts")
+    for chart in packet["charts"]:
+        # Validate the snapshot at consumption too, before making SVG geometry.
+        chart["values"] = [number(value) for value in chart["values"]]
+        if not chart["labels"] or len(set(chart["labels"])) != len(chart["labels"]) or len(chart["labels"]) != len(chart["values"]):
+            raise ValueError("Snapshot has mismatched or duplicate engine values")
+        parts += ['<article><h3>{}</h3>'.format(esc(chart["title"])), CHART_DIV + bar_chart(chart) + '</div>',
+                  current_explanation(lane, chart), observation_table(chart),
+                  '<p><a href="{}">Exact Jenkins plot CSV</a></p>'.format(esc(url_for(chart["source"]))),
+                  CHART_DIV + history_chart(chart, packet["history"]) + '</div></article>']
+    return parts
+
+
+def render(build_id, input_dir, output, build_url="", disabled=()):
+    output = Path(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.unlink(missing_ok=True)
+    if not build_id:
+        raise ValueError("A current build identity is required")
+    if build_url and (urlsplit(build_url).scheme not in ("http", "https") or not urlsplit(build_url).netloc):
+        raise ValueError("Build URL must be HTTP or HTTPS")
+    local_prefix = Path(os.path.relpath(Path.cwd(), output.resolve().parent)).as_posix() + "/"
+    def url_for(path):
+        return artifact_url(path, build_url, local_prefix)
+    packets = _load_packets(input_dir, build_id, disabled, url_for)
     parts = ['<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">',
              '<title>All Benchmark Plots</title><style>' + STYLE + '</style></head><body><main>',
              '<div class="eyebrow">xpact measurement report</div><h1>All Benchmark Plots</h1>',
@@ -292,28 +352,12 @@ def render(build_id, input_dir, output, build_url="", disabled=()):
             parts.append('<p class="notice">' + esc(message) + '</p></section>')
             continue
         packet = packets[lane]
-        source = packet["source_dir"]
         if lane == "dual":
             plots = dual_plots(packet["state"], packet["reports"])
             parts.append(CHART_DIV + dual.report_body(packet["state"], packet["reports"], plots,
-                         link_prefix=url_for(source) + "/") + '</div>')
+                         link_prefix=url_for(packet["source_dir"]) + "/") + '</div>')
         else:
-            raw_url = url_for(source + "/" + RESULTS[lane])
-            parts.append('<p><a href="{}">Raw measurements</a>{}</p>'.format(esc(raw_url),
-                         ' · <a href="{}">Stored build history</a>'.format(esc(url_for(source + "/benchmark-history.tsv"))) if packet["history"] else ""))
-            for row in packet.get("unmeasured", []):
-                parts.append('<p class="notice">Not measured: {}. {} No numeric value is plotted.</p>'.format(esc(row["Engine"]), esc(row.get("Notes", ""))))
-            if not packet["charts"] or len({chart["workload"] for chart in packet["charts"]}) != len(packet["charts"]):
-                raise ValueError("Snapshot has missing or duplicate charts")
-            for chart in packet["charts"]:
-                # Validate the snapshot at consumption too, before making SVG geometry.
-                chart["values"] = [number(value) for value in chart["values"]]
-                if not chart["labels"] or len(set(chart["labels"])) != len(chart["labels"]) or len(chart["labels"]) != len(chart["values"]):
-                    raise ValueError("Snapshot has mismatched or duplicate engine values")
-                parts += ['<article><h3>{}</h3>'.format(esc(chart["title"])), CHART_DIV + bar_chart(chart) + '</div>',
-                          current_explanation(lane, chart), observation_table(chart),
-                          '<p><a href="{}">Exact Jenkins plot CSV</a></p>'.format(esc(url_for(chart["source"]))),
-                          CHART_DIV + history_chart(chart, packet["history"]) + '</div></article>']
+            parts += _benchmark_section(lane, packet, url_for)
         parts.append('</section>')
     parts += [paragraphs("The Jenkins Plot plugin retains its existing trend series. This page consolidates their current values and the available benchmark history without changing the build's test verdicts. The recorded source reports remain the evidence for each measurement."), '</main></body></html>']
     dual.replace_text(output, "\n".join(parts) + "\n")
