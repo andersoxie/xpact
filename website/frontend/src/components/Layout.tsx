@@ -59,7 +59,7 @@ export function Layout() {
         <div className="container">
           <NavLink to="/" className="brand" aria-label="XPact home">
             <img src="/favicon.svg" alt="" />
-            XPact
+            <span>XPact</span>
           </NavLink>
           <nav className="nav" aria-label="Main">
             {NAV.map((item) => (
