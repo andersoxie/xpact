@@ -1,0 +1,17 @@
+id	lane	split	kind	whole	chunked	first_diff_whole	first_diff_chunked
+not-wf-sa-010	core	byte	same verdict, other events	REJECT / 5 / unclosed token	REJECT / 5 / unclosed token	[]	"[[""chars"", ""A ""]]"
+not-wf-sa-025	core	byte	same verdict, other events	REJECT / 4 / not well-formed (invalid token)	REJECT / 4 / not well-formed (invalid token)	[]	"[[""chars"", ""]]""]]"
+o-p18fail3	core	71	same verdict, other events	REJECT / 4 / not well-formed (invalid token)	REJECT / 4 / not well-formed (invalid token)	[]	"[[""chars"", ""\n""]]"
+o-p68fail1	core	88	same verdict, other events	REJECT / 5 / unclosed token	REJECT / 5 / unclosed token	[]	"[[""chars"", ""\n""]]"
+o-p68fail2	core	88	same verdict, other events	REJECT / 4 / not well-formed (invalid token)	REJECT / 4 / not well-formed (invalid token)	[]	"[[""chars"", ""\n""]]"
+o-p68fail3	core	88	same verdict, other events	REJECT / 4 / not well-formed (invalid token)	REJECT / 4 / not well-formed (invalid token)	[]	"[[""chars"", ""\n""]]"
+ibm-not-wf-P14-ibm14n03.xml	core	217	same verdict, other events	REJECT / 5 / unclosed token	REJECT / 5 / unclosed token	[]	"[[""chars"", ""M""]]"
+ibm-not-wf-P68-ibm68n01.xml	core	119	same verdict, other events	REJECT / 2 / syntax error	REJECT / 2 / syntax error	[]	"[[""chars"", ""m""]]"
+ibm-not-wf-P68-ibm68n03.xml	core	119	same verdict, other events	REJECT / 4 / not well-formed (invalid token)	REJECT / 4 / not well-formed (invalid token)	[]	"[[""chars"", ""e""]]"
+ibm-1-1-valid-P02-ibm02v02.xml	xml-1.1	221	same verdict, other events	REJECT / 14 / reference to invalid character number	REJECT / 14 / reference to invalid character number	[]	"[[""chars"", ""\n""]]"
+ibm-1-1-valid-P02-ibm02v05.xml	xml-1.1	169	same verdict, other events	REJECT / 14 / reference to invalid character number	REJECT / 14 / reference to invalid character number	[]	"[[""chars"", ""\n""]]"
+hst-bh-001	core	44	same verdict, other events	REJECT / 14 / reference to invalid character number	REJECT / 14 / reference to invalid character number	[]	"[[""chars"", ""F""]]"
+hst-bh-002	core	44	same verdict, other events	REJECT / 14 / reference to invalid character number	REJECT / 14 / reference to invalid character number	[]	"[[""chars"", ""F""]]"
+hst-bh-003	core	44	same verdict, other events	REJECT / 14 / reference to invalid character number	REJECT / 14 / reference to invalid character number	[]	"[[""chars"", ""F""]]"
+hst-bh-004	core	44	same verdict, other events	REJECT / 14 / reference to invalid character number	REJECT / 14 / reference to invalid character number	[]	"[[""chars"", ""F""]]"
+hst-lhs-009	core	byte	same verdict, other error code	REJECT / 6 / partial character	REJECT / 4 / not well-formed (invalid token)	[]	[]

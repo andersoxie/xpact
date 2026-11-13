@@ -1,0 +1,248 @@
+id	set	finding	expected	status	xpact	expat	xpact_error	expat_error	xpact_vs_expected	xpact_same_in_all_chunkings	expat_same_in_all_chunkings	configs_differing	first_configs	pairs_same
+G01-w3c/rmt-ns10-001	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/rmt-ns10-002	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/rmt-ns10-007	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ht-ns10-047	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/rmt-ns10-009	G01-w3c		REJECT	match	REJECT	REJECT	8	8	pass	yes	yes	0		14
+G01-w3c/rmt-ns10-014	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/rmt-ns10-026	G01-w3c		REJECT	match	REJECT	REJECT	27	27	pass	yes	yes	0		14
+G01-w3c/rmt-ns10-033	G01-w3c		REJECT	match	REJECT	REJECT	40	40	pass	yes	yes	0		14
+G01-w3c/valid-sa-031	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-049	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-050	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-051	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-099	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/not-wf-sa-101	G01-w3c		REJECT	error code differs	REJECT	REJECT	18	30	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/o-p02fail15	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/o-p02fail27	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/ibm-not-wf-P22-ibm22n02.xml	G01-w3c		REJECT	match	REJECT	REJECT	17	17	pass	yes	yes	0		14
+G01-w3c/ibm-not-wf-P80-ibm80n06.xml	G01-w3c		REJECT	error position differs	REJECT	REJECT	30	30	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/valid-sa-024	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-061	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-082	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-101	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/o-p71pass1	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/not-wf-sa-007	G01-w3c		REJECT	error code differs	REJECT	REJECT	5	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/not-wf-sa-121	G01-w3c		REJECT	error code differs	REJECT	REJECT	4	2	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/o-p73fail1	G01-w3c		REJECT	error position differs	REJECT	REJECT	2	2	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/ibm-not-wf-P66-ibm66n14.xml	G01-w3c		REJECT	error position differs	REJECT	REJECT	14	14	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/ibm-not-wf-P72-ibm72n06.xml	G01-w3c		REJECT	error code differs	REJECT	REJECT	4	2	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/valid-sa-001	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-079	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/o-p46pass1	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ibm-valid-P23-ibm23v01.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ibm-valid-P54-ibm54v02.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/not-wf-sa-055	G01-w3c		REJECT	error code differs	REJECT	REJECT	5	2	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/content03	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/o-p56fail2	G01-w3c		REJECT	error code differs	REJECT	REJECT	4	2	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/ibm-not-wf-P29-ibm29n02.xml	G01-w3c		REJECT	error code differs	REJECT	REJECT	2	10	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/ibm-not-wf-P51-ibm51n06.xml	G01-w3c		REJECT	match	REJECT	REJECT	2	2	pass	yes	yes	0		14
+G01-w3c/valid-sa-004	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-058	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-102	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-106	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-110	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/not-wf-sa-001	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/not-wf-sa-013	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/not-wf-sa-020	G01-w3c		REJECT	error code differs	REJECT	REJECT	5	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/not-wf-sa-090	G01-w3c		REJECT	match	REJECT	REJECT	4	4	pass	yes	yes	0		14
+G01-w3c/o-p10fail3	G01-w3c		REJECT	match	REJECT	REJECT	5	5	pass	yes	yes	0		14
+G01-w3c/valid-sa-002	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-010	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-018	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-035	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-109	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/not-wf-sa-019	G01-w3c		REJECT	match	REJECT	REJECT	4	4	pass	yes	yes	0		14
+G01-w3c/attlist11	G01-w3c		REJECT	error code differs	REJECT	REJECT	2	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/o-p42fail1	G01-w3c		REJECT	match	REJECT	REJECT	4	4	pass	yes	yes	0		14
+G01-w3c/ibm-not-wf-P40-ibm40n04.xml	G01-w3c		REJECT	error code differs	REJECT	REJECT	4	2	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/ibm-not-wf-P41-ibm41n13.xml	G01-w3c		REJECT	match	REJECT	REJECT	4	4	pass	yes	yes	0		14
+G01-w3c/valid-sa-016	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-036	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/valid-sa-098	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ibm-valid-P14-ibm14v03.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ibm-valid-P16-ibm16v03.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/not-wf-sa-003	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/not-wf-sa-051	G01-w3c		REJECT	error code differs	REJECT	REJECT	4	2	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/o-p14fail3	G01-w3c		REJECT	events differ	REJECT	REJECT	4	4	pass	NO	NO	6	XML_Parse 1; XML_Parse 2; XML_Parse 7	8
+G01-w3c/ibm-not-wf-P14-ibm14n02.xml	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/ibm-not-wf-P17-ibm17n02.xml	G01-w3c		REJECT	error code differs	REJECT	REJECT	2	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/valid-sa-012	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ibm-valid-P10-ibm10v01.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ibm-valid-P11-ibm11v02.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/not-wf-sa-002	G01-w3c		REJECT	error position differs	REJECT	REJECT	4	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/o-p03fail4	G01-w3c		REJECT	match	REJECT	REJECT	4	4	pass	yes	yes	0		14
+G01-w3c/ibm-not-wf-P10-ibm10n06.xml	G01-w3c		REJECT	error code differs	REJECT	REJECT	5	4	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/inv-dtd01	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/attr12	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/o-p23pass4	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/o-p66pass1	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/ibm-invalid-P56-ibm56i18.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/rmt-ns10-037	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/x-ibm-1-0.5-valid-P05-ibm05v04.xml	G01-w3c		ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+G01-w3c/x-ibm-1-0.5-valid-P05-ibm05v03.xml	G01-w3c		ACCEPT	error position differs	REJECT	REJECT	4	4	FAIL	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/x-ibm-1-0.5-valid-P04-ibm04av01.xml	G01-w3c		ACCEPT	error position differs	REJECT	REJECT	4	4	FAIL	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/not-wf-sa-081	G01-w3c			error code differs	REJECT	REJECT	2	16		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+G01-w3c/valid-ext-sa-013	G01-w3c			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+G01-w3c/decl01	G01-w3c			match	REJECT	REJECT	21	21		yes	yes	0		14
+G01-w3c/ibm-not-wf-P77-ibm77n04.xml	G01-w3c			match	REJECT	REJECT	21	21		yes	yes	0		14
+G01-w3c/ibm-1-1-valid-P46-ibm46i01.xml	G01-w3c			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+G01-w3c/ibm-1-1-not-wf-P04-ibm04n20.xml	G01-w3c			error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/ibm-1-1-valid-P77-ibm77v05.xml	G01-w3c			error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+G01-w3c/not-wf-sa-140	G01-w3c			match	REJECT	REJECT	4	4		yes	yes	0		14
+G01-w3c/not-wf-not-sa-005	G01-w3c			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+G01-w3c/ibm-invalid-P69-ibm69i01.xml	G01-w3c			match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C03-chunks/c02-mismatched	C03-chunks	andersoxie#124, #126		match	REJECT	REJECT	7	7		yes	yes	0		14
+C03-chunks/c02-trailing-junk	C03-chunks	andersoxie#124, #126		match	REJECT	REJECT	9	9		yes	yes	0		14
+C03-chunks/cr-attribute	C03-chunks	andersoxie#124, #126		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C03-chunks/cr-crlf	C03-chunks	andersoxie#124, #126		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C03-chunks/cr-last-byte	C03-chunks	andersoxie#124, #126		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C03-chunks/cr-lone	C03-chunks	andersoxie#124, #126		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C10-utf8/utf8-above-10ffff-attribute	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-above-10ffff-cdata	C10-utf8	andersoxie#122, #123		events differ	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+C10-utf8/utf8-above-10ffff-comment	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-above-10ffff-name	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-above-10ffff-pi	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-above-10ffff-text	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-bad-continuation-attribute	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-bad-continuation-cdata	C10-utf8	andersoxie#122, #123		events differ	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+C10-utf8/utf8-bad-continuation-comment	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-bad-continuation-name	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-bad-continuation-pi	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-bad-continuation-text	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-ff-attribute	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-ff-cdata	C10-utf8	andersoxie#122, #123		events differ	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+C10-utf8/utf8-ff-comment	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-ff-name	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-ff-pi	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-ff-text	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-lone-continuation-attribute	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-lone-continuation-cdata	C10-utf8	andersoxie#122, #123		events differ	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+C10-utf8/utf8-lone-continuation-comment	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-lone-continuation-name	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-lone-continuation-pi	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-lone-continuation-text	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-overlong-attribute	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-overlong-cdata	C10-utf8	andersoxie#122, #123		events differ	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+C10-utf8/utf8-overlong-comment	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-overlong-name	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-overlong-pi	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-overlong-text	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-surrogate-attribute	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-surrogate-cdata	C10-utf8	andersoxie#122, #123		events differ	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+C10-utf8/utf8-surrogate-comment	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-surrogate-name	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-surrogate-pi	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-surrogate-text	C10-utf8	andersoxie#122, #123		match	REJECT	REJECT	4	4		yes	yes	0		14
+C10-utf8/utf8-valid-e9-attribute	C10-utf8	andersoxie#122, #123		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C10-utf8/utf8-valid-e9-cdata	C10-utf8	andersoxie#122, #123		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C10-utf8/utf8-valid-e9-comment	C10-utf8	andersoxie#122, #123		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C10-utf8/utf8-valid-e9-name	C10-utf8	andersoxie#122, #123		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C10-utf8/utf8-valid-e9-pi	C10-utf8	andersoxie#122, #123		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+C10-utf8/utf8-valid-e9-text	C10-utf8	andersoxie#122, #123		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/eduni/errata-2e/E18.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/eduni/errata-2e/E60.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/eduni/xml-1.1/002.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/ibm/invalid/P68/ibm68i03.xml	ext-entities-64	mass-xpact#64		verdict differs	REJECT	ACCEPT	21	0		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+ext-entities-64/ibm/invalid/P68/ibm68i04.xml	ext-entities-64	mass-xpact#64		verdict differs	REJECT	ACCEPT	21	0		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+ext-entities-64/ibm/invalid/P69/ibm69i03.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/ibm/invalid/P69/ibm69i04.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/ibm/not-wf/P77/ibm77n03.xml	ext-entities-64	mass-xpact#64		match	REJECT	REJECT	21	21		yes	yes	0		14
+ext-entities-64/ibm/not-wf/P77/ibm77n04.xml	ext-entities-64	mass-xpact#64		match	REJECT	REJECT	21	21		yes	yes	0		14
+ext-entities-64/ibm/not-wf/P79/ibm79n01.xml	ext-entities-64	mass-xpact#64		match	REJECT	REJECT	21	21		yes	yes	0		14
+ext-entities-64/ibm/not-wf/P79/ibm79n02.xml	ext-entities-64	mass-xpact#64		match	REJECT	REJECT	21	21		yes	yes	0		14
+ext-entities-64/ibm/valid/P68/ibm68v02.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/ibm/valid/P69/ibm69v02.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/ibm/valid/P70/ibm70v01.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/ibm/valid/P79/ibm79v01.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/sun/not-wf/decl01.xml	ext-entities-64	mass-xpact#64		match	REJECT	REJECT	21	21		yes	yes	0		14
+ext-entities-64/xmltest/valid/not-sa/011.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/xmltest/valid/not-sa/012.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/xmltest/valid/not-sa/026.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+ext-entities-64/xmltest/valid/sa/097.xml	ext-entities-64	mass-xpact#64		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+positions-68/E36	positions-68	mass-xpact#68		match	ACCEPT	ACCEPT	0	0		yes	yes	0		14
+billion-laughs-60/big-low-factor	billion-laughs-60	mass-xpact#60	ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+billion-laughs-60/laughs-3	billion-laughs-60	mass-xpact#60	ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+billion-laughs-60/laughs-4	billion-laughs-60	mass-xpact#60	ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+billion-laughs-60/laughs-5	billion-laughs-60	mass-xpact#60	ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+billion-laughs-60/laughs-6	billion-laughs-60	mass-xpact#60	REJECT	events differ	REJECT	REJECT	43	43	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+billion-laughs-60/laughs-8	billion-laughs-60	mass-xpact#60	REJECT	events differ	REJECT	REJECT	43	43	pass	yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+billion-laughs-60/over-threshold	billion-laughs-60	mass-xpact#60	REJECT	match	REJECT	REJECT	43	43	pass	yes	yes	0		14
+billion-laughs-60/under-threshold	billion-laughs-60	mass-xpact#60	ACCEPT	match	ACCEPT	ACCEPT	0	0	pass	yes	yes	0		14
+skipped-entity-69/external-general	skipped-entity-69	mass-xpact#69		match	REJECT	REJECT	21	21		yes	yes	0		14
+skipped-entity-69/external-pe-then-declared	skipped-entity-69	mass-xpact#69		match	REJECT	REJECT	21	21		yes	yes	0		14
+skipped-entity-69/external-pe-then-undeclared	skipped-entity-69	mass-xpact#69		match	REJECT	REJECT	21	21		yes	yes	0		14
+fuzz-crash-72/fuzz-12249	fuzz-crash-72	mass-xpact#72		error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+fuzz-crash-72/fuzz-15380	fuzz-crash-72	mass-xpact#72		error code differs	REJECT	REJECT	4	2		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+fuzz-crash-72/fuzz-17702	fuzz-crash-72	mass-xpact#72		match	REJECT	REJECT	4	4		yes	yes	0		14
+fuzz-crash-72/fuzz-2002	fuzz-crash-72	mass-xpact#72		error code differs	REJECT	REJECT	4	2		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+fuzz-crash-72/fuzz-2150	fuzz-crash-72	mass-xpact#72		match	REJECT	REJECT	4	4		yes	yes	0		14
+fuzz-crash-72/fuzz-2896	fuzz-crash-72	mass-xpact#72		error code differs	REJECT	REJECT	4	2		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+fuzz-crash-72/fuzz-5293	fuzz-crash-72	mass-xpact#72		error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+fuzz-crash-72/min-12249	fuzz-crash-72	mass-xpact#72		match	REJECT	REJECT	4	4		yes	yes	0		14
+fuzz-crash-72/min-17702	fuzz-crash-72	mass-xpact#72		error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+fuzz-crash-72/min-2150	fuzz-crash-72	mass-xpact#72		error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+fuzz-crash-72/min-5293	fuzz-crash-72	mass-xpact#72		error position differs	REJECT	REJECT	4	4		yes	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	14
+fuzz-piece-dependent-74/fuzz-00418	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-00427	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	21		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-00851	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-00937	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-01188	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-01282	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-01315	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-01804	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-01846	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	6		NO	yes	2	XML_Parse 1; XML_ParseBuffer 1	12
+fuzz-piece-dependent-74/fuzz-01915	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-02080	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-02328	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-03220	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	21		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-03308	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	2		NO	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+fuzz-piece-dependent-74/fuzz-03314	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-03331	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	10	XML_Parse whole; XML_Parse 3; XML_Parse 7	4
+fuzz-piece-dependent-74/fuzz-03547	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-03570	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	21		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-03660	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-03982	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-04714	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-05484	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	2		NO	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+fuzz-piece-dependent-74/fuzz-06043	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-06370	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-06619	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-06737	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	4	9		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-06823	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	4	4		NO	yes	10	XML_Parse 1; XML_Parse 2; XML_Parse 3	4
+fuzz-piece-dependent-74/fuzz-07003	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-07089	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-07368	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	21		NO	yes	2	XML_Parse whole; XML_ParseBuffer whole	12
+fuzz-piece-dependent-74/fuzz-07565	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-08697	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-09900	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-10078	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-10133	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-10630	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-11206	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-12025	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	5		NO	yes	14	XML_Parse whole; XML_Parse 1; XML_Parse 2	0
+fuzz-piece-dependent-74/fuzz-12058	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-12141	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-12424	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-12491	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-13357	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-13370	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-13866	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-14234	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-14371	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-14477	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-14844	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-15597	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-15805	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-16009	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-16812	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-17356	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-17798	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-18136	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-18655	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-19120	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-19175	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	5	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-19463	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	4	9		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8
+fuzz-piece-dependent-74/fuzz-19658	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	4	XML_Parse whole; XML_Parse 1024; XML_ParseBuffer whole	10
+fuzz-piece-dependent-74/fuzz-19747	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	8	XML_Parse whole; XML_Parse 3; XML_Parse 64	6
+fuzz-piece-dependent-74/fuzz-19897	fuzz-piece-dependent-74	mass-xpact#74		error code differs	REJECT	REJECT	6	4		NO	yes	6	XML_Parse whole; XML_Parse 64; XML_Parse 1024	8

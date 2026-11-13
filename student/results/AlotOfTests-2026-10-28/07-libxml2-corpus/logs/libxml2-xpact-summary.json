@@ -1,0 +1,200 @@
+{
+ "files": 1417,
+ "same": 1269,
+ "stats": {
+  "xpact ACCEPT / expat ACCEPT": 1114,
+  "xpact REJECT / expat REJECT": 298,
+  "xpact REJECT / expat ACCEPT": 1,
+  "xpact TIMEOUT / expat REJECT": 2,
+  "xpact ACCEPT / expat REJECT": 2
+ },
+ "groups": [
+  {
+   "signature": "error code: xpact not well-formed (invalid token) / expat syntax error",
+   "count": 98,
+   "examples": [
+    "c14n/exc-without-comments/merlin-c14n-two-18.ns",
+    "c14n/exc-without-comments/merlin-c14n-two-19.ns",
+    "c14n/exc-without-comments/merlin-c14n-two-20.ns",
+    "c14n/exc-without-comments/merlin-c14n-two-21.ns",
+    "c14n/exc-without-comments/merlin-c14n-two-22.ns",
+    "c14n/exc-without-comments/merlin-c14n-two-23.ns",
+    "c14n/exc-without-comments/merlin-c14n-two-24.ns",
+    "c14n/exc-without-comments/merlin-c14n-two-25.ns"
+   ]
+  },
+  {
+   "signature": "events: xpact attlistdecl / expat attlistdecl field 5",
+   "count": 11,
+   "examples": [
+    "defattr.xml",
+    "defattr2.xml",
+    "ent10",
+    "issue643.xml",
+    "valid/127772.xml",
+    "valid/dia.xml",
+    "valid/index.xml",
+    "valid/notes.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact syntax error / expat limit on input amplification factor (from DTD and entities) breached",
+   "count": 6,
+   "examples": [
+    "recurse/lol_classic.xml",
+    "recurse/lol_ig_attr.xml",
+    "recurse/lol_ig_content.xml",
+    "recurse/lol_long_name.xml",
+    "recurse/lol_long_value.xml",
+    "recurse/lol_param.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact syntax error / expat not well-formed (invalid token)",
+   "count": 5,
+   "examples": [
+    "errors/754946.xml",
+    "errors/doctype2.xml",
+    "errors/issue868.xml",
+    "valid/t8.xml",
+    "valid/t8a.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact not well-formed (invalid token) / expat illegal parameter entity reference",
+   "count": 5,
+   "examples": [
+    "recurse/p1.ent",
+    "recurse/p2.ent",
+    "recurse/p3.ent",
+    "recurse/pb.ent",
+    "recurse/pc.ent"
+   ]
+  },
+  {
+   "signature": "events: xpact entitydecl / expat enddoctype",
+   "count": 3,
+   "examples": [
+    "ent6",
+    "ent6hex",
+    "errors/ent_redecl.xml"
+   ]
+  },
+  {
+   "signature": "events: xpact entitydecl / expat entitydecl field 1",
+   "count": 3,
+   "examples": [
+    "relaxng/tutor11_1_3.xml",
+    "valid/REC-xml-19980210.xml",
+    "valid/xlink.xml"
+   ]
+  },
+  {
+   "signature": "xpact TIMEOUT",
+   "count": 2,
+   "examples": [
+    "recurse/lol_eg.xml",
+    "recurse/lol_ep.xml"
+   ]
+  },
+  {
+   "signature": "verdict: xpact ACCEPT () / expat REJECT (error in processing external entity reference)",
+   "count": 2,
+   "examples": [
+    "valid/t4.xml",
+    "valid/t4a.xml"
+   ]
+  },
+  {
+   "signature": "events: xpact attlistdecl / expat attlistdecl field 4",
+   "count": 1,
+   "examples": [
+    "att9"
+   ]
+  },
+  {
+   "signature": "error code: xpact unknown encoding / expat error in processing external entity reference",
+   "count": 1,
+   "examples": [
+    "errors/759398.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact unclosed token / expat not well-formed (invalid token)",
+   "count": 1,
+   "examples": [
+    "errors/759573.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact not well-formed (invalid token) / expat junk after document element",
+   "count": 1,
+   "examples": [
+    "errors/extra-content.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact syntax error / expat unclosed token",
+   "count": 1,
+   "examples": [
+    "errors/name2.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact unknown encoding / expat python LookupError: unknown encoding: unsupported-encoding",
+   "count": 1,
+   "examples": [
+    "errors/unsupported-encoding.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact unclosed token / expat incomplete markup in parameter entity",
+   "count": 1,
+   "examples": [
+    "errors10/781361.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact unknown encoding / expat python ValueError: multi-byte encodings are not supported",
+   "count": 1,
+   "examples": [
+    "icu_parse_test.xml"
+   ]
+  },
+  {
+   "signature": "verdict: xpact REJECT (unknown encoding) / expat ACCEPT ()",
+   "count": 1,
+   "examples": [
+    "iso-8859-5.xml"
+   ]
+  },
+  {
+   "signature": "error code: xpact unclosed token / expat syntax error",
+   "count": 1,
+   "examples": [
+    "valid/dtds/cond_sect1.dtd"
+   ]
+  },
+  {
+   "signature": "events: xpact chars / expat entitydecl",
+   "count": 1,
+   "examples": [
+    "valid/pe-val-latin1.xml"
+   ]
+  },
+  {
+   "signature": "events: xpact attlistdecl / expat entitydecl",
+   "count": 1,
+   "examples": [
+    "valid/t11.xml"
+   ]
+  },
+  {
+   "signature": "events: xpact entitydecl / expat comment",
+   "count": 1,
+   "examples": [
+    "valid/xhtml1.xhtml"
+   ]
+  }
+ ]
+}

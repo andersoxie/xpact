@@ -1,0 +1,32 @@
+﻿== Backend tests
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Xpact.Contracts -> C:\xpact\xpact-student-Mass\website\backend\src\Xpact.Contracts\bin\Release\net10.0\Xpact.Contracts.dll
+  Xpact.Worker -> C:\xpact\xpact-student-Mass\website\backend\src\Xpact.Worker\bin\Release\net10.0\win-x64\Xpact.Worker.dll
+  Xpact.Api -> C:\xpact\xpact-student-Mass\website\backend\src\Xpact.Api\bin\Release\net10.0\win-x64\Xpact.Api.dll
+  Xpact.Api.Tests -> C:\xpact\xpact-student-Mass\website\backend\tests\Xpact.Api.Tests\bin\Release\net10.0\win-x64\Xpact.Api.Tests.dll
+Test run for C:\xpact\xpact-student-Mass\website\backend\tests\Xpact.Api.Tests\bin\Release\net10.0\win-x64\Xpact.Api.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    42, Skipped:     0, Total:    42, Duration: 48 s - Xpact.Api.Tests.dll (net10.0)
+== Frontend type check and build
+
+> xpact-website@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+âœ“ 40 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                       0.62 kB â”‚ gzip:  0.37 kB
+dist/assets/index-BgjemADb.css       12.61 kB â”‚ gzip:  3.39 kB
+dist/assets/Project-BwWCUwEf.js       5.75 kB â”‚ gzip:  2.14 kB
+dist/assets/Benchmarks-D4lgm5x3.js    9.34 kB â”‚ gzip:  2.98 kB
+dist/assets/Validator-DX7MGNQA.js    11.09 kB â”‚ gzip:  4.13 kB
+dist/assets/Docs-BgnYrKnV.js         12.66 kB â”‚ gzip:  3.88 kB
+dist/assets/index-CkLpNlyK.js       271.98 kB â”‚ gzip: 86.72 kB
+
+âœ“ built in 587ms
+All website checks passed.
+exit 0

@@ -1,0 +1,4 @@
+# GC registration check of the generated C, 2026-11-04 (tools/probe/unreg-all.awk over F_code/*.c, big_file_* excluded).
+# keep = student-Mass @ 896a3ab finalized with -keep; nokeep = perf/finalize-without-keep (#16).
+fcode-keep: 4940 routines with reference locals and calls; 0 of them without RTLD/RTLI registration
+fcode-nokeep: 880 routines with reference locals and calls; 0 of them without RTLD/RTLI registration

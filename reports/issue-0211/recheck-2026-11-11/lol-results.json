@@ -1,0 +1,37 @@
+[
+ {
+  "file": "lol_classic.xml",
+  "xpact": "rejected (syntax error)",
+  "xpact_ms": 138,
+  "expat": "rejected (limit on input amplification factor (from DTD and entities) breached)",
+  "expat_ms": 97
+ },
+ {
+  "file": "lol_eg.xml",
+  "xpact": "accepted",
+  "xpact_ms": 114,
+  "expat": "accepted",
+  "expat_ms": 0
+ },
+ {
+  "file": "lol_ep.xml",
+  "xpact": "accepted",
+  "xpact_ms": 114,
+  "expat": "accepted",
+  "expat_ms": 0
+ },
+ {
+  "file": "lol_ig_attr.xml",
+  "xpact": "rejected (amplification limit breached)",
+  "xpact_ms": 1718,
+  "expat": "rejected (limit on input amplification factor (from DTD and entities) breached)",
+  "expat_ms": 96
+ },
+ {
+  "file": "lol_ig_content.xml",
+  "xpact": "rejected (amplification limit breached)",
+  "xpact_ms": 2142,
+  "expat": "rejected (limit on input amplification factor (from DTD and entities) breached)",
+  "expat_ms": 83
+ }
+]

@@ -1,0 +1,23 @@
+{
+ "id": "G01-w3c/x-ibm-1-0.5-valid-P05-ibm05v03.xml",
+ "status": "error position differs",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 6,
+   "column": 0,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 6,
+   "column": 20,
+   "exit_hex": null
+  }
+ },
+ "configs": {}
+}

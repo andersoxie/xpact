@@ -34,7 +34,14 @@ def clear_summary(output_dir):
 
 
 def _text(value):
-    return re.sub(r"[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]", "?", str(value))
+    # XML 1.0 Char production; anything else becomes "?" (an explicit check, not a regex class).
+    return "".join(ch if _is_xml_char(ch) else "?" for ch in str(value))
+
+
+def _is_xml_char(ch):
+    code = ord(ch)
+    return (code in (0x9, 0xA, 0xD) or 0x20 <= code <= 0xD7FF or 0xE000 <= code <= 0xFFFD
+            or 0x10000 <= code <= 0x10FFFF)
 
 
 def _error_suite(lane, context, error):
@@ -82,44 +89,49 @@ def _verify_builds(rows, lane, repo_root):
 
 def _control_suites(directory, lane, report, repo_root):
     expected_status = "qualified" if lane == "catalog" else "executed"
-    if report is not None:
-        rows = report["qualification"]
-    else:
-        state = json.loads((directory / "run.json").read_text(encoding="utf-8"))
-        rows = state["builds"]
-        # A known core-only build/qualification gate can leave our complete
-        # controls intact. A later measurement/integrity/persistence failure
-        # has ambiguous ownership and must never become a green subject run.
-        if (lane != "catalog" or state.get("status") != "failed" or state.get("error") != CATALOG_CORE_GATE
-                or state.get("comparison_arguments")
-                or not any(row.get("implementation") == "xpact-core" and row.get("status") == "failed" for row in rows)):
-            raise SummaryError("Own validation cannot be established from the incomplete {} lane".format(lane))
+    rows = report["qualification"] if report is not None else _gated_catalog_rows(directory, lane)
     own = _own_controls(rows)
     if any(row.get("status") != expected_status for row in own):
         raise SummaryError("Own {} build or directed controls did not complete".format(lane))
     _verify_builds(own, lane, repo_root)
-    suites = []
-    for row in own:
-        mode = "on" if row["assertions"] else "off"
-        suite = ET.Element("testsuite", name="xpact.{}.controls.assertions-{}".format(lane, mode))
-        if row.get("qualification_error"):
-            test = ET.SubElement(suite, "testcase", classname="xpact.{}.controls".format(lane),
-                                 name="assertions-{}/control-process".format(mode), time="0")
-            ET.SubElement(test, "error", message="Own directed control process failed").text = _text(row["qualification_error"])
-        else:
-            cases = row["cases"]
-            names = [case["case_id"] for case in cases]
-            if len(names) != len(CONTROLS[lane]) or set(names) != CONTROLS[lane]:
-                raise SummaryError("Own {} directed-control case matrix is incomplete or duplicated".format(lane))
-            for case in cases:
-                if case["status"] not in ("PASS", "FAIL"):
-                    raise SummaryError("Own directed control has an invalid outcome")
-                test = ET.SubElement(suite, "testcase", classname="xpact.{}.controls".format(lane),
-                                     name="assertions-{}/{}".format(mode, case["case_id"]), time="0")
-                if case["status"] == "FAIL":
-                    ET.SubElement(test, "failure", message="Own directed control failed").text = _text(case.get("detail", "FAIL"))
-        suites.append(suite)
-    return suites
+    return [_control_suite(row, lane) for row in own]
+
+
+def _gated_catalog_rows(directory, lane):
+    """Build rows of an incomplete lane, accepted only for the known core-only catalog gate."""
+    state = json.loads((directory / "run.json").read_text(encoding="utf-8"))
+    rows = state["builds"]
+    # A known core-only build/qualification gate can leave our complete
+    # controls intact. A later measurement/integrity/persistence failure
+    # has ambiguous ownership and must never become a green subject run.
+    if (lane != "catalog" or state.get("status") != "failed" or state.get("error") != CATALOG_CORE_GATE
+            or state.get("comparison_arguments")
+            or not any(row.get("implementation") == "xpact-core" and row.get("status") == "failed" for row in rows)):
+        raise SummaryError("Own validation cannot be established from the incomplete {} lane".format(lane))
+    return rows
+
+
+def _control_suite(row, lane):
+    """One JUnit suite for one own build's directed controls."""
+    mode = "on" if row["assertions"] else "off"
+    suite = ET.Element("testsuite", name="xpact.{}.controls.assertions-{}".format(lane, mode))
+    if row.get("qualification_error"):
+        test = ET.SubElement(suite, "testcase", classname="xpact.{}.controls".format(lane),
+                             name="assertions-{}/control-process".format(mode), time="0")
+        ET.SubElement(test, "error", message="Own directed control process failed").text = _text(row["qualification_error"])
+        return suite
+    cases = row["cases"]
+    names = [case["case_id"] for case in cases]
+    if len(names) != len(CONTROLS[lane]) or set(names) != CONTROLS[lane]:
+        raise SummaryError("Own {} directed-control case matrix is incomplete or duplicated".format(lane))
+    for case in cases:
+        if case["status"] not in ("PASS", "FAIL"):
+            raise SummaryError("Own directed control has an invalid outcome")
+        test = ET.SubElement(suite, "testcase", classname="xpact.{}.controls".format(lane),
+                             name="assertions-{}/{}".format(mode, case["case_id"]), time="0")
+        if case["status"] == "FAIL":
+            ET.SubElement(test, "failure", message="Own directed control failed").text = _text(case.get("detail", "FAIL"))
+    return suite
 
 
 def _number(value):
@@ -149,6 +161,15 @@ def _case_counts(suite):
     return counts, elapsed
 
 
+def _check_w3c_counts(own, report):
+    for field in ("total", "passed", "failed", "errors", "skipped"):
+        _number(own[field])
+    if own["total"] <= 0 or own["total"] != sum(own[field] for field in ("passed", "failed", "errors", "skipped")):
+        raise SummaryError("Own W3C summary counts do not reconcile")
+    if own["total"] != _number(report["source"]["catalog_cases"]):
+        raise SummaryError("Own W3C summary does not cover the selected catalog")
+
+
 def _w3c_suite(directory, report):
     if report is None or report.get("status") not in ("complete", "complete_with_failures"):
         raise SummaryError("Own full W3C catalog results are unavailable")
@@ -156,12 +177,7 @@ def _w3c_suite(directory, report):
     if len(own) != 1:
         raise SummaryError("Own full W3C engine summary is missing or duplicated")
     own = own[0]
-    for field in ("total", "passed", "failed", "errors", "skipped"):
-        _number(own[field])
-    if own["total"] <= 0 or own["total"] != sum(own[field] for field in ("passed", "failed", "errors", "skipped")):
-        raise SummaryError("Own W3C summary counts do not reconcile")
-    if own["total"] != _number(report["source"]["catalog_cases"]):
-        raise SummaryError("Own W3C summary does not cover the selected catalog")
+    _check_w3c_counts(own, report)
     document = ET.parse(directory / "conformance/junit.xml").getroot()
     selected = [suite for suite in document.findall("testsuite") if suite.get("name") == "w3c-xml-xpact"]
     if len(selected) != 1:
@@ -202,38 +218,31 @@ def _replace_text(path, text):
             staged.unlink(missing_ok=True)
 
 
-def _publish_summary(output_dir, lane_reports, lane_states, *, selected_lanes=("catalog", "w3c"),
-                     lane_directories=None, repo_root=None):
-    """Publish our tests only; comparison reports and plots are never rewritten."""
-    output_dir = Path(output_dir)
-    if (not selected_lanes or len(set(selected_lanes)) != len(selected_lanes)
-            or set(selected_lanes) - set(CONTROLS)):
-        raise SummaryError("Select catalog and/or W3C exactly once")
-    directories = {lane: output_dir / lane for lane in selected_lanes}
-    directories.update({lane: Path(path) for lane, path in (lane_directories or {}).items()})
-    suites = ET.Element("testsuites")
+def _add_lane_suites(suites, lane, directory, report, row, repo_root):
+    """Append one lane's own suites (or error suites); True when the lane has an infrastructure error."""
     infrastructure = False
-    for lane in selected_lanes:
-        report = lane_reports.get(lane)
-        row = lane_states.get(lane, {})
-        if report is not None and (row.get("status") != report.get("status")
-                                   or report.get("status") not in ("complete", "complete_with_failures")):
-            report = None
-            infrastructure = True
-            suites.append(_error_suite(lane, "campaign-evidence", "Own campaign state and completed report disagree"))
+    if report is not None and (row.get("status") != report.get("status")
+                               or report.get("status") not in ("complete", "complete_with_failures")):
+        report = None
+        infrastructure = True
+        suites.append(_error_suite(lane, "campaign-evidence", "Own campaign state and completed report disagree"))
+    try:
+        suites.extend(_control_suites(directory, lane, report, repo_root))
+    except (OSError, ValueError, KeyError, TypeError) as error:  # SummaryError is a ValueError
+        infrastructure = True
+        suites.append(_error_suite(lane, "directed-controls", error))
+    if lane == "w3c":
         try:
-            for suite in _control_suites(directories[lane], lane, report, repo_root):
-                suites.append(suite)
-        except (SummaryError, OSError, ValueError, KeyError, TypeError) as error:
+            suites.append(_w3c_suite(directory, report))
+        except (OSError, ValueError, KeyError, TypeError, ET.ParseError) as error:
             infrastructure = True
-            suites.append(_error_suite(lane, "directed-controls", error))
-        if lane == "w3c":
-            try:
-                suites.append(_w3c_suite(directories[lane], report))
-            except (SummaryError, OSError, ValueError, KeyError, TypeError, ET.ParseError) as error:
-                infrastructure = True
-                suites.append(_error_suite(lane, "full-catalog", error))
-    totals = {field: 0 for field in ("tests", "passed", "failures", "errors", "skipped")}
+            suites.append(_error_suite(lane, "full-catalog", error))
+    return infrastructure
+
+
+def _set_counts(suites):
+    """Write each suite's and the root's counts and time; return the totals."""
+    totals = dict.fromkeys(("tests", "passed", "failures", "errors", "skipped"), 0)
     elapsed = 0.0
     for suite in suites:
         counts, duration = _case_counts(suite)
@@ -246,7 +255,30 @@ def _publish_summary(output_dir, lane_reports, lane_states, *, selected_lanes=("
     for field in ("tests", "failures", "errors", "skipped"):
         suites.set(field, str(totals[field]))
     suites.set("time", "{:.6f}".format(elapsed))
-    status = ("failed" if infrastructure else "complete_with_failures" if totals["failures"] or totals["errors"] else "complete")
+    return totals
+
+
+def _publish_summary(output_dir, lane_reports, lane_states, *, selected_lanes=("catalog", "w3c"),
+                     lane_directories=None, repo_root=None):
+    """Publish our tests only; comparison reports and plots are never rewritten."""
+    output_dir = Path(output_dir)
+    if (not selected_lanes or len(set(selected_lanes)) != len(selected_lanes)
+            or set(selected_lanes) - set(CONTROLS)):
+        raise SummaryError("Select catalog and/or W3C exactly once")
+    directories = {lane: output_dir / lane for lane in selected_lanes}
+    directories.update({lane: Path(path) for lane, path in (lane_directories or {}).items()})
+    suites = ET.Element("testsuites")
+    infrastructure = False
+    for lane in selected_lanes:
+        infrastructure |= _add_lane_suites(suites, lane, directories[lane], lane_reports.get(lane),
+                                           lane_states.get(lane, {}), repo_root)
+    totals = _set_counts(suites)
+    if infrastructure:
+        status = "failed"
+    elif totals["failures"] or totals["errors"]:
+        status = "complete_with_failures"
+    else:
+        status = "complete"
     summary = {"schema_version": 1, "implementation": "xpact", "status": status,
                "junit": JUNIT_FILE, "summary": SUMMARY_FILE, **totals}
     ET.indent(suites)

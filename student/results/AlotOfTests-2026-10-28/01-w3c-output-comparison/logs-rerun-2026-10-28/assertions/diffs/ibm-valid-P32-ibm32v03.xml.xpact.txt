@@ -1,0 +1,5 @@
+EXPECTED C:\Users\masou\Desktop\Lia\xpact\w9-latest\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\valid\P32\out\ibm32v03.xml
+'<animal class=")"></animal>'
+
+GOT (xpact)
+'<animal></animal>'

@@ -38,7 +38,10 @@ Primary classes:
 The core design rule is simple: XML semantics should be visible in Eiffel
 contracts and Eiffel code.
 
-The core consumes complete `READABLE_STRING_8` inputs. Its no-event path already
+The direct parse entry consumes complete `READABLE_STRING_8` inputs. Native
+chunked parsing can also use `continue_prefix` with retained parser checkpoints;
+see [incremental resume](incremental-resume.md) for eligible input and fallbacks.
+Its no-event path already
 uses slice-backed element names, avoids materializing simple attributes and text,
 defers position accounting, and can reuse suitable normalized `STRING_8` input.
 Eventful, namespace and DTD paths retain materialization where required. Further

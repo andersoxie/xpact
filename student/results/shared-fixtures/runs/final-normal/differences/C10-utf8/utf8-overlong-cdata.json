@@ -1,0 +1,584 @@
+{
+ "id": "C10-utf8/utf8-overlong-cdata",
+ "status": "events differ",
+ "whole": {
+  "xpact": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 1,
+   "column": 12,
+   "exit_hex": null
+  },
+  "expat": {
+   "verdict": "REJECT",
+   "error": 4,
+   "message": "not well-formed (invalid token)",
+   "line": 1,
+   "column": 12,
+   "exit_hex": null
+  }
+ },
+ "configs": {
+  "XML_Parse whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_Parse 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_Parse 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_Parse 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_Parse 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_Parse 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_Parse 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_ParseBuffer whole": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_ParseBuffer 1": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_ParseBuffer 2": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_ParseBuffer 3": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_ParseBuffer 7": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_ParseBuffer 64": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  },
+  "XML_ParseBuffer 1024": {
+   "xpact": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "expat": {
+    "verdict": "REJECT",
+    "error": 4,
+    "message": "not well-formed (invalid token)",
+    "line": 1,
+    "column": 12,
+    "exit_hex": null
+   },
+   "first_event_difference": {
+    "index": 1,
+    "events_a": [
+     [
+      "start",
+      "r",
+      []
+     ]
+    ],
+    "events_b": [
+     [
+      "start",
+      "r",
+      []
+     ],
+     [
+      "startcdata"
+     ]
+    ],
+    "count_a": 1,
+    "count_b": 2
+   }
+  }
+ }
+}

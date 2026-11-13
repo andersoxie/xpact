@@ -278,7 +278,7 @@ class BenchmarkLifecycleTests(unittest.TestCase):
         with mock.patch.object(runner.sys, "platform", "linux"), \
                 mock.patch.dict(runner.os.environ, {"ISE_PLATFORM": "win64"}):
             with self.assertRaisesRegex(runner.BenchmarkError, "ISE_PLATFORM"):
-                runner.check_prerequisites(SCRIPT.parents[1])
+                runner.check_prerequisites()
         self.output.mkdir(parents=True, exist_ok=True)
         windows_compiler = self.output / "ec.exe"
         windows_compiler.write_bytes(b"MZ" + b"\x00" * 62)
@@ -566,7 +566,7 @@ class BenchmarkLifecycleTests(unittest.TestCase):
                 mock.patch.dict(runner.os.environ, injected), \
                 mock.patch.object(runner.shutil, "which", side_effect=find_tool), \
                 mock.patch.object(runner, "run_checked", side_effect=self.fake_command):
-            tools = runner.check_prerequisites(SCRIPT.parents[1], ("Gobo",))
+            tools = runner.check_prerequisites(("Gobo",))
         self.assertNotIn("ec", found)
         self.assertNotIn("finish_freezing", found)
         self.assertNotIn("eiffel_version", tools)

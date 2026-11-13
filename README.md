@@ -13,6 +13,8 @@ is not intended to become a second C parser.
 
 ## Current Status
 
+**Version 0.9.0** (launch candidate). What each version contains: [CHANGELOG.md](CHANGELOG.md).
+
 The native Phase 1 preview package targets Windows x64. The same Eiffel parser
 also builds and runs in Ubuntu 24.04/WSL2 benchmarks with EiffelStudio and Gobo.
 Full libexpat drop-in compatibility and an Eiffel-backed Linux shared-library
@@ -38,6 +40,8 @@ Implemented and verified now:
 - A native C benchmark path against the Windows Eiffel-backed DLL.
 - A chunked `XML_Parse` CRC harness that compares event digests across buffer
   sizes and can be compiled against xpact or libexpat.
+- Native checkpoint resume for eligible UTF-8 and UTF-16 chunked input, with
+  documented replay fallbacks and full-input retention.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
 - A native-suite gate that resolves reported failures to upstream test names
   and rejects unexpected failures, crashes, and incomplete test runs.
@@ -46,6 +50,10 @@ Implemented and verified now:
   reports for both finalized assertion modes and Jenkins publication.
 - An opt-in large XML benchmark runner for caller-supplied, pre-decompressed
   real corpora.
+- Safe use from several threads, each with its own parsers: calls take turns
+  inside the single-threaded Eiffel runtime, so they do not run in parallel (#274).
+- An internal Eiffel exception (for example out of memory) makes the call fail
+  with an error code instead of ending the process (#273).
 
 The upstream Expat 2.8.1 manifest currently has 399 `START_TEST(...)` entries.
 The expected-failure list expands to 86 rows:
@@ -90,10 +98,9 @@ and [raw measurements](benchmarks/results/gobo-eiffelstudio-comparison-2026-11-1
 
 Before calling xpact a credible drop-in replacement, the project still needs:
 
-- true incremental parsing in the Eiffel parser/session core; the current
-  native adapter accepts chunks and now has CRC coverage for replayed character
-  data, but it still relies on accumulated-buffer replay rather than a
-  suspendable parser session;
+- broader incremental coverage and bounded input retention: the native adapter
+  now continues from checkpoints for eligible input, while replay fallbacks and
+  complete input buffers remain; see [incremental resume](docs/incremental-resume.md);
 - tighter expected-failure accounting that detects individual unexpected
   passes even when other expected failures remain in the same native-suite run;
 - further performance work: extending the existing slice and deferred-materialization
@@ -103,7 +110,9 @@ Before calling xpact a credible drop-in replacement, the project still needs:
 - Linux/WSL packaging for an Eiffel-backed `libxpact.so`;
 - broader consumer ABI coverage across compilers and build systems;
 - a release decision on whether allocator-injection semantics are intentionally
-  unsupported or emulated at the C ABI boundary.
+  unsupported or emulated at the C ABI boundary;
+- parallel parsing on several threads: needs a multi-threaded Eiffel runtime
+  build (today calls are serialized, #274).
 
 ## Reading Order
 
@@ -121,8 +130,8 @@ Start here, then read:
    upstream test-suite status.
 8. `docs/chunked-parse-crc.md` for incremental parsing verification through
    CRC-32 event digests across chunk sizes.
-9. `docs/incremental-shim-audit.md` for the current accumulated-buffer replay
-   baseline before the true incremental parser session.
+9. `docs/incremental-shim-audit.md` for native callback/position checks and
+   [incremental resume](docs/incremental-resume.md) for checkpoint coverage and fallbacks.
 10. `docs/incremental-core-prototype.md` for the isolated Eiffel session
     prototype that starts replacing replay with state-owned parsing.
 11. `docs/expat-port-spike.md` for the isolated Expat-processor-style Eiffel
@@ -141,6 +150,8 @@ Start here, then read:
    replacement plan.
 19. [Jenkins email notifications](docs/jenkins-email-notifications.md) for
    setting recipients for failed and unstable builds.
+20. [Speed work: session notes](docs/notes/README.md) for the 2026-11 speed
+   fixes, their issues and PRs, the merge order, and how to repeat the checks.
 
 ## Build And Verify
 
@@ -195,7 +206,7 @@ Run chunked `XML_Parse` CRC diagnostics:
 .\scripts\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All
 ```
 
-Audit the current accumulated-buffer incremental shim:
+Audit the native chunk adapter's callback and position behavior:
 
 ```powershell
 .\scripts\run_incremental_shim_audit.ps1 -SkipBuild
@@ -227,6 +238,28 @@ Run benchmarks including the W3C XML conformance suite:
 The suite runs by default in both Jenkins benchmark pipelines. See
 [W3C conformance benchmarks](docs/w3c-xml-conformance.md) for the supported
 profile, offline setup, and detailed reports.
+
+> **Testing a DLL you already built (#302):** by default `run_benchmarks.ps1`
+> rebuilds `build\native-eiffel\*.dll` and rewrites `docs\benchmarks.md`. To test
+> the exact DLL you built and checked, and keep the docs, add
+> `-UseExistingNativeDll -NoDocsUpdate` (the page then goes to
+> `build\benchmarks\benchmarks.md`). These scripts also rebuild the DLL unless told
+> not to: `run_large_xml_benchmarks.ps1`, `run_chunked_crc_harness.ps1`,
+> `run_incremental_shim_audit.ps1`, `package_windows_release.ps1` (`-SkipBuild`)
+> and `run_libexpat_adapter.ps1` (`-SkipNativeBuild`); so do
+> `website\scripts\build-dll.ps1` and `student\baseline\run_baseline.ps1` (on
+> purpose). `run_large_xml_benchmarks.ps1` also rewrites
+> `docs\large-xml-benchmarks.md` unless `-NoPublishDocs`. Check the DLL's SHA-256
+> before and after a run.
+>
+> **Freeze the tested DLL (#319):** `build_native_eiffel.ps1` prints the DLL it
+> replaces with its SHA-256 before and after. Set `$env:XPACT_FROZEN_DLL = "1"`
+> before a test run and any runner that tries to rebuild stops at once with an
+> error instead of replacing the DLL (child scripts inherit the variable).
+>
+> **Python (#308):** `run_benchmarks.ps1` and `run_large_xml_benchmarks.ps1` use
+> `$env:XPACT_PYTHON` if set, otherwise `python` from PATH. They stop at once if
+> that is the Microsoft Store alias (`...\WindowsApps\python.exe`).
 
 Run the additional Eiffel/GCC comparison inside WSL2 after configuring the Linux
 compiler environments (`ISE_EIFFEL`, `ISE_PLATFORM`, `GOBO`, and compiler paths):

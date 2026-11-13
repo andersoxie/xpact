@@ -1,0 +1,19 @@
+raw.py (reports/mass-xpact-issue-0014/logs/tools/raw.py): create + XML_Parse + free, no handlers, 40 reps
+A student-Mass+#14           nokeep           pr-xml-utf-8.xml             17330.4 us
+A student-Mass+#14           inlineA          pr-xml-utf-8.xml             15664.2 us
+A student-Mass+#14           nokeep           pr-xml-utf-8.xml             18191.1 us
+A student-Mass+#14           inlineA          pr-xml-utf-8.xml             15320.3 us
+A student-Mass+#14           nokeep           weekly-utf-8.xml             220.6 us
+A student-Mass+#14           inlineA          weekly-utf-8.xml             179.3 us
+A student-Mass+#14           nokeep           weekly-utf-8.xml             219.8 us
+A student-Mass+#14           inlineA          weekly-utf-8.xml             209.0 us
+B #11+#14                    textrun-nokeep   pr-xml-utf-8.xml             24360.0 us
+B #11+#14                    inline4          pr-xml-utf-8.xml             14230.2 us
+B #11+#14                    textrun-nokeep   pr-xml-utf-8.xml             17588.5 us
+B #11+#14                    inline4          pr-xml-utf-8.xml             14286.8 us
+B #11+#14                    textrun-nokeep   weekly-utf-8.xml             223.2 us
+B #11+#14                    inline4          weekly-utf-8.xml             183.1 us
+B #11+#14                    textrun-nokeep   weekly-utf-8.xml             224.4 us
+B #11+#14                    inline4          weekly-utf-8.xml             182.3 us
+
+inlining_size trial on B sources (pr-xml-utf-8 whole, us): none 17672/17522, 4: 14281/14159, 10: 14210/14225, 30: 16082/15965

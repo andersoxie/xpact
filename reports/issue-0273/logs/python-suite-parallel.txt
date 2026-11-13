@@ -1,0 +1,19 @@
+.............................................................................................................................................Own xpact tests: complete (C:\xpact\xpact-student-Mass\build\xpact-subject-summary-tests\tmpqq1jtz1t\w3c\xpact-junit.xml)
+Cannot publish own xpact summary: 'int' object has no attribute 'get'
+Own xpact tests: complete (C:\xpact\xpact-student-Mass\build\xpact-subject-summary-tests\tmpqq1jtz1t\w3c\xpact-junit.xml)
+...........Own xpact tests: complete (C:\xpact\xpact-student-Mass\build\xpact-subject-summary-tests\tmpfw9dhcm3\w3c\xpact-junit.xml)
+............F.........................................................................Measuring fixture...
+.
+======================================================================
+FAIL: test_failures_are_aggregated_and_cannot_poison_following_test (test_libexpat_isolation.NativeIsolationTests.test_failures_are_aggregated_and_cannot_poison_following_test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\xpact\xpact-student-Mass\tests\python\test_libexpat_isolation.py", line 295, in test_failures_are_aggregated_and_cannot_poison_following_test
+    self.assertIn("Checks: 7, Failed: 6", output)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'Checks: 7, Failed: 6' not found in 'Expat version: isolation-fixture\nERROR: controlled assertion\nFAIL [chunksize=0 deferral=0]: fixture_fail (during actual test at fixture.c:1)\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\nFOLLOWING_PASS\n***Timeout: fixture_after_fail exceeded 1 seconds\nFAIL [isolated child]: fixture_after_fail (during child process at basic_tests.c:0)\nERROR: callback assertion\nFAIL [chunksize=0 deferral=0]: fixture_callback_fail (during actual test at callback-helper.c:3)\nERROR: setup assertion\nFAIL [chunksize=0 deferral=0]: fixture_setup_fail (during setup at setup-helper.c:4)\nTEARDOWN_TEST_RAN\nERROR: teardown assertion\nFAIL [chunksize=0 deferral=0]: fixture_teardown_fail (during teardown at teardown-helper.c:5)\n***Exception: fixture_crash exited with code 0xC0000005\nFAIL [isolated child]: fixture_crash (during child process at C:\\xpact\\xpact-student-Mass\\build\\libexpat isolation tests _2mx8y_g\\source\\fixture.c:0)\n***Timeout: fixture_timeout exceeded 1 seconds\nFAIL [isolated child]: fixture_timeout (during child process at misc_tests.c:0)\n0%: Checks: 7, Failed: 7\n'
+
+----------------------------------------------------------------------
+Ran 239 tests in 77.526s
+
+FAILED (failures=1)

@@ -1,0 +1,18 @@
+# A04 large-xml: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_large_xml_benchmarks.ps1 -XmlFile C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\validation-corpora\w3c-xml-20130923\xmlconf\xmltest\valid\sa\001.xml -Iterations 1 -Repetitions 1 -SkipBuild -SkipWslC -NoPublishDocs -OutputDir build\a04\large
+# 65 processes, 903.5 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     3 x xpact_native_windows_c_benchmark.exe -> build\native-eiffel\xpact.dll [normal, 875b5664e5e9a0c6]
+
+## processes started (image [sha256 when under the repository])
+    25 x C:\Windows\System32\cmd.exe
+    22 x C:\Windows\System32\reg.exe
+     4 x C:\Users\masou\AppData\Local\Programs\Python\Python314\python.exe
+     3 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+     3 x build\a04\large\xpact_native_windows_c_benchmark.exe [0e71fa5ed2986f8a]
+     2 x C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe
+     2 x EIFGENs\xpact_benchmarks\F_code\xpact_benchmarks.exe [3f0130266b4c72a8]
+     1 x C:\Windows\System32\doskey.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\vctip.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\link.exe

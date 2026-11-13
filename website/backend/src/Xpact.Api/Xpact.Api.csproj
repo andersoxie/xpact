@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xpact.Contracts\Xpact.Contracts.csproj" />
+    <!-- The worker executable is copied next to the API. -->
+    <ProjectReference Include="..\Xpact.Worker\Xpact.Worker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- XPact DLLs (scripts/build-dll.ps1 puts them in website/backend/native) and the exported data.
+         The DLLs are copied on every build: a replaced DLL can be older than the copy in bin (#216). -->
+    <None Include="..\..\native\*.dll" Link="native\%(Filename)%(Extension)" CopyToOutputDirectory="Always" />
+    <None Include="..\..\..\data\*.json" Link="data\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

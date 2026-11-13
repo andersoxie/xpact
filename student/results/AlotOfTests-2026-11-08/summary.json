@@ -1,0 +1,150 @@
+{
+  "date": "2026-11-08",
+  "branch": "incremental-test",
+  "w3c_output": {
+    "normal": {
+      "pass": 399,
+      "xpact-only": 4,
+      "both-differ": 29,
+      "total": 432
+    },
+    "assertions": {
+      "pass": 399,
+      "xpact-only": 4,
+      "both-differ": 29,
+      "total": 432
+    }
+  },
+  "w3c_verdicts": {
+    "normal": {
+      "core:fail": 320,
+      "core:pass": 1654,
+      "legacy-names:pass": 309,
+      "optional-error:no-crash": 28,
+      "total": 2585,
+      "xml-1.1:no-crash": 274
+    },
+    "assertions": {
+      "core:fail": 320,
+      "core:pass": 1654,
+      "legacy-names:pass": 309,
+      "optional-error:no-crash": 28,
+      "total": 2585,
+      "xml-1.1:no-crash": 274
+    }
+  },
+  "w3c_pieces": {
+    "normal": {
+      "ok": 2564,
+      "xpact-only": 16,
+      "both": 5,
+      "total": 2585,
+      "xpact_crash_or_timeout": 0
+    },
+    "assertions": {
+      "ok": 2564,
+      "xpact-only": 16,
+      "both": 5,
+      "total": 2585,
+      "xpact_crash_or_timeout": 0
+    }
+  },
+  "w3c_pieces_differences": {
+    "same verdict, other events": 15,
+    "same verdict, other error code": 1
+  },
+  "verdict_changes_by_chunking": 0,
+  "xml_parse_calls": {
+    "per_run": 2673440,
+    "runs": 3,
+    "total": 8020320,
+    "documents": 2585,
+    "bytes_one_by_one": 1845171,
+    "two_piece_splits": 412842
+  },
+  "fuzzing": {
+    "seconds": 1800,
+    "inputs": 3879031,
+    "same_verdict": 3878459,
+    "crashes_or_hangs": 0,
+    "verdicts": {
+      "xpact REJECT / expat REJECT": 3830770,
+      "xpact ACCEPT / expat ACCEPT": 47689,
+      "xpact REJECT / expat ACCEPT": 538,
+      "xpact ACCEPT / expat REJECT": 34
+    }
+  },
+  "differential": {
+    "seconds": 1200,
+    "documents": 3148557,
+    "same_verdict": 3146594,
+    "verdicts": {
+      "documents": 3148557,
+      "xpact REJECT / expat REJECT": 1355071,
+      "xpact ACCEPT / expat ACCEPT": 1791523,
+      "xpact REJECT / expat ACCEPT": 1948,
+      "xpact ACCEPT / expat REJECT": 15
+    }
+  },
+  "security": {
+    "normal": {
+      "cases": 29,
+      "pass": 20,
+      "fail": 9
+    },
+    "assertions": {
+      "cases": 29,
+      "pass": 20,
+      "fail": 9
+    }
+  },
+  "expat_runtests": {
+    "normal": {
+      "checks": 399,
+      "failed_allocator_tests": 38,
+      "passed": 361
+    },
+    "assertions": {
+      "checks": 399,
+      "failed_allocator_tests": 38,
+      "passed": 361
+    }
+  },
+  "libxml2": {
+    "files": 1417,
+    "same_as_expat": 1288,
+    "stats": {
+      "xpact ACCEPT / expat ACCEPT": 1114,
+      "xpact REJECT / expat REJECT": 298,
+      "xpact REJECT / expat ACCEPT": 1,
+      "xpact TIMEOUT / expat REJECT": 2,
+      "xpact ACCEPT / expat REJECT": 2
+    }
+  },
+  "encodings": {
+    "normal": {
+      "cases": 146,
+      "pass": 141
+    },
+    "assertions": {
+      "cases": 146,
+      "pass": 141
+    }
+  },
+  "memory": {
+    "scenarios": 8,
+    "rounds": 20000,
+    "lifecycles": 160000
+  },
+  "cpython": {
+    "run": 976,
+    "failures": 34,
+    "skipped": 43,
+    "passed": 942
+  },
+  "large_files": {
+    "files": 16,
+    "runs": 64
+  },
+  "documents_parsed": 7031781
+}

@@ -1,0 +1,4 @@
+1223c1223
+< 1221	utf8-bad-continuation-text/none/bytes	utf8	utf8-bad-continuation-text	none	bytes	<r>\xc3(</r>	REJECT	PASS	REJECT	4	not well-formed (invalid token)	4	1	3	3	6	10			
+---
+> 1221	utf8-bad-continuation-text/none/bytes	utf8	utf8-bad-continuation-text	none	bytes	<r>\xc3(</r>	REJECT	PASS	REJECT	4	not well-formed (invalid token)	4	1	3	3	5	10			

@@ -50,9 +50,10 @@ looks like a reasonable C helper. The parser semantics should remain in Eiffel.
 Expat's parser object stores a retained C buffer with `m_buffer`, `m_bufferPtr`,
 `m_bufferEnd`, and `m_bufferLim`. `XML_GetBuffer` preserves only the unconsumed
 tail and optional input-context bytes before appending more input. xpact's
-native adapter currently accumulates full input in `XP_NATIVE_PARSER.input_buffer`
-and then reparses prefixes through `XP_PARSER`. Replacing that replay shape with
-an unconsumed-tail session is the most important architectural improvement.
+native adapter retains full input in `XP_NATIVE_PARSER.input_buffer`. Its
+[checkpoint-resume path](incremental-resume.md) avoids reparsing the whole prefix
+for eligible input, but the retained buffer supports replay fallbacks. An
+unconsumed-tail session would address that remaining memory-retention boundary.
 
 `callProcessor` calls the current processor repeatedly until parsing blocks,
 suspends, errors, or consumes all available work. The active processor slot is
@@ -64,10 +65,10 @@ small token subset.
 Expat's non-final reparse deferral avoids rescanning the same partial token over
 and over. It remembers how many bytes were available when no bytes were
 consumed, then waits until enough new data arrives or buffer pressure makes a
-retry useful. xpact has a start-tag-specific approximation in
-`XP_NATIVE_PARSER.should_defer_reparse_callbacks`; the general version belongs
-in the future incremental session, not as more special cases in the native
-adapter.
+retry useful. xpact's `XP_NATIVE_PARSER.should_defer_reparse_callbacks` now
+tracks pending partial markup as well as start-tag scanning, with separate
+deferred DOCTYPE scanning. Further Expat-parity and scaling work should qualify
+those existing paths and any additional token categories.
 
 Expat is also careful about lazy materialization. Open tag names can initially
 point into the input buffer, and strings are copied only when they must survive
@@ -75,7 +76,7 @@ across parse calls or callback/API boundaries. xpact already uses slice-backed
 open-element names and avoids several materializations in the no-event path.
 Extending this approach to other names, attribute values, namespace prefixes,
 and text runs remains useful work; it does not by itself remove native input
-copying or whole-prefix replay. See [the optimization history](performance-analysis.md).
+copying or replay fallbacks. See [the optimization history](performance-analysis.md).
 
 ## Current xpact Fit
 
@@ -86,10 +87,10 @@ The C export layer is already on the right side of the boundary:
 - `XP_NATIVE_PARSER` maps native parse calls to Eiffel parser behavior.
 - `XP_PARSER` owns XML semantics.
 
-The weak point is not the exported C bridge. The weak point is that
-`XP_NATIVE_PARSER` still has to buffer and replay input into a whole-prefix
-Eiffel parser. The isolated `XP_INCREMENTAL_PARSE_SESSION` and
-`XP_EXPAT_PORT_PARSE_SESSION` prototypes are the correct direction.
+`XP_NATIVE_PARSER` now continues eligible input through retained Eiffel parser
+checkpoints, while complete input retention and replay fallbacks remain.
+The isolated `XP_INCREMENTAL_PARSE_SESSION` and `XP_EXPAT_PORT_PARSE_SESSION`
+prototypes explore bounded input windows separately from that production path.
 
 ## C Helper Options
 
@@ -152,10 +153,10 @@ Start with a private tokenizer facade instead of changing production parsing:
 6. Compare the C-token stream with `XP_PARSER` and the chunked CRC harness on a
    small corpus before wiring anything into `XP_NATIVE_PARSER`.
 
-The first production integration should be the true incremental Eiffel session
-replacing accumulated-buffer replay. A C tokenizer can be introduced behind
-that session later if measurements show that Eiffel byte scanning is still the
-dominant cost.
+Further integration should address bounded input retention and the remaining
+replay fallbacks without losing the production resume path's behavior. A C
+tokenizer could be introduced behind an Eiffel-owned session if measurements
+show that byte scanning is still the dominant cost.
 
 ## Bottom Line
 

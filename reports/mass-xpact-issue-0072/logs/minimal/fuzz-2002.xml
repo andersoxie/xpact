@@ -1,0 +1,7 @@
+<!DOCTYPE doc [
+<!ELEMENT doc (#PCDATA>
+   <!ENTITY % parameterE "A music file -->">
+<!-- Parameter reference appears</ inside a comment in DTD -->
+   <!-- This is %parameterE;
+]>
+<animal>Any content</animal>

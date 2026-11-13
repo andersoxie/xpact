@@ -1,0 +1,50 @@
+NOTE 13 - 2026-11-04 (evening) - profile-driven speed rounds on input in pieces
+
+SHORT
+- pr-xml-utf-8.xml (207 KB) fed 1 byte per call, production DLL:
+    2,857 ms (student-Mass after #21) -> 438 (#31) -> 319 (#34) -> 286 (#37) -> 236 (#40) -> 217 (#43)
+    -> 200 (#46) -> 184 ms (#48) = 15.5x.
+  16-byte pieces 209 -> 40 ms; 64-byte 69 -> 27 ms; whole parse unchanged (~22 ms).
+- Every round: output identical (DLL tests, W3C trace, Test 2 byte-identical on both tiers;
+  Expat the same 38 failures). All merged into student-Mass and pushed to anders' incremental-test.
+
+THE ROUNDS (one issue + one PR each)
+- #31 / #32: declared_xml_encoding searched the WHOLE accumulated input for "encoding" on
+  every call (quadratic when the declaration has none). Bounded to the declaration.
+- #34 / #35: a delayed DOCTYPE was rescanned from its start on every call. New XP_DOCTYPE_SCAN
+  + doctype_end_resumed: resumable, waits at an unterminated comment/PI and at a partial
+  "<!--" / "<?" so it equals a full scan.
+- #37 / #38: the encoding checks created manifest strings and ran STRING_SEARCHER on every
+  call. Constants + two small loops with the same results.
+- #46 / #47 (2026-11-05): small chunks reuse one string; a nested parse (from a callback) or a
+  chunk over 64 KB still gets its own. Checked: XP_NATIVE_PARSER never keeps its argument.
+- #48 / #49 (2026-11-05): input that starts with a known <?xml ...?> has no UTF-16 signature, so
+  both signature checks and the encoding lookup are answered from the #40 prefix check.
+- #43 / #44: each input chunk was copied twice (through a C_STRING). One from_c_substring copy;
+  a NUL-byte test (4 documents) shows the bytes are kept.
+- #40 / #41: the declared encoding was re-read on every call. Kept with the bytes it depends on
+  (up to "?>") and reused while the input starts with them (one same_characters).
+- Also tonight: #3 fixed (#25), #21 merged after an equal-load check, post-merge check complete.
+
+HOW A ROUND GOES (about 45 min)
+1. Relink the current EIFGENs production F_code with -MAP (tools in
+   reports/mass-xpact-issue-0031/logs/tools/relink-map2.ps1), then
+   sampler2.exe pr-xml-utf-8.xml <reps> stacks.txt 1 and stacks.py <map> <F_code> <stacks> [focus].
+   SAVE the stacks.py output before the next ec build: it needs the matching F_code.
+2. Issue (10-field table), branch from massxpact/student-Mass, change, build both tiers.
+3. DLL tests both tiers (results.tsv must be byte-identical), timing with ct.bat (chunk_time.exe,
+   before/after interleaved, 3 rounds, checksums must match).
+4. verify<N>.ps1: W3C trace (run-tools.ps1 -Run Trace), Test 2 (--jobs 16, own --tag per tier!),
+   Expat runtests both tiers (logs are UTF-16: iconv before grep). Compare with the previous round.
+5. Report, commit, PR, merge, close with evidence, board Done, status pages PR, then
+   git push origin massxpact/student-Mass:refs/heads/incremental-test (fast-forward only).
+
+TRAPS
+- Test 2 writes chunked-<tag>.tsv: two runs with the same --tag overwrite each other.
+- A precondition of a public feature can't call a {NONE} feature (VAPE); passing READABLE_STRING_8
+  to a STRING_8 parameter is an obsolete implicit copy (as_string_8) - both stop the build.
+- sed "a\" with a shell variable for the indent inserts the variable name literally.
+
+NEXT (from the last profile, 236 ms byte by byte)
+- {XP_PARSER}.continue_prefix / parse_prefix_tokens (~24%), F125_1648 (~16%, a static routine in
+  XP_NATIVE_PARSER), bytes_to_string (~11%, a C_STRING copy per call), STRING_8.item dispatch.

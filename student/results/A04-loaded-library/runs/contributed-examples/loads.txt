@@ -1,0 +1,24 @@
+# A04 contributed-examples: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_contributed_examples.ps1 -OutputDir build\a04\examples
+# 249 processes, 916.9 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     none
+
+## processes started (image [sha256 when under the repository])
+   106 x C:\Windows\System32\cmd.exe
+    33 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe
+    27 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\nmake.exe
+    26 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\lib.exe
+    26 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\link.exe
+    18 x C:\Windows\System32\reg.exe
+     2 x C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe
+     2 x examples\contributed\xpact-incremental-example\EIFGENs\classic\W_code\xpact_example.exe [c51ad1452ba968c9]
+     1 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\ec.exe
+     1 x C:\Windows\System32\doskey.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\finish_freezing.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\quick_finalize.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\emake.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\vctip.exe
+     1 x C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\rc.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cvtres.exe

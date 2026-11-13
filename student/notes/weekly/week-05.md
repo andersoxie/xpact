@@ -22,6 +22,7 @@
   [#124](https://github.com/andersoxie/xpact/issues/124) `<root/>junk` error 4 not 9,
   [#125](https://github.com/andersoxie/xpact/issues/125) default handler gets the bad end tag,
   [#126](https://github.com/andersoxie/xpact/issues/126) default handler gets LF not CR.
+  ✅ *Later (2026-10-31): #122, #124 and #125 fixed and closed; #123 mostly fixed (598 → 133 cases); #126 still open.*
 - The libexpat error codes written in the test catalog on 2026-10-22 are all
   what Expat 2.8.1 really returns.
 

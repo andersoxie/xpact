@@ -1,0 +1,93 @@
+{
+ "documents": 1457486,
+ "xpact REJECT / expat REJECT": 627056,
+ "xpact ACCEPT / expat ACCEPT": 829531,
+ "xpact REJECT / expat ACCEPT": 894,
+ "xpact ACCEPT / expat REJECT": 5
+}
+156110  error: xpact syntax error / expat not well-formed (invalid token)
+        minimal: '<E x>'
+145098  events: xpact attlistdecl / expat attlistdecl field 4
+        minimal: '<?l ?><!DOCTYPE f [<!ENTITY ent0 "é"><!ATTLIST _u ks NMTOKENS #FIXED " 𝄞"><!ATTLIST _u ts NMTOKENS "v"><!ATTLIST Ω n (x) " "><!ATTLIST Ω a CDATA #IMPLIED><!ELEMENT f (#PCDATA)*><!ATTLIST f r IDREF " "'
+        xpact ['attlistdecl', '_u', 'ks', 'NMTOKENS', ' 𝄞', 0]
+        expat ['attlistdecl', '_u', 'ks', 'NMTOKENS', '𝄞', 1]
+119828  events: xpact notationdecl / expat notationdecl field 3
+        minimal: '<?l ?><!DOCTYPE f [<!ENTITY t0 ""><!NOTATION n0 PUBLIC "p" ><!NOTATION n1 PUBLIC " q"><!ATTLIST D><!ATTLIST f k NMTOKEN "t"><!ATTLIST o NN (n1) " "><!ATTLIST f k NMTOKEN #IMPLIED><?pi?><!--t -->]><f><'
+        xpact ['notationdecl', 'n1', None, ' q']
+        expat ['notationdecl', 'n1', None, 'q']
+ 98344  events: xpact attlistdecl / expat attlistdecl field 5
+        minimal: '<?l?><!DOCTYPE f[<!NOTATION n PUBLIC ""><!ELEMENT Ω (A)><!ATTLIST Ω N (0) ""><!ATTLIST Ω c CDATA ""><!ELEMENT m (A)><!ELEMENT e (e)><!ATTLIST e b CDATA #FIXED "">]><f><d n="o"></d></f><!-- -->'
+        xpact ['attlistdecl', 'e', 'b', 'CDATA', '', 0]
+        expat ['attlistdecl', 'e', 'b', 'CDATA', '', 1]
+ 48812  error: xpact unclosed token / expat not well-formed (invalid token)
+        minimal: '<?xml version="1.0" standalone="yes"?><!DOCTYPE item [<!ELEMENT item EMPTY><!ATTLIST item ON (x) #FIXED "  t65;">< &#65;">'
+ 10611  events: xpact startns / expat startns field 2
+        minimal: '<?l?><f><名前 xmlns="" s=\'\'><![CDATA[]]></名前></f>'
+        xpact ['startns', None, '']
+        expat ['startns', None, None]
+  9991  error: xpact not well-formed (invalid token) / expat syntax error
+        minimal: 'm'
+  2591  error: xpact unclosed token / expat syntax error
+        minimal: '<?l?><!DOCTYPED '
+  2266  error: xpact unknown encoding / expat XML declaration not well-formed
+        minimal: '<?xml encoding=""?>'
+   834  verdict: xpact REJECT (XML declaration not well-formed) / expat ACCEPT ()
+        minimal: '<?xml version=\'\' encoding=\'utf8\' standalone=\'no\'?><d><item n=""></item></d>'
+   488  error: xpact not well-formed (invalid token) / expat unclosed token
+        minimal: "'"
+   425  error: xpact reference to invalid character number / expat not well-formed (invalid token)
+        minimal: '<?l?><t b="&#0;& '
+   385  error: xpact not well-formed (invalid token) / expat junk after document element
+        minimal: '<?xml version="1.0" standalone="yes"?><!DOCTYPE d [<!ENTITY % pe "<!ENTITY mPE \'p\'>">%pe;<!ELEMENT d (e,f?)+><!ATTLIST d tok NMTOKEN #REQUIRED><!ELEMENT _u ANY><!ATTLIST _u ref IDREF #IMPLIED><!ELEMEN'
+   119  error: xpact unknown encoding / expat not well-formed (invalid token)
+        minimal: '<?xml version="" encoding="UTF"?>!'
+   117  error: xpact syntax error / expat entity declared in parameter entity
+        minimal: '<?xml version="1.0" standalone="yes"?><!DOCTYPE f [<!ENTITY % pe "<!ENTITY fromPE \'pe\'>">%pe;<!NOTATION n0 PUBLIC "p  q"><!NOTATION n1 SYSTEM "s"><!ATTLIST d c CDATA #IMPLIED><!ATTLIST item tok NMTOKE'
+   102  error: xpact syntax error / expat junk after document element
+        minimal: "<item><Ω g=''></Ω></item><r p"
+   100  error: xpact XML declaration not well-formed / expat unbound prefix
+        minimal: '<?xml version="" encoding="UTF8"?><f><p:x>'
+    84  error: xpact XML declaration not well-formed / expat not well-formed (invalid token)
+        minimal: '<?xml version=""?>t"'
+    78  error: xpact unknown encoding / expat unclosed token
+        minimal: '<?xml encoding=""'
+    60  verdict: xpact REJECT (unknown encoding) / expat ACCEPT ()
+        minimal: "<?xml version='' encoding='utf' standalone='no'?><d></d><?i?>"
+    41  error: xpact unclosed token / expat reference to invalid character number
+        minimal: '<?xml version=\'1.0\' encoding=\'utf-8\' standalone=\'no\'?><!DOCTYPE f [<!NOTATION n0 SYSTEM "s"><!ATTLIST Ω tok NMTOKEN #FIXED "f"><!ATTLIST Ω b CDATA "wo &#0;>"  t'
+    41  error: xpact unclosed token / expat no element found
+        minimal: '<!DOCTYPE '
+    35  error: xpact unclosed token / expat illegal character(s) in public id
+        minimal: '<!DOCTYPE d[<!ENTITY t0 "t\'>">%pe;<!NOTATION n0 PUBLIC "ps"><!NOTATION n1 PUBLIC "p >><"  '
+    32  error: xpact entity declared in parameter entity / expat not well-formed (invalid token)
+        minimal: '<?xml version="1.0" standalone="yes"?><!DOCTYPE e [<!ENTITY ent0 "<e𝄞"><!ENTITY % pe "<!ENTITY fromPE \'pxt\'>">%pe;<!ATTLIST d id ID #FIXED " &fromPE;&;"ATTF "\t&;é">T'
+    30  error: xpact illegal character in public id / expat not well-formed (invalid token)
+        minimal: '<!DOCTYPE e[<!ENTITY e "!ENTITY frE \'t\'>">%pe;<!NOTATION n0 PUBLIC "p  e>"&f>\n'
+    20  error: xpact syntax error / expat illegal parameter entity reference
+        minimal: '<?l?><!DOCTYPE f[<!ENTITY nt "<%peE;" ><'
+    13  error: xpact unclosed token / expat illegal parameter entity reference
+        minimal: '<?l?><!DOCTYPE d[<!ENTITY t ">%pe;< " '
+     7  error: xpact unknown encoding / expat unbound prefix
+        minimal: "<?xml version='' encoding='utf' standalone='no'?><f><p:m>"
+     7  error: xpact unclosed token / expat incomplete markup in parameter entity
+        minimal: '<?l \'?><!DOCTYPE i[<!ENTITY t0 ";"><!ENTITY % pe "<!ENTITY fE \'pe-\'">%pe;<'
+     6  error: xpact syntax error / expat reference to invalid character number
+        minimal: '<?l .0" encoding="UTF-8"?><!DOCTYPE f [<!ENTITY ent0 "&#0;<!"\t ]𝄞<fx>'
+     6  error: xpact XML declaration not well-formed / expat entity declared in parameter entity
+        minimal: '<?xml version="--0" standalone="yes"?><!DOCTYPE e [<!ENTITY % pe "<!ENTITY fromPE \'pe\'>">%pe;<!ELEMENT Ω (#PCDATA|e|f)*><!ATTLIST Ω b CDATA #FIXED "&apos;"><!ATTLIST Ω toks NMTOKENS "  two "><!ELEMENT'
+     6  error: xpact reference to invalid character number / expat unclosed token
+        minimal: '<e z="&#0;'
+     5  verdict: xpact ACCEPT () / expat REJECT (not well-formed (invalid token))
+        minimal: '<?xml version="1.0" encoding="UTF8"?><f><a.b x=\'\' s=""><![CDATA[]]>é</a.b></f>'
+     4  error: xpact unclosed token / expat entity declared in parameter entity
+        minimal: '<?xml version="1.0" standalone="yes"?><!DOCTYPE d [<!ENTITY % pe "<!ENTITY fromPE \'p\'>">%pe;<!ATTLIST b b CDATA " &fromPE;a="  t'
+     3  error: xpact syntax error / expat unclosed token
+        minimal: '<?l?><!DOCTYPE t[<!ENTITY ent0 "&q;>"><!ENTITY % pe "<!ENTITY frE \'xt\'><">%pe;<'
+     3  error: xpact not well-formed (invalid token) / expat mismatched tag
+        minimal: '<?xml version="1.0" standalone="yes"?><!DOCTYPE f [<!NOTATION n0 PUBLIC "p" "s"><!ELEMENT Ω (e,f?)+><!ATTLIST Ω c CDATA #REQUIRED><!ATTLIST Ω b CDATA #IMPLIED><!ELEMENT f (#PCDATA)><!ATTLIST f a CDATA'
+     3  error: xpact unbound prefix / expat not well-formed (invalid token)
+        minimal: '<?xml version="1.0" encoding="UTF8"?><e p:a=\'𝄞\'>'
+     3  error: xpact syntax error / expat illegal character(s) in public id
+        minimal: '<?xml version="1.0" standalone="yes"?><!DOCTYPE d [<!ENTITY ent0 ""><!ENTITY % pe "<!ENTITY fromPE \'pe-text\'>">%pe;<!NOTATION n0 SYSTEM "s"><!NOTATION n1 PUBLIC "d><Ω z="\n&f]]&ef><!--'
+     2  error: xpact XML declaration not well-formed / expat syntax error
+        minimal: "<?xml version='' encoding='utf8' standalone='no'?>e"

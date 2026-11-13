@@ -1,0 +1,70 @@
+14c14
+< eduni\errata-2e\E18.xml	0	21	4	0	74	102
+---
+> eduni\errata-2e\E18.xml	1	0	8	0	107	163
+31c31
+< eduni\errata-2e\E60.xml	0	21	5	0	88	123
+---
+> eduni\errata-2e\E60.xml	1	0	8	0	102	158
+534c534
+< eduni\xml-1.1\002.xml	0	21	5	0	115	150
+---
+> eduni\xml-1.1\002.xml	1	0	8	0	130	186
+711,712c711,712
+< ibm\invalid\P68\ibm68i03.xml	0	21	5	2	127	168
+< ibm\invalid\P68\ibm68i04.xml	0	21	5	2	127	168
+---
+> ibm\invalid\P68\ibm68i03.xml	1	0	11	0	221	298
+> ibm\invalid\P68\ibm68i04.xml	1	0	11	0	221	298
+719,720c719,720
+< ibm\invalid\P69\ibm69i03.xml	0	21	5	2	127	168
+< ibm\invalid\P69\ibm69i04.xml	0	21	5	2	128	169
+---
+> ibm\invalid\P69\ibm69i03.xml	1	0	11	0	221	298
+> ibm\invalid\P69\ibm69i04.xml	1	0	11	0	222	299
+1115,1116c1115,1116
+< ibm\not-wf\P77\ibm77n03.xml	0	21	7	0	160	209
+< ibm\not-wf\P77\ibm77n04.xml	0	21	7	0	160	209
+---
+> ibm\not-wf\P77\ibm77n03.xml	1	0	10	0	183	253
+> ibm\not-wf\P77\ibm77n04.xml	1	0	10	0	183	253
+1119,1120c1119,1120
+< ibm\not-wf\P79\ibm79n01.xml	0	21	7	0	160	209
+< ibm\not-wf\P79\ibm79n02.xml	0	21	7	0	160	209
+---
+> ibm\not-wf\P79\ibm79n01.xml	1	0	10	0	183	253
+> ibm\not-wf\P79\ibm79n02.xml	1	0	10	0	183	253
+1736c1736
+< ibm\valid\P68\ibm68v02.xml	0	21	5	2	127	168
+---
+> ibm\valid\P68\ibm68v02.xml	1	0	11	0	219	296
+1740c1740
+< ibm\valid\P69\ibm69v02.xml	0	21	5	2	127	168
+---
+> ibm\valid\P69\ibm69v02.xml	1	0	11	0	219	296
+1743c1743
+< ibm\valid\P70\ibm70v01.xml	0	21	14	0	393	491
+---
+> ibm\valid\P70\ibm70v01.xml	1	0	17	40	462	701
+1747c1747
+< ibm\valid\P79\ibm79v01.xml	0	21	7	0	138	187
+---
+> ibm\valid\P79\ibm79v01.xml	1	0	12	0	239	323
+2427c2427
+< sun\not-wf\decl01.xml	0	21	6	4	131	185
+---
+> sun\not-wf\decl01.xml	1	0	9	0	150	213
+2770,2771c2770,2771
+< xmltest\valid\not-sa\011.xml	0	21	3	0	47	68
+< xmltest\valid\not-sa\012.xml	0	21	3	0	47	68
+---
+> xmltest\valid\not-sa\011.xml	1	0	6	0	66	108
+> xmltest\valid\not-sa\012.xml	1	0	6	0	66	108
+2784c2784
+< xmltest\valid\not-sa\026.xml	0	21	4	0	66	94
+---
+> xmltest\valid\not-sa\026.xml	1	0	8	0	128	184
+2918c2918
+< xmltest\valid\sa\097.xml	0	21	5	0	101	136
+---
+> xmltest\valid\sa\097.xml	1	0	9	0	149	212

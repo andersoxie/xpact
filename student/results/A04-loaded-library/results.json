@@ -1,0 +1,383 @@
+{
+ "dll-build-production": {
+  "what": "DLL build + C DLL smoke test (`build_native_eiffel.ps1`)",
+  "configuration": "Production tier",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 943.7,
+  "processes": 379,
+  "library_hashes": {
+   "normal": "23854731670c2786",
+   "assertions": "9d1f30aa84eec3da",
+   "bridge-only": "",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_eiffel_dll_smoke.exe -> build\\native-eiffel\\xpact.dll [normal, 23854731670c2786]"
+  ]
+ },
+ "dll-build-assertions": {
+  "what": "DLL build + C DLL smoke test (`build_native_eiffel.ps1`)",
+  "configuration": "Assertions tier",
+  "expected": [
+   "assertions"
+  ],
+  "observed": [
+   "assertions"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 940.6,
+  "processes": 403,
+  "library_hashes": {
+   "normal": "23854731670c2786",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_assertions_eiffel_dll_smoke.exe -> build\\native-eiffel\\xpact_assertions.dll [assertions, c255a20b888566f2]"
+  ]
+ },
+ "csharp-normal": {
+  "what": "C# P/Invoke DLL tests (`XpactDllTests.exe`)",
+  "configuration": "`--dll build\\native-eiffel\\xpact.dll`",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 1.1,
+  "processes": 19,
+  "library_hashes": {
+   "normal": "23854731670c2786",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "XpactDllTests.exe -> build\\native-eiffel\\xpact.dll [normal, 23854731670c2786]"
+  ]
+ },
+ "csharp-default": {
+  "what": "C# P/Invoke DLL tests (`XpactDllTests.exe`)",
+  "configuration": "no `--dll` (default)",
+  "expected": [
+   "assertions"
+  ],
+  "observed": [
+   "assertions"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 0.7,
+  "processes": 19,
+  "library_hashes": {
+   "normal": "23854731670c2786",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "XpactDllTests.exe -> build\\native-eiffel\\xpact_assertions.dll [assertions, c255a20b888566f2]"
+  ]
+ },
+ "abi-windows": {
+  "what": "Native ABI smoke tests (`run_native_abi_tests.ps1`)",
+  "configuration": "`-Target Windows`",
+  "expected": [
+   "bridge-only"
+  ],
+  "observed": [
+   "bridge-only"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 907.4,
+  "processes": 114,
+  "library_hashes": {
+   "normal": "23854731670c2786",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_abi_smoke.exe -> build\\native\\xpact.dll [bridge-only, f65b09225e2c1a0d]",
+   "xpact_bridge_smoke.exe -> build\\native\\xpact.dll [bridge-only, f65b09225e2c1a0d]"
+  ]
+ },
+ "chunked-crc": {
+  "what": "Chunked CRC harness (`run_chunked_crc_harness.ps1`)",
+  "configuration": "`-Target Xpact -Repeat 1`",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 935.4,
+  "processes": 370,
+  "library_hashes": {
+   "normal": "fedfb077aeb70706",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_chunked_crc.exe -> build\\native-eiffel\\xpact.dll [normal, fedfb077aeb70706]"
+  ]
+ },
+ "shim-audit": {
+  "what": "Incremental shim audit (`run_incremental_shim_audit.ps1`)",
+  "configuration": "default",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 932.7,
+  "processes": 385,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_incremental_shim_audit.exe -> build\\native-eiffel\\xpact.dll [normal, 875b5664e5e9a0c6]"
+  ]
+ },
+ "libexpat-adapter-jenkins": {
+  "what": "Expat's C tests against xpact (`run_libexpat_adapter.ps1 -Mode NativeSuite`)",
+  "configuration": "`-XpactLibrary build\\native-eiffel\\xpact.lib`, as Jenkins",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 1,
+  "timed_out": false,
+  "seconds": 911.5,
+  "processes": 625,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_libexpat_runtests.exe -> build\\native-eiffel\\xpact.dll [normal, 875b5664e5e9a0c6]"
+  ]
+ },
+ "libexpat-adapter-default": {
+  "what": "Expat's C tests against xpact (`run_libexpat_adapter.ps1 -Mode NativeSuite`)",
+  "configuration": "no `-XpactLibrary` (default), after the ABI tests",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "bridge-only"
+  ],
+  "verdict": "MISMATCH",
+  "exit_code": 1,
+  "timed_out": false,
+  "seconds": 910.6,
+  "processes": 567,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_libexpat_runtests.exe -> build\\native\\xpact.dll [bridge-only, f65b09225e2c1a0d]"
+  ]
+ },
+ "jenkins-benchmarks": {
+  "what": "Jenkins Benchmarks stage (`run_benchmarks.ps1 -W3cAllCases`)",
+  "configuration": "default `-EiffelBuild` (Finalized, FinalizedAssertions, as Jenkins) `-SkipBuild -SkipWslC`, 1 iteration, 2 repetitions (1 fails, see the README)",
+  "expected": [
+   "assertions",
+   "normal"
+  ],
+  "observed": [
+   "assertions",
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 293.6,
+  "processes": 1078,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_native_windows_c_benchmark.exe -> build\\native-eiffel\\xpact.dll [normal, 875b5664e5e9a0c6]",
+   "xpact_w3c_case.exe -> build\\a04\\benchmarks\\w3c-dll\\FinalizedAssertions\\xpact_assertions.dll [assertions, c255a20b888566f2]",
+   "xpact_w3c_case.exe -> build\\a04\\benchmarks\\w3c-dll\\Finalized\\xpact.dll [normal, 875b5664e5e9a0c6]"
+  ]
+ },
+ "large-xml": {
+  "what": "Large XML benchmarks (`run_large_xml_benchmarks.ps1`)",
+  "configuration": "one small file, `-SkipBuild -SkipWslC`",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 903.5,
+  "processes": 65,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "xpact_native_windows_c_benchmark.exe -> build\\native-eiffel\\xpact.dll [normal, 875b5664e5e9a0c6]"
+  ]
+ },
+ "contributed-examples": {
+  "what": "Contributed examples (`run_contributed_examples.ps1`)",
+  "configuration": "default",
+  "expected": [
+   "no xpact DLL"
+  ],
+  "observed": [
+   "no xpact DLL"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 916.9,
+  "processes": 249,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": []
+ },
+ "package": {
+  "what": "Windows release package (`package_windows_release.ps1`)",
+  "configuration": "`-SkipBuild`",
+  "expected": [
+   "no xpact DLL"
+  ],
+  "observed": [
+   "no xpact DLL"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 2.2,
+  "processes": 1,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": []
+ },
+ "python-suite": {
+  "what": "Python test suite (`unittest discover tests/python`)",
+  "configuration": "default",
+  "expected": [
+   "any known build"
+  ],
+  "observed": [
+   "no xpact DLL"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 941.4,
+  "processes": 413,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": []
+ },
+ "eiffel-matrix": {
+  "what": "Eiffel test matrix (`run_eiffel_test_matrix.ps1`)",
+  "configuration": "all build modes, assertions off and on",
+  "expected": [
+   "no xpact DLL"
+  ],
+  "observed": [
+   "no xpact DLL"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 959.6,
+  "processes": 429,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": []
+ },
+ "student-test1": {
+  "what": "Student tool: W3C output test (`reports/issue-0154/tools/run.py`)",
+  "configuration": "default `--dll`",
+  "expected": [
+   "normal"
+  ],
+  "observed": [
+   "normal"
+  ],
+  "verdict": "ok",
+  "exit_code": 0,
+  "timed_out": false,
+  "seconds": 3.2,
+  "processes": 3,
+  "library_hashes": {
+   "normal": "875b5664e5e9a0c6",
+   "assertions": "c255a20b888566f2",
+   "bridge-only": "f65b09225e2c1a0d",
+   "expat-2.8.1": "36a2532e2181ab8b"
+  },
+  "loads": [
+   "python.exe -> build\\native-eiffel\\xpact.dll [normal, 875b5664e5e9a0c6]"
+  ]
+ }
+}

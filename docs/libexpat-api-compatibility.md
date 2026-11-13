@@ -73,9 +73,10 @@ event path: parser reset semantics, start/end element callbacks, character
 data, XML 1.0 tokenization, XML declaration callbacks/diagnostics, DTD
 declaration callbacks, entity expansion, external-entity resolver policy,
 external-subset loading, and error reporting.
-The core consumes complete input buffers; the native chunk adapter uses
-accumulated-buffer replay. Accepting chunked input is not yet a claim of a fully
-incremental parser core.
+The direct core entry consumes complete input buffers. The native chunk adapter
+also supports [checkpoint resume](incremental-resume.md) for eligible UTF-8 and
+UTF-16 input, while retaining the full input and documented replay fallbacks.
+This does not establish bounded-memory streaming across every API path.
 
 ## Tracked Parity Gaps
 

@@ -56,7 +56,7 @@ The document `<book><title>Hello</book>` has mismatched tags. A parser should re
 
 A file or network message may arrive in pieces. For example, the first chunk could be `<bo` and the second `ok/>`. An incremental parser remembers enough state to continue correctly. The final result should agree with parsing the same bytes in one call, although the boundaries between text callbacks may differ.
 
-Our production native adapter currently retains accumulated input and reparses it. Xpact-core has a more developed design for keeping parsing state and consuming completed input. That makes it a candidate for an integration experiment.
+Our production native adapter retains accumulated input, but eligible input now resumes from a parser checkpoint. Other cases still use replay. Xpact-core offers a separate design for keeping parsing state and consuming completed input, making it a candidate for an integration experiment.
 
 ### Three names to keep separate
 
@@ -258,7 +258,7 @@ Reset now clears handlers and context, rejects child resets and preserves requir
 
 ### P1 repeated work and memory use
 
-October profiling and position/materialization fixes are documented in [the performance history](performance-analysis.md). Extend scaling checks across parser modes rather than assuming the original rescan defect still reproduces. Native input copies and whole-prefix replay remain broader work; isolated incremental prototypes exist but are not the production shim. Large parsing-engine changes remain outside the student's minimum scope.
+October profiling and position/materialization fixes are documented in [the performance history](performance-analysis.md). The production native adapter [resumes from checkpoints](incremental-resume.md) for eligible UTF-8 and UTF-16 input, retaining parser state. Full input buffers and replay fallbacks remain; extend memory and scaling checks across modes. Isolated incremental prototypes remain separate. Large parsing-engine changes remain outside the student's minimum scope.
 
 <!-- pagebreak -->
 

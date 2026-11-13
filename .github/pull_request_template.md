@@ -1,7 +1,8 @@
 Refs #
-<!-- Student issue-fix workflow: these pull requests go into student-Mass,
-     not the default branch main, so "Closes #" does not close the issue there.
-     Close the issue by hand after the merged result has been verified.
+<!-- Student issue-fix workflow: pull requests go into incremental-test;
+     never target main. Since incremental-test is not the default branch,
+     "Closes #" does not close the issue. Merge with a merge commit,
+     never squash. Close the issue by hand after checking the merged commit.
      student/tools/fix.ps1 finish writes this description for you. -->
 <!-- For other authorized work, record the agreed target branch and evidence.
      The student-specific checklist below is scoped to that workflow.

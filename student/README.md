@@ -5,20 +5,16 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-**Repository status reviewed 13 November 2026.** The student records below
-retain their dates and machine/branch identities. The implemented
-[dual catalog](../docs/dual-catalog-lane.md), [W3C](../docs/dual-w3c-lane.md)
-and [regression](../docs/dual-regression-lane.md) lanes now compare xpact with
-pinned Xpact-core. The [28 October integrated W3C report](../reports/latest-2026-10-28/README.md)
-records 2,283 checked verdicts and 302 no-crash-only cases per assertion mode.
-The [current compiler comparison](../docs/wsl-benchmarks.md) and
-[Gobo qualification](../docs/gobo-assertions.md) are separate 13 November evidence,
-not a rerun of every student/native/DLL test. Native `Production` still defaults
-to assertions off; choose `Assertions` explicitly for contract-enabled work.
+> **Updated 2026-11-11 (week 8)** · work branch is **`incremental-test`** (andersoxie/xpact, since 2026-11-08); `student-Mass` was contained in it and deleted 2026-11-10.
+> Weeks 1-7 ✅, week 8 🟡 · state and next steps: [CONTINUE-HERE.md](CONTINUE-HERE.md), [PLAN.md](PLAN.md) ("Next", "Known problems"), [week-08](notes/weekly/week-08.md).
 
-> **Historical student snapshot: 26 October 2026 (week 4)** · `student-Mass`
-> at `97795fb`, then 0 behind `main`. The #104/#110 checks passed on the student
-> PC; issue and Jenkins follow-up labels from that date are not current tracker status.
+**Repository context, 13 November 2026:** the [dual catalog](../docs/dual-catalog-lane.md),
+[W3C](../docs/dual-w3c-lane.md) and [regression](../docs/dual-regression-lane.md)
+lanes compare xpact with pinned Xpact-core. The [compiler comparison](../docs/wsl-benchmarks.md)
+and [Gobo qualification](../docs/gobo-assertions.md) are separate local evidence,
+not a new Jenkins job or a rerun of the student/native/DLL suite. Native
+`Production` defaults to assertions off; choose `Assertions` for the checked DLL.
+The student records retain their dates and branch identities.
 
 ## Start here
 
@@ -28,16 +24,15 @@ to assertions off; choose `Assertions` explicitly for contract-enabled work.
 | 2️⃣ | [PLAN.md](PLAN.md) | **Every day.** Where things stand, pull requests to merge, the known problems, next steps |
 | 3️⃣ | [`../CLAUDE.md`](../CLAUDE.md) and [VERSIONING.md](VERSIONING.md) | **Before a change.** How to report, test, branch and open a pull request |
 
-[PLAN2.md](PLAN2.md) is the frozen, detailed record of weeks 1–2 as of 2026-10-15.
 
 ## Find it fast
 
 | I want to see… | Open |
 |---|---|
 | Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
-| Recorded problems and follow-up requests | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list), with dated status and current-context notes |
-| Dated integrated student verification (28 October) | [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md); earlier MSVC check: [`../reports/issue-0110/`](../reports/issue-0110/report.md); first DLL run: [`results/dll-tests-2026-10-22/`](results/dll-tests-2026-10-22/README.md) |
-| A one-page status for the supervisor | [`for superviser.txt`](for%20superviser.txt) |
+| Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
+| Dated test results and later fixes | W3C, 28 October: 2,283 checked verdicts plus 302 no-crash-only cases: [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md) · xpact vs Expat across chunks: [`results/G03-comparison/`](results/G03-comparison/README.md) · each fix since: [`../reports/README.md`](../reports/README.md) |
+| The open questions for the supervisor | [PLAN.md](PLAN.md), "Next", item 2 |
 | Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
 | What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |
 | Test results and investigations | [`results/README.md`](results/README.md) |
@@ -46,31 +41,32 @@ to assertions off; choose `Assertions` explicitly for contract-enabled work.
 | Issues not on GitHub yet | [`github/issues/`](github/issues/), listed in [`github/README.md`](github/README.md) |
 | How to make and revert a fix | [VERSIONING.md](VERSIONING.md) |
 
-The clone on this PC is `C:\xpact\xpact-student-Mass`. Make every
-change there, never in a copied folder: a copy has no commit hash, so its
-results can't be traced.
+The clone on this PC is `C:\Users\masou\Desktop\Lia\xpact\xpactGit`
+(`xpact\w10-attr-defaults` and `xpact\w11-plan` are extra worktrees of it, used to
+build several fixes side by side). Make every change there, never in a copied
+folder: a copy has no commit hash, so its results can't be traced.
 
-## Tools on this PC (2026-10-21)
+## Tools on this PC (2026-10-31)
 
 | Tool | Where | Note |
 |---|---|---|
-| Python 3.15 | `%APPDATA%\uv\python\cpython-3.15.0-windows-x86_64-none\python.exe` | Installed with uv, **not on `PATH`**: `python` opens the Microsoft Store alias. Call it by its full path, or run `uv python install --default` once |
-| GitHub CLI 2.102 | `%LOCALAPPDATA%\Microsoft\WinGet\Packages\GitHub.cli_Microsoft.Winget.Source_8wekyb3d8bbwe\bin\gh.exe` | Installed with winget, logged in as `CodTanium`. A VS Code terminal opened before the install doesn't find `gh` until VS Code is restarted |
+| Python 3.14.0 | `%LOCALAPPDATA%\Programs\Python\Python314\python.exe` | On `PATH` as `python`; the project needs 3.11 or newer ([#113](../reports/issue-0113/report.md)) |
+| GitHub CLI 2.102 | `%LOCALAPPDATA%\Programs\GitHubCLI\bin\gh.exe` | On `PATH`, logged in as `CodTanium` |
 | EiffelStudio 25.12, Visual Studio 18 (MSVC 14.51) | standard install paths | `ec` is on `PATH`; load MSVC with `. .\scripts\import_msvc_environment.ps1` |
 
-`tools/fix.ps1` does not work in **Windows PowerShell 5.1**: git writes normal
-messages ("Already on …", push progress) to stderr, and the script stops on
-them. Until that is fixed, do its steps by hand, as described in
-[VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51).
+`tools/fix.ps1` works in **Windows PowerShell 5.1** for `start` and `finish` when it is run
+plainly. Two things still stop it: adding `2>&1` (git's normal messages on stderr then count as
+errors), and a pull request title with `""` in it (5.1 splits the argument). In those cases do the
+step by hand, as described in [VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51).
 
 ## Layout
 
 | Path | What goes there |
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | The project in plain words (written 2026-10-21 as `guide.txt`, updated) |
-| [`PLAN.md`](PLAN.md) / [`PLAN2.md`](PLAN2.md) | Live plan and status / frozen weeks 1–2 record |
-| [`VERSIONING.md`](VERSIONING.md) | How every fix is made: issue, branch, report, pull request, squash merge, revert |
-| [`tools/fix.ps1`](tools/fix.ps1) | Runs and checks those steps (`start`, `finish`, `merge`, `revert`, `status`) |
+| [`PLAN.md`](PLAN.md) | Live plan and status |
+| [`VERSIONING.md`](VERSIONING.md) | How every fix is made: issue, branch, report, pull request, merge commit, revert |
+| [`tools/fix.ps1`](tools/fix.ps1) | Runs and checks those steps (`start`, `finish`, `merge`, `revert`, `status`); base `incremental-test`, refuses `main` (#318) |
 | [`git/commit-template.txt`](git/commit-template.txt) | Commit message template (asks for `Refs #<issue>`) |
 | [`history/`](history/) | Weeks 1–2 before this repository: error reports, build fix notes, the old fixes as patches |
 | [`baseline/`](baseline/) | The week 2 assertions-enabled baseline: script, event trace, logs, BASELINE.md |
@@ -78,7 +74,6 @@ them. Until that is fixed, do its steps by hand, as described in
 | [`notes/weekly/`](notes/weekly/) | Half-page weekly notes, one file per week; other notes in [`notes/`](notes/), e.g. the [tests chosen on 2026-10-21](notes/next-tests-2026-10-21.txt) |
 | [`report/`](report/) | The university report, demonstration notes and handover guide (weeks 8–10) |
 | [`github/`](github/) | Labels, milestones and issue drafts, plus `setup-github.ps1`, which creates them on GitHub |
-| [`for superviser.txt`](for%20superviser.txt) | One-page status for the supervisor |
 
 Outside this folder:
 
@@ -94,12 +89,12 @@ Outside this folder:
 | Branch | Purpose |
 |---|---|
 | `main` | The teacher's code. Never commit to it directly. |
-| `student-Mass` | Your integration branch. Every fix lands here as one squashed commit. |
-| `fix/<issue>-<name>` | One short-lived branch per issue, e.g. `fix/7-msvc-c-backend`, made by `fix.ps1 start` from the latest `student-Mass` and deleted by `fix.ps1 merge` |
+| `incremental-test` | Current work branch since 2026-11-08 (contains all of `student-Mass`). Fixes land here as one merge commit per pull request (never squash, since 2026-11-10). |
+| `student-Mass` | Earlier integration branch (until 2026-11-08); fully contained in `incremental-test`, deleted 2026-11-10. |
+| `fix/<issue>-<name>` | One short-lived branch per issue, e.g. `fix/7-msvc-c-backend`, made by `fix.ps1 start` from the latest `incremental-test` and deleted by `fix.ps1 merge` |
 
-A `fix/...` branch that still exists belongs to an open pull request, e.g.
-`fix/3-start-tag-loop-variant` for #12, which waits for review because it
-changes the parser.
+A `fix/...` branch that still exists belongs to an open pull request, or was merged and not
+deleted yet (the list is in [PLAN.md](PLAN.md), "Next" item 12).
 
 ## Working on one issue
 
@@ -112,18 +107,22 @@ cd C:\xpact\xpact-student-Mass
 #   change, test, save the logs next to the report, add "## Verification",
 #   add a row to reports\README.md, commit (the template asks for "Refs #7")
 .\student\tools\fix.ps1 finish                                # checks, pushes, opens the pull request
-.\student\tools\fix.ps1 merge                                 # squash-merges into student-Mass
+.\student\tools\fix.ps1 merge                                 # merge commit into incremental-test
 ```
 
 After merging:
 
-- The pull request goes into `student-Mass`, not the default branch `main`, so
+- The pull request goes into `incremental-test`, not the default branch `main`, so
   "Closes #7" does **not** close the issue. Comment "Fixed in `<sha>` (PR #N)"
   on the issue and close it by hand.
 - Update [PLAN.md](PLAN.md) when a planned task changes state, and write the
   week's note in [`notes/weekly/`](notes/weekly/).
-- Parser changes (`src/`) are not merged by `fix.ps1 merge` until the parser's
-  developer has reviewed the pull request.
+- Parser changes (`src/`): at first they waited for the parser's developer. Since
+  2026-10-28 they are merged into the work branch (`student-Mass`, now `incremental-test`) after
+  the full check set (both builds, compared with Expat 2.8.1; see each `reports/issue-NNNN/report.md`);
+  the supervisor reviews them when `incremental-test` goes into `main`.
+- An issue is closed after the result is checked locally on the merged `incremental-test` commit;
+  no Jenkins run is needed (student decision, 2026-10-31; Jenkins dropped 2026-11-03).
 
 ## What every result must record
 

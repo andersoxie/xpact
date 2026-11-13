@@ -1,0 +1,47 @@
+﻿mobile   docs        perf  99  a11y 100  best 100  seo 100
+    - render-blocking-resources: Eliminate render-blocking resources [Est savings of 150Â ms]
+    - unused-javascript: Reduce unused JavaScript [Est savings of 40Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests [Est savings of 150Â ms]
+mobile   benchmarks  perf 100  a11y 100  best 100  seo 100
+    - render-blocking-resources: Eliminate render-blocking resources [Est savings of 150Â ms]
+    - unused-javascript: Reduce unused JavaScript [Est savings of 38Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests [Est savings of 150Â ms]
+mobile   project     perf 100  a11y  98  best 100  seo 100
+    - heading-order: Heading elements are not in a sequentially-descending order []
+    - render-blocking-resources: Eliminate render-blocking resources [Est savings of 150Â ms]
+    - unused-javascript: Reduce unused JavaScript [Est savings of 40Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests [Est savings of 150Â ms]
+mobile   validator   perf  99  a11y 100  best 100  seo 100
+    - render-blocking-resources: Eliminate render-blocking resources [Est savings of 150Â ms]
+    - unused-javascript: Reduce unused JavaScript [Est savings of 38Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests [Est savings of 150Â ms]
+mobile   home        perf  99  a11y 100  best 100  seo 100
+    - render-blocking-resources: Eliminate render-blocking resources [Est savings of 150Â ms]
+    - unused-javascript: Reduce unused JavaScript [Est savings of 41Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests [Est savings of 150Â ms]
+desktop  docs        perf 100  a11y 100  best 100  seo 100
+    - unused-javascript: Reduce unused JavaScript [Est savings of 40Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests []
+desktop  benchmarks  perf  99  a11y 100  best 100  seo 100
+    - unused-javascript: Reduce unused JavaScript [Est savings of 38Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests []
+desktop  project     perf 100  a11y  98  best 100  seo 100
+    - heading-order: Heading elements are not in a sequentially-descending order []
+    - unused-javascript: Reduce unused JavaScript [Est savings of 40Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests []
+desktop  validator   perf 100  a11y 100  best 100  seo 100
+    - unused-javascript: Reduce unused JavaScript [Est savings of 38Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests []
+desktop  home        perf  98  a11y 100  best 100  seo 100
+    - unused-javascript: Reduce unused JavaScript [Est savings of 41Â KiB]
+    - network-dependency-tree-insight: Network dependency tree []
+    - render-blocking-insight: Render blocking requests []

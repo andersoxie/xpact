@@ -140,6 +140,14 @@ feature -- Events
 			Result := False
 		end
 
+	replay_sequence_count: INTEGER
+			-- Callbacks counted so far by a handler that replays a re-parsed input, or 0.
+		do
+			Result := 0
+		ensure
+			non_negative: Result >= 0
+		end
+
 	on_start_element (a_name: READABLE_STRING_8; a_attributes: XP_ATTRIBUTES)
 			-- A start element was parsed.
 		require
@@ -249,6 +257,7 @@ feature -- Events
 
 	on_attlist_decl (a_element_name, a_attribute_name, a_attribute_type: READABLE_STRING_8; a_default_value: detachable READABLE_STRING_8; a_is_required: BOOLEAN)
 			-- Attribute-list declaration was parsed.
+			-- `a_is_required' is True for `#REQUIRED' and `#FIXED', as in Expat's attlist handler.
 		require
 			element_name_attached: a_element_name /= Void
 			element_name_not_empty: not a_element_name.is_empty

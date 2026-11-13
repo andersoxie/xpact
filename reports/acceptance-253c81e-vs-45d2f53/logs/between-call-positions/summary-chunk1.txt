@@ -1,0 +1,13 @@
+calls 150246: equal to Expat baseline 49573, ours 23282
+calls changed 58833: ours = Expat 4, baseline = Expat 26295, neither 32534
+what changed: {'statusline/colbyte': 20, 'line/colbyte': 58813}
+   (1, 107) base ('0', '4', '0', '74') ours ('1', '8', '0', '107') expat ('1', '8', '0', '107')
+   (2, 77) base ('1', '3', '0', '71') ours ('1', '3', '5', '76') expat ('1', '3', '0', '71')
+   (2, 78) base ('1', '3', '0', '71') ours ('1', '3', '5', '76') expat ('1', '3', '0', '71')
+   (2, 79) base ('1', '3', '0', '71') ours ('1', '3', '5', '76') expat ('1', '3', '0', '71')
+   (2, 80) base ('1', '3', '0', '71') ours ('1', '3', '5', '76') expat ('1', '3', '0', '71')
+   (2, 81) base ('1', '3', '0', '71') ours ('1', '3', '5', '76') expat ('1', '3', '0', '71')
+start/end tag: 14883 calls in 125 files
+comment/CDATA/decl: 11372 calls in 103 files
+PI: 40 calls in 3 files
+{'ours ahead': 26295}

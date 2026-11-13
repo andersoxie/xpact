@@ -1,0 +1,2 @@
+# Byte-exact inputs: never convert line endings.
+*.xml binary

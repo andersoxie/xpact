@@ -3,8 +3,13 @@
 `XP_INCREMENTAL_PARSE_SESSION` is the first isolated prototype for the true
 incremental parser core. It is not wired into `XP_NATIVE_PARSER` yet.
 
-The point of this step is to establish a state-owned parsing shape before
-moving production behavior away from accumulated-buffer replay.
+> Since mass-xpact #2, `XP_NATIVE_PARSER` resumes the existing `XP_PARSER` from a
+> checkpoint instead of parsing the whole buffer again; see
+> [incremental-resume.md](incremental-resume.md). This prototype is not used by it.
+
+The prototype explores a bounded unconsumed-input window and explicit session
+state. Production checkpoint resume is a separate implementation and still
+retains the full input for replay fallbacks.
 
 ## Current Scope
 
@@ -44,8 +49,9 @@ The Eiffel regression suite currently checks that:
 
 The production [shim audit](incremental-shim-audit.md) also expects immediate
 callbacks for its completed attributed-start-tag cases, with and without
-reparse deferral. The architectural difference is retained incremental state
-versus accumulated-buffer replay, not a blanket difference in callback timing.
+reparse deferral. Production also retains state through its checkpoint-resume
+path. This prototype's separate bounded-window design is not a blanket
+difference in callback timing.
 
 ## Not In Scope Yet
 

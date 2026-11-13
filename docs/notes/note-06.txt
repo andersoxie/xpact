@@ -1,0 +1,51 @@
+Note6 - 2026-11-03 - Expat runtests found an accounting bug in #1 (fixed)
+=======================================================================
+
+HOW THE EXPAT SUITE WAS FINALLY RUN
+- The auto-mode permission check blocked ME from building the downloaded Expat source.
+  The user ran it themselves first; after that my runs of the same script were allowed.
+- cmake is NOT on PATH in a normal PowerShell. Use Visual Studio's copy:
+  $env:PATH = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;$env:PATH"
+- Command (source is in scratchpad\expat-src\expat-2.8.1, use a NEW -OutputDir each run):
+  .\scripts\run_libexpat_adapter.ps1 -Mode NativeSuite -ExpatSourceDir <src> -XpactLibrary build\native-eiffel\xpact.lib -SkipNativeBuild -SkipXpactBuild -OutputDir build\<new>
+- Takes ~3-7 min. Expected: "Checks: 399, Failed: 38" (allocator tests), script exit 0.
+  "***Failed" on the ctest line is NORMAL (the 38).
+- Full log: build\<out>\cbuild\Testing\Temporary\LastTest.log
+- Run ONE test alone (needs the DLL on PATH, else exit 0xC0000135 = DLL not found):
+  $env:PATH = "C:\xpact\xpact-student-Mass\build\native-eiffel;$env:PATH"
+  build\<out>\cbuild\Debug\xpact_libexpat_runtests.exe --timeout 120 --test <name>
+- Compare failure lists: grep -o "FAIL \[[^]]*\]: [a-z0-9_]*" LastTest.log | sort
+  reference list: reports\issue-0165\logs\checks\runtests-after.txt
+
+THE BUG
+- test_accounting_precision, doc 10 "<e>&amp;&apos;&gt;&lt;&quot;</e>" byte by byte:
+  indirect bytes 60 instead of 5. Predefined refs add to expanded_entity_bytes; the resume
+  path re-parses the pending text run each call -> counted again. Callbacks were correct, so
+  traces/CRC/C# tests could not see it.
+- Fix: resume_entity_bytes saved at each checkpoint (token start / after last general ref /
+  end), restored in continue_prefix.
+- LESSON: any parser-state counter that a re-parsed text run touches must be part of the
+  checkpoint. Others to keep in mind if the resumable set ever grows: amplification/direct
+  counts, position counters (already handled), namespace/attribute state.
+- LESSON: run the Expat C suite early - it checks internal counters my tools do not.
+
+FLAKY
+- test_deep_nested_attribute_entity crashed 0xC0000005 once while XpactDllTests ran in
+  parallel (8 processes). Alone 3/3 pass, clean full run pass. Suspected load, NOT confirmed.
+  Don't run heavy things at the same time as the Expat suite.
+
+TOOLING QUIRKS (again)
+- "python" = Store stub. ~/.local/bin/python3.15.exe or the uv cpython path in Note1.
+- In bash, never leave a bare "cat > file" without a heredoc: it waits on stdin forever.
+- Escaping Windows paths in sed/perl from bash is painful: write a small .py to the scratchpad.
+
+STATE
+- Fix in src/xp_parser.e + docs/incremental-resume.md + report section 4.2 + logs/expat/.
+- Committed 7c3eda4 (fix) + d5c041c (logs, renamed .log -> .txt because *.log is gitignored),
+  pushed to massxpact perf/incremental-parsing (PR #4). Comments on PR #4 and issue #2. Not merged.
+- After the fix: Expat 399/38 known, XpactDllTests 4308 x2, traces/CRC identical, Test 2
+  identical (2,585 rows), Eiffel matrix ok x4.
+- NOT done: Expat runtests on the assertions DLL.
+- Test 2 run.py writes to reports\issue-0165\tools\logs\ (untracked), not ...\logs\.
+- Matrix script: never pipe with 2>&1 (ec stderr -> NativeCommandError). Its "ok" line is
+  Write-Host, so it does not show in piped output; exit 0 = all 4 lanes passed.

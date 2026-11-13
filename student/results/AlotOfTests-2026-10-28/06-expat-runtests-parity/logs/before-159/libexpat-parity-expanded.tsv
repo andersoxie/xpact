@@ -1,0 +1,309 @@
+﻿source	name	status	evidence
+acc_tests.c	test_accounting_precision	green	Eiffel/native accounting now reports direct input bytes, nested external child bytes, parameter-entity replacement bytes, and predefined/internal expansion bytes through the upstream test hooks.
+acc_tests.c	test_billion_laughs_attack_protection_api	green	Billion-laughs attack-protection setters now enforce null parser, child parser, NaN, and lower-bound contracts through the native ABI.
+acc_tests.c	test_amplification_isolated_external_parser	green	Eiffel native parse state now rejects external-entity input once configured amplification limits are reached.
+alloc_tests.c	test_alloc_parse_xdecl	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_xdecl_2	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_pi	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_pi_2	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_pi_3	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_comment	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_comment_2	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_create_external_parser	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_run_external_parser	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_dtd_copy_default_atts	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_external_entity	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_ext_entity_set_encoding	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_internal_entity	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parameter_entity	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_dtd_default_handling	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_explicit_encoding	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_set_base	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_buffer	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_ext_entity_realloc_buffer	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_many_attributes	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_public_entity_value	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_subst_public_entity_value	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_public_doctype	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_parse_public_doctype_long_name	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_set_foreign_dtd	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_attribute_enum_value	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_attribute_enum_value	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_implied_attribute	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_default_attribute	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_notation	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_public_notation	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_system_notation	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_nested_groups	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_nested_groups	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_large_group	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_group_choice	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_pi_in_epilog	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_comment_in_epilog	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_long_attribute_value	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_attribute_whitespace	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_attribute_predefined_entity	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_long_attr_default_with_char_ref	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_long_attr_value	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_nested_entities	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_param_entity_newline	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_ce_extends_pe	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_realloc_attributes	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_long_doc_name	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_long_base	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_long_public_id	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_long_entity_value	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_long_notation	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_reset_after_external_entity_parser_create_fail	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_tracker_size_recorded	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_tracker_pointer_alignment	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_tracker_maximum_amplification	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_tracker_threshold	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_tracker_getbuffer_unlimited	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+alloc_tests.c	test_alloc_tracker_api	red	Upstream allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+basic_tests.c	test_nul_byte	green	The Eiffel-backed native parser now accepts non-final chunks and defers tokenization until the final chunk.
+basic_tests.c	test_siphash_self	green	The upstream SipHash self-test passes through the libexpat adapter build.
+basic_tests.c	test_siphash_spec	green	The upstream SipHash specification vector passes through the libexpat adapter build.
+basic_tests.c	test_bom_utf16_be	green	Eiffel native parser input decoding now accepts UTF-16 BOM-prefixed documents and feeds the existing UTF-8 tokenizer.
+basic_tests.c	test_bom_utf16_le	green	Eiffel native parser input decoding now accepts UTF-16 BOM-prefixed documents and feeds the existing UTF-8 tokenizer.
+basic_tests.c	test_nobom_utf16_le	green	Eiffel native parser input decoding now recognizes little-endian UTF-16 documents without a BOM from the initial token shape.
+basic_tests.c	test_hash_collision	green	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
+basic_tests.c	test_hash_salt_setter	green	Eiffel-owned native parser hash salt setters reject null arguments and parsing-after-start changes while preserving successful parsing for collision-heavy documents.
+basic_tests.c	test_utf16	green	Eiffel native parser input decoding converts UTF-16 character data, including non-ASCII BMP content, to the existing UTF-8 handler path.
+basic_tests.c	test_utf16_le_epilog_newline	green	Eiffel native parser input decoding handles chunked UTF-16LE input before final parse.
+basic_tests.c	test_not_utf16	green	Eiffel native parser input decoding now reports XML_ERROR_INCORRECT_ENCODING when a UTF-8 byte stream declares UTF-16.
+basic_tests.c	test_bad_encoding	green	Eiffel-owned explicit encoding state accepts unsupported names before parsing and reports XML_ERROR_UNKNOWN_ENCODING during parse.
+basic_tests.c	test_line_number_after_parse	green	Eiffel parser reports Expat-compatible end-of-parse line numbers through XML_GetCurrentLineNumber.
+basic_tests.c	test_column_number_after_parse	green	Eiffel parser reports Expat-compatible end-of-parse columns through XML_GetCurrentColumnNumber.
+basic_tests.c	test_line_and_column_numbers_inside_handlers	green	Eiffel parser updates line and column state immediately before start/end callback dispatch.
+basic_tests.c	test_line_number_after_error	green	Eiffel parser reports Expat-compatible error line numbers through XML_GetCurrentLineNumber.
+basic_tests.c	test_column_number_after_error	green	Eiffel parser reports Expat-compatible error columns through XML_GetCurrentColumnNumber.
+basic_tests.c	test_xmldecl_misplaced	green	Eiffel parser handles XML declaration callbacks and malformed/misplaced XML declaration diagnostics, including native XML_ERROR_MISPLACED_XML_PI and XML_ERROR_XML_DECL mapping.
+basic_tests.c	test_xmldecl_invalid	green	Eiffel parser handles XML declaration callbacks and malformed/misplaced XML declaration diagnostics, including native XML_ERROR_MISPLACED_XML_PI and XML_ERROR_XML_DECL mapping.
+basic_tests.c	test_xmldecl_missing_attr	green	Eiffel parser handles XML declaration callbacks and malformed/misplaced XML declaration diagnostics, including native XML_ERROR_MISPLACED_XML_PI and XML_ERROR_XML_DECL mapping.
+basic_tests.c	test_xmldecl_missing_value	green	Eiffel parser handles XML declaration callbacks and malformed/misplaced XML declaration diagnostics, including native XML_ERROR_MISPLACED_XML_PI and XML_ERROR_XML_DECL mapping.
+basic_tests.c	test_unknown_encoding_internal_entity	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unrecognised_encoding_internal_entity	green	Unknown-encoding handler rejection now maps to XML_ERROR_UNKNOWN_ENCODING.
+basic_tests.c	test_ext_entity_set_encoding	green	Eiffel external parsed entity children now accept text declarations with encoding-only form when XML_SetEncoding supplies UTF-8, including BOM-prefixed input.
+basic_tests.c	test_ext_entity_no_handler	green	Eiffel native bridge skips unloaded external general entities when no external entity handler is registered and reports XML_SkippedEntityHandler callbacks.
+basic_tests.c	test_ext_entity_set_bom	green	Eiffel external parsed entity children now accept text declarations with encoding-only form when XML_SetEncoding supplies UTF-8, including BOM-prefixed input.
+basic_tests.c	test_ext_entity_bad_encoding	green	Eiffel-backed external entity child parsers now report XML_ERROR_UNKNOWN_ENCODING for unsupported explicit encodings on general and parameter entity children.
+basic_tests.c	test_ext_entity_bad_encoding_2	green	Eiffel-backed external entity child parsers now report XML_ERROR_UNKNOWN_ENCODING for unsupported explicit encodings on general and parameter entity children.
+basic_tests.c	test_wfc_undeclared_entity_unread_external_subset	green	Eiffel parser distinguishes undefined entity errors from externally-declared/skippable entities based on external subset presence and standalone='yes'.
+basic_tests.c	test_wfc_undeclared_entity_no_external_subset	green	Eiffel parser distinguishes undefined entity errors from externally-declared/skippable entities based on external subset presence and standalone='yes'.
+basic_tests.c	test_wfc_undeclared_entity_standalone	green	Eiffel parser distinguishes undefined entity errors from externally-declared/skippable entities based on external subset presence and standalone='yes'.
+basic_tests.c	test_wfc_undeclared_entity_with_external_subset_standalone	green	Eiffel parser distinguishes undefined entity errors from externally-declared/skippable entities based on external subset presence and standalone='yes'.
+basic_tests.c	test_entity_with_external_subset_unless_standalone	green	Eiffel parser honors XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE by skipping external subset loading for standalone='yes' and preserving XML_ERROR_UNDEFINED_ENTITY.
+basic_tests.c	test_wfc_undeclared_entity_with_external_subset	green	Eiffel parser distinguishes undefined entity errors from externally-declared/skippable entities based on external subset presence and standalone='yes'.
+basic_tests.c	test_not_standalone_handler_reject	green	Eiffel parser invokes XML_NotStandaloneHandler for non-standalone external subset usage and maps handler rejection to XML_ERROR_NOT_STANDALONE through the Windows DLL smoke.
+basic_tests.c	test_not_standalone_handler_accept	green	Eiffel parser continues after an accepting XML_NotStandaloneHandler, both with and without external subset loading.
+basic_tests.c	test_recursive_external_parameter_entity_2	green	Eiffel external DTD subset parsing detects recursive parameter entity replacement text while preserving first-declaration-wins duplicates.
+basic_tests.c	test_ext_entity_invalid_parse	green	Eiffel external parsed entity fragments now report XML_ERROR_UNCLOSED_TOKEN for bare markup starts and XML_ERROR_PARTIAL_CHAR for incomplete UTF-8 tails.
+basic_tests.c	test_dtd_default_handling	green	Eiffel internal-subset scanning preserves default-handler whitespace while suppressing handled DTD declarations.
+basic_tests.c	test_dtd_attr_handling	green	Eiffel parser tokenizes ATTLIST declarations and forwards XML_AttlistDeclHandler callbacks for enumeration, NOTATION, CDATA, and default values.
+basic_tests.c	test_ns_in_attribute_default_without_namespaces	green	Eiffel parser treats xmlns-prefixed default attributes as ordinary names when namespace mode is not enabled.
+basic_tests.c	test_stop_parser_between_char_data_calls	green	Eiffel callback dispatch now observes XML_StopParser abort requests and maps character-data aborts to XML_ERROR_ABORTED.
+basic_tests.c	test_suspend_parser_between_char_data_calls	green	Eiffel callback dispatch now observes resumable XML_StopParser requests and rejects direct parsing while suspended with XML_ERROR_SUSPENDED.
+basic_tests.c	test_repeated_stop_parser_between_char_data_calls	green	The native Eiffel-backed stop state now handles repeated abort/suspend calls made from the same character-data callback.
+basic_tests.c	test_good_cdata_ascii	green	Eiffel parser emits CDATA character data and CDATA boundary callbacks through the native bridge on chunked input.
+basic_tests.c	test_good_cdata_utf16	green	Eiffel native parser input decoding feeds UTF-16 CDATA sections through the existing CDATA tokenizer.
+basic_tests.c	test_good_cdata_utf16_le	green	Eiffel native parser input decoding feeds UTF-16 CDATA sections through the existing CDATA tokenizer.
+basic_tests.c	test_long_cdata_utf16	green	Eiffel native parser input decoding supports long UTF-16 CDATA payloads through XML_ParseBuffer.
+basic_tests.c	test_multichar_cdata_utf16	green	Eiffel native parser input decoding converts UTF-16 surrogate pairs to UTF-8 before character-data callbacks.
+basic_tests.c	test_utf16_bad_surrogate_pair	green	Eiffel native parser input decoding rejects malformed UTF-16 surrogate structure as XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_bad_cdata_utf16	green	Eiffel native UTF-16 decoding and markup classification now match upstream unclosed-token, unclosed-CDATA, and partial-character diagnostics for malformed CDATA prefixes.
+basic_tests.c	test_stop_parser_between_cdata_calls	green	Eiffel CDATA character callbacks now honor non-resumable stop requests and report XML_ERROR_ABORTED.
+basic_tests.c	test_suspend_parser_between_cdata_calls	green	Eiffel CDATA character callbacks now honor resumable stop requests and report XML_STATUS_SUSPENDED.
+basic_tests.c	test_default_current	green	Eiffel DTD default-token replay and XML_DefaultCurrent callback text now match the upstream internal-entity cases.
+basic_tests.c	test_dtd_elements	green	Eiffel parser emits XML_SetElementDeclHandler callbacks and freeable XML_Content models for DTD element declarations.
+basic_tests.c	test_dtd_elements_nesting	green	Eiffel parser builds Expat-compatible nested XML_Content arrays for sequence, choice, name, and quantifier content models.
+basic_tests.c	test_set_foreign_dtd	green	Eiffel parser supports XML_UseForeignDTD before parsing, rejects late changes, and treats a loaded foreign DTD as an external subset for undefined-entity handling.
+basic_tests.c	test_foreign_dtd_not_standalone	green	Eiffel parser invokes XML_NotStandaloneHandler before loading a configured foreign DTD and maps rejection to XML_ERROR_NOT_STANDALONE.
+basic_tests.c	test_invalid_foreign_dtd	green	Eiffel child parsers now parse external DTD subset context explicitly and propagate invalid foreign DTD child failures as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
+basic_tests.c	test_foreign_dtd_with_doctype	green	Eiffel parser combines a configured foreign DTD with an internal doctype subset while preserving internal entity expansion.
+basic_tests.c	test_foreign_dtd_without_external_subset	green	Eiffel parser calls the foreign-DTD external entity handler even when the document doctype has only an internal subset.
+basic_tests.c	test_empty_foreign_dtd	green	Eiffel parser keeps undefined-entity rejection when XML_UseForeignDTD is enabled but the external entity handler does not parse a DTD.
+basic_tests.c	test_attributes	green	Eiffel parser regression covers attribute collection; native start-element callbacks pass attribute vectors for simple documents.
+basic_tests.c	test_duplicate_cdata_attribute	green	Eiffel parser rejects duplicate attributes and maps the native error to XML_ERROR_DUPLICATE_ATTRIBUTE.
+basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl	green	Eiffel parser merges multiple ATTLIST declarations with first declaration winning and delivers default attributes through the native start-element callback.
+basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_2	green	Eiffel parser applies ATTLIST defaults per element across multiple declarations.
+basic_tests.c	test_duplicate_cdata_attribute_multiple_attlistdecl_3	green	Eiffel parser preserves first-binding ATTLIST defaults when later declarations add another attribute and duplicate an existing one.
+basic_tests.c	test_duplicate_id_attribute_multiple_attlistdecl	green	Eiffel parser reports explicit attribute counts and ID attribute indexes while applying default attributes through the native ABI.
+basic_tests.c	test_resume_invalid_parse	green	XML_ResumeParser now re-enters the Eiffel parse path for character-data suspensions and propagates the retained syntax error.
+basic_tests.c	test_resume_resuspended	green	XML_ResumeParser now re-enters the Eiffel parse path for character-data suspensions and can surface a second suspension before final completion.
+basic_tests.c	test_cdata_default	green	Eiffel parser forwards raw CDATA section tokens to the native default handler.
+basic_tests.c	test_subordinate_suspend	green	Subordinate external-parameter parser suspension now returns XML_ERROR_SUSPEND_PE through the native ABI.
+basic_tests.c	test_subordinate_xdecl_suspend	green	External entity child parser XML declaration callbacks now surface resumable suspension status through the native ABI.
+basic_tests.c	test_ext_entity_invalid_suspended_parse	green	External entity child parsers now suspend on XML declaration callbacks, resume, and propagate final child parse errors as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
+basic_tests.c	test_explicit_encoding	green	Eiffel-owned explicit encoding state accepts UTF-8 before parse, rejects mid-parse changes, and allows reset after parsing finishes.
+basic_tests.c	test_ext_entity_trailing_cr	green	Eiffel external parsed entity fragments now deliver trailing character data and report XML_ERROR_ASYNC_ENTITY for fragments ending inside an open element.
+basic_tests.c	test_ext_entity_trailing_rsqb	green	Eiffel external parsed entity fragments now deliver trailing character data and report XML_ERROR_ASYNC_ENTITY for fragments ending inside an open element.
+basic_tests.c	test_ext_entity_good_cdata	green	Eiffel-backed XML_ExternalEntityParserCreate creates child parsers that parse external parsed entity fragments, inherit character/CDATA handlers, and emit CDATA text through the Windows DLL smoke.
+basic_tests.c	test_user_parameters	green	Eiffel parser emits XML declaration, comment, skipped-entity, external-subset, and parser-as-handler-argument callbacks through the Windows DLL smoke.
+basic_tests.c	test_ext_entity_ref_parameter	green	Eiffel-backed external subset callbacks honor explicit XML_SetExternalEntityRefHandlerArg values and Expat's null-argument fallback to the public C XML_Parser pointer.
+basic_tests.c	test_empty_parse	green	Eiffel parser maps missing document element to XML_ERROR_NO_ELEMENTS through the native bridge.
+basic_tests.c	test_get_buffer_1	green	XML_GetBuffer and XML_ParseBuffer are implemented through the Eiffel runtime bridge for the Windows native path.
+basic_tests.c	test_byte_info_at_end	green	Eiffel parser reports terminal byte index/count through XML_GetCurrentByteIndex and XML_GetCurrentByteCount.
+basic_tests.c	test_byte_info_at_error	green	Eiffel parser reports error byte index/count through XML_GetCurrentByteIndex and XML_GetCurrentByteCount.
+basic_tests.c	test_byte_info_at_cdata	green	Eiffel parser reports handler-time byte index/count and XML_GetInputContext windows through the native bridge.
+basic_tests.c	test_predefined_entities	green	Eiffel parser regression covers predefined entity expansion and the Windows native text callback path is measured.
+basic_tests.c	test_invalid_tag_in_dtd	green	Eiffel external parameter entity child parsers reject element tags inside DTD subset content and propagate the nested child failure through the parent parser.
+basic_tests.c	test_ignore_section_utf16	green	Eiffel DTD subset parsing now recognizes UTF-16 conditional IGNORE sections and forwards their skipped markup through the default handler.
+basic_tests.c	test_ignore_section_utf16_be	green	Eiffel DTD subset parsing now recognizes UTF-16 conditional IGNORE sections and forwards their skipped markup through the default handler.
+basic_tests.c	test_external_bom_consumed	green	Eiffel input normalization strips a UTF-8 BOM before external DTD subset tokenization, including when the native input is split across non-final/final calls.
+basic_tests.c	test_external_entity_values	green	Eiffel external DTD child parsers now validate XML text declarations, partial UTF-8 tails, unterminated literals, recursive parameter entity context, and successful BOM/ATTLIST value cases through the Windows DLL smoke.
+basic_tests.c	test_ext_entity_not_standalone	green	Eiffel external parameter entity loading now invokes XML_NotStandaloneHandler in child DTD parsers and propagates rejection through the parent external entity callback.
+basic_tests.c	test_ext_entity_value_abort	green	External entity child parsers now propagate XML declaration callback aborts as XML_ERROR_ABORTED without failing the accepting parent callback.
+basic_tests.c	test_bad_public_doctype	green	Eiffel parser validates XML PubidChar in PUBLIC doctype identifiers and maps violations to XML_ERROR_PUBLICID.
+basic_tests.c	test_dtd_stop_processing	green	Eiffel internal subset parsing skips an undefined parameter entity and stops later DTD declaration processing without failing the document.
+basic_tests.c	test_public_notation_no_sysid	green	Eiffel parser accepts PUBLIC notation declarations without system IDs and forwards XML_NotationDeclHandler callbacks.
+basic_tests.c	test_recursive_external_parameter_entity	green	Eiffel external subset child parsers propagate recursive external parameter entity failures through the parent external entity callback.
+basic_tests.c	test_undefined_ext_entity_in_external_dtd	green	Eiffel external subset parsing skips unresolved external parameter entities when handlers decline or are cleared, matching the covered upstream devaluer path.
+basic_tests.c	test_suspend_xdecl	green	XML declaration callbacks can suspend the parser and subsequent direct parse calls fail with XML_ERROR_SUSPENDED.
+basic_tests.c	test_abort_epilog	green	Eiffel native default-handler replay preserves the raw carriage-return epilog stop path and maps it to XML_ERROR_ABORTED.
+basic_tests.c	test_abort_epilog_2	green	Default-handler epilog callbacks can abort on normalized line-feed epilog text and map to XML_ERROR_ABORTED.
+basic_tests.c	test_suspend_epilog	green	Default-handler epilog callbacks can suspend the parser and return XML_STATUS_SUSPENDED.
+basic_tests.c	test_suspend_in_sole_empty_tag	green	End-element callbacks on an empty document element can suspend and resume without native state corruption.
+basic_tests.c	test_suspend_resume_internal_entity	green	Resume replay now suppresses already-delivered Eiffel callbacks and continues through internal entity expansion without duplicating user-visible events.
+basic_tests.c	test_suspend_resume_internal_entity_issue_629	green	Non-final prefix parsing now reaches complete internal-entity comment callbacks before final input and resumes without corrupting later buffer fills.
+basic_tests.c	test_resume_entity_with_syntax_error	green	Resume replay through an internal entity now preserves the retained entity syntax error and reports XML_ERROR_TAG_MISMATCH.
+basic_tests.c	test_suspend_resume_parameter_entity	green	Parameter-entity declaration callbacks can suspend, resume, and continue to document character data through the Eiffel parser path.
+basic_tests.c	test_skipped_external_entity	green	Eiffel native bridge reports XML_SkippedEntityHandler for unloaded external general entities without emitting character data.
+basic_tests.c	test_pi_handled_in_default	green	Eiffel parser forwards raw processing-instruction tokens to the native default handler.
+basic_tests.c	test_comment_handled_in_default	green	Eiffel parser forwards raw comment tokens and outside-root whitespace to the native default handler.
+basic_tests.c	test_utf16_pi	green	Eiffel native parser input decoding feeds UTF-16 processing instructions through the existing PI callback path.
+basic_tests.c	test_utf16_be_pi	green	Eiffel native parser input decoding feeds UTF-16 processing instructions through the existing PI callback path.
+basic_tests.c	test_utf16_be_comment	green	Eiffel native parser input decoding feeds UTF-16 comments through the existing comment callback path.
+basic_tests.c	test_utf16_le_comment	green	Eiffel native parser input decoding feeds UTF-16 comments through the existing comment callback path.
+basic_tests.c	test_missing_encoding_conversion_fn	green	Unknown-encoding maps that require conversion but omit convert() now fail with XML_ERROR_UNKNOWN_ENCODING.
+basic_tests.c	test_failing_encoding_conversion_fn	green	Unknown-encoding convert() failures now map to XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_success	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_bad_name	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_bad_name_2	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_long_name_1	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_long_name_2	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_invalid_unknown_encoding	green	Invalid unknown-encoding maps are validated before tokenization and map to XML_ERROR_UNKNOWN_ENCODING.
+basic_tests.c	test_unknown_ascii_encoding_ok	green	Unknown-encoding ASCII-like maps now pass ASCII input and reject top-bit bytes with XML_ERROR_INVALID_TOKEN before Eiffel tokenization.
+basic_tests.c	test_unknown_ascii_encoding_fail	green	Unknown-encoding ASCII-like maps now pass ASCII input and reject top-bit bytes with XML_ERROR_INVALID_TOKEN before Eiffel tokenization.
+basic_tests.c	test_unknown_encoding_invalid_length	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_invalid_topbit	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_invalid_surrogate	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_invalid_high	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_invalid_attr_value	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_user_data_primary	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_user_data_secondary	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_ext_entity_latin1_utf16le_bom	green	Eiffel native input decoding now honors explicit ISO-8859-1 on external entity child parsers, including UTF-16-looking BOM bytes as character data.
+basic_tests.c	test_ext_entity_latin1_utf16be_bom	green	Eiffel native input decoding now honors explicit ISO-8859-1 on external entity child parsers, including UTF-16-looking BOM bytes as character data.
+basic_tests.c	test_ext_entity_latin1_utf16le_bom2	green	Eiffel native input decoding now honors explicit ISO-8859-1 on external entity child parsers, including UTF-16-looking BOM bytes as character data.
+basic_tests.c	test_ext_entity_latin1_utf16be_bom2	green	Eiffel native input decoding now honors explicit ISO-8859-1 on external entity child parsers, including UTF-16-looking BOM bytes as character data.
+basic_tests.c	test_ext_entity_utf16_be	green	Eiffel native input decoding now covers external entity child parser UTF-16 endian overrides and rejects UTF-16-looking bytes without an explicit UTF-16 signal.
+basic_tests.c	test_ext_entity_utf16_le	green	Eiffel native input decoding now covers external entity child parser UTF-16 endian overrides and rejects UTF-16-looking bytes without an explicit UTF-16 signal.
+basic_tests.c	test_ext_entity_utf16_unknown	green	Eiffel native input decoding now covers external entity child parser UTF-16 endian overrides and rejects UTF-16-looking bytes without an explicit UTF-16 signal.
+basic_tests.c	test_ext_entity_utf8_non_bom	green	Eiffel external parsed entity fragments now treat the not-quite UTF-8 BOM byte sequence as ordinary UTF-8 character data.
+basic_tests.c	test_utf16_attribute	green	Eiffel UTF-8 name scanning now accepts continuation bytes, allowing decoded UTF-16 non-ASCII attribute names and values through the normal attribute path.
+basic_tests.c	test_utf16_second_attr	green	Eiffel UTF-8 name scanning now accepts continuation bytes, allowing decoded UTF-16 non-ASCII attribute names and values through the normal attribute path.
+basic_tests.c	test_utf16_pe	green	Eiffel DTD subset parsing now accepts UTF-16 parameter entity names and reports their declarations through XML_EntityDeclHandler.
+basic_tests.c	test_bad_attr_desc_keyword_utf16	green	Eiffel DTD subset parsing now rejects UTF-16 invalid ATTLIST default keywords with XML_ERROR_SYNTAX.
+basic_tests.c	test_bad_doctype	green	Eiffel parser rejects non-declaration content in internal subsets with XML_ERROR_SYNTAX, covering the upstream prefix-conv malformed doctype case.
+basic_tests.c	test_bad_doctype_utf8	green	Eiffel parser rejects the upstream malformed UTF-8 doctype byte sequence with XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_bad_doctype_utf16	green	Eiffel DTD subset parsing now rejects UTF-16 invalid internal-subset content with XML_ERROR_SYNTAX.
+basic_tests.c	test_bad_doctype_plus	green	Eiffel parser rejects invalid doctype names before '+' with XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_bad_doctype_star	green	Eiffel parser rejects invalid doctype names before '*' with XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_bad_doctype_query	green	Eiffel parser rejects invalid doctype names before '?' with XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_unknown_encoding_bad_ignore	green	Eiffel-owned native decoding now calls the public unknown-encoding handler, validates Expat map contracts, runs two-byte converters, preserves handler user data, and maps converter failures through XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_entity_in_utf16_be_attr	green	Eiffel native parser input decoding feeds UTF-16 attribute character references through the existing attribute-value normalization path.
+basic_tests.c	test_entity_in_utf16_le_attr	green	Eiffel native parser input decoding feeds UTF-16 attribute character references through the existing attribute-value normalization path.
+basic_tests.c	test_entity_public_utf16_be	green	Eiffel external parameter entity child parsers now merge parsed DTD declarations back into the parent, including UTF-16BE/LE public parameter entity callbacks.
+basic_tests.c	test_entity_public_utf16_le	green	Eiffel external parameter entity child parsers now merge parsed DTD declarations back into the parent, including UTF-16BE/LE public parameter entity callbacks.
+basic_tests.c	test_short_doctype	green	Eiffel parser maps a document-level end tag after a short doctype to XML_ERROR_INVALID_TOKEN.
+basic_tests.c	test_short_doctype_2	green	Eiffel parser rejects PUBLIC doctypes missing a public identifier with XML_ERROR_SYNTAX.
+basic_tests.c	test_short_doctype_3	green	Eiffel parser rejects SYSTEM doctypes missing a system identifier with XML_ERROR_SYNTAX.
+basic_tests.c	test_long_doctype	green	Eiffel parser rejects doctypes with extra external identifier content with XML_ERROR_SYNTAX.
+basic_tests.c	test_bad_notation	green	Eiffel parser rejects SYSTEM notation declarations missing a system literal with XML_ERROR_SYNTAX.
+basic_tests.c	test_default_doctype_handler	green	Eiffel parser forwards doctype start/end callbacks and public/system literals to the native default handler.
+basic_tests.c	test_empty_element_abort	green	Start-element callbacks on an empty document element can abort through XML_StopParser.
+basic_tests.c	test_nested_entity_suspend	green	Nested internal entity comment callbacks can repeatedly suspend and resume while preserving accumulated callback data.
+basic_tests.c	test_nested_entity_suspend_2	green	Nested internal entity character-data callbacks can repeatedly suspend and resume while preserving accumulated callback data.
+basic_tests.c	test_set_reparse_deferral	green	Eiffel-owned non-final parsing now remembers incomplete large tokens and delays newly discovered callbacks until the reparse-deferral threshold is met.
+basic_tests.c	test_reparse_deferral_is_inherited	green	External parameter-entity child parsers inherit the native reparse-deferral policy and apply the same Eiffel-side delayed callback release.
+basic_tests.c	test_set_reparse_deferral_on_null_parser	green	The public reparse-deferral setter now rejects null parser handles like libexpat.
+basic_tests.c	test_set_reparse_deferral_on_the_fly	green	Disabling reparse deferral on a live parser releases the deferred Eiffel callback stream on the next non-final parse.
+basic_tests.c	test_bypass_heuristic_when_close_to_bufsize	green	The Eiffel-backed native parser now releases deferred large start-tag callbacks within Expat's buffer-ceiling heuristic without further large allocations.
+basic_tests.c	test_varying_buffer_fills	green	The upstream varying-buffer-fill reparse-deferral row passes through the Windows DLL adapter, including large-token callback release and parse-attempt scan limits.
+misc_tests.c	test_misc_alloc_create_parser	green	The Windows native smoke verifies XML_ParserCreate_MM returns null when the custom allocator cannot allocate the parser object.
+misc_tests.c	test_misc_alloc_create_parser_with_encoding	green	The Windows native smoke verifies XML_ParserCreate_MM allocator failure/success behavior when an explicit encoding is supplied.
+misc_tests.c	test_misc_features	green	XML_GetFeatureList returns the Expat-compatible terminal list with correct XML_Char and XML_LChar size feature values.
+misc_tests.c	test_misc_attribute_leak	green	Attribute lifetime/leak regression row passes through the Eiffel-backed native bridge under the upstream adapter.
+misc_tests.c	test_misc_utf16le	green	Parser creation with explicit UTF-16LE now decodes native input before Eiffel tokenization.
+misc_tests.c	test_misc_stop_during_end_handler_issue_240_1	green	Eiffel-backed stop state now passes the upstream misc stop-during-end-handler and unstarted-stop rejection checks.
+misc_tests.c	test_misc_stop_during_end_handler_issue_240_2	green	Eiffel-backed stop state now passes the upstream misc stop-during-end-handler and unstarted-stop rejection checks.
+misc_tests.c	test_misc_create_external_entity_parser_with_null_context	green	The Windows native smoke verifies XML_ExternalEntityParserCreate accepts a null context and frees the Eiffel-backed child parser.
+misc_tests.c	test_misc_general_entities_support	green	Eiffel parser emits XML_EntityDeclHandler callbacks and delegates external general entity references through the native callback path.
+misc_tests.c	test_misc_char_handler_stop_without_leak	green	Character-data stop requests during internal entity expansion are observed without native handler lifetime regressions.
+misc_tests.c	test_misc_resumeparser_not_crashing	green	XML_ResumeParser on the current native state no longer crashes after a pre-parse buffer/stop sequence.
+misc_tests.c	test_misc_stopparser_rejects_unstarted_parser	green	Eiffel-backed stop state now passes the upstream misc stop-during-end-handler and unstarted-stop rejection checks.
+misc_tests.c	test_renter_loop_finite_content	green	Eiffel external parsed entity children now import parent DTD entity context, so nested internal entity expansion inside loaded external entity content is finite and matches upstream.
+misc_tests.c	test_misc_expected_event_ptr_issue_980	green	Eiffel parser reports XML_GetInputContext and XML_GetCurrentByteCount for character callbacks emitted from internal entity references.
+misc_tests.c	test_misc_sync_entity_tolerated	green	Eiffel parser accepts synchronous internal entity replacement text that opens/closes nested elements and exposes the behavior through the Windows native smoke.
+misc_tests.c	test_misc_async_entity_rejected	green	Eiffel parser rejects internal parsed entities that change the surrounding element depth and maps the native error to XML_ERROR_ASYNC_ENTITY.
+misc_tests.c	test_misc_no_infinite_loop_issue_1161	green	Eiffel external DTD child parsers now propagate nested external parameter entity child failures through the parent as XML_ERROR_EXTERNAL_ENTITY_HANDLING.
+ns_tests.c	test_return_ns_triplet	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_parser_reset	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_tagname_overwrite	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_tagname_overwrite_triplet	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_start_ns_clears_start_element	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_default_ns_from_ext_subset_and_ext_ge	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_prefix_with_empty_uri_1	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_prefix_with_empty_uri_2	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_prefix_with_empty_uri_3	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_prefix_with_empty_uri_4	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_unbound_prefix	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_default_with_empty_uri	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_duplicate_attrs_diff_prefixes	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_duplicate_hashes	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_unbound_prefix_on_attribute	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_unbound_prefix_on_element	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_long_element	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_mixed_prefix_atts	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_extend_uri_buffer	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_reserved_attributes	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_reserved_attributes_2	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_extremely_long_prefix	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_unknown_encoding_success	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_double_colon	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_double_colon_element	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_bad_attr_leafname	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_bad_element_leafname	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_utf16_leafname	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_utf16_element_leafname	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_utf16_doctype	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_invalid_doctype	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_double_colon_doctype	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+ns_tests.c	test_ns_separator_in_uri	green	Namespace parsing, namespace declaration callbacks, namespace triplets, and namespace error mapping pass through the Eiffel-backed bridge.
+nsalloc_tests.c	test_nsalloc_xmlns	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_parse_buffer	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_prefix	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_uri	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_attr	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_attr_prefix	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_attributes	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_element	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_binding_uri	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_prefix	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_longer_prefix	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_namespace	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_less_long_namespace	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_context	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context_2	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context_3	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context_4	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context_5	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context_6	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context_7	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_ge_name	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_realloc_long_context_in_dtd	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_default_in_ext	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_long_systemid_in_ext	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_prefixed_element	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.
+nsalloc_tests.c	test_nsalloc_set_context_zombie	red	Namespace allocation-failure injection exercises C allocator hook exhaustion; Eiffel parser storage is Eiffel-managed and not a programmer-visible allocation contract.

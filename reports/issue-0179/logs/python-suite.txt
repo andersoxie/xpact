@@ -1,0 +1,10 @@
+................................................................................................................................Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\xpact-subject-summary-tests\tmpjnv13bu5\w3c\xpact-junit.xml)
+Cannot publish own xpact summary: 'int' object has no attribute 'get'
+Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\xpact-subject-summary-tests\tmpjnv13bu5\w3c\xpact-junit.xml)
+........Own xpact tests: complete (C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\xpact-subject-summary-tests\tmp0z5dkzui\w3c\xpact-junit.xml)
+......................................................................Measuring fixture...
+.
+----------------------------------------------------------------------
+Ran 207 tests in 57.302s
+
+OK

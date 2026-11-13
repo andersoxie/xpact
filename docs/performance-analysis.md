@@ -10,6 +10,11 @@ and GC controls and the remaining literal-`ensure False` inlining difference.
 Assertion overhead must be read from that qualified campaign, not inferred
 from the small June difference retained below.
 
+The separate November parser and native-DLL speed work, including incremental
+parsing, production builds without `-keep`, and inlining, is recorded in
+[Speed work: session notes](notes/README.md). Those reports retain their own
+source revisions, build settings and measurements.
+
 The [PubMed DOCTYPE follow-up](pubmed-doctype-performance.md) compares the
 October source revisions' core architecture differences and measures the bounded no-op
 slice-path change. Earlier reports retain their original measurements.
@@ -217,6 +222,11 @@ must not be multiplied together or combined with November's compiler ratios
 to manufacture a new measurement. The latest listed PubMed study identifies
 remaining differences in scanning, name storage, normalization, input
 preparation, GC and position work without assigning additive speed shares.
+
+For native chunked calls, the later [November checkpoint-resume implementation](incremental-resume.md)
+continues eligible UTF-8 and UTF-16 input from saved parser state. It retains
+the full input buffer and falls back to replay in the documented cases; the
+earlier whole-file studies do not measure this change.
 
 Broader buffer views, pooling for eventful/native paths and optional parallel
 pipelines remain design questions here, not measured solutions. Any extension

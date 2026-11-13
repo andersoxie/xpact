@@ -11,9 +11,10 @@ The Windows native preview and portable parser benchmarks advance that track;
 they do not establish full libexpat replacement compatibility. The repository
 provides a contracted parser core:
 
-- `src/xp_parser.e` parses complete input buffers into events, with explicit
-  preconditions, postconditions, class invariants, loop invariants, and loop
-  variants. The native chunk adapter still relies on accumulated-buffer replay.
+- `src/xp_parser.e` parses complete input buffers or continues eligible native
+  chunks from checkpoints, with explicit preconditions, postconditions, class
+  invariants, loop invariants, and loop variants. Full-input retention and
+  documented replay fallbacks remain; see [incremental resume](incremental-resume.md).
 - `src/xp_event_handler.e` defines the SAX-style callback surface used internally and by tests.
 - `include/xpact.h` records the libexpat 2.8.1-compatible public API surface.
 - `src/xp_expat_api.e` keeps the public API manifest under the regression

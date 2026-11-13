@@ -8,7 +8,7 @@ To reproduce the whole thing, run `.\run_baseline.ps1` (see [README.md](README.m
 ## 1. Revision
 
 > Moved here from `Desktop\xpact-student-test\Assertion enabled tests` on 2026-10-15. The numbers
-> below are from that original run. Section 7 of [PLAN2.md](../PLAN2.md) adds the xmlconf crash finding.
+> below are from that original run. The xmlconf crash finding is in [`results/xmlconf-crashes-2026-10-14/`](../results/xmlconf-crashes-2026-10-14/).
 
 This checkout (`Desktop\xpact-student-test`) is **not a git working tree**, so
 the sources are identified by content:

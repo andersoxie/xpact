@@ -1,0 +1,11 @@
+document	chunk	without_inlining_run1	with_inlining_run1	without_inlining_run2	with_inlining_run2	without_inlining_run3	with_inlining_run3
+doc-rich.xml	1	249.7	247.9	250.4	228.1	249.9	229.4
+doc-rich.xml	16	41.6	39.4	40.8	36.4	41.2	35.6
+doc-rich.xml	256	22.7	21.8	23.5	19.2	24.9	19.2
+doc-rich.xml	4096	21.0	21.3	21.5	17.8	21.7	17.7
+doc-rich.xml	131167	21.7	25.4	20.8	18.0	21.8	17.8
+doc-plain.xml	1	51.6	47.7	51.4	46.9	58.9	47.9
+doc-plain.xml	16	13.0	11.9	13.0	11.6	12.9	11.9
+doc-plain.xml	256	9.1	7.9	9.4	7.5	8.7	9.2
+doc-plain.xml	4096	8.8	7.4	9.0	7.6	8.8	7.5
+doc-plain.xml	42841	8.8	7.4	8.4	7.3	8.1	7.8

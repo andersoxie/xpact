@@ -1,0 +1,1 @@
+<!DOCTYPE doc [<!ENTITY en SYSTEM "http://example.org/dummy.ent">]><doc>&en;</doc>

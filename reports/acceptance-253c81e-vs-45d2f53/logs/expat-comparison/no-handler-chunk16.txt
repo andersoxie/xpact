@@ -1,0 +1,7 @@
+field	baseline	ours	(of 3061)
+verdict	3037	3057
+verdict+code	2677	2697
++line+column	1484	1499
++byte index	828	832
+all incl. per-call positions	314	327
+changed baseline->ours: 509; closer to Expat: 33; further from Expat: 0; same distance: 476

@@ -87,3 +87,16 @@ Record important problems, investigations, fixes, and test results.
 
 
 
+Merging
+[ ] Merge PRs with a merge commit. No more squash merges (student, 2026-11-12). fix.ps1 merge uses a merge commit since #318 and may be used.
+[ ] Between main and incremental-test: only merge commits or fast-forward.
+
+Working faster
+[ ] Build once, test many: one finalized build per change, check its SHA-256, reuse that DLL for every test. Never let a runner rebuild or pick up a stale build\native-eiffel DLL.
+[ ] Tiered checks: after each edit, run only a quick smoke set (DLL smoke test, the related probe, a few minutes). Run the full set (Eiffel matrix, W3C both builds, C# DLL tests, Python suite) once, before the PR. Test 2 (W3C in pieces) only if chunked input is touched.
+[ ] Parallel: use --jobs on the W3C runner and Test 2 (#197) wherever it exists; run independent tests at the same time unless timings are being measured.
+[ ] Background: start long runs in the background and keep working on the next step (report, next probe) instead of waiting.
+[ ] Long runs to Jenkins when it can run them (the C# and website tests already do); say which test was handed off.
+[ ] Timings: measure only on an idle PC, alternate old/new runs, median of 3 or more; repeat a surprising number before reporting it.
+[ ] Full acceptance run after a large change or a batch of fixes: per-fix checks missed regressions before (#68, #69 in mass-xpact).
+[ ] Fewer stops: ask the student's decisions in one batch at the start, not one by one during the work.

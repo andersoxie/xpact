@@ -1,0 +1,1383 @@
+libexpat manifest: 399 START_TEST entries -> C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\libexpat-runtests-manifest.tsv
+libexpat expected failures: 86 manifest entries -> C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\libexpat-expected-failures-expanded.tsv
+libexpat parity rows: 152 green patterns, 2 red patterns, 0 blocked rows -> C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\libexpat-parity-expanded.tsv
+-- Building for: Visual Studio 18 2026
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26300.
+-- The C compiler identification is MSVC 19.51.36260.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done (3.2s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/masou/Desktop/Lia/xpact/w10-attr-defaults/build/a04/adapter-default/cbuild
+Configured C adapter build: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\cbuild
+MSBuild version 18.10.1-1.26427.6+3cd27c13e for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/masou/Desktop/Lia/xpact/w10-attr-defaults/adapters/libexpat/CMakeLists.txt
+  acc_tests.c
+  alloc_tests.c
+  basic_tests.c
+  misc_tests.c
+  ns_tests.c
+  nsalloc_tests.c
+  Generating Code...
+  chardata.c
+  common.c
+  dummy.c
+  handlers.c
+  memcheck.c
+  structdata.c
+  xpact_isolated_runtests.c
+  xpact_test_shims.c
+  Generating Code...
+  minicheck.c
+  xpact_libexpat_runtests.vcxproj -> C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\cbuild\Debug\xpact_libexpat_runtests.exe
+  Building Custom Rule C:/Users/masou/Desktop/Lia/xpact/w10-attr-defaults/adapters/libexpat/CMakeLists.txt
+UpdateCTestConfiguration  from :C:/Users/masou/Desktop/Lia/xpact/w10-attr-defaults/build/a04/adapter-default/cbuild/DartConfiguration.tcl
+Test project C:/Users/masou/Desktop/Lia/xpact/w10-attr-defaults/build/a04/adapter-default/cbuild
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: upstream-libexpat-runtests
+
+1: Test command: C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\cbuild\Debug\xpact_libexpat_runtests.exe "--timeout" "120"
+1: Working Directory: C:/Users/masou/Desktop/Lia/xpact/w10-attr-defaults/build/a04/adapter-default/cbuild
+1: Test timeout computed to be: 1800
+1: Expat version: expat_2.8.1
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 92
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_nul_byte (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:92)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 99
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_u0000_char (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:99)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 144
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bom_utf8 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:144)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 153
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bom_utf16_be (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:153)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 162
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bom_utf16_le (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:162)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 177
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_nobom_utf16_le (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:177)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 204
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_hash_collision (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:204)
+1: ERROR: check failed: XML_Parse(parser, "", 0, XML_FALSE ) == XML_STATUS_OK
+1: FAIL [chunksize=0 deferral=0]: test_hash_salt_setter (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:226)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 334
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_illegal_utf8 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:334)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 428
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:428)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 443
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_le_epilog_newline (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:443)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 463
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_not_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:463)
+1: ERROR: XML_SetEncoding failed
+1: FAIL [chunksize=0 deferral=0]: test_bad_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:472)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 494
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_latin1_umlauts (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:494)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 514
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_long_utf8_character (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:514)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 571
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_long_latin1_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:571)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 622
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_long_ascii_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:622)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 244
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_danish_latin1 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:244)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 258
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_french_charref_hexidecimal (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:258)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 271
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_french_charref_decimal (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:271)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 284
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_french_latin1 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:284)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 296
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_french_utf8 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:296)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 312
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf8_false_rejection (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:312)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 635
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_line_number_after_parse (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:635)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 653
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_column_number_after_parse (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:653)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 689
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_line_and_column_numbers_inside_handlers (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:689)
+1: ERROR: expected 3 lines, saw 1
+1: FAIL [chunksize=0 deferral=0]: test_line_number_after_error (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:711)
+1: ERROR: expected 4 columns, saw 0
+1: FAIL [chunksize=0 deferral=0]: test_column_number_after_error (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:731)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 767
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_really_long_lines (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:767)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 811
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_really_long_encoded_lines (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:811)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 829
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_end_element_events (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:829)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 940
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_attr_whitespace_normalization (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:940)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 953
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_xmldecl_misplaced (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:953)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 959
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_xmldecl_invalid (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:959)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 965
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_xmldecl_missing_attr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:965)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 973
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_xmldecl_missing_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:973)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 986
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_internal_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:986)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1021
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_set_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1021)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1033
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_no_handler (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1033)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1054
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_set_bom (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1054)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1071
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_bad_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1071)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1088
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_bad_encoding_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1088)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1101
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_wfc_undeclared_entity_unread_external_subset (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1101)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1110
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_wfc_undeclared_entity_no_external_subset (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1110)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1124
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_wfc_undeclared_entity_standalone (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1124)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1142
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_wfc_undeclared_entity_with_external_subset_standalone (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1142)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1161
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_entity_with_external_subset_unless_standalone (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1161)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1176
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_wfc_undeclared_entity_with_external_subset (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1176)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1192
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_not_standalone_handler_reject (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1192)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1212
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_not_standalone_handler_accept (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1212)
+1: ERROR: check failed: _XML_Parse_SINGLE_BYTES(parser, text, (int)strlen(text), XML_TRUE) == XML_STATUS_OK
+1: FAIL [chunksize=0 deferral=0]: test_entity_start_tag_level_greater_than_one (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1232)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1244
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_wfc_no_recursive_entity_refs (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1244)
+1: ERROR: check failed: XML_GetErrorCode(parser) == XML_ERROR_RECURSIVE_ENTITY_REF
+1: FAIL [chunksize=0 deferral=0]: test_no_indirectly_recursive_entity_refs (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1316)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1400
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_invalid_parse (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1400)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1428
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_dtd_default_handling (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1428)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1472
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_dtd_attr_handling (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1472)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1495
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_empty_ns_without_namespaces (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1495)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1512
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_in_attribute_default_without_namespaces (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1512)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1533
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_stop_parser_between_char_data_calls (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1533)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1554
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_parser_between_char_data_calls (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1554)
+1: ERROR: Failed to double-suspend parser
+1: FAIL [chunksize=0 deferral=0]: test_repeated_stop_parser_between_char_data_calls (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1585)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1611
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_good_cdata_ascii (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1611)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1650
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_good_cdata_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1650)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1677
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_good_cdata_utf16_le (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1677)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1752
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_long_cdata_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1752)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1792
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_multichar_cdata_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1792)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1821
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_bad_surrogate_pair (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1821)
+1: ERROR: Expected error 5 but got error 44 for case 1: "<a><"
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_cdata (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1872)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1934
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_cdata_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1934)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1961
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_stop_parser_between_cdata_calls (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1961)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 1982
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_parser_between_cdata_calls (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1982)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2041
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_default_current (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2041)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2247
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_dtd_elements (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2247)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2323
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_dtd_elements_nesting (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2323)
+1: ERROR: Could not set foreign DTD
+1: FAIL [chunksize=0 deferral=0]: test_set_foreign_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2344)
+1: ERROR: Could not set foreign DTD
+1: FAIL [chunksize=0 deferral=0]: test_foreign_dtd_not_standalone (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2377)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2395
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_invalid_foreign_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2395)
+1: ERROR: Could not set foreign DTD
+1: FAIL [chunksize=0 deferral=0]: test_foreign_dtd_with_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2414)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2447
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_foreign_dtd_without_external_subset (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2447)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2459
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_empty_foreign_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2459)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2510
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_attributes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2510)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2548
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_duplicate_cdata_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2548)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2586
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_duplicate_id_attribute_1 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2586)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2625
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_duplicate_id_attribute_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2625)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2661
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_duplicate_cdata_attribute_multiple_attlistdecl (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2661)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2700
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_duplicate_cdata_attribute_multiple_attlistdecl_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2700)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2742
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_duplicate_cdata_attribute_multiple_attlistdecl_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2742)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2783
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_duplicate_id_attribute_multiple_attlistdecl (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2783)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2811
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_reset_in_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2811)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2830
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_resume_invalid_parse (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2830)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2846
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_resume_resuspended (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2846)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2869
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_cdata_default (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2869)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2884
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_subordinate_reset (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2884)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2898
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_subordinate_suspend (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2898)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2917
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_subordinate_xdecl_suspend (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2917)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2933
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_subordinate_xdecl_abort (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2933)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 2960
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_invalid_suspended_parse (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2960)
+1: ERROR: Failed to initialise encoding to NULL
+1: FAIL [chunksize=0 deferral=0]: test_explicit_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:2973)
+1: ERROR: Did not catch the carriage return
+1: FAIL [chunksize=0 deferral=0]: test_trailing_cr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3005)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3034
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_trailing_cr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3034)
+1: ERROR: Did not catch the right square bracket
+1: FAIL [chunksize=0 deferral=0]: test_trailing_rsqb (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3066)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3108
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_trailing_rsqb (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3108)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3125
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_good_cdata (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3125)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3151
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_user_parameters (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3151)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3190
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_ref_parameter (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3190)
+1: ERROR: Parsing empty string faulted
+1: FAIL [chunksize=0 deferral=0]: test_empty_parse (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3210)
+1: ERROR: There was not supposed to be any initial parse error.
+1: FAIL [chunksize=0 deferral=0]: test_negative_len_parse (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3244)
+1: ERROR: There was not supposed to be any initial parse error.
+1: FAIL [chunksize=0 deferral=0]: test_negative_len_parse_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3268)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3324
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_get_buffer_1 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3324)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3362
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_get_buffer_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3362)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3384
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_get_buffer_3_overflow (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3384)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3435
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_buffer_can_grow_to_max (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3435)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3456
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_getbuffer_allocates_on_zero_len (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3456)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3471
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_byte_info_at_end (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3471)
+1: ERROR: Error byte index incorrect
+1: FAIL [chunksize=0 deferral=0]: test_byte_info_at_error (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3492)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3517
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_byte_info_at_cdata (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3517)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3539
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_predefined_entities (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3539)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3564
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_invalid_tag_in_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3564)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3576
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_not_predefined_entities (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3576)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3603
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ignore_section (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3603)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3630
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ignore_section_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3630)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3658
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ignore_section_utf16_be (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3658)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3684
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_ignore_section (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3684)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3759
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_external_bom_consumed (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3759)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3807
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_external_entity_values (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3807)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3821
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_not_standalone (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3821)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3834
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_value_abort (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3834)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3846
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_public_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3846)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3867
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_attribute_enum_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3867)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3881
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_predefined_entity_redefinition (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3881)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3898
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_dtd_stop_processing (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3898)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3915
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_public_notation_no_sysid (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3915)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3941
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_nested_groups (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3941)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3965
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_group_choice (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3965)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 3985
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_standalone_parameter_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:3985)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4006
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_skipped_parameter_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4006)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4027
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_recursive_external_parameter_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4027)
+1: ERROR: check failed: ext_parser != NULL
+1: FAIL [chunksize=0 deferral=0]: test_recursive_external_parameter_entity_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:1361)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4041
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_undefined_ext_entity_in_external_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4041)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4067
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_xdecl (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4067)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4091
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_abort_epilog (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4091)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4103
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_abort_epilog_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4103)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4117
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_epilog (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4117)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4129
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_in_sole_empty_tag (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4129)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4144
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unfinished_epilog (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4144)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4154
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_partial_char_in_epilog (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4154)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4182
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_resume_internal_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4182)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4247
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_resume_internal_entity_issue_629 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4247)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4276
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_resume_entity_with_syntax_error (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4276)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4301
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_suspend_resume_parameter_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4301)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4317
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_restart_on_error (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4317)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4331
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_reject_lt_in_attribute_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4331)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4340
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_reject_unfinished_param_in_att_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4340)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4349
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_trailing_cr_in_att_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4349)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4369
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_standalone_internal_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4369)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4386
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_skipped_external_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4386)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4405
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_skipped_null_loaded_ext_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4405)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4423
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_skipped_unloaded_ext_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4423)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4448
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_param_entity_with_trailing_cr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4448)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4466
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_invalid_character_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4466)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4477
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_invalid_character_entity_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4477)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4499
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_invalid_character_entity_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4499)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4510
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_invalid_character_entity_4 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4510)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4525
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_pi_handled_in_default (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4525)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4541
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_comment_handled_in_default (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4541)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4557
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_pi_yml (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4557)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4572
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_pi_xnl (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4572)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4587
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_pi_xmm (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4587)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4613
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_pi (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4613)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4639
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_be_pi (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4639)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4659
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_be_comment (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4659)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4678
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_le_comment (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4678)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4698
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_missing_encoding_conversion_fn (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4698)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4713
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_failing_encoding_conversion_fn (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4713)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4724
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_success (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4724)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4735
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_bad_name (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4735)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4746
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_bad_name_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4746)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4767
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_long_name_1 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4767)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4789
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_long_name_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4789)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4800
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_invalid_unknown_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4800)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4809
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_ascii_encoding_ok (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4809)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4819
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_ascii_encoding_fail (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4819)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4829
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_invalid_length (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4829)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4839
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_invalid_topbit (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4839)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4849
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_invalid_surrogate (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4849)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4859
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_invalid_high (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4859)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4869
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_invalid_attr_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4869)
+1: ERROR: check failed: _XML_Parse_SINGLE_BYTES(parser, text, (int)strlen(text), XML_TRUE) == XML_STATUS_OK
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_user_data_primary (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4883)
+1: ERROR: check failed: _XML_Parse_SINGLE_BYTES(parser, text_main, (int)strlen(text_main), XML_TRUE) == XML_STATUS_OK
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_user_data_secondary (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4907)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4943
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_latin1_utf16le_bom (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4943)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 4974
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_latin1_utf16be_bom (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:4974)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5009
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_latin1_utf16le_bom2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5009)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5040
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_latin1_utf16be_bom2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5040)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5069
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_utf16_be (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5069)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5098
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_utf16_le (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5098)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5122
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_utf16_unknown (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5122)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5149
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ext_entity_utf8_non_bom (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5149)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5163
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf8_in_cdata_section (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5163)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5176
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf8_in_cdata_section_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5176)
+1: FAIL case  1 (    at name start, 1-byte sequence, error code 44)
+1: FAIL case  1 (not at name start, 1-byte sequence, error code 44)
+1: FAIL case  2 (    at name start, 1-byte sequence, error code 44)
+1: FAIL case  2 (not at name start, 1-byte sequence, error code 44)
+1: FAIL case  3 (    at name start, 1-byte sequence, error code 44)
+1: FAIL case  3 (not at name start, 1-byte sequence, error code 44)
+1: FAIL case  4 (    at name start, 1-byte sequence, error code 44)
+1: FAIL case  4 (not at name start, 1-byte sequence, error code 44)
+1: FAIL case  5 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case  5 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case  6 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case  6 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case  7 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case  7 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case  8 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case  8 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case  9 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case  9 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case 10 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case 10 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case 11 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case 11 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case 12 (    at name start, 2-byte sequence, error code 44)
+1: FAIL case 12 (not at name start, 2-byte sequence, error code 44)
+1: FAIL case 13 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 13 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 14 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 14 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 15 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 15 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 16 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 16 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 17 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 17 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 18 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 18 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 19 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 19 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 20 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 20 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 21 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 21 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 22 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 22 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 23 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 23 (not at name start, 3-byte sequence, error code 44)
+1: FAIL case 24 (    at name start, 3-byte sequence, error code 44)
+1: FAIL case 24 (not at name start, 3-byte sequence, error code 44)
+1: ERROR: UTF-8 regression detected
+1: FAIL [chunksize=0 deferral=0]: test_utf8_in_start_tags (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5281)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5298
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_trailing_spaces_in_elements (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5298)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5318
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5318)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5338
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_second_attr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5338)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5346
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_attr_after_solidus (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5346)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5380
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_utf16_pe (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5380)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5393
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_attr_desc_keyword (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5393)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5419
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_attr_desc_keyword_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5419)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5432
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5432)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5440
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_doctype_utf8 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5440)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5459
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_doctype_utf16 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5459)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5468
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_doctype_plus (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5468)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5477
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_doctype_star (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5477)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5486
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_doctype_query (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5486)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5503
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_unknown_encoding_bad_ignore (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5503)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5524
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_entity_in_utf16_be_attr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5524)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5546
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_entity_in_utf16_le_attr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5546)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5578
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_entity_public_utf16_be (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5578)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5610
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_entity_public_utf16_le (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5610)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5621
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_short_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5621)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5628
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_short_doctype_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5628)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5635
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_short_doctype_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5635)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5641
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_long_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5641)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5651
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5651)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5662
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_entity_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5662)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5672
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_entity_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5672)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5682
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_entity_4 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5682)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5692
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_bad_notation (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5692)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5712
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_default_doctype_handler (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5712)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5751
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_pool_integrity_with_unfinished_attr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5751)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 6571
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_empty_ext_param_entity_in_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:6571)
+1: ERROR: check failed: XML_GetErrorCode(parser) == XML_ERROR_NO_ELEMENTS
+1: FAIL [chunksize=0 deferral=0]: test_entity_ref_no_elements (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5765)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5807
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_deep_nested_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5807)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5853
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_deep_nested_attribute_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5853)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5894
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_deep_nested_entity_delayed_interpretation (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5894)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5924
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_nested_entity_suspend (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5924)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5953
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_nested_entity_suspend_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5953)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 5997
+1: 
+1: FAIL [chunksize=0 deferral=1]: test_big_tokens_scale_linearly (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:5997)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 6072
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_set_reparse_deferral (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:6072)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 6230
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_reparse_deferral_is_inherited (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:6230)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 6269
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_set_reparse_deferral_on_the_fly (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:6269)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 6397
+1: 
+1: FAIL [chunksize=0 deferral=1]: test_bypass_heuristic_when_close_to_bufsize (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:6397)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c, line 6530
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_varying_buffer_fills (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\basic_tests.c:6530)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 84
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_return_ns_triplet (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:84)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 84
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_parser_reset (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:84)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 130
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_tagname_overwrite (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:130)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 130
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_tagname_overwrite_triplet (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:130)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 185
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_start_ns_clears_start_element (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:185)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 206
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_default_ns_from_ext_subset_and_ext_ge (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:206)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 218
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_prefix_with_empty_uri_1 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:218)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 228
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_prefix_with_empty_uri_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:228)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 242
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_prefix_with_empty_uri_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:242)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 263
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_prefix_with_empty_uri_4 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:263)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 280
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_unbound_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:280)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 294
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_default_with_empty_uri (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:294)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 304
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_duplicate_attrs_diff_prefixes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:304)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 329
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_duplicate_hashes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:329)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 337
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_unbound_prefix_on_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:337)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 345
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_unbound_prefix_on_element (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:345)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 366
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_long_element (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:366)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 378
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_mixed_prefix_atts (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:378)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 393
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_extend_uri_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:393)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 406
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_reserved_attributes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:406)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 423
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_reserved_attributes_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:423)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 516
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_extremely_long_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:516)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 529
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_unknown_encoding_success (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:529)
+1: ERROR: Double colon in attribute name not faulted (despite active namespace support)
+1: FAIL [chunksize=0 deferral=0]: test_ns_double_colon (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:542)
+1: ERROR: Double colon in element name not faulted (despite active namespace support)
+1: FAIL [chunksize=0 deferral=0]: test_ns_double_colon_element (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:561)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 577
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_bad_attr_leafname (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:577)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 585
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_bad_element_leafname (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:585)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 605
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_utf16_leafname (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:605)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 628
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_utf16_element_leafname (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:628)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 659
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_utf16_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:659)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 669
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_invalid_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:669)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c, line 678
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_ns_double_colon_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:678)
+1: ERROR: Namespace separator handling is broken
+1: FAIL [chunksize=0 deferral=0]: test_ns_separator_in_uri (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\ns_tests.c:709)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c, line 260
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_misc_attribute_leak (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:260)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c, line 289
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_misc_utf16le (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:289)
+1: ERROR: Error code does not match XML_ERROR_INVALID_TOKEN
+1: FAIL [chunksize=0 deferral=0]: test_misc_deny_internal_entity_closing_doctype_issue_317 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:440)
+1: ERROR: Call to parse was expected to fail from a closing tag mismatch
+1: FAIL [chunksize=0 deferral=0]: test_misc_tag_mismatch_reset_leak (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:465)
+1: ERROR: check failed: ext_parser != NULL
+1: FAIL [chunksize=0 deferral=0]: test_misc_create_external_entity_parser_with_null_context (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:488)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c, line 518
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_misc_general_entities_support (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:518)
+1: ERROR: check failed: XML_GetErrorCode(parser) == XML_ERROR_NONE
+1: FAIL [chunksize=0 deferral=0]: test_misc_stopparser_rejects_unstarted_parser (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:577)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c, line 617
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_renter_loop_finite_content (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:617)
+1: ERROR: check failed: _XML_Parse_SINGLE_BYTES(parser, doc, (int)strlen(doc), XML_TRUE) == XML_STATUS_OK
+1: FAIL [chunksize=0 deferral=0]: test_misc_expected_event_ptr_issue_980 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:678)
+1: ERROR: check failed: _XML_Parse_SINGLE_BYTES(parser, doc, (int)strlen(doc), XML_TRUE) == XML_STATUS_OK
+1: FAIL [chunksize=0 deferral=0]: test_misc_sync_entity_tolerated (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:696)
+1: ERROR: check failed: XML_GetErrorCode(parser) == expectedError
+1: FAIL [chunksize=0 deferral=0]: test_misc_async_entity_rejected (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:765)
+1: ERROR: check failed: XML_GetErrorCode(parser) == XML_ERROR_EXTERNAL_ENTITY_HANDLING
+1: FAIL [chunksize=0 deferral=0]: test_misc_no_infinite_loop_issue_1161 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\misc_tests.c:796)
+1: ERROR: Parse failed with max allocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_xdecl (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:107)
+1: ERROR: Parse failed with max allocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_xdecl_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:153)
+1: ERROR: Parse failed with max allocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_pi (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:180)
+1: ERROR: Parse failed with max allocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_pi_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:206)
+1: ERROR: Parse failed with max allocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_pi_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:247)
+1: ERROR: Parse failed with max allocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_comment (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:271)
+1: ERROR: Parse failed with max allocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_comment_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:297)
+1: ERROR: Parsing failed with allocation count 10
+1: FAIL [chunksize=0 deferral=0]: test_alloc_run_external_parser (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:344)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c, line 366
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_alloc_dtd_copy_default_atts (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:366)
+1: ERROR: External entity not parsed at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_external_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:401)
+1: ERROR: Encoding failed at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_ext_entity_set_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:429)
+1: ERROR: Internal entity failed at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_internal_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:457)
+1: ERROR: Parameter entity not processed at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parameter_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:482)
+1: ERROR: Default DTD not parsed with maximum alloc count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_dtd_default_handling (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:534)
+1: ERROR: Encoding not set at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_explicit_encoding (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:560)
+1: ERROR: Parse failed with max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:608)
+1: ERROR: Failed with max reallocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_ext_entity_realloc_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:634)
+1: ERROR: Parse failed at max reallocations
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_many_attributes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:679)
+1: ERROR: Parsing failed at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_public_entity_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:731)
+1: ERROR: Parsing failed at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_subst_public_entity_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:795)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_public_doctype (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:840)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_parse_public_doctype_long_name (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:888)
+1: ERROR: Could not set foreign DTD
+1: FAIL [chunksize=0 deferral=0]: test_alloc_set_foreign_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:906)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_attribute_enum_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:949)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_attribute_enum_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1005)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_implied_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1055)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_default_attribute (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1105)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_notation (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1170)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_public_notation (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1220)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_system_notation (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1269)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_nested_groups (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1308)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_nested_groups (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1348)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_large_group (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1385)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_group_choice (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1423)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_pi_in_epilog (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1449)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_comment_in_epilog (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1475)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_long_attribute_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1518)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_attribute_whitespace (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1539)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_attribute_predefined_entity (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1560)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_long_attr_default_with_char_ref (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1605)
+1: ERROR: Parse failed at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_long_attr_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1649)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c, line 1691
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_alloc_nested_entities (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1691)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_param_entity_newline (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1737)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_ce_extends_pe (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1783)
+1: ERROR: Parse failed at maximum reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_realloc_attributes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1818)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_long_doc_name (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1857)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_long_base (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1909)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_long_public_id (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:1956)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_long_entity_value (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2004)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_alloc_long_notation (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2073)
+1: ERROR: Call to parse was expected to fail from the external entity handler
+1: FAIL [chunksize=0 deferral=0]: test_alloc_reset_after_external_entity_parser_create_fail (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2089)
+1: ERROR: check failed: sizeRecordedFor(ptr) == 10
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_size_recorded (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2117)
+1: ERROR: check failed: _XML_Parse_SINGLE_BYTES(parser, chunk, (int)strlen(chunk), XML_FALSE) == XML_STATUS_OK
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_maximum_amplification (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2162)
+1: ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_threshold (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2196)
+1: ERROR: check failed: expat_malloc(parser, 1000, -1) == NULL
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_getbuffer_unlimited (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2211)
+1: ERROR: parserWithParent is NULL
+1: FAIL [chunksize=0 deferral=0]: test_alloc_tracker_api (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\alloc_tests.c:2227)
+1: ERROR: Parsing failed even at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_xmlns (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:104)
+1: ERROR: Pre-init XML_ParseBuffer faulted for wrong reason
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_parse_buffer (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:128)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:248)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_uri (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:308)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_attr (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:351)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_attr_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:437)
+1: ERROR: check failed: i == 0
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_attributes (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:460)
+1: ERROR: Parsing failed at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_element (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:499)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c, line 527
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_binding_uri (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:527)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:616)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_longer_prefix (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:692)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_namespace (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:806)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_less_long_namespace (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:879)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_context (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:931)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:960)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_2 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:960)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_3 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:960)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_4 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:960)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_5 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:960)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_6 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:960)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_7 (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:960)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_ge_name (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1243)
+1: ERROR: Parsing failed even at max reallocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_realloc_long_context_in_dtd (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1351)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_default_in_ext (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1400)
+1: ERROR: Parsing failed even at max allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_long_systemid_in_ext (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1469)
+1: ERROR: Failed even at full allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_prefixed_element (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1505)
+1: ERROR: Parsing failed even at maximum allocation count
+1: FAIL [chunksize=0 deferral=0]: test_nsalloc_set_context_zombie (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\nsalloc_tests.c:1533)
+1: ERROR:     44: Eiffel parser bridge is not installed (line 1, offset 0)
+1:     reported from C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\acc_tests.c, line 264
+1: 
+1: FAIL [chunksize=0 deferral=0]: test_accounting_precision (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\acc_tests.c:264)
+1: ERROR: parserWithParent is NULL
+1: FAIL [chunksize=0 deferral=0]: test_billion_laughs_attack_protection_api (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\acc_tests.c:303)
+1: ERROR: check failed: ext_parser != NULL
+1: FAIL [chunksize=0 deferral=0]: test_amplification_isolated_external_parser (during actual test at C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\libexpat-R_2_8_1\libexpat-R_2_8_1\expat\tests\acc_tests.c:424)
+1: 6%: Checks: 399, Failed: 373
+1/1 Test #1: upstream-libexpat-runtests .......***Failed   21.85 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =  21.88 sec
+
+The following tests FAILED:
+	  1 - upstream-libexpat-runtests (Failed)
+Errors while running CTest
+Output from these tests are in: C:/Users/masou/Desktop/Lia/xpact/w10-attr-defaults/build/a04/adapter-default/cbuild/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
+Native libexpat suite failed unexpectedly: basic_tests.c/test_nul_byte (during actual test); see 
+C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\libexpat-native-suite.log.
+At C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_libexpat_adapter.ps1:404 char:4
++             throw "Native libexpat suite failed unexpectedly: $Source ...
++             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Native libexpat...tive-suite.log.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Native libexpat suite failed unexpectedly: basic_tests.c/test_nul_byte (during actual te 
+   st); see C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\build\a04\adapter-default\libexpat-native-suite.log.
+ 

@@ -1,0 +1,7 @@
+<!DOCTYPE doc
+[
+<!ELEMENT doc (#PCDATA>) --bad comment-->
+!DOC\YPE doc
+[
+<!]>
+<doc/>

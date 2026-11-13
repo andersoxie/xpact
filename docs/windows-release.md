@@ -10,7 +10,9 @@ and their MSVC import libraries, not the bridge-only placeholder DLL/SO build.
 - C API surface: `include/xpact.h`, tracking the libexpat 2.8.1 public header
   surface used by xpact.
 - Production native library: `bin/xpact.dll`, initialized with the Eiffel
-  runtime and wired to the Eiffel parser core.
+  runtime and wired to the Eiffel parser core. Finalized without `-keep`, so
+  no assertion code is compiled in (about 3.5 times faster than with `-keep`,
+  mass-xpact#14).
 - Production link library: `lib/xpact.lib`.
 - Assertion native library: `bin/xpact_assertions.dll`, finalized with Eiffel
   runtime assertions enabled for contract-audited validation runs.

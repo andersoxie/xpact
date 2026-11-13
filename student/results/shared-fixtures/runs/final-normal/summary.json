@@ -1,0 +1,142 @@
+{
+  "tag": "final-normal",
+  "engines": {
+    "xpact": {
+      "path": "C:\\xpact\\xpact-student-Mass\\build\\fix72\\native-eiffel\\xpact.dll",
+      "bytes": 1566208,
+      "sha256": "17219e108d13a2beee69403acec4f0df1134c25f275cce2986db912dc2156ff6",
+      "XML_ExpatVersion": "expat_2.8.1"
+    },
+    "expat": {
+      "path": "C:\\xpact\\xpact-student-Mass\\build\\libexpat-R_2_8_1\\Release\\libexpat.dll",
+      "bytes": 166400,
+      "sha256": "74c3c976823bf3865edbe232afa3bfe8c72cbe70b1a5ef58af2d0e635a2ecd4b",
+      "XML_ExpatVersion": "expat_2.8.1"
+    }
+  },
+  "fixtures": 247,
+  "parses": 6916,
+  "sets": {
+    "G01-w3c": {
+      "fixtures": 93,
+      "match": 62,
+      "verdict same (whole)": 93,
+      "pairs": 1302,
+      "pairs same": 1100,
+      "xpact stable": 92,
+      "expat stable": 92,
+      "status": {
+        "match": 62,
+        "error position differs": 16,
+        "error code differs": 14,
+        "events differ": 1
+      }
+    },
+    "C03-chunks": {
+      "fixtures": 6,
+      "match": 6,
+      "verdict same (whole)": 6,
+      "pairs": 84,
+      "pairs same": 84,
+      "xpact stable": 6,
+      "expat stable": 6,
+      "status": {
+        "match": 6
+      }
+    },
+    "C10-utf8": {
+      "fixtures": 42,
+      "match": 36,
+      "verdict same (whole)": 42,
+      "pairs": 588,
+      "pairs same": 504,
+      "xpact stable": 42,
+      "expat stable": 42,
+      "status": {
+        "match": 36,
+        "events differ": 6
+      }
+    },
+    "ext-entities-64": {
+      "fixtures": 20,
+      "match": 18,
+      "verdict same (whole)": 18,
+      "pairs": 280,
+      "pairs same": 252,
+      "xpact stable": 20,
+      "expat stable": 20,
+      "status": {
+        "match": 18,
+        "verdict differs": 2
+      }
+    },
+    "positions-68": {
+      "fixtures": 1,
+      "match": 1,
+      "verdict same (whole)": 1,
+      "pairs": 14,
+      "pairs same": 14,
+      "xpact stable": 1,
+      "expat stable": 1,
+      "status": {
+        "match": 1
+      }
+    },
+    "billion-laughs-60": {
+      "fixtures": 8,
+      "match": 6,
+      "verdict same (whole)": 8,
+      "pairs": 112,
+      "pairs same": 84,
+      "xpact stable": 8,
+      "expat stable": 8,
+      "status": {
+        "match": 6,
+        "events differ": 2
+      }
+    },
+    "skipped-entity-69": {
+      "fixtures": 3,
+      "match": 3,
+      "verdict same (whole)": 3,
+      "pairs": 42,
+      "pairs same": 42,
+      "xpact stable": 3,
+      "expat stable": 3,
+      "status": {
+        "match": 3
+      }
+    },
+    "fuzz-crash-72": {
+      "fixtures": 11,
+      "match": 3,
+      "verdict same (whole)": 11,
+      "pairs": 154,
+      "pairs same": 112,
+      "xpact stable": 11,
+      "expat stable": 11,
+      "status": {
+        "error position differs": 5,
+        "error code differs": 3,
+        "match": 3
+      }
+    },
+    "fuzz-piece-dependent-74": {
+      "fixtures": 63,
+      "match": 0,
+      "verdict same (whole)": 63,
+      "pairs": 882,
+      "pairs same": 516,
+      "xpact stable": 0,
+      "expat stable": 63,
+      "status": {
+        "error code differs": 63
+      }
+    }
+  },
+  "expected": {
+    "pass": 89,
+    "FAIL": 2
+  },
+  "problems": []
+}

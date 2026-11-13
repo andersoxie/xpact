@@ -1,0 +1,25 @@
+# A04 shim-audit: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_incremental_shim_audit.ps1 -OutputDir build\a04\shim
+# 385 processes, 932.7 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     1 x xpact_incremental_shim_audit.exe -> build\native-eiffel\xpact.dll [normal, 875b5664e5e9a0c6]
+
+## processes started (image [sha256 when under the repository])
+   171 x C:\Windows\System32\cmd.exe
+    93 x C:\Windows\System32\reg.exe
+    33 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe
+    19 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\nmake.exe
+    17 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\link.exe
+    15 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\lib.exe
+    11 x C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe
+    10 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+     4 x C:\Windows\System32\doskey.exe
+     4 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\x2c.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\vctip.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\ec.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\finish_freezing.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\quick_finalize.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\emake.exe
+     1 x C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\rc.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cvtres.exe
+     1 x build\a04\shim\xpact_incremental_shim_audit.exe [ce08a92b48379731]

@@ -1,13 +1,20 @@
 # Versioning workflow
 
-**Scope reviewed 13 November 2026:** this is the assignment's `student-Mass`
-workflow, with historical branch/issue examples below. It is not a requirement
-to base unrelated repository or automated work on that student branch. Follow
-the active task's repository instructions and agreed target branch, while
-retaining one logical change per commit, reviewable evidence and a clear PR.
-No historical issue or merge status below was refreshed from GitHub in this review.
+**Scope reviewed 13 November 2026:** this is the student assignment's workflow,
+now based on `incremental-test`; the older examples retain their recorded branch
+names. Unrelated authorized work follows its own agreed target and repository
+instructions. Keep one logical change per commit, reviewable evidence and a clear
+PR. This documentation review did not refresh historical issue or merge status.
 
-> **Last updated:** 2026-10-22 · describes `student-Mass` @ `76ac272`
+> **Last updated:** 2026-11-11 · the rules below were written for `student-Mass` (2026-10-22); the box says what changed since.
+
+> ### ✅ Current rules (2026-11-11, these win over anything older below)
+> - **Branch:** all work goes into **`incremental-test`** on andersoxie/xpact. `student-Mass` was deleted. **Never touch `main`.**
+> - **Merging:** every pull request is merged with a **merge commit, never squash** (`gh pr merge <n> --merge`). `fix.ps1 merge` does the same since #318 (before that it squashed into `student-Mass`); it refuses `-Base main` and a pull request whose base is not `incremental-test`. Between `main` and `incremental-test` only merge commits or fast-forward.
+> - **Who merges:** since 2026-11-11 Claude merges its own verified pull requests into `incremental-test` (student's decision), then pulls, reruns the checks on the merged commit and only then closes the issue.
+> - **Conflicts:** merge `incremental-test` into the fix branch (a merge commit), never rebase a pushed branch.
+> - **Evidence:** logs under `reports/` are committed (`.gitignore` exception since #306). Benchmark/W3C runs on a tested DLL: `run_benchmarks.ps1 -UseExistingNativeDll -NoDocsUpdate` (#302), with `$env:XPACT_FROZEN_DLL = "1"` so no runner can rebuild the DLL by accident (#319).
+> - Rules 1, 2, 5 and 7 below still apply; in rules 3 and 6 read `incremental-test` for `student-Mass`. Rule 4: the issue number in the commit subject (`... (#273)`) counts as well as a `Refs #273` line; both are found with `git log --grep "#273"`.
 
 Every fix should be **traceable** (you can see which issue it belongs to and
 why it was made), **tested** (the evidence is in the repository) and **easy to
@@ -22,16 +29,17 @@ revert** (one commit undoes it). This page describes how that is done on
 2. **One issue per fix.** Every fix starts from a GitHub issue that describes
    the problem.
 3. **One branch per fix:** `fix/<issue>-<short-name>`, e.g.
-   `fix/2-include-fallback`, always created from the latest `student-Mass`.
+   `fix/2-include-fallback`, always created from the latest `incremental-test`
+   (was `student-Mass` until 2026-11-10).
 4. **Every commit names its issue** with `Refs #<issue>` on the last line.
 5. **Every fix has its own folder** `reports/issue-<NNNN>/` (issue number padded
    to four digits, e.g. `reports/issue-0002/`). It holds `report.md` with a
    `## Verification` section (the exact command, the result and the exit
    status) and the logs as `<what>.txt`. Add the fix to the index in
    [`reports/README.md`](../reports/README.md).
-6. **Every fix goes through a pull request** into `student-Mass`, and is
-   **squash-merged**. So each fix becomes exactly one commit on `student-Mass`,
-   with the pull request number in its subject.
+6. **Every fix goes through a pull request** into `incremental-test` and is
+   merged with a **merge commit** (never squash, since 2026-11-10). Until then
+   pull requests into `student-Mass` were squash-merged.
 7. **Undo with `git revert`, never by rewriting history.** No force pushes and
    no `git reset` on `student-Mass`. A revert is a fix of its own, with its own
    branch, report and pull request.
@@ -43,7 +51,7 @@ revert** (one commit undoes it). This page describes how that is done on
 ```powershell
 cd C:\xpact\xpact-student-Mass
 
-# 1. Branch from the latest student-Mass (also creates reports\issue-0002\)
+# 1. Branch from the latest incremental-test (also creates reports\issue-0002\)
 .\student\tools\fix.ps1 start -Issue 2 -Name include-fallback
 
 # 2. Change the code, then test it and save the log
@@ -59,7 +67,7 @@ git commit
 # 5. Check, push and open the pull request
 .\student\tools\fix.ps1 finish
 
-# 6. When the checks on the pull request pass, squash-merge it
+# 6. When the checks on the pull request pass, merge it (merge commit, never squash)
 .\student\tools\fix.ps1 merge
 ```
 
@@ -72,13 +80,13 @@ the commit to use if the fix ever has to be reverted.
 In Windows PowerShell 5.1 the script stops as soon as git writes to stderr,
 which git also does for normal messages ("Already on 'student-Mass'", push
 progress). Until the script is fixed, run the same steps by hand. This is how
-#29 was done:
+#29 was done, updated to the current branch and merge rule (#318):
 
 ```powershell
 # start
 git fetch --prune origin
-git switch student-Mass
-git merge --ff-only origin/student-Mass
+git switch incremental-test
+git merge --ff-only origin/incremental-test
 git switch -c fix/29-w3c-assertions
 mkdir reports\issue-0029
 
@@ -87,20 +95,22 @@ mkdir reports\issue-0029
 # finish: check yourself that every commit says "Refs #29" and that the
 # report has a "## Verification" section, then
 git push -u origin fix/29-w3c-assertions
-gh pr create --repo andersoxie/xpact --base student-Mass --head fix/29-w3c-assertions --title "<subject>" --body-file <file>
+gh pr create --repo andersoxie/xpact --base incremental-test --head fix/29-w3c-assertions --title "<subject>" --body-file <file>
 #   body: "Refs #29", the commit list, a link to the report, the revert command
 
-# merge, after the checks pass
-gh pr merge <pr> --repo andersoxie/xpact --squash --subject "<subject> (#<pr>)" --body "Refs #29"
-git switch student-Mass
+# merge, after the checks pass (merge commit, never --squash)
+gh pr merge <pr> --repo andersoxie/xpact --merge --body "Refs #29"
+git switch incremental-test
 git pull --ff-only
 git push origin --delete fix/29-w3c-assertions
-git branch -D fix/29-w3c-assertions
+git branch -d fix/29-w3c-assertions
 ```
 
 ## Who merges, and pull requests that build on each other
 
-- **Claude opens pull requests but does not merge them.** The student reviews
+- ⚠️ *Changed 2026-11-11: Claude now merges its own verified pull requests into
+  `incremental-test` with a merge commit (see the box at the top).* Before that:
+  **Claude opens pull requests but does not merge them.** The student reviews
   the diff and the test evidence, then merges (`gh pr merge <n> --squash` or
   the button on GitHub). This is the review step of `CLAUDE.md` ("Review the
   diff before committing or merging").
@@ -114,7 +124,9 @@ git branch -D fix/29-w3c-assertions
   Example, 2026-10-22: #36 → #41 → #42 → #44.
 - After a merge, check the result on `student-Mass`, then close the issue by
   hand with "Fixed in `<sha>` (PR #N)", and fill in the commit in
-  [`reports/README.md`](../reports/README.md).
+  [`reports/README.md`](../reports/README.md). No Jenkins run and no merge
+  into `main` is needed before closing (student decision, 2026-10-31); the
+  local check is the evidence.
 
 ## Reverting a fix
 
@@ -126,7 +138,9 @@ git branch -D fix/29-w3c-assertions
 ```
 
 The original commit stays in the history, so the reason for both the fix and
-the revert remains visible.
+the revert remains visible. `-Commit` may be a merge commit (every pull request
+since 2026-11-10): `fix.ps1 revert` then reverts it against its first parent
+(`git revert -m 1`), which undoes the whole pull request (#318).
 
 ## Finding things later
 
@@ -166,7 +180,7 @@ gh auth status                    # GitHub CLI must be logged in
 ```
 
 `gh` was installed with `winget install GitHub.cli`; see
-[README.md](README.md#tools-on-this-pc-2026-10-21) for where it and Python are
+[README.md](README.md#tools-on-this-pc-2026-10-31) for where it and Python are
 on this PC.
 
 ## Already on `student-Mass` before this workflow

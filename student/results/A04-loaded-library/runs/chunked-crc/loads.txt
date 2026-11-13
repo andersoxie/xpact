@@ -1,0 +1,24 @@
+# A04 chunked-crc: powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\masou\Desktop\Lia\xpact\w10-attr-defaults\scripts\run_chunked_crc_harness.ps1 -Target Xpact -Repeat 1 -OutputDir build\a04\crc
+# 370 processes, 935.4 s, exit 0, timed out: False
+
+## xpact / Expat libraries loaded (process -> file [build, sha256])
+     2 x xpact_chunked_crc.exe -> build\native-eiffel\xpact.dll [normal, fedfb077aeb70706]
+
+## processes started (image [sha256 when under the repository])
+   159 x C:\Windows\System32\cmd.exe
+    89 x C:\Windows\System32\reg.exe
+    30 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cl.exe
+    18 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\nmake.exe
+    18 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\link.exe
+    16 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\lib.exe
+    12 x C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+    11 x C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe
+     6 x C:\Windows\System32\doskey.exe
+     3 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\x2c.exe
+     2 x build\a04\crc\xpact_chunked_crc.exe [4193b7910554dadd]
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\vctip.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\ec.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\finish_freezing.exe
+     1 x C:\Program Files\Eiffel Software\EiffelStudio 25.12 Standard\studio\spec\win64\bin\quick_finalize.exe
+     1 x C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\rc.exe
+     1 x C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\bin\Hostx64\x64\cvtres.exe

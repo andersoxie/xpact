@@ -1,0 +1,506 @@
+armed 1 of 1 candidates (tick 1525583453): 1956c38c9be
+w 1 at 1956c38c9be value 0a: ucrtbased.dll+e5d05 ucrtbased.dll+d51e8 ucrtbased.dll+d488b ucrtbased.dll+d2bff
+armed 2 of 2 candidates (tick 1525583859): 1956c38c9be 1956d38c9be
+w 2 at 1956d38c9be value 00: xpact.dll+104e0 xpact.dll+f170 xpact.dll+10a74 xpact.dll+103b2
+w 3 at 1956d38c9be value 2d: xpact.dll+1004cf xpact.dll+78ba xpact.dll+7ab8 xpact.dll+7c2e
+w 4 at 1956d38c9be value 2d: xpact.dll+1004da xpact.dll+78ba xpact.dll+7ab8 xpact.dll+7c2e
+armed 2 of 2 candidates (tick 1525614578): 1956c38c9be 1956e38c9be
+armed 3 of 3 candidates (tick 1525646203): 1956c38c9be 1956d38c9be 1956e38c9be
+w 5 at 1956d38c9be value 00: xpact.dll+104d2 xpact.dll+f170 xpact.dll+10a74 xpact.dll+103b2
+w 6 at 1956d38c9be value 00: xpact.dll+10030c xpact.dll+78ba xpact.dll+7ab8 xpact.dll+7c2e
+w 7 at 1956c38c9be value dd: ucrtbased.dll+181b59 ucrtbased.dll+80f85 ucrtbased.dll+7f495 ucrtbased.dll+82048
+w 8 at 1956c38c9be value cd: ucrtbased.dll+181b59 ucrtbased.dll+7ff52 ucrtbased.dll+7ffcd ucrtbased.dll+7f4df
+w 9 at 1956c38c9be value 73: ucrtbased.dll+e5d05 ucrtbased.dll+d51e8 ucrtbased.dll+d488b ucrtbased.dll+d2bff
+armed 1 of 1 candidates (tick 1525683890): 1956c38c9be
+armed 2 of 2 candidates (tick 1525684828): 1956c38c9be 1956d38c9be
+armed 3 of 3 candidates (tick 1525753234): 1956c38c9be 1956d38c9be 1956e38c9be
+w 10 at 1956e38c9be value 00: xpact.dll+104e0 xpact.dll+f170 xpact.dll+10a74 xpact.dll+103b2
+w 11 at 1956e38c9be value 2d: xpact.dll+1004cf xpact.dll+78ba xpact.dll+7ab8 xpact.dll+7c2e
+w 12 at 1956e38c9be value 2d: xpact.dll+1004da xpact.dll+78ba xpact.dll+7ab8 xpact.dll+7c2e
+armed 2 of 2 candidates (tick 1525783828): 1956c38c9be 1956e38c9be
+armed 3 of 3 candidates (tick 1525784265): 1956c38c9be 1956d38c9be 1956e38c9be
+w 13 at 1956c38c9be value dd: ucrtbased.dll+181b59 ucrtbased.dll+80f85 ucrtbased.dll+7f495 ucrtbased.dll+82048
+w 14 at 1956c38c9be value cd: ucrtbased.dll+181b59 ucrtbased.dll+7ff52 ucrtbased.dll+7ffcd ucrtbased.dll+7f4df
+w 15 at 1956c38c9be value 49: ucrtbased.dll+e5d05 ucrtbased.dll+d51e8 ucrtbased.dll+d488b ucrtbased.dll+d2bff
+armed 2 of 2 candidates (tick 1525784984): 1956c38c9be 1956d38c9be
+armed 1 of 1 candidates (tick 1525785515): 1956c38c9be
+armed 2 of 2 candidates (tick 1525790578): 1956c38c9be 1956d38c9be
+w 16 at 1956d38c9be value 00: xpact.dll+7162d xpact.dll+3d346 xpact.dll+c5bfa xpact.dll+b6e86
+w 17 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 18 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 19 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 20 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 21 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 22 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 23 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 24 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 25 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 26 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 27 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 28 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 29 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 30 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 31 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 32 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 33 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 34 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 35 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 36 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 37 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 38 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 39 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 40 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 41 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 42 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 43 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 44 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 45 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 46 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 47 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 48 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 49 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 50 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 51 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 52 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 53 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 54 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 55 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 56 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 57 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 58 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 59 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 60 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 61 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 62 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 63 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 64 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 65 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 66 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 67 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 68 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 69 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 70 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 71 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 72 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 73 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 74 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 75 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 76 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 77 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 78 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 79 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 80 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 81 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 82 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 83 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 84 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 85 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 86 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 87 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 88 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 89 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 90 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 91 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 92 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 93 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 94 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 95 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 96 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 97 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 98 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 99 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 100 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 101 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 102 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 103 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 104 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 105 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 106 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 107 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 108 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 109 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 110 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 111 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 112 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 113 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 114 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 115 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 116 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 117 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 118 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 119 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 120 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 121 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 122 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 123 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 124 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 125 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 126 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 127 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 128 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 129 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 130 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 131 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 132 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 133 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 134 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 135 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 136 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 137 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 138 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 139 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 140 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 141 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 142 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 143 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 144 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 145 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 146 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 147 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 148 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 149 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 150 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 151 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 152 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 153 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 154 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 155 at 1956d38c9be value 00: xpact.dll+7fb1 xpact.dll+7fae xpact.dll+7fae xpact.dll+7fae
+w 156 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+armed 3 of 3 candidates (tick 1525791875): 1956c38c9be 1956d38c9be 1956e38c9be
+w 157 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 158 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 159 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 160 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 161 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 162 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 163 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 164 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 165 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 166 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 167 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 168 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 169 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 170 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 171 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 172 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 173 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 174 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 175 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 176 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 177 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 178 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 179 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 180 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 181 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 182 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 183 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 184 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 185 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 186 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 187 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 188 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 189 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 190 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 191 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 192 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 193 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 194 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 195 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 196 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 197 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 198 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 199 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 200 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 201 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 202 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 203 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 204 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 205 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 206 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 207 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 208 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 209 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 210 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 211 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 212 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 213 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 214 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 215 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 216 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 217 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 218 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 219 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 220 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 221 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 222 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 223 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 224 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 225 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 226 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 227 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 228 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 229 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 230 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 231 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 232 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 233 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 234 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 235 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 236 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 237 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 238 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 239 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 240 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 241 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 242 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 243 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 244 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 245 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 246 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 247 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 248 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 249 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 250 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 251 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 252 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 253 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 254 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 255 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 256 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 257 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 258 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 259 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 260 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 261 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 262 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 263 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 264 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 265 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 266 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 267 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 268 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 269 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 270 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 271 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 272 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 273 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 274 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 275 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 276 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 277 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 278 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 279 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 280 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 281 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 282 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 283 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 284 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 285 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 286 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 287 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 288 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 289 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 290 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 291 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 292 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 293 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 294 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 295 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 296 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 297 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 298 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 299 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 300 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 301 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 302 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 303 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 304 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 305 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 306 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 307 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 308 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 309 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 310 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 311 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 312 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 313 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 314 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 315 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 316 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 317 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 318 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 319 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 320 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 321 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 322 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 323 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 324 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 325 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 326 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 327 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 328 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 329 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 330 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 331 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 332 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 333 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 334 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 335 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 336 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 337 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 338 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 339 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 340 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 341 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 342 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 343 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 344 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 345 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 346 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 347 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 348 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 349 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 350 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 351 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 352 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 353 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 354 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 355 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 356 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 357 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 358 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 359 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 360 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 361 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 362 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 363 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 364 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 365 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 366 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 367 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 368 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 369 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 370 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 371 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 372 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 373 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 374 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 375 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 376 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 377 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 378 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 379 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 380 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 381 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 382 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 383 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 384 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 385 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 386 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 387 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 388 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 389 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 390 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 391 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 392 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 393 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 394 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 395 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 396 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 397 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 398 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 399 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+w 400 at 1956d38c9be value 00: xpact.dll+7c31 xpact.dll+88a3 xpact.dll+73f2 xpact.dll+9412
+armed 2 of 2 candidates (tick 1525861406): 1956c38c9be 1956d38c9be
+armed 3 of 3 candidates (tick 1525861453): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 4 of 4 candidates (tick 1525861500): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1525861562): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1525861593): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1525861687): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1525861750): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1525863953): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1525867046): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1525870187): 1956c38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1525870984): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 2 of 2 candidates (tick 1525871828): 1956c38c9be 1956e38c9be
+armed 3 of 3 candidates (tick 1525872078): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 2 of 2 candidates (tick 1525878828): 1956c38c9be 1956d38c9be
+armed 3 of 3 candidates (tick 1525940812): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 4 of 4 candidates (tick 1525952156): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 2 of 2 candidates (tick 1525952671): 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1525952875): 1956c38c9be 1956e38c9be 1956f38c9be
+armed 2 of 2 candidates (tick 1525952937): 1956e38c9be 1956f38c9be
+armed 1 of 1 candidates (tick 1525953250): 1956f38c9be
+armed 2 of 2 candidates (tick 1525978296): 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526023234): 1956e38c9be 1956f38c9be 1957038c9be
+armed 2 of 2 candidates (tick 1526023359): 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526023453): 1956e38c9be 1956f38c9be 1957038c9be
+armed 4 of 4 candidates (tick 1526023609): 1956e38c9be 1956f38c9be 1957038c9be 1957138c9be
+armed 3 of 3 candidates (tick 1526023671): 1956e38c9be 1956f38c9be 1957138c9be
+armed 2 of 2 candidates (tick 1526023828): 1956e38c9be 1956f38c9be
+armed 1 of 1 candidates (tick 1526030328): 1956e38c9be
+armed 2 of 2 candidates (tick 1526032171): 1956d38c9be 1956e38c9be
+armed 3 of 3 candidates (tick 1526035406): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 2 of 2 candidates (tick 1526035796): 1956c38c9be 1956e38c9be
+armed 3 of 3 candidates (tick 1526057500): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 2 of 2 candidates (tick 1526057531): 1956c38c9be 1956e38c9be
+armed 3 of 3 candidates (tick 1526065156): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 3 of 3 candidates (tick 1526127890): 1956d38c9be 1956e38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1526128062): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526128140): 1956d38c9be 1956e38c9be 1956f38c9be
+armed 2 of 2 candidates (tick 1526128281): 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526135093): 1956d38c9be 1956e38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1526216890): 1956d38c9be 1956e38c9be 1956f38c9be 1957038c9be
+armed 4 of 4 candidates (tick 1526217171): 1956d38c9be 1956e38c9be 1956f38c9be 1957138c9be
+armed 3 of 3 candidates (tick 1526222359): 1956d38c9be 1956e38c9be 1956f38c9be
+armed 2 of 2 candidates (tick 1526227953): 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526228234): 1956c38c9be 1956e38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1526244828): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+ONE #1 (write 3796) at 1956c38c9be value 01, rip xpact.dll+4705c
+ rax=a86 rbx=1956bb040a8 rcx=1956c38bf38 rdx=1 rsi=1956bb04340 rdi=a86 r8=a86 r9=a86 r10=7ffffffffffffff r11=0 r14=cd73 r15=1
+ bytes at 1956c38c9a8: 0101010101010101 0101010101010101 0101010101010149 5459207333383434 3220272673333834
+ stack:
+ xpact.dll+4705c
+ xpact.dll+2b49a
+ xpact.dll+29b9e
+ xpact.dll+2b66d
+ xpact.dll+a3801
+ xpact.dll+a3c56
+ xpact.dll+a32a0
+ xpact.dll+9ca2a
+ xpact.dll+9ae7b
+ xpact.dll+9a7e2
+ xpact.dll+96f8a
+ xpact.dll+97e97
+ xpact.dll+cc930
+ xpact.dll+cb521
+ xpact.dll+e10be
+ xpact.dll+1c00
+ xpact_libexpat_runtests.exe+3163d
+ xpact_libexpat_runtests.exe+22a52
+ xpact_libexpat_runtests.exe+1f1f8
+ xpact_libexpat_runtests.exe+2fb24
+ xpact_libexpat_runtests.exe+30e15
+ xpact_libexpat_runtests.exe+33f89
+ xpact_libexpat_runtests.exe+33ea2
+ xpact_libexpat_runtests.exe+33d5e
+ xpact_libexpat_runtests.exe+33ffe
+ KERNEL32.DLL+2dda7
+ ntdll.dll+7ee4c
+ end
+armed 3 of 3 candidates (tick 1526308203): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 2 of 2 candidates (tick 1526308234): 1956c38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526311546): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 2 of 2 candidates (tick 1526345718): 1956c38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526355515): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1526368484): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526391234): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1526392156): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526393000): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 2 of 2 candidates (tick 1526397093): 1956c38c9be 1956d38c9be
+armed 1 of 1 candidates (tick 1526397281): 1956d38c9be
+armed 2 of 2 candidates (tick 1526398156): 1956c38c9be 1956d38c9be
+armed 3 of 3 candidates (tick 1526464640): 1956c38c9be 1956d38c9be 1956e38c9be
+armed 4 of 4 candidates (tick 1526476531): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be
+armed 3 of 3 candidates (tick 1526477203): 1956c38c9be 1956d38c9be 1956f38c9be
+armed 4 of 4 candidates (tick 1526544625): 1956c38c9be 1956d38c9be 1956e38c9be 1956f38c9be

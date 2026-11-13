@@ -1,0 +1,48 @@
+﻿> powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_benchmarks.ps1 -Iterations 1 -Repetitions 3 -SkipBuild -SkipWslC -W3cAllCases -OutputDir build\fix180\after-r3-fresh
+xpact_native_c_benchmark.c
+Benchmark medians written to C:\Users\masou\Desktop\Lia\xpact\xpactGit\docs\benchmarks.md
+Raw benchmark rows written to C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix180\after-r3-fresh\benchmark-results.tsv
+| catalog-100-items | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1 | 2611 | 8.831 | 113.237 | 0.282 | Parser object reused; no-op event handler; finalized Eiffel C compilation |
+| catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1 | 2611 | 8.272 | 120.896 | 0.301 | Parser object reused; no-op event handler; finalized Eiffel C compilation; calls parse_without_garbage_collection |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled | Phase 1 finalized assertions | 1 | 2611 | 14.9 | 67.114 | 0.167 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled |
+| catalog-100-items | xpact Eiffel finalized, assertions enabled, GC suspended during parse | Phase 1 finalized assertions | 1 | 2611 | 14.161 | 70.616 | 0.176 | Parser object reused; no-op event handler; finalized Eiffel C compilation; runtime assertions enabled; calls parse_without_garbage_collection |
+| catalog-100-items | libexpat via CPython pyexpat callbacks | expat_2.7.3 | 1 | 2611 | 254.594 | 3.928 | 0.01 | Parser created per document; Python callbacks |
+| catalog-100-items | libexpat via CPython pyexpat tokenizer | expat_2.7.3 | 1 | 2611 | 1118.424 | 0.894 | 0.002 | Parser created per document; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1 | 1 | 2611 | 14.277 | 70.043 | 0.174 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1 | 1 | 2611 | 12.568 | 79.57 | 0.198 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks |
+| catalog-100-items | xpact native C ABI callbacks via Windows MSVC DLL, parser reused | expat_2.8.1 | 1 | 2611 | 14.29 | 69.981 | 0.174 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; C callbacks; XML_ParserReset between documents |
+| catalog-100-items | xpact native C ABI tokenizer via Windows MSVC DLL, parser reused | expat_2.8.1 | 1 | 2611 | 11.081 | 90.241 | 0.225 | MSVC x64; linked through include/xpact.h and build\native-eiffel\xpact.lib; calls Eiffel-backed xpact.dll; no callbacks; XML_ParserReset between documents |
+xpact_w3c_case.c
+xpact_w3c_case.c
+W3C XML: Finalized: 2585 catalog cases
+  Finalized: 250/2585
+  Finalized: 500/2585
+  Finalized: 750/2585
+  Finalized: 1000/2585
+  Finalized: 1250/2585
+  Finalized: 1500/2585
+  Finalized: 1750/2585
+  Finalized: 2000/2585
+  Finalized: 2250/2585
+  Finalized: 2500/2585
+W3C XML: FinalizedAssertions: 2585 catalog cases
+  FinalizedAssertions: 250/2585
+  FinalizedAssertions: 500/2585
+  FinalizedAssertions: 750/2585
+  FinalizedAssertions: 1000/2585
+  FinalizedAssertions: 1250/2585
+  FinalizedAssertions: 1500/2585
+  FinalizedAssertions: 1750/2585
+  FinalizedAssertions: 2000/2585
+  FinalizedAssertions: 2250/2585
+  FinalizedAssertions: 2500/2585
+{"engine": "Finalized", "total": 2585, "passed": 2283, "no_crash_only": 302, "failed": 0, "errors": 0, "skipped": 0, "accepted": 1109, "rejected": 1476, "known": 0, "unexpected": 0, "elapsed_ms": 89927.965}
+{"engine": "FinalizedAssertions", "total": 2585, "passed": 2283, "no_crash_only": 302, "failed": 0, "errors": 0, "skipped": 0, "accepted": 1109, "rejected": 1476, "known": 0, "unexpected": 0, "elapsed_ms": 99172.76}
+W3C XML reports: C:\Users\masou\Desktop\Lia\xpact\xpactGit\build\fix180\after-r3-fresh\w3c-xml-conformance
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+exit=0 seconds=210.8

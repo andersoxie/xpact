@@ -1,0 +1,80 @@
+{
+  "info": {
+    "name": "XPact API",
+    "description": "Requests and checks for the XPact website API. Set the variable base (default http://localhost:5080).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "base", "value": "http://localhost:5080" }],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{base}}/api/health" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('status 200', () => pm.response.to.have.status(200));"
+      ] } }]
+    },
+    {
+      "name": "Info",
+      "request": { "method": "GET", "url": "{{base}}/api/info" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('both builds listed', () => pm.expect(pm.response.json().builds.map(b => b.name)).to.include.members(['production', 'assertions']));"
+      ] } }]
+    },
+    {
+      "name": "Validate: accepted",
+      "request": {
+        "method": "POST", "url": "{{base}}/api/validate",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"xml\": \"<catalog><item id=\\\"1\\\">Book</item></catalog>\" }" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "const r = pm.response.json();",
+        "pm.test('accepted', () => pm.expect(r.verdict).to.eql('accepted'));",
+        "pm.test('two start events', () => pm.expect(r.events.startElements).to.eql(2));"
+      ] } }]
+    },
+    {
+      "name": "Validate: mismatched tag",
+      "request": {
+        "method": "POST", "url": "{{base}}/api/validate",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"xml\": \"<root>\\n  <child>\\n</root>\", \"build\": \"assertions\" }" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "const r = pm.response.json();",
+        "pm.test('rejected', () => pm.expect(r.verdict).to.eql('rejected'));",
+        "pm.test('code 7 on line 3', () => { pm.expect(r.error.code).to.eql(7); pm.expect(r.error.line).to.eql(3); });"
+      ] } }]
+    },
+    {
+      "name": "Validate: byte by byte",
+      "request": {
+        "method": "POST", "url": "{{base}}/api/validate",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"xml\": \"<root><a>1</a></root>\", \"chunkSize\": 1 }" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "const r = pm.response.json();",
+        "pm.test('accepted in chunks', () => { pm.expect(r.verdict).to.eql('accepted'); pm.expect(r.mode).to.eql('chunks'); });"
+      ] } }]
+    },
+    {
+      "name": "Validate: unknown build is refused",
+      "request": {
+        "method": "POST", "url": "{{base}}/api/validate",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{ \"xml\": \"<a/>\", \"build\": \"nope\" }" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('status 400', () => pm.response.to.have.status(400));"
+      ] } }]
+    },
+    {
+      "name": "Results: conformance",
+      "request": { "method": "GET", "url": "{{base}}/api/results/conformance" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('2585 W3C cases', () => pm.expect(pm.response.json().suite.cases).to.eql(2585));"
+      ] } }]
+    }
+  ]
+}

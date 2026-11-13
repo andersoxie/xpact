@@ -16,6 +16,10 @@ import build_implementations as builds
 import compare_eiffel_benchmarks as paired
 from prepare_xpact_core import DependencyError
 
+RUN_JSON = "run.json"
+REPORT_JSON = "report.json"
+SUMMARY_MD = "summary.md"
+
 
 QUALIFICATION_CASES = ("catalog_observed", "catalog_noop", "observed_reuse_recovery",
                        "noop_reuse_recovery", "gc_restoration")
@@ -78,6 +82,19 @@ def verify_sources(repo_root, audits, artifacts):
             raise LaneError("Catalog source inputs changed after building: " + implementation)
 
 
+def _checked_pair(row, index):
+    """Check one comparison pair row; return its iteration count."""
+    if (row["Workload"] != "catalog" or row["Pair"] != index
+            or row["Order"] != ("AB" if index % 2 else "BA")
+            or row["DocumentBytes"] != len(DOCUMENT) or row["Iterations"] < 1):
+        raise LaneError("Comparison row does not match the selected workload/pair")
+    for field in ("BaselineElapsedMs", "CandidateElapsedMs", "BaselineMiBPerSecond",
+                  "CandidateMiBPerSecond", "CandidateSpeedRatio"):
+        if not math.isfinite(row[field]) or row[field] <= 0:
+            raise LaneError("Comparison contains an invalid measurement")
+    return row["Iterations"]
+
+
 def validate_comparison(report, artifacts, pairs):
     metadata = report["metadata"]
     workloads = metadata["workloads"]
@@ -94,17 +111,7 @@ def validate_comparison(report, artifacts, pairs):
     if (len(rows) != pairs or len(summaries) != 1
             or summaries[0]["workload"] != "catalog" or summaries[0]["pairs"] != pairs):
         raise LaneError("Comparison is incomplete")
-    iterations = set()
-    for index, row in enumerate(rows, 1):
-        if (row["Workload"] != "catalog" or row["Pair"] != index
-                or row["Order"] != ("AB" if index % 2 else "BA")
-                or row["DocumentBytes"] != len(DOCUMENT) or row["Iterations"] < 1):
-            raise LaneError("Comparison row does not match the selected workload/pair")
-        iterations.add(row["Iterations"])
-        for field in ("BaselineElapsedMs", "CandidateElapsedMs", "BaselineMiBPerSecond",
-                      "CandidateMiBPerSecond", "CandidateSpeedRatio"):
-            if not math.isfinite(row[field]) or row[field] <= 0:
-                raise LaneError("Comparison contains an invalid measurement")
+    iterations = {_checked_pair(row, index) for index, row in enumerate(rows, 1)}
     if len(iterations) != 1:
         raise LaneError("Comparison used different iteration counts across pairs")
 
@@ -144,15 +151,66 @@ def publish_reports(run_root, report):
                                          dir=run_root, prefix=".summary-", suffix=".tmp", delete=False) as stream:
             temporary = Path(stream.name)
             stream.write(summary_markdown(report))
-        builds.write_json_atomic(run_root / "report.json", report)
-        temporary.replace(run_root / "summary.md")
+        builds.write_json_atomic(run_root / REPORT_JSON, report)
+        temporary.replace(run_root / SUMMARY_MD)
     except BaseException:
-        for name in ("report.json", "summary.md"):
+        for name in (REPORT_JSON, SUMMARY_MD):
             (run_root / name).unlink(missing_ok=True)
         raise
     finally:
         if temporary is not None:
             temporary.unlink(missing_ok=True)
+
+
+def _qualified_build(repo_root, phase, implementation, assertions, toolchain, offline):
+    """Build and qualify one implementation; return (row, artifact), artifact None on failure."""
+    tools, environment, compiler_metadata = toolchain
+    row = {"implementation": implementation, "assertions": assertions, "status": "failed"}
+    try:
+        result = builds.build_one(repo_root, phase, implementation, tools, environment,
+                                  compiler_metadata, offline=offline, profile="catalog",
+                                  assertions=assertions)
+        artifact = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))
+        validate_build(artifact, implementation, assertions)
+        output = builds.run_checked([artifact["executable"], "--qualify"],
+                                    cwd=phase / implementation, env=environment,
+                                    log_path=phase / implementation / "qualification.log", timeout=30)
+        cases = validate_qualification(output, artifact)
+        verify_artifact(artifact)
+        row.update(status="qualified", manifest=result["manifest"], cases=cases)
+        return row, artifact
+    except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
+        row["error"] = str(error)
+        return row, None
+
+
+def _qualify_all(repo_root, run_root, state, toolchain, offline):
+    """Build and qualify both implementations in both assertion modes; rows go to state["builds"]."""
+    artifacts, audits, qualification = {}, {}, []
+    for assertions in (True, False):
+        phase = run_root / ("audit" if assertions else "benchmark")
+        phase.mkdir()
+        for implementation in ("xpact", "xpact-core"):
+            row, artifact = _qualified_build(repo_root, phase, implementation, assertions, toolchain, offline)
+            if artifact is not None:
+                qualification.append(row)
+                (audits if assertions else artifacts)[implementation] = artifact
+            state["builds"].append(row)
+    return artifacts, audits, qualification
+
+
+def _measure(run_root, state, artifacts, sampling):
+    """Run the paired catalog measurement (state records the exact arguments first)."""
+    comparison_dir = run_root / "comparison"
+    arguments = ["--baseline", artifacts["xpact"]["executable"],
+                 "--candidate", artifacts["xpact-core"]["executable"], "--workload", "catalog",
+                 "--output-dir", str(comparison_dir)] + sampling
+    state["status"] = "measuring"
+    state["comparison_arguments"] = arguments
+    builds.write_json_atomic(run_root / RUN_JSON, state)
+    if paired.main(arguments) != 0:
+        raise LaneError("Catalog paired measurement failed")
+    return json.loads((comparison_dir / "comparison.json").read_text(encoding="utf-8"))
 
 
 def run_lane(repo_root, run_root, *, offline=False, iterations=1000, pairs=6,
@@ -163,54 +221,20 @@ def run_lane(repo_root, run_root, *, offline=False, iterations=1000, pairs=6,
     state = {"schema_version": 1, "status": "running", "lane": "catalog-finalized-assertions-off",
              "builds": []}
     try:
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         tools, environment, compiler_metadata = builds.toolchain()
-        artifacts, audits, qualification = {}, {}, []
-        for assertions in (True, False):
-            phase = run_root / ("audit" if assertions else "benchmark")
-            phase.mkdir()
-            for implementation in ("xpact", "xpact-core"):
-                row = {"implementation": implementation, "assertions": assertions, "status": "failed"}
-                try:
-                    result = builds.build_one(repo_root, phase, implementation, tools, environment,
-                                              compiler_metadata, offline=offline, profile="catalog",
-                                              assertions=assertions)
-                    artifact = json.loads(Path(result["manifest"]).read_text(encoding="utf-8"))
-                    validate_build(artifact, implementation, assertions)
-                    output = builds.run_checked([artifact["executable"], "--qualify"],
-                                                cwd=phase / implementation, env=environment,
-                                                log_path=phase / implementation / "qualification.log", timeout=30)
-                    cases = validate_qualification(output, artifact)
-                    verify_artifact(artifact)
-                    row.update(status="qualified", manifest=result["manifest"], cases=cases)
-                    qualification.append(row)
-                    if assertions:
-                        audits[implementation] = artifact
-                    else:
-                        artifacts[implementation] = artifact
-                except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
-                    row["error"] = str(error)
-                state["builds"].append(row)
+        artifacts, audits, qualification = _qualify_all(repo_root, run_root, state,
+                                                        (tools, environment, compiler_metadata), offline)
         if any(row["status"] != "qualified" for row in state["builds"]):
             raise LaneError("Catalog correctness/build gate failed; see per-build errors in run.json")
         verify_sources(repo_root, audits, artifacts)
         state["status"] = "qualified"
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         for artifact in artifacts.values():
             verify_artifact(artifact)
-        comparison_dir = run_root / "comparison"
-        arguments = ["--baseline", artifacts["xpact"]["executable"],
-                     "--candidate", artifacts["xpact-core"]["executable"], "--workload", "catalog",
-                     "--output-dir", str(comparison_dir), "--iterations", str(iterations),
-                     "--pairs", str(pairs), "--warmups", str(warmups),
-                     "--min-sample-seconds", str(min_sample_seconds),
-                     "--timeout-seconds", str(sample_timeout_seconds)]
-        state["status"] = "measuring"
-        state["comparison_arguments"] = arguments
-        builds.write_json_atomic(run_root / "run.json", state)
-        if paired.main(arguments) != 0:
-            raise LaneError("Catalog paired measurement failed")
-        comparison = json.loads((comparison_dir / "comparison.json").read_text(encoding="utf-8"))
+        comparison = _measure(run_root, state, artifacts, [
+            "--iterations", str(iterations), "--pairs", str(pairs), "--warmups", str(warmups),
+            "--min-sample-seconds", str(min_sample_seconds), "--timeout-seconds", str(sample_timeout_seconds)])
         validate_comparison(comparison, artifacts, pairs)
         for artifact in artifacts.values():
             verify_artifact(artifact)
@@ -221,14 +245,14 @@ def run_lane(repo_root, run_root, *, offline=False, iterations=1000, pairs=6,
                   "artifacts": artifacts, "qualification": qualification, "comparison": comparison}
         publish_reports(run_root, report)
         state["status"] = "complete"
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         return report
     except BaseException as error:
-        for name in ("report.json", "summary.md"):
+        for name in (REPORT_JSON, SUMMARY_MD):
             (run_root / name).unlink(missing_ok=True)
         paired.clear_reports(run_root / "comparison")
         state.update(status="failed", error=str(error))
-        builds.write_json_atomic(run_root / "run.json", state)
+        builds.write_json_atomic(run_root / RUN_JSON, state)
         raise
 
 
@@ -251,7 +275,7 @@ def main(argv=None):
     except (builds.BuildError, DependencyError, LaneError, OSError, ValueError, KeyError) as error:
         print("Dual catalog failed: " + str(error), file=sys.stderr)
         return 1
-    print("Complete: " + str(run / "summary.md"), flush=True)
+    print("Complete: " + str(run / SUMMARY_MD), flush=True)
     return 0
 
 

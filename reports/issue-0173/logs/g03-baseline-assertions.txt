@@ -1,0 +1,128 @@
+  1/93 rmt-ns10-001: match
+  2/93 rmt-ns10-002: match
+  3/93 rmt-ns10-007: match
+  4/93 ht-ns10-047: match
+  5/93 rmt-ns10-009: match
+  6/93 rmt-ns10-014: error position differs
+  7/93 rmt-ns10-026: match
+  8/93 rmt-ns10-033: match
+  9/93 valid-sa-031: match
+ 10/93 valid-sa-049: match
+ 11/93 valid-sa-050: match
+ 12/93 valid-sa-051: match
+ 13/93 valid-sa-099: match
+ 14/93 not-wf-sa-101: error code differs
+ 15/93 o-p02fail15: error position differs
+ 16/93 o-p02fail27: error position differs
+ 17/93 ibm-not-wf-P22-ibm22n02.xml: match
+ 18/93 ibm-not-wf-P80-ibm80n06.xml: error position differs
+ 19/93 valid-sa-024: match
+ 20/93 valid-sa-061: match
+ 21/93 valid-sa-082: match
+ 22/93 valid-sa-101: match
+ 23/93 o-p71pass1: match
+ 24/93 not-wf-sa-007: error code differs
+ 25/93 not-wf-sa-121: error code differs
+ 26/93 o-p73fail1: error position differs
+ 27/93 ibm-not-wf-P66-ibm66n14.xml: error position differs
+ 28/93 ibm-not-wf-P72-ibm72n06.xml: error code differs
+ 29/93 valid-sa-001: match
+ 30/93 valid-sa-079: match
+ 31/93 o-p46pass1: match
+ 32/93 ibm-valid-P23-ibm23v01.xml: match
+ 33/93 ibm-valid-P54-ibm54v02.xml: match
+ 34/93 not-wf-sa-055: error code differs
+ 35/93 content03: error position differs
+ 36/93 o-p56fail2: error code differs
+ 37/93 ibm-not-wf-P29-ibm29n02.xml: error code differs
+ 38/93 ibm-not-wf-P51-ibm51n06.xml: events differ
+ 39/93 valid-sa-004: match
+ 40/93 valid-sa-058: match
+ 41/93 valid-sa-102: match
+ 42/93 valid-sa-106: match
+ 43/93 valid-sa-110: match
+ 44/93 not-wf-sa-001: error position differs
+ 45/93 not-wf-sa-013: error position differs
+ 46/93 not-wf-sa-020: error code differs
+ 47/93 not-wf-sa-090: match
+ 48/93 o-p10fail3: match
+ 49/93 valid-sa-002: match
+ 50/93 valid-sa-010: match
+ 51/93 valid-sa-018: match
+ 52/93 valid-sa-035: match
+ 53/93 valid-sa-109: match
+ 54/93 not-wf-sa-019: match
+ 55/93 attlist11: error code differs
+ 56/93 o-p42fail1: match
+ 57/93 ibm-not-wf-P40-ibm40n04.xml: error code differs
+ 58/93 ibm-not-wf-P41-ibm41n13.xml: match
+ 59/93 valid-sa-016: match
+ 60/93 valid-sa-036: match
+ 61/93 valid-sa-098: match
+ 62/93 ibm-valid-P14-ibm14v03.xml: match
+ 63/93 ibm-valid-P16-ibm16v03.xml: match
+ 64/93 not-wf-sa-003: error position differs
+ 65/93 not-wf-sa-051: error code differs
+ 66/93 o-p14fail3: events differ
+ 67/93 ibm-not-wf-P14-ibm14n02.xml: error position differs
+ 68/93 ibm-not-wf-P17-ibm17n02.xml: error code differs
+ 69/93 valid-sa-012: match
+ 70/93 ibm-valid-P10-ibm10v01.xml: match
+ 71/93 ibm-valid-P11-ibm11v02.xml: events differ
+ 72/93 not-wf-sa-002: error position differs
+ 73/93 o-p03fail4: match
+ 74/93 ibm-not-wf-P10-ibm10n06.xml: error code differs
+ 75/93 inv-dtd01: match
+ 76/93 attr12: match
+ 77/93 o-p23pass4: match
+ 78/93 o-p66pass1: match
+ 79/93 ibm-invalid-P56-ibm56i18.xml: match
+ 80/93 rmt-ns10-037: match
+ 81/93 x-ibm-1-0.5-valid-P05-ibm05v04.xml: match
+ 82/93 x-ibm-1-0.5-valid-P05-ibm05v03.xml: error position differs
+ 83/93 x-ibm-1-0.5-valid-P04-ibm04av01.xml: error position differs
+ 84/93 not-wf-sa-081: error code differs
+ 85/93 valid-ext-sa-013: match
+ 86/93 decl01: match
+ 87/93 ibm-not-wf-P77-ibm77n04.xml: match
+ 88/93 ibm-1-1-valid-P46-ibm46i01.xml: match
+ 89/93 ibm-1-1-not-wf-P04-ibm04n20.xml: error position differs
+ 90/93 ibm-1-1-valid-P77-ibm77v05.xml: error position differs
+ 91/93 not-wf-sa-140: match
+ 92/93 not-wf-not-sa-005: match
+ 93/93 ibm-invalid-P69-ibm69i01.xml: match
+{
+  "cases": 93,
+  "counted": 83,
+  "parses": 2604,
+  "config_pairs": 1302,
+  "config_pairs_same": 1072,
+  "status": {
+    "error code differs / counted=no": 1,
+    "error code differs / counted=yes": 13,
+    "error position differs / counted=no": 2,
+    "error position differs / counted=yes": 14,
+    "events differ / counted=yes": 3,
+    "match / counted=no": 7,
+    "match / counted=yes": 53
+  },
+  "vs_expected_whole": {
+    "expat expected=(ACCEPT) not counted": 3,
+    "expat expected=(REJECT) not counted": 5,
+    "expat expected=(unspecified) not counted": 2,
+    "expat expected=ACCEPT FAIL": 2,
+    "expat expected=ACCEPT pass": 44,
+    "expat expected=REJECT pass": 37,
+    "xpact expected=(ACCEPT) not counted": 3,
+    "xpact expected=(REJECT) not counted": 5,
+    "xpact expected=(unspecified) not counted": 2,
+    "xpact expected=ACCEPT FAIL": 2,
+    "xpact expected=ACCEPT pass": 44,
+    "xpact expected=REJECT pass": 37
+  },
+  "same_in_all_chunkings": {
+    "xpact": 92,
+    "expat": 92
+  },
+  "problems": []
+}

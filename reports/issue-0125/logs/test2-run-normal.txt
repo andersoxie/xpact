@@ -1,0 +1,31 @@
+{'id': 'not-wf-sa-010', 'lane': 'core', 'size': 18, 'xpact': 'UNSTABLE', 'xpact_byte': 'differs (REJECT)', 'xpact_bad_splits': '6 7 8 9 10 11 12 13 14 15 16 17', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'not-wf-sa-025', 'lane': 'core', 'size': 16, 'xpact': 'UNSTABLE', 'xpact_byte': 'differs (REJECT)', 'xpact_bad_splits': '6 7', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'not-wf-sa-026', 'lane': 'core', 'size': 17, 'xpact': 'UNSTABLE', 'xpact_byte': 'differs (REJECT)', 'xpact_bad_splits': '6 7 8', 'expat': 'UNSTABLE', 'expat_byte': 'differs (REJECT)', 'expat_bad_splits': '8', 'status': 'both'}
+{'id': 'not-wf-sa-029', 'lane': 'core', 'size': 23, 'xpact': 'UNSTABLE', 'xpact_byte': 'differs (REJECT)', 'xpact_bad_splits': '6 7 8 9 10 11', 'expat': 'UNSTABLE', 'expat_byte': 'differs (REJECT)', 'expat_bad_splits': '6 7 8 9 10 11', 'status': 'both'}
+{'id': 'pr-xml-little', 'lane': 'core', 'size': 313076, 'xpact': 'TIMEOUT', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'pr-xml-utf-16', 'lane': 'core', 'size': 313074, 'xpact': 'TIMEOUT', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'pr-xml-utf-8', 'lane': 'core', 'size': 207172, 'xpact': 'TIMEOUT', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'o-p14fail3', 'lane': 'core', 'size': 18, 'xpact': 'UNSTABLE', 'xpact_byte': 'differs (REJECT)', 'xpact_bad_splits': '6 7 8', 'expat': 'UNSTABLE', 'expat_byte': 'differs (REJECT)', 'expat_bad_splits': '6 7 8', 'status': 'both'}
+{'id': 'o-p18fail3', 'lane': 'core', 'size': 83, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '71 72 73 74', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'o-p68fail1', 'lane': 'core', 'size': 103, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '88 89 90 91 92 93 94 95 96 97 98 99 100 101 102', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'o-p68fail2', 'lane': 'core', 'size': 105, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '88 89 90 91 92 93 94', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'o-p68fail3', 'lane': 'core', 'size': 105, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '88 89 90 91 92 93 94', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'ibm-not-wf-P14-ibm14n01.xml', 'lane': 'core', 'size': 255, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233 234', 'expat': 'UNSTABLE', 'expat_byte': 'differs (REJECT)', 'expat_bad_splits': '217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233 234', 'status': 'both'}
+{'id': 'ibm-not-wf-P14-ibm14n03.xml', 'lane': 'core', 'size': 248, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233 234 235 236 ... (31)', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'ibm-not-wf-P18-ibm18n01.xml', 'lane': 'core', 'size': 207, 'xpact': 'UNSTABLE', 'xpact_byte': 'differs (REJECT)', 'xpact_bad_splits': '184 185 186 187 188 189 190', 'expat': 'UNSTABLE', 'expat_byte': 'differs (REJECT)', 'expat_bad_splits': '184 185 186 187 188 189 190', 'status': 'both'}
+{'id': 'ibm-not-wf-P68-ibm68n01.xml', 'lane': 'core', 'size': 149, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 ... (21)', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'ibm-not-wf-P68-ibm68n03.xml', 'lane': 'core', 'size': 163, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 ... (31)', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'ibm-1-1-valid-P02-ibm02v02.xml', 'lane': 'xml-1.1', 'size': 691, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '221 222 223 224 225 226 227', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'ibm-1-1-valid-P02-ibm02v05.xml', 'lane': 'xml-1.1', 'size': 696, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 ... (55)', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'hst-bh-001', 'lane': 'core', 'size': 108, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '44 45 46 47 48 49 50 51 52 53 54 55 56 57 58', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'hst-bh-002', 'lane': 'core', 'size': 108, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '44 45 46 47 48 49 50 51 52 53 54 55 56 57', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'hst-bh-003', 'lane': 'core', 'size': 108, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 ... (21)', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'hst-bh-004', 'lane': 'core', 'size': 108, 'xpact': 'UNSTABLE', 'xpact_byte': 'same', 'xpact_bad_splits': '44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 ... (24)', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{'id': 'hst-lhs-009', 'lane': 'core', 'size': 31, 'xpact': 'UNSTABLE', 'xpact_byte': 'differs (REJECT)', 'xpact_bad_splits': '4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 ... (27)', 'expat': 'stable', 'expat_byte': 'same', 'expat_bad_splits': '', 'status': 'xpact-only'}
+{
+  "ok": 2561,
+  "xpact-only": 19,
+  "both": 5,
+  "total": 2585
+}
+normal exit=0 seconds=1154

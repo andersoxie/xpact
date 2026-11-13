@@ -1,0 +1,10 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Xpact.Contracts -> C:\Users\masou\Desktop\Lia\xpact\w19-hardening\website\backend\src\Xpact.Contracts\bin\Release\net10.0\Xpact.Contracts.dll
+  Xpact.Worker -> C:\Users\masou\Desktop\Lia\xpact\w19-hardening\website\backend\src\Xpact.Worker\bin\Release\net10.0\win-x64\Xpact.Worker.dll
+  Xpact.Api -> C:\Users\masou\Desktop\Lia\xpact\w19-hardening\website\backend\src\Xpact.Api\bin\Release\net10.0\win-x64\Xpact.Api.dll
+  Xpact.Api.Tests -> C:\Users\masou\Desktop\Lia\xpact\w19-hardening\website\backend\tests\Xpact.Api.Tests\bin\Release\net10.0\win-x64\Xpact.Api.Tests.dll
+Test run for C:\Users\masou\Desktop\Lia\xpact\w19-hardening\website\backend\tests\Xpact.Api.Tests\bin\Release\net10.0\win-x64\Xpact.Api.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    26, Skipped:     0, Total:    26, Duration: 14 s - Xpact.Api.Tests.dll (net10.0)

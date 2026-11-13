@@ -148,7 +148,7 @@ A command finishing is not proof that the tests passed. Check the exit code
 | `_csv.Error: need to escape` in the Python tests | Python 3.10 | Fixed in #32 |
 | `AttributeError: module 'hashlib' has no attribute 'file_digest'` (many Python tests) | Python 3.10 | Use Python 3.11 or newer (section 1) |
 | `shutil.Error ... [WinError 3] The system cannot find the path specified` in `test_implementation_builds.py` | Windows long paths off | Section 2b |
-| `fix.ps1` stops on "Already on 'student-Mass'" | PowerShell 5.1 and git's stderr | Do its steps by hand ([VERSIONING.md](../VERSIONING.md)) |
+| `fix.ps1` stops on "Already on 'incremental-test'" (run with `2>&1`) | PowerShell 5.1 and git's stderr | Do its steps by hand ([VERSIONING.md](../VERSIONING.md)) |
 
 ## 6. Failures recorded on 22 October (not setup problems)
 

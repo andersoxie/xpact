@@ -1,0 +1,8 @@
+laughs-3.xml	181 bytes	rejected	code 43	amplification limit breached	0.3 ms
+laughs-4.xml	225 bytes	rejected	code 43	amplification limit breached	0.2 ms
+laughs-5.xml	269 bytes	rejected	code 43	amplification limit breached	0.1 ms
+laughs-6.xml	313 bytes	rejected	code 43	amplification limit breached	0.1 ms
+laughs-8.xml	401 bytes	rejected	code 43	amplification limit breached	0.1 ms
+big-low-factor.xml	1012036 bytes	rejected	code 43	amplification limit breached	11.2 ms
+under-threshold.xml	7380 bytes	rejected	code 43	amplification limit breached	0.2 ms
+over-threshold.xml	7386 bytes	rejected	code 43	amplification limit breached	0.2 ms

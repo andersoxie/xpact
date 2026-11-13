@@ -1,0 +1,14 @@
+# Watchpoint run 1, 2026-11-04: stacks of the 0x01 writes at ...38c9be (watch-31296.txt, watch-59204.txt), mapped with the #16 DLL's link map.
+# DLL: perf/finalize-without-keep relinked with -MAP (tools/probe/relink-map.ps1); runner: tools/probe/watch.c.
+4705c F575_3552 {SPECIAL}.force
+2b49a F673_3934 {HASH_TABLE}.put
+29b9e F673_3891 {HASH_TABLE}.accommodate
+2b66d F673_3935 {HASH_TABLE}.force
+a3801 F124_1615 {XP_PARSER}.resolved_general_entity_name
+a3c56 F124_1617 {XP_PARSER}.include_general_entity_in_literal
+a32a0 F124_1613 {XP_PARSER}.append_reference_in_literal
+9ca2a F124_1601 {XP_PARSER}.parse_attribute
+9ae7b F124_1595 {XP_PARSER}.parse_start_tag
+9a7e2 F124_1594 {XP_PARSER}.parse_markup
+96f8a F124_1579 {XP_PARSER}.parse
+97d2b F124_1584 {XP_PARSER}.parse_with_cached_doctype

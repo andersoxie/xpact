@@ -1,0 +1,14 @@
+﻿> powershell -NoProfile -ExecutionPolicy Bypass -File scripts\run_benchmarks.ps1 -Iterations 1 -Repetitions 1 -SkipBuild -SkipWslC -W3cAllCases -OutputDir build\fix180\before
+C:\Users\masou\Desktop\Lia\xpact\xpactGit\scripts\run_benchmarks.ps1 : Cannot convert argument "collection", with 
+value: "@{Benchmark=catalog-100-items; Engine=xpact Eiffel finalized, assertions discarded; Version=Phase 1 finalized; 
+Repetition=1; Iterations=1; DocumentBytes=2611; ElapsedMs=13.669; DocsPerSecond=73.157; MiBPerSecond=0.182; 
+Notes=Parser object reused; no-op event handler; finalized Eiffel C compilation}", for "AddRange" to type 
+"System.Collections.Generic.IEnumerable`1[System.Object]": "Cannot convert the "@{Benchmark=catalog-100-items; 
+Engine=xpact Eiffel finalized, assertions discarded; Version=Phase 1 finalized; Repetition=1; Iterations=1; 
+DocumentBytes=2611; ElapsedMs=13.669; DocsPerSecond=73.157; MiBPerSecond=0.182; Notes=Parser object reused; no-op 
+event handler; finalized Eiffel C compilation}" value of type "System.Management.Automation.PSCustomObject" to type 
+"System.Collections.Generic.IEnumerable`1[System.Object]"."
+    + CategoryInfo          : NotSpecified: (:) [run_benchmarks.ps1], MethodException
+    + FullyQualifiedErrorId : MethodArgumentConversionInvalidCastArgument,run_benchmarks.ps1
+ 
+exit=1

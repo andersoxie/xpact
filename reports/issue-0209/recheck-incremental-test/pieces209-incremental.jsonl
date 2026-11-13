@@ -1,0 +1,9 @@
+{"bytes": 1015, "piece": 1, "xpact_ok": 1, "xpact_starts": 73, "xpact_ms": 1.7, "expat_starts": 73, "expat_ms": 0.2}
+{"bytes": 1015, "piece": 64, "xpact_ok": 1, "xpact_starts": 73, "xpact_ms": 0.3, "expat_starts": 73, "expat_ms": 0.0}
+{"bytes": 1015, "piece": 4096, "xpact_ok": 1, "xpact_starts": 73, "xpact_ms": 0.2, "expat_starts": 73, "expat_ms": 0.0}
+{"bytes": 8183, "piece": 1, "xpact_ok": 1, "xpact_starts": 585, "xpact_ms": 12.2, "expat_starts": 585, "expat_ms": 1.1}
+{"bytes": 8183, "piece": 64, "xpact_ok": 1, "xpact_starts": 585, "xpact_ms": 2.5, "expat_starts": 585, "expat_ms": 0.3}
+{"bytes": 8183, "piece": 4096, "xpact_ok": 1, "xpact_starts": 585, "xpact_ms": 1.6, "expat_starts": 585, "expat_ms": 0.2}
+{"bytes": 65527, "piece": 1, "xpact_ok": 1, "xpact_starts": 4681, "xpact_ms": 99.1, "expat_starts": 4681, "expat_ms": 9.6}
+{"bytes": 65527, "piece": 64, "xpact_ok": 1, "xpact_starts": 4681, "xpact_ms": 15.4, "expat_starts": 4681, "expat_ms": 1.7}
+{"bytes": 65527, "piece": 4096, "xpact_ok": 1, "xpact_starts": 4681, "xpact_ms": 13.2, "expat_starts": 4681, "expat_ms": 1.4}

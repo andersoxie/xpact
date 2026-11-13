@@ -1,0 +1,15 @@
+﻿Expat version: expat_2.8.1
+FAIL [chunksize=2 deferral=0]: test_deep_nested_attribute_entity (during actual test at C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad\expat-src\expat-2.8.1\tests\basic_tests.c:5853)
+xpact_libexpat_runtests.exe : ERROR:     11: undefined entity (line 60002, offset 3)
+At C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf781d5b\scratchpad
+\probe\stress-nogc.ps1:9 char:30
++ ... mand { $o = & $exe --timeout 1800 --test test_deep_nested_attribute_e ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR:     11: ...0002, offset 3):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    reported from C:\Users\masou\AppData\Local\Temp\claude\c--xpact-xpact-student-Mass\a1df27f3-4bcf-4e06-b574-128daf78
+1d5b\scratchpad\expat-src\expat-2.8.1\tests\basic_tests.c, line 5853
+
+0%: Checks: 1, Failed: 1
+

@@ -195,6 +195,66 @@ def file_hash(path):
     return digest.hexdigest()
 
 
+def _sample(args, executables, workload, output, count, role, phase):
+    """One timed run of executable role (A or B) for count iterations of the workload."""
+    arguments = (executables[role], count, workload, workload.name + "-" + phase + "-" + role, output)
+    if args.timeout_seconds is not None:
+        return run_sample(*arguments, timeout=args.timeout_seconds)
+    return run_sample(*arguments)
+
+
+def _calibrated_count(args, sample, workload, report):
+    """Double the iterations until both samples reach the minimum sample time."""
+    count = workload.iterations
+    if args.min_sample_seconds <= 0:
+        return count
+    while True:
+        baseline, candidate = sample(count, "A", "calibration"), sample(count, "B", "calibration")
+        report["calibration"].append({"Workload": workload.name, "Iterations": count,
+            "BaselineElapsedMs": baseline * 1000, "CandidateElapsedMs": candidate * 1000})
+        if min(baseline, candidate) >= args.min_sample_seconds:
+            return count
+        if count == MAX_ITERATIONS:
+            raise BenchmarkError("Cannot reach minimum sample time within the signed 32-bit iteration limit.")
+        count = min(count * 2, MAX_ITERATIONS)
+
+
+def _workload_summary(workload, rows, count):
+    ratios = [row["CandidateSpeedRatio"] for row in rows]
+    return {"workload": workload.name, "pairs": len(rows), "iterations": count,
+            "document_bytes": workload.document_bytes, "median_candidate_speed_ratio": statistics.median(ratios),
+            "min_candidate_speed_ratio": min(ratios), "max_candidate_speed_ratio": max(ratios),
+            "median_baseline_ms": statistics.median(row["BaselineElapsedMs"] for row in rows),
+            "median_candidate_ms": statistics.median(row["CandidateElapsedMs"] for row in rows),
+            "min_baseline_ms": min(row["BaselineElapsedMs"] for row in rows),
+            "max_baseline_ms": max(row["BaselineElapsedMs"] for row in rows),
+            "min_candidate_ms": min(row["CandidateElapsedMs"] for row in rows),
+            "max_candidate_ms": max(row["CandidateElapsedMs"] for row in rows)}
+
+
+def _compare_workload(args, executables, workload, output, report):
+    """Calibrate, warm up, then measure alternating AB/BA pairs for one workload."""
+    def sample(count, role, phase):
+        return _sample(args, executables, workload, output, count, role, phase)
+
+    count = _calibrated_count(args, sample, workload, report)
+    for warmup in range(args.warmups):
+        for role in ("AB" if warmup % 2 == 0 else "BA"):
+            sample(count, role, "warmup-{}".format(warmup + 1))
+    rows = []
+    mib = count * workload.document_bytes / 1048576
+    for pair in range(1, args.pairs + 1):
+        order = "AB" if pair % 2 else "BA"
+        elapsed = {role: sample(count, role, "pair-{}".format(pair)) for role in order}
+        row = dict(zip(FIELDS, (workload.name, pair, order, count, workload.document_bytes,
+              elapsed["A"] * 1000, elapsed["B"] * 1000, mib / elapsed["A"],
+              mib / elapsed["B"], elapsed["A"] / elapsed["B"])))
+        rows.append(row)
+        report["results"].append(row)
+        print("  pair {} {}: candidate speed ratio {:.4f}".format(pair, order, row["CandidateSpeedRatio"]), flush=True)
+    report["summary"].append(_workload_summary(workload, rows, count))
+
+
 def run_comparison(args):
     # This guard must remain outside cleanup: a colliding report may be the input itself.
     preflight_inputs(args)
@@ -217,48 +277,8 @@ def run_comparison(args):
                                  "sha256": file_hash(w.path) if w.path else None} for w in workloads]},
                   "calibration": [], "results": [], "summary": []}
         for workload in workloads:
-            count = workload.iterations
             print("Comparing {}...".format(workload.name), flush=True)
-            def sample(role, phase):
-                arguments = (executables[role], count, workload,
-                             workload.name + "-" + phase + "-" + role, output)
-                if args.timeout_seconds is not None:
-                    return run_sample(*arguments, timeout=args.timeout_seconds)
-                return run_sample(*arguments)
-            if args.min_sample_seconds > 0:
-                while True:
-                    baseline, candidate = sample("A", "calibration"), sample("B", "calibration")
-                    report["calibration"].append({"Workload": workload.name, "Iterations": count,
-                        "BaselineElapsedMs": baseline * 1000, "CandidateElapsedMs": candidate * 1000})
-                    if min(baseline, candidate) >= args.min_sample_seconds:
-                        break
-                    if count == MAX_ITERATIONS:
-                        raise BenchmarkError("Cannot reach minimum sample time within the signed 32-bit iteration limit.")
-                    count = min(count * 2, MAX_ITERATIONS)
-            for warmup in range(args.warmups):
-                for role in ("AB" if warmup % 2 == 0 else "BA"):
-                    sample(role, "warmup-{}".format(warmup + 1))
-            rows = []
-            for pair in range(1, args.pairs + 1):
-                order = "AB" if pair % 2 else "BA"
-                elapsed = {role: sample(role, "pair-{}".format(pair)) for role in order}
-                mib = count * workload.document_bytes / 1048576
-                row = dict(zip(FIELDS, (workload.name, pair, order, count, workload.document_bytes,
-                      elapsed["A"] * 1000, elapsed["B"] * 1000, mib / elapsed["A"],
-                      mib / elapsed["B"], elapsed["A"] / elapsed["B"])))
-                rows.append(row)
-                report["results"].append(row)
-                print("  pair {} {}: candidate speed ratio {:.4f}".format(pair, order, row["CandidateSpeedRatio"]), flush=True)
-            ratios = [row["CandidateSpeedRatio"] for row in rows]
-            report["summary"].append({"workload": workload.name, "pairs": len(rows), "iterations": count,
-                "document_bytes": workload.document_bytes, "median_candidate_speed_ratio": statistics.median(ratios),
-                "min_candidate_speed_ratio": min(ratios), "max_candidate_speed_ratio": max(ratios),
-                "median_baseline_ms": statistics.median(row["BaselineElapsedMs"] for row in rows),
-                "median_candidate_ms": statistics.median(row["CandidateElapsedMs"] for row in rows),
-                "min_baseline_ms": min(row["BaselineElapsedMs"] for row in rows),
-                "max_baseline_ms": max(row["BaselineElapsedMs"] for row in rows),
-                "min_candidate_ms": min(row["CandidateElapsedMs"] for row in rows),
-                "max_candidate_ms": max(row["CandidateElapsedMs"] for row in rows)})
+            _compare_workload(args, executables, workload, output, report)
         publish_reports(output, report)
         return report
     except BaseException:

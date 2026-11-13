@@ -1,10 +1,12 @@
 # Incremental Shim Audit
 
-This audit records the current native chunk adapter behavior before replacing
-the accumulated-buffer replay path with a true incremental parser session.
+This audit records native chunk-adapter behavior shared by the production
+checkpoint-resume path and its replay fallbacks.
 
 It is intentionally a focused native API audit, not a claim that the production
-parser has already stopped using replay internally. Rows classified as
+parser has already stopped using replay internally. Since mass-xpact #2 the
+adapter resumes from a checkpoint and replays only as a fallback
+([incremental-resume.md](incremental-resume.md)); all rows are unchanged by it. Rows classified as
 `current_gap` identify expected observations that should guide the
 incremental-core design. The six current cases all require `passes` outcomes.
 The [recorded October validation](../reports/issue-0104/report.md) includes a

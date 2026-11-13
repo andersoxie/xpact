@@ -1,0 +1,58 @@
+# Where the Eiffel runtime reads the clock, in the #16 production DLL relinked with a map (dumpbin /disasm + xpact.map), 2026-11-04.
+# GetProcessTimes: called from exitprf (profiler exit) and getcputime (timer.obj).
+# getcputime and gettime: called from scollect (garcol.obj, the GC statistics wrapper); elapsed: called twice in the static code right after it.
+# Disassembly around the first elapsed call: the results go into a statistics table as doubles, behind a gc_monitor test; no branch on them here.
+
+  00000001800095BB: 76 05              jbe         00000001800095C2
+  00000001800095BD: 49 2B C6           sub         rax,r14
+  00000001800095C0: EB 02              jmp         00000001800095C4
+  00000001800095C2: 33 C0              xor         eax,eax
+  00000001800095C4: 48 89 05 FD B0 15  mov         qword ptr [eiffel_usage],rax
+                    00
+  00000001800095CB: 0F 29 7C 24 60     movaps      xmmword ptr [rsp+60h],xmm7
+  00000001800095D0: 44 0F 29 44 24 50  movaps      xmmword ptr [rsp+50h],xmm8
+  00000001800095D6: 45 85 DB           test        r11d,r11d
+  00000001800095D9: 74 75              je          0000000180009650
+  00000001800095DB: 48 8D 55 D7        lea         rdx,[rbp-29h]
+  00000001800095DF: 48 8D 4D E7        lea         rcx,[rbp-19h]
+  00000001800095E3: E8 98 C6 00 00     call        elapsed
+  00000001800095E8: F2 0F 10 7D 77     movsd       xmm7,mmword ptr [rbp+77h]
+  00000001800095ED: 4C 8D 3D 0C 6A FF  lea         r15,[180000000h]
+                    FF
+  00000001800095F4: F2 44 0F 10 45 7F  movsd       xmm8,mmword ptr [rbp+7Fh]
+  00000001800095FA: 4D 8D 8F E0 3F 16  lea         r9,[r15+163FE0h]
+                    00
+  0000000180009601: F2 0F 10 65 CF     movsd       xmm4,mmword ptr [rbp-31h]
+  0000000180009606: 4D 8D 97 00 40 16  lea         r10,[r15+164000h]
+                    00
+  000000018000960D: F2 0F 10 6D C7     movsd       xmm5,mmword ptr [rbp-39h]
+  0000000180009612: 4D 8D B7 08 40 16  lea         r14,[r15+164008h]
+                    00
+  0000000180009619: 44 8B 1D 9C A9 15  mov         r11d,dword ptr [gc_monitor]
+                    00
+  0000000180009620: 4C 03 CB           add         r9,rbx
+  0000000180009623: 4C 03 D3           add         r10,rbx
+  0000000180009626: F2 42 0F 11 BC 3B  movsd       mmword ptr [rbx+r15+164040h],xmm7
+                    40 40 16 00
+  0000000180009630: 41 0F 28 C0        movaps      xmm0,xmm8
+  0000000180009634: F2 46 0F 11 84 3B  movsd       mmword ptr [rbx+r15+164048h],xmm8
+                    48 40 16 00
+  000000018000963E: 0F 28 CF           movaps      xmm1,xmm7
+  0000000180009641: 8B C8              mov         ecx,eax
+  0000000180009643: 4C 03 F3           add         r14,rbx
+  0000000180009646: F2 0F 5C C4        subsd       xmm0,xmm4
+  000000018000964A: F2 0F 5C CD        subsd       xmm1,xmm5
+  000000018000964E: EB 47              jmp         0000000180009697
+  0000000180009650: F2 0F 10 6D C7     movsd       xmm5,mmword ptr [rbp-39h]
+  0000000180009655: 4C 8D 3D A4 69 FF  lea         r15,[180000000h]
+                    FF
+  000000018000965C: F2 0F 10 65 CF     movsd       xmm4,mmword ptr [rbp-31h]
+  0000000180009661: 4D 8D 8F E0 3F 16  lea         r9,[r15+163FE0h]
+                    00
+  0000000180009668: F2 0F 10 7D 77     movsd       xmm7,mmword ptr [rbp+77h]
+  000000018000966D: 4D 8D 97 00 40 16  lea         r10,[r15+164000h]
+                    00
+  0000000180009674: F2 44 0F 10 45 7F  movsd       xmm8,mmword ptr [rbp+7Fh]
+  000000018000967A: 4D 8D B7 08 40 16  lea         r14,[r15+164008h]
+                    00
+  0000000180009681: 4C 03 CB           add         r9,rbx

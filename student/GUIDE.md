@@ -1,14 +1,19 @@
 # The whole project in plain words
 
-> **Status reviewed 13 November 2026; student-PC records retain their October dates.** Read sections 1-3 once. After that you
-> mostly need [section 7, what to do next](#7-what-you-do-next). The student
-> work record is in [PLAN.md](PLAN.md); this page explains how it all fits.
+> **Workflow updated 2026-11-11:** the work branch is `incremental-test` (not `student-Mass`), pull
+> requests merge with a merge commit (never squash), `main` is never touched. Sections 6-7 still
+> show week 4: the current state is in [CONTINUE-HERE.md](CONTINUE-HERE.md).
+>
+> **Updated 2026-10-26 (week 4).** Read sections 1-3 once. After that you
+> mostly need [section 7, what to do next](#7-what-you-do-next). The live
+> status is in [PLAN.md](PLAN.md); this page explains how it all fits.
 > ✅ works · 🔴 broken · 🟡 waiting
 
 Use [the student index](README.md) and [current build map](../docs/implementation-builds.md)
 for the implemented dual-parser lanes and newer results. The issue waiting lists
-below are dated follow-ups, not a fresh check of the GitHub tracker. No complete
-student/native suite was rerun for this documentation update.
+below retain their recorded dates; this 13 November documentation review did
+not refresh their GitHub status. No complete student/native suite was rerun
+for this documentation update.
 
 ---
 
@@ -89,7 +94,7 @@ or native, load the C compiler once per window (see the [setup guide](report/set
 | What | What it does |
 |---|---|
 | `scripts\run_eiffel_test_matrix.ps1` | Builds `xpact_tests` in the 4 builds and runs them. `-AssertionMode All\|Off\|On`, `-BuildMode All\|Workbench\|Finalized`. Finalized uses `-keep` (#48), every test runs even after a contract failure (#60), a failure exits nonzero in every build (#45). Set `XPACT_META_FAIL=assert` or `exception` to make it fail on purpose (B02, #46) |
-| `scripts\run_w3c_conformance.py` | The official W3C suite (2,585 cases) against `xpact_benchmarks.exe`. Python is not on `PATH`, see [README](README.md#tools-on-this-pc-2026-10-21) |
+| `scripts\run_w3c_conformance.py` | The official W3C suite (2,585 cases) against `xpact_benchmarks.exe`. Python 3.11+ is required; see [the recorded tool setup](README.md#tools-on-this-pc-2026-10-31) |
 | `tests\dotnet\XpactDllTests` 🆕 | **Tests the DLL like a C program:** 3,360 cases, every callback set and chunking. A crash only ends one case. See its [README](../tests/dotnet/XpactDllTests/README.md) |
 
 **Use later (weeks 5-7)**
@@ -107,8 +112,8 @@ or native, load the C compiler once per window (see the [setup guide](report/set
 `package_windows_release.ps1`, `run_phase1.ps1`.
 
 **Your own tools:** `student\baseline\run_baseline.ps1` (the baseline, `-LogDir`
-for a rerun) and `student\tools\fix.ps1` (broken in PowerShell 5.1: do its
-steps by hand, [VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51)).
+for a rerun) and `student\tools\fix.ps1` (works in PowerShell 5.1 when run plainly, without
+`2>&1`; otherwise do its steps by hand, [VERSIONING.md](VERSIONING.md#fixps1-in-windows-powershell-51)).
 
 ## 6. Recorded student-PC results and follow-ups
 
@@ -144,9 +149,9 @@ bug behind them. With them gone, every test above now runs to the end.
 |---|---|---|---|
 | 1 | ✅ **B02** ([#46](https://github.com/andersoxie/xpact/issues/46)): one test that must fail | if a failing test still says "ok", no green result means anything | done 2026-10-22: `XPACT_META_FAIL`, every lane exits nonzero ([results](results/B02-meta-tests/README.md)) |
 | 2 | ✅ **B01** ([#45](https://github.com/andersoxie/xpact/issues/45)): failures give a nonzero exit code | same reason | done 2026-10-22 with draft 06 (#60) ([results](results/B01-nonzero-exit/README.md)) |
-| 3 | **Ask the supervisor** | decisions are theirs | [`for superviser.txt`](for%20superviser.txt), questions at the end |
+| 3 | **Ask the supervisor** | decisions are theirs | [PLAN.md](PLAN.md), "Next", item 2 |
 | 4 | ✅ **G01**: 93 selected W3C cases | a recorded regression set | completed 26 October; [results](results/G01-corpus/README.md). Selection was not yet supervisor-reviewed in the recorded plan |
-| 5 | ✅ **Expat comparison** (C03, C10) | compare verdicts, codes and events with a real reference | completed 26 October with Expat 2.8.1; [results and remaining differences](results/expat-2.8.1/README.md) |
+| 5 | ✅ **Expat comparison** (C03, C10, G03) | compare verdicts, codes and events with a real reference | C03/C10 completed 26 October ([results](results/expat-2.8.1/README.md)); G03 completed 31 October ([results](results/G03-comparison/README.md)) |
 
 ✅ Already done of the five tests chosen on 2026-10-21: 1 (#28 regression
 test), 3 (C02), 4 (C03, xpact side), 5 (C10, xpact side), all through the
@@ -155,11 +160,11 @@ test), 3 (C02), 4 (C03, xpact side), 5 (C10, xpact side), all through the
 ## 8. How to do one piece of work (every time)
 
 1. One GitHub issue per problem or task, with a milestone and labels.
-2. Branch `fix/<issue>-<name>` from `student-Mass` (never work on `main`).
+2. Branch `fix/<issue>-<name>` from `incremental-test` (never work on `main`).
 3. Write down the **expected** result **before** you run anything.
 4. Run it. Save the log. Write down the actual result and the exit code.
 5. Report in `reports\issue-NNNN\report.md`, logs next to it.
-6. Pull request into `student-Mass`; **you** review and squash-merge it.
+6. Pull request into `incremental-test`; merge it with a **merge commit**, never squash (Claude merges its own verified pull requests since 2026-11-11).
 7. Check the result, then close the issue by hand; update [PLAN.md](PLAN.md) and the weekly note.
 
 Every result records: the input (or its hash), the git commit, the build and
@@ -173,7 +178,6 @@ command, the exit code. "It finished" or "it printed ok" is **not** proof.
 | [`CLAUDE.md`](../CLAUDE.md) | Your rules for reports, issues and pull requests |
 | [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md) | The assignment: plan, task register |
 | [PLAN.md](PLAN.md) | Live plan, known problems, next steps |
-| [`for superviser.txt`](for%20superviser.txt) | One page for the supervisor |
 | [baseline/BASELINE.md](baseline/BASELINE.md) | Week 2 results, K1-K5 |
 | [results/](results/README.md) | Evidence of test runs |
 | [`reports/README.md`](../reports/README.md) | Every fix and task, with its report |

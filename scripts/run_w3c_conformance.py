@@ -9,22 +9,27 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 import csv
 from dataclasses import asdict, dataclass, replace
 import hashlib
 import json
 from pathlib import Path
 import re
+from typing import cast
 import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from urllib.parse import urljoin, urlsplit
 from urllib.request import url2pathname, urlopen
 import xml.etree.ElementTree as ET
 from xml.parsers import expat
 import zipfile
+
+DEFAULT_RECOMMENDATION = "XML1.0"
 
 
 SUITE_VERSION = "20130923"
@@ -65,7 +70,7 @@ class Case:
     expected: str
     skip_reason: str = ""
     description: str = ""
-    recommendation: str = "XML1.0"
+    recommendation: str = DEFAULT_RECOMMENDATION
     lane: str = "core"
     lane_expected: str = ""
     entities: bool = False
@@ -147,10 +152,10 @@ def expectation(attributes: dict[str, str]) -> tuple[str, str]:
     if kind not in {"valid", "invalid", "not-wf", "error"}:
         raise ValueError(f"Unknown test TYPE: {kind}")
     expected = "REJECT" if kind == "not-wf" else "ACCEPT"
-    recommendation = attributes.get("RECOMMENDATION", "XML1.0")
+    recommendation = attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION)
     if recommendation.startswith(("XML1.1", "NS1.1")):
         return expected, "XML 1.1 / Namespaces 1.1 is outside this profile"
-    if recommendation not in {"XML1.0", "XML1.0-errata2e", "XML1.0-errata3e", "XML1.0-errata4e", "NS1.0", "NS1.0-errata1e"}:
+    if recommendation not in {DEFAULT_RECOMMENDATION, "XML1.0-errata2e", "XML1.0-errata3e", "XML1.0-errata4e", "NS1.0", "NS1.0-errata1e"}:
         raise ValueError(f"Unknown RECOMMENDATION: {recommendation}")
     if "VERSION" in attributes and "1.0" not in attributes["VERSION"].split():
         return expected, "Case does not apply to XML 1.0"
@@ -167,7 +172,7 @@ def expectation(attributes: dict[str, str]) -> tuple[str, str]:
 def out_of_profile_lane(attributes: dict[str, str]) -> tuple[str, str]:
     """Return the --all-cases lane and expected verdict ("ANY" = either) for an out-of-profile case."""
     kind = attributes["TYPE"]
-    recommendation = attributes.get("RECOMMENDATION", "XML1.0")
+    recommendation = attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION)
     if recommendation.startswith(("XML1.1", "NS1.1")) or (
             "VERSION" in attributes and "1.0" not in attributes["VERSION"].split()):
         return "xml-1.1", "ANY"
@@ -177,6 +182,39 @@ def out_of_profile_lane(attributes: dict[str, str]) -> tuple[str, str]:
     if "EDITION" in attributes and "5" not in attributes["EDITION"].split():
         return "legacy-names", expected
     return "external-entities", expected
+
+
+def is_forward_version_case(root: Path, attributes, namespace: str, path: Path) -> bool:
+    """The one pinned not-wf case (exact ID, attributes and file hashes) whose verdict E38 reverses."""
+    entity_path = root / FORWARD_VERSION_ENTITY
+    return (attributes["ID"] == FORWARD_VERSION_CASE_ID
+            and attributes["TYPE"] == "not-wf"
+            and attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION) == "XML1.0-errata2e"
+            and attributes.get("ENTITIES", "none") == "general"
+            and namespace == "yes"
+            and path.relative_to(root).as_posix() == FORWARD_VERSION_DOCUMENT
+            and path.is_file() and entity_path.resolve().is_relative_to(root) and entity_path.is_file()
+            and hashlib.sha256(path.read_bytes()).hexdigest() == FORWARD_VERSION_DOCUMENT_SHA256
+            and hashlib.sha256(entity_path.read_bytes()).hexdigest() == FORWARD_VERSION_ENTITY_SHA256)
+
+
+def catalog_case(element: ET.Element, root: Path, current_base: str) -> Case:
+    """One catalog TEST element as a Case: expectation, profile lane and the E38 adjustment."""
+    attributes = element.attrib
+    identifier = attributes["ID"]
+    expected, skip_reason = expectation(attributes)
+    lane, lane_expected = out_of_profile_lane(attributes) if skip_reason else ("core", expected)
+    namespace = attributes.get("NAMESPACE", "yes")
+    if namespace not in {"yes", "no"}:
+        raise ValueError(f"Unknown NAMESPACE for {identifier}: {namespace}")
+    path = local_uri(root, current_base, attributes["URI"])
+    catalog_expected, adjustment = expected, ""
+    if not skip_reason and is_forward_version_case(root, attributes, namespace, path):
+        expected, adjustment = "ACCEPT", FORWARD_VERSION_REASON
+    return Case(identifier, path, attributes["TYPE"], namespace == "yes",
+                expected, skip_reason, " ".join(element.itertext()).strip(),
+                attributes.get("RECOMMENDATION", DEFAULT_RECOMMENDATION), lane, lane_expected,
+                attributes.get("ENTITIES", "none") != "none", catalog_expected, adjustment)
 
 
 def load_catalog(suite_dir: Path) -> list[Case]:
@@ -232,33 +270,11 @@ def load_catalog(suite_dir: Path) -> list[Case]:
         # Check inherited bases as well as leaf paths, including empty groups.
         local_uri(root, current_base, "")
         if element.tag == "TEST":
-            attributes = element.attrib
-            identifier = attributes["ID"]
+            identifier = element.attrib["ID"]
             if identifier in identifiers:
                 raise ValueError(f"Duplicate test ID: {identifier}")
             identifiers.add(identifier)
-            expected, skip_reason = expectation(attributes)
-            lane, lane_expected = out_of_profile_lane(attributes) if skip_reason else ("core", expected)
-            namespace = attributes.get("NAMESPACE", "yes")
-            if namespace not in {"yes", "no"}:
-                raise ValueError(f"Unknown NAMESPACE for {identifier}: {namespace}")
-            path = local_uri(root, current_base, attributes["URI"])
-            catalog_expected, adjustment = expected, ""
-            entity_path = root / FORWARD_VERSION_ENTITY
-            if (not skip_reason and identifier == FORWARD_VERSION_CASE_ID
-                    and attributes["TYPE"] == "not-wf"
-                    and attributes.get("RECOMMENDATION", "XML1.0") == "XML1.0-errata2e"
-                    and attributes.get("ENTITIES", "none") == "general"
-                    and namespace == "yes"
-                    and path.relative_to(root).as_posix() == FORWARD_VERSION_DOCUMENT
-                    and path.is_file() and entity_path.resolve().is_relative_to(root) and entity_path.is_file()
-                    and hashlib.sha256(path.read_bytes()).hexdigest() == FORWARD_VERSION_DOCUMENT_SHA256
-                    and hashlib.sha256(entity_path.read_bytes()).hexdigest() == FORWARD_VERSION_ENTITY_SHA256):
-                expected, adjustment = "ACCEPT", FORWARD_VERSION_REASON
-            cases.append(Case(identifier, path, attributes["TYPE"], namespace == "yes",
-                              expected, skip_reason, " ".join(element.itertext()).strip(),
-                              attributes.get("RECOMMENDATION", "XML1.0"), lane, lane_expected,
-                              attributes.get("ENTITIES", "none") != "none", catalog_expected, adjustment))
+            cases.append(catalog_case(element, root, current_base))
         for child in element:
             visit(child, current_base)
 
@@ -266,6 +282,49 @@ def load_catalog(suite_dir: Path) -> list[Case]:
     if not cases:
         raise ValueError("W3C catalog contains no test cases")
     return cases
+
+
+def lane_variant(case: Case) -> Case:
+    """The case as run by --all-cases in its own lane: lane expectation, no skip reason."""
+    # The stubs type replace() as a generic dataclass instance; it returns a Case (S5886).
+    return cast(Case, replace(case, expected=case.lane_expected, skip_reason=""))
+
+
+def case_command(case: Case, executable: Path, suite_root: Path | None,
+                 extra_arguments: tuple[str, ...]) -> tuple[list[str], str]:
+    """(command, "") to run the case, or ([], reason) when its input cannot be used."""
+    if not case.path.is_file():
+        return [], "Catalog input file is missing"
+    command = [str(executable), "--conformance-file", str(case.path)]
+    if suite_root is not None:
+        suite_root = suite_root.resolve()
+        if not suite_root.is_dir() or not case.path.resolve().is_relative_to(suite_root):
+            return [], "Catalog input is outside an existing local suite root"
+        command += ["--suite-root", str(suite_root)]
+    if case.namespaces:
+        command.append("--namespaces")
+    return command + list(extra_arguments), ""
+
+
+def judge_process(result: Result, case: Case, completed: subprocess.CompletedProcess) -> None:
+    """Fill result from the process: exactly one verdict line that agrees with the exit code."""
+    result.exit_code = completed.returncode
+    stdout = completed.stdout.decode("utf-8", errors="replace")
+    stderr = completed.stderr.decode("utf-8", errors="replace")
+    markers = [line for line in stdout.splitlines() if line.startswith("XPACT_CONFORMANCE\t")]
+    result.message = (stdout + stderr)[-12000:].strip()
+    if markers == ["XPACT_CONFORMANCE\tACCEPT"] and completed.returncode == 0:
+        result.actual = "ACCEPT"
+    elif markers == ["XPACT_CONFORMANCE\tREJECT"] and completed.returncode == 1:
+        result.actual = "REJECT"
+    else:
+        result.status = "error"
+        result.actual = "process-error"
+        result.message = f"Exit code {completed.returncode}; missing or inconsistent verdict.\n{result.message}"
+        return
+    result.status = "passed" if case.expected in (result.actual, "ANY") else "failed"
+    if result.status == "failed":
+        result.message = f"Expected {case.expected}, got {result.actual}. {case.description}\n{result.message}"
 
 
 def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir: Path,
@@ -277,43 +336,17 @@ def run_case(case: Case, engine: str, executable: Path, timeout: float, work_dir
     if case.skip_reason:
         result.message = case.skip_reason
         return result
-    if not case.path.is_file():
+    command, problem = case_command(case, executable, suite_root, extra_arguments)
+    if problem:
         result.status = "error"
-        result.message = "Catalog input file is missing"
+        result.message = problem
         return result
-    command = [str(executable), "--conformance-file", str(case.path)]
-    if suite_root is not None:
-        suite_root = suite_root.resolve()
-        if not suite_root.is_dir() or not case.path.resolve().is_relative_to(suite_root):
-            result.status = "error"
-            result.message = "Catalog input is outside an existing local suite root"
-            return result
-        command += ["--suite-root", str(suite_root)]
-    if case.namespaces:
-        command.append("--namespaces")
-    command += extra_arguments
     started = time.perf_counter()
     stdout_bytes, stderr_bytes = b"", b""
     try:
         completed = subprocess.run(command, capture_output=True, timeout=timeout, cwd=work_dir)
-        result.exit_code = completed.returncode
         stdout_bytes, stderr_bytes = completed.stdout, completed.stderr
-        stdout = stdout_bytes.decode("utf-8", errors="replace")
-        stderr = stderr_bytes.decode("utf-8", errors="replace")
-        markers = [line for line in stdout.splitlines() if line.startswith("XPACT_CONFORMANCE\t")]
-        result.message = (stdout + stderr)[-12000:].strip()
-        if markers == ["XPACT_CONFORMANCE\tACCEPT"] and completed.returncode == 0:
-            result.actual = "ACCEPT"
-        elif markers == ["XPACT_CONFORMANCE\tREJECT"] and completed.returncode == 1:
-            result.actual = "REJECT"
-        else:
-            result.status = "error"
-            result.actual = "process-error"
-            result.message = f"Exit code {completed.returncode}; missing or inconsistent verdict.\n{result.message}"
-            return result
-        result.status = "passed" if case.expected in (result.actual, "ANY") else "failed"
-        if result.status == "failed":
-            result.message = f"Expected {case.expected}, got {result.actual}. {case.description}\n{result.message}"
+        judge_process(result, case, completed)
     except subprocess.TimeoutExpired as error:
         stdout_bytes, stderr_bytes = error.output or b"", error.stderr or b""
         result.status, result.actual = "error", "timeout"
@@ -403,7 +436,14 @@ def no_crash_only(row: Result) -> bool:
 
 def xml_text(value: str) -> str:
     # Malformed-input diagnostics may contain NUL or invalid XML characters.
-    return re.sub(r"[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]", "?", value)
+    return "".join(ch if is_xml_char(ch) else "?" for ch in value)
+
+
+def is_xml_char(ch: str) -> bool:
+    """XML 1.0 Char production: #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]."""
+    code = ord(ch)
+    return (code in (0x9, 0xA, 0xD) or 0x20 <= code <= 0xD7FF or 0xE000 <= code <= 0xFFFD
+            or 0x10000 <= code <= 0x10FFFF)
 
 
 def tsv_row(row: Result) -> dict:
@@ -421,20 +461,66 @@ def add_junit_suite(suites: ET.Element, name: str, rows: list[Result], profile: 
     properties = ET.SubElement(suite, "properties")
     ET.SubElement(properties, "property", name="profile", value=profile)
     for row in rows:
-        classname = f"w3c.xml.{row.engine}" if row.lane == "core" else f"w3c.xml.{row.engine}.{row.lane}"
-        test = ET.SubElement(suite, "testcase", classname=classname,
-                             name=row.case_id, time=f"{row.elapsed_ms / 1000:.6f}", file=row.path)
-        if row.expectation_adjustment:
-            case_properties = ET.SubElement(test, "properties")
-            for name, value in (("catalog_expected", row.catalog_expected),
-                                ("profile_expected", row.expected),
-                                ("expectation_adjustment", row.expectation_adjustment)):
-                ET.SubElement(case_properties, "property", name=name, value=xml_text(value))
-        if row.status in {"failed", "error", "skipped"}:
-            tag = {"failed": "failure", "error": "error", "skipped": "skipped"}[row.status]
-            text = f"[known: {row.known}] {row.message}" if row.known else row.message
-            detail = ET.SubElement(test, tag, message=xml_text(text.splitlines()[0] if text else row.status))
-            detail.text = xml_text(text)
+        add_junit_case(suite, row)
+
+
+def add_junit_case(suite: ET.Element, row: Result) -> None:
+    classname = f"w3c.xml.{row.engine}" if row.lane == "core" else f"w3c.xml.{row.engine}.{row.lane}"
+    test = ET.SubElement(suite, "testcase", classname=classname,
+                         name=row.case_id, time=f"{row.elapsed_ms / 1000:.6f}", file=row.path)
+    if row.expectation_adjustment:
+        case_properties = ET.SubElement(test, "properties")
+        for name, value in (("catalog_expected", row.catalog_expected),
+                            ("profile_expected", row.expected),
+                            ("expectation_adjustment", row.expectation_adjustment)):
+            ET.SubElement(case_properties, "property", name=name, value=xml_text(value))
+    if row.status in {"failed", "error", "skipped"}:
+        tag = {"failed": "failure", "error": "error", "skipped": "skipped"}[row.status]
+        text = f"[known: {row.known}] {row.message}" if row.known else row.message
+        detail = ET.SubElement(test, tag, message=xml_text(text.splitlines()[0] if text else row.status))
+        detail.text = xml_text(text)
+
+
+def engine_summary(engine: str, rows: list[Result]) -> dict:
+    counts = Counter(row.status for row in rows)
+    robust = sum(map(no_crash_only, rows))
+    return {"engine": engine, "total": len(rows), "passed": counts["passed"] - robust,
+            "no_crash_only": robust,
+            "failed": counts["failed"], "errors": counts["error"], "skipped": counts["skipped"],
+            "accepted": sum(row.actual == "ACCEPT" for row in rows),
+            "rejected": sum(row.actual == "REJECT" for row in rows),
+            "known": sum(bool(row.known) for row in rows), "unexpected": sum(map(unexpected, rows)),
+            "elapsed_ms": round(sum(row.elapsed_ms for row in rows), 3)}
+
+
+def summary_table(summaries: list[dict]) -> list[str]:
+    """Markdown engine table; the "No crash only" column appears only when such cases exist."""
+    if any(row["no_crash_only"] for row in summaries):
+        lines = ["| Engine | Cases | Passed (verdict checked) | No crash only | Failed | Errors | Skipped | Known | Unexpected | Elapsed ms |",
+                 "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+        return lines + [f"| {row['engine']} | {row['total']} | {row['passed']} | {row['no_crash_only']} | {row['failed']} | {row['errors']} | {row['skipped']} | {row['known']} | {row['unexpected']} | {row['elapsed_ms']} |"
+                        for row in summaries]
+    lines = ["| Engine | Cases | Passed | Failed | Errors | Skipped | Known | Unexpected | Elapsed ms |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    return lines + [f"| {row['engine']} | {row['total']} | {row['passed']} | {row['failed']} | {row['errors']} | {row['skipped']} | {row['known']} | {row['unexpected']} | {row['elapsed_ms']} |"
+                    for row in summaries]
+
+
+def lane_table(results: list[Result]) -> list[str]:
+    """Markdown table per engine and lane (--all-cases), then the lane legend."""
+    lanes = list(dict.fromkeys(row.lane for row in results if row.engine != "harness"))
+    lines = ["", "## Lanes (--all-cases)", "",
+             "| Engine | Lane | Judged by | Cases | Passed | Failed | Errors | Skipped | Accepted | Rejected |",
+             "|---|---|---|---:|---:|---:|---:|---:|---:|---:|"]
+    for engine in dict.fromkeys(row.engine for row in results if row.engine != "harness"):
+        for lane in lanes:
+            rows = [row for row in results if row.engine == engine and row.lane == lane]
+            counts = Counter(row.status for row in rows)
+            judged = "no crash only" if rows and all(r.expected == "ANY" for r in rows) else "verdict"
+            lines.append(f"| {engine} | {lane} | {judged} | {len(rows)} | {counts['passed']} | {counts['failed']} | "
+                         f"{counts['error']} | {counts['skipped']} | {sum(r.actual == 'ACCEPT' for r in rows)} | "
+                         f"{sum(r.actual == 'REJECT' for r in rows)} |")
+    return lines + [""] + [f"- `{lane}`: {LANES[lane]}" for lane in lanes]
 
 
 def write_reports(results: list[Result], output_dir: Path, metadata: dict) -> dict:
@@ -443,17 +529,7 @@ def write_reports(results: list[Result], output_dir: Path, metadata: dict) -> di
     summaries = []
     for engine in dict.fromkeys(row.engine for row in results):
         rows = [row for row in results if row.engine == engine]
-        counts = Counter(row.status for row in rows)
-        elapsed_ms = round(sum(row.elapsed_ms for row in rows), 3)
-        robust = sum(map(no_crash_only, rows))
-        summary = {"engine": engine, "total": len(rows), "passed": counts["passed"] - robust,
-                   "no_crash_only": robust,
-                   "failed": counts["failed"], "errors": counts["error"], "skipped": counts["skipped"],
-                   "accepted": sum(row.actual == "ACCEPT" for row in rows),
-                   "rejected": sum(row.actual == "REJECT" for row in rows),
-                   "known": sum(bool(row.known) for row in rows), "unexpected": sum(map(unexpected, rows)),
-                   "elapsed_ms": elapsed_ms}
-        summaries.append(summary)
+        summaries.append(engine_summary(engine, rows))
         # Cases whose lane accepts either verdict get their own suite, so that Jenkins
         # does not show them as checked verdicts.
         add_junit_suite(suites, f"w3c-xml-{engine}", [row for row in rows if row.expected != "ANY"], PROFILE)
@@ -474,30 +550,9 @@ def write_reports(results: list[Result], output_dir: Path, metadata: dict) -> di
               "expectation_adjustments": list(adjustments.values())}
     (output_dir / "summary.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     lines = ["# W3C XML conformance", "", f"Source: {SUITE_URL}", "", f"Profile: {PROFILE}", ""]
-    if any(row["no_crash_only"] for row in summaries):
-        lines += ["| Engine | Cases | Passed (verdict checked) | No crash only | Failed | Errors | Skipped | Known | Unexpected | Elapsed ms |",
-                  "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
-        for row in summaries:
-            lines.append(f"| {row['engine']} | {row['total']} | {row['passed']} | {row['no_crash_only']} | {row['failed']} | {row['errors']} | {row['skipped']} | {row['known']} | {row['unexpected']} | {row['elapsed_ms']} |")
-    else:
-        lines += ["| Engine | Cases | Passed | Failed | Errors | Skipped | Known | Unexpected | Elapsed ms |",
-                  "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
-        for row in summaries:
-            lines.append(f"| {row['engine']} | {row['total']} | {row['passed']} | {row['failed']} | {row['errors']} | {row['skipped']} | {row['known']} | {row['unexpected']} | {row['elapsed_ms']} |")
-    lanes = list(dict.fromkeys(row.lane for row in results if row.engine != "harness"))
+    lines += summary_table(summaries)
     if any(row.lane != "core" and row.status != "skipped" for row in results):
-        lines += ["", "## Lanes (--all-cases)", "",
-                  "| Engine | Lane | Judged by | Cases | Passed | Failed | Errors | Skipped | Accepted | Rejected |",
-                  "|---|---|---|---:|---:|---:|---:|---:|---:|---:|"]
-        for engine in dict.fromkeys(row.engine for row in results if row.engine != "harness"):
-            for lane in lanes:
-                rows = [row for row in results if row.engine == engine and row.lane == lane]
-                counts = Counter(row.status for row in rows)
-                judged = "no crash only" if rows and all(r.expected == "ANY" for r in rows) else "verdict"
-                lines.append(f"| {engine} | {lane} | {judged} | {len(rows)} | {counts['passed']} | {counts['failed']} | "
-                             f"{counts['error']} | {counts['skipped']} | {sum(r.actual == 'ACCEPT' for r in rows)} | "
-                             f"{sum(r.actual == 'REJECT' for r in rows)} |")
-        lines += [""] + [f"- `{lane}`: {LANES[lane]}" for lane in lanes]
+        lines += lane_table(results)
     if adjustments:
         lines += ["", "Catalog expectations adjusted to the selected XML edition:"]
         lines += [f"- {row['case_id']}: catalog {row['catalog_expected']}; profile {row['expected']}. {row['reason']}"
@@ -510,55 +565,73 @@ def write_reports(results: list[Result], output_dir: Path, metadata: dict) -> di
     return report
 
 
-def main(argv: list[str] | None = None) -> int:
-    repo = Path(__file__).resolve().parent.parent
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite-dir", type=Path, help="Offline extracted directory containing xmlconf.xml")
-    parser.add_argument("--cache-dir", type=Path, default=repo / "build/validation-corpora/w3c-xml-20130923")
-    parser.add_argument("--output-dir", type=Path, default=repo / "build/benchmarks/w3c-xml-conformance")
-    parser.add_argument("--engine", action="append", required=True, metavar="NAME=EXE")
-    parser.add_argument("--timeout", type=float, default=10.0, help="Maximum seconds per case (default: 10)")
-    parser.add_argument("--known-failures", type=Path,
-                        help="TSV of recorded parser gaps (engine, case_id, status, category); listed results do not fail the run")
-    parser.add_argument("--all-cases", action="store_true",
-                        help="Run the out-of-profile cases in their lanes instead of skipping them (see LANES)")
-    parser.add_argument("--entity-engine", action="append", default=[], metavar="NAME=EXE",
-                        help="With --all-cases: Expat-compatible DLL checker for engine NAME, used for cases with external entities")
-    parser.add_argument("--write-known-failures", type=Path, metavar="PATH",
-                        help="Write this run's failures and errors as a known-failures TSV for review")
-    args = parser.parse_args(argv)
-    if not 0 < args.timeout < float("inf"):
-        parser.error("--timeout must be positive and finite")
-    output = args.output_dir.resolve()
-    output.mkdir(parents=True, exist_ok=True)
-    for name in REPORT_FILES:
-        (output / name).unlink(missing_ok=True)
+def parse_engines(values: list[str]) -> dict[str, Path]:
+    engines: dict[str, Path] = {}
+    for value in values:
+        name, separator, executable = value.partition("=")
+        if not separator or not name or not executable or name in engines:
+            raise ValueError(f"Invalid or duplicate --engine NAME=EXE: {value}")
+        engines[name] = Path(executable).resolve()
+        if not engines[name].is_file():
+            raise ValueError(f"Engine executable does not exist: {engines[name]}")
+    return engines
+
+
+def parse_entity_engines(values: list[str], engines: dict[str, Path]) -> dict[str, Path]:
+    entity_engines: dict[str, Path] = {}
+    for value in values:
+        name, separator, executable = value.partition("=")
+        if not separator or name not in engines or name in entity_engines:
+            raise ValueError(f"Invalid, unknown or duplicate --entity-engine NAME=EXE: {value}")
+        entity_engines[name] = Path(executable).resolve()
+        if not entity_engines[name].is_file():
+            raise ValueError(f"Entity engine executable does not exist: {entity_engines[name]}")
+    return entity_engines
+
+
+def run_engine(args, engine: str, executable: Path, entity_executable: Path | None,
+               cases: list[Case], suite_dir: Path, work: str) -> list[Result]:
+    """Every case on one engine, in catalog order (also with --jobs > 1)."""
+    print(f"W3C XML: {engine}: {len(cases)} catalog cases", flush=True)
+
+    def run_one(case: Case) -> Result:
+        work_dir = Path(work)
+        if args.jobs > 1:
+            # A crash log per job: parallel crashes never share one exception_trace.log.
+            work_dir = work_dir / f"job-{threading.get_ident()}"
+            work_dir.mkdir(exist_ok=True)
+        if args.all_cases and case.skip_reason:
+            lane_case = lane_variant(case)
+            if case.entities:
+                return run_case(lane_case, engine, entity_executable, args.timeout, work_dir,
+                                extra_arguments=("--entity-root", str(suite_dir)))
+            extra = ("--legacy-names",) if case.lane == "legacy-names" else ()
+            return run_case(lane_case, engine, executable, args.timeout, work_dir,
+                            suite_root=suite_dir, extra_arguments=extra)
+        return run_case(case, engine, executable, args.timeout, work_dir, suite_root=suite_dir)
+
+    results = []
+    with ThreadPoolExecutor(max_workers=args.jobs) as pool:
+        # map keeps catalog order, so the reports do not depend on --jobs.
+        rows = pool.map(run_one, cases) if args.jobs > 1 else map(run_one, cases)
+        for index, row in enumerate(rows, 1):
+            results.append(row)
+            if index % 250 == 0:
+                print(f"  {engine}: {index}/{len(cases)}", flush=True)
+    return results
+
+
+def run_suite(args, metadata: dict, output: Path) -> tuple[list[Result], dict]:
+    """(results, known failures); a setup problem becomes one harness error row."""
     results: list[Result] = []
-    metadata = {"suite_version": SUITE_VERSION, "source": SUITE_URL,
-                "archive_sha256": SUITE_SHA256 if args.suite_dir is None else None,
-                "source_mode": "local-directory" if args.suite_dir else "verified-archive"}
     known: dict[tuple[str, str], dict[str, str]] = {}
     try:
         if args.known_failures:
             known = load_known_failures(args.known_failures.resolve())
             metadata["known_failures_file"] = str(args.known_failures.resolve())
             metadata["known_failures_listed"] = len(known)
-        engines: dict[str, Path] = {}
-        for value in args.engine:
-            name, separator, executable = value.partition("=")
-            if not separator or not name or not executable or name in engines:
-                raise ValueError(f"Invalid or duplicate --engine NAME=EXE: {value}")
-            engines[name] = Path(executable).resolve()
-            if not engines[name].is_file():
-                raise ValueError(f"Engine executable does not exist: {engines[name]}")
-        entity_engines: dict[str, Path] = {}
-        for value in args.entity_engine:
-            name, separator, executable = value.partition("=")
-            if not separator or name not in engines or name in entity_engines:
-                raise ValueError(f"Invalid, unknown or duplicate --entity-engine NAME=EXE: {value}")
-            entity_engines[name] = Path(executable).resolve()
-            if not entity_engines[name].is_file():
-                raise ValueError(f"Entity engine executable does not exist: {entity_engines[name]}")
+        engines = parse_engines(args.engine)
+        entity_engines = parse_entity_engines(args.entity_engine, engines)
         if args.all_cases and set(entity_engines) != set(engines):
             raise ValueError("--all-cases needs one --entity-engine for every --engine")
         suite_dir = args.suite_dir.resolve() if args.suite_dir else prepare_suite(args.cache_dir.resolve())
@@ -574,23 +647,49 @@ def main(argv: list[str] | None = None) -> int:
         # Isolate Eiffel exception_trace.log and other crash output from the checkout.
         with tempfile.TemporaryDirectory(prefix="w3c-", dir=output) as work:
             for engine, executable in engines.items():
-                print(f"W3C XML: {engine}: {len(cases)} catalog cases", flush=True)
-                for index, case in enumerate(cases, 1):
-                    if args.all_cases and case.skip_reason:
-                        lane_case = replace(case, expected=case.lane_expected, skip_reason="")
-                        if case.entities:
-                            results.append(run_case(lane_case, engine, entity_engines[engine], args.timeout, Path(work),
-                                                    extra_arguments=("--entity-root", str(suite_dir))))
-                        else:
-                            extra = ("--legacy-names",) if case.lane == "legacy-names" else ()
-                            results.append(run_case(lane_case, engine, executable, args.timeout, Path(work),
-                                                    suite_root=suite_dir, extra_arguments=extra))
-                    else:
-                        results.append(run_case(case, engine, executable, args.timeout, Path(work), suite_root=suite_dir))
-                    if index % 250 == 0:
-                        print(f"  {engine}: {index}/{len(cases)}", flush=True)
+                results += run_engine(args, engine, executable, entity_engines.get(engine), cases, suite_dir, work)
     except (OSError, ValueError, KeyError, expat.ExpatError, zipfile.BadZipFile) as error:
         results.append(Result("harness", "suite-setup", "", "", "", "not-run", "error", message=str(error)))
+    return results, known
+
+
+def build_parser(repo: Path) -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--suite-dir", type=Path, help="Offline extracted directory containing xmlconf.xml")
+    parser.add_argument("--cache-dir", type=Path, default=repo / "build/validation-corpora/w3c-xml-20130923")
+    parser.add_argument("--output-dir", type=Path, default=repo / "build/benchmarks/w3c-xml-conformance")
+    parser.add_argument("--engine", action="append", required=True, metavar="NAME=EXE")
+    parser.add_argument("--timeout", type=float, default=10.0, help="Maximum seconds per case (default: 10)")
+    parser.add_argument("--known-failures", type=Path,
+                        help="TSV of recorded parser gaps (engine, case_id, status, category); listed results do not fail the run")
+    parser.add_argument("--all-cases", action="store_true",
+                        help="Run the out-of-profile cases in their lanes instead of skipping them (see LANES)")
+    parser.add_argument("--entity-engine", action="append", default=[], metavar="NAME=EXE",
+                        help="With --all-cases: Expat-compatible DLL checker for engine NAME, used for cases with external entities")
+    parser.add_argument("--write-known-failures", type=Path, metavar="PATH",
+                        help="Write this run's failures and errors as a known-failures TSV for review")
+    parser.add_argument("--jobs", type=int, default=1,
+                        help="Cases run at the same time (default: 1). Results are the same; per-case "
+                             "elapsed times include the load of the other jobs")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    repo = Path(__file__).resolve().parent.parent
+    parser = build_parser(repo)
+    args = parser.parse_args(argv)
+    if not 0 < args.timeout < float("inf"):
+        parser.error("--timeout must be positive and finite")
+    if args.jobs < 1:
+        parser.error("--jobs must be at least 1")
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    for name in REPORT_FILES:
+        (output / name).unlink(missing_ok=True)
+    metadata = {"suite_version": SUITE_VERSION, "source": SUITE_URL,
+                "archive_sha256": SUITE_SHA256 if args.suite_dir is None else None,
+                "source_mode": "local-directory" if args.suite_dir else "verified-archive"}
+    results, known = run_suite(args, metadata, output)
     if known and not any(row.engine == "harness" for row in results):
         results += apply_known_failures(results, known)
     if args.write_known_failures:
