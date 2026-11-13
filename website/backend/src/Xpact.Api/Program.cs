@@ -65,6 +65,7 @@ builder.Services.AddSingleton<IWorkerLimiter, JobObjectWorkerLimiter>();
 builder.Services.AddSingleton<IWorkerLauncher>(sp =>
     new WorkerLauncher(sp.GetRequiredService<IOptions<XpactOptions>>().Value.WorkerLowIntegrity));
 builder.Services.AddSingleton<IWorkerRunner, WorkerRunner>();
+builder.Services.AddSingleton<UploadGate>();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(o => o.AddPolicy("dev", p => p.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddRateLimiter(o =>
@@ -150,10 +151,17 @@ api.MapGet("/info", (IOptions<XpactOptions> options) =>
     });
 });
 
-api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions<XpactOptions> options,
+api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, UploadGate gate, IOptions<XpactOptions> options,
     ILogger<Program> log, CancellationToken cancellationToken) =>
 {
     var o = options.Value;
+    // The same address the rate limiter uses (X-Forwarded-For only from trusted proxies).
+    string client = http.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+    // #357: decide BEFORE reading the body, so a refused upload costs no memory.
+    if (gate.Admit(http, client, maxBody, out var lease) is { } refusal) return refusal;
+    using var _ = lease;
+
     ValidateInput input;
     try
     {
@@ -184,8 +192,6 @@ api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, IOptions
         return Problem(StatusCodes.Status400BadRequest, "Bad chunk size",
             $"Use 0 for the whole document, or a size of at least {o.MinChunkSize} byte(s).");
 
-    // The same address the rate limiter uses (X-Forwarded-For only from trusted proxies).
-    string client = http.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
     try
     {
         var result = await runner.RunAsync(new ParseRequest(input.Document, build, chunk, client), cancellationToken);
@@ -253,9 +259,11 @@ internal sealed record ValidateInput(byte[]? Document, string? Build, int? Chunk
             if (int.TryParse(form["chunkSize"].FirstOrDefault(), out int f)) chunk = f;
             if (form.Files.GetFile("file") is { } file)
             {
-                using var buffer = new MemoryStream();
-                await file.CopyToAsync(buffer, cancellationToken);
-                return new ValidateInput(buffer.ToArray(), build, chunk);
+                // One exactly sized copy (#357); the form's own buffer is bounded by the request size.
+                byte[] bytes = new byte[file.Length];
+                await using var stream = file.OpenReadStream();
+                await stream.ReadExactlyAsync(bytes, cancellationToken);
+                return new ValidateInput(bytes, build, chunk);
             }
             string? text = form["xml"].FirstOrDefault();
             return new ValidateInput(text is null ? null : Encoding.UTF8.GetBytes(text), build, chunk);
@@ -269,6 +277,13 @@ internal sealed record ValidateInput(byte[]? Document, string? Build, int? Chunk
         }
 
         // Raw body (for example curl --data-binary @file.xml -H "Content-Type: application/xml").
+        // With a Content-Length (already checked against the body limit) read into one exact array (#357).
+        if (http.ContentLength is > 0 and <= int.MaxValue)
+        {
+            byte[] exact = new byte[(int)http.ContentLength.Value];
+            await http.Body.ReadExactlyAsync(exact, cancellationToken);
+            return new ValidateInput(exact, build, chunk);
+        }
         using var raw = new MemoryStream();
         await http.Body.CopyToAsync(raw, cancellationToken);
         return new ValidateInput(raw.Length == 0 ? null : raw.ToArray(), build, chunk);
