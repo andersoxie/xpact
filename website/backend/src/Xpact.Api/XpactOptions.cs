@@ -48,6 +48,15 @@ public sealed class XpactOptions
     /// </summary>
     public int MaxBufferedMb { get; set; } = 256;
 
+    /// <summary>
+    /// Longest time for one /api/validate request: upload, queue and parse together (#358). Must stay
+    /// above QueueWaitSeconds + TimeoutSeconds plus the upload time of a 10 MB document on a slow line.
+    /// </summary>
+    public int RequestTimeoutSeconds { get; set; } = 120;
+
+    /// <summary>Open connections the server accepts at once (#358); the reverse proxy may set its own limit.</summary>
+    public int MaxConnections { get; set; } = 500;
+
     /// <summary>Requests per client IP per minute.</summary>
     public int RequestsPerMinute { get; set; } = 30;
 
