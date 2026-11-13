@@ -41,7 +41,13 @@ builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.BrotliCompre
     o => o.Level = System.IO.Compression.CompressionLevel.Optimal);
 builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompressionProviderOptions>(
     o => o.Level = System.IO.Compression.CompressionLevel.Optimal);
-builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = maxBody);
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.MultipartBodyLengthLimit = maxBody;
+    // #359: keep uploaded files in memory. The default (64 KB) spools larger files to a temp file in
+    // %TEMP%, so visitors' documents touched the disk. The memory is bounded by UploadGate (#357).
+    o.MemoryBufferThreshold = (int)Math.Min(maxBody, int.MaxValue);
+});
 
 // Behind IIS or nginx the visitor's address arrives in X-Forwarded-For. Only a proxy on this
 // machine, one listed in KnownProxies or one inside KnownNetworks is believed, so a visitor cannot
