@@ -226,7 +226,15 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 ## ➡️ Next
 
-**State 2026-11-12 (read first):**
+**State 2026-11-13 (read first):** the full to-do list with time estimates is [TOOODOOO.txt](../TOOODOOO.txt).
+
+- [x] ✅ [#316](https://github.com/andersoxie/xpact/issues/316) fixed in the worker (PR #355, 2026-11-12): WinDbg showed every crash is inside .NET (type loading / JIT / finalizers at the cap), not in the DLL; warm-up + 4 MB reserve + tiered JIT off; 0 crashes in 50 runs ([report](../reports/issue-0316/report.md)).
+- [x] ✅ [#352](https://github.com/andersoxie/xpact/issues/352) / [#353](https://github.com/andersoxie/xpact/issues/353) 10 MB upload (PR #354, 2026-11-12): the editor froze the page (one DOM row per line) → read-only 256 KB preview; a timeout now explains the assertions build and small pieces ([report](../reports/issue-0352/report.md)).
+- [x] ✅ #262 and #130 closed as not planned (Jenkins dropped 2026-11-03).
+- [ ] Next website release with #316 + #352/#353 (the student runs `gh release create`); then the Docker memory-cap check can require code 1 again.
+- [ ] Ask the supervisor in one go: #293, #211, #304, #171, #13, licence, assertions timeout, SonarQube hotspot rights ([TOOODOOO.txt](../TOOODOOO.txt) section B).
+
+**State 2026-11-12:**
 
 - [x] ✅ **SonarQube (2026-11-12):** scan works with the student's token; issues 196 → **0** in eight PRs (SonarQube issue 1-8 = [#325](https://github.com/andersoxie/xpact/issues/325)-[#332](https://github.com/andersoxie/xpact/issues/332), PRs #333-#340), duplication 14 % → 0 %; Python suite 239 OK, website 42/42. [Summary](../reports/sonarqube-2026-11-12/README.md).
 - [ ] SonarQube: 2 security hotspots (3 → 2 with #342) need someone with review rights (supervisor); quality gate fails only on "coverage of new code" (send a `coverage.py` report, or agree to drop that condition).
@@ -235,7 +243,6 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 - [x] ✅ Hand-in report updated to 2026-11-12 ([#346](https://github.com/andersoxie/xpact/issues/346)); ✏️ reflection still in the student's own words.
 - [x] ✅ Website build `website-2026-11-12-1` shipped ([#345](https://github.com/andersoxie/xpact/issues/345), PR #348): release + image `latest` (digest `08b77a5b…`), container smoke and memory-cap tests passed ([report](../reports/issue-0345/report.md)).
 - [ ] ⏸ Aikido: mark the 14 checksum alerts as false positives (put aside by the student, 2026-11-12).
-- [ ] 🟡 [#316](https://github.com/andersoxie/xpact/issues/316) investigated, not fixed ([report](../reports/issue-0316/report.md)): a race, reproduced without a container (stack overflow at 18-22 MB caps); first hypothesis refuted; the crash is in native code. WinDbg installed; parked by the student.
 - [x] ✅ Weekly note [week 9](notes/weekly/week-09.md) (10-16 Nov) written.
 
 **State 2026-11-11, night:**
@@ -452,6 +459,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Bring to review:** A draft report and result tables tied to specific builds.
 - [x] [Report draft](github/issues/18-report-handover.md) in [`report/`](report/) ✅ [`ActualReport.md`](report/ActualReport.md) (2026-11-01); ✏️ the student completes the personal details and the reflection
 - [x] Report brought up to 2026-11-12 with recounted numbers and result tables tied to builds ([#346](https://github.com/andersoxie/xpact/issues/346)); [week 9 note](notes/weekly/week-09.md)
+- [x] 2026-11-12/13: [#316](https://github.com/andersoxie/xpact/issues/316) fixed (PR #355), [#352](https://github.com/andersoxie/xpact/issues/352)/[#353](https://github.com/andersoxie/xpact/issues/353) fixed (PR #354), #262/#130 closed; report, short report and week 9 note updated
 
 ## Week 10 – Handover
 **Activity:** Demonstrate the work, address review comments and hand it over.

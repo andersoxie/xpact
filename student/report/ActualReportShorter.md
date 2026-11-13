@@ -2,7 +2,7 @@
 
 > **Student:** Masoud Dehdar · **Programme:** Software Developer .NET · **University:** Medieinstitutet
 > **Company:** Bsharp · **Supervisor:** Anders Persson · **Internship:** 6 October – 27 November 2026 (eight weeks)
-> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` @ `a840029` (2026-11-12, = `main` after PR #344) · **Full report:** [ActualReport.md](ActualReport.md)
+> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` @ `40c6428` (2026-11-13) · **Full report:** [ActualReport.md](ActualReport.md)
 >
 > ✅ done and verified · 🟡 partly done · 🔴 open · ⏭️ dropped by decision · ✏️ for the student to complete
 
@@ -20,7 +20,7 @@ xpact is an XML parser written in Eiffel with a C interface compatible with **Ex
 | ✅ Same verdict as Expat | 4,308 / 4,308 C-API cases · 1,302 / 1,302 chunked configurations · 525 / 525 SVG files |
 | ✅ Final parser retested | Every test rerun on 2026-11-08: no regression, 3.9 million fuzzed inputs, 0 crashes |
 | ✅ Failures are reported | A failing test exits nonzero in every build, proven by a meta-test |
-| ✅ Traceable | 146 issues (129 closed) and 168 merged pull requests by the student (2026-11-12), plus 50 for the speed work; versions 0.1.0–0.9.0 |
+| ✅ Traceable | 149 issues (136 closed) and 175 merged pull requests by the student (2026-11-13), plus 50 for the speed work; versions 0.1.0–0.9.0 |
 | ✅ Code quality | SonarQube: **196 → 0 issues**, 0 bugs, 0 vulnerabilities, duplicated code 14 % → 0 %; 🟡 2 security hotspots to mark "Safe", gate needs a coverage report |
 | ✅ Website | Upload XML and test it with xpact; all 7 review findings fixed, worker with no privileges at Low integrity; 42/42 backend tests; Docker image on GitHub; 🟡 not deployed yet |
 | 🟡 Speed | Chunked input is incremental: 50 min → 106 ms. Against native Expat 2.8.1: median **18× slower**, same events in every cell ([results](../results/fair-speed-2026-11-10/README.md)). 🔴 ISO-8859-1 in pieces is still slow (#272) |
@@ -148,7 +148,7 @@ flowchart LR
 | ⏸ [#13](https://github.com/andersoxie/xpact/issues/13) | The GC wrapper swallows exceptions (a design question) |
 | 🟡 [#210](https://github.com/andersoxie/xpact/issues/210) | Website deployment and HTTPS (the supervisor's server) |
 | 🟡 [#342](https://github.com/andersoxie/xpact/issues/342) | SonarQube: 2 security hotspots to mark "Safe"; a coverage report for the quality gate |
-| 🟡 [#316](https://github.com/andersoxie/xpact/issues/316) | Under a small memory cap the worker sometimes crashes in native code instead of reporting out of memory (a race; low impact; next: WinDbg) |
+| ✅ [#316](https://github.com/andersoxie/xpact/issues/316), [#352](https://github.com/andersoxie/xpact/issues/352) | Fixed 2026-11-12: small-memory-cap crash (inside .NET, fixed in the worker); 10 MB upload froze the page (now a preview). Next website release ships both |
 
 ## 8. Reflection ✏️
 > *Draft. Rewrite it in your own words.*
