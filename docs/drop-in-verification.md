@@ -24,11 +24,15 @@ Use these levels when discussing status:
   L2 has zero unexplained red rows, L3 passes for at least one serious public
   application, benchmarks are published, and ABI packaging is repeatable.
 
-The current Windows preview is between L2 and L3:
+The Windows preview has header/ABI coverage and an upstream-suite gate; the
+public-application replacement step remains incomplete:
 
 - L0 and L1 are covered on Windows.
-- L2 is covered with an explicit expected-failure list.
-- L3 is not automated yet.
+- L2 has a native-suite runner that checks named failures against an explicit
+  expected-failure list. A manifest expansion alone is not an executed-suite
+  result; assess the archived native-suite log for the build being qualified.
+- L3 has optional CPython baseline stages, but the replacement project patch is
+  not installed and the replacement stage reports that gap rather than passing.
 - L4 is not claimed.
 
 ## Current Windows Verification Commands
@@ -120,8 +124,9 @@ they are sensitive to machine load:
 .\scripts\run_benchmarks.ps1 -EiffelBuild Finalized,FinalizedAssertions
 ```
 
-Large XML macro-benchmarks are also nightly-only and require pre-decompressed
-real corpus files prepared outside the workspace:
+Large XML macro-benchmarks are opt-in and require pre-decompressed real corpus
+files prepared outside the workspace. Schedule timing runs on an otherwise idle
+agent:
 
 ```powershell
 .\scripts\run_large_xml_benchmarks.ps1 `
@@ -129,6 +134,12 @@ real corpus files prepared outside the workspace:
   -Iterations 1 `
   -Repetitions 3
 ```
+
+The separate [WSL compiler benchmark lane](wsl-benchmarks.md) measures direct
+Eiffel executables with EiffelStudio and Gobo, plus a libexpat C baseline. Its
+November 2026 results used the updated shared Jenkins environment through a
+local launcher invocation, not a new Jenkins build. Those timings and bounded
+assertion probes do not qualify a Linux native-library replacement.
 
 ## Jenkins Pipeline
 
@@ -156,7 +167,11 @@ Recommended agent prerequisites:
 - A prepared Expat 2.8.1 source checkout or release tree.
 - Access to the pinned W3C suite download, or an extracted suite directory
   outside the Jenkins workspace for offline agents.
-- Optional WSL2 Ubuntu with `gcc` for cross-platform ABI smoke.
+- WSL2 Ubuntu 24.04 with the selected Linux Eiffel compilers, GCC, make, Python
+  and libexpat development headers for the default-enabled WSL benchmark lane.
+  Set its environment-file parameters or expose the compilers in the Linux
+  login environment; disable that lane on agents without these prerequisites.
+- WSL2 with GCC for the separately controlled bridge/ABI smoke tests.
 - Optional CPython source checkout for L3 public-application replacement.
 
 Recommended Jenkins parameters:
@@ -173,8 +188,17 @@ Recommended Jenkins parameters:
 - `W3C_SUITE_DIRECTORY`
   Optional extracted W3C XML suite directory for offline agents. Leave empty
   to download the pinned archive and verify its checksum automatically.
+- `RUN_WSL_EIFFEL_BENCHMARKS`
+  Enable the separate WSL benchmark stage; defaults to true independently of
+  `RUN_BENCHMARKS`.
+- `WSL_EIFFEL_COMPILERS`, `WSL_DISTRIBUTION`, `WSL_EIFFEL_ENVIRONMENT`,
+  `WSL_GOBO_ENVIRONMENT`
+  Select the compilers, distribution and Linux Bash setup files. Current defaults
+  and the shared Gobo nightly selection are documented in the
+  [WSL Jenkins configuration](wsl-benchmarks.md#jenkins).
 - `RUN_PUBLIC_APP`
-  Run CPython replacement experiment.
+  Enable the CPython stages in `Jenkinsfile.windows-phase1`; the replacement
+  stage remains blocked until its maintained link patch is installed.
 - `CPYTHON_SOURCE_DIR`
   Path to a CPython checkout.
 
@@ -273,19 +297,25 @@ Archive these artifacts:
   when the conformance command fails.
 - `docs/large-xml-benchmarks.md` when large XML benchmarks run
 - `docs/performance-analysis.md` when benchmarks run
+- `build/wsl-benchmarks/benchmark-results.tsv`, `metadata.json`, `summary.md`
+  and build logs when the WSL compiler benchmark stage runs
 - `build/large-xml-benchmarks/large-xml-benchmark-results.tsv` when large XML
   benchmarks run
 - `dist/*.zip`
 - CPython baseline and xpact-lane test logs when `RUN_PUBLIC_APP` is enabled
 
-## Future CI Improvements
+## Native-Suite Gate And Remaining Work
 
-The current native-suite gate knows the expected-failure manifest, but it does
-not yet parse the upstream test runner output into exact unexpected test names.
-Before a public replacement claim, add a parser that:
+`Assert-NativeSuiteResult` in `scripts/run_libexpat_adapter.ps1` parses the
+native-suite failure names, resolves them through the upstream manifest and
+checks each against `adapters/libexpat/expected-failures.tsv`. It rejects crashes,
+missing or inconsistent summaries, unknown or ambiguous names, unexpected
+failures, and setup/teardown failures. A completely passing suite also fails the
+gate if the expected-failure list is still nonempty.
 
-- extracts failing upstream `START_TEST` names from the native-suite log;
-- compares them with `adapters/libexpat/expected-failures.tsv`;
-- fails the build if any non-expected row fails;
-- fails the build if an expected row unexpectedly passes and the manifest was
-  not updated.
+The remaining reporting gap is individual unexpected passes in a mixed run:
+when some expected failures remain, the gate does not identify every expected
+test that has started passing. That needs explicit per-test outcome accounting
+before claiming the expected-failure list exactly describes an executed suite.
+The CPython replacement patch and evidence from its real application tests are
+also still required for L3.

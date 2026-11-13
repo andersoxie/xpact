@@ -1,13 +1,21 @@
 # GitHub setup
 
+**Scope reviewed 13 November 2026:** this page records the student workflow and
+the GitHub state checked in October. Issue, draft, board and branch-status rows
+below are historical observations, not a fresh tracker check. Before running
+the setup script, review its dry run and the intended repository so old drafts
+do not create duplicate work. Current repository capabilities are linked from
+[the student index](../README.md); branch and approval policy remains in
+[the student workflow](../VERSIONING.md) and [`CLAUDE.md`](../../CLAUDE.md).
+
 > **Last updated:** 2026-10-26 · describes `student-Mass` @ `a39362a` (labels and board checked on GitHub, [#108](https://github.com/andersoxie/xpact/issues/108))
 
-How the work is tracked on [andersoxie/xpact](https://github.com/andersoxie/xpact):
+How student work is tracked on [andersoxie/xpact](https://github.com/andersoxie/xpact):
 **one issue per problem or task**, labels to sort them, one milestone per
 project week, and a pull request into `student-Mass` for every change
 (never into `main`; see [`CLAUDE.md`](../../CLAUDE.md)).
 
-| | What | State (2026-10-22) |
+| | What | Recorded state, through 26 October 2026 |
 |---|---|---|
 | ✅ | Labels | 21, listed in [`labels.json`](labels.json); **all 21 on GitHub** with the same colour and description (the last 6 created 2026-10-26, [#108](https://github.com/andersoxie/xpact/issues/108)) |
 | ✅ | Milestones | `Week 1 - Setup` … `Week 10 - Handover`, in [`milestones.json`](milestones.json), all on GitHub |
@@ -39,19 +47,19 @@ Two kinds, used together on every issue.
 | `P0` / `P1` | Must be solved first / after P0 |
 | `workflow` | Versioning, reports and plan updates (not a project finding) |
 
-All 21 are on GitHub. `group:A-orientation`, `group:F-core`,
+All 21 were present at the 26 October check. `group:A-orientation`, `group:F-core`,
 `group:G-verification`, `D1-beginner`, `D4-expert` and `type:blocker` were
 created on 2026-10-26 ([#108](https://github.com/andersoxie/xpact/issues/108), authorized by the student). GitHub's
 7 default labels (`duplicate`, `enhancement`, `good first issue`, `help wanted`,
-`invalid`, `question`, `wontfix`) are also there; no issue or pull request uses
-them, and they are not in `labels.json`. The issue templates add `type:finding`
+`invalid`, `question`, `wontfix`) were also present; no issue or pull request used
+them at that check, and they are not in `labels.json`. The issue templates add `type:finding`
 or `type:task` by themselves; add the others by hand.
 
-## Milestones and issues
+## Recorded milestones and issues
 
 Due on the Friday of each week; week 1 started on 2026-10-05.
 
-| Milestone | Issues on GitHub | Drafts not on GitHub yet |
+| Milestone | Issues recorded on GitHub | Drafts not published at the snapshot |
 |---|---|---|
 | Week 1 - Setup | #2, #4, #7, #10 (build fixes), #18 (A01), #68 (A01 evidence) | |
 | Week 2 - Baseline | #3 (B03), #13, #33 (A02), #48 (`-keep`) | 04 `-keep`, 06 runner stops, 07 DLL crash, 21 xmlconf crashes, 22 build fixes not in `main` |
@@ -67,7 +75,7 @@ Due on the Friday of each week; week 1 started on 2026-10-05.
 Every issue's report is indexed in [`reports/README.md`](../../reports/README.md).
 
 <details>
-<summary>Drafts that already have a real issue (check before running the script)</summary>
+<summary>Draft-to-issue mappings recorded in October (recheck before running the script)</summary>
 
 | Draft | Real issue | Note |
 |---|---|---|
@@ -76,7 +84,7 @@ Every issue's report is indexed in [`reports/README.md`](../../reports/README.md
 | `02-A02.md` | [#33](https://github.com/andersoxie/xpact/issues/33) | Done; delete the draft or the script makes a duplicate |
 | `09-B01.md`, `10-B02.md` | [#45](https://github.com/andersoxie/xpact/issues/45), [#46](https://github.com/andersoxie/xpact/issues/46) | Same titles, so the script skips them |
 | `01-A01.md` | (none; A01 was marked done in [#18](https://github.com/andersoxie/xpact/issues/18), evidence in [#68](https://github.com/andersoxie/xpact/issues/68)) | The script would create an A01 issue for finished work |
-| `22-blocker-build-fixes.md` | (none) | Partly solved by #2, #7, #10 on `student-Mass`; still not in `main` |
+| `22-blocker-build-fixes.md` | (none recorded) | At the snapshot, partly solved by #2, #7, #10 on `student-Mass` and not yet in `main`; this is not the current merge status |
 
 Issues created outside the drafts: #2, #4, #7, #10, #13, #28, #38, #39, #40,
 #48, #51, #53, #55, #60 (findings), #5, #14, #16, #18, #20, #22, #24, #26, #29,
@@ -104,7 +112,7 @@ close an issue just because the code changed).
   `andersoxie/xpact` (GitHub only links a project to a repository of the same
   owner), so it does not show in the repository's Projects tab. Issues of
   the repository can be added to it all the same.
-- The `gh` login has the `project` scope since 2026-10-26 (`gh auth refresh -s read:project,project`).
+- The student PC's `gh` login was granted the `project` scope on 2026-10-26 (`gh auth refresh -s read:project,project`).
   That day the board was read and brought up to date ([#108](https://github.com/andersoxie/xpact/issues/108)): 16 student
   issues were missing (#48-#106), 7 closed issues were still in Todo or In review,
   and the merged PRs #12 and #47 were still in In review. The supervisor's own
@@ -139,5 +147,5 @@ cd C:\xpact\xpact-student-Mass
 ```
 
 Running it again: labels are created with `--force`, so existing ones are set
-to the colour and description in `labels.json` (all 21 exist since 2026-10-26). A milestone that exists is skipped, and so is a draft
+to the colour and description in `labels.json`. A milestone that exists is skipped, and so is a draft
 whose title **exactly** matches an existing issue.

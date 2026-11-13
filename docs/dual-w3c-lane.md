@@ -61,7 +61,10 @@ normal XML rejections. The E38 fifth-edition correction retains catalog and
 profile expectations in the report. The pinned core source and no-loader
 behavior are unchanged, so a future expanded comparison must retain its wrong
 verdicts or unsupported-resource errors; it cannot claim external-resource
-conformance from an ignored entity. No expanded core comparison has been verified.
+conformance from an ignored entity. Later Jenkins build 108 archived an expanded
+comparison, including core failures and timeouts; its authenticated reports were
+checked during the [31 October summary repair](dual-implementation-jenkins.md#w3c-classname-compatibility-31-october-2026).
+That report verification did not rerun either parser.
 The 25 October results below retain their original 1,727-case profile; see
 [the xpact verification](w3c-xml-conformance.md) for later assertion-enabled and
 assertion-disabled campaigns.
@@ -131,7 +134,8 @@ The standalone [Windows Jenkins pipeline](../ci/Jenkinsfile.dual-w3c) selects on
 this lane. Configure a Pipeline-from-SCM job using that script path. It runs the
 runner checks, publishes our filtered JUnit and archives both implementations'
 reports and per-case output even when parser results fail. No existing GitHub Actions workflow is changed.
-Jenkins controller execution is separate from local verification.
+The dated local verification below remains separate from later Jenkins evidence
+documented in the linked integration notes.
 
 ```powershell
 python -m unittest discover -s tests/python -p test_implementation_builds.py -v

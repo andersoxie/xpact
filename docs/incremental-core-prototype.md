@@ -7,8 +7,9 @@ incremental parser core. It is not wired into `XP_NATIVE_PARSER` yet.
 > checkpoint instead of parsing the whole buffer again; see
 > [incremental-resume.md](incremental-resume.md). This prototype is not used by it.
 
-The point of this step is to establish a state-owned parsing shape before
-moving production behavior away from accumulated-buffer replay.
+The prototype explores a bounded unconsumed-input window and explicit session
+state. Production checkpoint resume is a separate implementation and still
+retains the full input for replay fallbacks.
 
 ## Current Scope
 
@@ -41,11 +42,16 @@ The Eiffel regression suite currently checks that:
 - a chunk ending inside an attribute value waits for more input and keeps only
   the incomplete token;
 - the completed attributed start tag is emitted when the next chunk arrives;
-- a completed attributed start tag in a non-final chunk is emitted immediately,
-  unlike the current native replay shim with reparse deferral enabled;
+- a completed attributed start tag in a non-final chunk is emitted immediately;
 - non-final character data is emitted and consumed;
 - final end tags finish the session;
 - mismatched end tags produce an error.
+
+The production [shim audit](incremental-shim-audit.md) also expects immediate
+callbacks for its completed attributed-start-tag cases, with and without
+reparse deferral. Production also retains state through its checkpoint-resume
+path. This prototype's separate bounded-window design is not a blanket
+difference in callback timing.
 
 ## Not In Scope Yet
 

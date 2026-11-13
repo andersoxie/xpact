@@ -19,7 +19,7 @@ The evidence is in [the investigation data](../benchmarks/results/gobo-assertion
 
 The installed Windows compiler, `C:\gobo\bin\gec.exe`, reports
 `26.11.12+ca6541c`. This is the latest **nightly** checked on 13 November;
-the latest stable release remains `26.10.18+c84ee2f`.
+the latest stable release at that check was `26.10.18+c84ee2f`.
 The matching official Linux archive was downloaded into a separate qualification
 directory. Both packages correspond to commit
 `ca6541cacb6d3ce388bc312c884f321d183de411`.

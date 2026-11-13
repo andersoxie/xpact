@@ -56,9 +56,12 @@ Read the repository in this order if you want to understand the design:
 8. `adapters/libexpat/parity.tsv`
    This is the public truth table for what upstream tests are green, red, or
    intentionally out of scope for the Windows preview.
-9. `docs/benchmarks.md` and `docs/performance-analysis.md`
-   These record the current same-machine measurements and explain the largest
-   remaining performance costs.
+9. `docs/performance-analysis.md`, `docs/wsl-benchmarks.md`, and
+   `docs/gobo-assertions.md`
+   These distinguish the completed parser optimizations from the 13 November
+   local toolchain comparison and its assertion qualification. The tables in
+   `docs/benchmarks.md` preserve the June Windows campaign; Jenkins artifacts
+   identify each CI build's own measurements.
 
 ## How The Article Maps To Verification
 
@@ -66,36 +69,42 @@ The article's "billion-user project" idea only becomes credible if the
 implementation is measured against existing users' expectations. For xpact,
 that means layered verification:
 
-- Eiffel tests prove the contracted parser model.
-- Native ABI smoke tests prove C callers can link and call.
+- Eiffel tests exercise the contracted parser model in the tested configurations.
+- Native ABI smoke tests verify the tested C linking and call paths.
 - The upstream libexpat suite provides the main compatibility oracle.
 - Same-machine benchmarks show cost honestly.
-- Public-application replacement tests prove the library works outside its own
+- Public-application replacement tests check the library outside its own
   repository.
 
 `docs/drop-in-verification.md` turns that into a Jenkins plan.
 
 ## How The Performance Update Maps To xpact
 
-The current article now gives a clearer Phase 2 performance argument. The
-important points for this repository are:
+The article's May 2026 performance discussion motivated the following design
+directions. Some are already implemented in xpact's guarded no-op paths:
 
 - Phase 1 was correct to use ordinary Eiffel strings while closing XML behavior
   and libexpat parity gaps.
-- The future hot path should move toward C-buffer-backed or byte-buffer-backed
-  token slices, with contracts proving equivalence to `STRING_8` behavior in
-  development builds.
-- Token names, attribute values, namespace prefixes, and text runs should be
-  shared views into the input where possible, not eagerly copied strings.
+- Slice-backed element names, no-event attribute/text scanning, and safe input
+  aliasing are implemented. October work added marker reuse, backward-position
+  updates, duplicate-attribute hashing, batched text positions, and bounded
+  DOCTYPE slice eligibility. These are completed changes, documented with
+  before/after evidence in [performance analysis](performance-analysis.md).
+- Broader buffer views still require explicit ownership, callback, mutation and
+  reset rules; the existing guarded paths do not establish a universal zero-copy
+  parser or remove the need for materialized public values.
 - Repeated names should be pooled or interned so large documents do not allocate
   the same vocabulary thousands of times.
-- GC-off parse windows are useful only when paired with lower allocation
-  pressure; by themselves they do not explain the current gap.
+- GC-off parse windows are implemented, including the qualified new Gobo
+  `MEMORY` controls. Their benefit depends on the workload and allocation policy;
+  the June neutral result is not a universal claim about GC cost.
 - SCOOP pipeline parallelism is a later optional capability, not a substitute
   for making the single-threaded tokenizer competitive first.
 
-`docs/performance-analysis.md` records this as the current optimization
-roadmap.
+Compiler behavior also matters: the new Gobo nightly fixes the original missed
+checks, but a literal-`ensure False` inlining case remains different. Read the
+[bounded qualification](gobo-assertions.md) before interpreting assertion-enabled
+timings as identical enforcement across compilers.
 
 ## Current Answer To "Are We On The Right Track?"
 
@@ -109,5 +118,6 @@ Yes, for the Eiffel-library vision:
 
 No, if the claim is "100% drop-in replacement today":
 
-- allocator-injection behavior needs a product decision;
-- replacement testing in public applications still needs to be automated.
+The current acceptance levels and remaining replacement work are recorded in
+[drop-in verification](drop-in-verification.md). Parser benchmarks and smoke
+tests alone do not establish complete application replacement compatibility.

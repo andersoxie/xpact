@@ -1,7 +1,16 @@
 # 10-week plan
 
+**Repository context, 13 November 2026:** pinned core builds and the dual
+catalog, W3C and regression lanes are implemented; see [the build map](../docs/implementation-builds.md)
+and [Jenkins evidence](../docs/dual-implementation-jenkins.md). The
+[Gobo qualification](../docs/gobo-assertions.md) and [WSL timings](../docs/wsl-benchmarks.md)
+are separate local evidence, not a new Jenkins job or a rerun of the complete
+student matrix. Native `Production` disables assertions. Student records and
+issue/approval checklists below retain their dates; this documentation review
+does not refresh their GitHub or supervision status.
+
 > **Last updated:** 2026-11-11 (week 8) · work branch **`incremental-test`** of andersoxie/xpact (since 2026-11-08; `student-Mass` was fully contained in it, deleted 2026-11-10) · CodTanium/mass-xpact was a mirror from 2026-11-09; on 2026-11-11 its `incremental-test` (`f37178d`, PR #93) is no longer in sync and is not used · state: [week-08](notes/weekly/week-08.md), [CONTINUE-HERE](CONTINUE-HERE.md)
-> · earlier: 2026-11-04 evening (week 8) · **speed work** in [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact): ✅ all speed PRs merged into `student-Mass` @ `8ccf51b` and #21 (static input), and verified together ([post-merge check](../reports/mass-xpact-merge-2026-11-04/report.md)); the GC heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) is pre-existing (open); status and notes in [`docs/notes/`](../docs/notes/README.md), reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304)
+> · earlier: 2026-11-04 evening (week 8) · **speed work** in [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact): ✅ all speed PRs merged into `student-Mass` @ `8ccf51b` and #21 (static input), and verified together ([post-merge check](../reports/mass-xpact-merge-2026-11-04/report.md)); the GC heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) is pre-existing (open); status and notes in [`docs/notes/`](../docs/notes/README.md), reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-11-0304)
 > · earlier: 2026-11-02 (week 8) · the XPact website [#210](https://github.com/andersoxie/xpact/issues/210) (pull request open) and the finding [#211](https://github.com/andersoxie/xpact/issues/211) · earlier: 2026-10-31 (week 7, night) · `student-Mass` @ `32bc80a` · today: [#122](https://github.com/andersoxie/xpact/issues/122), [#124](https://github.com/andersoxie/xpact/issues/124), [#125](https://github.com/andersoxie/xpact/issues/125), [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175) fixed and closed; [#88](https://github.com/andersoxie/xpact/issues/88), [#90](https://github.com/andersoxie/xpact/issues/90), [#93](https://github.com/andersoxie/xpact/issues/93) closed (already done on `main`) · **issues close after a local check on `student-Mass`; no Jenkins run is needed** (student, 2026-10-31) · earlier: the supervisor merged `student-Mass` into `main` ([#177](https://github.com/andersoxie/xpact/pull/177), `733688e`) and the Jenkins run on it passed
 > · earlier: 2026-10-28 (week 6) · describes `student-Mass` after PR [#152](https://github.com/andersoxie/xpact/pull/152) (includes `main` @ `1714f31` with the supervisor's [#150](https://github.com/andersoxie/xpact/pull/150)); full W3C report: [latest-2026-10-28](../reports/latest-2026-10-28/README.md); W3C output test and its fixes: [issue-0154](../reports/issue-0154/report.md), [issue-0156](../reports/issue-0156/report.md), [issue-0157](../reports/issue-0157/report.md), [issue-0158](../reports/issue-0158/report.md), [issue-0159](../reports/issue-0159/report.md); W3C in pieces: [issue-0165](../reports/issue-0165/report.md); `main` @ `2488f44` (PR #139, merged by the supervisor 2026-10-29) = `student-Mass` @ `e5d59e2`
 > · ✅ done · 🟡 in progress / waiting · ⬜ not started · 🔴 open problem
@@ -43,7 +52,9 @@ Jenkins Benchmarks stage run locally on the integrated code (PR #152), default 1
 Jenkins would show **2,283 checked plus 302 "no crash only"**. We started at **1,727 passed and 858 skipped per build** (Jenkins #70).
 
 **External files through the DLL** (the way Expat programs load them): **247 of 247** in both builds.
-The supervisor's `main` alone still has crashes and timeouts there (1 crash off; 4 crashes + 3 timeouts on).
+The pre-integration `main` snapshot tested in that report had crashes and
+timeouts there (1 crash off; 4 crashes + 3 timeouts on). This is a dated
+before/after result, not a claim about the current branch.
 
 **Nothing else broke:**
 - [x] DLL smoke tests: ok in both builds
@@ -272,7 +283,7 @@ Local Release build of `incremental-test`, all 5 pages, Edge (headless). Details
 
 Not checked yet (need the public site): PageSpeed Insights, GTmetrix, Google Search Console, SSL Labs, Mozilla Observatory, SecurityHeaders.com, BrowserStack. SonarQube: #131 (token).
 
-0. ✅ **Speed work (2026-11-03/04, [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact)):** status table, merge order and the notes of every step in [`docs/notes/README.md`](../docs/notes/README.md); the reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304).
+0. ✅ **Speed work (2026-11-03/04, [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact)):** status table, merge order and the notes of every step in [`docs/notes/README.md`](../docs/notes/README.md); the reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-11-0304).
    - [x] Parallel Test 2 (#6), W3C runner `--jobs` (#10), session notes and reports (#19, #22): merged 2026-11-04
    - [x] Parser chain #4 → #8 → #13, build check #23, no `-keep` #16 (3.5× faster), inlining #18: merged 2026-11-04 and verified together
    - [x] #21 (static `STRING_8` input, 20 % faster): merged 2026-11-04 after an equal-load GC-stress check (23/24 against 24/24)
@@ -301,7 +312,7 @@ Not checked yet (need the public site): PageSpeed Insights, GTmetrix, Google Sea
 4. ✅ **W3C skips (2026-10-28):** none left. All 2,585 cases run: 2,283 checked + 302 "no crash only", 0 failed, 0 errors ([#151](https://github.com/andersoxie/xpact/issues/151), PR #152). ✅ Jenkins passed on `main` @ `733688e` (PR #177); #142, #146, #148, #151 and #153 closed 2026-10-31.
 5. ✅ **Week 5 done 2026-10-26:** C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); C02 regressions ([#128](https://github.com/andersoxie/xpact/issues/128)). Open from it: findings [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) (parser work).
 6. ✅ Every known problem has an issue now (2026-10-26): Jenkins "Eiffel Tests" without output [#130](https://github.com/andersoxie/xpact/issues/130), SonarQube 401 [#131](https://github.com/andersoxie/xpact/issues/131) (both need the supervisor); the old runner copy removed ([#132](https://github.com/andersoxie/xpact/issues/132)).
-7. 🟡 **Supervisor's dual-implementation plan** (`newUpdates.txt`): steps 1-2 and the catalog and W3C lanes are done on `main`. For steps 3-9, Jenkins, #74 and #79, the supervisor can run `student\tools\collect-supervisor-info.ps1` ([#140](https://github.com/andersoxie/xpact/issues/140)) and send back the `.txt`.
+7. **Dual-implementation status reviewed 13 November:** build, catalog, W3C and regression lanes are implemented; catalog/W3C Jenkins integration is documented in [the current guide](../docs/dual-implementation-jenkins.md). The [shared contract](../docs/dual-adapter-contract-draft.md) remains a draft, and native core DLL/.NET integration remains separate work. Earlier #74/#79 requests and collected supervisor information retain their original dates.
 8. ✅ **W3C output test (2026-10-28):** the content, not only the verdict, of the 432 W3C cases that have an expected output file. 359 right at first; the fix for [#154](https://github.com/andersoxie/xpact/issues/154)/[#155](https://github.com/andersoxie/xpact/issues/155) brings it to **393** (PR #160), [#156](https://github.com/andersoxie/xpact/issues/156) to **394** (PR #161) [#157](https://github.com/andersoxie/xpact/issues/157) to **395** (PR #162) [#158](https://github.com/andersoxie/xpact/issues/158) to **398** (PR #163) and [#159](https://github.com/andersoxie/xpact/issues/159) to **399**, 0 worse ([#154](../reports/issue-0154/report.md), [#156](../reports/issue-0156/report.md), [#157](../reports/issue-0157/report.md), [#158](../reports/issue-0158/report.md), [#159](../reports/issue-0159/report.md) reports). **Every xpact-only difference of this test is fixed**; left: 29 XML 1.1 files and 4 optional errors. ✅ Jenkins passed (PR #177); #154-#159 closed 2026-10-31.
 9. ⏸ Still on hold: [#13](https://github.com/andersoxie/xpact/issues/13) (GC wrapper swallows exceptions). A04 done 2026-10-31 ([#168](https://github.com/andersoxie/xpact/issues/168)): every report now records the DLL path and SHA-256.
 10. ✅ **Done 2026-10-31:** `main` (supervisor's PR #167) brought into `student-Mass` ([#188](https://github.com/andersoxie/xpact/issues/188), PR #189, `48f8c6f`); [#179](https://github.com/andersoxie/xpact/issues/179) and [#180](https://github.com/andersoxie/xpact/issues/180) fixed, verified and closed (PR #182, #186); their merged branches deleted.
@@ -404,8 +415,8 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 ## Week 4 – Input matrix
 **Activity:** Design small regressions and select 50–100 applicable W3C XML cases with the supervisor.
 **Bring to review:** An input matrix with reviewed expected outcomes.
-- [x] [G01](github/issues/11-G01.md) Corpus manifest and 50–100 reviewed W3C cases: done 2026-10-26 ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 cases, 83 counted (46 accept, 37 reject), 10 marked; all pass today in both builds; selected by the student, not reviewed by the supervisor ([results](results/G01-corpus/README.md))
-- [x] [Fix xmlconf verdict rules](github/issues/12-xmlconf-verdicts.md): done 2026-10-26 ([#117](https://github.com/andersoxie/xpact/issues/117)): the old PowerShell runner (never in git) is superseded by `run_w3c_conformance.py`; its 2026-10-14 results re-scored: 676 of 854 "failures" were wrong rules, the 233 real problems all pass today ([results](results/xmlconf-verdicts/README.md))
+- [x] [G01](github/issues/11-G01.md) Corpus manifest and 50–100 reviewed W3C cases: done 2026-10-26 ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 cases, 83 counted (46 accept, 37 reject), 10 marked; all passed in both builds in that run; selected by the student, not reviewed by the supervisor ([results](results/G01-corpus/README.md))
+- [x] [Fix xmlconf verdict rules](github/issues/12-xmlconf-verdicts.md): done 2026-10-26 ([#117](https://github.com/andersoxie/xpact/issues/117)): the old PowerShell runner (never in git) is superseded by `run_w3c_conformance.py`; its 2026-10-14 results re-scored: 676 of 854 "failures" were wrong rules, the 233 real problems all passed in the recorded 26 October run ([results](results/xmlconf-verdicts/README.md))
 
 ## Week 5 – Regressions
 **Activity:** Run the selected small inputs with different callbacks and chunk boundaries.
@@ -442,7 +453,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 - [x] Boogie models of two loops ([#252](https://github.com/andersoxie/xpact/issues/252), PR #253): find both old bugs, prove the current code; 3 unstated facts open ✅
 - [x] Website: built, Docker image released, not deployed; [#227](https://github.com/andersoxie/xpact/issues/227), load test, worker account, HTTPS and deployment left 🟡
 - [x] Weekly note: [week-08](notes/weekly/week-08.md) ✅
-- [ ] Optional: [F01](github/issues/19-F01.md) Core build, [F02](github/issues/20-F02.md) Core runner
+- [ ] Optional student follow-up: [F01](github/issues/19-F01.md) and [F02](github/issues/20-F02.md) originally proposed core builds and a runner. Those repository capabilities now exist; review or extend the [implemented lanes](../docs/implementation-builds.md). This does not mark the student's original acceptance checklist or supervisor review complete.
 - [x] Not in the original plan: the XPact website [#210](https://github.com/andersoxie/xpact/issues/210) (local, all tests pass; not deployed)
 
 ## Week 9 – Analyse and draft

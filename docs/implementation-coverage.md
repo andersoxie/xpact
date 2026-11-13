@@ -1,7 +1,7 @@
 # Dual-implementation coverage inventory
 
-Step 2 inventories the existing tests and workloads before introducing a shared
-adapter. Every shared behavior case must eventually produce a result for both
+This step-2 snapshot inventories tests and workloads before the shared
+adapters were introduced. Every shared behavior case must eventually produce a result for both
 `xpact` and the pinned `xpact-core`. The detailed tables preserve current case
 identifiers, source locations, expectations and the boundary each case needs.
 
@@ -9,6 +9,18 @@ This is a **source inventory, not a new test run or a parity report**. Its sourc
 snapshot is xpact commit `480ab3b3d847bac5be3607a80f8ad64d32727726` and Xpact-core
 commit `6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676`. The latter remains locked in
 [`dependencies/xpact-core.json`](../dependencies/xpact-core.json).
+
+**Current status, 13 November 2026:** the [build infrastructure](implementation-builds.md),
+[catalog](dual-catalog-lane.md), [W3C](dual-w3c-lane.md) and
+[regression](dual-regression-lane.md) lanes now execute both parsers. Catalog and
+W3C are wired into [both main Jenkins pipelines](dual-implementation-jenkins.md).
+The tables below and their TSV files remain the dated inventory: `not_wired`,
+counts and pipeline descriptions refer to that snapshot, not today's execution.
+Native core DLL/.NET coverage and migration of the entire suite remain incomplete.
+The current W3C profile includes suite-local external resources and 1,974 checked
+cases; see [the current profile and all-cases extension](w3c-xml-conformance.md).
+The upstream native-suite runner now parses individual failures and rejects
+unexpected or incomplete runs; see [the parity gate](libexpat-parity.md).
 
 ## Read the matrix
 
@@ -114,7 +126,7 @@ trim text, reorder events or relax expected outcomes to manufacture agreement.
   Functional lanes may execute concurrently in isolation; timed comparisons
   need the sequential paired method described in the benchmark catalog.
 
-## Existing entry points and wiring gaps
+## Entry points and wiring gaps at the inventory snapshot
 
 | Entry point | Existing path | What remains for dual execution |
 |---|---|---|
@@ -144,7 +156,7 @@ belong to the three Windows libexpat harness modules selected by Jenkins.
 Their native fixture prerequisites and runtime skips remain distinct from
 parser pass/fail outcomes.
 
-## Findings to carry into the next steps
+## Findings recorded at the inventory snapshot
 
 - The large XML runner selects the assertions-off `xpact_benchmarks` target for
   both of its build modes, while its workbench label says contracts are enabled.

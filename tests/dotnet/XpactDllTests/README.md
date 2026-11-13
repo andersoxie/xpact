@@ -5,9 +5,12 @@ Tests the xpact DLL the way a C program uses it: through the Expat C API
 Written in C# so cases are easy to add; the calls go straight into the DLL
 with P/Invoke, nothing is wrapped or changed on the way.
 
-The Eiffel tests (`tests/xp_test_root.e`) and the W3C runner call the Eiffel
-parser directly. They never go through the C bridge, the chunk handling in
-`XP_NATIVE_PARSER` or the callback adapter. This program does.
+The Eiffel suite (`tests/xp_test_root.e`) includes direct core and Eiffel-side
+native adapter tests. This C# program adds external DLL/C ABI coverage of the
+bridge, chunk handling in `XP_NATIVE_PARSER`, and callback adapter. The standard
+W3C core lane calls the Eiffel parser directly; separate W3C DLL checkers
+also exist; see [the W3C lane descriptions](../../../docs/w3c-xml-conformance.md).
+The C# harness loads native DLLs; it is not a managed Eiffel parser build.
 
 ## What it tests
 
@@ -50,7 +53,8 @@ on 2026-10-22, 11 cases (timeout 10 s, compiler running) and 4 cases
 when run alone. So at the end of a run, **each TIMEOUT case is retried once
 on its own**; the summary lists those cases, and `results.tsv` has the first
 result in the `note` column. A case that is still TIMEOUT after the retry is
-a real hang.
+a repeated timeout under that configuration; investigate it before calling it
+a confirmed parser deadlock.
 
 The crashes do not come with a Windows dialog: an Eiffel exception that
 reaches the top of the DLL makes the runtime panic ("main entry point

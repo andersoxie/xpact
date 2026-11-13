@@ -8,6 +8,14 @@ folder, so it stays separate from the parser code. The plan, the task register
 > **Updated 2026-11-11 (week 8)** · work branch is **`incremental-test`** (andersoxie/xpact, since 2026-11-08); `student-Mass` was contained in it and deleted 2026-11-10.
 > Weeks 1-7 ✅, week 8 🟡 · state and next steps: [CONTINUE-HERE.md](CONTINUE-HERE.md), [PLAN.md](PLAN.md) ("Next", "Known problems"), [week-08](notes/weekly/week-08.md).
 
+**Repository context, 13 November 2026:** the [dual catalog](../docs/dual-catalog-lane.md),
+[W3C](../docs/dual-w3c-lane.md) and [regression](../docs/dual-regression-lane.md)
+lanes compare xpact with pinned Xpact-core. The [compiler comparison](../docs/wsl-benchmarks.md)
+and [Gobo qualification](../docs/gobo-assertions.md) are separate local evidence,
+not a new Jenkins job or a rerun of the student/native/DLL suite. Native
+`Production` defaults to assertions off; choose `Assertions` for the checked DLL.
+The student records retain their dates and branch identities.
+
 ## Start here
 
 | | Read | When |
@@ -23,7 +31,7 @@ folder, so it stays separate from the parser code. The plan, the task register
 |---|---|
 | Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
 | Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
-| The newest test results | W3C, all 2,585 cases: [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md) · xpact vs Expat across chunks: [`results/G03-comparison/`](results/G03-comparison/README.md) · each fix since: [`../reports/README.md`](../reports/README.md) |
+| Dated test results and later fixes | W3C, 28 October: 2,283 checked verdicts plus 302 no-crash-only cases: [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md) · xpact vs Expat across chunks: [`results/G03-comparison/`](results/G03-comparison/README.md) · each fix since: [`../reports/README.md`](../reports/README.md) |
 | The open questions for the supervisor | [PLAN.md](PLAN.md), "Next", item 2 |
 | Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
 | What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |

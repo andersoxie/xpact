@@ -7,6 +7,12 @@
 > (`tests/dotnet/XpactDllTests`) and the Expat 2.8.1 comparison (#121).
 > Rows marked **open** need a decision.
 
+**Reviewed against the current repository, 13 November 2026.** This remains a
+proposal, not an approved common API or a current issue-status list. The three
+direct Eiffel lanes are implemented; native core DLL/.NET integration is not.
+Dated runtime observations below retain their original compiler and pinned-core
+scope. The W3C resource policy and finalized-assertion statement are updated here.
+
 The contract says what every backend adapter must do, so that one set of
 fixtures and expectations can run on xpact, Xpact-core and, later, their DLLs.
 
@@ -25,8 +31,8 @@ fixtures and expectations can run on xpact, Xpact-core and, later, their DLLs.
 | # | Option | Today |
 |---|---|---|
 | O1 | Namespaces on or off, with the separator, fixed at construction | W3C lane (`|`) |
-| O2 | External entities off; parameter entities never | W3C lane |
-| O3 | **Open:** DTD default attributes, the default handler, suspension and resume are not in any lane yet | |
+| O2 | External-resource policy is explicit and confined to the supplied suite root | Current W3C lane enables suite-local external general/parameter entities for xpact; pinned core has no loader. This is a recorded capability difference, not equivalent resource behavior |
+| O3 | **Open:** specify shared event/lifecycle obligations for DTD default attributes, the default handler, suspension and resume | W3C binary verdict coverage does not by itself establish these event/API contracts |
 
 ## 3. Lifecycle and ownership
 
@@ -36,7 +42,7 @@ fixtures and expectations can run on xpact, Xpact-core and, later, their DLLs.
 | L2 | `reset` returns the parser to its initial state after **success, failure or partial input** | regression lifecycle: 10/10 steps for both parsers |
 | L3 | `close` releases the parser, input buffers and handler references; a closed adapter reports itself closed | catalog and W3C `is_closed` |
 | L4 | The caller's GC state is the same after a run as before it, whatever the backend does internally | catalog and W3C `restore_gc`; core switches GC off and does a full collect on final input |
-| L5 | **Open:** check resource release separately from behaviour (handles, child processes, buffers), as the plan asks | not measured |
+| L5 | **Open:** extend resource-release checks to native handles, child processes and allocator behavior | Catalog/W3C controls check owned parser/input references on close; they do not measure allocator leaks or qualify a core native DLL |
 
 ## 4. Output
 
@@ -64,7 +70,7 @@ fixtures and expectations can run on xpact, Xpact-core and, later, their DLLs.
 | # | Rule | Today |
 |---|---|---|
 | B1 | Each backend builds in its own directory from a pinned revision; build inputs are fingerprinted, and a change during the build fails the run | `build_implementations.py` (observed on 26 October: an edit during a run correctly failed it) |
-| B2 | **Finalized `-keep` builds do not check loop invariants or variants** (generated C keeps preconditions only). Loop contracts need workbench assertion builds | regression lane, #40 check |
+| B2 | Requested assertion flags need execution probes; finalization alone does not imply loop checks are absent | Both regression ECF assertion targets request `loop="true"`. The 26 October #40 mutation was missed in that generated build. Separate finalized EiffelStudio 25.02 and Gobo 26.11.12 probes detect loop invariants and variants; see [bounded qualification](gobo-assertions.md). This does not rerun or explain the older mutation |
 
 ## 7. Questions for the supervisor
 

@@ -24,6 +24,13 @@ failure-injection rows that are recorded as expected failures for the Eiffel rel
 scope because Eiffel parser storage is not a caller-managed allocation
 contract.
 
+These are manifest/policy counts, not a claim that 399 tests passed or exactly
+86 tests failed in a particular build. Native execution must be read from that
+build's archived suite log. The runner checks individual failure names,
+rejects unexpected failures and incomplete runs, and rejects an all-pass run
+when expected failures are configured. It does not yet detect an individual
+unexpected pass in a mixed failing run; see [the adapter gate](../adapters/libexpat/README.md).
+
 ## Green Rows
 
 The Windows release has green evidence for:

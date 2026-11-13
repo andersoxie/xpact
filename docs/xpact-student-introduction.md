@@ -4,7 +4,15 @@ A ten week university assignment
 
 Prepared for a student who has completed one year of university study
 
-27 September 2026
+Original assignment: 27 September 2026. Current-status review: 13 November 2026.
+
+The W3C suite has now been run, and the repository includes pinned Xpact-core
+builds plus shared catalog, W3C and chunked-regression lanes. Start with
+[the current build map](implementation-builds.md), [W3C results](w3c-xml-conformance.md)
+and [the student evidence index](../student/README.md). The task register below
+preserves assignment IDs and proposed work; it is not a list of defects that
+all remain open. Recorded results always belong to their stated revision,
+compiler, profile and assertion mode.
 
 ## Your assignment
 
@@ -22,7 +30,7 @@ You will learn the project, run examples, reproduce selected problems, and impro
 - One small, reviewed improvement to the test framework or verification scripts, or a well-supported explanation of a blocker with usable regression tests.
 - A final report and demonstration explaining the findings and remaining work.
 
-If time permits, extend the test framework so that it can also run Xpact-core against the same inputs and reference results. A complete parser replacement and a production release belong to the wider project roadmap. Your contribution should be small enough to understand, explain and verify yourself.
+If time permits, extend coverage in the existing Xpact-core comparison lanes using the same inputs and independent expectations. Pinned builds and catalog, W3C and chunked-regression adapters are implemented; a core native DLL adapter, complete parser replacement and production release remain wider project work. Your contribution should be small enough to understand, explain and verify yourself.
 
 ## How to use this guide
 
@@ -48,7 +56,7 @@ The document `<book><title>Hello</book>` has mismatched tags. A parser should re
 
 A file or network message may arrive in pieces. For example, the first chunk could be `<bo` and the second `ok/>`. An incremental parser remembers enough state to continue correctly. The final result should agree with parsing the same bytes in one call, although the boundaries between text callbacks may differ.
 
-Our production native adapter currently retains accumulated input and reparses it. Xpact-core has a more developed design for keeping parsing state and consuming completed input. That makes it a candidate for an integration experiment.
+Our production native adapter retains accumulated input, but eligible input now resumes from a parser checkpoint. Other cases still use replay. Xpact-core offers a separate design for keeping parsing state and consuming completed input, making it a candidate for an integration experiment.
 
 ### Three names to keep separate
 
@@ -78,7 +86,7 @@ Our intended policy is to **keep assertions enabled in production**, including o
 
 This direction has not yet been implemented throughout the build scripts. The current default tier named `Production` disables assertions, while a separate `Assertions` tier enables them. Updating the defaults, packaging, tests and documentation is an identified task. Record the configuration actually used, rather than relying on an artifact's name.
 
-Assertions-off testing may remain as an additional diagnostic. If an assertions-off build continues to be distributed as supported, it must be tested. This policy updates the older backlog's recommendation to require both configurations. The assertions-enabled production configuration remains the primary target.
+Assertions-enabled verification is the assignment's primary target. The proposed production policy has not replaced the current scripts: both assertion modes remain tested and the default native `Production` tier still disables assertions. Record that distinction when discussing release defaults or benchmark results.
 
 ### How failures are handled
 
@@ -135,7 +143,7 @@ Record the Git commit, compiler version, assertion settings, command, loaded lib
 
 ## A proposed ten week plan
 
-Agree the scope with your supervisor at the beginning and review it each week. Testing and verification are the required work. Adding Xpact-core to the test framework is an optional extension, dependent on time and a usable build.
+Agree the scope with your supervisor at the beginning and review it each week. This is the original proposed schedule, not a current completion checklist. Testing and verification are the required work; extending the already implemented Xpact-core lanes is optional. See the dated work and current-status links in [the student plan](../student/PLAN.md).
 
 | Week | Main activity | Evidence to bring to review |
 | --- | --- | --- |
@@ -154,7 +162,7 @@ Agree the scope with your supervisor at the beginning and review it each week. T
 
 At the end of week 2, select one main improvement and a small input set. At the end of week 5, review what can realistically be completed. Reserve weeks 9 and 10 for explanation, review and handover.
 
-Parser repairs remain the responsibility of experienced developers; your main contribution is tests, clear reproductions and verification of reviewed fixes. If Xpact-core cannot be added in time, complete the xpact versus libexpat comparison and document how a future test adapter could be added.
+Parser repairs remain the responsibility of experienced developers; your main contribution is tests, clear reproductions and verification of reviewed fixes. Use the existing Xpact-core adapters where their boundaries fit the chosen case, and document missing capabilities instead of treating the core native interface as already integrated.
 
 A suggested weekly update is half a page: what you tried, what the evidence shows, what is blocked and what you will do next. Agree the university's required report format and supervision arrangements at the start.
 
@@ -193,7 +201,7 @@ Keep source notices with fixtures. One Core fixture has a GPLv2+ notice; the rep
 
 ### The prepared W3C collection
 
-The W3C 20130923 ZIP has been downloaded and extracted, preserving the original bytes and directory structure. The 1.5 MB archive contains 3,078 `.xml` files, including catalogs and expected outputs. Its 2,585 active catalog cases comprise 812 valid, 242 invalid, 1,498 not-well-formed and 33 optional-error cases. Counts are before filtering for supported features. **These are inventory counts, not xpact test results; the prepared suite has not yet been run against xpact.**
+The W3C 20130923 ZIP has been downloaded and extracted, preserving the original bytes and directory structure. The 1.5 MB archive contains 3,078 `.xml` files, including catalogs and expected outputs. Its 2,585 active catalog cases comprise 812 valid, 242 invalid, 1,498 not-well-formed and 33 optional-error cases. Those are inventory counts before profile selection. The suite has since been executed: the [28 October integrated run](../reports/latest-2026-10-28/README.md) recorded 2,283 checked verdicts plus 302 no-crash-only outcomes per finalized assertion mode, with no failures, errors or skips. The [W3C guide](w3c-xml-conformance.md) separates the current profile, all-cases extension and earlier failures.
 
 Paths below are relative to the repository root. The `build` directory is ignored by Git, so another checkout needs the download and setup steps.
 
@@ -216,7 +224,7 @@ Select XML version, edition, namespace mode and external-entity policy from the 
 
 ### Comparing engines and testing large files
 
-Keep assertions enabled. Under G03, compare xpact and Expat through both parse APIs with recorded callback and chunk settings. Count accepted, rejected, skipped, crashed, timed-out and not-run cases separately. A correct rejection passes a negative test. Save mismatch traces and require every selected engine to run. F02 remains the optional D3 extension for adding Core to the same framework.
+Keep assertions enabled for the main student verification. Under G03, compare xpact and Expat through both parse APIs with recorded callback and chunk settings. Count accepted, rejected, skipped, crashed, timed-out and not-run cases separately. A correct rejection passes a negative test. Save mismatch traces and require every selected engine to run. F02 now has implemented direct Eiffel comparison lanes; extending them to more fixtures or the native DLL boundary remains optional D3 work.
 
 For later D3 large-file work, `build/large-xml-corpus/` already contains `pubmed26n0001.xml` at about 195 MB, `pubmed26n1380.xml` at about 10 MB and a derived sample of about 0.5 MB. Use practical chunk sizes for these files; reserve one-byte chunks for small fixtures. Record the sample's parent and extraction method. Apply G07 and G09 to comparable runs with elapsed time, completed parses and peak memory. Preserve the data sources and their usage notices.
 
@@ -224,7 +232,7 @@ For later D3 large-file work, `build/large-xml-corpus/` already contains `pubmed
 
 ## Tasks identified in our implementation
 
-The following sections summarize the project backlog. The complete task register at the end gives every task an identifier and difficulty. P0 means an immediate correctness or test-reliability blocker; P1 means the next compatibility or performance priority. Priority and difficulty are different. The assertion policy awaits implementation.
+The following sections summarize the original review priorities and their current disposition. The complete task register preserves every task's identifier and difficulty; it does not mark all of them as still open. P0 denotes correctness or test reliability; P1 denotes compatibility or performance. Priority and difficulty are different. The assertion policy awaits implementation. See [the review disposition](../TODO_CODE_REVIEW.md#current-disposition--13-november-2026) for evidence and remaining boundaries.
 
 ### Assertions enabled in production
 
@@ -232,25 +240,25 @@ Update build defaults, release packaging, CI and benchmark scripts to use the as
 
 ### P0 reliable test and benchmark outcomes
 
-Make every recorded test failure produce a nonzero exit status. Match actual upstream failing test names to the exact expected-failure list; report unexpected failures and unexpected passes. Reject benchmark results from failed or semantically different parses. A small failure-reporting improvement is a suitable primary student task.
+Make every recorded test failure produce the documented failure status. The upstream native-suite runner now extracts actual failing names and checks the expected-failure list, rejecting unexpected failures, incomplete runs and crashes. Audit this existing behavior before proposing B04 work; see [the parity gate](libexpat-parity.md). Reject benchmark results from failed or semantically different parses. A bounded remaining failure-reporting gap can still be suitable student work.
 
 ### P0 malformed final input and UTF8
 
-The native first-start-element shortcut can bypass full validation of final input. UTF-8 checking also needs strict decoding of complete Unicode characters, including rejection of invalid continuation bytes, overlong encodings and invalid values. Test text, names and attributes, then extend to other XML contexts and split sequences.
+The original review found final-input validation and malformed UTF-8 defects. Later parser repairs and permanent regressions cover the reported incomplete, mismatched and malformed-byte inputs; see [the repair report](../reports/issue-0079/report.md) and [regression evidence](../reports/issue-0128/report.md). Broader combinations of XML context, handlers and split sequences still need their own evidence.
 
 Earlier probes of an existing June DLL accepted `<root>` and `<root><child></root>` with a start handler, and accepted malformed UTF-8. Source inspection found corresponding faulty paths. Reproduce these cases against a fresh, identified build before reporting current results. The student can own reproductions and tests; decoder design needs experienced review.
 
 ### P0 content model memory ownership
 
-An `XML_Content` model describes an element's allowed content. Its memory and names must remain valid for the documented lifetime, and allocation and freeing must use compatible allocators. Repair the current ownership path and test retained models, custom allocators and allocation failure. This is work for an experienced developer, with supervised student test support.
+An `XML_Content` model describes an element's allowed content. The implementation now owns its nodes and copied names in one block allocated through the parser allocator. Allocation-failure propagation and the broader retained-model/custom-allocator test matrix remain unqualified here. Review those boundaries with an experienced developer, with supervised student test support.
 
 ### P1 API behavior and parser state
 
-Correct reset behavior, including child parsers and callback registration. Check namespace inheritance, XML declaration recognition, encoding changes, stop and resume, and buffer APIs. Ensure security-setting functions implement their promises or report unsupported behavior. Make bridge removal safe while parser handles exist. Start student work with one narrow case.
+Reset now clears handlers and context, rejects child resets and preserves required configuration; reuse benchmarks re-register callbacks, and bridge smoke tests cover those transitions. The complete state matrix remains broader: check namespace inheritance, XML declaration recognition, encoding changes, stop and resume, buffer APIs, security settings and bridge removal with live handles. Start student work with one narrow, reproducible case.
 
 ### P1 repeated work and memory use
 
-Separate forward scan positions from event positions to avoid rescanning old input. Count work for increasing document sizes. Reduce repeated input copies and eventually replace whole-prefix replay with persistent incremental state. Profile callback allocations afterwards. Large changes to the parsing engine remain outside the student's minimum scope.
+October profiling and position/materialization fixes are documented in [the performance history](performance-analysis.md). The production native adapter [resumes from checkpoints](incremental-resume.md) for eligible UTF-8 and UTF-16 input, retaining parser state. Full input buffers and replay fallbacks remain; extend memory and scaling checks across modes. Isolated incremental prototypes remain separate. Large parsing-engine changes remain outside the student's minimum scope.
 
 <!-- pagebreak -->
 
@@ -258,9 +266,9 @@ Separate forward scan positions from event positions to avoid rescanning old inp
 
 ### The optional student extension
 
-Add Xpact-core as another implementation that the test framework can run. Start with a separate test runner for a small common subset: element events, text, valid and malformed input, and chunks. Reuse the same fixtures and structured result format. Mark unsupported features explicitly. Compare with libexpat and retain logs for every difference.
+Xpact-core is already available through [pinned builds](implementation-builds.md), the [catalog lane](dual-catalog-lane.md), the [W3C lane](dual-w3c-lane.md) and the [chunked regression lane](dual-regression-lane.md). Extend those adapters and shared fixtures where needed. Mark unsupported features explicitly, retain pinned-core failures, and compare with independent expectations and libexpat where applicable.
 
-Completion means another developer can run that subset using documented commands and a pinned Xpact-core build. It does not require replacing xpact's production parser or completing the native ABI. Attempt this only after the main verification deliverables are stable, with supervisor help for the adapter boundary.
+The implemented lanes provide documented commands and a pinned Xpact-core build for their subsets. They do not replace xpact's production parser or complete the core native ABI. Attempt further integration only after the main verification deliverables are stable, with supervisor help for the adapter boundary.
 
 ### The wider integration roadmap
 
@@ -338,7 +346,7 @@ Repeat selected cases without callbacks and with start, end and text callbacks. 
 
 The minimum outcome is a reproducible baseline, an agreed regression set, one reviewed contribution or demonstrated blocker, and a clear handover. A useful report explains the question, background, method, results, limitations and next steps. Include commands and input identifiers so another person can check the work. Discuss what you learned as well as what changed.
 
-The wider roadmap remains: reliable tests; xpact correctness fixes; an optional Xpact-core adapter; three-way compatibility tests; and fair performance measurement. The recent assertions-enabled production direction applies across these steps.
+The wider roadmap remains: stronger coverage; remaining xpact correctness fixes; extending the implemented Xpact-core comparisons to missing boundaries; three-way compatibility tests; and fair performance measurement. Assertions-enabled production remains a proposed policy; current native production defaults and each benchmark's actual assertion settings must be stated explicitly.
 
 ### Reading and source references
 
@@ -353,7 +361,7 @@ The wider roadmap remains: reliable tests; xpact correctness fixes; an optional 
 
 ## Complete task register
 
-These 63 tasks cover the earlier code review, implementation comparison, assertions policy and XML corpus work. The existing task IDs include the corpus activities. They are pending work to verify and complete, not a claim that all historical failures still reproduce. Select a small subset with your supervisor; completing all 63 tasks is outside the ten-week assignment.
+These 63 task definitions cover the earlier code review, implementation comparison, assertions policy and XML corpus work. They preserve assignment IDs, not current completion status: for example, pinned core builds, comparison lanes and native-suite failure-name checks now exist. Check the linked implementation guides and dated [student plan](../student/PLAN.md) before selecting remaining work. Historical failures need reproduction; completing all 63 tasks is outside the ten-week assignment.
 
 ### Difficulty and student responsibility
 

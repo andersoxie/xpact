@@ -5,12 +5,33 @@ during the July 2026 review. Items are ordered by risk and expected impact.
 Correctness and trustworthy test results should be established before benchmark
 numbers are used to guide lower-level optimization.
 
-> **Status note (2026-11-11):** the boxes below were never updated after the
-> July review, so an empty box does **not** mean the item is still open. Many
-> items were fixed later and are tracked as task IDs A-H in
-> [docs/xpact-student-introduction.md](docs/xpact-student-introduction.md),
-> with status in [student/PLAN.md](student/PLAN.md) and the fix reports in
-> [reports/README.md](reports/README.md). Check there before working on an item.
+## Current disposition — 13 November 2026
+
+The checklist below preserves the July review, including its unchecked boxes,
+review-time observations and source line references. It is not a current list of
+unfixed defects. Later work has superseded several findings; the linked reports
+record the revisions and scenarios actually verified.
+
+| July finding | Current implementation and evidence | Remaining boundary |
+|---|---|---|
+| Final-input shortcuts and malformed UTF-8 | [Parser repairs](reports/issue-0079/report.md) and [permanent regressions](reports/issue-0128/report.md) cover the reported incomplete, mismatched and malformed-byte inputs. The latter also records mutations that make the tests fail. | These checks do not establish every handler/chunk/encoding combination listed below. |
+| `XML_Content` allocation and lifetime | `XP_NATIVE_CALLBACK_HANDLER.content_model_array` now allocates nodes and copied names in one block through the parser allocator, matching `XML_FreeContentModel`. | Allocation-failure propagation, retained-model lifetime tests and the broader allocator/memory-tool matrix remain unqualified here. |
+| Test failures disappear with assertions off | Both Eiffel test runners use explicit nonzero exits; [B01](reports/issue-0045/report.md) and [B02](reports/issue-0046/report.md) record exit-status and deliberate-failure checks. | Those reports are dated evidence, not a fresh run of every current lane. GC-state probes do not qualify exception propagation through `execute_without_collection`. |
+| Native-suite expected failures | The [adapter gate](adapters/libexpat/README.md) now parses individual failure names and rejects unexpected failures, crashes, inconsistent counts and incomplete runs. | An individual unexpected pass in a mixed failing run is not yet detected. |
+| `XML_ParserReset` and reuse callbacks | The native implementation clears handlers/context, rejects child resets and preserves required configuration; the reuse benchmark re-registers callbacks. `xpact_bridge_smoke.c` covers these transitions. | The entire lifecycle/state matrix below is not claimed complete. |
+| Position rescans and later materialization | [Parser profiling](docs/parser-profile-performance.md), [PubMed position work](docs/pubmed-position-performance.md) and [DOCTYPE work](docs/pubmed-doctype-performance.md) record the October fixes and their measured scope. | Native input copying, broader allocation work and scaling across all parser modes remain separate concerns. |
+| Persistent incremental parsing | The production native adapter now uses [checkpoint resume](docs/incremental-resume.md) for eligible UTF-8/UTF-16 input. The separate [incremental-core](docs/incremental-core-prototype.md) and [Expat-port](docs/expat-port-spike.md) prototypes are not its implementation. | Full-input retention and documented replay fallbacks remain; bounded streaming memory is not established. |
+| Comparable compiler benchmarks | [The WSL guide](docs/wsl-benchmarks.md) records the 13 November EiffelStudio/Gobo comparison, source identity, input and build settings. [Assertion qualification](docs/gobo-assertions.md) records fixed Gobo issues and the remaining literal-`ensure False` difference. | These direct parser timings do not qualify native DLL equivalence, every benchmark-plan item, or a new Jenkins job build. |
+
+Use the [project overview](README.md), [native compatibility status](docs/libexpat-api-compatibility.md)
+and [drop-in verification](docs/drop-in-verification.md) for the active scope.
+Related task IDs A–H are retained in the [student introduction](docs/xpact-student-introduction.md),
+with the student's progress recorded in [the plan](student/PLAN.md) and
+[fix reports](reports/README.md).
+Unmentioned July items remain historical investigation requests, not newly
+confirmed defects or completed work.
+
+## Historical July checklist
 
 ## P0: correctness and memory safety
 

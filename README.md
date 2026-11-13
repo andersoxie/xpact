@@ -15,16 +15,21 @@ is not intended to become a second C parser.
 
 **Version 0.9.0** (launch candidate). What each version contains: [CHANGELOG.md](CHANGELOG.md).
 
-This checkpoint is a Windows-only Phase 1 preview, not a final drop-in
-replacement for libexpat.
+The native Phase 1 preview package targets Windows x64. The same Eiffel parser
+also builds and runs in Ubuntu 24.04/WSL2 benchmarks with EiffelStudio and Gobo.
+Full libexpat drop-in compatibility and an Eiffel-backed Linux shared-library
+release remain work in progress.
 
 Implemented and verified now:
 
 - Eiffel targets explicitly compile with void safety enabled
-  (`support="all" use="all"`), using the safe Base precompile.
+  (`support="all" use="all"`). The safe Base precompile is used by Windows
+  EiffelStudio targets; Linux benchmarks compile Base from source.
 - Contract-backed temporary garbage-collection suspension for critical parse
   sections.
 - XML 1.0 tokenization and entity handling in Eiffel.
+- A no-event parsing fast path with slice-backed element names, deferred
+  materialization, and lazy position accounting.
 - Capability-based external entity resolver policy: xpact does not open files,
   URLs, or sockets by itself.
 - A libexpat 2.8.1 public API header surface in `include/xpact.h`.
@@ -35,7 +40,11 @@ Implemented and verified now:
 - A native C benchmark path against the Windows Eiffel-backed DLL.
 - A chunked `XML_Parse` CRC harness that compares event digests across buffer
   sizes and can be compiled against xpact or libexpat.
+- Native checkpoint resume for eligible UTF-8 and UTF-16 chunked input, with
+  documented replay fallbacks and full-input retention.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
+- A native-suite gate that resolves reported failures to upstream test names
+  and rejects unexpected failures, crashes, and incomplete test runs.
 - Published benchmark, performance-analysis, and parity documentation.
 - W3C XML binary conformance tests in the benchmark lane, with per-case
   reports for both finalized assertion modes and Jenkins publication.
@@ -53,18 +62,49 @@ The expected-failure list expands to 86 rows:
   release scope because they exercise libexpat's manual C allocation hook
   contract.
 
+### Compiler Verification And Benchmarks — 13 November 2026
+
+The configured Jenkins WSL environment now selects Gobo nightly
+**26.11.12+ca6541c**, alongside EiffelStudio **25.02.9.8723**. After the update,
+the Jenkins benchmark launcher was run locally with the same environment files
+and workload; these measurements are not from a new Jenkins job build.
+
+Both compilers parsed the same 2,611-byte, 100-item catalog with a reused parser
+and no-op event handler. Each value below is the median of five runs of
+**10,000 documents**, after one full warmup, using finalized builds and normal GC.
+
+| Requested assertions | EiffelStudio | Gobo | Gobo throughput relative to EiffelStudio |
+|---|---:|---:|---:|
+| Off | 1.552 s | 0.915 s | **1.70×** |
+| On | 15.400 s | 4.025 s | **3.83×** |
+
+This compares complete toolchains: Gobo uses GCC `-O2` and Boehm GC;
+EiffelStudio uses GCC `-O3` and its own collector. The installed Base-library
+snapshots also differ. A separate Gobo run using the unchanged EiffelStudio ECF
+gave similar results: **0.941 s off** and **4.015 s on**.
+
+The new Gobo passes the previously failing `check`, loop-variant, and
+supplier-precondition probes. Imported-library assertion scope and repeated
+GC on/off transitions also pass on Linux and Windows. This is bounded
+qualification: a separate Linux test still finds that an empty routine's literal
+`ensure False` is skipped by finalized Gobo with assertions off, while
+EiffelStudio raises an exception.
+
+See [the WSL comparison and setup](docs/wsl-benchmarks.md),
+[assertion qualification and remaining differences](docs/gobo-assertions.md),
+and [raw measurements](benchmarks/results/gobo-eiffelstudio-comparison-2026-11-13.tsv).
+
 ## What Is Left
 
 Before calling xpact a credible drop-in replacement, the project still needs:
 
-- true incremental parsing in the Eiffel parser/session core; the current
-  native adapter accepts chunks and now has CRC coverage for replayed character
-  data, but it still relies on accumulated-buffer replay rather than a
-  suspendable parser session;
-- a stronger native-suite gate that reports actual unexpected failures by
-  upstream test name, not only the current expected-failure manifest expansion;
-- Phase 2 performance work: buffer-backed token slices, lazy materialization,
-  string-pool recycling, and a native byte-buffer parse path;
+- broader incremental coverage and bounded input retention: the native adapter
+  now continues from checkpoints for eligible input, while replay fallbacks and
+  complete input buffers remain; see [incremental resume](docs/incremental-resume.md);
+- tighter expected-failure accounting that detects individual unexpected
+  passes even when other expected failures remain in the same native-suite run;
+- further performance work: extending the existing slice and deferred-materialization
+  paths, string-pool recycling, and a native byte-buffer parse path;
 - replacement testing in at least one public application that normally builds
   against libexpat;
 - Linux/WSL packaging for an Eiffel-backed `libxpact.so`;
@@ -90,23 +130,27 @@ Start here, then read:
    upstream test-suite status.
 8. `docs/chunked-parse-crc.md` for incremental parsing verification through
    CRC-32 event digests across chunk sizes.
-9. `docs/incremental-shim-audit.md` for the current accumulated-buffer replay
-   baseline before the true incremental parser session.
+9. `docs/incremental-shim-audit.md` for native callback/position checks and
+   [incremental resume](docs/incremental-resume.md) for checkpoint coverage and fallbacks.
 10. `docs/incremental-core-prototype.md` for the isolated Eiffel session
     prototype that starts replacing replay with state-owned parsing.
 11. `docs/expat-port-spike.md` for the isolated Expat-processor-style Eiffel
     port experiment.
 12. `docs/expat-c-code-investigation.md` for what the original Expat C source
     suggests about incremental parsing and optional low-level C helpers.
-13. `docs/benchmarks.md` for same-machine benchmark results.
-14. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
-15. `docs/performance-analysis.md` for the current xpact-vs-libexpat performance
-   gap analysis and next optimization priorities.
-16. `docs/drop-in-verification.md` for the Jenkins and public-application
+13. [WSL2 Eiffel/GCC benchmarks](docs/wsl-benchmarks.md) for the current
+    Gobo/EiffelStudio comparison, setup, and Jenkins compiler selection.
+14. [Gobo assertion investigation](docs/gobo-assertions.md) for verified fixes,
+    remaining compatibility differences, and the original slowdown analysis.
+15. `docs/benchmarks.md` for the Windows benchmark series.
+16. `docs/large-xml-benchmarks.md` for opt-in real-corpus macro-benchmarking.
+17. `docs/performance-analysis.md` for optimization history and links to
+    workload-specific profiles; its older baseline measurements retain their dates.
+18. `docs/drop-in-verification.md` for the Jenkins and public-application
    replacement plan.
-17. [Jenkins email notifications](docs/jenkins-email-notifications.md) for
+19. [Jenkins email notifications](docs/jenkins-email-notifications.md) for
    setting recipients for failed and unstable builds.
-18. [Speed work: session notes](docs/notes/README.md) for the 2026-11 speed
+20. [Speed work: session notes](docs/notes/README.md) for the 2026-11 speed
    fixes, their issues and PRs, the merge order, and how to repeat the checks.
 
 ## Build And Verify
@@ -162,7 +206,7 @@ Run chunked `XML_Parse` CRC diagnostics:
 .\scripts\run_chunked_crc_corpus.ps1 -Target Xpact -ParseMode All
 ```
 
-Audit the current accumulated-buffer incremental shim:
+Audit the native chunk adapter's callback and position behavior:
 
 ```powershell
 .\scripts\run_incremental_shim_audit.ps1 -SkipBuild
@@ -217,15 +261,20 @@ profile, offline setup, and detailed reports.
 > `$env:XPACT_PYTHON` if set, otherwise `python` from PATH. They stop at once if
 > that is the Microsoft Store alias (`...\WindowsApps\python.exe`).
 
-Run the additional Eiffel/GCC comparison inside WSL2 (requires Linux
-EiffelStudio and Gobo Eiffel in that distribution):
+Run the additional Eiffel/GCC comparison inside WSL2 after configuring the Linux
+compiler environments (`ISE_EIFFEL`, `ISE_PLATFORM`, `GOBO`, and compiler paths):
 
 ```powershell
 .\scripts\run_wsl_benchmarks.ps1 -Distribution Ubuntu-24.04
 ```
 
-Both compilers use the same xpact parser and workload, with assertions enabled
-and disabled, alongside the libexpat C baseline. Pass `-EiffelCompiler Gobo`
+If the compiler setup is kept in Bash files instead of the Linux login
+environment, pass their Linux paths through `-EiffelEnvironment` and
+`-GoboEnvironment`. Jenkins's configured paths are documented in the
+[WSL setup guide](docs/wsl-benchmarks.md#jenkins).
+
+Both compilers use the same xpact parser and workload, with assertions requested
+or discarded, alongside the libexpat C baseline. Pass `-EiffelCompiler Gobo`
 or `-EiffelCompiler EiffelStudio` to select just one compiler.
 See [WSL2 Eiffel/GCC benchmarks](docs/wsl-benchmarks.md) for setup, timing
 methodology, and the Jenkins lane.

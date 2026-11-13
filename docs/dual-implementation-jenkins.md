@@ -12,6 +12,14 @@ Finnian Xpact-core. The primary executables are Eiffel finalized with assertions
 discarded. Assertion-enabled builds run the directed controls for each lane.
 Existing benchmark tiers and plots continue separately.
 
+**Scope reviewed 13 November 2026:** this stage compares two parser
+implementations with Windows EiffelStudio/MSVC. The WSL stage separately compares
+EiffelStudio and Gobo compiling xpact. Updating the configured WSL Gobo nightly
+does not change the dual-parser compiler or rerun its archived results. See
+[the WSL setup and measurements](wsl-benchmarks.md) for that compiler selection.
+The integration and summary-verification sections below retain their dates;
+the 31 October section records actual Jenkins build 108 evidence.
+
 ## Execution and failure behavior
 
 The stage runs before the existing Benchmarks stage. The catalog and W3C campaigns
@@ -214,7 +222,8 @@ under `build/dual-ci-own-summary-20261025T170000Z-retry-1/`. An earlier attempt
 hit Windows `PermissionError [WinError 5]` while atomically replacing `run.json`;
 that failed directory was preserved and the fresh retry passed. The cause of
 that transient storage failure is unconfirmed; no retry workaround was added.
-Jenkins controller execution remains unverified.
+Jenkins controller execution was not part of that own-only policy check; later
+build 108 evidence is recorded below.
 
 ## W3C classname compatibility, 31 October 2026
 

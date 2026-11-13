@@ -32,6 +32,10 @@ The current spike handles the same small token subset as the first
 empty-element tags, end tags, character data, XML-declaration-like prolog
 consumption, and mismatched end-tag errors.
 
+The spike already has a `resume` operation and checks callback stop requests in
+its processor loop. These Eiffel-level hooks are not a native `XML_StopParser`
+adapter or evidence of complete Expat suspend/resume semantics.
+
 ## Why Keep It Separate
 
 This class exists to compare architecture and behavior against both:
@@ -49,6 +53,7 @@ The next useful additions are:
 
 - model Expat token categories for comments, CDATA, entity references, and
   partial UTF-8 boundaries;
-- add explicit `XML_StopParser` / resume semantics to the processor loop;
+- qualify the existing stop/resume hooks across more processor states and map
+  them to native `XML_StopParser` / `XML_ResumeParser` semantics;
 - drive the spike through a native-compatible wrapper so the CRC harness can
   compare xpact-current, the xpact session prototype, and the Expat-port spike.

@@ -1,8 +1,18 @@
 # XML collections for xpact verification
 
-Research date: 27 September 2026; W3C integration updated 6 October 2026. This note supplements the ten-week student assignment, especially tasks G01 (portable corpus), G03 (cross-engine comparison), and the optional Xpact-core integration.
+Research date: 27 September 2026; implementation status reviewed 13 November 2026. This note supplements the ten-week student assignment, especially tasks G01 (portable corpus) and G03 (cross-engine comparison). Collection counts and external-source research retain their September date.
 
 **Recommendation:** use the W3C XML conformance suite as the main correctness collection, Xpact-core's fixtures for targeted regressions, SVG and selected libxml2 inputs for variety, and PubMed for large-file streaming tests. Keep assertions enabled in xpact and Xpact-core builds used for verification.
+
+The repository now has [pinned dual builds](implementation-builds.md),
+[catalog](dual-catalog-lane.md), [W3C](dual-w3c-lane.md) and
+[chunked regression](dual-regression-lane.md) comparisons with Xpact-core.
+Their primary catalog/W3C campaigns use assertions off, with separate
+assertion-enabled directed controls; this differs from the student verification
+recommendation above. The [all-cases W3C extension](w3c-xml-conformance.md#all-cases---all-cases)
+also runs the 611 profile exclusions, with 302 explicitly scored only for a
+non-crashing verdict. Native core DLL integration and canonical-output parity
+are not established by these direct Eiffel lanes.
 
 ## What Xpact-core actually provides
 
@@ -73,7 +83,13 @@ The [W3C test matrix](https://www.w3.org/XML/Test/xmlconf-20130923.html) disting
 | `not-wf` | Reject, subject to the documented external-entity processing rules. |
 | `error` | Optional error detection; there is no universal accept/reject requirement. |
 
-The current runner selects XML 1.0 fifth-edition binary tests, with namespaces enabled unless `NAMESPACE="no"`, using a nonvalidating parser and a suite-local external-resource loader. It selects **1,974 cases per build** and reports the remaining **611 cases as skipped** with reasons. External general/parameter entities and DTD subsets use their declaring file's base; no network resources are fetched. The hash-qualified E38 fifth-edition correction retains the original catalog expectation beside the profile expectation. XML 1.1, other editions and optional-error cases remain excluded. Missing, denied or unreadable parsed resources are harness errors, never successful XML rejections. Per-case parser results and strict failure status are recorded separately from skipped cases. Canonical output comparisons remain future work. See [the W3C profile and verification](w3c-xml-conformance.md).
+The standard core profile selects XML 1.0 fifth-edition binary tests, with namespaces enabled unless `NAMESPACE="no"`, using a nonvalidating parser and a suite-local external-resource loader. It selects **1,974 cases per build** and, without the all-cases extension, reports the remaining **611 cases as skipped** with reasons. External general/parameter entities and DTD subsets use their declaring file's base; no network resources are fetched. The hash-qualified E38 fifth-edition correction retains the original catalog expectation beside the profile expectation. XML 1.1, other editions and optional-error cases remain outside this profile. Missing, denied or unreadable parsed resources are harness errors, never successful XML rejections. Per-case parser results and strict failure status are recorded separately from skipped cases. See [the W3C profile and verification](w3c-xml-conformance.md).
+
+This standard lane does not compare canonical output. A separate October DLL
+study checks the 432 cases with expected-output files; its repairs and recorded
+results are indexed in [the reports overview](../reports/README.md), starting
+with [issue #154](../reports/issue-0154/report.md). Those output checks are
+distinct from binary verdict and no-crash scoring.
 
 ## Student work and completion criteria
 
@@ -84,7 +100,7 @@ The current runner selects XML 1.0 fifth-edition binary tests, with namespaces e
 | D2 — guided | Compare xpact and Expat across whole-buffer and selected chunk sizes through both parse APIs. | Build and assertion settings recorded; each required engine actually ran; differences have saved traces. |
 | D2 — guided | Add SVG and selected libxml2 parser inputs. | Pinned sources, declared parser modes and a reviewed expectation for each case. |
 | D3 — advanced | Measure the existing PubMed files with practical chunk sizes. | Repeatable elapsed-time and peak-memory results; timeouts and incomplete parses are failures. |
-| D3 — optional | Run the same manifest through Xpact-core after adding its test-framework adapter. | Comparable outcomes and event traces for all three engines. |
+| D3 — optional | Extend the existing Xpact-core lanes to the selected shared corpus and required API boundary. | Comparable outcomes and event traces for all three engines; keep direct Eiffel and native DLL evidence distinct. |
 
 Use small inputs for one-byte chunk tests and larger chunks for large documents. Preserve event order and text content; callback segmentation can legitimately vary with chunk size. Keep accepted, rejected, crashed, timed-out, unsupported and not-run counts separate. A checksum agreement is supporting evidence, not proof of full compatibility.
 
