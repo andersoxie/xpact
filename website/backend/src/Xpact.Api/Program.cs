@@ -22,7 +22,12 @@ builder.Services.Configure<KestrelServerOptions>(o =>
 {
     o.Limits.MaxRequestBodySize = maxBody;
     o.AddServerHeader = false; // no "Server: Kestrel": do not advertise the server software
+    // #358: a client trickling its upload must not hold a connection for hours (Kestrel's default
+    // minimum is 240 B/s: a 20 MB body could take 24 h). Together with RequestTimeoutSeconds below.
+    o.Limits.MinRequestBodyDataRate = new MinDataRate(bytesPerSecond: 4096, gracePeriod: TimeSpan.FromSeconds(10));
+    o.Limits.MaxConcurrentConnections = Math.Max(1, xpact.MaxConnections);
 });
+builder.Services.AddRequestTimeouts();
 
 // Brotli/gzip for the page, its script and CSS, and the JSON results (about 300 KB less per first visit).
 // No response carries a secret, so compression over HTTPS does not open a BREACH-style leak.
@@ -121,6 +126,7 @@ app.Use(async (context, next) =>
 });
 if (app.Environment.IsDevelopment()) app.UseCors("dev");
 app.UseRateLimiter();
+app.UseRequestTimeouts();
 app.UseResponseCompression();
 app.UseDefaultFiles();
 app.UseStaticFiles(SiteFiles.Options);
@@ -202,7 +208,9 @@ api.MapPost("/validate", async (HttpRequest http, IWorkerRunner runner, UploadGa
         http.HttpContext.Response.Headers.RetryAfter = busy.RetryAfterSeconds.ToString();
         return Problem(busy.StatusCode, busy.Title, busy.Message);
     }
-}).RequireRateLimiting("validate").DisableAntiforgery();
+}).RequireRateLimiting("validate").DisableAntiforgery()
+  // #358: upload + queue + parse together; then the request is cancelled (504) and its memory freed.
+  .WithRequestTimeout(TimeSpan.FromSeconds(Math.Max(1, xpact.RequestTimeoutSeconds)));
 
 // Conformance and benchmark numbers, exported from the repository's reports by scripts/export-data.py.
 string[] dataFiles = { "conformance", "benchmarks", "comparison", "testing" };
