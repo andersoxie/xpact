@@ -18,7 +18,14 @@ The site runs a parser on documents from strangers. These are the protections, a
 | One visitor using up the limit for everyone behind a proxy | `X-Forwarded-For` is read from a proxy on this machine or one in `Xpact:KnownProxies` only, so the limit counts each real visitor and visitors cannot fake their address | `Program.cs` | ✅ `Visitors_behind_a_proxy_are_rate_limited_separately` |
 | Reading other files through the results endpoint | Allowed names only: `conformance`, `benchmarks`, `comparison`, `testing` | `Program.cs` | ✅ `Results_files_are_served_and_names_are_checked` |
 | Click-jacking, MIME sniffing, leaking referrers | `X-Frame-Options: DENY`, `frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a strict CSP without `'unsafe-inline'` and with `base-uri`, `form-action`, `object-src`; `Permissions-Policy`, `Cross-Origin-Opener-Policy`; no `Server` header | `Program.cs` | ✅ `Security_headers_are_set`; OWASP ZAP 2.17.0: 0 medium/high ([#286](https://github.com/andersoxie/xpact/issues/286)) |
-| Storing visitors' documents | Nothing is written to disk; the document goes to the worker on stdin; logs record size, build, verdict and time only | `WorkerRunner.cs` | ✅ by design (code review) |
+| Storing visitors' documents | Nothing is written to disk: uploads stay in memory (also files over 64 KB, #359); the document goes to the worker on stdin; logs record size, build, verdict and time only | `Program.cs` (`FormOptions`), `WorkerRunner.cs` | ✅ `A_large_uploaded_file_does_not_touch_the_temp_folder` ([#359](../../reports/issue-0359/report.md)) |
+| Memory flood: many large uploads at once | Uploads are admitted **before** their body is read: at most `MaxWorkersPerClient` per visitor (429) and a buffered-bytes budget `MaxBufferedMb` = 256 MB (503); one exact copy per body | `Workers/UploadGate.cs` | ✅ `UploadGateTests`; 60 IPs × 21 MB → 355 MB peak (was 1.7 GB from one IP) ([#357](../../reports/issue-0357/report.md)) |
+| Slow clients holding connections (slowloris) | Body at least 4 KB/s after 10 s; `/api/validate` ends after `RequestTimeoutSeconds` = 120 s (504); `MaxConnections` = 500; slow headers end after Kestrel's 30 s | `Program.cs` | ✅ `A_trickling_upload_is_stopped_by_the_request_timeout`; 300 B/s ended after 11 s ([#358](../../reports/issue-0358/report.md)) |
+| A planted DLL picked up by a P/Invoke | DLLs are looked up in System32 only; `xpact.dll` by full path | `NativeSearchPath.cs` | ✅ CA5392 70 → 0 ([#360](../../reports/issue-0360/report.md)) |
+
+## Security scan 2026-11-13
+
+Full scan of the website: own attack battery (27 harmful-upload and protocol checks), OWASP ZAP 2.17.0 active scan, SonarQube, .NET security analyzers, Trivy, `npm audit`, NuGet advisories and gitleaks over the git history. 4 findings (#357-#360), all fixed and verified; after the fixes 27/27 checks pass, ZAP 0 high/medium/low, SonarQube 0 issues, 0 vulnerable dependencies, 0 secrets. Details and how to repeat: [scan report](../../reports/security-scan-2026-11-13/README.md).
 
 ## Known gaps before a public deployment
 
@@ -34,7 +41,7 @@ The site runs a parser on documents from strangers. These are the protections, a
 
 | Finding | Status | Report |
 |---|---|---|
-| Nested entity expansion ("billion laughs") is rejected after ~7 s as "syntax error"; Expat rejects it in ~0.1 s as "amplification limit breached" | ⬜ open | [#211](https://github.com/andersoxie/xpact/issues/211) · [report](../../reports/issue-0211/report.md) |
+| Nested entity expansion ("billion laughs"): now stopped with Expat's error (code 43) in ~1.6 s; Expat ~0.1 s | 🟡 right error, slower | [#211](https://github.com/andersoxie/xpact/issues/211) · [report](../../reports/issue-0211/report.md) |
 
 The website itself is safe from this finding: the time limit and memory cap contain it.
 

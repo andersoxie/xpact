@@ -1,0 +1,4 @@
+gitleaks v8.30.1, git history of incremental-test (455 commits), --redact
+56 findings, all rule generic-api-key on lines like  "xp_expat_api.e": "<sha-256 of the file>"  in JSON reports = file checksums, not secrets.
+ 24 generic-api-key in reports/
+ 32 generic-api-key in benchmarks/

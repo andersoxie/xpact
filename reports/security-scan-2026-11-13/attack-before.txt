@@ -1,0 +1,29 @@
+XXE-file | win.ini content never in response | HTTP 200, accepted code=None, leaked=False | PASS
+SSRF | no connection to a listener named in DTD/entity/PI/XInclude | 0 connections | PASS
+XXE-UNC | UNC path not opened (no NTLM leak), clean verdict | HTTP 200, accepted code=None, 0.2s | PASS
+Billion-laughs | rejected code 43 < 10 s | rejected code=43, 1.6s | PASS
+Quadratic-blowup | stopped (43) or finished, never crash/hang | rejected code=43, 0.7s | PASS
+Attr-entity-bomb | clean verdict, no crash | rejected code=2, 0.3s | PASS
+Deep-nesting-3M | clean verdict (rejected/timeout), site keeps serving | rejected code=2, 0.3s | PASS
+Name-5MB | clean verdict | rejected code=2, 0.2s | PASS
+Attrs-300k | clean verdict (hash flooding must not hang) | rejected code=2, 0.2s | PASS
+Dup-attribute | rejected (not well-formed) | rejected code=8 | PASS
+Random-binary-10MB | rejected, no crash | rejected code=4, 0.2s | PASS
+Encodings | UTF-16 accepted; NUL/overlong/surrogate rejected; no crash | utf16le-bom:accepted code=None; utf32:rejected code=4; nul:rejected code=4; overlong:rejected code=4; surrogate:rejected code=4; bad-decl:rejected code=18 | PASS
+Gzip-bomb-body | body NOT decompressed (rejected as bytes or 415) | HTTP 200, rejected code=4, 48640 B sent | PASS
+Script-in-XML | JSON response (application/json), nosniff, CSP set | HTTP 200, application/json; charset=utf-8, nosniff=nosniff, csp=True | PASS
+Filename-traversal/CRLF | filename ignored, document parsed | HTTP 400, None code=None | PASS
+Multipart-5000-fields | refused (400), quick | HTTP 400, 0.0s | PASS
+Multipart-150-extra-files | only 'file' used; refused or accepted, no disk/memory blow-up | HTTP 200, accepted code=None, 0.2s | PASS
+Params/JSON | 400 or a safe default, never 500 | ?build=../../native/x:400; ?build=PRODUCTION%00:400; ?chunkSize=-5:400; ?chunkSize=99999999999:200; ?chunkSize=2147483647:200; deep-json:400 | PASS
+Server-files | never served (404 or the index page) | /appsettings.json:404; /Xpact.Api.dll:404; /native/xpact.dll:404; /web.config:404; /data/testing.json:404; /api/results/..%2f..%2fappsettings:404; /api/results/%2e%2e%5cappsettings:404; /.git/config:200; /Xpact.Worker.exe:404 | PASS
+HTTP-methods | TRACE/PUT/DELETE not allowed (405/404) | TRACE:405; PUT:405; DELETE:405; OPTIONS:405 | PASS
+Security-headers | all set, no Server/X-Powered-By | missing=[], server=None, powered=None | PASS
+Host-header | foreign Host refused (400) | HTTP 400 | PASS
+Upload-to-disk | document never written to disk (security.md) | 1 temp files seen in C:\Users\masou\AppData\Local\Temp | FAIL
+Slow-upload-300B/s | connection dropped well before 40 s (a 20 MB body at 300 B/s = 18 h) | alive after 40 s=True | FAIL
+Slow-headers | dropped within ~30 s (Kestrel RequestHeadersTimeout) | alive after 45 s=False | PASS
+XFF-rate-bypass | spoofed X-Forwarded-For ignored: 429 after 30 | first 429 at request None | FAIL
+Site-alive-after-all | health 200 | HTTP 200 | PASS
+
+24 PASS, 3 FAIL

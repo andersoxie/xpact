@@ -1,0 +1,8 @@
+scanner exit 0
+analysis SUCCESS
+open issues: 0
+gate: ERROR
+  new_coverage ERROR actual=0.0
+  new_duplicated_lines_density OK actual=0.0
+  new_violations OK actual=0
+hotspots: The remote server returned an error: (403) Forbidden.

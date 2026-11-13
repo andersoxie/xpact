@@ -92,7 +92,7 @@ Worth it only if test 2 is run often (when chunked input changes, e.g. #272).
 -----------------------------------------------------------------------------
 F. OTHER
 -----------------------------------------------------------------------------
-[ ] Website release with #316 + #352/#353 fixes. Student runs
+[ ] Website release with #316 + #352/#353 + security fixes #357-#360. Student runs
           gh release create; then Docker memory-cap check may require
           code 1 again ............................................. ~1 h
 [x] #262 and #130 closed as not planned (Jenkins dropped) ...... 2026-11-13
@@ -148,5 +148,10 @@ DONE THIS WEEK (2026-11-12)
 [x] #353  Timeout with no hint: result now explains assertions build /
           small pieces. PR #354, closed.
 [x] SonarQube 196 -> 0 issues; website build website-2026-11-12-1 shipped.
+[x] 2026-11-13 website security scan (attack battery, ZAP, SonarQube, Trivy,
+          npm/NuGet audit, .NET analyzers, gitleaks): 4 findings fixed
+          #357 memory flood, #358 slow uploads, #359 uploads on disk,
+          #360 DLL search path. Battery 27/27, ZAP 0 high/med/low.
+          reports/security-scan-2026-11-13/README.md
 
 Reports: reports/issue-0316/report.md, reports/issue-0352/report.md
