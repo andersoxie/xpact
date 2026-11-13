@@ -42,6 +42,12 @@ public sealed class XpactOptions
     /// <summary>Requests that may wait for a worker at once; more are refused with 503 straight away.</summary>
     public int MaxQueuedRequests { get; set; } = 32;
 
+    /// <summary>
+    /// Memory for request bodies being read and parsed at once, in MB (#357). Each upload reserves about
+    /// four times its size before its body is read; when the budget is full, further uploads get 503.
+    /// </summary>
+    public int MaxBufferedMb { get; set; } = 256;
+
     /// <summary>Requests per client IP per minute.</summary>
     public int RequestsPerMinute { get; set; } = 30;
 

@@ -182,7 +182,13 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
         }
 
         // Pasted text: the JSON body is longer than 10 MB, the document is not.
-        Assert.Equal(Verdicts.Accepted, (await PostJson(Client(), new { xml = Encoding.UTF8.GetString(exact) })).Verdict);
+        // Escaped the way the site's own page does it (JSON.stringify: \" and \n, at most 2x). .NET's default
+        // encoder writes < > " as < etc. (up to 6x): that body is over the 2x limit and refused with 413,
+        // which the in-process test host only enforces since the upload gate checks Content-Length (#357).
+        var browserJson = new System.Text.Json.JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+        var jsonResponse = await Client().PostAsJsonAsync("/api/validate", new { xml = Encoding.UTF8.GetString(exact) }, browserJson);
+        Assert.Equal(HttpStatusCode.OK, jsonResponse.StatusCode);
+        Assert.Equal(Verdicts.Accepted, (await jsonResponse.Content.ReadFromJsonAsync<ValidationResult>())!.Verdict);
 
         using (var form = new MultipartFormDataContent())
         {
