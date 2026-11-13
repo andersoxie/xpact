@@ -71,9 +71,11 @@ adapter.
 
 Expat is also careful about lazy materialization. Open tag names can initially
 point into the input buffer, and strings are copied only when they must survive
-across parse calls or callback/API boundaries. xpact's Phase 2 token-slice plan
-matches this idea: represent names, attribute values, namespace prefixes, and
-text runs as buffer slices until a public API needs a `STRING_8`.
+across parse calls or callback/API boundaries. xpact already uses slice-backed
+open-element names and avoids several materializations in the no-event path.
+Extending this approach to other names, attribute values, namespace prefixes,
+and text runs remains useful work; it does not by itself remove native input
+copying or whole-prefix replay. See [the optimization history](performance-analysis.md).
 
 ## Current xpact Fit
 

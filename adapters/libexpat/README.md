@@ -88,6 +88,11 @@ unlisted failures fail the stage. CTest output is printed in Jenkins and saved
 to `libexpat-native-suite.log`; a validated expected-failure result returns a
 successful process status to Jenkins.
 
+The gate does not yet detect every individual unexpected pass in a mixed
+result: if some expected tests pass while others fail, it checks the reported
+failures rather than requiring equality with the entire expanded expected set.
+The all-passing case with a nonempty expected list is rejected as described above.
+
 Run the orchestration regression tests without building Eiffel or CMake:
 
 ```powershell

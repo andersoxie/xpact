@@ -1,5 +1,12 @@
 # Versioning workflow
 
+**Scope reviewed 13 November 2026:** this is the assignment's `student-Mass`
+workflow, with historical branch/issue examples below. It is not a requirement
+to base unrelated repository or automated work on that student branch. Follow
+the active task's repository instructions and agreed target branch, while
+retaining one logical change per commit, reviewable evidence and a clear PR.
+No historical issue or merge status below was refreshed from GitHub in this review.
+
 > **Last updated:** 2026-10-22 · describes `student-Mass` @ `76ac272`
 
 Every fix should be **traceable** (you can see which issue it belongs to and

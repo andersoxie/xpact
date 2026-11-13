@@ -11,6 +11,10 @@ previously labelled **xpact Eiffel finalized, assertions discarded**:
 - One parser reused between whole documents; no-op handlers during timing.
 - No additional caller-requested GC suspension.
 
+The results below compare two parser implementations under Windows EiffelStudio.
+The [13 November WSL comparison](wsl-benchmarks.md) instead compares two compilers
+running xpact. Its Gobo results do not replace this lane's pinned-core evidence.
+
 ## Run this lane
 
 Use the prerequisites in [Pinned implementation builds](implementation-builds.md).

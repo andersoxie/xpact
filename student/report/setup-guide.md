@@ -1,5 +1,14 @@
 # Setup guide: build xpact and run the assertions-enabled tests on Windows
 
+**Historical setup record, reviewed 13 November 2026.** Tool versions, paths and
+expected failures below describe the student's October machine and revisions.
+They are retained for reproduction, not as current Jenkins inventory or current
+failure claims. For today's supported build paths, use
+[platform builds](../../docs/platform-builds.md),
+[the Windows regression matrix](../../docs/test-matrix.md) and
+[WSL EiffelStudio/Gobo setup](../../docs/wsl-benchmarks.md). The Windows safe Base
+precompile instructions here do not apply to the Linux benchmark builds.
+
 For a developer who has a Windows PC and a clone of this repository, and wants
 to reproduce the builds and tests used in the student project. Tested on
 2026-10-22 (task A02, [#33](https://github.com/andersoxie/xpact/issues/33));
@@ -12,7 +21,7 @@ the results of that run are in
 
 ## 1. Install the tools
 
-| Tool | Student PC (2026-10-26) | Supervisor / Jenkins | Notes |
+| Tool | Student PC (2026-10-26) | Supervisor / Jenkins recorded then | Notes |
 |---|---|---|---|
 | Windows | 11 Home, 64-bit | 11, 64-bit | |
 | EiffelStudio | 25.12.9.8922 Standard, win64 | ⚠️ **25.02.9.8723 Enterprise** (`C:\El2502E`) | Puts `ec` and `finish_freezing` on `PATH` |
@@ -24,8 +33,9 @@ the results of that run are in
 | CMake | Visual Studio's copy, after the MSVC import | 4.3.3 | Only for the libexpat lanes |
 
 ⚠️ = still different on purpose: the student decided on 2026-10-26 to keep
-these versions and record the difference. No result so far has depended on
-them; if a result ever differs from Jenkins, compare on Jenkins first.
+these versions and record the difference. The report did not attribute an
+observed difference to them; that does not establish equivalence between the
+toolchains. Record the actual versions for each new comparison.
 
 `gh` on the student PC is not on `PATH`; its location (and the other tools') is in
 [`../README.md`](../README.md) ("Tools on this PC").
@@ -91,7 +101,9 @@ cd C:\xpact\xpact-student-Mass
 
 ## 4. Build and test
 
-The student project uses **assertions-enabled** builds (guide, "Your role").
+The student project prioritizes **assertions-enabled** builds (guide, "Your role").
+The following expected outcomes are the 22 October baseline; subsequent fixes
+are recorded in [the integrated 28 October report](../../reports/latest-2026-10-28/README.md).
 
 | # | Command | What it does | Expected on 2026-10-22 |
 |---|---|---|---|
@@ -138,14 +150,17 @@ A command finishing is not proof that the tests passed. Check the exit code
 | `shutil.Error ... [WinError 3] The system cannot find the path specified` in `test_implementation_builds.py` | Windows long paths off | Section 2b |
 | `fix.ps1` stops on "Already on 'student-Mass'" | PowerShell 5.1 and git's stderr | Do its steps by hand ([VERSIONING.md](../VERSIONING.md)) |
 
-## 6. Known failures (not setup problems)
+## 6. Failures recorded on 22 October (not setup problems)
 
-These fail on a correct setup. Do not try to fix them by changing the build:
+These failed on the correctly configured baseline revision. They are not a
+current failure list: later parser and runner fixes are recorded in
+[the reports index](../../reports/README.md). Preserve the original baseline
+when reproducing these outcomes:
 
 - **#28**: any CR byte breaks a loop variant in `XP_PARSER.normalized_input`
   (assertions on). Caught by `test_cr_line_ends_with_deferred_positions`.
 - **#3 (B03)**: postcondition `final_finished_or_suspended` in
-  `test_garbage_collection_suspension`. Fix in draft pull request #12.
+  `test_garbage_collection_suspension`. The fix was then in draft pull request #12.
 - **K3**: the assertions-DLL smoke test crashes (`0xC0000028` and other codes).
 - The test runner stops at the first failure, so tests after it do not run
   (draft 06).

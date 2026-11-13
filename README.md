@@ -39,6 +39,8 @@ Implemented and verified now:
 - A chunked `XML_Parse` CRC harness that compares event digests across buffer
   sizes and can be compiled against xpact or libexpat.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
+- A native-suite gate that resolves reported failures to upstream test names
+  and rejects unexpected failures, crashes, and incomplete test runs.
 - Published benchmark, performance-analysis, and parity documentation.
 - W3C XML binary conformance tests in the benchmark lane, with per-case
   reports for both finalized assertion modes and Jenkins publication.
@@ -92,8 +94,8 @@ Before calling xpact a credible drop-in replacement, the project still needs:
   native adapter accepts chunks and now has CRC coverage for replayed character
   data, but it still relies on accumulated-buffer replay rather than a
   suspendable parser session;
-- a stronger native-suite gate that reports actual unexpected failures by
-  upstream test name, not only the current expected-failure manifest expansion;
+- tighter expected-failure accounting that detects individual unexpected
+  passes even when other expected failures remain in the same native-suite run;
 - further performance work: extending the existing slice and deferred-materialization
   paths, string-pool recycling, and a native byte-buffer parse path;
 - replacement testing in at least one public application that normally builds

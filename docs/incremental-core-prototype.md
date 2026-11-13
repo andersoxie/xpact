@@ -37,11 +37,15 @@ The Eiffel regression suite currently checks that:
 - a chunk ending inside an attribute value waits for more input and keeps only
   the incomplete token;
 - the completed attributed start tag is emitted when the next chunk arrives;
-- a completed attributed start tag in a non-final chunk is emitted immediately,
-  unlike the current native replay shim with reparse deferral enabled;
+- a completed attributed start tag in a non-final chunk is emitted immediately;
 - non-final character data is emitted and consumed;
 - final end tags finish the session;
 - mismatched end tags produce an error.
+
+The production [shim audit](incremental-shim-audit.md) also expects immediate
+callbacks for its completed attributed-start-tag cases, with and without
+reparse deferral. The architectural difference is retained incremental state
+versus accumulated-buffer replay, not a blanket difference in callback timing.
 
 ## Not In Scope Yet
 

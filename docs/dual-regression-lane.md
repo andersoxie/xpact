@@ -9,6 +9,11 @@ It reuses the build infrastructure of the [dual catalog](dual-catalog-lane.md)
 and [dual W3C](dual-w3c-lane.md) lanes (`build_implementations.py`, profile
 `regression`).
 
+As of 13 November 2026 this is an implemented Windows EiffelStudio/MSVC lane.
+Its recorded parser results below are dated student-PC measurements; the new
+Gobo qualification does not rerun this lane. The main Jenkins dual stage runs
+catalog and W3C campaigns, so this regression command remains a separate check.
+
 ## Run it
 
 Use the prerequisites in [Pinned implementation builds](implementation-builds.md)
@@ -112,12 +117,16 @@ restored `src/` (`git diff src/` empty afterwards).
 | Mutation | Result |
 |---|---|
 | CR not normalized to LF (#28 undone) | ✅ caught: 21 `WRONG-EVENTS` for xpact (`text:\x0d`), exit 1 |
-| #40 fix undone (`find_markup_declaration_end` start index) | ❌ not caught, by design of finalized builds: the generated C keeps preconditions but no loop invariant check (`index_in_bounds` absent in `F_code`), and without that check the mistake has no visible effect. The workbench Eiffel suite catches it (#128) |
+| #40 fix undone (`find_markup_declaration_end` start index) | ❌ not caught in that recorded finalized build: `index_in_bounds` was absent in the inspected `F_code`, and no visible outcome changed. The workbench Eiffel suite catches it (#128). This observation does not establish a rule for every finalized build |
 | One malformed-UTF-8 check skipped in `normalized_input` | not visible: other checks on the native path still reject the input, so no verdict changed |
 
-**Limitation for every finalized lane:** `-finalize -keep` builds do not check
-loop invariants or variants. Bugs that only break a loop contract need the
-workbench assertion builds of `run_eiffel_test_matrix.ps1`.
+Both regression assertion targets explicitly request loop assertions. Separate
+13 November finalized probes detect loop invariants and variants with
+EiffelStudio 25.02 and Gobo 26.11.12; see [assertion qualification](gobo-assertions.md).
+The older missed mutation therefore needs investigation in its exact build and
+call path rather than a blanket conclusion about finalization. Keep the workbench
+assertion matrix as additional coverage; this documentation review did not rerun
+the mutation or the regression campaign.
 
 ## Not covered
 

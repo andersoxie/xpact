@@ -1,5 +1,16 @@
 # 10-week plan
 
+**Repository status, 13 November 2026:** this remains the student's dated work
+record. Pinned core builds and the dual catalog, W3C and chunked-regression
+lanes are implemented; see [the build map](../docs/implementation-builds.md).
+Catalog and W3C are in both main Jenkins pipelines, with later build 108
+evidence recorded in [the Jenkins guide](../docs/dual-implementation-jenkins.md).
+The [13 November compiler qualification](../docs/gobo-assertions.md) and
+[WSL timings](../docs/wsl-benchmarks.md) are separate evidence, not a rerun of
+the complete student test matrix. Native `Production` still disables assertions.
+Historical checkboxes and pending issue/approval requests below are preserved;
+this review does not certify their current GitHub or supervision status.
+
 > **Last updated:** 2026-10-28 (week 6) · describes `student-Mass` after PR [#152](https://github.com/andersoxie/xpact/pull/152) (includes `main` @ `1714f31` with the supervisor's [#150](https://github.com/andersoxie/xpact/pull/150)); full W3C report: [latest-2026-10-28](../reports/latest-2026-10-28/README.md); W3C output test and its fixes: [issue-0154](../reports/issue-0154/report.md), [issue-0156](../reports/issue-0156/report.md), [issue-0157](../reports/issue-0157/report.md), [issue-0158](../reports/issue-0158/report.md), [issue-0159](../reports/issue-0159/report.md); W3C in pieces: [issue-0165](../reports/issue-0165/report.md); `main` @ `2488f44` (PR #139, merged by the supervisor 2026-10-29) = `student-Mass` @ `e5d59e2`
 > · ✅ done · 🟡 in progress / waiting · ⬜ not started · 🔴 open problem
 
@@ -39,7 +50,9 @@ Jenkins Benchmarks stage run locally on the integrated code (PR #152), default 1
 Jenkins would show **2,283 checked plus 302 "no crash only"**. We started at **1,727 passed and 858 skipped per build** (Jenkins #70).
 
 **External files through the DLL** (the way Expat programs load them): **247 of 247** in both builds.
-The supervisor's `main` alone still has crashes and timeouts there (1 crash off; 4 crashes + 3 timeouts on).
+The pre-integration `main` snapshot tested in that report had crashes and
+timeouts there (1 crash off; 4 crashes + 3 timeouts on). This is a dated
+before/after result, not a claim about the current branch.
 
 **Nothing else broke:**
 - [x] DLL smoke tests: ok in both builds
@@ -180,7 +193,7 @@ so its steps are done by hand ([VERSIONING.md](VERSIONING.md#fixps1-in-windows-p
 4. ✅ **W3C skips (2026-10-28):** none left. All 2,585 cases run: 2,283 checked + 302 "no crash only", 0 failed, 0 errors ([#151](https://github.com/andersoxie/xpact/issues/151), PR #152). 🟡 Waiting for the supervisor's Jenkins run on `student-Mass`; then close #146, #148, #151, #153 and #142.
 5. ✅ **Week 5 done 2026-10-26:** C03/C10 compared with Expat 2.8.1 ([#121](https://github.com/andersoxie/xpact/issues/121)); C02 regressions ([#128](https://github.com/andersoxie/xpact/issues/128)). Open from it: findings [#122](https://github.com/andersoxie/xpact/issues/122)-[#126](https://github.com/andersoxie/xpact/issues/126) (parser work).
 6. ✅ Every known problem has an issue now (2026-10-26): Jenkins "Eiffel Tests" without output [#130](https://github.com/andersoxie/xpact/issues/130), SonarQube 401 [#131](https://github.com/andersoxie/xpact/issues/131) (both need the supervisor); the old runner copy removed ([#132](https://github.com/andersoxie/xpact/issues/132)).
-7. 🟡 **Supervisor's dual-implementation plan** (`newUpdates.txt`): steps 1-2 and the catalog and W3C lanes are done on `main`. For steps 3-9, Jenkins, #74 and #79, the supervisor can run `student\tools\collect-supervisor-info.ps1` ([#140](https://github.com/andersoxie/xpact/issues/140)) and send back the `.txt`.
+7. **Dual-implementation status reviewed 13 November:** build, catalog, W3C and regression lanes are implemented; catalog/W3C Jenkins integration is documented in [the current guide](../docs/dual-implementation-jenkins.md). The [shared contract](../docs/dual-adapter-contract-draft.md) remains a draft, and native core DLL/.NET integration remains separate work. Earlier #74/#79 requests and collected supervisor information retain their original dates.
 8. ✅ **W3C output test (2026-10-28):** the content, not only the verdict, of the 432 W3C cases that have an expected output file. 359 right at first; the fix for [#154](https://github.com/andersoxie/xpact/issues/154)/[#155](https://github.com/andersoxie/xpact/issues/155) brings it to **393** (PR #160), [#156](https://github.com/andersoxie/xpact/issues/156) to **394** (PR #161) [#157](https://github.com/andersoxie/xpact/issues/157) to **395** (PR #162) [#158](https://github.com/andersoxie/xpact/issues/158) to **398** (PR #163) and [#159](https://github.com/andersoxie/xpact/issues/159) to **399**, 0 worse ([#154](../reports/issue-0154/report.md), [#156](../reports/issue-0156/report.md), [#157](../reports/issue-0157/report.md), [#158](../reports/issue-0158/report.md), [#159](../reports/issue-0159/report.md) reports). **Every xpact-only difference of this test is fixed**; left: 29 XML 1.1 files and 4 optional errors. 🟡 Jenkins run, then close #154-#159.
 9. ⏸ Still on hold: [#13](https://github.com/andersoxie/xpact/issues/13) (GC wrapper swallows exceptions), A04.
 
@@ -270,8 +283,8 @@ The 2026-10-19 error report is [reports/error-reports/2026-10-19.md](../reports/
 ## Week 4 – Input matrix
 **Activity:** Design small regressions and select 50–100 applicable W3C XML cases with the supervisor.
 **Bring to review:** An input matrix with reviewed expected outcomes.
-- [x] [G01](github/issues/11-G01.md) Corpus manifest and 50–100 reviewed W3C cases: done 2026-10-26 ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 cases, 83 counted (46 accept, 37 reject), 10 marked; all pass today in both builds; selected by the student, not reviewed by the supervisor ([results](results/G01-corpus/README.md))
-- [x] [Fix xmlconf verdict rules](github/issues/12-xmlconf-verdicts.md): done 2026-10-26 ([#117](https://github.com/andersoxie/xpact/issues/117)): the old PowerShell runner (never in git) is superseded by `run_w3c_conformance.py`; its 2026-10-14 results re-scored: 676 of 854 "failures" were wrong rules, the 233 real problems all pass today ([results](results/xmlconf-verdicts/README.md))
+- [x] [G01](github/issues/11-G01.md) Corpus manifest and 50–100 reviewed W3C cases: done 2026-10-26 ([#118](https://github.com/andersoxie/xpact/issues/118)): 93 cases, 83 counted (46 accept, 37 reject), 10 marked; all passed in both builds in that run; selected by the student, not reviewed by the supervisor ([results](results/G01-corpus/README.md))
+- [x] [Fix xmlconf verdict rules](github/issues/12-xmlconf-verdicts.md): done 2026-10-26 ([#117](https://github.com/andersoxie/xpact/issues/117)): the old PowerShell runner (never in git) is superseded by `run_w3c_conformance.py`; its 2026-10-14 results re-scored: 676 of 854 "failures" were wrong rules, the 233 real problems all passed in the recorded 26 October run ([results](results/xmlconf-verdicts/README.md))
 
 ## Week 5 – Regressions
 **Activity:** Run the selected small inputs with different callbacks and chunk boundaries.
@@ -300,7 +313,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Activity:** Consolidate the results and add selected SVG or libxml2 cases. Core integration stays optional.
 **Bring to review:** Shared fixtures and comparison output, or documented integration requirements.
 - [ ] Shared fixtures and comparison output committed under `results/`
-- [ ] Optional: [F01](github/issues/19-F01.md) Core build, [F02](github/issues/20-F02.md) Core runner
+- [ ] Optional student follow-up: [F01](github/issues/19-F01.md) and [F02](github/issues/20-F02.md) originally proposed core builds and a runner. Those repository capabilities now exist; review or extend the [implemented lanes](../docs/implementation-builds.md). This does not mark the student's original acceptance checklist or supervisor review complete.
 
 ## Week 9 – Analyse and draft
 **Activity:** Analyse the results and draft the report. Try selected PubMed files if the correctness checks permit.

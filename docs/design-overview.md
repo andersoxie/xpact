@@ -21,6 +21,9 @@ Primary classes:
 - `XP_ATTRIBUTES`
   Attribute vector with duplicate checking, specified/default counts, and ID
   attribute position support.
+- `XP_TOKEN_SLICE`
+  Holds a buffer, offset and length for an element name in the no-event parsing
+  path, avoiding a separate name string while the element is open.
 - `XP_EXTERNAL_ENTITY_RESOLVER`
   Capability object supplied by an application when external entity loading is
   allowed.
@@ -35,10 +38,20 @@ Primary classes:
 The core design rule is simple: XML semantics should be visible in Eiffel
 contracts and Eiffel code.
 
-The current Phase 1 core is intentionally `STRING_8`-centric. The Phase 2
-performance direction from the article is to introduce contract-checked
-byte-buffer token slices so the tokenizer can scan shared input buffers and
-materialize Eiffel strings only at API, callback, or diagnostic boundaries.
+The core consumes complete `READABLE_STRING_8` inputs. Its no-event path already
+uses slice-backed element names, avoids materializing simple attributes and text,
+defers position accounting, and can reuse suitable normalized `STRING_8` input.
+Eventful, namespace and DTD paths retain materialization where required. Further
+performance work extends these paths and considers string pooling and native
+byte-buffer input.
+
+Parser reuse still produces temporary objects: element slices are created and
+removed as elements open and close, and reset rebuilds per-document state.
+Temporary GC suspension preserves the previous runtime collection setting; it
+does not reclaim those objects or establish that a long-lived application needs
+no collector. Runtime support is compiler-dependent: Gobo 26.10's controls were
+stubs, while the 26.11.12 nightly passed the bounded GC-state probes described in
+[the compiler qualification](gobo-assertions.md).
 
 ## Native Adapter
 
@@ -68,7 +81,8 @@ but it must not become the XML parser.
 Primary files:
 
 - `tests/xp_test_root.e`
-  Contract-enabled Eiffel regression suite.
+  Eiffel regression suite run with ordinary contracts enabled and disabled;
+  its explicit test checks execute in both modes.
 - `tests/native/xpact_abi_smoke.c`
   Public C ABI smoke test.
 - `tests/native/xpact_bridge_smoke.c`
@@ -107,7 +121,9 @@ XP_PARSER
   -> normal Eiffel parsing under recursion and expansion limits
 ```
 
-No class in the parser performs file, URL, or socket I/O for external entities.
+`XP_PARSER` does not open files, URLs or sockets for external entities. It calls
+the configured resolver; a resolver such as `XP_LOCAL_EXTERNAL_ENTITY_RESOLVER`
+may perform the application's authorized resource loading.
 
 ## EiffelStudio BON Diagrams
 

@@ -1,4 +1,22 @@
-STATUS FOR SUPERVISOR - 2026-10-26 (week 4)
+CURRENT REPOSITORY CONTEXT - reviewed 2026-11-13
+The message below is the historical 26 October student status and request list,
+not a new message or a current list of unanswered supervisor questions.
+
+Pinned Xpact-core builds and catalog, W3C and chunked-regression lanes now exist:
+  docs/implementation-builds.md
+Catalog and W3C are wired into both main Jenkins pipelines; later build 108
+report evidence is in docs/dual-implementation-jenkins.md.
+The 28 October integrated W3C report records 2,283 checked verdicts plus 302
+no-crash-only cases per assertion mode, without failures or errors:
+  reports/latest-2026-10-28/README.md
+The 13 November Gobo qualification and WSL compiler comparison are separate:
+  docs/gobo-assertions.md
+  docs/wsl-benchmarks.md
+They do not rerun every student/native/DLL test. Production DLL defaults still
+disable assertions; use the Assertions tier explicitly for checked builds.
+Current tracker status and remaining supervision decisions were not reverified.
+
+HISTORICAL STATUS FOR SUPERVISOR - 2026-10-26 (week 4)
 student-Mass @ 97795fb, 0 commits behind main @ de01371 (main untouched by the student)
 Repo: github.com/andersoxie/xpact   Plan + known problems: student/PLAN.md   Index: reports/README.md
 (The 2026-10-22 version of this page is in the git history.)

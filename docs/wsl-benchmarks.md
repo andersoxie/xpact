@@ -42,6 +42,8 @@ Use a Linux distribution compatible with the selected compiler binary. The
 prebuilt Gobo 26.10 Linux x86-64 compiler requires glibc 2.38 or newer; the
 configured host uses Ubuntu 24.04 (`Ubuntu-24.04` in WSL), since its older
 Ubuntu 20.04 distribution cannot load this Gobo release.
+The 13 November qualification below uses `26.11.12+ca6541c` on Ubuntu 24.04;
+compatibility of that newer nightly with Ubuntu 20.04 has not been tested.
 
 From PowerShell:
 

@@ -13,6 +13,15 @@ records elapsed time separately from the catalog throughput benchmarks.
 `FinalizedAssertions` is compiled with `-finalize -keep`, since EiffelStudio
 otherwise discards runtime assertions during finalization.
 
+**Status reviewed 13 November 2026:** the default profile checks 1,974 cases;
+`-W3cAllCases`, selected by both main Jenkins benchmark stages, additionally
+runs 309 legacy-name verdict cases and 302 no-crash-only cases. The committed
+[28 October integrated run](../reports/latest-2026-10-28/README.md) records
+2,283 checked verdicts plus 302 no-crash-only outcomes per assertion mode,
+with no failures, errors or skips. These are dated Windows EiffelStudio results,
+not a fresh run or evidence for Gobo. Historical failure tables below retain
+their original dates and profiles.
+
 The source is the [W3C XML Conformance Test Suite](https://www.w3.org/XML/Test/),
 pinned to [the 20130923 ZIP](https://www.w3.org/XML/Test/xmlts20130923.zip).
 The [W3C test matrix and case descriptions](https://www.w3.org/XML/Test/xmlconf-20130923.html)
@@ -313,17 +322,23 @@ were not tested.
 
 ### All cases (`--all-cases`)
 
-With `--all-cases` the runner also runs the 858 cases outside the profile, in
-four lanes, instead of skipping them. Every `--engine` then needs an
+With `--all-cases` the runner also runs the 611 cases outside the current profile,
+instead of skipping them. Every `--engine` then needs an
 `--entity-engine` with the same name: the DLL checker built from
 `tests/native/xpact_w3c_case.c` against that build's DLL.
 
 | Lane | Cases | Program | Required result |
 |---|---:|---|---|
 | `legacy-names` | 309 | the engine with `--legacy-names` (fourth-edition name tables, as `XP_NATIVE_PARSER` uses) | the catalog verdict |
-| `external-entities` | 247 | the DLL checker: external entities and the external DTD loaded with `XML_ExternalEntityParserCreate`, only files below the suite directory | the catalog verdict, nonvalidating |
 | `optional-error` | 28 | the engine, or the DLL checker when the case has external entities | either verdict; a crash, timeout or missing verdict fails |
 | `xml-1.1` | 274 | the engine, or the DLL checker when the case has external entities | either verdict; a crash, timeout or missing verdict fails |
+
+The 247 binary external-resource cases are now included in the 1,974-case core
+profile and use the Eiffel suite-local resolver. They are not 247 extra cases.
+The runner retains an `external-entities` routing category for excluded binary
+cases, but the current pinned profile has none in that category. The
+[separate 247-case DLL check](../reports/latest-2026-10-28/README.md#external-entities-through-the-dll)
+provides evidence for the child-parser API path.
 
 ```powershell
 cl /nologo /Iinclude tests\native\xpact_w3c_case.c build\native-eiffel\xpact.lib /Fe:build\w3c-dll\xpact_w3c_case.exe
@@ -339,10 +354,11 @@ python scripts\run_w3c_conformance.py --all-cases `
 `results.tsv` gains a `lane` column, `summary.md` a table per lane, and JUnit
 class names end in the lane (`w3c.xml.<engine>.<lane>`; core cases keep
 `w3c.xml.<engine>`). Without `--all-cases` nothing changes. With assertions
-on, the three `pr-xml-*` documents (the XML specification with its DTD) take
-about 16 s each until the entity-position fix of
-[#148](https://github.com/andersoxie/xpact/issues/148) is in (0.2 s with it),
-so without it they need `--timeout 30`.
+on, the three `pr-xml-*` documents previously took about 16 s each before the
+entity-position fix in [#148](https://github.com/andersoxie/xpact/issues/148).
+The fix is present in the integrated code; the 28 October campaign completed
+with the default ten-second limit. Older revisions without the fix needed a
+larger timeout; those timings are historical.
 
 Cases whose lane accepts either verdict (`optional-error`, `xml-1.1`) only
 show that the parser gave a verdict without crashing. They are reported
@@ -358,8 +374,9 @@ Eiffel builds: it builds the DLL tier matching each build (Finalized →
 
 ### Known failures
 
-`benchmarks/w3c-known-failures.tsv` lists the parser gaps that were recorded
-on 2026-10-23 (columns `engine`, `case_id`, `status`, `category`). The category
+`benchmarks/w3c-known-failures.tsv` is the explicit baseline mechanism introduced
+on 2026-10-23 (columns `engine`, `case_id`, `status`, `category`). Its current
+file has no active failure rows. The category
 column records what was observed, not the cause. `run_benchmarks.ps1` passes
 the file to the runner with `--known-failures` by default
 (`-W3cKnownFailures ""` turns it off).

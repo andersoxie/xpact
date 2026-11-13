@@ -1,5 +1,11 @@
 # 10-week plan, with the work done so far
 
+**Archive notice reviewed 13 November 2026:** this historical plan is preserved,
+including later dated annotations. Use [the current student index](README.md)
+and [implemented comparison lanes](../docs/implementation-builds.md) for present
+repository capabilities. Old unchecked tasks and failures here are not current
+open-issue or compiler-qualification claims.
+
 > **Snapshot as of 2026-10-15 (week 2), kept as the record of weeks 1-2.** The
 > current status is in [PLAN.md](PLAN.md). Since this snapshot, the build fixes
 > listed below as blocked or "fixed in patch 01" were brought into git on

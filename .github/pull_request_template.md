@@ -1,7 +1,11 @@
 Refs #
-<!-- "Closes #" does not close the issue: pull requests go into student-Mass,
-     not the default branch main. Close the issue by hand after merging.
+<!-- Student issue-fix workflow: these pull requests go into student-Mass,
+     not the default branch main, so "Closes #" does not close the issue there.
+     Close the issue by hand after the merged result has been verified.
      student/tools/fix.ps1 finish writes this description for you. -->
+<!-- For other authorized work, record the agreed target branch and evidence.
+     The student-specific checklist below is scoped to that workflow.
+     Preserve CLAUDE.md's no-main policy; this template does not authorize a merge. -->
 
 ## What changed
 
@@ -14,7 +18,7 @@ Refs #
 |---|---|---|
 |  |  |  |
 
-## Checklist
+## Student workflow checklist
 - [ ] Report, logs and inputs are in `reports/issue-NNNN/`, and `reports/README.md` has a row for it
 - [ ] Every commit ends with `Refs #<issue>`
 - [ ] Only test, script or documentation changes, or a parser change reviewed with its developer

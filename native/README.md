@@ -2,7 +2,7 @@
 
 This directory contains the native `include/xpact.h` export layer.
 
-The current layer is intentionally bridge-only. It exports the libexpat-shaped
+The C export layer is intentionally a bridge. It exports the libexpat-shaped
 public symbols, preserves the C callback ABI, and forwards parser operations to
 an Eiffel-owned bridge registered through `XPACT_SetEiffelBridge`.
 
@@ -37,9 +37,13 @@ Linux/WSL packaging for an Eiffel-backed `libxpact.so` remains deferred
 platform expansion. The current native release path is Windows x64, and the
 Windows native benchmark already exercises the Eiffel-backed DLL through the
 public C ABI.
+Direct Linux parser benchmarks already run with EiffelStudio and Gobo; they do
+not use this shared-object path. See [the WSL benchmark guide](../docs/wsl-benchmarks.md)
+for compiler setup and the November 2026 comparison.
 
 `scripts/package_windows_release.ps1` creates the Windows-only release archive
 under `dist/`. The archive contains `bin/xpact.dll`, `lib/xpact.lib`,
+`bin/xpact_assertions.dll` and `lib/xpact_assertions.lib`,
 `include/xpact.h`, Windows release notes, checksum rows, benchmark/parity
 documentation, and the C smoke source used to verify a consumer link.
 
@@ -47,7 +51,8 @@ documentation, and the C smoke source used to verify a consumer link.
 C ABI. It compiles `benchmarks/xpact_native_c_benchmark.c` with MSVC, links
 against `build/native-eiffel/xpact.lib`, runs with `build/native-eiffel` on
 `PATH`, publishes create/free and parser-reuse rows in `docs/benchmarks.md`,
-and keeps the interpretation in `docs/performance-analysis.md`.
+and records optimization history in `docs/performance-analysis.md`. Those dated
+Windows ABI measurements are separate from the direct WSL compiler comparison.
 
 `tests/native/xpact_chunked_crc.c` is a diagnostic harness for the public
 `XML_Parse` contract. It compiles against either xpact or system libexpat,
@@ -73,6 +78,10 @@ Build and smoke the Eiffel-backed Windows DLL with:
 ```powershell
 .\scripts\build_native_eiffel.ps1
 ```
+
+Use `-BuildTier Assertions` for the finalized assertion-enabled DLL. These
+native builds use EiffelStudio; the Gobo qualification currently covers direct
+parser benchmarks and compiler probes.
 
 Package the Windows-only native release with:
 

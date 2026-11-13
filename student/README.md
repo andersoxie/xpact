@@ -5,9 +5,20 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-> **Updated 2026-10-26 (week 4)** · describes `student-Mass` @ `97795fb`, 0 behind `main`.
-> Weeks 1-3 ✅ · every build and test passes with assertions on (#104, #110) ·
-> #3, #38, #39, #40 fixed and closed · waiting for a Jenkins rerun (#73, #74, #79) · #13 ⏸ on hold.
+**Repository status reviewed 13 November 2026.** The student records below
+retain their dates and machine/branch identities. The implemented
+[dual catalog](../docs/dual-catalog-lane.md), [W3C](../docs/dual-w3c-lane.md)
+and [regression](../docs/dual-regression-lane.md) lanes now compare xpact with
+pinned Xpact-core. The [28 October integrated W3C report](../reports/latest-2026-10-28/README.md)
+records 2,283 checked verdicts and 302 no-crash-only cases per assertion mode.
+The [current compiler comparison](../docs/wsl-benchmarks.md) and
+[Gobo qualification](../docs/gobo-assertions.md) are separate 13 November evidence,
+not a rerun of every student/native/DLL test. Native `Production` still defaults
+to assertions off; choose `Assertions` explicitly for contract-enabled work.
+
+> **Historical student snapshot: 26 October 2026 (week 4)** · `student-Mass`
+> at `97795fb`, then 0 behind `main`. The #104/#110 checks passed on the student
+> PC; issue and Jenkins follow-up labels from that date are not current tracker status.
 
 ## Start here
 
@@ -24,8 +35,8 @@ folder, so it stays separate from the parser code. The plan, the task register
 | I want to see… | Open |
 |---|---|
 | Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
-| Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
-| The newest test results (everything, 2026-10-26) | [`../reports/issue-0110/`](../reports/issue-0110/report.md) (merged code, MSVC); first DLL run: [`results/dll-tests-2026-10-22/`](results/dll-tests-2026-10-22/README.md) |
+| Recorded problems and follow-up requests | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list), with dated status and current-context notes |
+| Dated integrated student verification (28 October) | [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md); earlier MSVC check: [`../reports/issue-0110/`](../reports/issue-0110/report.md); first DLL run: [`results/dll-tests-2026-10-22/`](results/dll-tests-2026-10-22/README.md) |
 | A one-page status for the supervisor | [`for superviser.txt`](for%20superviser.txt) |
 | Every fix: issue, pull request, commit, report | [`../reports/README.md`](../reports/README.md) |
 | What failed on a given day | [`../reports/error-reports/`](../reports/error-reports/) |
