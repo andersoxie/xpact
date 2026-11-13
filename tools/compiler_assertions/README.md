@@ -36,6 +36,8 @@ invalidated before rebuilding, and the complete report is published only after
 all selected builds and cases finish.
 
 The postcondition uses a boolean argument instead of a literal `ensure False`:
-EiffelStudio treats the latter as a nonreturning routine even when ordinary
-postcondition monitoring is disabled. Both loop-variant probes terminate after
+EiffelStudio raises a postcondition violation for the latter even when ordinary
+postcondition monitoring is disabled. This runtime behavior does not establish
+the same attachment-analysis rules as `check False then end`.
+Both loop-variant probes terminate after
 two iterations when checking is absent.

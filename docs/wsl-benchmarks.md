@@ -96,17 +96,22 @@ assertion policy explicitly and disables assertions in imported Base classes.
 This matches EiffelStudio's broad scope, but not all executed checks:
 EiffelStudio still enforces supplier preconditions from xpact callers, while
 Gobo 26.10 ignores that setting and also omits `check` instructions and
-decreasing loop-variant checks. The Gobo result is therefore labelled
+decreasing loop-variant checks. The `26.11.12+ca6541c` nightly passes the
+previously failing probes, including separate-library caller checks; this is
+bounded qualification rather than proof of full semantic equivalence.
+The Gobo result is therefore labelled
 `xpact assertions requested`, not equivalent full assertion coverage.
 See the [assertion investigation](gobo-assertions.md) for measured effects and
 the compiler behavior probes. Both Gobo targets specify native GCC `-O2`
-through an ECF `external_cflag`, since Gobo's current default `gcc.cfg` does
+through an ECF `external_cflag`, since Gobo 26.10's default `gcc.cfg` did
 not add optimization flags to its C compilation commands.
 Both compilers use the same parser and benchmark harness sources.
 Gobo uses GCC and the Boehm garbage collector explicitly. It contributes one
 normal-GC row per assertion mode. Gobo 26.10's `MEMORY` runtime controls do
 not implement garbage-collection suspension, so the runner does not publish
-Gobo GC-suspended measurements. EiffelStudio retains both GC variants.
+Gobo GC-suspended measurements. The `26.11.12+ca6541c` nightly implements
+those controls and passes the lifecycle probe, but the runner still provides
+only normal-GC Gobo rows. EiffelStudio retains both GC variants.
 Gobo's generated C build script is retained with the build.
 Workbench is optional, has assertions enabled, and requires selecting
 EiffelStudio alone; Gobo with Workbench is rejected.
@@ -125,8 +130,9 @@ The workloads use the same 2,611-byte UTF-8 catalog with 100 items:
 - Each selected Eiffel compiler with a reused parser, a no-op event handler,
   and normal GC for every selected build mode. Gobo rows are labelled
   separately from EiffelStudio.
-- EiffelStudio also runs with GC suspended during parsing. This variant is
-  unavailable for Gobo because its `MEMORY` suspension controls are unsupported.
+- EiffelStudio also runs with GC suspended during parsing. The runner omits
+  this variant for Gobo to support 26.10; the qualified 26.11 nightly now
+  implements the required `MEMORY` controls.
 - The existing libexpat C harness, compiled with `gcc -O2`, with callbacks
   and without callbacks. It creates a parser for each document and links
   against the distribution's libexpat.
@@ -148,6 +154,61 @@ configurations. A difference from the Windows results cannot be attributed
 to the C compiler alone. The older Windows
 runner times WSL C executables from Windows, so its process timings include
 `wsl.exe` overhead and should be kept as a separate series.
+
+## Measured Gobo/EiffelStudio comparison: 13 November 2026
+
+After updating the shared Jenkins WSL compiler selection, the Jenkins benchmark
+launcher was invoked locally with its normal settings: Ubuntu 24.04/WSL2,
+10,000 documents per process, one full warmup, and five measured repetitions.
+This was a local invocation using Jenkins's shared environment files, not a new
+Jenkins job build. Both compilers rebuilt the same parser and harness sources at
+repository revision `01e963d`; source hashes and the working-tree state are
+preserved with the results.
+
+The following medians compare **normal GC** and finalized builds only. Gobo is
+`26.11.12+ca6541c`; EiffelStudio is `25.02.9.8723`. Both use GCC 13.3, with Gobo's
+`-O2` and EiffelStudio's generated `-O3` settings. Gobo uses Boehm GC;
+EiffelStudio uses its own collector.
+
+| Requested assertion mode | EiffelStudio elapsed | Gobo elapsed | Gobo throughput relative to EiffelStudio |
+|---|---:|---:|---:|
+| Off | 1,552.189 ms | 915.405 ms | **1.70×** |
+| On | 15,399.687 ms | 4,024.620 ms | **3.83×** |
+
+Gobo takes 41.0% less elapsed time with assertions off and 73.9% less with them
+on. Enabling assertions increases elapsed time **4.40×** for Gobo and **9.92×**
+for EiffelStudio. These are comparisons within this run, not estimates of the
+speedup from upgrading Gobo alone. The earlier November investigation used a
+different parser revision and, for its original configuration, broader Base
+assertion scope.
+
+The previously failing assertion probes now match, including caller-requested
+supplier preconditions. An additional empty-routine literal-`ensure False` probe
+still differs with assertions off, so this remains bounded qualification rather
+than full semantic equivalence; see [the assertion investigation](gobo-assertions.md).
+
+The developers' shared-ECF suggestion was checked separately. New Gobo builds
+both targets directly from the unchanged EiffelStudio ECF, without the explicit
+optimization or GC options. With the same 10,000-document/five-repetition timing
+procedure, those Gobo executables measured **940.900 ms off** and **4,014.825 ms
+on**, giving **1.65×** and **3.84×** EiffelStudio's throughput. The conclusion
+therefore holds with the shared ECF too.
+
+The two Gobo configurations do not produce identical library code on this host:
+the installed EiffelStudio 25.02 Base snapshot differs from the newer Gobo
+FreeELKS snapshot, including `CONSOLE` and `FILE_INFO`. Gobo's README identifies
+compatibility with EiffelStudio 26.09.9.9100. The shared-ECF control uses the
+installed EiffelStudio Base sources; the normal Jenkins runner retains the
+separate Gobo ECF and its library selection for older compiler compatibility.
+Neither comparison isolates the compiler backend from its runtime and library
+implementation.
+
+[Raw repetitions](../benchmarks/results/gobo-eiffelstudio-comparison-2026-11-13.tsv)
+also retain the runner's additional EiffelStudio GC-suspended and libexpat rows;
+they are excluded from the ratios above.
+[Metadata and follow-up evidence](../benchmarks/results/gobo-eiffelstudio-comparison-2026-11-13.json)
+include the source/configuration hashes, generated flags, executable hashes,
+shared-ECF control repetitions, and literal-postcondition diagnostics.
 
 ## Measured xpact comparison: 24 October 2026
 
@@ -195,9 +256,16 @@ distribution, which can run the latest compiler binary:
 | `WSL_GOBO_ENVIRONMENT` | `/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/gobo-env.sh` |
 
 These environment paths target the built-in Windows agent's Linux compiler
-installations. The Gobo environment points to standalone Gobo 26.10
-(`gec` version `26.10.18+c84ee2f`), the latest stable release when added on
-8 November 2026; see the [official release](https://github.com/gobo-eiffel/gobo/releases/tag/gobo-26.10).
+installations. On 13 November 2026 the shared Gobo environment was updated to
+`gec version 26.11.12+ca6541c`, from the checksum-verified
+[official nightly](https://github.com/gobo-eiffel/gobo/releases/tag/nightly),
+installed under `build/gobo-toolchain/26.11.12-ca6541c/gobo`.
+The previous 26.10 installation remains available, with environment and metadata
+backups named `gobo-env-before-26.11.12.sh` and
+`installation-before-26.11.12.json` in `build/gobo-toolchain`.
+Both pipeline defaults still use the same shared environment filename, so the
+compiler update requires no job parameter change. Build #134 predates this
+selection change and retains its original 26.10 results.
 Override `WSL_GOBO_ENVIRONMENT` for another Gobo installation, or clear it when
 the Linux login environment already exposes Gobo. Override the distribution and
 environment files for another host. Environment files and toolchains outside

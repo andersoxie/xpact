@@ -5,15 +5,154 @@ checks. Most of Gobo's large slowdown came from checking its Base library,
 including allocating integer invariants, while EiffelStudio disabled ordinary
 Base-library assertions. The Gobo benchmark now explicitly disables Base
 assertions and labels the remaining mode **xpact assertions requested**.
-This aligns the broad library scope but does **not** make assertion enforcement
-identical: Gobo 26.10 misses several checks described below.
+Gobo 26.10 still misses several checks despite that scope correction.
+The newer `26.11.12+ca6541c` nightly passes the previously failing probes;
+an additional literal-`ensure False` case still differs from EiffelStudio.
+The follow-up below distinguishes those results from the original measurements.
 
-This investigation was performed on 8 November 2026 against parser revision
+The original investigation was performed on 8 November 2026 against parser revision
 `b870d3b`, Gobo `26.10.18+c84ee2f`, EiffelStudio `25.02.9.8723`, and GCC 13.3.0
 inside Ubuntu 24.04/WSL2. The parser was unchanged during the experiments.
 The evidence is in [the investigation data](../benchmarks/results/gobo-assertion-investigation-2026-11-08.json).
 
-## What the original results measured
+## Follow-up: 13 November 2026
+
+The installed Windows compiler, `C:\gobo\bin\gec.exe`, reports
+`26.11.12+ca6541c`. This is the latest **nightly** checked on 13 November;
+the latest stable release remains `26.10.18+c84ee2f`.
+The matching official Linux archive was downloaded into a separate qualification
+directory. Both packages correspond to commit
+`ca6541cacb6d3ce388bc312c884f321d183de411`.
+See the [official nightly release](https://github.com/gobo-eiffel/gobo/releases/tag/nightly)
+and [changes since 26.10](https://github.com/gobo-eiffel/gobo/compare/c84ee2f...ca6541c).
+
+Fresh finalized builds (Gobo using Boehm GC) produced these results:
+
+| Qualification | Linux / GCC 13.3 | Windows / bundled Zig 0.15.2 |
+|---|---|---|
+| Seven assertion cases, each in all-on, all-off and supplier-only modes | Gobo **21/21**; EiffelStudio 25.02 **21/21** | Gobo **21/21** |
+| Imported-library scope and caller-state cases | Gobo **7/7** | Gobo **7/7** |
+| `MEMORY.collecting`, `collection_off`, `collection_on` sequence | Passed | Passed |
+
+All-on now detects the plain `check` and non-decreasing loop variant, and
+supplier-only now detects the precondition. All-off still completes all seven
+cases. Gobo and EiffelStudio therefore agree on every case in the existing
+bounded assertion matrix; this does not establish complete Eiffel semantic
+equivalence.
+
+That 42-case Linux matrix deliberately uses a dynamic postcondition, so it does
+not exercise the special handling of literal `ensure False`. A separate finalized
+Linux/GCC probe compared this empty routine with a routine whose postcondition is a Boolean
+parameter passed `False`:
+
+```eiffel
+test_literal
+    do
+    ensure
+        literal_false_postcondition: False
+    end
+```
+
+| Compiler and assertion mode | Literal `False` | Dynamic false parameter |
+|---|---|---|
+| Gobo 26.11.12, all off | **Completes normally** | Completes normally |
+| Gobo 26.11.12, all on | Detected | Detected |
+| EiffelStudio 25.02, all off | Detected | Completes normally |
+| EiffelStudio 25.02, all on | Detected | Detected |
+
+Seven of the eight expected compatibility outcomes matched. The remaining Gobo
+case exits successfully after the call; its generated C contains an empty inline
+block in place of the routine. The generator's postcondition check prevents
+inlining only when postcondition monitoring is enabled. This points to inlining
+bypassing the new literal-`False` exception behavior. The fixture uses a tagged
+postcondition; source inspection shows that the special-case predicate examines
+the expression without consulting its tag. The untagged form was not separately
+run. This is an additional compatibility gap, separate from the original three
+assertion defects that now pass.
+
+The separate-library fixture leaves its imported library's assertion options
+unset while enabling all assertions in the root target. It confirms that
+ordinary library postconditions and invariants remain disabled, while a root
+call checks the library routine's supplier precondition. A library-to-library
+call leaves that precondition disabled; after returning to the root, a direct
+call checks it again. Root check and postcondition violations remain detected.
+This verifies both scope isolation and restoration of the caller's policy.
+
+The GC probe observes **enabled → off → off → on → on → off → on**, including
+repeated operations. It uses explicit process failure on a mismatch, independent
+of Eiffel assertion settings. This qualifies those three control operations,
+not memory reclamation, other `MEMORY` APIs, or multithreaded behavior.
+
+Parser reuse does not eliminate temporary objects. The no-event parsing path
+[creates an `XP_TOKEN_SLICE` for each opening element](../src/xp_parser.e#L5777),
+and parser reset replaces namespace state and predefined-entity strings.
+The current catalog has 101 elements per document. A bounded executable might
+finish with GC disabled, but that does not establish acceptable memory growth
+for a long-lived application. Allocation bytes and sustained memory growth were
+not measured here. Suspending GC around each parse, then restoring its previous
+state, also differs from compiling the whole program with `--gc=no`.
+
+The fixes are present upstream:
+
+| Original issue | Corrective change |
+|---|---|
+| ECF `check` option updates the wrong setting | [Correct option setter](https://github.com/gobo-eiffel/gobo/commit/196c23725e6b45fba943d8c8e37420eeb2058dc3) |
+| Saved loop variant assigned in the wrong direction | [Correct saved value](https://github.com/gobo-eiffel/gobo/commit/b861e06463b6a3fb55f7ce513fd58bd5983ff654) |
+| Missing caller-requested supplier preconditions | [Track caller precondition policy](https://github.com/gobo-eiffel/gobo/commit/17c6b3756e5787f401988e45d1e96cb466ccc273) |
+| Root assertions propagate into imported libraries | [Keep library options separate](https://github.com/gobo-eiffel/gobo/commit/5b083f9674d72a40faa1c77e61d63e9d34fb5b62) |
+| Checked primitive routines trigger integer invariants and boxing | [Inline finalized basic routines and disable basic-class assertions](https://github.com/gobo-eiffel/gobo/commit/894098e1c154610bfc4522864e5611b3d4e6552d) |
+| Ordinary assertions carry additional exception frames | [Remove per-assertion `setjmp`](https://github.com/gobo-eiffel/gobo/commit/f51e634011e2ce136badd9b5ce238ddd1b3bc33a) |
+| GC controls are stubs | [Implement Boehm GC controls](https://github.com/gobo-eiffel/gobo/commit/51c91d46cb3f482d76e0e2f84890017ac322aecd) |
+
+Inspection of the newly generated assertion-enabled xpact C confirms that
+ordinary preconditions and checks no longer introduce their own `GE_setjmp`,
+and the integer invariant/boxing path is absent. Exception frames still occur
+for old expressions, once initialization, and rescue handling. The current ECF
+already disables Base assertions, so this inspection cannot isolate the benefit
+of the primitive optimization from the earlier scope correction.
+The primitive change permits finalized inlining and suppresses basic-type
+assertions, matching EiffelStudio's behavior; it does not remove the boxing
+implementation or establish that boxing is unnecessary in other contexts.
+
+Both Gobo benchmark modes also built and completed a smoke run: 100 documents,
+one warmup and three measured runs per mode, at repository revision `01e963d`.
+This is compatibility evidence, not a new performance comparison with the
+8 November timings. The runner continues to publish only normal-GC Gobo rows;
+that omission no longer means the newer compiler lacks GC controls.
+
+An additional Linux/GCC check built both finalized targets directly from the unchanged
+`benchmarks/xpact_benchmarks.ecf`, including its reference to EiffelStudio's Base
+library. Gobo built and parsed 100 documents in each mode without an added ECF
+optimization flag or an explicit `--gc` argument. Its generated commands used
+the default GCC `-O2`, and both executables used the default Boehm GC. This verifies
+that this ECF works with the tested Gobo installation without the separate Gobo
+ECF's overrides. The compiler's general GC default is Boehm when available and
+no GC otherwise; explicitly selecting Boehm remains useful for reproducibility.
+
+The nightly is built on Ubuntu 22.04 rather than a newer GitHub runner image.
+Compatibility with Ubuntu 20.04 remains **untested**; successful Ubuntu 24.04
+qualification does not establish it.
+
+**Jenkins build #134 still used the old Linux compiler.** Successful `xpact` build
+**#134**, started at 14:30 and finished at 15:07 Stockholm time on 13 November,
+archives `gec version 26.10.18+c84ee2f` in its WSL benchmark metadata. Its
+compiler is under `build/gobo-toolchain/26.10/gobo`, selected by
+`build/gobo-toolchain/gobo-env.sh`. The new Windows archive had been downloaded
+at 14:12, but that installation did not replace the WSL compiler. Initial
+qualification used an isolated Linux installation. Later, at **18:15 UTC
+(19:15 Stockholm)** on 13 November, the shared environment file was switched to
+`build/gobo-toolchain/26.11.12-ca6541c/gobo`. This changes the compiler selected
+by subsequent Jenkins WSL builds; it does not change build #134's archived results.
+
+The [qualification evidence](../benchmarks/results/gobo-assertion-qualification-2026-11-13.json)
+preserves the version identities, assertion diagnostics, additional probe source
+text, commands, hashes, and Jenkins metadata identity. The shared-ECF and
+literal-postcondition follow-up accompanies the
+[new Gobo/EiffelStudio comparison](../benchmarks/results/gobo-eiffelstudio-comparison-2026-11-13.json);
+see the [WSL benchmark notes](wsl-benchmarks.md) for its methodology and results.
+The original findings and timings below remain historical evidence for Gobo 26.10.
+
+## What the original 8 November results measured
 
 The original medians were for three process runs of 1,000 copies of the same
 2,611-byte catalog, after one warmup, with normal garbage collection:
@@ -79,7 +218,7 @@ Base assertion scope. It keeps GCC `-O2`, Boehm's normal settings, and the
 unchanged parser. The faster corrected Gobo row is still not proof of superior
 performance under equivalent contract enforcement.
 
-## Checks are still not equivalent
+## Gobo 26.10 assertion coverage differences
 
 Small bounded programs deliberately violate each kind of contract. With all
 six ECF assertion flags requested, the observed behavior is:
@@ -97,8 +236,8 @@ six ECF assertion flags requested, the observed behavior is:
 
 The probes also run with assertions discarded. They classify only the named
 deliberate violation as detection; an unrelated failure is an investigation
-error. Postconditions use a dynamic predicate because EiffelStudio gives
-literal `ensure False` special nonreturning-routine semantics.
+error. Postconditions use a dynamic predicate because EiffelStudio raises a
+violation for literal `ensure False` even when ordinary assertion monitoring is off.
 
 The findings correspond to concrete Gobo 26.10 compiler behavior:
 
