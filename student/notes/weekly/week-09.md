@@ -1,6 +1,6 @@
 # Week 9 - Analyse and draft
 
-> **10-16 November 2026, state on 2026-11-12** · work branch `incremental-test` of andersoxie/xpact; `main` = `incremental-test` (0 ahead / 0 behind, 2026-11-12).
+> **10-16 November 2026, state on 2026-11-13** · work branch `incremental-test` of andersoxie/xpact; `main` is behind `incremental-test` since PR #354/#355 (not touched).
 > Week goal (guide): analyse the results and draft the report. Hand-in: 27 November.
 > 10-11 November (DLL blockers, website review findings, fair speed test) are in [week 8](week-08.md) under "2026-11-10" and "Next".
 
@@ -11,7 +11,9 @@
 - [x] **`main` synced twice:** PR #344 (merge commit), then PR #350 and a fast-forward, so `main` = `incremental-test` (student's explicit request; CLAUDE.md overridden for these two steps only).
 - [x] **Website build `website-2026-11-12-1`** with the accessibility and React fixes: release + Docker image `latest` ([#345](https://github.com/andersoxie/xpact/issues/345), PR #348).
 - [x] **Hand-in report** updated to 2026-11-12 with recounted numbers ([#346](https://github.com/andersoxie/xpact/issues/346), PR #347, #349).
-- [x] **[#316](https://github.com/andersoxie/xpact/issues/316) investigated** (not fixed): [report](../../../reports/issue-0316/report.md). WinDbg installed for the next step.
+- [x] ✅ **[#316](https://github.com/andersoxie/xpact/issues/316) fixed** (PR #355): under `cdb` the 3 crashes were all inside .NET (finalizer thread twice, main thread once) when it loaded a type at the cap; only 20-63 KB of stack used. Worker: warm-up, 4 MB reserve, tiered JIT off. [Report](../../../reports/issue-0316/report.md).
+- [x] ✅ **10 MB upload** ([#352](https://github.com/andersoxie/xpact/issues/352), [#353](https://github.com/andersoxie/xpact/issues/353), PR #354): the page froze (editor drew 2 rows per line); now a read-only 256 KB preview; a timeout explains the assertions build / small pieces. [Report](../../../reports/issue-0352/report.md).
+- [x] #262 and #130 closed (Jenkins dropped). Full to-do list with time estimates: [TOOODOOO.txt](../../../TOOODOOO.txt).
 
 ## What the evidence shows
 **Observed, not expected:**
@@ -23,7 +25,10 @@
 | Untested script functions (#331) | old vs new under mocks: identical outputs, call order and exit codes |
 | SonarQube rescan | **0 issues**, 0 bugs, 0 vulnerabilities, 0 % duplication, 2 hotspots to review; gate fails only on coverage |
 | Docker image `website-2026-11-12-1` | built and tested twice on GitHub (container smoke test, memory cap) |
-| #316 | a race: the same image gave code 1 in one run and a stack overflow in the other; on the PC a stack overflow at 18-22 MB caps, code 1 from 30 MB; the overflow is in native code |
+| #316 before | stack overflow / access violation in 35 of 40 runs below 30 MB; code 1 from 30 MB |
+| #316 after (PR #355) | **0 crashes in 50 runs**: below 30 MB `error` (caught out-of-memory), from 30 MB code 1; 10 MiB document +0.17 s total (PC not idle) |
+| 10 MB upload (PR #354) | headless Edge: old page frozen (click timed out after 30 s); new loads in 0.75 s, accepted in 4.4 s; invalid 10 MB rejected at line 196,080 |
+| Website `test.ps1` after both fixes | **42 / 42** |
 | Parser source | unchanged since the 2026-11-08 rerun |
 
 ## Blocked
@@ -37,5 +42,5 @@
 - [ ] Ask the supervisor the open questions in one message.
 - [ ] [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces (the last known speed problem).
 - [ ] SonarQube: mark the 2 hotspots Safe; send a Python coverage report for the gate.
-- [ ] [#316](https://github.com/andersoxie/xpact/issues/316) with WinDbg (when picked up again).
-- [ ] Open issues on andersoxie (16 on 2026-11-12): #342, #316, #304, #293, #272, #262, #211, #210, #197, #176, #171, #170, #130, #126, #123, #13.
+- [ ] Next website release with #316 + #352/#353 (student runs `gh release create`); then tighten the Docker memory-cap check.
+- [ ] Open issues on andersoxie (13 on 2026-11-13): #342, #304, #293, #272, #211, #210, #197, #176, #171, #170, #126, #123, #13.

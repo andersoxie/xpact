@@ -4,7 +4,7 @@
 
 > **Student:** Masoud Dehdar · **Programme:** Software Developer .NET · **University:** Medieinstitutet
 > **Company:** Bsharp · **Supervisor:** Anders Persson · **Internship:** 6 October – 27 November 2026 (eight weeks; build preparation from September)
-> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` · **Report state:** `incremental-test` @ `a840029` = `main` @ `266401f` (2026-11-12) · first version: `student-Mass` @ `1280aee` (2026-11-01)
+> **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` · **Report state:** `incremental-test` @ `40c6428` (2026-11-13; `main` @ `266401f` is the 2026-11-12 state) · first version: `student-Mass` @ `1280aee` (2026-11-01)
 >
 > ✅ done and verified · 🟡 partly done or waiting · 🔴 open problem · ⏭️ dropped by decision · ✏️ for the student to check or complete
 
@@ -173,7 +173,7 @@ The main results: the full W3C XML Conformance Test Suite (**2,585 cases**) now 
 | ✅ **Same verdict as Expat 2.8.1** | 4,308 / 4,308 C-API cases (C# DLL tests) · 1,302 / 1,302 chunked configurations (G03) · 2,585 W3C cases through the DLL |
 | ✅ **Failures are reported** | A failing test now exits nonzero in every build (B01), proven by a switchable meta-test (B02) |
 | ✅ **Final parser retested** | All 11 test areas and the repository suites rerun on 2026-11-08: no crash, no regression, 3.9 million fuzzed inputs with 0 crashes, no memory leak |
-| ✅ **Traceable work** | By the student on andersoxie/xpact (2026-11-12): 146 issues (129 closed) and 168 merged pull requests (193 in the repo), plus 39 issues and 50 pull requests for the speed work; versions 0.1.0–0.9.0 tagged with a [CHANGELOG](../../CHANGELOG.md); `main` = `incremental-test`, 0 ahead / 0 behind (PR #344, #350, 2026-11-12) |
+| ✅ **Traceable work** | By the student on andersoxie/xpact (2026-11-13): 149 issues (136 closed) and 175 merged pull requests (200 in the repo), plus 39 issues and 50 pull requests for the speed work; versions 0.1.0–0.9.0 tagged with a [CHANGELOG](../../CHANGELOG.md); every PR merged into `incremental-test` with a merge commit |
 | ✅ **Code quality** | SonarQube: **196 → 0 issues**, 0 bugs, 0 vulnerabilities, duplicated code 14 % → 0 % ([summary](../../reports/sonarqube-2026-11-12/README.md)); 🟡 2 security hotspots wait for a "Safe" review, and the quality gate still needs a test-coverage report |
 | ✅ **Website** | Upload or paste XML and test it with xpact; Docker image built on GitHub; memory cap and load tested; all 7 code-review findings fixed (memory cap fails closed, per-visitor worker cap, queue limits); worker runs with no privileges at Low integrity; 42/42 backend tests; quality check 11 Nov: Lighthouse accessibility 100, speed 98-100, OWASP ZAP 0 findings, W3C HTML 0 errors ([#286](https://github.com/andersoxie/xpact/issues/286)); 🟡 not deployed yet (supervisor's server) |
 | 🟡 **Speed** | Chunked input is incremental now: worst case 50 min → 106 ms, whole documents 4–7× faster. Fair test against native Expat 2.8.1 through the same C API ([#275](https://github.com/andersoxie/xpact/issues/275)): xpact median **18× slower**, 0 checksum mismatches. 🔴 ISO-8859-1 in pieces is still quadratic ([#272](https://github.com/andersoxie/xpact/issues/272)) |
@@ -596,8 +596,7 @@ Each test kind checks a different layer, from single Eiffel routines to the C in
 | [#171](https://github.com/andersoxie/xpact/issues/171) | Error column differs where Expat points at the token | defect (positions) |
 | [#176](https://github.com/andersoxie/xpact/issues/176) | `]]` of a forbidden `]]>` delivered as text in pieces | defect (pieces) |
 | [#13](https://github.com/andersoxie/xpact/issues/13) | GC wrapper swallows exceptions | ⏸ on hold, design |
-| [#130](https://github.com/andersoxie/xpact/issues/130) | Jenkins: "Eiffel Tests" green without a result (SonarQube's HTTP 401, [#131](https://github.com/andersoxie/xpact/issues/131), is solved: a new token works, 196 → 0 issues) | environment (supervisor's server) |
-| [#316](https://github.com/andersoxie/xpact/issues/316) | Under a small memory cap (18-26 MB on the PC, ~40 MB in the container) the worker sometimes crashes in native code (stack overflow / access violation) instead of reporting out of memory; a race; the first suspected cause was refuted ([report](../../reports/issue-0316/report.md)) | ❔ unknown, low impact (the document is always stopped) |
+| ✅ [#316](https://github.com/andersoxie/xpact/issues/316) | Fixed 2026-11-12 (PR #355): the small-memory-cap crash was inside .NET (type loading at the cap), not the DLL; the worker now warms up, keeps a 4 MB reserve and runs without tiered JIT; 0 crashes in 50 runs ([report](../../reports/issue-0316/report.md)) | fixed (worker) |
 | [#342](https://github.com/andersoxie/xpact/issues/342) | 2 SonarQube security hotspots (`killpg` on the probe's own process group, the ECF XML namespace) to be marked Safe; the quality gate needs a coverage report | review (supervisor's rights) |
 | [#211](https://github.com/andersoxie/xpact/issues/211) | Billion-laughs documents: Expat's error now, but ~1.5 s against Expat's 0.1 s (rechecked 2026-11-11) | defect (limits) |
 | [#293](https://github.com/andersoxie/xpact/issues/293) | Well-formed documents with entities nested more than 32 levels deep are rejected as "syntax error"; Expat accepts them (found in the #211 recheck) | defect (limits), supervisor decision |
@@ -752,7 +751,7 @@ In the first five weeks of the eight-week internship, the project went from a pa
 
 ### 13.2 Future work
 
-**Follow-up list** (state 2026-11-12; the full list with time estimates is kept outside the repository):
+**Follow-up list** (state 2026-11-13; the full list with time estimates is [TOOODOOO.txt](../../TOOODOOO.txt) at the repository root):
 - [x] ~~Rerun the G03 comparison on the final code~~ (2026-11-06, 62 / 93 identical)
 - [x] ~~Selected SVG or libxml2 cases~~ (week 8)
 - [x] ~~Speed: resume from a saved state instead of replaying~~ (7.7, the "middle path" suggested on 1 November)
@@ -772,7 +771,9 @@ In the first five weeks of the eight-week internship, the project went from a pa
 - [x] ✅ Website build `website-2026-11-12-1` with the accessibility fixes: release and Docker image `latest`, tested in the container ([#345](https://github.com/andersoxie/xpact/issues/345), 2026-11-12)
 - [x] ✅ SonarQube: 196 issues → 0 ([#325](https://github.com/andersoxie/xpact/issues/325)–[#332](https://github.com/andersoxie/xpact/issues/332), 2026-11-12); SHA-1 hotspot resolved ([#342](https://github.com/andersoxie/xpact/issues/342))
 - [ ] SonarQube: mark the 2 remaining hotspots "Safe" (reasons in [#342](../../reports/issue-0342/report.md)); send a Python coverage report so the quality gate can pass
-- [ ] [#316](https://github.com/andersoxie/xpact/issues/316): find the native recursion with WinDbg (installed) and a DLL built with symbols; the fix is probably in the DLL or Eiffel runtime
+- [x] ✅ [#316](https://github.com/andersoxie/xpact/issues/316): found with WinDbg (no recursion: .NET loading types at the cap) and fixed in the worker (PR #355, 2026-11-12)
+- [x] ✅ [#352](https://github.com/andersoxie/xpact/issues/352)/[#353](https://github.com/andersoxie/xpact/issues/353): a 10 MB upload no longer freezes the page; timeouts explained (PR #354, 2026-11-12)
+- [ ] Next website release with #316 + #352/#353, then the Docker memory-cap check can require code 1 again
 - [x] ✅ Fair speed test against native Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275)): median 18× slower, 0 checksum mismatches → [results](../results/fair-speed-2026-11-10/README.md); rerun on an idle PC before quoting final numbers
 - [ ] Speed: profile the callback and 1-byte cases, then read by index and reuse buffers (leads in [mass-xpact-issue-0014](../../reports/mass-xpact-issue-0014/report.md))
 - [ ] A Linux build

@@ -1,0 +1,152 @@
+XPACT - WHAT IS LEFT OPEN                                   state 2026-11-13
+=============================================================================
+Hand-in: 27 November 2026. Branch: incremental-test (up to date, nothing to push).
+13 open issues, 0 open PRs (2026-11-13, after closing #262 and #130).
+Times = my working time. Each parser fix also needs one full acceptance run
+before its PR (~2-3 h machine time, runs in the background).
+
+Recommended order:
+  1. Website release (quick)
+  2. #272 (biggest bug that does not need Anders)
+  3. Send Anders all questions in one go (section B)
+  4. Speed rerun LAST, on an idle PC, after any speed fixes
+
+-----------------------------------------------------------------------------
+A. PARSER BUGS WE CAN FIX OURSELVES
+-----------------------------------------------------------------------------
+[ ] #272  ISO-8859-1 input in pieces is quadratic (1 MB in 1 KB pieces: 46 s,
+          Expat 0.2 s). Fix: copy the UTF-16 resume path.        1-2 days
+[ ] #123  No events before a malformed-UTF-8 error (Expat delivers them)
+                                                                  1-2 days
+[ ] #126  Default handler gets normalized line ends, not the raw CR
+                                                                  1-2 days
+[ ] #176  In pieces, "]]" of a forbidden "]]>" is delivered as text before
+          the error                                               1-2 days
+[ ] #170  Error code differs from Expat on 14 W3C cases           2-3 days
+
+-----------------------------------------------------------------------------
+B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
+-----------------------------------------------------------------------------
+[ ] #293  Entities nested > 32 levels rejected as "syntax error"; Expat accepts
+          a) keep limit, own error code ............................ 2-3 h
+          b) remove/raise limit like Expat (check stack safety first) 1/2-1 day
+[ ] #211  Billion laughs: right error (code 43) but 1.5 s vs Expat 0.1 s
+          Fix: profile (1/2 day) + bulk entity expansion (1-3 days)
+          = 1 1/2 - 3 1/2 days, uncertain. See section C.
+[ ] #304  Parallel parsing on several threads needed for 1.0?
+          "no" (likely): document it ............................... 30 min
+          "yes": multi-threaded Eiffel runtime, remove #274 lock,
+                 thread tests ...................................... 3-5 days, risky
+[ ] #171  Error column 0 where Expat points at the bad token ....... 1-2 days
+[ ] #13   XP_GC_CRITICAL_SECTION swallows exceptions (his code):
+          report error instead + test .............................. 1/2-1 day
+[ ] Licence: LICENSE file + README line ............................ 30 min
+[ ] Raise 10 s timeout for the assertions build? (from #353)
+          one config value, ships with next release ................ 15 min
+[ ] SonarQube: give the student "Administer Security Hotspots" on project
+          xpact, or mark the 2 hotspots Safe himself (#342) ........ 5 min (Anders)
+[ ] #210  Website online: HTTPS, domain, AllowedHosts (deployment)
+
+Total if Anders says yes to everything:   ~2-3 weeks
+Total if he picks the cheap options
+(#293a, #304 no, rest fixed):              ~4-6 days
+
+-----------------------------------------------------------------------------
+C. #211 - CAN IT BE FASTER?
+-----------------------------------------------------------------------------
+- XPact uses the same rule as Expat: expand up to an 8 MB threshold, then
+  stop with code 43. Same amount of work; XPact is ~15x slower per byte
+  (close to the general 18x gap to Expat).
+- Suspected cause (NOT verified): entity text copied character by character
+  instead of in bulk.
+- Plan: profile 1/2 day, bulk expansion 1-3 days. Realistic target 0.3-0.5 s,
+  not Expat's 0.1 s.
+- Cheap shortcut: lower the 8 MB threshold -> faster, but differs from Expat.
+  Not without Anders.
+
+-----------------------------------------------------------------------------
+D. SONARQUBE
+-----------------------------------------------------------------------------
+[x] 0 issues (196 -> 0, 2026-11-12)
+[x] #342  SHA-1 hotspot already fixed (PR #343, 2026-11-12)
+[ ] #342  2 security hotspots left (killpg on the probe's own process group,
+          the ECF XML namespace): not weaknesses, need a "Safe" review.
+          Student account has NO review rights: hotspot API returns
+          403 Forbidden. -> Anders (section B)
+[ ] Quality gate fails only on coverage: send a coverage report
+          (Python + C# only; Eiffel has no easy coverage tool) ..... 1/2-1 day
+
+-----------------------------------------------------------------------------
+E. #197 - W3C "TEST 2" ON SEVERAL CORES
+-----------------------------------------------------------------------------
+What test 2 is: checks that XPact gives the same answer however the input is
+cut. Each of the 2,585 W3C documents is parsed in one piece, byte by byte,
+and split at every size, and every result is compared with Expat.
+Problem: runs one document after another -> 20-25 min per DLL build (XPact is
+very slow on 1-byte pieces: 8 KB takes 58 s, Expat 5 ms).
+Task: run.py --jobs N, N documents at once (PC has 6 cores) -> ~5 min.
+Results must be identical, same row order. Does not speed up the parser.
+Worth it only if test 2 is run often (when chunked input changes, e.g. #272).
+[ ] #197 ............................................................ 1/2-1 day
+
+-----------------------------------------------------------------------------
+F. OTHER
+-----------------------------------------------------------------------------
+[ ] Website release with #316 + #352/#353 fixes. Student runs
+          gh release create; then Docker memory-cap check may require
+          code 1 again ............................................. ~1 h
+[x] #262 and #130 closed as not planned (Jenkins dropped) ...... 2026-11-13
+[ ] Speed rerun vs Expat (#275 fair test) for final report numbers
+          (currently median 18x slower). ~30 min work + 1-2 h machine.
+          PC must be IDLE the whole time (no browser, no builds).
+          Do AFTER speed fixes (#211, #272). Say "run the speed test".
+[ ] Hand-in report: reflection sections in your own words, then the
+          demonstration ........................................... student
+[ ] Aikido: mark 14 checksum alerts as false positives ............ on hold
+
+-----------------------------------------------------------------------------
+G. CHECKLIST FROM docs/xpact-student-introduction.md
+-----------------------------------------------------------------------------
+"Useful outcome after ten weeks" / minimum outcome:
+[x] Setup guide another developer can follow (student/report/setup-guide.md)
+[x] Recorded baseline: revision, build settings, test commands (A02)
+[x] Tests for malformed input, callbacks, chunks + selected W3C cases (G01, C02/C03/C10, G03)
+[x] One reviewed improvement to the test framework (B01/B02 and many more)
+[ ] Final report: reflection sections in the student's own words ... student
+[ ] Demonstration ..................................................... student
+[ ] Handover: follow-up list + final review comments addressed ........ week 10
+[ ] Optional: Xpact-core in the test framework (F01 Core build, F02 Core runner)
+          not started; optional per the intro ......................... 2-4 days
+
+10-week plan:
+[x] Weeks 1-8 done (evidence in PLAN.md)
+[x] Week 9 draft report + result tables tied to builds
+[ ] Week 9 "try selected PubMed files" - only speed work on PubMed so far
+          (docs/pubmed-*.md); a correctness run on selected PubMed files
+          is not recorded ............................................. 1/2 day
+[ ] Week 10: demonstrate, address review comments, hand over
+[ ] A06: all weekly notes complete (week 10 note still to write) ..... 30 min
+
+Suggested student selection (task register):
+[x] A01 A02 A04 . [x] B01 B02 . [x] C02 C03 C10 (part) . [x] G01 G03
+[x] SVG / libxml2 cases added (week 8)
+[ ] A06 report/demo/handover (above)
+    B04/B05 = alternative to B01/B02, not needed
+
+Rest of the register (A03 A05 B03-B07 C01 C04-C09 D E F03-F09 G02 G04-G10 H):
+the intro says these are context or OWNED BY EXPERIENCED DEVELOPERS
+("Parser repairs remain the responsibility of experienced developers").
+So the parser bugs in section A are useful extras, not required for hand-in.
+
+-----------------------------------------------------------------------------
+DONE THIS WEEK (2026-11-12)
+-----------------------------------------------------------------------------
+[x] #316  Worker crash under small memory cap: cause was .NET loading types
+          at the cap (not the DLL). Fixed: warm-up + 4 MB reserve + tiered
+          JIT off. 0 crashes in 50 runs. PR #355, closed.
+[x] #352  10 MB upload froze the page: read-only 256 KB preview. PR #354, closed.
+[x] #353  Timeout with no hint: result now explains assertions build /
+          small pieces. PR #354, closed.
+[x] SonarQube 196 -> 0 issues; website build website-2026-11-12-1 shipped.
+
+Reports: reports/issue-0316/report.md, reports/issue-0352/report.md

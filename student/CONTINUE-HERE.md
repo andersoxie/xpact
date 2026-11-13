@@ -1,6 +1,6 @@
 # Continue here
 
-> Short and current: state on **2026-11-12** (week 8 of 8). Hand-in: **27 November 2026**.
+> Short and current: state on **2026-11-13** (week 8 of 8). Hand-in: **27 November 2026**.
 > Start with `git fetch --all`, then read this file, [the full to-do list](notes/left-to-do-2026-11-11.md)
 > and [PLAN.md](PLAN.md) ("Next"). Rules: the repo's `CLAUDE.md` and [VERSIONING.md](VERSIONING.md) (box at the top).
 
