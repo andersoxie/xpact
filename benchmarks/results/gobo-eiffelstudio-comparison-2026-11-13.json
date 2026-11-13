@@ -1,0 +1,710 @@
+{
+  "schema_version": 1,
+  "comparison_date": "2026-11-13",
+  "purpose": "Compare the newly selected Jenkins WSL Gobo nightly with EiffelStudio, and verify additional compiler compatibility claims.",
+  "run_manifest": {
+    "started_utc": "2026-11-13T18:18:41.535682+00:00",
+    "repository_revision": "01e963dabf3ec85d17f7be575b59eebb64c24c5c",
+    "working_tree_status_at_start": " M docs/gobo-assertions.md\n M docs/wsl-benchmarks.md\n M scripts/run_wsl_benchmarks.py\n M tests/python/test_wsl_benchmarks.py\n?? benchmarks/results/gobo-assertion-qualification-2026-11-13.json\n",
+    "source_sha256": {
+      "benchmarks/xp_benchmark_root.e": "e74c76d8f39210a3be198bcef7f21c5d8c6f38c3175fdf7afc5737fba92bd2fc",
+      "benchmarks/xpact_benchmarks.ecf": "1439345697da11745a8bc9c39e2763c12c92a033c5549acf32fa97d8efec48d6",
+      "benchmarks/xpact_gobo_benchmarks.ecf": "429e11a2887cb3624854e749565e125b54e52587d0124548e579739e4d38f99a",
+      "scripts/run_wsl_benchmarks.ps1": "85e9444fda1acb134c84c5178750c1000126500573752d701097965f62bf072d",
+      "scripts/run_wsl_benchmarks.py": "6bef9739da8bd136c875528edf3b5b5d17e443d3e9368b00873a458f9533b21b",
+      "src/xp_attribute_decl.e": "4973246d0b6008f8e7410bc2d55298f1e60adfdaf27032ebd63059f6b7fa3305",
+      "src/xp_attribute_name_range_set.e": "437e89f9841b256ddb906fa96c4e84a09a51b10b79d8ae9b2ddb6506352353fa",
+      "src/xp_attributes.e": "e0980b9ebdfe02dd162a9d5877f4f7cfcae19a888fc44e341f70e961cdb43e0c",
+      "src/xp_cli.e": "9324d803eb35babeb8afc32df491aabcc8c38b61dddf9c663e61551d186cce5c",
+      "src/xp_content_model.e": "43915d03e34ed6ed448acc92a55969729adc98dff07b5a622d94c1dd932686bd",
+      "src/xp_event_handler.e": "28ecf759614ce3a66adb4985c1894067c896b27441b50b8663ccda4b0a6380e3",
+      "src/xp_expat_api.e": "12097d2cbbf79252baa75c8d636e56bb8daf343d635bcc323ab66c11b58e0d96",
+      "src/xp_expat_port_parse_session.e": "f438d538c284595dca830cf1036ed9f9dad0e81fb2a769f632cfb1e6c60b3d97",
+      "src/xp_external_entity.e": "2262ba15ffc86436d84c48478073de2905904ae1fb1093894295727714259166",
+      "src/xp_external_entity_policy.e": "a5249442ad11b773ce193069355608c32ff5c752ac9901022988eb9098761a5c",
+      "src/xp_external_entity_resolver.e": "51d3479cc35321191d6eabf1abe48c8a2a3664232ed3aac97146c0477b41c742",
+      "src/xp_gc_critical_section.e": "871891b6fbfa74efd05f97cc40ab26ad91d8ce7a7a626319e7e2a4caa4960867",
+      "src/xp_incremental_parse_session.e": "e28b2cac32bf634e59eb6ff686e8f1a447f09ff8db7b9c09ba95f6f984bd2716",
+      "src/xp_limits.e": "0d6b9d55126fbeb2b1d2a71660d36c02b3fa51a1fea16f7576f239dd4d0970f4",
+      "src/xp_literal_check_handler.e": "c22e06e76f8330d1f76f69b49cb3e2d8b28eaea865a9cb26984a9a82ce7f740f",
+      "src/xp_local_external_entity_resolver.e": "09f0d32862f472793565582ad0a5b3c820d4854d4cea9f58599261d4d4d485bd",
+      "src/xp_native_bridge_export.e": "80d3cf3c7ecc66b7ab57557fbc31e167844b488e623e13534f331a23405e95cf",
+      "src/xp_native_bridge_installer.e": "7c8cce6ffccaeeadb52b7d3d9571d5c7cfb2d3825a4486e9a3eb7ff97310ea70",
+      "src/xp_native_callback_handler.e": "225383d9476e843510018b006c4f95426cc2a868179e523e25c167fbc372365a",
+      "src/xp_native_library_root.e": "12a6d0dcb2c3682579c577934a8b8edaccba478cc94356b4a3bb053e1ea76d58",
+      "src/xp_native_parser.e": "3e9a26d1b49fea669a8130955690481ac8b533fdaa419ce2c1e74e558fc7f074",
+      "src/xp_null_event_handler.e": "162c60ac51e2f2b2dae3c0493c284d31e6f5062cac3fed0fc97882a5fbe7663d",
+      "src/xp_parser.e": "12cad7635b5f5201b35dcdbe6a2110c0db8244634d7b7b028b040afca550b0ef",
+      "src/xp_token_slice.e": "045df4e825be5aae4ee244bc8356187c268c7364681744791fae789b48313f23"
+    },
+    "invocation": ".\\scripts\\run_wsl_benchmarks.ps1 -Distribution Ubuntu-24.04 -EiffelEnvironment /mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/eiffel-env.sh -GoboEnvironment /mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/gobo-env.sh -EiffelCompiler EiffelStudio,Gobo -EiffelBuild Finalized,FinalizedAssertions -Iterations 10000 -Repetitions 5 -OutputDir build\\wsl-benchmarks-gobo-26.11.12-2026-11-13",
+    "execution_context": "Local invocation of the Jenkins benchmark launcher, using the same shared toolchain environment paths and workload; not a newly triggered Jenkins build.",
+    "toolchain_installation": {
+      "release": "nightly",
+      "release_updated_at": "2026-11-13T12:26:57Z",
+      "compiler_version": "gec version 26.11.12+ca6541c",
+      "source_page": "https://gobo-eiffel.github.io/gobo/",
+      "release_url": "https://github.com/gobo-eiffel/gobo/releases/tag/nightly",
+      "archive_url": "https://github.com/gobo-eiffel/gobo/releases/download/nightly/gobo-linux-x86_64-26.11.12%2Bca6541c.tar.xz",
+      "sha256": "c8354dd0503b50bb013ef75b203f1f772cb1bbc5ee2738ce39ef46f7c774af2f",
+      "official_digest": "sha256:c8354dd0503b50bb013ef75b203f1f772cb1bbc5ee2738ce39ef46f7c774af2f",
+      "installation": "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo",
+      "verified_distribution": "Ubuntu-24.04",
+      "installed_utc": "2026-11-13T18:15:25.660747+00:00",
+      "previous_installation": "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.10/gobo",
+      "previous_environment_backup": "gobo-env-before-26.11.12.sh",
+      "previous_metadata_backup": "installation-before-26.11.12.json"
+    },
+    "environment_files": {
+      "build/gobo-toolchain/gobo-env.sh": {
+        "text": "export GOBO=/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo\nexport GOBO_EIFFEL=ge\nexport GOBO_CC=gcc\nexport PATH=\"$GOBO/bin:$PATH\"\n",
+        "sha256": "8d51aa40f41729f2739d5fba67163840b769a790c5b904737f28e86f7bbd8702"
+      },
+      "build/wsl-toolchain/eiffel-env.sh": {
+        "text": "export ISE_EIFFEL=/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02\nexport ISE_PLATFORM=linux-x86-64\nexport PATH=\"$ISE_EIFFEL/studio/spec/$ISE_PLATFORM/bin:$ISE_EIFFEL/tools/spec/$ISE_PLATFORM/bin:$PATH\"\nunset ISE_C_COMPILER\n",
+        "sha256": "59048a74f1cd60382184b5da4ddf5e07af1dd156424dfe8d40cc5f23091f24ab"
+      }
+    },
+    "gc_runtime_override_names": [],
+    "comparison": "Finalized normal-GC Gobo versus EiffelStudio, each separately assertions discarded/enabled; median of five sequential measurements after one full warmup."
+  },
+  "source_hashes_unchanged_through_run": true,
+  "metadata": {
+    "document_bytes": 2611,
+    "eiffel_build_details": {
+      "Finalized": {
+        "code_directory": "/mnt/c/Users/ander/Documents/xpact/build/wsl-benchmarks-gobo-26.11.12-2026-11-13/builds/Finalized/EIFGENs/xpact_benchmarks/F_code",
+        "compiler_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+        "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+        "makefile_assignments": {
+          "CC": "gcc",
+          "CCLDFLAGS": "-m64  ",
+          "CFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+          "CPP": "g++",
+          "CPPFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+          "EIFLIB": "\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/lib/libfinalized.a\"",
+          "LDFLAGS": ""
+        }
+      },
+      "FinalizedAssertions": {
+        "code_directory": "/mnt/c/Users/ander/Documents/xpact/build/wsl-benchmarks-gobo-26.11.12-2026-11-13/builds/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code",
+        "compiler_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+        "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+        "makefile_assignments": {
+          "CC": "gcc",
+          "CCLDFLAGS": "-m64  ",
+          "CFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+          "CPP": "g++",
+          "CPPFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+          "EIFLIB": "\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/lib/libfinalized.a\"",
+          "LDFLAGS": ""
+        }
+      }
+    },
+    "eiffel_builds": [
+      "Finalized",
+      "FinalizedAssertions"
+    ],
+    "eiffel_compilers": [
+      "EiffelStudio",
+      "Gobo"
+    ],
+    "eiffel_version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+    "gcc_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "generated_utc": "2026-11-13T18:26:29.361487+00:00",
+    "gobo_build_details": {
+      "Finalized": {
+        "assertion_coverage": "Assertion coverage is compiler-dependent; see docs/gobo-assertions.md",
+        "assertions_requested": false,
+        "base_assertions": false,
+        "c_build_script": "#!/bin/sh\nexport GOBO=${GOBO:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo}\nexport ZIG=${ZIG:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o xpact_benchmarks xpact_benchmarks_2.o xpact_benchmarks_1.o -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n",
+        "code_directory": "/mnt/c/Users/ander/Documents/xpact/build/wsl-benchmarks-gobo-26.11.12-2026-11-13/builds/Gobo/Finalized/.gobo",
+        "compiler_paths": [
+          "/usr/bin/x86_64-linux-gnu-gcc-13"
+        ],
+        "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+        "gc": "boehm"
+      },
+      "FinalizedAssertions": {
+        "assertion_coverage": "Assertion coverage is compiler-dependent; see docs/gobo-assertions.md",
+        "assertions_requested": true,
+        "base_assertions": false,
+        "c_build_script": "#!/bin/sh\nexport GOBO=${GOBO:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo}\nexport ZIG=${ZIG:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o xpact_benchmarks xpact_benchmarks_2.o xpact_benchmarks_1.o -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n",
+        "code_directory": "/mnt/c/Users/ander/Documents/xpact/build/wsl-benchmarks-gobo-26.11.12-2026-11-13/builds/Gobo/FinalizedAssertions/.gobo",
+        "compiler_paths": [
+          "/usr/bin/x86_64-linux-gnu-gcc-13"
+        ],
+        "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+        "gc": "boehm"
+      }
+    },
+    "gobo_root": "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo",
+    "gobo_version": "gec version 26.11.12+ca6541c",
+    "ise_eiffel": "/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02",
+    "ise_platform": "linux-x86-64",
+    "iterations": 10000,
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "libexpat_c_flags": [
+      "-O2"
+    ],
+    "libexpat_library": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.9.1",
+    "libexpat_version": "expat_2.6.1",
+    "machine": "x86_64",
+    "os": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "os_release": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+    "python": "3.12.3",
+    "repetitions": 5,
+    "repository": "/mnt/c/Users/ander/Documents/xpact",
+    "timing": "perf_counter around Linux subprocess; compilation and wsl.exe launch excluded",
+    "tool_paths": {
+      "ec": "/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/bin/ec",
+      "finish_freezing": "/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/bin/finish_freezing",
+      "gcc": "/usr/bin/gcc",
+      "gec": "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/bin/gec",
+      "ldd": "/usr/bin/ldd",
+      "make": "/usr/bin/make",
+      "sh": "/usr/bin/sh"
+    },
+    "warmups_per_engine": 1
+  },
+  "normal_gc_comparison": [
+    {
+      "mode": "Finalized",
+      "label": "assertions discarded",
+      "normal_gc": true,
+      "compilers": {
+        "EiffelStudio": {
+          "engine": "xpact Eiffel finalized, assertions discarded via WSL2 gcc",
+          "version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+          "elapsed_ms_samples": [
+            1557.214,
+            1552.189,
+            1577.959,
+            1541.569,
+            1520.391
+          ],
+          "median_ms": 1552.189,
+          "minimum_ms": 1520.391,
+          "maximum_ms": 1577.959,
+          "median_mib_per_second": 16.042
+        },
+        "Gobo": {
+          "engine": "xpact Gobo Eiffel finalized, assertions discarded via WSL2 gcc",
+          "version": "gec version 26.11.12+ca6541c",
+          "elapsed_ms_samples": [
+            915.405,
+            903.917,
+            944.873,
+            903.073,
+            919.772
+          ],
+          "median_ms": 915.405,
+          "minimum_ms": 903.073,
+          "maximum_ms": 944.873,
+          "median_mib_per_second": 27.202
+        }
+      },
+      "gobo_speedup_vs_eiffelstudio": 1.696,
+      "gobo_elapsed_reduction_percent": 41.02
+    },
+    {
+      "mode": "FinalizedAssertions",
+      "label": "assertions enabled",
+      "normal_gc": true,
+      "compilers": {
+        "EiffelStudio": {
+          "engine": "xpact Eiffel finalized, assertions enabled via WSL2 gcc",
+          "version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+          "elapsed_ms_samples": [
+            16904.656,
+            15242.931,
+            15330.831,
+            15399.687,
+            15470.075
+          ],
+          "median_ms": 15399.687,
+          "minimum_ms": 15242.931,
+          "maximum_ms": 16904.656,
+          "median_mib_per_second": 1.617
+        },
+        "Gobo": {
+          "engine": "xpact Gobo Eiffel finalized, xpact assertions requested via WSL2 gcc",
+          "version": "gec version 26.11.12+ca6541c",
+          "elapsed_ms_samples": [
+            4125.552,
+            4024.62,
+            4006.752,
+            4091.308,
+            3991.866
+          ],
+          "median_ms": 4024.62,
+          "minimum_ms": 3991.866,
+          "maximum_ms": 4125.552,
+          "median_mib_per_second": 6.187
+        }
+      },
+      "gobo_speedup_vs_eiffelstudio": 3.826,
+      "gobo_elapsed_reduction_percent": 73.87
+    }
+  ],
+  "assertions_on_vs_off_elapsed_ratio": {
+    "EiffelStudio": 9.921,
+    "Gobo": 4.397
+  },
+  "raw_results_file": "gobo-eiffelstudio-comparison-2026-11-13.tsv",
+  "raw_results_sha256": "e7bf7491d2a9bb445e9f6a708f1c5cdaae375d30613846e99a8f7ada1413ecce",
+  "metadata_sha256": "9cc6e22134040764492e23be54b2c88b0fba662d860471ddc0c2b3c27b0a1dd8",
+  "artifacts_sha256": {
+    "builds/Gobo/Finalized/.gobo/xpact_benchmarks": "67dfa02e71e1f354e924b857e33abda0d515911a7abddadfa22626123420a192",
+    "builds/Gobo/Finalized/.gobo/xpact_benchmarks.sh": "c87f0ddf1d1b601727403db5c1cb4cc6ebc9bd976f3f9ad808ef03deb0e3414c",
+    "builds/Finalized/EIFGENs/xpact_benchmarks/F_code/xpact_benchmarks": "1762aff0c382c6f5b1a205debcfe60455a4963f6667e949a6b4de3bcb0dba12b",
+    "builds/Gobo/FinalizedAssertions/.gobo/xpact_benchmarks": "1dc3b70c08e5d4b92fe462539216eb67f410ca666dd42ff038b7fba0648ce328",
+    "builds/Gobo/FinalizedAssertions/.gobo/xpact_benchmarks.sh": "c87f0ddf1d1b601727403db5c1cb4cc6ebc9bd976f3f9ad808ef03deb0e3414c",
+    "builds/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code/xpact_benchmarks": "69e85f56d23217306ef05bf2347ab662b89a090b4b773a09c135dead39a0641e"
+  },
+  "shared_ecf_qualification": {
+    "gobo": "gec version 26.11.12+ca6541c",
+    "eiffelstudio": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64",
+    "gobo_root": "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo",
+    "gc_runtime_override_names": [],
+    "ecf": "/mnt/c/Users/ander/Documents/xpact/benchmarks/xpact_benchmarks.ecf",
+    "ecf_sha256": "1439345697da11745a8bc9c39e2763c12c92a033c5549acf32fa97d8efec48d6",
+    "note": "Unmodified EiffelStudio ECF; no explicit GC selection or external optimization flag added.",
+    "builds": [
+      {
+        "mode": "Finalized",
+        "command": [
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/bin/gec",
+          "--finalize",
+          "--cc=no",
+          "--target=xpact_benchmarks",
+          "/mnt/c/Users/ander/Documents/xpact/benchmarks/xpact_benchmarks.ecf"
+        ],
+        "generated_c_script": "#!/bin/sh\nexport GOBO=${GOBO:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo}\nexport ZIG=${ZIG:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o xpact_benchmarks xpact_benchmarks_2.o xpact_benchmarks_1.o -O2 `/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n",
+        "default_gc": "boehm",
+        "binary_sha256": "e304f7c041d7aa2aeec5d8b9cdf4b7558ec7c3d2aec44ca6e24a374e20357ac9",
+        "iterations": 100,
+        "output": "xpact benchmark harness parsed 100 documents.",
+        "passed": true
+      },
+      {
+        "mode": "FinalizedAssertions",
+        "command": [
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/bin/gec",
+          "--finalize",
+          "--cc=no",
+          "--target=xpact_benchmarks_assertions",
+          "/mnt/c/Users/ander/Documents/xpact/benchmarks/xpact_benchmarks.ecf"
+        ],
+        "generated_c_script": "#!/bin/sh\nexport GOBO=${GOBO:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo}\nexport ZIG=${ZIG:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.11.12-ca6541c/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o xpact_benchmarks xpact_benchmarks_2.o xpact_benchmarks_1.o -O2 `/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/library/base/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n",
+        "default_gc": "boehm",
+        "binary_sha256": "566d7098eb928f0797418c48f8f053251c57ad9299ee431e38c1c30f364efefb",
+        "iterations": 100,
+        "output": "xpact benchmark harness parsed 100 documents.",
+        "passed": true
+      }
+    ]
+  },
+  "shared_ecf_timing_control": {
+    "started_utc": "2026-11-13T18:28:31.753679+00:00",
+    "version": "gec version 26.11.12+ca6541c",
+    "iterations": 10000,
+    "repetitions": 5,
+    "warmups_per_engine": 1,
+    "purpose": "Supplemental normal-GC control using unchanged EiffelStudio ECF and its installed Base sources.",
+    "rows": [
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF Finalized",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 1,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 958.415,
+        "DocsPerSecond": 10433.891,
+        "MiBPerSecond": 25.981,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF Finalized",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 2,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 920.878,
+        "DocsPerSecond": 10859.206,
+        "MiBPerSecond": 27.04,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF Finalized",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 3,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 919.171,
+        "DocsPerSecond": 10879.374,
+        "MiBPerSecond": 27.09,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF Finalized",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 4,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 945.248,
+        "DocsPerSecond": 10579.234,
+        "MiBPerSecond": 26.343,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF Finalized",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 5,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 940.9,
+        "DocsPerSecond": 10628.119,
+        "MiBPerSecond": 26.464,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF FinalizedAssertions",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 1,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 3977.612,
+        "DocsPerSecond": 2514.071,
+        "MiBPerSecond": 6.26,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF FinalizedAssertions",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 2,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 4031.334,
+        "DocsPerSecond": 2480.568,
+        "MiBPerSecond": 6.177,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF FinalizedAssertions",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 3,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 4001.618,
+        "DocsPerSecond": 2498.989,
+        "MiBPerSecond": 6.223,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF FinalizedAssertions",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 4,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 4014.825,
+        "DocsPerSecond": 2490.769,
+        "MiBPerSecond": 6.202,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      },
+      {
+        "Benchmark": "catalog-100-items",
+        "Engine": "Gobo shared ECF FinalizedAssertions",
+        "Version": "gec version 26.11.12+ca6541c",
+        "Repetition": 5,
+        "Iterations": 10000,
+        "DocumentBytes": 2611,
+        "ElapsedMs": 4024.05,
+        "DocsPerSecond": 2485.059,
+        "MiBPerSecond": 6.188,
+        "Notes": "Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC"
+      }
+    ],
+    "medians_ms": {
+      "Finalized": 940.9,
+      "FinalizedAssertions": 4014.825
+    },
+    "completed_utc": "2026-11-13T18:29:01.506512+00:00",
+    "gobo_speedup_vs_eiffelstudio": {
+      "Finalized": 1.65,
+      "FinalizedAssertions": 3.836
+    },
+    "elapsed_change_vs_standard_gobo_percent": {
+      "Finalized": 2.785,
+      "FinalizedAssertions": -0.243
+    }
+  },
+  "shared_ecf_generated_c_comparison": {
+    "Finalized": {
+      "xpact_benchmarks.h": {
+        "benchmark_sha256": "79d52113298b173eb3e5ce3ff8cd31cfcbba5f91ccc8f7a70e660419b1f7f613",
+        "shared_ecf_sha256": "0c147d8984e8f17b8b29d43ebfc03728421a2fcfdc5283a65f36b7d6f50450ba",
+        "identical": false
+      },
+      "xpact_benchmarks_1.c": {
+        "benchmark_sha256": "6e855b992628dfdc2aed35f174fb781d4a35a7e239bad2d4d81950f032566a7d",
+        "shared_ecf_sha256": "6e855b992628dfdc2aed35f174fb781d4a35a7e239bad2d4d81950f032566a7d",
+        "identical": true
+      },
+      "xpact_benchmarks_2.c": {
+        "benchmark_sha256": "fcc6864dbeba23e8d0d1e98b0949ac394485dd6de13e1762690f7746ede66c23",
+        "shared_ecf_sha256": "eba7641e84a37abc633d752b5c873de8d177fac51a49874aea3b93d5accc3e9f",
+        "identical": false
+      }
+    },
+    "FinalizedAssertions": {
+      "xpact_benchmarks.h": {
+        "benchmark_sha256": "648d63bd56154039abea6b8b627d656f1a4db2a3fdbcf47b84f7a43dc4bf1642",
+        "shared_ecf_sha256": "d94bfcad2b78fb6fccd1e32c5fd6117d6b5d7a8c90c4185a869a99eb7669e21b",
+        "identical": false
+      },
+      "xpact_benchmarks_1.c": {
+        "benchmark_sha256": "6e855b992628dfdc2aed35f174fb781d4a35a7e239bad2d4d81950f032566a7d",
+        "shared_ecf_sha256": "6e855b992628dfdc2aed35f174fb781d4a35a7e239bad2d4d81950f032566a7d",
+        "identical": true
+      },
+      "xpact_benchmarks_2.c": {
+        "benchmark_sha256": "74c05747830cf819056bb9db127c5b6a197c448984f4c09ec2d52dd571a3fa20",
+        "shared_ecf_sha256": "b51abd08b22c05f641afd4a9200686d32f1a235ff62092f18ad161da0c3e1d6b",
+        "identical": false
+      }
+    }
+  },
+  "base_source_snapshots": {
+    "files": {
+      "EiffelStudio": {
+        "console.e": {
+          "path": "C:\\Users\\ander\\Documents\\xpact\\build\\wsl-toolchain\\Eiffel_25.02\\library\\base\\elks\\kernel\\console.e",
+          "sha256": "012a02279d7f42f9c185843dc3021943ad3798bff7461b42a43dff5976a5bbd3"
+        },
+        "file_info.e": {
+          "path": "C:\\Users\\ander\\Documents\\xpact\\build\\wsl-toolchain\\Eiffel_25.02\\library\\base\\elks\\kernel\\file_info.e",
+          "sha256": "d1ecd35508ac87d0f748e50aae17326efffd794d14bef9477befb35c4b0a4e11"
+        },
+        "special.e": {
+          "path": "C:\\Users\\ander\\Documents\\xpact\\build\\wsl-toolchain\\Eiffel_25.02\\library\\base\\elks\\kernel\\special.e",
+          "sha256": "35bd680211a41982c32c627809ead99376f6e0780d1090c3e63bb8c7efeaadff"
+        }
+      },
+      "Gobo": {
+        "console.e": {
+          "path": "C:\\Users\\ander\\Documents\\xpact\\build\\gobo-toolchain\\26.11.12-ca6541c\\gobo\\library\\free_elks\\src\\elks\\kernel\\console.e",
+          "sha256": "15a93e5a0fa5ee9d69f60bef9256f6fda0ef85796cfaa02e11ed9b1805a7a0d2"
+        },
+        "file_info.e": {
+          "path": "C:\\Users\\ander\\Documents\\xpact\\build\\gobo-toolchain\\26.11.12-ca6541c\\gobo\\library\\free_elks\\src\\elks\\kernel\\file_info.e",
+          "sha256": "f68369450072d384d408e381d7c770c0815a99713ce602572fda5eea9951a55a"
+        },
+        "special.e": {
+          "path": "C:\\Users\\ander\\Documents\\xpact\\build\\gobo-toolchain\\26.11.12-ca6541c\\gobo\\library\\free_elks\\src\\elks\\kernel\\special.e",
+          "sha256": "9aa127e69642f12794647e81d9c1c0608c41753f30cde29842da347c955c1d85"
+        }
+      }
+    },
+    "observations": [
+      "CONSOLE.put_string uses an external_s reference in installed ISE 25.02, versus s.area.item_address(s.area_lower) in new Gobo.",
+      "New Gobo FILE_INFO includes Wchar_length and uses it for Windows conversion-buffer sizing; installed ISE 25.02 lacks this change.",
+      "SPECIAL.e differs only in expanded revision/date metadata in the inspected files; different generated feature IDs alone do not imply semantic differences.",
+      "Gobo Readme.md line 84 lists ISE Eiffel 26.09.9.9100 compatibility. Installed ISE is 25.02.9.8723."
+    ],
+    "interpretation": "The installed Base snapshots differ. The shared-ECF control uses the installed EiffelStudio Base sources; these source differences alone do not establish any timing cause."
+  },
+  "literal_false_qualification": {
+    "compilers": {
+      "Gobo": {
+        "path": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/bin/gec",
+        "version": "gec version 26.11.12+ca6541c"
+      },
+      "EiffelStudio": {
+        "path": "/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/bin/ec",
+        "version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64"
+      }
+    },
+    "cases": [
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "mode": "literal",
+        "expected_detection": true,
+        "detected": false,
+        "completed": true,
+        "matches": false,
+        "exit_code": 0,
+        "diagnostic": "LITERAL_PROBE_COMPLETED literal\n",
+        "executable_sha256": "f1007559628a594fa8931ad0bb89615fb1926fe08de7e819f5f16da43ac69de7"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "mode": "dynamic",
+        "expected_detection": false,
+        "detected": false,
+        "completed": true,
+        "matches": true,
+        "exit_code": 0,
+        "diagnostic": "LITERAL_PROBE_COMPLETED dynamic\n",
+        "executable_sha256": "f1007559628a594fa8931ad0bb89615fb1926fe08de7e819f5f16da43ac69de7"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "mode": "literal",
+        "expected_detection": true,
+        "detected": true,
+        "completed": false,
+        "matches": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_literal           literal_false_postcondition: \n<0000000000000000>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_literal                                        \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n",
+        "executable_sha256": "bb4b735f45d52ec563239c313848fe73a96aec8cb2c7d8c849731bcb2c553b27"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "mode": "dynamic",
+        "expected_detection": true,
+        "detected": true,
+        "completed": false,
+        "matches": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_dynamic           dynamic_false_postcondition: \n<0000000000000000>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_dynamic                                        \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n",
+        "executable_sha256": "bb4b735f45d52ec563239c313848fe73a96aec8cb2c7d8c849731bcb2c553b27"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "mode": "literal",
+        "expected_detection": true,
+        "detected": true,
+        "completed": false,
+        "matches": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007DC2EBBFE558>                         Postcondition violated.       Exit\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007DC2EBBFE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n",
+        "executable_sha256": "47c09f0a12dbb5cf8161ceed3c40cc5e0aea489aca1e14d3abb710e3222d03a9"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "mode": "dynamic",
+        "expected_detection": false,
+        "detected": false,
+        "completed": true,
+        "matches": true,
+        "exit_code": 0,
+        "diagnostic": "LITERAL_PROBE_COMPLETED dynamic\n",
+        "executable_sha256": "47c09f0a12dbb5cf8161ceed3c40cc5e0aea489aca1e14d3abb710e3222d03a9"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "mode": "literal",
+        "expected_detection": true,
+        "detected": true,
+        "completed": false,
+        "matches": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_literal @1        literal_false_postcondition: \n<000072CA461FE558>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_literal @1                                     \n<000072CA461FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @5                                             \n<000072CA461FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<000072CA461FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n",
+        "executable_sha256": "abe778873a2dfe6a409b540dd041c4fe2ca4d8df4764b5db04218a4f673e173f"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "mode": "dynamic",
+        "expected_detection": true,
+        "detected": true,
+        "completed": false,
+        "matches": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_dynamic @1        dynamic_false_postcondition: \n<00007DF9AF5FE558>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     test_dynamic @1                                     \n<00007DF9AF5FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @7                                             \n<00007DF9AF5FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007DF9AF5FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n",
+        "executable_sha256": "abe778873a2dfe6a409b540dd041c4fe2ca4d8df4764b5db04218a4f673e173f"
+      }
+    ],
+    "gobo_generated_build_scripts": {
+      "all_off": "#!/bin/sh\nexport GOBO=${GOBO:-/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo}\nexport ZIG=${ZIG:-/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c assertion_probe_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c assertion_probe_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o assertion_probe assertion_probe_2.o assertion_probe_1.o -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n",
+      "all_on": "#!/bin/sh\nexport GOBO=${GOBO:-/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo}\nexport ZIG=${ZIG:-/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c assertion_probe_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/tool/gec/backend/c/runtime\" -I\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c assertion_probe_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o assertion_probe assertion_probe_2.o assertion_probe_1.o -O2 `/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n"
+    },
+    "source_sha256": "d3079e38b18a842d5e3d719d6de49b7534db727e94abed81d028d934b6ab3520",
+    "explicit_cflags": [],
+    "all_match": false
+  },
+  "additional_probe_sources": {
+    "shared_ecf_probe.py": {
+      "sha256": "9acfe908c47280f0c11b6c404d7d485e6b22346419480ff3a3202f2cf3c12979",
+      "text": "import hashlib\nimport importlib.util\nimport json\nimport os\nfrom pathlib import Path\n\nroot = Path(__file__).resolve().parents[2]\nspec = importlib.util.spec_from_file_location('benchmark_runner', root / 'scripts/run_wsl_benchmarks.py')\nrunner = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(runner)\ntools = runner.check_prerequisites(root)\noutput = root / 'build/gobo-update-2026-11-13/shared-ecf'\noutput.mkdir(parents=True, exist_ok=True)\nreport_path = output / 'results.json'\nreport_path.unlink(missing_ok=True)\ntuning = sorted(name for name in os.environ if name.startswith(('GC_', 'EIF_')))\nif tuning:\n    raise RuntimeError('Review inherited GC/runtime settings before timing: ' + ', '.join(tuning))\nreport = {\n    'gobo': tools['gobo_version'], 'eiffelstudio': tools['eiffel_version'],\n    'gobo_root': tools['gobo_root'], 'gc_runtime_override_names': tuning,\n    'ecf': str(root / 'benchmarks/xpact_benchmarks.ecf'),\n    'ecf_sha256': hashlib.sha256((root / 'benchmarks/xpact_benchmarks.ecf').read_bytes()).hexdigest(),\n    'note': 'Unmodified EiffelStudio ECF; no explicit GC selection or external optimization flag added.',\n    'builds': []\n}\nfor mode in runner.build_specs(['Finalized', 'FinalizedAssertions']):\n    project = output / mode.name\n    project.mkdir(exist_ok=True)\n    command = [tools['gec'], '--finalize', '--cc=no', '--target=' + mode.target, report['ecf']]\n    print('Checking shared ECF: ' + mode.name, flush=True)\n    runner.run_checked(command, cwd=project, env=tools['gobo_environment'], log_path=project/'eiffel.log')\n    generated = project / '.gobo'\n    script = generated / 'xpact_benchmarks.sh'\n    text = script.read_text()\n    assert '-O2' in text, 'Default optimization missing'\n    headers = '\\n'.join(p.read_text() for p in generated.glob('*.h'))\n    assert '#define GE_USE_BOEHM_GC' in headers, 'Default Boehm selection missing'\n    runner.run_checked([tools['sh'], '-e', script], cwd=generated, env=tools['gobo_environment'], log_path=project/'c.log')\n    executable = generated / 'xpact_benchmarks'\n    runner.require_linux_executable(executable, 'shared ECF Gobo benchmark', elf=True)\n    run_output = runner.run_checked([executable, '--iterations', '100'], env=tools['gobo_environment'])\n    report['builds'].append({\n        'mode': mode.name, 'command': [str(x) for x in command],\n        'generated_c_script': text, 'default_gc': 'boehm',\n        'binary_sha256': hashlib.sha256(executable.read_bytes()).hexdigest(),\n        'iterations': 100, 'output': run_output, 'passed': True\n    })\nreport_path.write_text(json.dumps(report, indent=2) + '\\n')\nprint('Both unchanged ECF targets build/run with default -O2 and Boehm GC.', flush=True)\n"
+    },
+    "time_shared_ecf.py": {
+      "sha256": "2c553f6afd0173019e7b56878569bfa48e7d355f6217d1d82523675af344574f",
+      "text": "import hashlib\nimport importlib.util\nimport json\nfrom datetime import datetime, timezone\nfrom pathlib import Path\nimport statistics\n\nrepo = Path(__file__).resolve().parents[2]\nspec = importlib.util.spec_from_file_location('benchmark_runner', repo/'scripts/run_wsl_benchmarks.py')\nrunner = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(runner)\ntools = runner.check_prerequisites(repo, ['Gobo'])\nroot = repo/'build/gobo-update-2026-11-13/shared-ecf'\nqualification = json.loads((root/'results.json').read_text())\ndestination = root/'timings.json'\ndestination.unlink(missing_ok=True)\nreport = {'started_utc': datetime.now(timezone.utc).isoformat(), 'version':tools['gobo_version'],\n          'iterations':10000, 'repetitions':5, 'warmups_per_engine':1,\n          'purpose':'Supplemental normal-GC control using unchanged EiffelStudio ECF and its installed Base sources.',\n          'rows':[], 'medians_ms':{}}\nfor build in qualification['builds']:\n    mode=build['mode']\n    binary=root/mode/'.gobo/xpact_benchmarks'\n    assert hashlib.sha256(binary.read_bytes()).hexdigest()==build['binary_sha256']\n    engine=runner.Engine('Gobo shared ECF '+mode, binary, (), tools['gobo_version'],\n                         'Same ECF as EiffelStudio; default GCC -O2 and Boehm; normal GC', tools['gobo_environment'])\n    rows=runner.measure_engine(engine,10000,5)\n    report['rows'].extend(rows)\n    report['medians_ms'][mode]=statistics.median(row['ElapsedMs'] for row in rows)\nreport['completed_utc']=datetime.now(timezone.utc).isoformat()\ndestination.write_text(json.dumps(report,indent=2)+'\\n')\nprint(json.dumps(report['medians_ms']),flush=True)\n"
+    },
+    "literal-false/source/assertion_probe.e": {
+      "sha256": "d3079e38b18a842d5e3d719d6de49b7534db727e94abed81d028d934b6ab3520",
+      "text": "class\n    ASSERTION_PROBE\ncreate\n    make\nfeature {NONE}\n    make\n        local\n            args: ARGUMENTS\n            mode: STRING\n            exceptions: EXCEPTIONS\n        do\n            create args\n            if args.argument_count = 1 then\n                mode := args.argument (1)\n                if mode.same_string (\"literal\") then\n                    test_literal\n                elseif mode.same_string (\"dynamic\") then\n                    test_dynamic (False)\n                else\n                    create exceptions\n                    exceptions.die (2)\n                end\n                io.put_string (\"LITERAL_PROBE_COMPLETED \" + mode + \"%N\")\n            else\n                create exceptions\n                exceptions.die (2)\n            end\n        end\n\n    test_literal\n        do\n        ensure\n            literal_false_postcondition: False\n        end\n\n    test_dynamic (expected: BOOLEAN)\n        do\n        ensure\n            dynamic_false_postcondition: expected\n        end\nend\n"
+    },
+    "literal-false/run.py": {
+      "sha256": "c1732b56a48f8c34eabaa46a6ecca971a63569dd6c34af7ea20153e073f15ce6",
+      "text": "import hashlib\nimport importlib.util\nimport json\nimport os\nfrom pathlib import Path\nimport shutil\nimport sys\nimport xml.etree.ElementTree as ET\n\nROOT = Path(__file__).resolve().parent\nREPO = ROOT.parents[2]\nOUT = ROOT / \"linux\"\nOUT.mkdir(exist_ok=True)\nREPORT = OUT / \"results.json\"\nREPORT.unlink(missing_ok=True)\nspec = importlib.util.spec_from_file_location(\"probe\", REPO / \"tools/compiler_assertions/run_probe.py\")\nprobe = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(probe)\nprobe.SOURCE = ROOT / \"source\"\noriginal_config = probe.config_text\n\ndef no_extra_cflags(compiler, selection):\n    document = ET.fromstring(original_config(compiler, selection))\n    ns = \"{\" + probe.NAMESPACE + \"}\"\n    target = document.find(ns + \"target\")\n    for flag in target.findall(ns + \"external_cflag\"):\n        target.remove(flag)\n    return ET.tostring(document, encoding=\"unicode\")\n\nprobe.config_text = no_extra_cflags\nenvironment = {key: value for key, value in os.environ.items()\n               if not key.startswith((\"GOBO_CLI_\", \"GOBO_DEFAULT_\"))}\nfor key in (\"LD_LIBRARY_PATH\", \"LD_PRELOAD\", \"LIBRARY_PATH\", \"CPATH\", \"C_INCLUDE_PATH\",\n            \"CPLUS_INCLUDE_PATH\", \"BOEHM_GC\"):\n    environment.pop(key, None)\nenvironment.update(GOBO_CC=\"gcc\", GOBO_EIFFEL=\"ge\", LC_ALL=\"C\")\nreport = {\"compilers\": {}, \"cases\": [], \"gobo_generated_build_scripts\": {},\n          \"source_sha256\": hashlib.sha256((probe.SOURCE / \"assertion_probe.e\").read_bytes()).hexdigest(),\n          \"explicit_cflags\": []}\nfor compiler, tool, argument in ((\"Gobo\", \"gec\", \"--version\"), (\"EiffelStudio\", \"ec\", \"-version\")):\n    version = probe.checked([tool, argument], OUT, environment, OUT / (compiler + \"-version.log\"))\n    report[\"compilers\"][compiler] = {\"path\": shutil.which(tool), \"version\": version}\n    for selection in (\"all_off\", \"all_on\"):\n        executable, directory = probe.build(compiler, selection, OUT, environment)\n        if compiler == \"Gobo\":\n            report[\"gobo_generated_build_scripts\"][selection] = (executable.parent / \"assertion_probe.sh\").read_text()\n        for mode in (\"literal\", \"dynamic\"):\n            result = probe.run([executable, mode], directory, environment, directory / (mode + \".log\"), 15)\n            completed = \"LITERAL_PROBE_COMPLETED \" + mode in result.stdout\n            detected = result.returncode != 0 and \"Postcondition violated\" in result.stdout and \"ASSERTION_PROBE\" in result.stdout and not completed\n            valid = detected or (result.returncode == 0 and completed)\n            expected = mode == \"literal\" or selection == \"all_on\"\n            row = {\"compiler\": compiler, \"selection\": selection, \"mode\": mode,\n                   \"expected_detection\": expected, \"detected\": detected, \"completed\": completed,\n                   \"matches\": valid and detected == expected, \"exit_code\": result.returncode,\n                   \"diagnostic\": result.stdout,\n                   \"executable_sha256\": hashlib.sha256(executable.read_bytes()).hexdigest()}\n            report[\"cases\"].append(row)\n            print(compiler, selection, mode, \"PASS\" if row[\"matches\"] else \"FAIL\", flush=True)\nreport[\"all_match\"] = all(row[\"matches\"] for row in report[\"cases\"])\nstaging = REPORT.with_suffix(\".staging\")\nstaging.write_text(json.dumps(report, indent=2) + \"\\n\", encoding=\"utf-8\")\nstaging.replace(REPORT)\nprint(REPORT, flush=True)\nsys.exit(0 if report[\"all_match\"] else 1)\n"
+    },
+    "literal-false/linux/EiffelStudio-all_off/probe.ecf": {
+      "sha256": "0765a44f85b635a2baac26378165cb31cf9e9d1b8d6f43177190b81421845e20",
+      "text": "<system xmlns=\"http://www.eiffel.com/developers/xml/configuration-1-20-0\" name=\"assertion_probe\" uuid=\"B360C71F-958A-4636-AABB-E893AC52B413\"><target name=\"assertion_probe\"><root class=\"ASSERTION_PROBE\" feature=\"make\" /><option><assertions precondition=\"false\" postcondition=\"false\" check=\"false\" invariant=\"false\" loop=\"false\" supplier_precondition=\"false\" /></option><setting name=\"console_application\" value=\"true\" /><capability><concurrency support=\"none\" /><void_safety support=\"all\" use=\"all\" /></capability><library name=\"base\" location=\"$ISE_LIBRARY/library/base/base.ecf\" /><cluster name=\"probe\" location=\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/literal-false/source\" /></target></system>"
+    },
+    "literal-false/linux/EiffelStudio-all_on/probe.ecf": {
+      "sha256": "3afdb7a7e2dd2710c8449bcf64f7e59fa993ef646ce53443c8ca35bf94d62d5e",
+      "text": "<system xmlns=\"http://www.eiffel.com/developers/xml/configuration-1-20-0\" name=\"assertion_probe\" uuid=\"B360C71F-958A-4636-AABB-E893AC52B413\"><target name=\"assertion_probe\"><root class=\"ASSERTION_PROBE\" feature=\"make\" /><option><assertions precondition=\"true\" postcondition=\"true\" check=\"true\" invariant=\"true\" loop=\"true\" supplier_precondition=\"true\" /></option><setting name=\"console_application\" value=\"true\" /><capability><concurrency support=\"none\" /><void_safety support=\"all\" use=\"all\" /></capability><library name=\"base\" location=\"$ISE_LIBRARY/library/base/base.ecf\" /><cluster name=\"probe\" location=\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/literal-false/source\" /></target></system>"
+    },
+    "literal-false/linux/Gobo-all_off/probe.ecf": {
+      "sha256": "2c753d0cc0882a874c57ab07cae224c2d4c7af30401194f708c5fe1941948bea",
+      "text": "<system xmlns=\"http://www.eiffel.com/developers/xml/configuration-1-20-0\" name=\"assertion_probe\" uuid=\"B360C71F-958A-4636-AABB-E893AC52B413\"><target name=\"assertion_probe\"><root class=\"ASSERTION_PROBE\" feature=\"make\" /><option><assertions precondition=\"false\" postcondition=\"false\" check=\"false\" invariant=\"false\" loop=\"false\" supplier_precondition=\"false\" /></option><setting name=\"console_application\" value=\"true\" /><capability><concurrency support=\"none\" /><void_safety support=\"all\" use=\"all\" /></capability><library name=\"base\" location=\"$GOBO/library/free_elks/library.ecf\" /><cluster name=\"probe\" location=\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/literal-false/source\" /></target></system>"
+    },
+    "literal-false/linux/Gobo-all_on/probe.ecf": {
+      "sha256": "0a9770e2cf76ca58df875f1657880b17e813c753615b9b49f907ade56078c55f",
+      "text": "<system xmlns=\"http://www.eiffel.com/developers/xml/configuration-1-20-0\" name=\"assertion_probe\" uuid=\"B360C71F-958A-4636-AABB-E893AC52B413\"><target name=\"assertion_probe\"><root class=\"ASSERTION_PROBE\" feature=\"make\" /><option><assertions precondition=\"true\" postcondition=\"true\" check=\"true\" invariant=\"true\" loop=\"true\" supplier_precondition=\"true\" /></option><setting name=\"console_application\" value=\"true\" /><capability><concurrency support=\"none\" /><void_safety support=\"all\" use=\"all\" /></capability><library name=\"base\" location=\"$GOBO/library/free_elks/library.ecf\" /><cluster name=\"probe\" location=\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/literal-false/source\" /></target></system>"
+    }
+  },
+  "latest_release_check": {
+    "checked_utc": "2026-11-13T18:12:30.1106193Z",
+    "nightly": {
+      "tag_name": "nightly",
+      "name": "Nightly Build",
+      "updated_at": "2026-11-13T12:26:57Z",
+      "html_url": "https://github.com/gobo-eiffel/gobo/releases/tag/nightly"
+    },
+    "stable": {
+      "tag_name": "gobo-26.10",
+      "name": "Gobo Eiffel 26.10",
+      "published_at": "2026-10-19T14:57:34Z",
+      "html_url": "https://github.com/gobo-eiffel/gobo/releases/tag/gobo-26.10"
+    },
+    "linux_assets": [
+      {
+        "name": "gobo-linux-x86_64-26.11.12+ca6541c.tar.xz",
+        "size": 71817520,
+        "digest": "sha256:c8354dd0503b50bb013ef75b203f1f772cb1bbc5ee2738ce39ef46f7c774af2f",
+        "browser_download_url": "https://github.com/gobo-eiffel/gobo/releases/download/nightly/gobo-linux-x86_64-26.11.12%2Bca6541c.tar.xz",
+        "updated_at": "2026-11-13T12:26:55Z"
+      }
+    ]
+  },
+  "prior_assertion_qualification": "gobo-assertion-qualification-2026-11-13.json",
+  "interpretation_limits": [
+    "Comparison uses normal GC for both compilers. Additional EiffelStudio suspended-GC and libexpat rows remain in raw results but do not enter the compiler ratios.",
+    "Same parser/harness sources and workload, but complete toolchains differ: Gobo uses GCC -O2 and Boehm; EiffelStudio uses GCC -O3 and its runtime/collector.",
+    "Previously failing bounded checks now match, but the extra empty-routine literal ensure False probe still differs with assertions off. This is not full Eiffel semantic equivalence.",
+    "The shared ECF smoke test uses the unmodified EiffelStudio ECF with both targets. The timed runner retains its existing two ECF files for older compiler compatibility.",
+    "The shared Jenkins toolchain was updated; this timing run invoked its launcher locally and is not a new Jenkins job build.",
+    "No allocation-byte, sustained-memory-growth or Ubuntu 20.04 compatibility measurement was performed."
+  ]
+}

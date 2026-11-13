@@ -337,7 +337,7 @@ class BenchmarkLifecycleTests(unittest.TestCase):
         self.assertEqual(len(gobo_rows), 4)
         self.assertEqual({row["Version"] for row in gobo_rows}, {self.tools["gobo_version"]})
         self.assertTrue(all("GC suspended" not in row["Engine"] for row in gobo_rows))
-        self.assertTrue(all("GC suspension unavailable" in row["Notes"] for row in gobo_rows))
+        self.assertTrue(all("normal GC only in this runner" in row["Notes"] for row in gobo_rows))
         gobo_measurements = [command for command, _ in self.commands
                             if "--iterations" in command and "Gobo" in Path(command[0]).parts]
         self.assertTrue(gobo_measurements)
