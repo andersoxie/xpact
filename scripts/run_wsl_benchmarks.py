@@ -274,10 +274,10 @@ def build_gobo(repo_root, output_dir, spec, tools):
         raise
     name = "xpact Gobo Eiffel finalized, {} via WSL2 gcc".format(
         "xpact assertions requested" if spec.assertions else "assertions discarded")
-    # Gobo 26.10 implements MEMORY.collection_off/on as no-ops. Do not publish
-    # a suspended-GC row merely because the shared harness accepts the option.
+    # Gobo 26.10 implements MEMORY.collection_off/on as no-ops. Keep normal-GC
+    # rows for compatibility; newer compilers can implement these controls.
     notes = ("Gobo Eiffel/GCC; Boehm GC; parser reused; no-op event handler; "
-             "Linux process wall time; GC suspension unavailable in Gobo MEMORY; "
+             "Linux process wall time; normal GC only in this runner; "
              "Base assertions disabled")
     if spec.assertions:
         notes += "; " + tools["gobo_build_details"][spec.name]["assertion_coverage"]
