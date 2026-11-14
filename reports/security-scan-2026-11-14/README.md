@@ -56,3 +56,33 @@ Problems found, kept separate:
 Not done: real Cloudflare/Azure/OPSWAT (need a domain or paid key), SonarCloud (not wanted), a scan of the Windows image itself (cannot run Windows containers on Windows 11 Home).
 
 How to repeat the Sonar scan: `powershell -File reports\security-scan-2026-11-14\sonar-net.ps1` (needs `dotnet tool install -g dotnet-sonarscanner` and the DPAPI token, see [docs](../../student/tools/sonar/)).
+
+## Part 3: fixes and final acceptance run
+
+**Revision:** incremental-test @ `e0c3eab` → release [`website-2026-11-14-2`](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-14-2) · one `publish.ps1` build reused for every check · `Xpact.Api.dll` `bff8f7ac…`, `xpact.dll` `adae03d2…` (unchanged) · production build · Windows 11, local.
+
+| Problem | Fix | Status |
+|---|---|---|
+| 1 Image older than #357–#360 | release `website-2026-11-14-1` (#372), then `-2` | ✅ image built and published by CI |
+| 2 `AllowedHosts` missing from docker.md | "Hosting on the internet safely" (#372) | ✅ re-tested: `Host: xpact.example.com` → 400 without, 200 with the setting |
+| 3 13 tests crash under coverage (#370) | `coverage.runsettings` instruments only Xpact.Api (#374). Cause **confirmed**: instrumented `Xpact.Contracts.dll` in the low-integrity worker | ✅ `test.ps1 -Coverage` 48/48 |
+| 4 SonarQube: C# never analysed, 76 issues (#371) | worker (#375), API split (#376), LibraryImport (#377), last log guard (#378) | ✅ 76 → 1 → 0 expected (#378 removes the last one; see below) |
+
+Final run on the release build (expected vs observed):
+
+| Check | Expected | Observed |
+|---|---|---|
+| Backend tests, with coverage | 48/48 | ✅ 48/48, C# line coverage 93 % |
+| Frontend type check + build | passes | ✅ |
+| Attack battery (`attack.py`, 27 checks) | 27 pass | ✅ 27/27 |
+| bsharp SonarQube (.NET scanner, @ `2ccfe09`) | 0 bugs/vulnerabilities | ✅ 0 bugs, 0 vulnerabilities, A/A/A, 1 issue (fixed in #378). ⚠️ 7 hotspots: student account cannot open them (403) |
+| ZAP 2.17 spider + active scan | no high/medium code findings | ✅ only "HTTP Only Site" (local test has no HTTPS: the proxy/tunnel adds it, checklist #3) + 2 informational |
+| nuclei 3.11.1 (7,246 templates) | 0 | ✅ 0 |
+| Semgrep 1.185 (OWASP sets) | 0 | ✅ 0 (76 files) |
+| Snyk Code | 0 real | ✅ 2 low "log forging" = same false positive (values are `IPAddress`) |
+| Snyk / npm audit / `dotnet list --vulnerable` / Trivy | 0 | ✅ 0 |
+| gitleaks (history) | no secrets | ✅ 58 hits, all file checksums in benchmark/report JSON (as on 2026-11-13) |
+| CodeQL (security-extended, every PR) | 0 alerts | ✅ |
+
+Not tested: W3C/Eiffel/Python suites (the parser DLLs did not change), the Windows container itself (no Windows containers on Windows 11 Home), Hyper-V isolation on a server.
+Lesson: SonarQube + ZAP + tests + Docker at the same time ran this PC out of memory (both scans crashed); run them one after another.
