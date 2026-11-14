@@ -8,14 +8,16 @@ The image is built by GitHub Actions ([`website-docker.yml`](../../.github/workf
 
 ```powershell
 docker pull ghcr.io/andersoxie/xpact-website:latest
-docker run -d --name xpact -p 80:8080 --memory 4g --restart unless-stopped ghcr.io/andersoxie/xpact-website:latest
+docker run -d --name xpact -p 80:8080 --memory 4g --restart unless-stopped `
+  -e AllowedHosts=xpact.example.com ghcr.io/andersoxie/xpact-website:latest
 ```
 
-Open `http://<server>/`. For HTTPS, put IIS or another reverse proxy in front and set `Xpact__KnownProxies__0` ([Settings](#settings)).
+Open `http://<server>/`. ⚠️ **`AllowedHosts` is required** when the site is reached by any name other than `localhost`: without it every request gets **400 Bad Request** (verified 2026-11-14). Use your real domain (several: `a.com;b.com`). For a public site, follow [Hosting on the internet](#hosting-on-the-internet-safely).
 
 | Tag | Content |
 |---|---|
 | `latest` | the newest website build |
+| `website-2026-11-14-1` | `incremental-test` @ `9e3cb7a`: security fixes #357–#360 (upload flood, slow clients, DLL search path) |
 | `website-2026-11-09-3` | `incremental-test` @ `c9f74cd`: old one-line footer credit removed; same DLLs and results ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09-3)) |
 | `website-2026-11-09-2` | `incremental-test` @ `f9c9e97`: footer credit, plain result lines; same DLLs and results ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09-2)) |
 | `website-2026-11-09` | `incremental-test` @ `307744b`, test results of 2026-11-08 ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09)) |
@@ -62,6 +64,35 @@ Then open `http://localhost:5099`.
 | `--build-arg WINDOWS_TAG=ltsc2025` | The base image must match the host's Windows version: `ltsc2022` = Windows Server 2022, `ltsc2025` = Windows Server 2025 |
 | `--memory 4g` | Up to 4 workers × 512 MB (`MaxConcurrentWorkers` × `WorkerMemoryMb`) plus the API. With Hyper-V isolation the default can be much lower |
 | `-p 5099:8080` | Any free host port; on the student PC Apache already uses 8080 |
+
+## Hosting on the internet safely
+
+Checklist for a public server (Windows Server with the Containers feature). Background: [security scan 2026-11-14](../../reports/security-scan-2026-11-14/README.md).
+
+| # | Do this | Why |
+|---|---|---|
+| 1 | Use an image built **after 2026-11-13** (release `website-2026-11-14-1` or newer). Do not use `website-2026-11-12-1` or older | Older images lack the upload-flood, slow-client and DLL-search-path fixes (#357–#360) |
+| 2 | `-e AllowedHosts=<your domain>` | Otherwise every visitor gets 400 (host filter, #283) |
+| 3 | Serve HTTPS only, through a proxy. Easiest: **Cloudflare Tunnel** (free; `cloudflared` on the host, no inbound port opened, server IP hidden, free DDoS protection). Or IIS + a Let's Encrypt certificate (win-acme) | The container itself speaks plain HTTP on 8080 |
+| 4 | Do not open the container port (`-p …:8080`) in the server's firewall when a proxy or tunnel is used: only the proxy should reach it | Otherwise visitors can skip the proxy |
+| 5 | Tell the site which proxy to trust: a tunnel or IIS on the host reaches the container through Docker's network, so `-e Xpact__KnownNetworks__0=172.16.0.0/12` ([details](#behind-a-reverse-proxy)) | Otherwise all visitors share one rate limit |
+| 6 | If a Cloudflare/Azure WAF is turned on: **exclude `/api/validate` from the XSS rules** (CRS 941xxx / "XSS" managed rules) | Measured 2026-11-14 with OWASP CRS 4.25: every pasted XML document was blocked (403). A WAF does not stop XML attacks anyway: the parser and the worker sandbox do |
+| 7 | `--isolation=hyperv` if the host has the Hyper-V role | The container gets its own kernel: stronger walls around the native DLL that parses untrusted files. ⬜ Not tested yet with this image: run the [checks below](#check-after-the-first-run) once |
+| 8 | `--memory 4g --cpus 2 --restart unless-stopped` | Caps what one container can take from the server; restarts after a crash or reboot |
+| 9 | Pull a fresh image every month (Windows patch Tuesday), or rebuild | Windows Server Core security patches come with the base image |
+| 10 | Keep the logs: `docker logs xpact` is lost when the container is removed | Needed to see abuse; the site logs refusals (rate limit, full queue, bad requests) |
+
+Full example (Cloudflare Tunnel or IIS on the same host, forwarding to `http://localhost:5099`):
+
+```powershell
+docker run -d --name xpact --isolation=hyperv --memory 4g --cpus 2 --restart unless-stopped `
+  -p 5099:8080 `
+  -e AllowedHosts=xpact.example.com `
+  -e Xpact__KnownNetworks__0=172.16.0.0/12 `
+  ghcr.io/andersoxie/xpact-website:website-2026-11-14-1
+```
+
+What is already built in (no setting needed): not an administrator in the container, each document parsed in a separate low-rights worker with a 512 MB cap and 10 s timeout, upload size limit, rate limit (30/min per visitor), slow-client cut-off, security headers (CSP, HSTS on HTTPS, `X-Frame-Options`, `nosniff`), no server banner, no error details to visitors. Scans 2026-11-14: Snyk (NuGet, npm), Semgrep, Trivy (Dockerfile), nuclei: 0 vulnerabilities.
 
 ## Settings
 

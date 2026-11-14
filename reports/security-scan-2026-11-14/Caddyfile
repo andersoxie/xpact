@@ -1,0 +1,19 @@
+{
+	order coraza_waf first
+	admin off
+}
+:5097 {
+	coraza_waf {
+		load_owasp_crs
+		directives `
+			Include @coraza.conf-recommended
+			Include @crs-setup.conf.example
+			Include @owasp_crs/*.conf
+			SecRuleEngine On
+			SecAuditEngine RelevantOnly
+			SecAuditLogParts ABHZ
+			SecAuditLog C:/Users/masou/AppData/Local/Temp/claude/be9bf0bfbb757644/312aad70-4260-4fe0-b2c7-7ba518b55616/scratchpad/waf/audit.log
+		`
+	}
+	reverse_proxy localhost:5098
+}
