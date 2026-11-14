@@ -1,6 +1,6 @@
 # Week 9 - Analyse and draft
 
-> **10-16 November 2026, state on 2026-11-13** · work branch `incremental-test` of andersoxie/xpact; `main` is behind `incremental-test` since PR #354/#355 (not touched).
+> **10-16 November 2026, state on 2026-11-14** · work branch `incremental-test` of andersoxie/xpact; `main` is behind `incremental-test` since PR #354/#355 (not touched).
 > Week goal (guide): analyse the results and draft the report. Hand-in: 27 November.
 > 10-11 November (DLL blockers, website review findings, fair speed test) are in [week 8](week-08.md) under "2026-11-10" and "Next".
 
@@ -14,6 +14,15 @@
 - [x] ✅ **[#316](https://github.com/andersoxie/xpact/issues/316) fixed** (PR #355): under `cdb` the 3 crashes were all inside .NET (finalizer thread twice, main thread once) when it loaded a type at the cap; only 20-63 KB of stack used. Worker: warm-up, 4 MB reserve, tiered JIT off. [Report](../../../reports/issue-0316/report.md).
 - [x] ✅ **10 MB upload** ([#352](https://github.com/andersoxie/xpact/issues/352), [#353](https://github.com/andersoxie/xpact/issues/353), PR #354): the page froze (editor drew 2 rows per line); now a read-only 256 KB preview; a timeout explains the assertions build / small pieces. [Report](../../../reports/issue-0352/report.md).
 - [x] #262 and #130 closed (Jenkins dropped). Full to-do list with time estimates: [TOOODOOO.txt](../../../TOOODOOO.txt).
+
+- [x] ✅ **Hosting safety and full scan, 14 Nov** ([report](../../../reports/security-scan-2026-11-14/README.md)):
+  - WAF test (OWASP CRS 4.25, stands in for Cloudflare/Azure): it **blocks every pasted XML** and does not stop XML attacks → documented: exclude `/api/validate` if a WAF is used.
+  - Antivirus (Defender, ClamAV; stands in for OPSWAT): uploads are never scanned; scanners miss EICAR wrapped in XML. Low risk: XML only, never stored or run.
+  - [#368](https://github.com/andersoxie/xpact/issues/368) image was older than the security fixes and `AllowedHosts` was missing from the Docker docs → docker.md "Hosting on the internet safely" (PR #372), releases `website-2026-11-14-1` and **`-2`**, image `ghcr.io/andersoxie/xpact-website:website-2026-11-14-2` = `latest` (PR #379).
+  - [#370](https://github.com/andersoxie/xpact/issues/370) 13 of 48 backend tests crashed under code coverage: instrumented `Xpact.Contracts.dll` in the low-integrity worker → `coverage.runsettings` (PR #374).
+  - [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube had **never analysed C#**: first .NET scan 76 issues → **0** (PRs #375-#378: worker, Program.cs split, `LibraryImport`, log guard).
+  - [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL (security-extended) on every PR + Dependabot weekly (PR #373). Snyk account (CodTanium) set up.
+  - [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
 
 ## What the evidence shows
 **Observed, not expected:**
@@ -30,17 +39,23 @@
 | 10 MB upload (PR #354) | headless Edge: old page frozen (click timed out after 30 s); new loads in 0.75 s, accepted in 4.4 s; invalid 10 MB rejected at line 196,080 |
 | Website `test.ps1` after both fixes | **42 / 42** |
 | Parser source | unchanged since the 2026-11-08 rerun |
+| Website final build `e0c3eab` (14 Nov) | backend **48 / 48** with coverage (C# 93 %), frontend build OK, attack battery **27 / 27** |
+| bsharp SonarQube with C# (14 Nov) | **0 issues**, 0 bugs, 0 vulnerabilities, A/A/A; 9 hotspots: 3 removed, 6 reviewed as safe (#380) |
+| Other scanners (14 Nov) | ZAP: only "HTTP only" (local test has no HTTPS); nuclei 0; Semgrep 0; CodeQL 0; Snyk/npm/NuGet/Trivy 0; gitleaks 58 = file checksums |
+| WAF (CRS 4.25) | pasted XML 14/14 blocked (403); file upload XXE passes the WAF (the parser still refuses it) |
+| Host filter | `Host: xpact.example.com` → 400; with `AllowedHosts` → 200 |
 
 ## Blocked
-- Website deployment ([#210](https://github.com/andersoxie/xpact/issues/210)): HTTPS, domain, `AllowedHosts` (supervisor's server).
-- 2 SonarQube hotspots: need someone with review rights to mark them Safe; the student's token cannot list hotspots.
+- Website deployment ([#210](https://github.com/andersoxie/xpact/issues/210)): image and checklist are ready (docker.md "Hosting on the internet safely"); the server, domain, HTTPS and `AllowedHosts` are the supervisor's.
+- Dependabot alerts and secret scanning: repo admin only.
 - Design questions for the supervisor: #304 parallel parsing, #293 entity depth, #211 speed of the billion-laughs stop, #171, #13, the 10 MB limit.
-- `gh release create` is blocked for Claude: the student runs it.
+- ~~`gh release create` is blocked for Claude~~: worked on 14 Nov.
 
 ## Next week
 - [ ] ✏️ Reflection sections of the report in the student's own words; prepare the demonstration.
 - [ ] Ask the supervisor the open questions in one message.
 - [ ] [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces (the last known speed problem).
-- [ ] SonarQube: mark the 2 hotspots Safe; send a Python coverage report for the gate.
-- [ ] Next website release with #316 + #352/#353 (student runs `gh release create`); then tighten the Docker memory-cap check.
+- [ ] SonarQube: mark the 6 safe hotspots Safe (text in `security-report-11-14.txt` §7, #380); send a Python coverage report for the gate.
+- [x] ✅ Website releases with #316, #352/#353, #357-#360 and #371: `website-2026-11-14-2` (14 Nov).
+- [ ] Send the supervisor the hosting package ([to-supervisor-2026-11-14.md](../to-supervisor-2026-11-14.md)).
 - [ ] Open issues on andersoxie (13 on 2026-11-13): #342, #304, #293, #272, #211, #210, #197, #176, #171, #170, #126, #123, #13.

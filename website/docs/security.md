@@ -27,12 +27,24 @@ The site runs a parser on documents from strangers. These are the protections, a
 
 Full scan of the website: own attack battery (27 harmful-upload and protocol checks), OWASP ZAP 2.17.0 active scan, SonarQube, .NET security analyzers, Trivy, `npm audit`, NuGet advisories and gitleaks over the git history. 4 findings (#357-#360), all fixed and verified; after the fixes 27/27 checks pass, ZAP 0 high/medium/low, SonarQube 0 issues, 0 vulnerable dependencies, 0 secrets. Details and how to repeat: [scan report](../../reports/security-scan-2026-11-13/README.md).
 
+## Security scan 2026-11-14
+
+Before handing the Docker image to the supervisor ([report](../../reports/security-scan-2026-11-14/README.md)). Build `e0c3eab` = image `website-2026-11-14-2`.
+
+| Check | Result |
+|---|---|
+| WAF (OWASP CRS 4.25, like Cloudflare/Azure managed rules) | ⚠️ blocks every **pasted** XML (XSS rules see `<tags>`); XXE in a file upload passes the WAF. → exclude `/api/validate` from the XSS rules if a WAF is used; the parser and worker are the real protection |
+| Antivirus (Defender, ClamAV) | ⚠️ uploads are not scanned; scanners miss EICAR inside XML. Accepted: XML only, kept in memory, never stored or executed |
+| SonarQube (.NET scanner, now including C#) | ✅ 76 → 0 issues (#371); 9 hotspots: 3 removed, 6 reviewed as safe (#380) |
+| Attack battery · ZAP · nuclei · Semgrep · CodeQL · Snyk · Trivy · npm/NuGet | ✅ 27/27 · only "HTTP only" (local) · 0 · 0 · 0 · 0 real · 0 · 0 |
+| Host filter | ✅ unknown host → 400; **set `AllowedHosts` at deployment** ([docker.md](docker.md#hosting-on-the-internet-safely)) |
+
 ## Known gaps before a public deployment
 
 - [ ] HTTPS: terminate TLS at the host (IIS, a reverse proxy or App Service). Kestrel runs plain HTTP here. **Handled by the supervisor on the server.**
 - [x] Behind a proxy, configure forwarded headers, so the rate limit sees the real client IP ([#224](https://github.com/andersoxie/xpact/issues/224)): automatic for a proxy on the same machine; list other proxies in `Xpact:KnownProxies`.
 - [x] A proxy that is not trusted is no longer silent: the log names it once and says which setting to change; `Xpact:KnownNetworks` for proxies in a range; a mistyped address stops the start ([docker.md](docker.md#behind-a-reverse-proxy)). Tests: `Only_trusted_proxies_pass_on_the_visitor_address`, `A_mistyped_proxy_setting_stops_the_start_with_a_clear_message`.
-- [ ] **At deployment:** choose the proxy setting from the table in [docker.md](docker.md#behind-a-reverse-proxy) (supervisor's server).
+- [ ] **At deployment:** follow [Hosting on the internet safely](docker.md#hosting-on-the-internet-safely) (image `website-2026-11-14-2` or newer, `AllowedHosts`, HTTPS via tunnel/proxy, WAF exclusion). Choose the proxy setting from the table in [docker.md](docker.md#behind-a-reverse-proxy) (supervisor's server).
 - [x] Test the memory cap with a document that actually reaches it ([#227](https://github.com/andersoxie/xpact/issues/227)).
 - [x] ✅ The worker runs with **no privileges at Low integrity** (#299, [report](../../reports/issue-0299/report.md)): it cannot write to the API account's files, registry or processes. A separate low-privilege Windows account (needs the hosting/supervisor) would add more; optional.
 - [x] Load test: how many visitors at once before the 4-worker queue becomes slow ([load-test.md](load-test.md): ~31-40 requests/s, no failures up to 32 at once).

@@ -226,12 +226,20 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 ## ➡️ Next
 
-**State 2026-11-13 (read first):** the full to-do list with time estimates is [TOOODOOO.txt](../TOOODOOO.txt).
+**State 2026-11-14 (read first):** website ready to host: image `ghcr.io/andersoxie/xpact-website:website-2026-11-14-2` (= `latest`), checklist in [docker.md](../website/docs/docker.md#hosting-on-the-internet-safely), full scan [report](../reports/security-scan-2026-11-14/README.md). Message for the supervisor: [to-supervisor-2026-11-14.md](notes/to-supervisor-2026-11-14.md).
+
+- [x] ✅ [#368](https://github.com/andersoxie/xpact/issues/368) image older than the security fixes + `AllowedHosts` missing from the docs (PR #372, #379); releases `website-2026-11-14-1`, `-2`.
+- [x] ✅ [#370](https://github.com/andersoxie/xpact/issues/370) tests crashed under coverage (PR #374). [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube with C#: 76 → **0** issues (PR #375-#378). [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL + Dependabot (PR #373).
+- [ ] [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
+- [ ] Supervisor: Dependabot alerts + secret scanning (repo Settings → Code security); host the image (#210).
+- [ ] Nothing pushed from the 14 Nov docs update until the student says so.
+
+**State 2026-11-13:** the full to-do list with time estimates is [TOOODOOO.txt](../TOOODOOO.txt).
 
 - [x] ✅ [#316](https://github.com/andersoxie/xpact/issues/316) fixed in the worker (PR #355, 2026-11-12): WinDbg showed every crash is inside .NET (type loading / JIT / finalizers at the cap), not in the DLL; warm-up + 4 MB reserve + tiered JIT off; 0 crashes in 50 runs ([report](../reports/issue-0316/report.md)).
 - [x] ✅ [#352](https://github.com/andersoxie/xpact/issues/352) / [#353](https://github.com/andersoxie/xpact/issues/353) 10 MB upload (PR #354, 2026-11-12): the editor froze the page (one DOM row per line) → read-only 256 KB preview; a timeout now explains the assertions build and small pieces ([report](../reports/issue-0352/report.md)).
 - [x] ✅ #262 and #130 closed as not planned (Jenkins dropped 2026-11-03).
-- [ ] Next website release with #316 + #352/#353 (the student runs `gh release create`); then the Docker memory-cap check can require code 1 again.
+- [x] ✅ Website release with #316 + #352/#353: `website-2026-11-14-1`/`-2` (2026-11-14). Open: the Docker memory-cap check can require code 1 again.
 - [ ] Ask the supervisor in one go: #293, #211, #304, #171, #13, licence, assertions timeout, SonarQube hotspot rights ([TOOODOOO.txt](../TOOODOOO.txt) section B).
 
 **State 2026-11-12:**

@@ -10,7 +10,7 @@ try {
   if ($LASTEXITCODE) { throw "begin $LASTEXITCODE" }
   dotnet build website\backend\Xpact.Web.slnx -c Release --no-incremental
   if ($LASTEXITCODE) { throw "build $LASTEXITCODE" }
-  dotnet test website\backend\Xpact.Web.slnx -c Release --no-build --collect:"XPlat Code Coverage" --settings "$PSScriptRoot\cov.runsettings" --results-directory $cov
+  dotnet test website\backend\Xpact.Web.slnx -c Release --no-build --collect:"XPlat Code Coverage" --settings website\backend\coverage.runsettings --results-directory $cov
   "TEST EXIT $LASTEXITCODE"
   dotnet-sonarscanner end /d:sonar.token=$env:SONAR_TOKEN
   "END EXIT $LASTEXITCODE"
