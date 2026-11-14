@@ -42,6 +42,21 @@ public sealed class XpactOptions
     /// <summary>Requests that may wait for a worker at once; more are refused with 503 straight away.</summary>
     public int MaxQueuedRequests { get; set; } = 32;
 
+    /// <summary>
+    /// Memory for request bodies being read and parsed at once, in MB (#357). Each upload reserves about
+    /// four times its size before its body is read; when the budget is full, further uploads get 503.
+    /// </summary>
+    public int MaxBufferedMb { get; set; } = 256;
+
+    /// <summary>
+    /// Longest time for one /api/validate request: upload, queue and parse together (#358). Must stay
+    /// above QueueWaitSeconds + TimeoutSeconds plus the upload time of a 10 MB document on a slow line.
+    /// </summary>
+    public int RequestTimeoutSeconds { get; set; } = 120;
+
+    /// <summary>Open connections the server accepts at once (#358); the reverse proxy may set its own limit.</summary>
+    public int MaxConnections { get; set; } = 500;
+
     /// <summary>Requests per client IP per minute.</summary>
     public int RequestsPerMinute { get; set; } = 30;
 

@@ -1,0 +1,293 @@
+
+************* Preparing the environment for Debugger Extensions Gallery repositories **************
+   ExtensionRepository : Implicit
+   UseExperimentalFeatureForNugetShare : true
+   AllowNugetExeUpdate : true
+   NonInteractiveNuget : true
+   AllowNugetMSCredentialProviderInstall : true
+   AllowParallelInitializationOfLocalRepositories : true
+
+   -- Configuring repositories
+      ----> Repository : LocalInstalled, Enabled: true
+      ----> Repository : UserExtensions, Enabled: true
+
+>>>>>>>>>>>>> Preparing the environment for Debugger Extensions Gallery repositories completed, duration 0.000 seconds
+
+************* Waiting for Debugger Extensions Gallery to Initialize **************
+
+>>>>>>>>>>>>> Waiting for Debugger Extensions Gallery to Initialize completed, duration 0.046 seconds
+   ----> Repository : UserExtensions, Enabled: true, Packages count: 0
+   ----> Repository : LocalInstalled, Enabled: true, Packages count: 46
+
+Microsoft (R) Windows Debugger Version 10.0.29680.1004 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+CommandLine: "c:\xpact\xpact-student-Mass\website\dist\Xpact.Worker.exe" --dll "c:\xpact\xpact-student-Mass\website\dist\native\xpact.dll" 
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+Deferred                                       srv*
+Symbol search path is: srv*
+Executable search path is: 
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+(858.8f28): Break instruction exception - code 80000003 (first chance)
+ntdll!RtlGetReturnAddressHijackTarget+0xa45:
+00007ffe`48cf5245 cc              int     3
+0:000> cdb: Reading initial command 'sxd av; sxd eh; .sleep 4000; g; .echo ===EXCEPTION; .lastevent; r; .echo ===STACK; kn 120; .echo ===TEB; !teb; .echo ===ALL; ~*kn 25; q'
+(858.8f28): Unknown exception - code 04242420 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): C++ EH exception - code e06d7363 (first chance)
+(858.8f28): Stack overflow - code c00000fd (first chance)
+First chance exceptions are reported before any exception handling.
+This exception may be expected and handled.
+===EXCEPTION
+Last event: 858.8f28: Stack overflow - code c00000fd (first chance)
+  debugger time: Thu Nov 12 23:00:15.195 2026 (UTC + 1:00)
+rax=0000000000000680 rbx=8000000000000807 rcx=0000000000000680
+rdx=000000007ffe0704 rsi=000000d3be96f2a0 rdi=00000000e06d7363
+rip=00007ffe48d3aad7 rsp=000000d3be96f0f8 rbp=000000d3be96f150
+ r8=8000000000000000  r9=0000000000000000 r10=000000d3be96e000
+r11=000000d3be96e000 r12=000000d3be96f4d0 r13=0000000000000000
+r14=000000000010004b r15=0000000000000000
+iopl=0         nv up ei ng nz na pe nc
+cs=0033  ss=002b  ds=002b  es=002b  fs=0053  gs=002b             efl=00010286
+ntdll!_chkstk+0x37:
+00007ffe`48d3aad7 45841b          test    byte ptr [r11],r11b ds:000000d3`be96e000=00
+===STACK
+*** WARNING: Unable to verify checksum for c:\xpact\xpact-student-Mass\website\dist\Xpact.Contracts.dll
+*** WARNING: Unable to verify checksum for c:\xpact\xpact-student-Mass\website\dist\Xpact.Worker.dll
+*** WARNING: Unable to verify checksum for apphost.exe
+ # Child-SP          RetAddr               Call Site
+00 000000d3`be96f0f8 00007ffe`48be9e77     ntdll!_chkstk+0x37
+01 000000d3`be96f110 00007ffe`4632569a     ntdll!RtlRaiseException+0xc7
+02 000000d3`be96f280 00007ffd`b76ccb43     KERNELBASE!RaiseException+0x8a
+03 000000d3`be96f380 00007ffd`b76f0f8b     coreclr!_CxxThrowException+0x97 [D:\a\_work\1\s\src\vctools\crt\vcruntime\src\eh\throw.cpp @ 80]
+04 000000d3`be96f3e0 00007ffd`b76cf190     coreclr!`AppDomain::LoadAssembly'::`1'::catch$19+0x1e4 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\appdomain.cpp @ 2410]
+05 000000d3`be96f430 00007ffd`b76ce25f     coreclr!_CallSettingFrame_LookupContinuationIndex+0x20 [D:\a\_work\1\s\src\vctools\crt\vcruntime\src\eh\amd64\handlers.asm @ 98]
+06 000000d3`be96f460 00007ffe`48cf71e6     coreclr!__FrameHandler4::CxxCallCatchBlock+0xff [D:\a\_work\1\s\src\vctools\crt\vcruntime\src\eh\frame.cpp @ 1439]
+07 000000d3`be96f520 00007ffd`b75b278b     ntdll!RtlCaptureContext2+0x4a6
+08 000000d3`be97cf90 00007ffd`b75b24f3     coreclr!AppDomain::LoadAssembly+0x8f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\appdomain.cpp @ 2372]
+09 000000d3`be97d270 00007ffd`b7551e47     coreclr!Module::LoadAssemblyImpl+0x233 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.cpp @ 2485]
+0a (Inline Function) --------`--------     coreclr!ModuleBase::LoadAssembly+0x13 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.h @ 571]
+0b 000000d3`be97d380 00007ffd`b759d39e     coreclr!Assembly::FindModuleByTypeRef+0x1eb [D:\a\_work\1\s\src\runtime\src\coreclr\vm\assembly.cpp @ 870]
+0c 000000d3`be97d420 00007ffd`b759cff1     coreclr!ClassLoader::LoadTypeDefOrRefThrowing+0x28e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 2075]
+0d 000000d3`be97d520 00007ffd`b759e34f     coreclr!SigPointer::GetGenericInstType+0x201 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\siginfo.cpp @ 2021]
+0e 000000d3`be97d5a0 00007ffd`b75969ed     coreclr!SigPointer::GetTypeHandleThrowing+0xa4f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\siginfo.cpp @ 1440]
+0f (Inline Function) --------`--------     coreclr!ZapSig::DecodeType+0x95 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\zapsig.cpp @ 724]
+10 000000d3`be97d7e0 00007ffd`b759685e     coreclr!LoadDynamicInfoEntry+0x17d [D:\a\_work\1\s\src\runtime\src\coreclr\vm\jitinterface.cpp @ 13709]
+11 000000d3`be97dd10 00007ffd`b76dd848     coreclr!Module::FixupNativeEntry+0x66 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.cpp @ 3644]
+12 000000d3`be97dd40 00007ffd`b760480d     coreclr!Module::FixupDelayListAux<Module *,int (__cdecl Module::*)(READYTORUN_IMPORT_SECTION *,unsigned __int64,unsigned __int64 *,int)>+0x98 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.inl @ 457]
+13 (Inline Function) --------`--------     coreclr!Module::FixupDelayList+0x4f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.inl @ 360]
+14 000000d3`be97ddd0 00007ffd`b7603070     coreclr!ReadyToRunInfo::GetEntryPoint+0xccd [D:\a\_work\1\s\src\runtime\src\coreclr\vm\readytoruninfo.cpp @ 1257]
+15 (Inline Function) --------`--------     coreclr!MethodDesc::GetPrecompiledR2RCode+0x37 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 500]
+16 (Inline Function) --------`--------     coreclr!MethodDesc::GetPrecompiledCode+0x3c [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 440]
+17 (Inline Function) --------`--------     coreclr!MethodDesc::PrepareILBasedCode+0x22e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 405]
+18 (Inline Function) --------`--------     coreclr!MethodDesc::PrepareCode+0x22e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 312]
+19 000000d3`be97dee0 00007ffd`b7602b63     coreclr!CodeVersionManager::PublishVersionableCodeIfNecessary+0x4b0 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\codeversion.cpp @ 1740]
+1a 000000d3`be97e0e0 00007ffd`b760239f     coreclr!MethodDesc::DoPrestub+0x5a3 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 2238]
+1b 000000d3`be97e1d0 00007ffd`b76c9605     coreclr!PreStubWorker+0x4ff [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 1981]
+1c 000000d3`be97e340 00007ffd`7d3843a2     coreclr!ThePreStub+0x55 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\amd64\ThePreStubAMD64.asm @ 20]
+1d 000000d3`be97e3f0 00007ffd`7d382b8f     System_Text_Json!System.Text.Json.JsonSerializerOptions.<get_CacheContext>g__GetOrCreate|1_0+0x12 [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializerOptions.Caching.cs @ 32]
+1e 000000d3`be97e430 00007ffd`7d382c45     System_Text_Json!System.Text.Json.JsonSerializerOptions.GetTypeInfoInternal+0xaf [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializerOptions.Caching.cs @ 113]
+1f 000000d3`be97e480 00007ffd`7d3df99c     System_Text_Json!System.Text.Json.JsonSerializerOptions.GetTypeInfoForRootType+0x55 [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializerOptions.Caching.cs @ 153]
+20 000000d3`be97e4e0 00007ffd`7d3e0c3b     System_Text_Json!System.Text.Json.JsonSerializer.GetTypeInfo<Xpact.Contracts.ValidationResult>+0x3c [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializer.Helpers.cs @ 53]
+21 000000d3`be97e530 00007ffd`57a748c0     System_Text_Json!System.Text.Json.JsonSerializer.Serialize<Xpact.Contracts.ValidationResult>+0x2b [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializer.Write.String.cs @ 32]
+22 000000d3`be97e570 00007ffd`b76c8743     Xpact_Worker!Program.<Main>$+0x140
+23 000000d3`be97e620 00007ffd`b755f300     coreclr!CallDescrWorkerInternal+0x83 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\amd64\CallDescrWorkerAMD64.asm @ 74]
+24 (Inline Function) --------`--------     coreclr!CallDescrWorkerWithHandler+0x5b [D:\a\_work\1\s\src\runtime\src\coreclr\vm\callhelpers.cpp @ 59]
+25 000000d3`be97e660 00007ffd`b75e4f90     coreclr!MethodDescCallSite::CallTargetWorker+0x414 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\callhelpers.cpp @ 555]
+26 (Inline Function) --------`--------     coreclr!MethodDescCallSite::Call_RetArgSlot+0xf [D:\a\_work\1\s\src\runtime\src\coreclr\vm\callhelpers.h @ 446]
+27 000000d3`be97e800 00007ffd`b7570c4e     coreclr!RunMainInternal+0x124 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\assembly.cpp @ 1214]
+28 000000d3`be97e920 00007ffd`b757060f     coreclr!RunMain+0x112 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\assembly.cpp @ 1279]
+29 000000d3`be97e9c0 00007ffd`b7571325     coreclr!Assembly::ExecuteMainMethod+0x1b7 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\assembly.cpp @ 1407]
+2a 000000d3`be97ec90 00007ffd`b7679657     coreclr!CorHost2::ExecuteAssembly+0x235 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\corhost.cpp @ 350]
+2b 000000d3`be97eda0 00007ffe`25f3dd0a     coreclr!coreclr_execute_assembly+0xd7 [D:\a\_work\1\s\src\runtime\src\coreclr\dlls\mscoree\exports.cpp @ 491]
+2c (Inline Function) --------`--------     hostpolicy!coreclr_t::execute_assembly+0x29 [D:\a\_work\1\s\src\runtime\src\native\corehost\hostpolicy\coreclr.cpp @ 108]
+2d 000000d3`be97ee40 00007ffe`25f3dfac     hostpolicy!run_app_for_context+0x5ea [D:\a\_work\1\s\src\runtime\src\native\corehost\hostpolicy\hostpolicy.cpp @ 256]
+2e 000000d3`be97ef70 00007ffe`25f3ef21     hostpolicy!run_app+0x3c [D:\a\_work\1\s\src\runtime\src\native\corehost\hostpolicy\hostpolicy.cpp @ 285]
+2f 000000d3`be97efb0 00007ffe`2b90d56b     hostpolicy!corehost_main+0x171 [D:\a\_work\1\s\src\runtime\src\native\corehost\hostpolicy\hostpolicy.cpp @ 426]
+30 000000d3`be97f0b0 00007ffe`2b91029c     hostfxr!execute_app+0x2bb [D:\a\_work\1\s\src\runtime\src\native\corehost\fxr\fx_muxer.cpp @ 146]
+31 000000d3`be97f140 00007ffe`2b912676     hostfxr!`anonymous namespace'::read_config_and_execute+0xac [D:\a\_work\1\s\src\runtime\src\native\corehost\fxr\fx_muxer.cpp @ 533]
+32 000000d3`be97f240 00007ffe`2b91079d     hostfxr!fx_muxer_t::handle_exec_host_command+0x1d6 [D:\a\_work\1\s\src\runtime\src\native\corehost\fxr\fx_muxer.cpp @ 1008]
+33 000000d3`be97f2f0 00007ffe`2b908998     hostfxr!fx_muxer_t::execute+0x2ad [D:\a\_work\1\s\src\runtime\src\native\corehost\fxr\fx_muxer.cpp @ 579]
+34 000000d3`be97f420 00007ff6`58772f48     hostfxr!hostfxr_main_startupinfo+0xa8 [D:\a\_work\1\s\src\runtime\src\native\corehost\fxr\hostfxr.cpp @ 63]
+35 000000d3`be97f520 00007ff6`587733c6     apphost!exe_start+0xaa8 [D:\a\_work\1\s\src\runtime\src\native\corehost\corehost.cpp @ 264]
+36 000000d3`be97f6d0 00007ff6`58783b28     apphost!wmain+0x156 [D:\a\_work\1\s\src\runtime\src\native\corehost\corehost.cpp @ 335]
+37 (Inline Function) --------`--------     apphost!invoke_main+0x22 [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 90]
+38 000000d3`be97f750 00007ffe`4714dda7     apphost!__scrt_common_main_seh+0x10c [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl @ 288]
+39 000000d3`be97f790 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+3a 000000d3`be97f7c0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+===TEB
+TEB at 000000d3be6ec000
+*************************************************************************
+***                                                                   ***
+***                                                                   ***
+***    Either you specified an unqualified symbol, or your debugger   ***
+***    doesn't have full symbol information.  Unqualified symbol      ***
+***    resolution is turned off by default. Please either specify a   ***
+***    fully qualified symbol module!symbolname, or enable resolution ***
+***    of unqualified symbols by typing ".symopt- 100". Note that     ***
+***    enabling unqualified symbol resolution with network symbol     ***
+***    server shares in the symbol path may cause the debugger to     ***
+***    appear to hang for long periods of time when an incorrect      ***
+***    symbol name is typed or the network symbol server is down.     ***
+***                                                                   ***
+***    For some commands to work properly, your symbol path           ***
+***    must point to .pdb files that have full type information.      ***
+***                                                                   ***
+***    Certain .pdb files (such as the public OS symbols) do not      ***
+***    contain the required information.  Contact the group that      ***
+***    provided you with these symbols if you need this command to    ***
+***    work.                                                          ***
+***                                                                   ***
+***    Type referenced: nt!_TEB                                       ***
+***                                                                   ***
+*************************************************************************
+error InitTypeRead( TEB )...
+===ALL
+
+.  0  Id: 858.8f28 Suspend: 1 Teb: 000000d3`be6ec000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 000000d3`be96f0f8 00007ffe`48be9e77     ntdll!_chkstk+0x37
+01 000000d3`be96f110 00007ffe`4632569a     ntdll!RtlRaiseException+0xc7
+02 000000d3`be96f280 00007ffd`b76ccb43     KERNELBASE!RaiseException+0x8a
+03 000000d3`be96f380 00007ffd`b76f0f8b     coreclr!_CxxThrowException+0x97 [D:\a\_work\1\s\src\vctools\crt\vcruntime\src\eh\throw.cpp @ 80]
+04 000000d3`be96f3e0 00007ffd`b76cf190     coreclr!`AppDomain::LoadAssembly'::`1'::catch$19+0x1e4 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\appdomain.cpp @ 2410]
+05 000000d3`be96f430 00007ffd`b76ce25f     coreclr!_CallSettingFrame_LookupContinuationIndex+0x20 [D:\a\_work\1\s\src\vctools\crt\vcruntime\src\eh\amd64\handlers.asm @ 98]
+06 000000d3`be96f460 00007ffe`48cf71e6     coreclr!__FrameHandler4::CxxCallCatchBlock+0xff [D:\a\_work\1\s\src\vctools\crt\vcruntime\src\eh\frame.cpp @ 1439]
+07 000000d3`be96f520 00007ffd`b75b278b     ntdll!RtlCaptureContext2+0x4a6
+08 000000d3`be97cf90 00007ffd`b75b24f3     coreclr!AppDomain::LoadAssembly+0x8f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\appdomain.cpp @ 2372]
+09 000000d3`be97d270 00007ffd`b7551e47     coreclr!Module::LoadAssemblyImpl+0x233 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.cpp @ 2485]
+0a (Inline Function) --------`--------     coreclr!ModuleBase::LoadAssembly+0x13 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.h @ 571]
+0b 000000d3`be97d380 00007ffd`b759d39e     coreclr!Assembly::FindModuleByTypeRef+0x1eb [D:\a\_work\1\s\src\runtime\src\coreclr\vm\assembly.cpp @ 870]
+0c 000000d3`be97d420 00007ffd`b759cff1     coreclr!ClassLoader::LoadTypeDefOrRefThrowing+0x28e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\clsload.cpp @ 2075]
+0d 000000d3`be97d520 00007ffd`b759e34f     coreclr!SigPointer::GetGenericInstType+0x201 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\siginfo.cpp @ 2021]
+0e 000000d3`be97d5a0 00007ffd`b75969ed     coreclr!SigPointer::GetTypeHandleThrowing+0xa4f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\siginfo.cpp @ 1440]
+0f (Inline Function) --------`--------     coreclr!ZapSig::DecodeType+0x95 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\zapsig.cpp @ 724]
+10 000000d3`be97d7e0 00007ffd`b759685e     coreclr!LoadDynamicInfoEntry+0x17d [D:\a\_work\1\s\src\runtime\src\coreclr\vm\jitinterface.cpp @ 13709]
+11 000000d3`be97dd10 00007ffd`b76dd848     coreclr!Module::FixupNativeEntry+0x66 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.cpp @ 3644]
+12 000000d3`be97dd40 00007ffd`b760480d     coreclr!Module::FixupDelayListAux<Module *,int (__cdecl Module::*)(READYTORUN_IMPORT_SECTION *,unsigned __int64,unsigned __int64 *,int)>+0x98 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.inl @ 457]
+13 (Inline Function) --------`--------     coreclr!Module::FixupDelayList+0x4f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\ceeload.inl @ 360]
+14 000000d3`be97ddd0 00007ffd`b7603070     coreclr!ReadyToRunInfo::GetEntryPoint+0xccd [D:\a\_work\1\s\src\runtime\src\coreclr\vm\readytoruninfo.cpp @ 1257]
+15 (Inline Function) --------`--------     coreclr!MethodDesc::GetPrecompiledR2RCode+0x37 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 500]
+16 (Inline Function) --------`--------     coreclr!MethodDesc::GetPrecompiledCode+0x3c [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 440]
+17 (Inline Function) --------`--------     coreclr!MethodDesc::PrepareILBasedCode+0x22e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 405]
+18 (Inline Function) --------`--------     coreclr!MethodDesc::PrepareCode+0x22e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 312]
+19 000000d3`be97dee0 00007ffd`b7602b63     coreclr!CodeVersionManager::PublishVersionableCodeIfNecessary+0x4b0 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\codeversion.cpp @ 1740]
+1a 000000d3`be97e0e0 00007ffd`b760239f     coreclr!MethodDesc::DoPrestub+0x5a3 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 2238]
+1b 000000d3`be97e1d0 00007ffd`b76c9605     coreclr!PreStubWorker+0x4ff [D:\a\_work\1\s\src\runtime\src\coreclr\vm\prestub.cpp @ 1981]
+1c 000000d3`be97e340 00007ffd`7d3843a2     coreclr!ThePreStub+0x55 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\amd64\ThePreStubAMD64.asm @ 20]
+1d 000000d3`be97e3f0 00007ffd`7d382b8f     System_Text_Json!System.Text.Json.JsonSerializerOptions.<get_CacheContext>g__GetOrCreate|1_0+0x12 [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializerOptions.Caching.cs @ 32]
+1e 000000d3`be97e430 00007ffd`7d382c45     System_Text_Json!System.Text.Json.JsonSerializerOptions.GetTypeInfoInternal+0xaf [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializerOptions.Caching.cs @ 113]
+1f 000000d3`be97e480 00007ffd`7d3df99c     System_Text_Json!System.Text.Json.JsonSerializerOptions.GetTypeInfoForRootType+0x55 [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializerOptions.Caching.cs @ 153]
+20 000000d3`be97e4e0 00007ffd`7d3e0c3b     System_Text_Json!System.Text.Json.JsonSerializer.GetTypeInfo<Xpact.Contracts.ValidationResult>+0x3c [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializer.Helpers.cs @ 53]
+21 000000d3`be97e530 00007ffd`57a748c0     System_Text_Json!System.Text.Json.JsonSerializer.Serialize<Xpact.Contracts.ValidationResult>+0x2b [/_/src/runtime/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/JsonSerializer.Write.String.cs @ 32]
+22 000000d3`be97e570 00007ffd`b76c8743     Xpact_Worker!Program.<Main>$+0x140
+23 000000d3`be97e620 00007ffd`b755f300     coreclr!CallDescrWorkerInternal+0x83 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\amd64\CallDescrWorkerAMD64.asm @ 74]
+24 (Inline Function) --------`--------     coreclr!CallDescrWorkerWithHandler+0x5b [D:\a\_work\1\s\src\runtime\src\coreclr\vm\callhelpers.cpp @ 59]
+
+   1  Id: 858.9060 Suspend: 1 Teb: 000000d3`be6ee000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 000000d3`bec7f838 00007ffe`48bf4d0e     ntdll!NtWaitForWorkViaWorkerFactory+0x14
+01 000000d3`bec7f840 00007ffe`4714dda7     ntdll!TpCallbackMayRunLong+0x1a0e
+02 000000d3`bec7fba0 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+03 000000d3`bec7fbd0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   2  Id: 858.4e90 Suspend: 1 Teb: 000000d3`be6f0000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 000000d3`bef7f988 00007ffe`48bf4d0e     ntdll!NtWaitForWorkViaWorkerFactory+0x14
+01 000000d3`bef7f990 00007ffe`4714dda7     ntdll!TpCallbackMayRunLong+0x1a0e
+02 000000d3`bef7fcf0 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+03 000000d3`bef7fd20 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   3  Id: 858.8f00 Suspend: 1 Teb: 000000d3`be6f2000 Unfrozen
+ # Child-SP          RetAddr               Call Site
+00 000000d3`bf27f478 00007ffe`48bf4d0e     ntdll!NtWaitForWorkViaWorkerFactory+0x14
+01 000000d3`bf27f480 00007ffe`4714dda7     ntdll!TpCallbackMayRunLong+0x1a0e
+02 000000d3`bf27f7e0 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+03 000000d3`bf27f810 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   4  Id: 858.7134 Suspend: 1 Teb: 000000d3`be6f4000 Unfrozen ".NET EventPipe"
+ # Child-SP          RetAddr               Call Site
+00 000000d3`bf57f428 00007ffe`4627ab53     ntdll!ZwWaitForMultipleObjects+0x14
+01 000000d3`bf57f430 00007ffe`4627aa21     KERNELBASE!WaitForMultipleObjectsEx+0x123
+02 000000d3`bf57f720 00007ffd`b7681abf     KERNELBASE!WaitForMultipleObjects+0x11
+03 000000d3`bf57f760 00007ffd`b7681a21     coreclr!ds_ipc_poll+0x7f [D:\a\_work\1\s\src\runtime\src\native\eventpipe\ds-ipc-pal-namedpipe.c @ 263]
+04 000000d3`bf57f9e0 00007ffd`b76817c4     coreclr!ds_ipc_stream_factory_get_next_available_stream+0x105 [D:\a\_work\1\s\src\runtime\src\native\eventpipe\ds-ipc.c @ 424]
+05 000000d3`bf57fab0 00007ffd`b7681783     coreclr!server_loop_tick+0x34 [D:\a\_work\1\s\src\runtime\src\native\eventpipe\ds-server.c @ 118]
+06 000000d3`bf57fb20 00007ffe`4714dda7     coreclr!server_thread+0x33 [D:\a\_work\1\s\src\runtime\src\native\eventpipe\ds-server.c @ 185]
+07 000000d3`bf57fb50 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+08 000000d3`bf57fb80 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   5  Id: 858.9484 Suspend: 1 Teb: 000000d3`be6f6000 Unfrozen ".NET Debugger"
+ # Child-SP          RetAddr               Call Site
+00 000000d3`bf87f878 00007ffe`4627ab53     ntdll!ZwWaitForMultipleObjects+0x14
+01 000000d3`bf87f880 00007ffd`b76ba2b9     KERNELBASE!WaitForMultipleObjectsEx+0x123
+02 000000d3`bf87fb70 00007ffd`b76521ee     coreclr!DebuggerRCThread::MainLoop+0x109 [D:\a\_work\1\s\src\runtime\src\coreclr\debug\ee\rcthread.cpp @ 928]
+03 000000d3`bf87fc30 00007ffd`b76507db     coreclr!DebuggerRCThread::ThreadProc+0x1ae [D:\a\_work\1\s\src\runtime\src\coreclr\debug\ee\rcthread.cpp @ 731]
+04 000000d3`bf87fc80 00007ffe`4714dda7     coreclr!DebuggerRCThread::ThreadProcStatic+0x5b [D:\a\_work\1\s\src\runtime\src\coreclr\debug\ee\rcthread.cpp @ 1322]
+05 000000d3`bf87fcb0 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+06 000000d3`bf87fce0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   6  Id: 858.93f4 Suspend: 1 Teb: 000000d3`be6f8000 Unfrozen ".NET Finalizer"
+ # Child-SP          RetAddr               Call Site
+00 000000d3`bfb7f2a8 00007ffe`4627427f     ntdll!NtWaitForSingleObject+0x14
+01 000000d3`bfb7f2b0 00007ffd`b76b11f2     KERNELBASE!WaitForSingleObjectEx+0xaf
+02 (Inline Function) --------`--------     coreclr!CLREventWaitHelper2+0x6 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\synch.cpp @ 372]
+03 000000d3`bfb7f350 00007ffd`b7652bfc     coreclr!CLREventWaitHelper+0x12 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\synch.cpp @ 397]
+04 000000d3`bfb7f3a0 00007ffd`b765271f     coreclr!FinalizerThread::WaitForFinalizerEvent+0x24 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\finalizerthread.cpp @ 268]
+05 000000d3`bfb7f3e0 00007ffd`b763f9a2     coreclr!FinalizerThread::FinalizerThreadWorker+0x4f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\finalizerthread.cpp @ 396]
+06 (Inline Function) --------`--------     coreclr!ManagedThreadBase_DispatchInner+0xd [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 6862]
+07 000000d3`bfb7f630 00007ffd`b763f8bf     coreclr!ManagedThreadBase_DispatchMiddle+0x5e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 6906]
+08 000000d3`bfb7f6d0 00007ffd`b7653e58     coreclr!ManagedThreadBase_DispatchOuter+0x7b [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 7065]
+09 (Inline Function) --------`--------     coreclr!ManagedThreadBase::KickOff+0x1f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 7104]
+0a 000000d3`bfb7f740 00007ffe`4714dda7     coreclr!FinalizerThread::FinalizerThreadStart+0xc8 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\finalizerthread.cpp @ 522]
+0b 000000d3`bfb7f840 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+0c 000000d3`bfb7f870 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+
+   7  Id: 858.756c Suspend: 1 Teb: 000000d3`be6fa000 Unfrozen ".NET Tiered Compilation Worker"
+ # Child-SP          RetAddr               Call Site
+00 000000d3`bfe7fac8 00007ffe`48ca3194     ntdll!ZwDelayExecution+0x14
+01 000000d3`bfe7fad0 00007ffe`462ecca1     ntdll!RtlDelayExecution+0x34
+02 000000d3`bfe7fb00 00007ffd`b75f906e     KERNELBASE!SleepEx+0x91
+03 (Inline Function) --------`--------     coreclr!ClrSleepEx+0xa [D:\a\_work\1\s\src\runtime\src\coreclr\vm\hosting.cpp @ 216]
+04 000000d3`bfe7fb90 00007ffd`b75f8a5d     coreclr!TieredCompilationManager::BackgroundWorkerStart+0x96 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\tieredcompilation.cpp @ 519]
+05 000000d3`bfe7fbe0 00007ffd`b763f9a2     coreclr!TieredCompilationManager::BackgroundWorkerBootstrapper1+0x5d [D:\a\_work\1\s\src\runtime\src\coreclr\vm\tieredcompilation.cpp @ 483]
+06 (Inline Function) --------`--------     coreclr!ManagedThreadBase_DispatchInner+0xd [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 6862]
+07 000000d3`bfe7fc20 00007ffd`b763f8bf     coreclr!ManagedThreadBase_DispatchMiddle+0x5e [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 6906]
+08 000000d3`bfe7fcc0 00007ffd`b76bdec6     coreclr!ManagedThreadBase_DispatchOuter+0x7b [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 7065]
+09 (Inline Function) --------`--------     coreclr!ManagedThreadBase::KickOff+0x1f [D:\a\_work\1\s\src\runtime\src\coreclr\vm\threads.cpp @ 7104]
+0a 000000d3`bfe7fd30 00007ffe`4714dda7     coreclr!TieredCompilationManager::BackgroundWorkerBootstrapper0+0x56 [D:\a\_work\1\s\src\runtime\src\coreclr\vm\tieredcompilation.cpp @ 466]
+0b 000000d3`bfe7fd70 00007ffe`48c99c5c     KERNEL32!BaseThreadInitThunk+0x17
+0c 000000d3`bfe7fda0 00000000`00000000     ntdll!RtlUserThreadStart+0x2c
+quit:
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\atlmfc.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\concurrency.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\cpp_rest.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\ObjectiveC.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\stl.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Data.Json.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Devices.Geolocation.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Devices.Sensors.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\Windows.Media.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\windows.natvis'
+NatVis script unloaded from 'C:\Program Files\WindowsApps\Microsoft.WinDbg_1.2611.4001.0_x64__8wekyb3d8bbwe\amd64\Visualizers\winrt.natvis'

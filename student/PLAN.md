@@ -237,15 +237,32 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 ## ➡️ Next
 
-**State 2026-11-12 (read first):**
+**State 2026-11-14 (read first):** website ready to host: image `ghcr.io/andersoxie/xpact-website:website-2026-11-14-2` (= `latest`), checklist in [docker.md](../website/docs/docker.md#hosting-on-the-internet-safely), full scan [report](../reports/security-scan-2026-11-14/README.md). Message for the supervisor: [to-supervisor-2026-11-14.md](notes/to-supervisor-2026-11-14.md).
+
+- [x] ✅ [#368](https://github.com/andersoxie/xpact/issues/368) image older than the security fixes + `AllowedHosts` missing from the docs (PR #372, #379); releases `website-2026-11-14-1`, `-2`.
+- [x] ✅ [#370](https://github.com/andersoxie/xpact/issues/370) tests crashed under coverage (PR #374). [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube with C#: 76 → **0** issues (PR #375-#378). [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL + Dependabot (PR #373).
+- [ ] [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
+- [ ] Supervisor: Dependabot alerts + secret scanning (repo Settings → Code security); host the image (#210).
+- [ ] Nothing pushed from the 14 Nov docs update until the student says so.
+
+**State 2026-11-13:** the full to-do list with time estimates is [TOOODOOO.txt](../TOOODOOO.txt).
+
+- [x] ✅ [#316](https://github.com/andersoxie/xpact/issues/316) fixed in the worker (PR #355, 2026-11-12): WinDbg showed every crash is inside .NET (type loading / JIT / finalizers at the cap), not in the DLL; warm-up + 4 MB reserve + tiered JIT off; 0 crashes in 50 runs ([report](../reports/issue-0316/report.md)).
+- [x] ✅ [#352](https://github.com/andersoxie/xpact/issues/352) / [#353](https://github.com/andersoxie/xpact/issues/353) 10 MB upload (PR #354, 2026-11-12): the editor froze the page (one DOM row per line) → read-only 256 KB preview; a timeout now explains the assertions build and small pieces ([report](../reports/issue-0352/report.md)).
+- [x] ✅ #262 and #130 closed as not planned (Jenkins dropped 2026-11-03).
+- [x] ✅ Website release with #316 + #352/#353: `website-2026-11-14-1`/`-2` (2026-11-14). Open: the Docker memory-cap check can require code 1 again.
+- [ ] Ask the supervisor in one go: #293, #211, #304, #171, #13, licence, assertions timeout, SonarQube hotspot rights ([TOOODOOO.txt](../TOOODOOO.txt) section B).
+
+**State 2026-11-12:**
 
 - [x] ✅ **SonarQube (2026-11-12):** scan works with the student's token; issues 196 → **0** in eight PRs (SonarQube issue 1-8 = [#325](https://github.com/andersoxie/xpact/issues/325)-[#332](https://github.com/andersoxie/xpact/issues/332), PRs #333-#340), duplication 14 % → 0 %; Python suite 239 OK, website 42/42. [Summary](../reports/sonarqube-2026-11-12/README.md).
-- [ ] SonarQube: 3 security hotspots need someone with review rights (supervisor); quality gate fails only on "coverage of new code" (send a `coverage.py` report, or agree to drop that condition).
+- [ ] SonarQube: 2 security hotspots (3 → 2 with #342) need someone with review rights (supervisor); quality gate fails only on "coverage of new code" (send a `coverage.py` report, or agree to drop that condition).
 - [x] ✅ #131 closed (student's permission). SHA-1 hotspot resolved ([#342](https://github.com/andersoxie/xpact/issues/342), PR #343); 2 hotspots left to mark Safe in the UI.
-- [x] ✅ `main` synced with `incremental-test` (PR #344, merge commit, student's explicit request, 2026-11-12).
+- [x] ✅ `main` = `incremental-test`, 0 ahead / 0 behind (PR #344 merge commit, then PR #350 and a fast-forward of `main` to `fff0d2d`; student's explicit request, 2026-11-12).
 - [x] ✅ Hand-in report updated to 2026-11-12 ([#346](https://github.com/andersoxie/xpact/issues/346)); ✏️ reflection still in the student's own words.
 - [x] ✅ Website build `website-2026-11-12-1` shipped ([#345](https://github.com/andersoxie/xpact/issues/345), PR #348): release + image `latest` (digest `08b77a5b…`), container smoke and memory-cap tests passed ([report](../reports/issue-0345/report.md)).
 - [ ] ⏸ Aikido: mark the 14 checksum alerts as false positives (put aside by the student, 2026-11-12).
+- [x] ✅ Weekly note [week 9](notes/weekly/week-09.md) (10-16 Nov) written.
 
 **State 2026-11-11, night:**
 
@@ -460,6 +477,8 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Activity:** Analyse the results and draft the report. Try selected PubMed files if the correctness checks permit.
 **Bring to review:** A draft report and result tables tied to specific builds.
 - [x] [Report draft](github/issues/18-report-handover.md) in [`report/`](report/) ✅ [`ActualReport.md`](report/ActualReport.md) (2026-11-01); ✏️ the student completes the personal details and the reflection
+- [x] Report brought up to 2026-11-12 with recounted numbers and result tables tied to builds ([#346](https://github.com/andersoxie/xpact/issues/346)); [week 9 note](notes/weekly/week-09.md)
+- [x] 2026-11-12/13: [#316](https://github.com/andersoxie/xpact/issues/316) fixed (PR #355), [#352](https://github.com/andersoxie/xpact/issues/352)/[#353](https://github.com/andersoxie/xpact/issues/353) fixed (PR #354), #262/#130 closed; report, short report and week 9 note updated
 
 ## Week 10 – Handover
 **Activity:** Demonstrate the work, address review comments and hand it over.

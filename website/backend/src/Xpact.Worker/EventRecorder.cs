@@ -12,6 +12,8 @@ namespace Xpact.Worker;
 internal static unsafe class EventRecorder
 {
     private const int MaxValueLength = 200;
+    // Text kept per text node: twice what is shown, so joined pieces still fill the shown part.
+    private const int MaxTextChars = MaxValueLength * 2;
 
     public static EventSummary Summary { get; private set; } = new();
     public static IntPtr Parser { get; set; }
@@ -28,46 +30,88 @@ internal static unsafe class EventRecorder
         s_text.Clear();
     }
 
-    [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static void OnStart(IntPtr userData, byte* name, byte** atts) => Guard(() =>
-    {
-        FlushText();
-        Summary.StartElements++;
-        Add("start", Native.CString(name), Attributes(atts));
-    });
+    // Every callback catches everything itself (no lambda: a closure allocated before the try could
+    // throw OutOfMemoryException outside it near the memory cap, and an exception leaving an
+    // UnmanagedCallersOnly method ends the process). Losing one recorded event is better than ending
+    // the worker inside a native callback; the verdict comes from XML_Parse, not from these events.
+    // Names and values are only decoded while the sample still has room (#384).
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static void OnEnd(IntPtr userData, byte* name) => Guard(() =>
+    public static void OnStart(IntPtr userData, byte* name, byte** atts)
     {
-        FlushText();
-        Summary.EndElements++;
-        Add("end", Native.CString(name), "");
-    });
+        try
+        {
+            FlushText();
+            Summary.StartElements++;
+            if (HasRoom()) Add("start", Native.CString(name), Attributes(atts));
+        }
+        catch (Exception)
+        {
+            // See above: dropped on purpose.
+        }
+    }
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static void OnText(IntPtr userData, byte* s, int len) => Guard(() =>
+    public static void OnEnd(IntPtr userData, byte* name)
     {
-        if (s == null || len <= 0) return;
-        if (s_text.Length == 0) s_textLine = CurrentLine();
-        if (s_text.Length < MaxValueLength * 2)
-            s_text.Append(Encoding.UTF8.GetString(new ReadOnlySpan<byte>(s, len)));
-    });
+        try
+        {
+            FlushText();
+            Summary.EndElements++;
+            if (HasRoom()) Add("end", Native.CString(name), "");
+        }
+        catch (Exception)
+        {
+            // See above: dropped on purpose.
+        }
+    }
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static void OnComment(IntPtr userData, byte* data) => Guard(() =>
+    public static void OnText(IntPtr userData, byte* s, int len)
     {
-        FlushText();
-        Summary.Comments++;
-        Add("comment", "", Native.CString(data));
-    });
+        try
+        {
+            if (s == null || len <= 0) return;
+            if (s_text.Length == 0) s_textLine = CurrentLine();
+            // Only the first characters are ever shown: decode at most that many bytes of a huge text node.
+            if (s_text.Length < MaxTextChars)
+                s_text.Append(Encoding.UTF8.GetString(new ReadOnlySpan<byte>(s, Math.Min(len, MaxTextChars))));
+        }
+        catch (Exception)
+        {
+            // See above: dropped on purpose.
+        }
+    }
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-    public static void OnPi(IntPtr userData, byte* target, byte* data) => Guard(() =>
+    public static void OnComment(IntPtr userData, byte* data)
     {
-        FlushText();
-        Summary.ProcessingInstructions++;
-        Add("pi", Native.CString(target), Native.CString(data));
-    });
+        try
+        {
+            FlushText();
+            Summary.Comments++;
+            if (HasRoom()) Add("comment", "", Native.CString(data));
+        }
+        catch (Exception)
+        {
+            // See above: dropped on purpose.
+        }
+    }
+
+    [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
+    public static void OnPi(IntPtr userData, byte* target, byte* data)
+    {
+        try
+        {
+            FlushText();
+            Summary.ProcessingInstructions++;
+            if (HasRoom()) Add("pi", Native.CString(target), Native.CString(data));
+        }
+        catch (Exception)
+        {
+            // See above: dropped on purpose.
+        }
+    }
 
     /// <summary>Call after the last XML_Parse, so trailing text is counted.</summary>
     public static void Finish() => FlushText();
@@ -79,17 +123,20 @@ internal static unsafe class EventRecorder
         s_text.Clear();
         Summary.TextChunks++;
         // Whitespace between elements is counted but not shown.
-        if (!string.IsNullOrWhiteSpace(text))
+        if (HasRoom() && !string.IsNullOrWhiteSpace(text))
             Add("text", "", text, s_textLine);
+    }
+
+    /// <summary>True while the sample can take another event; marks the summary truncated otherwise.</summary>
+    private static bool HasRoom()
+    {
+        if (Summary.Sample.Count < MaxSample) return true;
+        Summary.Truncated = true;
+        return false;
     }
 
     private static void Add(string kind, string name, string value, uint? line = null)
     {
-        if (Summary.Sample.Count >= MaxSample)
-        {
-            Summary.Truncated = true;
-            return;
-        }
         Summary.Sample.Add(new ParseEvent
         {
             Kind = kind,
@@ -116,10 +163,4 @@ internal static unsafe class EventRecorder
 
     private static string Shorten(string s) =>
         s.Length <= MaxValueLength ? s : s[..MaxValueLength] + "…";
-
-    // An exception must never leave a callback: it would take the process down.
-    private static void Guard(Action action)
-    {
-        try { action(); } catch { }
-    }
 }

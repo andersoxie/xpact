@@ -11,6 +11,8 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- #316: no background re-JIT while the parse may use all memory under the cap. -->
+    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
 
   <ItemGroup>

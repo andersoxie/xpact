@@ -9,7 +9,7 @@ namespace Xpact.Worker;
 /// Windows build: XML_Char = char, XML_Size = unsigned long (32 bit),
 /// XML_Index = long (32 bit), calling convention cdecl.
 /// </summary>
-internal static unsafe class Native
+internal static unsafe partial class Native
 {
     private const string Lib = "xpact";
 
@@ -29,51 +29,65 @@ internal static unsafe class Native
             name == Lib ? NativeLibrary.Load(full) : IntPtr.Zero);
     }
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr XML_ParserCreate(byte* encoding);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial IntPtr XML_ParserCreate(byte* encoding);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void XML_ParserFree(IntPtr parser);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial void XML_ParserFree(IntPtr parser);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int XML_Parse(IntPtr parser, byte* s, int len, int isFinal);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial int XML_Parse(IntPtr parser, byte* s, int len, int isFinal);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int XML_GetErrorCode(IntPtr parser);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial int XML_GetErrorCode(IntPtr parser);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern byte* XML_ErrorString(int code);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial byte* XML_ErrorString(int code);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint XML_GetCurrentLineNumber(IntPtr parser);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial uint XML_GetCurrentLineNumber(IntPtr parser);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint XML_GetCurrentColumnNumber(IntPtr parser);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial uint XML_GetCurrentColumnNumber(IntPtr parser);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int XML_GetCurrentByteIndex(IntPtr parser);
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial int XML_GetCurrentByteIndex(IntPtr parser);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern byte* XML_ExpatVersion();
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial byte* XML_ExpatVersion();
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void XML_SetStartElementHandler(IntPtr parser,
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial void XML_SetStartElementHandler(IntPtr parser,
         delegate* unmanaged[Cdecl]<IntPtr, byte*, byte**, void> handler);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void XML_SetEndElementHandler(IntPtr parser,
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial void XML_SetEndElementHandler(IntPtr parser,
         delegate* unmanaged[Cdecl]<IntPtr, byte*, void> handler);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void XML_SetCharacterDataHandler(IntPtr parser,
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial void XML_SetCharacterDataHandler(IntPtr parser,
         delegate* unmanaged[Cdecl]<IntPtr, byte*, int, void> handler);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void XML_SetCommentHandler(IntPtr parser,
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial void XML_SetCommentHandler(IntPtr parser,
         delegate* unmanaged[Cdecl]<IntPtr, byte*, void> handler);
 
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void XML_SetProcessingInstructionHandler(IntPtr parser,
+    [LibraryImport(Lib)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    public static partial void XML_SetProcessingInstructionHandler(IntPtr parser,
         delegate* unmanaged[Cdecl]<IntPtr, byte*, byte*, void> handler);
 
     public static string CString(byte* s) =>

@@ -1,0 +1,23 @@
+# Dependabot version updates: weekly PRs into incremental-test when a library, action or base image has a newer version.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /website/frontend
+    target-branch: incremental-test
+    schedule: { interval: weekly }
+    labels: [dependencies]
+  - package-ecosystem: nuget
+    directory: /website/backend
+    target-branch: incremental-test
+    schedule: { interval: weekly }
+    labels: [dependencies]
+  - package-ecosystem: docker
+    directory: /website
+    target-branch: incremental-test
+    schedule: { interval: weekly }
+    labels: [dependencies]
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: incremental-test
+    schedule: { interval: weekly }
+    labels: [dependencies]

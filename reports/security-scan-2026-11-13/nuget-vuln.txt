@@ -1,0 +1,11 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+   C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\
+
+The given project `Xpact.Api` has no vulnerable packages given the current sources.
+The given project `Xpact.Contracts` has no vulnerable packages given the current sources.
+The given project `Xpact.Worker` has no vulnerable packages given the current sources.
+The given project `Xpact.Api.Tests` has no vulnerable packages given the current sources.

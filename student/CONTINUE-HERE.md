@@ -1,13 +1,13 @@
 # Continue here
 
-> Short and current: state on **2026-11-12** (week 8 of 8). Hand-in: **27 November 2026**.
+> Short and current: state on **2026-11-14** (week 9). Hand-in: **27 November 2026**.
 > Start with `git fetch --all`, then read this file, [the full to-do list](notes/left-to-do-2026-11-11.md)
 > and [PLAN.md](PLAN.md) ("Next"). Rules: the repo's `CLAUDE.md` and [VERSIONING.md](VERSIONING.md) (box at the top).
 
 ## 1. Branches
 
 - Work branch: **`incremental-test`** on andersoxie/xpact (`origin`). Not `student-Mass` (deleted), not CodTanium/mass-xpact.
-- `main` was synced with `incremental-test` on 2026-11-12 (PR #344, merge commit `266401f`; same files as `incremental-test` @ `a840029`). Claude asks before touching `main` again.
+- `main` = `incremental-test` (0 ahead / 0 behind) since 2026-11-12: PR #344, then PR #350 and a fast-forward of `main` to `fff0d2d`. Claude asks before touching `main` again.
 - Every PR merges with a **merge commit**, never squash. Claude merges its own verified PRs into `incremental-test`, pulls, rechecks on the merged commit, then closes the issue.
 
 ## 2. State
@@ -22,13 +22,13 @@
 | [#211](https://github.com/andersoxie/xpact/issues/211) billion laughs | 🟡 right error (code 43) ✅, ~1.5 s vs Expat ~0.1 s: ask Anders ([recheck](../reports/issue-0211/recheck-2026-11-11/README.md)) |
 | [#293](https://github.com/andersoxie/xpact/issues/293) entity depth > 32 | 🔴 well-formed documents nested 33+ levels rejected as "syntax error"; Expat accepts: ask Anders (remove limit or own error code) |
 | [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces | 🔴 quadratic, still present |
-| Website security | ✅ review findings 1-7 fixed (#295, #297, #283, #286); ✅ worker with no privileges at Low integrity (#299) ([security.md](../website/docs/security.md)) |
+| Website security | ✅ **scan 2026-11-14** ([report](../reports/security-scan-2026-11-14/README.md)): WAF/antivirus test, Snyk, Semgrep, CodeQL, nuclei, ZAP, attack battery 27/27 on the final build · ✅ security scan 2026-11-13: 4 findings fixed (#357-#360), battery 27/27, ZAP 0 high/medium/low ([scan](../reports/security-scan-2026-11-13/README.md)) · ✅ review findings 1-7 fixed (#295, #297, #283, #286); ✅ worker with no privileges at Low integrity (#299) ([security.md](../website/docs/security.md)) |
 | Website quality | ✅ Lighthouse 100, ZAP 0 medium, W3C HTML 0/0 (#286); 42/42 backend tests; pages show the fair speed result and current limits (#314) |
-| Website Docker image | ✅ `ghcr.io/andersoxie/xpact-website:website-2026-11-12-1` (= `latest`, digest `sha256:08b77a5b…`) from release `website-2026-11-12-1` (`a840029`: accessibility #328, React #329, same DLLs), PR #348; container smoke and memory-cap tests pass ([report](../reports/issue-0345/report.md)) · 🟡 under a 40 MB cap the container worker can die of a stack overflow instead of reporting out of memory ([#316](https://github.com/andersoxie/xpact/issues/316), low impact) |
+| Website Docker image | ✅ **`website-2026-11-14-2`** (= `latest`, `sha256:a1ea0cdf…`, from `e0c3eab`, PR #379); hosting checklist in docker.md (#368). Older: `website-2026-11-12-1` (digest digest `sha256:08b77a5b…`) from release `website-2026-11-12-1` (`a840029`: accessibility #328, React #329, same DLLs), PR #348; container smoke and memory-cap tests pass ([report](../reports/issue-0345/report.md)) · ✅ small memory cap crash fixed in the worker: cause was .NET loading types at the cap, not the DLL ([#316](https://github.com/andersoxie/xpact/issues/316), [report](../reports/issue-0316/report.md)) · ✅ 10 MB upload no longer freezes the page ([#352](https://github.com/andersoxie/xpact/issues/352), [#353](https://github.com/andersoxie/xpact/issues/353), [report](../reports/issue-0352/report.md)) · both need the next website release |
 | Website proxy | ✅ untrusted proxy logged, `KnownNetworks` (#312); the real proxy setting is chosen at deployment ([docker.md](../website/docs/docker.md#behind-a-reverse-proxy)) |
-| Website deployment | 🟡 not online: HTTPS, domain, `AllowedHosts` = Anders ([#210](https://github.com/andersoxie/xpact/issues/210)) |
+| Website deployment | 🟡 not online; package for Anders ready: [to-supervisor-2026-11-14.md](notes/to-supervisor-2026-11-14.md) ([#210](https://github.com/andersoxie/xpact/issues/210)) |
 | Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias), [#318](https://github.com/andersoxie/xpact/issues/318) (`fix.ps1` merge commits into `incremental-test`, refuses `main`), [#319](https://github.com/andersoxie/xpact/issues/319) (DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL=1` blocks rebuilds) |
-| SonarQube | ✅ scan works with the student's token (2026-11-12); **196 → 0 issues**, duplication 14 % → 0 % (#325-#332, PRs #333-#340) ([summary](../reports/sonarqube-2026-11-12/README.md)) · 🟡 3 hotspots need review rights · 🔴 gate: no coverage report yet · run: `student\tools\sonar\run-sonar.ps1 -Scanner %USERPROFILE%\tools\sonar\sonar-scanner-7.0.2.4839-windows-x64\bin\sonar-scanner.bat` |
+| SonarQube | ✅ **2026-11-14: first scan with C# (.NET scanner), 76 → 0 issues** (#371, PRs #375-#378); 🟡 9 hotspots: 3 removed, 6 to mark Safe ([#380](https://github.com/andersoxie/xpact/issues/380)) · ✅ scan works with the student's token (2026-11-12); **196 → 0 issues**, duplication 14 % → 0 % (#325-#332, PRs #333-#340) ([summary](../reports/sonarqube-2026-11-12/README.md)) · 🟡 3 hotspots need review rights · 🔴 gate: no coverage report yet · run: `student\tools\sonar\run-sonar.ps1 -Scanner %USERPROFILE%\tools\sonar\sonar-scanner-7.0.2.4839-windows-x64\bin\sonar-scanner.bat` |
 
 ## 3. Next (in this order)
 
@@ -39,6 +39,9 @@
 - [ ] Rerun the full fair speed matrix (#275) on an **idle** PC before quoting final numbers. 1-2 h machine time
 - [x] ✅ Website build `website-2026-11-12-1` shipped (#345, PR #348). Next build: same steps (see the [#345 report](../reports/issue-0345/report.md)); the student runs `gh release create`.
 - [ ] ⏸ Aikido: mark the 14 checksum alerts as false positives (put aside, 2026-11-12).
+- [x] ✅ #316 found with WinDbg and fixed in the worker (2026-11-12, [report](../reports/issue-0316/report.md)); #352/#353 10 MB upload fixed (PR #354)
+- [ ] Next website release with #316 + #352/#353; then let the Docker memory-cap check require code 1 again
+- [x] ✅ Weekly note [week 9](notes/weekly/week-09.md).
 - [x] ✅ Website findings 1-2, worker rights; #273; #274; #275 merged; #302, #306, #308 (all 2026-11-11)
 
 ## 4. Setup on a new PC

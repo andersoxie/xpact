@@ -58,7 +58,7 @@ public interface IWorkerLauncher
 /// worker and DLL files, but it cannot write to files, registry keys or processes of the API's account.
 /// No extra Windows account is needed.
 /// </summary>
-public sealed class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
+public sealed partial class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
 {
     private const uint CreateSuspended = 0x00000004;
     private const uint CreateUnicodeEnvironment = 0x00000400;
@@ -91,23 +91,26 @@ public sealed class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
             CreatePipePair(out IntPtr outRead, out IntPtr outWrite, handles);
             CreatePipePair(out IntPtr errRead, out IntPtr errWrite, handles);
 
-            var startup = new STARTUPINFO
+            var startup = new StartupInfo
             {
-                cb = Marshal.SizeOf<STARTUPINFO>(),
+                cb = Marshal.SizeOf<StartupInfo>(),
                 dwFlags = StartfUseStdHandles,
                 hStdInput = inRead,
                 hStdOutput = outWrite,
                 hStdError = errWrite,
             };
-            var commandLine = new StringBuilder(CommandLine(path, arguments));
+            // CreateProcess may write into the command line: a private, NUL-terminated buffer.
+            char[] commandLine = (CommandLine(path, arguments) + "\0").ToCharArray();
             string env = EnvironmentBlock(environment);
             uint flags = CreateSuspended | CreateUnicodeEnvironment | BelowNormalPriorityClass | CreateNoWindow;
-            PROCESS_INFORMATION info;
+            ProcessInformation info;
             bool ok;
             lock (LaunchLock)
             {
-                foreach (IntPtr child in new[] { inRead, outWrite, errWrite })
-                    if (!SetHandleInformation(child, HandleFlagInherit, HandleFlagInherit)) throw new Win32Exception();
+                IntPtr[] childHandles = [inRead, outWrite, errWrite];
+                if (childHandles.Any(child => !SetHandleInformation(child, HandleFlagInherit, HandleFlagInherit)))
+                    throw new Win32Exception();
+                // The char[] is pinned by the generated marshalling code: no unsafe code here (S6640, #380).
                 ok = lowIntegrity
                     ? CreateProcessAsUser(token, path, commandLine, IntPtr.Zero, IntPtr.Zero, true, flags, env,
                         workingDirectory, ref startup, out info)
@@ -155,8 +158,8 @@ public sealed class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
                 throw new Win32Exception();
             if (!ConvertStringSidToSid(LowIntegritySid, out sid)) throw new Win32Exception();
 
-            var mandatory = new TOKEN_MANDATORY_LABEL { Label = new SID_AND_ATTRIBUTES { Sid = sid, Attributes = SeGroupIntegrity } };
-            int size = Marshal.SizeOf<TOKEN_MANDATORY_LABEL>() + GetLengthSid(sid);
+            var mandatory = new TokenMandatoryLabel { Label = new SidAndAttributes { Sid = sid, Attributes = SeGroupIntegrity } };
+            int size = Marshal.SizeOf<TokenMandatoryLabel>() + GetLengthSid(sid);
             label = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(mandatory, label, false);
             if (!SetTokenInformation(restricted, TokenIntegrityLevel, label, size)) throw new Win32Exception();
@@ -276,89 +279,100 @@ public sealed class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
         }
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    private struct STARTUPINFO
+    [StructLayout(LayoutKind.Sequential)]
+    private struct StartupInfo
     {
         public int cb;
-        public string? lpReserved, lpDesktop, lpTitle;
+        public IntPtr lpReserved, lpDesktop, lpTitle; // unused (null); IntPtr keeps the struct blittable
         public int dwX, dwY, dwXSize, dwYSize, dwXCountChars, dwYCountChars, dwFillAttribute, dwFlags;
         public short wShowWindow, cbReserved2;
         public IntPtr lpReserved2, hStdInput, hStdOutput, hStdError;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct PROCESS_INFORMATION
+    private struct ProcessInformation
     {
         public IntPtr hProcess, hThread;
         public int dwProcessId, dwThreadId;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct SID_AND_ATTRIBUTES
+    private struct SidAndAttributes
     {
         public IntPtr Sid;
         public uint Attributes;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct TOKEN_MANDATORY_LABEL
+    private struct TokenMandatoryLabel
     {
-        public SID_AND_ATTRIBUTES Label;
+        public SidAndAttributes Label;
     }
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern bool CreateProcess(string app, StringBuilder commandLine, IntPtr processAttributes,
-        IntPtr threadAttributes, bool inheritHandles, uint flags, string environment, string currentDirectory,
-        ref STARTUPINFO startup, out PROCESS_INFORMATION info);
+    [LibraryImport("kernel32.dll", EntryPoint = "CreateProcessW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool CreateProcess(string app, [In, Out] char[] commandLine, IntPtr processAttributes,
+        IntPtr threadAttributes, [MarshalAs(UnmanagedType.Bool)] bool inheritHandles, uint flags, string environment, string currentDirectory,
+        ref StartupInfo startup, out ProcessInformation info);
 
-    [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern bool CreateProcessAsUser(IntPtr token, string app, StringBuilder commandLine,
-        IntPtr processAttributes, IntPtr threadAttributes, bool inheritHandles, uint flags, string environment,
-        string currentDirectory, ref STARTUPINFO startup, out PROCESS_INFORMATION info);
+    [LibraryImport("advapi32.dll", EntryPoint = "CreateProcessAsUserW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool CreateProcessAsUser(IntPtr token, string app, [In, Out] char[] commandLine,
+        IntPtr processAttributes, IntPtr threadAttributes, [MarshalAs(UnmanagedType.Bool)] bool inheritHandles, uint flags, string environment,
+        string currentDirectory, ref StartupInfo startup, out ProcessInformation info);
 
-    [DllImport("advapi32.dll", SetLastError = true)]
-    private static extern bool OpenProcessToken(IntPtr process, uint access, out IntPtr token);
+    [LibraryImport("advapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool OpenProcessToken(IntPtr process, uint access, out IntPtr token);
 
-    [DllImport("advapi32.dll", SetLastError = true)]
-    private static extern bool CreateRestrictedToken(IntPtr existing, uint flags, uint disableSidCount, IntPtr sidsToDisable,
+    [LibraryImport("advapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool CreateRestrictedToken(IntPtr existing, uint flags, uint disableSidCount, IntPtr sidsToDisable,
         uint deletePrivilegeCount, IntPtr privilegesToDelete, uint restrictedSidCount, IntPtr sidsToRestrict, out IntPtr newToken);
 
-    [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern bool ConvertStringSidToSid(string sid, out IntPtr result);
+    [LibraryImport("advapi32.dll", EntryPoint = "ConvertStringSidToSidW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool ConvertStringSidToSid(string sid, out IntPtr result);
 
-    [DllImport("advapi32.dll")]
-    private static extern int GetLengthSid(IntPtr sid);
+    [LibraryImport("advapi32.dll")]
+    private static partial int GetLengthSid(IntPtr sid);
 
-    [DllImport("advapi32.dll", SetLastError = true)]
-    private static extern bool SetTokenInformation(IntPtr token, int infoClass, IntPtr info, int length);
+    [LibraryImport("advapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetTokenInformation(IntPtr token, int infoClass, IntPtr info, int length);
 
-    [DllImport("advapi32.dll", SetLastError = true)]
-    private static extern bool GetTokenInformation(IntPtr token, int infoClass, IntPtr info, int length, out int returned);
+    [LibraryImport("advapi32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool GetTokenInformation(IntPtr token, int infoClass, IntPtr info, int length, out int returned);
 
-    [DllImport("advapi32.dll")]
-    private static extern IntPtr GetSidSubAuthorityCount(IntPtr sid);
+    [LibraryImport("advapi32.dll")]
+    private static partial IntPtr GetSidSubAuthorityCount(IntPtr sid);
 
-    [DllImport("advapi32.dll")]
-    private static extern IntPtr GetSidSubAuthority(IntPtr sid, uint index);
+    [LibraryImport("advapi32.dll")]
+    private static partial IntPtr GetSidSubAuthority(IntPtr sid, uint index);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CreatePipe(out IntPtr read, out IntPtr write, IntPtr attributes, uint size);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool CreatePipe(out IntPtr read, out IntPtr write, IntPtr attributes, uint size);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool SetHandleInformation(IntPtr handle, uint mask, uint flags);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetHandleInformation(IntPtr handle, uint mask, uint flags);
 
-    [DllImport("kernel32.dll")]
-    private static extern IntPtr GetCurrentProcess();
+    [LibraryImport("kernel32.dll")]
+    private static partial IntPtr GetCurrentProcess();
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool TerminateProcess(IntPtr process, uint exitCode);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool TerminateProcess(IntPtr process, uint exitCode);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    internal static extern uint ResumeThread(IntPtr thread);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    internal static partial uint ResumeThread(IntPtr thread);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    internal static extern bool CloseHandle(IntPtr handle);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool CloseHandle(IntPtr handle);
 
-    [DllImport("kernel32.dll")]
-    private static extern IntPtr LocalFree(IntPtr memory);
+    [LibraryImport("kernel32.dll")]
+    private static partial IntPtr LocalFree(IntPtr memory);
 }

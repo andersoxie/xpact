@@ -29,6 +29,13 @@ export function ResultPanel({ result, onGoToLine }: Readonly<Props>) {
           </span>
           {title}
         </div>
+        {result.verdict === "timeout" && (
+          <div className="detail">
+            Large documents take longer with the assertions build (about 10× slower) and with small pieces (one parser
+            call per piece). For a document of several MB, use the production build in one piece or pieces of 4096
+            bytes or more.
+          </div>
+        )}
         {e && (
           <div className="detail">
             <strong>{e.message}</strong> <span className="badge">code {e.code}</span>
