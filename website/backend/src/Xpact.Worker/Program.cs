@@ -11,6 +11,10 @@ using Xpact.Worker;
 // The API starts one worker per request. A crash inside the DLL (for example a
 // failed Eiffel contract) then ends this process only, never the web server.
 // The document arrives on stdin as raw bytes, so no file on disk is involved.
+//
+// Synchronous I/O on purpose (S6966): a short-lived single-request process gains nothing from
+// async, and after the parse no new code may be loaded or JIT-compiled (#316, see WarmUp).
+#pragma warning disable S6966
 
 var options = WorkerOptions.Parse(args);
 if (options is null)
@@ -36,8 +40,8 @@ try
 }
 catch (Exception e)
 {
-    // The details (DLL path, stack trace) go to stderr, which the API writes to its log;
-    // the visitor gets a generic message.
+    // Details such as the DLL path and the stack trace go to stderr, which the API writes
+    // to its log. The visitor only gets a generic message.
     Console.Error.WriteLine(e);
     result = new ValidationResult
     {
@@ -66,9 +70,12 @@ static void WarmUp(WorkerOptions options)
     }
     Console.Out.Flush();
     Console.Error.Flush();
+    // S1215 on purpose: free the warm-up garbage now, so the parse starts with the whole cap.
+#pragma warning disable S1215
     GC.Collect();
     GC.WaitForPendingFinalizers();
     GC.Collect();
+#pragma warning restore S1215
 }
 
 static unsafe int Feed(IntPtr parser, byte[] buffer, int length, int chunkSize, ValidationResult result)
@@ -136,7 +143,7 @@ static unsafe ValidationResult Parse(byte[] input, WorkerOptions options)
         // freeing this right after leaves room for .NET to build and print the result.
         const int ReserveBytes = 4 * 1024 * 1024;
         IntPtr reserve = Marshal.AllocHGlobal(ReserveBytes);
-        new Span<byte>((void*)reserve, ReserveBytes).Fill(0); // touch every page, so it is really committed
+        new Span<byte>((void*)reserve, ReserveBytes).Clear(); // touch every page, so it is really committed
         int status;
         var clock = Stopwatch.StartNew();
         try
@@ -175,31 +182,37 @@ static unsafe ValidationResult Parse(byte[] input, WorkerOptions options)
     }
 }
 
-internal sealed record WorkerOptions(string DllPath, string Build, int ChunkSize, int MaxEvents)
+namespace Xpact.Worker
 {
-    public static WorkerOptions? Parse(string[] args)
+    internal sealed record WorkerOptions(string DllPath, string Build, int ChunkSize, int MaxEvents)
     {
-        string? dll = null;
-        string build = "production";
-        int chunk = 0;
-        int maxEvents = 200;
-        for (int i = 0; i < args.Length; i++)
+        // Every option takes a value: "--name value" pairs, nothing else.
+        public static WorkerOptions? Parse(string[] args)
         {
-            string next = i + 1 < args.Length ? args[i + 1] : "";
-            switch (args[i])
+            if (args.Length % 2 != 0) return null;
+            string? dll = null;
+            string build = "production";
+            int chunk = 0;
+            int maxEvents = 200;
+            for (int pair = 0; pair < args.Length / 2; pair++)
             {
-                case "--dll": dll = next; i++; break;
-                case "--build": build = next; i++; break;
-                case "--chunk" when int.TryParse(next, out int c) && c >= 0: chunk = c; i++; break;
-                case "--max-events" when int.TryParse(next, out int m) && m >= 0: maxEvents = m; i++; break;
-                default: return null;
+                string name = args[2 * pair];
+                string value = args[2 * pair + 1];
+                switch (name)
+                {
+                    case "--dll": dll = value; break;
+                    case "--build": build = value; break;
+                    case "--chunk" when int.TryParse(value, out int c) && c >= 0: chunk = c; break;
+                    case "--max-events" when int.TryParse(value, out int m) && m >= 0: maxEvents = m; break;
+                    default: return null;
+                }
             }
+            return string.IsNullOrEmpty(dll) ? null : new WorkerOptions(dll, build, chunk, maxEvents);
         }
-        return string.IsNullOrEmpty(dll) ? null : new WorkerOptions(dll, build, chunk, maxEvents);
     }
-}
 
-internal static class WorkerJson
-{
-    public static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+    internal static class WorkerJson
+    {
+        public static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+    }
 }
