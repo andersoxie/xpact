@@ -30,7 +30,7 @@ jobs:
     # Windows Server 2022: matches the Dockerfile's default base image (ltsc2022).
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download the website build
         shell: pwsh
