@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           # 3.11 or newer: on 3.10 the csv module cannot write NUL (see the Python 3.10 finding).
           python-version: "3.12"
