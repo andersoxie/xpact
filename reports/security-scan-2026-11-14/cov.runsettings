@@ -1,3 +1,0 @@
-<RunSettings><DataCollectionRunSettings><DataCollectors><DataCollector friendlyName="XPlat code coverage"><Configuration>
-<Format>opencover</Format><Include>[Xpact.Api]*,[Xpact.Contracts]*</Include><Exclude>[Xpact.Worker]*,[Xpact.Api.Tests]*</Exclude>
-</Configuration></DataCollector></DataCollectors></DataCollectionRunSettings></RunSettings>
