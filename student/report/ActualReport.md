@@ -773,7 +773,8 @@ In the first five weeks of the eight-week internship, the project went from a pa
 - [ ] SonarQube: mark the 2 remaining hotspots "Safe" (reasons in [#342](../../reports/issue-0342/report.md)); send a Python coverage report so the quality gate can pass
 - [x] ✅ [#316](https://github.com/andersoxie/xpact/issues/316): found with WinDbg (no recursion: .NET loading types at the cap) and fixed in the worker (PR #355, 2026-11-12)
 - [x] ✅ [#352](https://github.com/andersoxie/xpact/issues/352)/[#353](https://github.com/andersoxie/xpact/issues/353): a 10 MB upload no longer freezes the page; timeouts explained (PR #354, 2026-11-12)
-- [ ] Next website release with #316 + #352/#353, then the Docker memory-cap check can require code 1 again
+- [x] Website release with #316 + #352/#353 (and the security fixes): `website-2026-11-14-3`, 14 November
+- [ ] The Docker memory-cap check can require code 1 again
 - [x] ✅ Fair speed test against native Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275)): median 18× slower, 0 checksum mismatches → [results](../results/fair-speed-2026-11-10/README.md); rerun on an idle PC before quoting final numbers
 - [ ] Speed: profile the callback and 1-byte cases, then read by index and reuse buffers (leads in [mass-xpact-issue-0014](../../reports/mass-xpact-issue-0014/report.md))
 - [ ] A Linux build

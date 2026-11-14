@@ -44,4 +44,4 @@ API alone (`curl -F file=@<f> -F build=<b> -F chunkSize=<c> http://localhost:509
 - [x] ✅ Frontend build (`npm run build`, includes `tsc`)
 - [x] ✅ `website\scripts\test.ps1`: 42/42 backend tests, all website checks passed
 - [x] ✅ Headless Edge: valid 1 MB and 10 MiB accepted, invalid 10 MB rejected with line, timeout hint shown
-- [ ] Next website release + Docker image (student runs `gh release create`, see [#345](../issue-0345/report.md))
+- [x] ✅ done 2026-11-14: releases `website-2026-11-14-1`…`-3` · Next website release + Docker image (student runs `gh release create`, see [#345](../issue-0345/report.md))
