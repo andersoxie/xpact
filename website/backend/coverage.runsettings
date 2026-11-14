@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Code coverage for the backend tests (#370): test.ps1 -Coverage, or dotnet test with this file as its settings.
+     Only Xpact.Api is instrumented. Xpact.Worker and Xpact.Contracts run inside the low-integrity worker process:
+     instrumented, they try to write coverage hits where that process may not write, and the worker crashes
+     (13 of 48 tests failed with "crashed"). -->
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>opencover,cobertura</Format>
+          <Include>[Xpact.Api]*</Include>
+          <Exclude>[Xpact.Worker]*,[Xpact.Contracts]*,[Xpact.Api.Tests]*</Exclude>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
