@@ -110,17 +110,12 @@ public sealed partial class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
                 IntPtr[] childHandles = [inRead, outWrite, errWrite];
                 if (childHandles.Any(child => !SetHandleInformation(child, HandleFlagInherit, HandleFlagInherit)))
                     throw new Win32Exception();
-                unsafe
-                {
-                    fixed (char* command = commandLine)
-                    {
-                        ok = lowIntegrity
-                            ? CreateProcessAsUser(token, path, command, IntPtr.Zero, IntPtr.Zero, true, flags, env,
-                                workingDirectory, ref startup, out info)
-                            : CreateProcess(path, command, IntPtr.Zero, IntPtr.Zero, true, flags, env,
-                                workingDirectory, ref startup, out info);
-                    }
-                }
+                // The char[] is pinned by the generated marshalling code: no unsafe code here (S6640, #380).
+                ok = lowIntegrity
+                    ? CreateProcessAsUser(token, path, commandLine, IntPtr.Zero, IntPtr.Zero, true, flags, env,
+                        workingDirectory, ref startup, out info)
+                    : CreateProcess(path, commandLine, IntPtr.Zero, IntPtr.Zero, true, flags, env,
+                        workingDirectory, ref startup, out info);
                 int error = Marshal.GetLastWin32Error();
                 foreach (IntPtr child in new[] { inRead, outWrite, errWrite })
                 {
@@ -316,13 +311,13 @@ public sealed partial class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
 
     [LibraryImport("kernel32.dll", EntryPoint = "CreateProcessW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static unsafe partial bool CreateProcess(string app, char* commandLine, IntPtr processAttributes,
+    private static partial bool CreateProcess(string app, char[] commandLine, IntPtr processAttributes,
         IntPtr threadAttributes, [MarshalAs(UnmanagedType.Bool)] bool inheritHandles, uint flags, string environment, string currentDirectory,
         ref StartupInfo startup, out ProcessInformation info);
 
     [LibraryImport("advapi32.dll", EntryPoint = "CreateProcessAsUserW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static unsafe partial bool CreateProcessAsUser(IntPtr token, string app, char* commandLine,
+    private static partial bool CreateProcessAsUser(IntPtr token, string app, char[] commandLine,
         IntPtr processAttributes, IntPtr threadAttributes, [MarshalAs(UnmanagedType.Bool)] bool inheritHandles, uint flags, string environment,
         string currentDirectory, ref StartupInfo startup, out ProcessInformation info);
 
