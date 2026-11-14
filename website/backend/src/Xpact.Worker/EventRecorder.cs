@@ -120,6 +120,14 @@ internal static unsafe class EventRecorder
     // An exception must never leave a callback: it would take the process down.
     private static void Guard(Action action)
     {
-        try { action(); } catch { }
+        try
+        {
+            action();
+        }
+        catch (Exception)
+        {
+            // Dropped on purpose: losing one recorded event is better than ending the worker
+            // inside a native callback. The verdict comes from XML_Parse, not from these events.
+        }
     }
 }

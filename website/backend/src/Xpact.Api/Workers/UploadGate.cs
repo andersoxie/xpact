@@ -31,7 +31,8 @@ public sealed class UploadGate(IOptions<XpactOptions> options, ILogger<UploadGat
         if (TryEnter(client, Estimate(http.ContentLength, maxBody), out lease, out int status)) return null;
 
         http.HttpContext.Response.Headers.RetryAfter = "5";
-        log.LogInformation("Upload from {Client} refused before reading ({Status})", client, status);
+        if (log.IsEnabled(LogLevel.Information))
+            log.LogInformation("Upload from {Client} refused before reading ({Status})", client, status);
         return status == StatusCodes.Status429TooManyRequests
             ? Results.Problem(statusCode: status, title: "Too many documents at once",
                 detail: $"You already have {_options.MaxWorkersPerClient} document(s) being checked. Wait until they finish.")
@@ -42,7 +43,7 @@ public sealed class UploadGate(IOptions<XpactOptions> options, ILogger<UploadGat
     private long _bufferedBytes;
 
     /// <summary>Bytes reserved for a body of <paramref name="contentLength"/> bytes (the largest allowed body when unknown).</summary>
-    public long Estimate(long? contentLength, long maxBody) =>
+    public static long Estimate(long? contentLength, long maxBody) =>
         Math.Min(contentLength ?? maxBody, maxBody) * CopiesPerByte;
 
     /// <summary>Reserve room for one upload, or say why not (status 429 or 503).</summary>

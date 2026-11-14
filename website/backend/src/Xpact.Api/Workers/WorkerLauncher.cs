@@ -107,8 +107,9 @@ public sealed partial class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
             bool ok;
             lock (LaunchLock)
             {
-                foreach (IntPtr child in new[] { inRead, outWrite, errWrite })
-                    if (!SetHandleInformation(child, HandleFlagInherit, HandleFlagInherit)) throw new Win32Exception();
+                IntPtr[] childHandles = [inRead, outWrite, errWrite];
+                if (childHandles.Any(child => !SetHandleInformation(child, HandleFlagInherit, HandleFlagInherit)))
+                    throw new Win32Exception();
                 unsafe
                 {
                     fixed (char* command = commandLine)
