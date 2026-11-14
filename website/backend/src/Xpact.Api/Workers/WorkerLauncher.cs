@@ -311,13 +311,13 @@ public sealed partial class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
 
     [LibraryImport("kernel32.dll", EntryPoint = "CreateProcessW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool CreateProcess(string app, char[] commandLine, IntPtr processAttributes,
+    private static partial bool CreateProcess(string app, [In, Out] char[] commandLine, IntPtr processAttributes,
         IntPtr threadAttributes, [MarshalAs(UnmanagedType.Bool)] bool inheritHandles, uint flags, string environment, string currentDirectory,
         ref StartupInfo startup, out ProcessInformation info);
 
     [LibraryImport("advapi32.dll", EntryPoint = "CreateProcessAsUserW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool CreateProcessAsUser(IntPtr token, string app, char[] commandLine,
+    private static partial bool CreateProcessAsUser(IntPtr token, string app, [In, Out] char[] commandLine,
         IntPtr processAttributes, IntPtr threadAttributes, [MarshalAs(UnmanagedType.Bool)] bool inheritHandles, uint flags, string environment,
         string currentDirectory, ref StartupInfo startup, out ProcessInformation info);
 
