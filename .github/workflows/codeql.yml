@@ -1,0 +1,42 @@
+# CodeQL code scanning (free for public repositories). Results: the repository's Security → Code scanning tab.
+# C# uses build-mode none, so no EiffelStudio/MSVC build is needed. Eiffel and C are not scanned here.
+name: CodeQL
+
+on:
+  push:
+    branches: [incremental-test]
+  pull_request:
+    branches: [incremental-test]
+  schedule:
+    - cron: "17 3 * * 1"   # every Monday: new CodeQL queries find new problems in old code
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write   # upload results to code scanning
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: csharp
+          - language: javascript-typescript
+          - language: python
+          - language: actions
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended   # more security queries than the default set
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
