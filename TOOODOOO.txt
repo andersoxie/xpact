@@ -43,8 +43,8 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
 [ ] Licence: LICENSE file + README line ............................ 30 min
 [ ] Raise 10 s timeout for the assertions build? (from #353)
           one config value, ships with next release ................ 15 min
-[ ] SonarQube: give the student "Administer Security Hotspots" on project
-          xpact, or review the 7 hotspots himself (#380) ............ 5 min (Anders)
+[ ] #380 SonarQube hotspots: 3 removed (PR), 6 safe -> student marks them
+          Safe in the UI (text: security-report-11-14.txt §7) ........ 5 min
 [ ] #210  Website online: image website-2026-11-14-2 + checklist ready
           (student/notes/to-supervisor-2026-11-14.md) ............... Anders
 [ ] Repo Settings -> Code security: Dependabot alerts + secret

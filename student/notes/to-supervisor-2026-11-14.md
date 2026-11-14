@@ -47,25 +47,17 @@ docker run -d --name xpact --isolation=hyperv --memory 4g --cpus 2 --restart unl
 > It also did not stop XML attacks; the parser and the locked-down worker do that.
 > So the exception costs no safety.
 
-### 5. 🔍 SonarQube: 7 security hotspots (issue #380)
-- https://github.com/andersoxie/xpact/issues/380 · https://sonarqube.bsharp.se/dashboard?id=xpact
-- Please review them, or give my account "Administer Security Hotspots" on project `xpact`.
-
-> Why: my account gets "403" and cannot even see them.
-> The quality gate stays red until they are reviewed.
-> Everything else is clean: 0 issues, 0 bugs, 0 vulnerabilities (the C# backend is now scanned too).
-
-### 6. 🛡️ GitHub: turn on two free security switches
+### 5. 🛡️ GitHub: turn on two free security switches
 - https://github.com/andersoxie/xpact/settings/security_analysis → **Dependabot alerts** and **Secret scanning**: Enable.
 
 > Why: they warn about libraries with known holes and about passwords committed by mistake.
 > Only a repo admin can turn them on.
 > CodeQL and weekly Dependabot updates already run (PR #373).
 
-### 7. 📄 The full security report (for reading)
+### 6. 📄 The full security report (for reading)
 - https://github.com/andersoxie/xpact/blob/incremental-test/reports/security-scan-2026-11-14/README.md
 
-> Why: it shows what was tested and what was found, with exact results.
+> Why: it shows what was tested and what was found, with exact results (SonarQube: 0 issues; I review the hotspots myself).
 > Final build: 48/48 backend tests, 27/27 attack tests, no real findings from ZAP, nuclei, Semgrep, CodeQL, Snyk, Trivy or npm/NuGet audits.
 > Not tested: the container on a real server (my PC cannot run Windows containers); please run the checks in docker.md once.
 

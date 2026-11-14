@@ -35,7 +35,7 @@ Before handing the Docker image to the supervisor ([report](../../reports/securi
 |---|---|
 | WAF (OWASP CRS 4.25, like Cloudflare/Azure managed rules) | ⚠️ blocks every **pasted** XML (XSS rules see `<tags>`); XXE in a file upload passes the WAF. → exclude `/api/validate` from the XSS rules if a WAF is used; the parser and worker are the real protection |
 | Antivirus (Defender, ClamAV) | ⚠️ uploads are not scanned; scanners miss EICAR inside XML. Accepted: XML only, kept in memory, never stored or executed |
-| SonarQube (.NET scanner, now including C#) | ✅ 76 → 0 issues (#371); 🟡 7 hotspots need an admin (#380) |
+| SonarQube (.NET scanner, now including C#) | ✅ 76 → 0 issues (#371); 9 hotspots: 3 removed, 6 reviewed as safe (#380) |
 | Attack battery · ZAP · nuclei · Semgrep · CodeQL · Snyk · Trivy · npm/NuGet | ✅ 27/27 · only "HTTP only" (local) · 0 · 0 · 0 · 0 real · 0 · 0 |
 | Host filter | ✅ unknown host → 400; **set `AllowedHosts` at deployment** ([docker.md](docker.md#hosting-on-the-internet-safely)) |
 

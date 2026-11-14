@@ -230,7 +230,7 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 - [x] ✅ [#368](https://github.com/andersoxie/xpact/issues/368) image older than the security fixes + `AllowedHosts` missing from the docs (PR #372, #379); releases `website-2026-11-14-1`, `-2`.
 - [x] ✅ [#370](https://github.com/andersoxie/xpact/issues/370) tests crashed under coverage (PR #374). [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube with C#: 76 → **0** issues (PR #375-#378). [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL + Dependabot (PR #373).
-- [ ] [#380](https://github.com/andersoxie/xpact/issues/380) 7 SonarQube hotspots: supervisor (project admin) reviews them.
+- [ ] [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
 - [ ] Supervisor: Dependabot alerts + secret scanning (repo Settings → Code security); host the image (#210).
 - [ ] Nothing pushed from the 14 Nov docs update until the student says so.
 

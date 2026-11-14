@@ -22,7 +22,7 @@
   - [#370](https://github.com/andersoxie/xpact/issues/370) 13 of 48 backend tests crashed under code coverage: instrumented `Xpact.Contracts.dll` in the low-integrity worker → `coverage.runsettings` (PR #374).
   - [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube had **never analysed C#**: first .NET scan 76 issues → **0** (PRs #375-#378: worker, Program.cs split, `LibraryImport`, log guard).
   - [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL (security-extended) on every PR + Dependabot weekly (PR #373). Snyk account (CodTanium) set up.
-  - [#380](https://github.com/andersoxie/xpact/issues/380) 7 SonarQube hotspots need a project admin (student gets 403).
+  - [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
 
 ## What the evidence shows
 **Observed, not expected:**
@@ -40,14 +40,14 @@
 | Website `test.ps1` after both fixes | **42 / 42** |
 | Parser source | unchanged since the 2026-11-08 rerun |
 | Website final build `e0c3eab` (14 Nov) | backend **48 / 48** with coverage (C# 93 %), frontend build OK, attack battery **27 / 27** |
-| bsharp SonarQube with C# (14 Nov) | **0 issues**, 0 bugs, 0 vulnerabilities, A/A/A; 7 hotspots unreadable (403) |
+| bsharp SonarQube with C# (14 Nov) | **0 issues**, 0 bugs, 0 vulnerabilities, A/A/A; 9 hotspots: 3 removed, 6 reviewed as safe (#380) |
 | Other scanners (14 Nov) | ZAP: only "HTTP only" (local test has no HTTPS); nuclei 0; Semgrep 0; CodeQL 0; Snyk/npm/NuGet/Trivy 0; gitleaks 58 = file checksums |
 | WAF (CRS 4.25) | pasted XML 14/14 blocked (403); file upload XXE passes the WAF (the parser still refuses it) |
 | Host filter | `Host: xpact.example.com` → 400; with `AllowedHosts` → 200 |
 
 ## Blocked
 - Website deployment ([#210](https://github.com/andersoxie/xpact/issues/210)): image and checklist are ready (docker.md "Hosting on the internet safely"); the server, domain, HTTPS and `AllowedHosts` are the supervisor's.
-- 7 SonarQube hotspots ([#380](https://github.com/andersoxie/xpact/issues/380)): need someone with review rights; the student's token cannot list them. Dependabot alerts and secret scanning: repo admin only.
+- Dependabot alerts and secret scanning: repo admin only.
 - Design questions for the supervisor: #304 parallel parsing, #293 entity depth, #211 speed of the billion-laughs stop, #171, #13, the 10 MB limit.
 - ~~`gh release create` is blocked for Claude~~: worked on 14 Nov.
 
@@ -55,7 +55,7 @@
 - [ ] ✏️ Reflection sections of the report in the student's own words; prepare the demonstration.
 - [ ] Ask the supervisor the open questions in one message.
 - [ ] [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces (the last known speed problem).
-- [ ] SonarQube: supervisor reviews the 7 hotspots (#380); send a Python coverage report for the gate.
+- [ ] SonarQube: mark the 6 safe hotspots Safe (text in `security-report-11-14.txt` §7, #380); send a Python coverage report for the gate.
 - [x] ✅ Website releases with #316, #352/#353, #357-#360 and #371: `website-2026-11-14-2` (14 Nov).
 - [ ] Send the supervisor the hosting package ([to-supervisor-2026-11-14.md](../to-supervisor-2026-11-14.md)).
 - [ ] Open issues on andersoxie (13 on 2026-11-13): #342, #304, #293, #272, #211, #210, #197, #176, #171, #170, #126, #123, #13.
