@@ -40,7 +40,8 @@
 - [x] ✅ Website build `website-2026-11-12-1` shipped (#345, PR #348). Next build: same steps (see the [#345 report](../reports/issue-0345/report.md)); the student runs `gh release create`.
 - [ ] ⏸ Aikido: mark the 14 checksum alerts as false positives (put aside, 2026-11-12).
 - [x] ✅ #316 found with WinDbg and fixed in the worker (2026-11-12, [report](../reports/issue-0316/report.md)); #352/#353 10 MB upload fixed (PR #354)
-- [ ] Next website release with #316 + #352/#353; then let the Docker memory-cap check require code 1 again
+- [x] ✅ Website release with #316 + #352/#353 + #357-#360 + #371/#380/#384: `website-2026-11-14-3` (2026-11-14)
+- [ ] Let the Docker memory-cap check require code 1 again
 - [x] ✅ Weekly note [week 9](notes/weekly/week-09.md).
 - [x] ✅ Website findings 1-2, worker rights; #273; #274; #275 merged; #302, #306, #308 (all 2026-11-11)
 

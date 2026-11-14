@@ -55,7 +55,8 @@
 - [ ] ✏️ Reflection sections of the report in the student's own words; prepare the demonstration.
 - [ ] Ask the supervisor the open questions in one message.
 - [ ] [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces (the last known speed problem).
-- [ ] SonarQube: mark the 6 safe hotspots Safe (text in `security-report-11-14.txt` §7, #380); send a Python coverage report for the gate.
+- [x] ✅ SonarQube: 6 safe hotspots marked Safe (#380 closed); 0 left to review.
+- [ ] SonarQube gate: coverage of new code (see the gate fix).
 - [x] ✅ Website releases with #316, #352/#353, #357-#360 and #371: `website-2026-11-14-2` (14 Nov).
 - [ ] Send the supervisor the hosting package ([to-supervisor-2026-11-14.md](../to-supervisor-2026-11-14.md)).
 - [ ] Open issues on andersoxie (13 on 2026-11-13): #342, #304, #293, #272, #211, #210, #197, #176, #171, #170, #126, #123, #13.
