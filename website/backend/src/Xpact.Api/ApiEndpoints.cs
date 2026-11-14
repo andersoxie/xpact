@@ -64,7 +64,8 @@ internal static class ApiEndpoints
         catch (Exception e) when (e is BadHttpRequestException or InvalidDataException or JsonException)
         {
             // The exception stays in the log; the visitor gets a fixed message.
-            log.LogInformation(e, "Unreadable request from {Client}", client);
+            if (log.IsEnabled(LogLevel.Information))
+                log.LogInformation(e, "Unreadable request from {Client}", client);
             return Problem(StatusCodes.Status400BadRequest, "Unreadable request",
                 "The request could not be read. Send JSON, a form with a 'file' or 'xml' field, or the raw XML.");
         }
