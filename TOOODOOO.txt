@@ -6,7 +6,7 @@ Times = my working time. Each parser fix also needs one full acceptance run
 before its PR (~2-3 h machine time, runs in the background).
 
 Recommended order:
-  1. Website release (quick)
+  1. [x] Website release: done 2026-11-14 (website-2026-11-14-2)
   2. #272 (biggest bug that does not need Anders)
   3. Send Anders all questions in one go (section B)
   4. Speed rerun LAST, on an idle PC, after any speed fixes
@@ -44,8 +44,11 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
 [ ] Raise 10 s timeout for the assertions build? (from #353)
           one config value, ships with next release ................ 15 min
 [ ] SonarQube: give the student "Administer Security Hotspots" on project
-          xpact, or mark the 2 hotspots Safe himself (#342) ........ 5 min (Anders)
-[ ] #210  Website online: HTTPS, domain, AllowedHosts (deployment)
+          xpact, or review the 7 hotspots himself (#380) ............ 5 min (Anders)
+[ ] #210  Website online: image website-2026-11-14-2 + checklist ready
+          (student/notes/to-supervisor-2026-11-14.md) ............... Anders
+[ ] Repo Settings -> Code security: Dependabot alerts + secret
+          scanning on (needs repo admin) ........................... 2 min (Anders)
 
 Total if Anders says yes to everything:   ~2-3 weeks
 Total if he picks the cheap options
@@ -92,9 +95,9 @@ Worth it only if test 2 is run often (when chunked input changes, e.g. #272).
 -----------------------------------------------------------------------------
 F. OTHER
 -----------------------------------------------------------------------------
-[ ] Website release with #316 + #352/#353 + security fixes #357-#360. Student runs
-          gh release create; then Docker memory-cap check may require
-          code 1 again ............................................. ~1 h
+[x] Website release with #316 + #352/#353 + #357-#360 + #371:
+          website-2026-11-14-2 (2026-11-14). Still open: Docker
+          memory-cap check may require code 1 again ................ ~1 h
 [x] #262 and #130 closed as not planned (Jenkins dropped) ...... 2026-11-13
 [ ] Speed rerun vs Expat (#275 fair test) for final report numbers
           (currently median 18x slower). ~30 min work + 1-2 h machine.
@@ -153,5 +156,9 @@ DONE THIS WEEK (2026-11-12)
           #357 memory flood, #358 slow uploads, #359 uploads on disk,
           #360 DLL search path. Battery 27/27, ZAP 0 high/med/low.
           reports/security-scan-2026-11-13/README.md
+[x] 2026-11-14 hosting scan: WAF/antivirus test, Snyk, Semgrep, CodeQL,
+          nuclei, ZAP; #368 image + AllowedHosts docs, #369 CodeQL +
+          Dependabot, #370 coverage crash, #371 SonarQube C# 76 -> 0.
+          reports/security-scan-2026-11-14/README.md
 
 Reports: reports/issue-0316/report.md, reports/issue-0352/report.md
