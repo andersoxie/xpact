@@ -86,3 +86,10 @@ Final run on the release build (expected vs observed):
 
 Not tested: W3C/Eiffel/Python suites (the parser DLLs did not change), the Windows container itself (no Windows containers on Windows 11 Home), Hyper-V isolation on a server.
 Lesson: SonarQube + ZAP + tests + Docker at the same time ran this PC out of memory (both scans crashed); run them one after another.
+
+## Part 4: the "unsafe" hotspots (#380) and a second opinion
+
+- Read with a SonarQube **User Token**; the saved token is a *Project Analysis Token* and gets 403 on hotspots.
+- 9 hotspots: 3 `unsafe` in WorkerLauncher removed (#381, #383); run_probe.py namespace URI and `killpg` reviewed Safe; **4 in the worker** (EventRecorder.cs, Native.cs, Program.cs ×2, rule S6640).
+- **Second opinion** (independent review agent, read-only, 2026-11-14): no memory-safety bug in the 4 places (callbacks are static `UnmanagedCallersOnly`, attribute walk stops at NULL, buffer pinned with exact length, no use after `XML_ParserFree`, reserve freed in `finally`). Realistic risk very low: the DLL already runs in the same sandboxed worker. Removing `unsafe` (delegates + `Marshal`) would **not** be more secure (same trust in native memory) and adds delegate keep-alive risk and more code to warm up (#316). **Recommendation: mark the 4 Safe.**
+- It found 3 robustness points, fixed locally: closure allocated before the `try` in every callback (OOM near the cap could end the worker), names/attributes decoded after the sample was full, whole text chunks decoded although 200 characters are shown. Old vs new worker: identical output on a 5 MB text node and 100,000 elements; backend 48/48; attack battery 27/27 on the `website-2026-11-14-3` build.

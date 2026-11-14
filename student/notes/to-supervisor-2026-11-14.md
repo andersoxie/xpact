@@ -9,15 +9,15 @@ Hi Anders,
 The XPact website is ready to host as a Docker image. Below are the things I need from you, with links and a short reason for each.
 
 ### 1. ✅ The Docker image: please host it
-- Image: `ghcr.io/andersoxie/xpact-website:website-2026-11-14-2` (same as `latest`)
-- Release: https://github.com/andersoxie/xpact/releases/tag/website-2026-11-14-2
+- Image: `ghcr.io/andersoxie/xpact-website:website-2026-11-14-3` (same as `latest`)
+- Release: https://github.com/andersoxie/xpact/releases/tag/website-2026-11-14-3
 - Needs: Windows Server with the Containers feature (2022 by default; 2025 needs a rebuild with `--build-arg WINDOWS_TAG=ltsc2025`).
 
 ```powershell
-docker pull ghcr.io/andersoxie/xpact-website:website-2026-11-14-2
+docker pull ghcr.io/andersoxie/xpact-website:website-2026-11-14-3
 docker run -d --name xpact --isolation=hyperv --memory 4g --cpus 2 --restart unless-stopped `
   -p 5099:8080 -e AllowedHosts=YOUR-DOMAIN -e Xpact__KnownNetworks__0=172.16.0.0/12 `
-  ghcr.io/andersoxie/xpact-website:website-2026-11-14-2
+  ghcr.io/andersoxie/xpact-website:website-2026-11-14-3
 ```
 
 > Why: this is the newest version, with all security fixes (upload flood, slow clients, DLL search path).

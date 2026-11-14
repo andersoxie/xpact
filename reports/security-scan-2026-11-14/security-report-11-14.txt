@@ -1,0 +1,86 @@
+XPact website - security results 2026-11-14
+============================================
+Build tested: incremental-test @ e0c3eab = Docker image ghcr.io/andersoxie/xpact-website:website-2026-11-14-2 (= latest)
+Parser DLLs unchanged: xpact.dll ADAE03D2..., xpact_assertions.dll 75F43A5B...
+Full report: reports/security-scan-2026-11-14/README.md
+
+1. FINAL RESULTS (on the release build)
+---------------------------------------
+[OK] Backend tests (with coverage) ..... 48/48 passed, C# coverage 93 %
+[OK] Frontend type check + build ....... passed
+[OK] Attack battery (27 harmful-upload and protocol tests) ... 27/27 passed
+[OK] SonarQube (bsharp, now incl. C#) .. 0 issues, 0 bugs, 0 vulnerabilities, ratings A/A/A
+[!!] SonarQube hotspots ................ 7, student account cannot open them (403) -> issue #380, needs supervisor
+[OK] ZAP 2.17 active scan .............. only "HTTP only site" (local test has no HTTPS; server gets HTTPS from tunnel/proxy)
+[OK] nuclei 3.11.1 (7,246 checks) ...... 0 findings
+[OK] Semgrep 1.185 (OWASP rules) ....... 0 findings
+[OK] CodeQL (every PR) ................. 0 alerts
+[OK] Snyk libraries / npm audit / NuGet / Trivy ... 0 vulnerabilities
+[OK] Snyk Code ......................... 2 low "log forging" = false alarm (value is an IP address)
+[OK] gitleaks .......................... 58 hits, all file checksums in JSON reports (not secrets)
+
+2. PROBLEMS FOUND AND FIXED TODAY
+---------------------------------
+#368 Docker image was older than the security fixes, and docker.md did not say AllowedHosts must be set
+     (without it every visitor gets 400). FIXED: hosting checklist in docker.md, releases
+     website-2026-11-14-1 and -2, image published (PR #372, #379). Verified: 400 without, 200 with AllowedHosts.
+#369 CodeQL + Dependabot added (PR #373).
+#370 13 of 48 backend tests crashed when coverage was measured. Cause (confirmed): the coverage tool changed
+     Xpact.Contracts.dll, which the low-rights worker loads. FIXED: coverage.runsettings (PR #374). 48/48.
+#371 SonarQube had never scanned the C# backend. First scan: 76 issues. FIXED: PRs #375-#378. Now 0.
+#380 OPEN: 7 SonarQube hotspots need a project admin.
+
+3. FIREWALL AND ANTIVIRUS TEST (stand-ins for Cloudflare/Azure and OPSWAT)
+--------------------------------------------------------------------------
+- Firewall (OWASP CRS 4.25): blocked EVERY pasted XML (14/14, 403). XXE inside an uploaded file passed the
+  firewall (the parser still refuses it). -> If a WAF is used: exclude /api/validate from the XSS rules.
+- Antivirus (Defender, ClamAV): uploads are never scanned; both missed the EICAR test file inside XML.
+  Accepted risk: XML only, kept in memory, never stored or run.
+
+4. NOT TESTED
+-------------
+- The Windows container itself (Windows 11 Home cannot run Windows containers); Hyper-V isolation on a server.
+- Real Cloudflare / Azure / OPSWAT services (need domain or paid key).
+- W3C / Eiffel / Python suites: parser DLLs did not change.
+
+5. FOR THE SUPERVISOR
+---------------------
+student/notes/to-supervisor-2026-11-14.md (image, AllowedHosts, HTTPS, WAF exclusion, hotspots, GitHub switches).
+
+6. SONARQUBE RESCAN (bsharp) - 2026-11-14 08:57
+-----------------------------------------------
+Command: powershell -File reports\security-scan-2026-11-14\sonar-net.ps1
+         (uses the saved encrypted token %USERPROFILE%\.sonar-token, no prompt; SonarScanner for .NET,
+          so C# is included - the old run-sonar.ps1 skips C#)
+Result:  ANALYSIS SUCCESSFUL, tests 48/48
+[OK] Open issues ........ 0     [OK] Bugs ..... 0     [OK] Vulnerabilities ... 0
+[OK] Code smells ........ 0     [OK] Duplication 0 %  [OK] Ratings ........... A / A / A
+[!!] Hotspots ........... 7 (cannot be opened by the student, #380)
+[!!] Quality gate ....... FAILED on 2 conditions only:
+       - new code coverage 30.4 % (C# is 93 %; the frontend and Python scripts have no coverage report)
+       - new hotspots reviewed 0 % (needs the supervisor, #380)
+Languages scanned: C# 1,454 lines, Python 4,562, TypeScript 1,783, CSS 846, Docker 12, HTML 14
+Dashboard: https://sonarqube.bsharp.se/dashboard?id=xpact
+
+7. SONARQUBE HOTSPOTS (read with a User Token, 2026-11-14)
+----------------------------------------------------------
+9 open (7 "unsafe" in C#, 2 in a Python tool). The old analysis token could not read them (PROJECT_ANALYSIS_TOKEN).
+FIXED locally (branch fix/380-hotspots, not pushed): WorkerLauncher.cs:113/319/325 - no unsafe code any more
+  (char[] instead of a pointer). Tests 48/48. These 3 disappear after the next scan of pushed code.
+TO MARK "SAFE" in the SonarQube page (Security Hotspots tab -> each one -> Change status -> Safe), with this comment:
+  Worker: EventRecorder.cs:12, Native.cs:12, Program.cs:81, Program.cs:107 (rule S6640 "unsafe")
+    "Needed to call xpact.dll: the parser calls back through native function pointers with C strings,
+     and the document is passed as a pinned buffer with its exact length. Runs only in the per-document
+     worker: Low integrity, no privileges, 512 MB cap, 10 s timeout. Covered by 48 tests + 27 attack tests."
+  tools/compiler_assertions/run_probe.py:25 (S5332 http)
+    "XML namespace name of EiffelStudio .ecf files, an identifier; no connection is made."
+  tools/compiler_assertions/run_probe.py:44 (S4828 signals)
+    "killpg only hits the process group this tool started itself, after its timeout."
+
+8. FINAL SONARQUBE SCAN - 2026-11-14 09:35 (incremental-test @ 9cfe41c)
+------------------------------------------------------------------------
+[OK] Open issues 0 · bugs 0 · vulnerabilities 0 · code smells 0 · duplication 0 % · ratings A/A/A
+[OK] Hotspots: 3 "unsafe" removed (PR #381; #383 added [In, Out], fixing 2 info notes the change caused)
+[OK] run_probe.py:25 and :44 already marked Safe
+[!!] 4 left to mark Safe: Worker EventRecorder.cs:12, Native.cs:12, Program.cs:81, Program.cs:107 (text in section 7)
+[!!] Quality gate red only because of: hotspots not reviewed yet, and new-code coverage 30 % (frontend/Python have no coverage)
