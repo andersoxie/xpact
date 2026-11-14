@@ -19,6 +19,8 @@ namespace Xpact.Api.Tests;
 /// </summary>
 public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Program>>
 {
+    private static readonly string[] AllowedWorkerVariables = ["PATH", "SystemRoot", "TEMP"];
+
     private readonly WebApplicationFactory<Program> _factory;
 
     public ValidateApiTests(WebApplicationFactory<Program> factory) => _factory = factory;
@@ -601,7 +603,7 @@ public sealed class ValidateApiTests : IClassFixture<WebApplicationFactory<Progr
             ["XPACT_API_KEY"] = "secret",
         };
         Xpact.Api.Workers.WorkerRunner.LimitEnvironment(environment);
-        Assert.Equal(new[] { "PATH", "SystemRoot", "TEMP" }, environment.Keys.OrderBy(k => k, StringComparer.Ordinal));
+        Assert.Equal(AllowedWorkerVariables, environment.Keys.OrderBy(k => k, StringComparer.Ordinal));
     }
 
     [Fact]

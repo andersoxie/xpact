@@ -58,8 +58,8 @@ public class UploadGateTests
     public void The_estimate_uses_the_largest_body_when_the_length_is_unknown()
     {
         var gate = Gate();
-        Assert.Equal(400, gate.Estimate(100, 1000));
-        Assert.Equal(4000, gate.Estimate(null, 1000));
-        Assert.Equal(4000, gate.Estimate(5000, 1000));
+        Assert.Equal(400, UploadGate.Estimate(100, 1000));
+        Assert.Equal(4000, UploadGate.Estimate(null, 1000));
+        Assert.Equal(4000, UploadGate.Estimate(5000, 1000));
     }
 }
