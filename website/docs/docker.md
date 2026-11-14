@@ -17,6 +17,7 @@ Open `http://<server>/`. ⚠️ **`AllowedHosts` is required** when the site is 
 | Tag | Content |
 |---|---|
 | `latest` | the newest website build |
+| `website-2026-11-14-2` | `incremental-test` @ `e0c3eab`: SonarQube clean-up of the backend (#371), client address in the log, coverage settings (#370); same DLLs |
 | `website-2026-11-14-1` | `incremental-test` @ `9e3cb7a`: security fixes #357–#360 (upload flood, slow clients, DLL search path) |
 | `website-2026-11-09-3` | `incremental-test` @ `c9f74cd`: old one-line footer credit removed; same DLLs and results ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09-3)) |
 | `website-2026-11-09-2` | `incremental-test` @ `f9c9e97`: footer credit, plain result lines; same DLLs and results ([release](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-09-2)) |
@@ -71,7 +72,7 @@ Checklist for a public server (Windows Server with the Containers feature). Back
 
 | # | Do this | Why |
 |---|---|---|
-| 1 | Use an image built **after 2026-11-13** (release `website-2026-11-14-1` or newer). Do not use `website-2026-11-12-1` or older | Older images lack the upload-flood, slow-client and DLL-search-path fixes (#357–#360) |
+| 1 | Use an image built **after 2026-11-13** (release `website-2026-11-14-2` or newer). Do not use `website-2026-11-12-1` or older | Older images lack the upload-flood, slow-client and DLL-search-path fixes (#357–#360) |
 | 2 | `-e AllowedHosts=<your domain>` | Otherwise every visitor gets 400 (host filter, #283) |
 | 3 | Serve HTTPS only, through a proxy. Easiest: **Cloudflare Tunnel** (free; `cloudflared` on the host, no inbound port opened, server IP hidden, free DDoS protection). Or IIS + a Let's Encrypt certificate (win-acme) | The container itself speaks plain HTTP on 8080 |
 | 4 | Do not open the container port (`-p …:8080`) in the server's firewall when a proxy or tunnel is used: only the proxy should reach it | Otherwise visitors can skip the proxy |
@@ -89,7 +90,7 @@ docker run -d --name xpact --isolation=hyperv --memory 4g --cpus 2 --restart unl
   -p 5099:8080 `
   -e AllowedHosts=xpact.example.com `
   -e Xpact__KnownNetworks__0=172.16.0.0/12 `
-  ghcr.io/andersoxie/xpact-website:website-2026-11-14-1
+  ghcr.io/andersoxie/xpact-website:website-2026-11-14-2
 ```
 
 What is already built in (no setting needed): not an administrator in the container, each document parsed in a separate low-rights worker with a 512 MB cap and 10 s timeout, upload size limit, rate limit (30/min per visitor), slow-client cut-off, security headers (CSP, HSTS on HTTPS, `X-Frame-Options`, `nosniff`), no server banner, no error details to visitors. Scans 2026-11-14: Snyk (NuGet, npm), Semgrep, Trivy (Dockerfile), nuclei: 0 vulnerabilities.
