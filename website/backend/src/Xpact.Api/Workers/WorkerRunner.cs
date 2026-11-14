@@ -63,7 +63,8 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
 
         if (!TryEnterClient(request.Client))
         {
-            _log.LogInformation("Client {Client} already uses {Max} worker(s); request refused", request.Client, _options.MaxWorkersPerClient);
+            if (_log.IsEnabled(LogLevel.Information))
+                _log.LogInformation("Client {Client} already uses {Max} worker(s); request refused", request.Client, _options.MaxWorkersPerClient);
             throw new WorkerBusyException(StatusCodes.Status429TooManyRequests, "Too many documents at once",
                 $"You already have {_options.MaxWorkersPerClient} document(s) being checked. Wait until they finish.", 5);
         }
@@ -74,8 +75,9 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
             {
                 ValidationResult result = await RunWorkerAsync(worker, dll, request, cancellationToken);
                 result.TotalMs = Math.Round(clock.Elapsed.TotalMilliseconds, 3);
-                _log.LogInformation("Parsed {Bytes} bytes with {Build}: {Verdict} in {Ms} ms",
-                    request.Document.Length, request.Build, result.Verdict, result.TotalMs);
+                if (_log.IsEnabled(LogLevel.Information))
+                    _log.LogInformation("Parsed {Bytes} bytes from {Client} with {Build}: {Verdict} in {Ms} ms",
+                        request.Document.Length, request.Client, request.Build, result.Verdict, result.TotalMs);
                 return result;
             }
             finally
@@ -95,7 +97,7 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
     /// </summary>
     private async Task WaitForSlotAsync(CancellationToken cancellationToken)
     {
-        if (_slots.Wait(0)) return;
+        if (await _slots.WaitAsync(0, cancellationToken)) return;
 
         if (Interlocked.Increment(ref _waiting) > Math.Max(0, _options.MaxQueuedRequests))
         {
@@ -272,7 +274,10 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
         {
             if (!process.HasExited) process.Kill(entireProcessTree: true);
         }
-        catch (InvalidOperationException) { }
+        catch (InvalidOperationException)
+        {
+            // It ended between the check and the kill: nothing left to stop.
+        }
     }
 
     private static string Trim(string s) => s.Length <= 300 ? s.Trim() : s[..300].Trim() + "…";

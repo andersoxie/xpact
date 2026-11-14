@@ -106,8 +106,9 @@ public sealed class WorkerLauncher(bool lowIntegrity) : IWorkerLauncher
             bool ok;
             lock (LaunchLock)
             {
-                foreach (IntPtr child in new[] { inRead, outWrite, errWrite })
-                    if (!SetHandleInformation(child, HandleFlagInherit, HandleFlagInherit)) throw new Win32Exception();
+                IntPtr[] childHandles = [inRead, outWrite, errWrite];
+                if (childHandles.Any(child => !SetHandleInformation(child, HandleFlagInherit, HandleFlagInherit)))
+                    throw new Win32Exception();
                 ok = lowIntegrity
                     ? CreateProcessAsUser(token, path, commandLine, IntPtr.Zero, IntPtr.Zero, true, flags, env,
                         workingDirectory, ref startup, out info)
