@@ -88,7 +88,8 @@ very slow on 1-byte pieces: 8 KB takes 58 s, Expat 5 ms).
 Task: run.py --jobs N, N documents at once (PC has 6 cores) -> ~5 min.
 Results must be identical, same row order. Does not speed up the parser.
 Worth it only if test 2 is run often (when chunked input changes, e.g. #272).
-[ ] #197 ............................................................ 1/2-1 day
+[x] #197 verified 2026-11-15: --jobs 16 gives byte-identical results,
+          median 148.4 s -> 27.5 s (5.4x). reports/issue-0197/README.md
 
 -----------------------------------------------------------------------------
 F. OTHER
