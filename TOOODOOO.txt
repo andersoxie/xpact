@@ -45,7 +45,7 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
           one config value, ships with next release ................ 15 min
 [x] #380 SonarQube hotspots: 3 removed (PR), 6 safe -> student marked them
           Safe in the UI (text: security-report-11-14.txt §7) ........ 5 min
-[ ] #210  Website online: image website-2026-11-14-2 + checklist ready
+[ ] #210  Website online: image website-2026-11-14-3 + checklist ready
           (student/notes/to-supervisor-2026-11-14.md) ............... Anders
 [ ] Repo Settings -> Code security: Dependabot alerts + secret
           scanning on (needs repo admin) ........................... 2 min (Anders)
@@ -72,12 +72,10 @@ D. SONARQUBE
 -----------------------------------------------------------------------------
 [x] 0 issues (196 -> 0, 2026-11-12)
 [x] #342  SHA-1 hotspot already fixed (PR #343, 2026-11-12)
-[ ] #342  2 security hotspots left (killpg on the probe's own process group,
-          the ECF XML namespace): not weaknesses, need a "Safe" review.
-          Student account has NO review rights: hotspot API returns
-          403 Forbidden. -> Anders (section B)
-[ ] Quality gate fails only on coverage: send a coverage report
-          (Python + C# only; Eiffel has no easy coverage tool) ..... 1/2-1 day
+[x] #342  2 hotspots left (killpg, ECF namespace): reviewed Safe 2026-11-14
+          (user token can read them; 0 hotspots to review)
+[x] Quality gate passes (2026-11-14/15): Python + C# coverage sent by
+          sonar-net.ps1, new-code coverage 81.8 % (#397)
 
 -----------------------------------------------------------------------------
 E. #197 - W3C "TEST 2" ON SEVERAL CORES
