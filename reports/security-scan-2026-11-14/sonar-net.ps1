@@ -15,12 +15,17 @@ $cov = "$env:TEMP\xpact-cov"; Remove-Item -Recurse -Force $cov -ErrorAction Sile
 $pyCov = Join-Path $cov "coverage-python.xml"
 New-Item -ItemType Directory -Force $cov | Out-Null
 
-# 1. Python suite under coverage.py (before the scanner starts, so a failure is visible early).
+# 1. Python suite under coverage.py, in a background job: it runs while the C# side builds and tests.
 & $Python -m coverage --version *> $null
+$PyJob = $null
 if ($LASTEXITCODE -eq 0) {
-  & $Python -m coverage run --branch --data-file "$cov\.coverage" --source=scripts,benchmarks,tools,website/scripts -m unittest discover -s tests/python -p "test_*.py"
-  "PYTHON TESTS EXIT $LASTEXITCODE"
-  & $Python -m coverage xml --data-file "$cov\.coverage" -o $pyCov
+  $PyJob = Start-Job -ScriptBlock {
+    param($Repo, $Python, $Cov, $PyCov)
+    Set-Location $Repo
+    & $Python -m coverage run --branch --data-file "$Cov\.coverage" --source=scripts,benchmarks,tools,student/tools,website/scripts -m unittest discover -s tests/python -p "test_*.py" 2>&1 | Select-Object -Last 3
+    "PYTHON TESTS EXIT $LASTEXITCODE"
+    & $Python -m coverage xml -q --data-file "$Cov\.coverage" -o $PyCov
+  } -ArgumentList (Get-Location).Path, $Python, $cov, $pyCov
 } else {
   Write-Warning "coverage.py not found for '$Python': Python coverage is not sent."
 }
@@ -37,6 +42,7 @@ try {
   if ($LASTEXITCODE) { throw "build $LASTEXITCODE" }
   dotnet test website\backend\Xpact.Web.slnx -c Release --no-build --collect:"XPlat Code Coverage" --settings website\backend\coverage.runsettings --results-directory $cov
   "TEST EXIT $LASTEXITCODE"
+  if ($PyJob) { Receive-Job -Job $PyJob -Wait -AutoRemoveJob }  # the Python coverage XML must exist before 'end'
   dotnet-sonarscanner end /d:sonar.token=$env:SONAR_TOKEN
   "END EXIT $LASTEXITCODE"
 } finally { Rename-Item sonar-project.properties.off sonar-project.properties }

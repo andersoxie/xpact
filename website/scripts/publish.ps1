@@ -29,7 +29,15 @@ try {
 } finally { Pop-Location }
 
 Write-Host "== API and worker"
-if (Test-Path $Output) { Remove-Item -Recurse -Force $Output }
+# Only ever delete an earlier publish: a folder that is empty or holds Xpact.Api.exe. A mistyped
+# -Output (for example a home or project folder) stops here instead of being wiped.
+if (Test-Path $Output) {
+	$Old = @(Get-ChildItem -LiteralPath $Output -Force)
+	if ($Old.Count -and -not (Test-Path (Join-Path $Output "Xpact.Api.exe"))) {
+		throw "$Output is not empty and is not an earlier publish (no Xpact.Api.exe): not deleting it. Pick an empty or new folder."
+	}
+	Remove-Item -Recurse -Force $Output
+}
 dotnet publish $Api -c Release -o $Output --nologo
 if ($LASTEXITCODE) { throw "dotnet publish failed" }
 

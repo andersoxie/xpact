@@ -13,7 +13,7 @@ public static class J {
   [DllImport("kernel32.dll", SetLastError=true)] public static extern bool QueryInformationJobObject(IntPtr j, int c, ref E i, uint l, IntPtr r);
 }
 "@
-$bin = "C:\Users\masou\Desktop\Lia\xpact\w12-website\website\backend\tests\Xpact.Api.Tests\bin\Release\net10.0\win-x64"
+$bin = Join-Path $PSScriptRoot "..\Xpact.Api.Tests\bin\Release\net10.0\win-x64"
 $job = [J]::CreateJobObject([IntPtr]::Zero, $null)
 $e = [J]::Make([uint64]($CapMb * 1MB))
 "set limit: " + [J]::SetInformationJobObject($job, 9, [ref]$e, [uint32][Runtime.InteropServices.Marshal]::SizeOf($e))

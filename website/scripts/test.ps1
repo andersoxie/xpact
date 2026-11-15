@@ -12,7 +12,17 @@ $ErrorActionPreference = "Stop"
 $Website = Split-Path -Parent $PSScriptRoot
 $Failed = @()
 
-Write-Host "== Backend tests"
+# The frontend build does not depend on the backend: run it in a background job at the same time.
+$FrontendDir = Join-Path $Website "frontend"
+$FrontendJob = Start-Job -ScriptBlock {
+	param($Dir)
+	Set-Location $Dir
+	if (-not (Test-Path node_modules)) { npm ci 2>&1 }
+	npm run build 2>&1
+	"FRONTEND EXIT $LASTEXITCODE"
+} -ArgumentList $FrontendDir
+
+Write-Host "== Backend tests (frontend build runs in parallel)"
 # Coverage instruments only Xpact.Api (coverage.runsettings, #370).
 $CoverageArgs = @()
 if ($Coverage) {
@@ -23,12 +33,9 @@ dotnet test (Join-Path $Website "backend\Xpact.Web.slnx") -c Release --nologo @C
 if ($LASTEXITCODE) { $Failed += "backend tests" }
 
 Write-Host "== Frontend type check and build"
-Push-Location (Join-Path $Website "frontend")
-try {
-	if (-not (Test-Path node_modules)) { npm ci }
-	npm run build
-	if ($LASTEXITCODE) { $Failed += "frontend build" }
-} finally { Pop-Location }
+$FrontendOutput = @(Receive-Job -Job $FrontendJob -Wait -AutoRemoveJob | ForEach-Object { "$_" })
+$FrontendOutput | Where-Object { $_ -notmatch '^FRONTEND EXIT ' } | Write-Host
+if (($FrontendOutput | Select-Object -Last 1) -ne "FRONTEND EXIT 0") { $Failed += "frontend build" }
 
 if ($Failed.Count) { Write-Host "FAILED: $($Failed -join ', ')" -ForegroundColor Red; exit 1 }
 Write-Host "All website checks passed." -ForegroundColor Green
