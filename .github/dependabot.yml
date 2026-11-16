@@ -1,4 +1,6 @@
 # Dependabot version updates: weekly PRs into incremental-test when a library, action or base image has a newer version.
+# Minor and patch updates come as one grouped PR per ecosystem (#420); major updates stay one PR each,
+# because they can break the build and need their own check.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -6,18 +8,34 @@ updates:
     target-branch: incremental-test
     schedule: { interval: weekly }
     labels: [dependencies]
+    groups:
+      npm-minor-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
   - package-ecosystem: nuget
     directory: /website/backend
     target-branch: incremental-test
     schedule: { interval: weekly }
     labels: [dependencies]
+    groups:
+      nuget-minor-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
   - package-ecosystem: docker
     directory: /website
     target-branch: incremental-test
     schedule: { interval: weekly }
     labels: [dependencies]
+    groups:
+      docker-minor-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
   - package-ecosystem: github-actions
     directory: /
     target-branch: incremental-test
     schedule: { interval: weekly }
     labels: [dependencies]
+    groups:
+      actions-minor-patch:
+        patterns: ["*"]
+        update-types: [minor, patch]
