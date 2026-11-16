@@ -50,16 +50,30 @@ function Invoke-TestLane {
 	$CompileArgs += @("-config", $ConfigPath, "-target", $Target)
 
 	Write-Host "== xpact tests: $AssertionLabel / $Mode =="
-	& ec @CompileArgs
-	if ($LASTEXITCODE -ne 0) {
-		throw "Eiffel compilation failed for $AssertionLabel / $Mode."
-	}
-
 	$SystemRoot = Join-Path $RepoRoot "EIFGENs\$Target"
 	if ($Mode -eq "Finalized") {
 		$CodeDir = Join-Path $SystemRoot "F_code"
 	} else {
 		$CodeDir = Join-Path $SystemRoot "W_code"
+	}
+	# Two lanes share each target (Workbench, then Finalized). Right after the first, ec can print
+	# "Cannot create project directory", leave EIFGENs\<target>\ec.lock and still EXIT 0 without generating
+	# code (a file of the fresh build still locked, e.g. by the virus scanner). So a compile counts only if
+	# ec exits 0 AND writes a fresh Makefile.SH; otherwise wait, remove the stale lock and retry, at most twice.
+	$Lock = Join-Path $SystemRoot "ec.lock"
+	$Makefile = Join-Path $CodeDir "Makefile.SH"
+	for ($Attempt = 1; $Attempt -le 3; $Attempt++) {
+		$Started = Get-Date
+		& ec @CompileArgs
+		$Fresh = (Test-Path -LiteralPath $Makefile -PathType Leaf) -and ((Get-Item -LiteralPath $Makefile).LastWriteTime -ge $Started)
+		if ($LASTEXITCODE -eq 0 -and $Fresh) { break }
+		if ($Attempt -lt 3) {
+			Write-Host "ec produced no fresh code (exit $LASTEXITCODE, lock: $(Test-Path -LiteralPath $Lock)); retry $Attempt of 2 in 10 s"
+			Start-Sleep -Seconds 10
+			Remove-Item -LiteralPath $Lock -Force -ErrorAction SilentlyContinue
+			continue
+		}
+		throw "Eiffel compilation failed for $AssertionLabel / $Mode (exit $LASTEXITCODE, fresh code: $Fresh)."
 	}
 	if (Test-Path -LiteralPath (Join-Path $CodeDir "Makefile.SH") -PathType Leaf) {
 		Push-Location $CodeDir
