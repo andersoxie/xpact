@@ -724,7 +724,7 @@ Each fix can be followed from the issue (what was wrong) to its report (cause, c
 *12 Nov counts from `gh pr list`, `gh issue list` (author CodTanium) and `git rev-list --all --author=Masoud` on 2026-11-12. Earlier columns counted slightly differently (the 359 of 11 Nov included another scope), so the steps between columns are approximate.*
 
 ### 10.3 Outstanding
-See [8.5](#85-known-issues). Also: deploying the website (supervisor's server), a Linux build, porting xpact.dll to Gobo Eiffel so programs get multi-threaded parsing (7.9), the include path for the shared Gobo ECF on Windows ([#409](https://github.com/andersoxie/xpact/issues/409)), the 3 missing contracts from the Boogie models, and a test-coverage report for the SonarQube quality gate.
+See [8.5](#85-known-issues). Also: deploying the website (supervisor's server), a Linux build, porting xpact.dll to Gobo Eiffel so programs get multi-threaded parsing (7.9), removing the global bridge lock so the Gobo DLL parses in parallel ([#418](https://github.com/andersoxie/xpact/issues/418); the Windows include problem [#409](https://github.com/andersoxie/xpact/issues/409) is fixed, PR #417), the 3 missing contracts from the Boogie models, and a test-coverage report for the SonarQube quality gate.
 
 ### 10.4 Overall
 The main question is answered with evidence. xpact's handling of valid and invalid XML **is consistent**: with Expat, with the W3C expectations, between builds and however the input is split, as far as the tested inputs go, and it stayed consistent through the large speed change. The tests that make this claim checkable are now part of the repository, and some of them run in Jenkins. The remaining differences are documented as findings with reproductions.
@@ -733,7 +733,7 @@ The main question is answered with evidence. xpact's handling of valid and inval
 
 ## 11. Reflection and learning outcomes
 
-> ✏️ *Draft. Rewrite this section in your own words; only you can say what you learned and how it felt. The points below are what the work shows.*
+> ✏️ *DRAFT written by the AI assistant (updated 2026-11-16) as a placeholder. Rewrite this section in your own words before the hand-in; only you can say what you learned and how it felt. The points below are what the work shows.*
 
 ### 11.1 Technical knowledge
 I learned XML far beyond `<tag>` syntax: well-formedness rules, DTDs, entities, encodings, and the W3C test suite. I learned what an event-based parser is, and how its C interface (handles, callbacks, chunked input) works. I learned the basics of Eiffel and Design by Contract, and how C, Eiffel, C# and Python fit together in one project.
@@ -754,7 +754,10 @@ Working through issues, pull requests and written reports made it possible to wo
 - I would run a full acceptance check earlier: in the speed work, checks per fix missed two regressions that the full run found (7.7).
 - Working in two repositories and three branches cost time when joining them; one work branch from the start would have been simpler.
 
-### 11.6 Using an AI assistant
+### 11.6 The last weeks: security and a second compiler
+Hardening the website taught me that a feature is not done when it works: it also has to fail safely (a memory cap that cannot be set must stop the worker, not run without one) and be checked from the outside by tools that do not know the code (ZAP, nuclei, CodeQL, an attack battery). Moving to Gobo Eiffel showed the value of the test suite built in the earlier weeks: one W3C profile run was enough to show that a different compiler gives the same results. Because the Gobo results were written up with exact commands, the Gobo author could read the report and suggest a fix for [#409](https://github.com/andersoxie/xpact/issues/409) the same day.
+
+### 11.7 Using an AI assistant
 Working with Claude Code was productive for exploring code, running repetitive checks and writing reports, but it needed clear rules (one issue, one PR, never commit to `main`, never report a pass without evidence) and checking of its conclusions. In my own estimate, working this way raised my efficiency about **100×**: work that would have taken me weeks alone (reading an unfamiliar Eiffel code base, building test tools, running and comparing millions of test cases, writing evidence reports) took days.
 
 ---

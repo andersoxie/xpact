@@ -15,7 +15,7 @@
 | Area | State |
 |---|---|
 | Parser (Eiffel) | ✅ unchanged since the full rerun 2026-11-08 ([results](results/AlotOfTests-2026-11-08/README.md)); the DLL bridge changed (#273, #274) and was fully retested |
-| DLL | ✅ `xpact.dll` `ADAE03D2…`, `xpact_assertions.dll` `75F43A5B…` (from `2935a8a`; same source up to `c33cade`) |
+| DLL | ✅ `xpact.dll` `32171ECD…`, `xpact_assertions.dll` `4B224D0A…` (built 2026-11-16 from `0c7e114`, after the parser changes #411 and #417; smoke ok, website 48/48) · earlier: `ADAE03D2…` / `75F43A5B…` (from `2935a8a`, same source up to `c33cade`) |
 | [#273](https://github.com/andersoxie/xpact/issues/273) exception in a DLL call | ✅ fixed: error code instead of a crash without trace ([report](../reports/issue-0273/report.md)) |
 | [#274](https://github.com/andersoxie/xpact/issues/274) threads | ✅ safe from many threads (calls take turns, no single-thread cost) · 🟡 parallel parsing: question [#304](https://github.com/andersoxie/xpact/issues/304) ([report](../reports/issue-0274/report.md)) |
 | [#275](https://github.com/andersoxie/xpact/issues/275) fair speed test vs Expat 2.8.1 | ✅ merged: median 18× slower, 0 checksum mismatches; after #273/#274 whole documents unchanged, 1-byte pieces 2-4 % ([check](../reports/issue-0276-check/README.md)) |
