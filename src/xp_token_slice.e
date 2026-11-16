@@ -194,23 +194,11 @@ feature -- Comparison
 			valid_start: a_start_index >= 1 and a_start_index <= a_buffer.count + 1
 			non_negative_count: a_count >= 0
 			range_in_bounds: a_start_index + a_count - 1 <= a_buffer.count
-		local
-			i: INTEGER
 		do
+				-- `same_characters' compares the two character areas in one call (perf: this is on the
+				-- path of every end tag).
 			if a_count = count then
-				from
-					Result := True
-					i := 1
-				invariant
-					index_in_bounds: i >= 1 and i <= count + 1
-				until
-					i > count or not Result
-				loop
-					Result := item (i) = a_buffer.item (a_start_index + i - 1)
-					i := i + 1
-				variant
-					count - i + 1
-				end
+				Result := a_count = 0 or else buffer.same_characters (a_buffer, a_start_index, a_start_index + a_count - 1, start_index)
 			end
 		end
 

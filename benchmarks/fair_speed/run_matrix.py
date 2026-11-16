@@ -7,11 +7,17 @@ TIMEOUT_S is recorded as TIMEOUT. Finished cells are appended to the TSV, so a s
 
 Usage: python -I benchmarks/fair_speed/run_matrix.py <fair_speed.exe> <inputs dir> <results.tsv>
           --xpact <xpact.dll> --expat <libexpat.dll> [--assertions <xpact_assertions.dll>] [--only <substring>]
+          [--jobs N]
+--jobs N measures N cells at the same time (default 1 = the PC is otherwise idle, the published method). Inside a cell
+the engines still alternate AB/BA in the same worker, so both see the same load and the RATIO stays fair; absolute
+times are slower than on an idle PC. Use --jobs only for ratios, or when comparing two builds run the same way.
 """
 import argparse
 import csv
 import statistics
 import subprocess
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 CHUNKS = [0, 65536, 4096, 256, 16, 1]
@@ -49,6 +55,7 @@ def parse_args():
     ap.add_argument("exe"); ap.add_argument("inputs", type=Path); ap.add_argument("tsv", type=Path)
     ap.add_argument("--xpact", required=True); ap.add_argument("--expat", required=True); ap.add_argument("--assertions")
     ap.add_argument("--only", default="")
+    ap.add_argument("--jobs", type=int, default=1)
     return ap.parse_args()
 
 
@@ -114,23 +121,33 @@ def main():
     w = csv.DictWriter(out, FIELDS, delimiter="\t")
     if new:
         w.writeheader()
-    for f, shape, size, enc, chunk, cb, ns, engines in cells(a.inputs, bool(a.assertions)):
-        todo = [e for e in engines if (f.name, str(chunk), str(cb), e) not in done]
-        if (a.only and a.only not in f.name) or not todo:
-            continue
+    lock = threading.Lock()
 
-        def run_cell(engine, iterations, f=f, chunk=chunk, cb=cb, ns=ns):
+    def one_cell(cell):
+        f, shape, size, enc, chunk, cb, ns, todo = cell
+
+        def run_cell(engine, iterations):
             return run(a.exe, dlls[engine], f, chunk, cb, ns, iterations)
 
         plan, rows = calibrate(run_cell, todo)
         times = measure(run_cell, plan)
         rows.update({e: result_row(plan[e], times[e]) for e in plan})
-        for e in todo:
-            w.writerow({"file": f.name, "shape": shape, "size": size, "encoding": enc, "chunk": chunk,
-                        "callbacks": cb, "engine": e, **rows[e]})
-        out.flush()
-        xs = {e: rows[e].get("median_ms", rows[e].get("status")) for e in todo}
-        print(f"{f.name} chunk={chunk} cb={cb} {xs}", flush=True)
+        with lock:  # one writer at a time; each finished cell is flushed, so a stopped run resumes
+            for e in todo:
+                w.writerow({"file": f.name, "shape": shape, "size": size, "encoding": enc, "chunk": chunk,
+                            "callbacks": cb, "engine": e, **rows[e]})
+            out.flush()
+            xs = {e: rows[e].get("median_ms", rows[e].get("status")) for e in todo}
+            print(f"{f.name} chunk={chunk} cb={cb} {xs}", flush=True)
+
+    work = []
+    for f, shape, size, enc, chunk, cb, ns, engines in cells(a.inputs, bool(a.assertions)):
+        todo = [e for e in engines if (f.name, str(chunk), str(cb), e) not in done]
+        if (a.only and a.only not in f.name) or not todo:
+            continue
+        work.append((f, shape, size, enc, chunk, cb, ns, todo))
+    with ThreadPoolExecutor(max_workers=max(1, a.jobs)) as pool:
+        list(pool.map(one_cell, work))
     out.close()
 
 

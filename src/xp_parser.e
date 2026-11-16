@@ -1847,7 +1847,7 @@ feature {NONE} -- Markup parsing
 				else
 					l_use_slice_stack := can_use_element_name_slices
 					if not l_use_slice_stack then
-						create l_name.make_from_string (a_input.substring (name_start, name_end))
+						l_name := a_input.substring (name_start, name_end) -- `substring' already returns a new string (perf)
 						check attached l_name as l_attached_name then
 							if namespace_mode and then not is_valid_qualified_name (l_attached_name) then
 								set_error ("invalid namespace name")
@@ -1868,7 +1868,7 @@ feature {NONE} -- Markup parsing
 								i := attribute_start
 								create l_attributes.make
 								if not attached l_name then
-									create l_name.make_from_string (a_input.substring (name_start, name_end))
+									l_name := a_input.substring (name_start, name_end) -- `substring' already returns a new string (perf)
 								end
 							end
 						else
@@ -1951,6 +1951,7 @@ feature {NONE} -- Markup parsing
 			valid_start: a_start_index >= 1 and a_start_index < a_input.count
 			starts_end_tag: has_at (a_input, a_start_index, "</")
 		local
+			l_matches_open: BOOLEAN
 			i: INTEGER
 			name_start: INTEGER
 			name_end: INTEGER
@@ -1973,7 +1974,7 @@ feature {NONE} -- Markup parsing
 					Result := a_input.count + 1
 				else
 					if namespace_mode then
-						create l_name.make_from_string (a_input.substring (name_start, name_end))
+						l_name := a_input.substring (name_start, name_end) -- `substring' already returns a new string (perf)
 						if not is_valid_qualified_name (l_name) then
 							set_error ("invalid namespace name")
 							Result := a_input.count + 1
@@ -1982,7 +1983,9 @@ feature {NONE} -- Markup parsing
 					if not has_error then
 						i := skip_spaces (a_input, i)
 						if i <= a_input.count and then a_input.item (i) = '>' then
-							if element_stack.count > 0 and then open_element_matches_range (a_input, name_start, name_end) then
+								-- Compare the end tag with the open element once; the three uses below share it.
+							l_matches_open := element_stack.count > 0 and then open_element_matches_range (a_input, name_start, name_end)
+							if l_matches_open then
 								note_position (a_start_index)
 							else
 								note_position (name_start)
@@ -1992,15 +1995,15 @@ feature {NONE} -- Markup parsing
 							if
 								handler.wants_end_element_default
 								and then element_stack.count > entity_element_floor
-								and then open_element_matches_range (a_input, name_start, name_end)
+								and then l_matches_open
 							then
 								emit_default_range (a_input, a_start_index, i)
 							end
 							if not namespace_mode and then not handler.wants_end_element_events then
-								close_element_range (a_input, name_start, name_end)
+								close_element_range_known (l_matches_open)
 							else
 								if not attached l_name then
-									create l_name.make_from_string (a_input.substring (name_start, name_end))
+									l_name := a_input.substring (name_start, name_end) -- `substring' already returns a new string (perf)
 								end
 								check attached l_name as l_attached_name then
 									close_element (l_attached_name)
@@ -3431,11 +3434,11 @@ feature {NONE} -- Character data and references
 	resolved_general_entity_name (a_name: READABLE_STRING_8): STRING_8
 			-- Follow linear aliases without growing the Eiffel call stack.
 		local
-			l_seen: HASH_TABLE [BOOLEAN, STRING_8]
+			l_seen: detachable HASH_TABLE [BOOLEAN, STRING_8]
 			l_done: BOOLEAN
 		do
 			create Result.make_from_string (a_name)
-			create l_seen.make (8)
+				-- `l_seen' is created only when an alias is followed: most references are not aliases (perf).
 			from
 			until
 				l_done or has_error
@@ -3443,9 +3446,12 @@ feature {NONE} -- Character data and references
 				if dtd_is_standalone and then external_dtd_depth = 0 and then parameter_subset_expansion_depth = 0
 					and then not parsing_external_entity and then is_general_entity_declared_externally (Result) then
 					set_error ("standalone reference to externally declared entity")
-				elseif l_seen.has (Result) or else is_entity_active (Result) then
+				elseif (attached l_seen as l_seen_names and then l_seen_names.has (Result)) or else is_entity_active (Result) then
 					set_error ("recursive entity reference")
 				elseif attached entity_value (Result) as l_value and then attached single_entity_reference_name (l_value, '&') as l_next and then not is_predefined_entity (l_next) and then attached entity_value (l_next) then
+					if not attached l_seen then
+						create l_seen.make (8)
+					end
 					l_seen.force (True, Result)
 					note_entity_expansion (l_value.count)
 					Result := l_next
@@ -6415,7 +6421,14 @@ feature {NONE} -- Event dispatch
 					end
 				end
 				if not has_error then
-					create l_name.make_from_string (a_name)
+					if attached {STRING_8} a_name as l_owned_name then
+							-- The only caller passes a string it created for this element and only reads it
+							-- afterwards; the stack keeps it instead of a second copy (perf). Strings on
+							-- `element_stack' are never changed. The event gets its own copy above.
+						l_name := l_owned_name
+					else
+						create l_name.make_from_string (a_name)
+					end
 					element_stack.extend (l_name)
 					if namespace_mode then
 						if attached l_namespace_scope as l_attached_scope and then attached l_namespace_prefixes as l_attached_prefixes then
@@ -6523,6 +6536,24 @@ feature {NONE} -- Event dispatch
 				note_current_entity_reference_position
 				set_error ("asynchronous entity")
 			elseif not open_element_matches_range (a_input, a_name_start, a_name_end) then
+				set_error ("mismatched end tag")
+			else
+				pop_open_element
+			end
+		ensure
+			popped_or_error: (not has_error) implies element_stack.count = old element_stack.count - 1
+		end
+
+	close_element_range_known (a_matches_open: BOOLEAN)
+			-- `close_element_range' when the caller has already compared the end tag with the open element:
+			-- `a_matches_open' is the result of `open_element_matches_range'.
+		do
+			if element_stack.count = 0 then
+				set_error ("unexpected end tag")
+			elseif element_stack.count <= entity_element_floor then
+				note_current_entity_reference_position
+				set_error ("asynchronous entity")
+			elseif not a_matches_open then
 				set_error ("mismatched end tag")
 			else
 				pop_open_element
@@ -7618,14 +7649,21 @@ feature {NONE} -- Scanning
 		local
 			l_end: INTEGER
 		do
-			if has_at (a_input, a_start_index, "<!--") then
-				l_end := find_sequence (a_input, "-->", a_start_index + 4)
-			elseif has_at (a_input, a_start_index, "<![CDATA[") then
-				l_end := find_sequence (a_input, "]]>", a_start_index + 9)
-			elseif has_at (a_input, a_start_index, "<!DOCTYPE") then
-				l_end := find_doctype_end (a_input, a_start_index)
-			elseif has_at (a_input, a_start_index, "<?") then
-				l_end := find_sequence (a_input, "?>", a_start_index + 2)
+				-- Only "<!" and "<?" can start a comment, CDATA section, DOCTYPE or processing instruction: an
+				-- ordinary tag goes straight to `find_markup_declaration_end'. The literals are `once' strings,
+				-- so this check (run for markup at the end of every piece) creates no objects (perf).
+			if a_start_index < a_input.count and then (a_input.item (a_start_index + 1) = '!' or a_input.item (a_start_index + 1) = '?') then
+				if has_at (a_input, a_start_index, once "<!--") then
+					l_end := find_sequence (a_input, once "-->", a_start_index + 4)
+				elseif has_at (a_input, a_start_index, once "<![CDATA[") then
+					l_end := find_sequence (a_input, once "]]>", a_start_index + 9)
+				elseif has_at (a_input, a_start_index, once "<!DOCTYPE") then
+					l_end := find_doctype_end (a_input, a_start_index)
+				elseif has_at (a_input, a_start_index, once "<?") then
+					l_end := find_sequence (a_input, once "?>", a_start_index + 2)
+				else
+					l_end := find_markup_declaration_end (a_input, a_start_index)
+				end
 			else
 				l_end := find_markup_declaration_end (a_input, a_start_index)
 			end
@@ -8717,7 +8755,19 @@ feature {NONE} -- Entity tables
 		require
 			valid_name: is_valid_name (a_name)
 		do
-			Result := a_name.same_string ("lt") or a_name.same_string ("gt") or a_name.same_string ("amp") or a_name.same_string ("apos") or a_name.same_string ("quot")
+				-- Compare characters directly: manifest strings such as "amp" would create a new string object
+				-- on every call, and this runs for every entity reference (perf).
+			inspect a_name.count
+			when 2 then
+				Result := a_name.item (2) = 't' and then (a_name.item (1) = 'l' or a_name.item (1) = 'g')
+			when 3 then
+				Result := a_name.item (1) = 'a' and then a_name.item (2) = 'm' and then a_name.item (3) = 'p'
+			when 4 then
+				Result := (a_name.item (1) = 'a' and then a_name.item (2) = 'p' and then a_name.item (3) = 'o' and then a_name.item (4) = 's')
+					or else (a_name.item (1) = 'q' and then a_name.item (2) = 'u' and then a_name.item (3) = 'o' and then a_name.item (4) = 't')
+			else
+				Result := False
+			end
 		end
 
 	is_valid_predefined_entity_name (a_name: READABLE_STRING_8): BOOLEAN
