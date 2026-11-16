@@ -33,7 +33,8 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
 [ ] #211  Billion laughs: right error (code 43) but 1.5 s vs Expat 0.1 s
           Fix: profile (1/2 day) + bulk entity expansion (1-3 days)
           = 1 1/2 - 3 1/2 days, uncertain. See section C.
-[ ] #304  Parallel parsing on several threads needed for 1.0?
+[~] #304  Parallel parsing: EiffelStudio runtime cannot scale threads; under Gobo it
+          scales (4 threads 1.8x). Next: port xpact.dll to Gobo (days).
           "no" (likely): document it ............................... 30 min
           "yes": multi-threaded Eiffel runtime, remove #274 lock,
                  thread tests ...................................... 3-5 days, risky
@@ -98,7 +99,7 @@ F. OTHER
           website-2026-11-14-2 (2026-11-14). Still open: Docker
           memory-cap check may require code 1 again ................ ~1 h
 [x] #262 and #130 closed as not planned (Jenkins dropped) ...... 2026-11-13
-[ ] Speed rerun vs Expat (#275 fair test) for final report numbers
+[x] Speed rerun vs Expat (#275 fair test): 2026-11-16, 18.27x -> 17.15x (#407)
           (currently median 18x slower). ~30 min work + 1-2 h machine.
           PC must be IDLE the whole time (no browser, no builds).
           Do AFTER speed fixes (#211, #272). Say "run the speed test".

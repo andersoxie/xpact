@@ -1,6 +1,6 @@
 # Week 9 - Analyse and draft
 
-> **10-16 November 2026, state on 2026-11-14** · work branch `incremental-test` of andersoxie/xpact; `main` is behind `incremental-test` since PR #354/#355 (not touched).
+> **10-16 November 2026, state on 2026-11-16** · work branch `incremental-test` of andersoxie/xpact; `main` is behind `incremental-test` since PR #354/#355 (not touched).
 > Week goal (guide): analyse the results and draft the report. Hand-in: 27 November.
 > 10-11 November (DLL blockers, website review findings, fair speed test) are in [week 8](week-08.md) under "2026-11-10" and "Next".
 
@@ -24,6 +24,13 @@
   - [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL (security-extended) on every PR + Dependabot weekly (PR #373). Snyk account (CodTanium) set up.
   - [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
 
+- [x] ✅ **15-16 Nov:**
+  - SonarQube quality gate passes (#397); script audit for hidden actions, safe `publish.ps1` (#401).
+  - Test 2 on 16 cores: identical results, 148 s → 27.5 s ([#197](https://github.com/andersoxie/xpact/issues/197)).
+  - Faster parser, 4 allocation changes found with a sampling profiler: DLL median 1.07×, elements 1.16× ([#407](https://github.com/andersoxie/xpact/issues/407)).
+  - Threads: EiffelStudio's runtime gets slower with more threads (#304); Gobo 26.11.14: W3C identical, the parser scales (4 threads 1.8× the best EiffelStudio setting) ([#408](https://github.com/andersoxie/xpact/issues/408)).
+  - Tooling fixes #404-#406; Gobo ECF on Windows needs an include path ([#409](https://github.com/andersoxie/xpact/issues/409)).
+
 ## What the evidence shows
 **Observed, not expected:**
 
@@ -44,6 +51,10 @@
 | Other scanners (14 Nov) | ZAP: only "HTTP only" (local test has no HTTPS); nuclei 0; Semgrep 0; CodeQL 0; Snyk/npm/NuGet/Trivy 0; gitleaks 58 = file checksums |
 | WAF (CRS 4.25) | pasted XML 14/14 blocked (403); file upload XXE passes the WAF (the parser still refuses it) |
 | Host filter | `Host: xpact.example.com` → 400; with `AllowedHosts` → 200 |
+
+| Parser speed (16 Nov, DLL, idle, 60 cells) | median 1.07×, elements 1.16×; W3C 0 failed both builds; test 2 identical |
+| Threads, 16,000 parses | EiffelStudio 1 → 16 threads: 0.44 → 1.83 s; Gobo (tuned GC) 0.39 → 0.24 s at 4 threads |
+| Gobo W3C profile | 1,974 passed, 0 failed, 0 cases different from EiffelStudio (both modes) |
 
 ## Blocked
 - Website deployment ([#210](https://github.com/andersoxie/xpact/issues/210)): image and checklist are ready (docker.md "Hosting on the internet safely"); the server, domain, HTTPS and `AllowedHosts` are the supervisor's.

@@ -105,7 +105,7 @@ flowchart LR
 ### ⚡ Speed
 
 > [!NOTE]
-> The big gains are against xpact's own earlier versions. Against native Expat 2.8.1, the fair speed test shows xpact is a median **18× slower**, and exactly where.
+> The big gains are against xpact's own earlier versions. Against native Expat 2.8.1, the fair speed test shows xpact is a median **18× slower**, and exactly where. After the allocation work of 16 November (section 7.9): **17.15×** in the idle 60-cell comparison; multi-threaded parsing works with Gobo Eiffel.
 
 | Measure | Before | After |
 |---|---:|---:|
@@ -417,6 +417,19 @@ The internship runs for eight weeks, 6 October – 27 November 2026. Weeks 1–7
 - Note: [week-08](../notes/weekly/week-08.md).
 </details>
 
+<details>
+<summary><b>Week 9 – Security, quality, speed and threads (10-16 Nov)</b></summary>
+
+- **Results:**
+  - ✅ **Website security** (13-14 Nov): 4 findings fixed (#357-#360); WAF and antivirus tested; Snyk, Semgrep, CodeQL, nuclei, ZAP; hosting checklist; Docker image `website-2026-11-14-3` ([report](../../reports/security-scan-2026-11-14/README.md)).
+  - ✅ **SonarQube:** C# analysed for the first time, 76 → 0 issues; hotspots reviewed; **quality gate passes** (Python coverage sent, new-code coverage 81.8 %) (#371, #380, #397).
+  - ✅ **Scripts audited** for hidden actions (#401); 3 tooling problems fixed (#404-#406).
+  - ✅ **Test 2 on 16 cores:** identical results, 148 s → 27.5 s ([#197](https://github.com/andersoxie/xpact/issues/197)).
+  - ✅ **Faster parser** ([#407](https://github.com/andersoxie/xpact/issues/407), section 7.9): through the DLL median 1.07×, elements 1.16×, results unchanged.
+  - ✅ **Threads and Gobo** ([#304](https://github.com/andersoxie/xpact/issues/304), [#408](https://github.com/andersoxie/xpact/issues/408), section 7.9): EiffelStudio's runtime cannot use several cores in one process; under Gobo Eiffel the parser scales (4 threads 1.8× the best EiffelStudio setting) and the W3C results are identical.
+- Note: [week-09](../notes/weekly/week-09.md).
+</details>
+
 ---
 
 ## 7. Technical investigations
@@ -516,7 +529,15 @@ Eight problems, chosen to show different kinds of work: a build problem, a contr
 - **Verification.** The models of the old code fail at exactly the two known bugs; the models of the current code are proven.
 - **Evaluation.** ✅ It works on real bugs. 🟡 **Open finding:** the proofs need 3 facts that no Eiffel contract states. Adding them as contracts needs its own issue and a rerun of the Eiffel test matrix.
 
-### 7.9 Overall technical findings
+### 7.9 Fewer allocations, threads and Gobo Eiffel (week 9)
+- **Problem.** xpact is a median 18× slower than Expat, and calls from several threads take turns (#274). The supervisor moved to Gobo Eiffel.
+- **Method.** A sampling profiler built from the Windows debugger (`cdbX64.exe` with function names from a `-DEBUG` link), first on an Eiffel probe, then on the DLL as programs call it; every change checked with the full W3C runner, test 2 and the fair speed test ([report](../../reports/perf-allocations/README.md)).
+- **Speed.** Four small changes that remove allocations (end-tag comparison, manifest strings that created new objects on every call, a hash table per entity reference, copies of copies of element names). Through the DLL, idle PC, 60 cells: median **1.07×**, element-heavy documents **1.16×**; against Expat 18.27× → **17.15×** slower. Lesson: the first probe showed 1.07-1.46×, but it took a code path that programs using the DLL do not; only the DLL measurement counts.
+- **Threads ([#304](https://github.com/andersoxie/xpact/issues/304)).** A multi-threaded EiffelStudio DLL was made to run on several threads (thread registration with the runtime, a lock around the shared tables, one input buffer per thread), but a pure-Eiffel test shows EiffelStudio's runtime gets **slower** with more threads (1 thread 0.44 s, 16 threads 1.83 s): one allocator lock and a stop-the-world GC.
+- **Gobo Eiffel ([#408](https://github.com/andersoxie/xpact/issues/408), [report](../../reports/gobo-2026-11-16/README.md)).** The same parser compiled with Gobo 26.11.14: W3C profile **identical** to EiffelStudio (1,974 passed, 0 cases different, both assertion modes); on threads it **scales**: 4 threads 0.24 s with a tuned Boehm GC = 1.8× the best EiffelStudio setting, 15 MB peak memory.
+- **Evaluation.** ✅ Faster, same results. ✅ Multi-threaded parsing works with Gobo. 🟡 Not yet for programs using the DLL: the C bridge is written for EiffelStudio's runtime; Gobo has a compatible `eif_cecil.h` layer, so a port looks feasible (days). 🟡 The shared Gobo ECF needs an include path on Windows ([#409](https://github.com/andersoxie/xpact/issues/409)).
+
+### 7.10 Overall technical findings
 1. **Assertions find real bugs that assertions-off testing hides** (7.2).
 2. **Evidence needs to be checked as carefully as code**: wrong verdict rules (676 false "failures"), tests that exit 0 on failure (7.3), a suite that tested the wrong library (7.5), and per-fix checks that missed two regressions found by the acceptance run (7.7).
 3. **xpact's verdicts agree with Expat everywhere it was compared.** The remaining differences are in *how* errors are reported (positions, codes, events), not in *whether* a document is accepted.
@@ -702,7 +723,7 @@ Each fix can be followed from the issue (what was wrong) to its report (cause, c
 *12 Nov counts from `gh pr list`, `gh issue list` (author CodTanium) and `git rev-list --all --author=Masoud` on 2026-11-12. Earlier columns counted slightly differently (the 359 of 11 Nov included another scope), so the steps between columns are approximate.*
 
 ### 10.3 Outstanding
-See [8.5](#85-known-issues). Also: deploying the website (supervisor's server), a Linux build, a rerun of the fair speed matrix on an idle PC, the 3 missing contracts from the Boogie models, two SonarQube security hotspots to mark "Safe", and a test-coverage report for the SonarQube quality gate.
+See [8.5](#85-known-issues). Also: deploying the website (supervisor's server), a Linux build, porting xpact.dll to Gobo Eiffel so programs get multi-threaded parsing (7.9), the include path for the shared Gobo ECF on Windows ([#409](https://github.com/andersoxie/xpact/issues/409)), the 3 missing contracts from the Boogie models, and a test-coverage report for the SonarQube quality gate.
 
 ### 10.4 Overall
 The main question is answered with evidence. xpact's handling of valid and invalid XML **is consistent**: with Expat, with the W3C expectations, between builds and however the input is split, as far as the tested inputs go, and it stayed consistent through the large speed change. The tests that make this claim checkable are now part of the repository, and some of them run in Jenkins. The remaining differences are documented as findings with reproductions.

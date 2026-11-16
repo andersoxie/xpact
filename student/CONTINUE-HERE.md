@@ -1,6 +1,6 @@
 # Continue here
 
-> Short and current: state on **2026-11-14** (week 9). Hand-in: **27 November 2026**.
+> Short and current: state on **2026-11-16** (week 9). Hand-in: **27 November 2026**.
 > Start with `git fetch --all`, then read this file, [the full to-do list](notes/left-to-do-2026-11-11.md)
 > and [PLAN.md](PLAN.md) ("Next"). Rules: the repo's `CLAUDE.md` and [VERSIONING.md](VERSIONING.md) (box at the top).
 
@@ -28,9 +28,16 @@
 | Website proxy | ✅ untrusted proxy logged, `KnownNetworks` (#312); the real proxy setting is chosen at deployment ([docker.md](../website/docs/docker.md#behind-a-reverse-proxy)) |
 | Website deployment | 🟡 not online; package for Anders ready: [to-supervisor-2026-11-14.md](notes/to-supervisor-2026-11-14.md) ([#210](https://github.com/andersoxie/xpact/issues/210)) |
 | Tooling | ✅ #302 (no silent DLL rebuild), #306 (report logs committed), #308 (Store python alias), [#318](https://github.com/andersoxie/xpact/issues/318) (`fix.ps1` merge commits into `incremental-test`, refuses `main`), [#319](https://github.com/andersoxie/xpact/issues/319) (DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL=1` blocks rebuilds) |
-| SonarQube | ✅ **2026-11-14: first scan with C# (.NET scanner), 76 → 0 issues** (#371, PRs #375-#378); 🟡 9 hotspots: 3 removed, 6 to mark Safe ([#380](https://github.com/andersoxie/xpact/issues/380)) · ✅ scan works with the student's token (2026-11-12); **196 → 0 issues**, duplication 14 % → 0 % (#325-#332, PRs #333-#340) ([summary](../reports/sonarqube-2026-11-12/README.md)) · 🟡 3 hotspots need review rights · 🔴 gate: no coverage report yet · run: `student\tools\sonar\run-sonar.ps1 -Scanner %USERPROFILE%\tools\sonar\sonar-scanner-7.0.2.4839-windows-x64\bin\sonar-scanner.bat` |
+| SonarQube | ✅ **quality gate passes** (2026-11-15: 0 issues, 0 hotspots to review, new-code coverage 81.8 %, #397); run `reports\security-scan-2026-11-14\sonar-net.ps1` · ✅ 2026-11-14: first scan with C#, 76 → 0 issues (#371); hotspots reviewed (#380) · ✅ scan works with the student's token (2026-11-12); **196 → 0 issues**, duplication 14 % → 0 % (#325-#332, PRs #333-#340) ([summary](../reports/sonarqube-2026-11-12/README.md)) · 🟡 3 hotspots need review rights · 🔴 gate: no coverage report yet · run: `student\tools\sonar\run-sonar.ps1 -Scanner %USERPROFILE%\tools\sonar\sonar-scanner-7.0.2.4839-windows-x64\bin\sonar-scanner.bat` |
+
+| Parser speed | ✅ 2026-11-16: DLL median 1.07×, elements 1.16×, 0 checksum mismatches; vs Expat 17.15× ([#407](https://github.com/andersoxie/xpact/issues/407), [report](../reports/perf-allocations/README.md)) |
+| Threads / Gobo | ✅ EiffelStudio's runtime cannot scale threads (#304); ✅ under Gobo 26.11.14 the parser scales and W3C is identical (#408); 🟡 xpact.dll not yet built with Gobo ([report](../reports/gobo-2026-11-16/README.md)). Gobo installed in `%USERPROFILE%\tools\gobo-26.11.14` |
+| Tooling | ✅ script audit `student/tools/audit-scripts.py` (#401); matrix lock retry, `-EiffelBuild` list, Python resolver (#404-#406); test 2 `--jobs 16` (#197); fair speed `--jobs N` |
 
 ## 3. Next (in this order)
+
+- [ ] **Port xpact.dll to Gobo** so programs and the website get multi-threaded parsing. Several days.
+- [ ] [#409](https://github.com/andersoxie/xpact/issues/409) Gobo ECF include path on Windows (decide with the supervisor; workaround in the Gobo report).
 
 - [x] ✅ **Hand-in report** updated to 2026-11-12 (#346): numbers recounted, SonarQube, tooling, `main` sync. Left for the student: the ✏️ reflection sections in your own words, then the demonstration.
 - [ ] **Ask Anders in one go:** #304 parallel parsing, #293 depth limit, #211 1.5 s, #171, #13, #210 deployment, licence. See [left-to-do §3](notes/left-to-do-2026-11-11.md#3-questions-for-anders-ask-in-one-go).
