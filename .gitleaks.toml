@@ -1,0 +1,10 @@
+# Gitleaks settings for this repository: the default rules, plus one known-safe pattern.
+title = "xpact gitleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "SHA-256 checksums of source files in result JSON (key = an Eiffel file name, value = 64 hex digits): not secrets"
+regexTarget = "match"
+regexes = ['''[\w./\\-]*\.e"\s*:\s*"[0-9a-fA-F]{64}"''']
