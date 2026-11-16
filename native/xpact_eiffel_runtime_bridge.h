@@ -223,4 +223,8 @@ XPACT_UnregisterEiffelRuntimeBridge(void);
 }
 #endif
 
+/* #304 trial: guards the installer's shared tables; no-ops without EIF_THREADS. */
+void xp_registry_lock(void);
+void xp_registry_unlock(void);
+
 #endif

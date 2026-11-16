@@ -21,7 +21,6 @@ feature {NONE} -- Initialization
 		do
 			create live_parser_ids.make (16)
 			create parse_buffers.make (16)
-			create input_chunk.make (Input_chunk_reuse_limit)
 			create failed_parser_codes.make (4)
 			diagnostic_events_enabled := True
 			trace_exceptions := attached (create {EXECUTION_ENVIRONMENT}).item ("XPACT_EXCEPTION_TRACE") as l_value
@@ -67,9 +66,11 @@ feature -- Access
 			l_id: INTEGER
 		do
 			l_id := pointer_to_integer (a_handle)
+			registry_lock
 			if l_id > 0 and then live_parser_ids.has (l_id) and then not failed_parser_codes.has (l_id) then
 				Result := live_parser_ids.item (l_id)
 			end
+			registry_unlock
 		end
 
 	failure_count: INTEGER
@@ -97,8 +98,10 @@ feature -- Parser lifecycle callbacks
 				if a_encoding /= default_pointer then
 					l_status := l_parser.set_initial_encoding (a_encoding)
 				end
+				registry_lock
 				l_id := eif_object_id (l_parser)
 				live_parser_ids.force (l_parser, l_id)
+				registry_unlock
 				Result := integer_to_pointer (l_id)
 			end
 		ensure
@@ -818,7 +821,9 @@ feature -- Parse callbacks
 				l_id := pointer_to_integer (a_parser)
 				if attached parser_for (a_parser) and then a_length >= 0 then
 					create l_buffer.make (a_length + 1)
+					registry_lock
 					parse_buffers.force (l_buffer, l_id)
+					registry_unlock
 					Result := l_buffer.item
 				end
 			end
@@ -832,6 +837,7 @@ feature -- Parse callbacks
 	parse_buffer (a_parser: POINTER; a_length: INTEGER; a_is_final: BOOLEAN): INTEGER
 			-- Parse the current buffer for `a_parser'.
 		local
+			l_parse_buffer: detachable MANAGED_POINTER
 			l_failed: BOOLEAN
 			l_id: INTEGER
 		do
@@ -840,7 +846,10 @@ feature -- Parse callbacks
 				Result := 0
 			else
 				l_id := pointer_to_integer (a_parser)
-				if attached parser_for (a_parser) as l_parser and then attached parse_buffers.item (l_id) as l_buffer and then a_length >= 0 and then a_length <= l_buffer.count then
+				registry_lock
+				l_parse_buffer := parse_buffers.item (l_id)
+				registry_unlock
+				if attached parser_for (a_parser) as l_parser and then attached l_parse_buffer as l_buffer and then a_length >= 0 and then a_length <= l_buffer.count then
 					Result := parsed_chunk (l_parser, l_buffer.item, a_length, a_is_final)
 				else
 					Result := Xml_status_error
@@ -1116,8 +1125,10 @@ feature {NONE} -- Failure handling (#273)
 		local
 			l_id, l_code: INTEGER
 		do
+			registry_lock
 			failure_count := failure_count + 1
-			input_chunk_in_use := False
+			registry_unlock
+			input_chunk_flag.put (False)
 			l_code := Xml_error_unexpected_state
 			if attached exception_manager.last_exception as l_exception then
 				if attached {NO_MORE_MEMORY} l_exception then
@@ -1132,13 +1143,15 @@ feature {NONE} -- Failure handling (#273)
 				end
 			end
 			l_id := pointer_to_integer (a_parser)
+			registry_lock
 			if l_id > 0 and then live_parser_ids.has (l_id) then
 				failed_parser_codes.force (l_code, l_id)
 				parse_buffers.remove (l_id)
 			end
+			registry_unlock
 		ensure
 			counted: failure_count = old failure_count + 1
-			reusable_input: not input_chunk_in_use
+			reusable_input: not input_chunk_flag.item
 		end
 
 	forget_parser (a_parser: POINTER)
@@ -1147,12 +1160,14 @@ feature {NONE} -- Failure handling (#273)
 			l_id: INTEGER
 		do
 			l_id := pointer_to_integer (a_parser)
+			registry_lock
 			if l_id > 0 and then live_parser_ids.has (l_id) then
 				parse_buffers.remove (l_id)
 				failed_parser_codes.remove (l_id)
 				eif_object_id_free (l_id)
 				live_parser_ids.remove (l_id)
 			end
+			registry_unlock
 		ensure
 			parser_not_live: not attached parser_for (a_parser)
 		end
@@ -1233,9 +1248,35 @@ feature {NONE} -- Storage
 
 	input_chunk: STRING_8
 			-- String reused for the bytes of one `parse' call, so that small chunks need no new string.
+			-- A `once': one per thread in the multi-threaded runtime, so threads never share it (#304).
+		once
+			create Result.make (Input_chunk_reuse_limit)
+		end
 
-	input_chunk_in_use: BOOLEAN
+	input_chunk_flag: CELL [BOOLEAN]
 			-- Is a `parse' call reading `input_chunk' right now (a callback may start another parse)?
+			-- Per thread, like `input_chunk'.
+		once
+			create Result.put (False)
+		end
+
+	registry_lock
+			-- Guard the shared parser tables (#304); no-op in the single-threaded runtime.
+		external
+			-- "blocking": the compiler saves this routine's object references, so a garbage
+			-- collection on another thread while this one waits cannot leave them stale.
+			"C blocking use %"xpact_eiffel_runtime_bridge.h%""
+		alias
+			"xp_registry_lock"
+		end
+
+	registry_unlock
+			-- Release `registry_lock'.
+		external
+			"C use %"xpact_eiffel_runtime_bridge.h%""
+		alias
+			"xp_registry_unlock"
+		end
 
 	Input_chunk_reuse_limit: INTEGER = 65536
 			-- Larger chunks get a string of their own, so that `input_chunk' stays small.
@@ -1252,14 +1293,14 @@ feature {NONE} -- Parsing
 		local
 			l_chunk: STRING_8
 		do
-			if input_chunk_in_use or else a_length = 0 or else a_length > Input_chunk_reuse_limit then
+			if input_chunk_flag.item or else a_length = 0 or else a_length > Input_chunk_reuse_limit then
 				Result := a_parser.parse (bytes_to_string (a_bytes, a_length), a_is_final)
 			else
 				l_chunk := input_chunk
 				l_chunk.from_c_substring (a_bytes, 1, a_length)
-				input_chunk_in_use := True
+				input_chunk_flag.put (True)
 				Result := a_parser.parse (l_chunk, a_is_final)
-				input_chunk_in_use := False
+				input_chunk_flag.put (False)
 			end
 		end
 

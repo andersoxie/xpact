@@ -12,7 +12,54 @@
  * XML_GetCurrentLineNumber) still works. Parsers on different threads are therefore safe but do
  * not parse in parallel. `__finally` releases the lock even if a call is left by an exception.
  */
-#ifdef _WIN32
+#if defined(_WIN32) && defined(EIF_THREADS)
+/*
+ * #304 trial: multi-threaded Eiffel runtime. No process-wide lock: parsers on different threads
+ * parse in parallel. A thread that was not started by Eiffel registers once; while it is outside
+ * xpact it is marked "in C", so the garbage collector of another thread does not wait for it.
+ * The depth counter keeps re-entrant calls (a handler calling XML_GetCurrentLineNumber) inside.
+ */
+#include <windows.h>
+#include "eif_threads.h"
+#include "eif_cecil.h"
+#include "eif_except.h"
+#include "eif_local.h"
+#include <stdio.h> /* TRACE #304 */
+static __declspec(thread) int xp_eiffel_depth;
+static __declspec(thread) int xp_eiffel_registered;
+
+static void
+xp_eiffel_lock_enter(void) {
+	if (!xp_eiffel_registered) {
+		fprintf(stderr, "[mt] thread %lu: initialized=%d\n", GetCurrentThreadId(), eif_thr_is_initialized()); fflush(stderr);
+		if (!eif_thr_is_initialized()) {
+			/* EiffelStudio's recipe for a thread not created by the Eiffel runtime
+			 * (EIF_INITIALIZE_AUX_THREAD in eif_setup.h): register, set the thread context
+			 * (once values, ...), create the local-variable stacks. */
+			eif_thr_register(1);
+			eif_set_thr_context();
+			initstk();
+			fprintf(stderr, "[mt] registered\n"); fflush(stderr);
+		}
+		/* Start every outside thread in the known state "in C". */
+		if (EIF_IS_IN_EIFFEL_CODE) {
+			EIF_ENTER_C;
+		}
+		fprintf(stderr, "[mt] state ok\n"); fflush(stderr);
+		xp_eiffel_registered = 1;
+	}
+	if (xp_eiffel_depth++ == 0) {
+		EIF_EXIT_C;
+	}
+}
+
+static void
+xp_eiffel_lock_leave(void) {
+	if (--xp_eiffel_depth == 0) {
+		EIF_ENTER_C;
+	}
+}
+#elif defined(_WIN32)
 #include <windows.h>
 static INIT_ONCE xp_eiffel_lock_once = INIT_ONCE_STATIC_INIT;
 static CRITICAL_SECTION xp_eiffel_lock;
@@ -38,6 +85,35 @@ xp_eiffel_lock_leave(void) {
 }
 #else
 #error "xpact: the Eiffel runtime bridge needs a call lock on this platform (#274)"
+#endif
+
+/*
+ * Registry lock (#304 trial): guards the installer's shared tables (live parsers, failed parsers,
+ * parse buffers). Held only for a table operation, never while parsing. A waiting thread is marked
+ * "in C", so a garbage collection started by the lock holder does not wait for it (no deadlock).
+ */
+#if defined(_WIN32) && defined(EIF_THREADS)
+static INIT_ONCE xp_registry_once = INIT_ONCE_STATIC_INIT;
+static CRITICAL_SECTION xp_registry_cs;
+static BOOL CALLBACK
+xp_init_registry(PINIT_ONCE once, PVOID parameter, PVOID *context) {
+	(void)once; (void)parameter; (void)context;
+	InitializeCriticalSectionAndSpinCount(&xp_registry_cs, 4000);
+	return TRUE;
+}
+void
+xp_registry_lock(void) {
+	/* Called as a "blocking" external: the generated code already marks the thread "in C". */
+	InitOnceExecuteOnce(&xp_registry_once, xp_init_registry, NULL, NULL);
+	EnterCriticalSection(&xp_registry_cs);
+}
+void
+xp_registry_unlock(void) {
+	LeaveCriticalSection(&xp_registry_cs);
+}
+#else
+void xp_registry_lock(void) {}
+void xp_registry_unlock(void) {}
 #endif
 
 typedef struct XPACT_EiffelRuntimeBridgeState {

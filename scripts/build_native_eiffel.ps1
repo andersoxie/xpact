@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
 	[string] $OutputDir = "build\native-eiffel",
-	[ValidateSet("Production", "Assertions")]
+	[ValidateSet("Production", "Assertions", "MultiThread")]
 	[string] $BuildTier = "Production",
 	[switch] $SkipSmoke
 )
@@ -11,12 +11,13 @@ $ErrorActionPreference = "Stop"
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $OutputRoot = Join-Path $RepoRoot $OutputDir
-$EcfObjectRoot = Join-Path $RepoRoot "build\native-eiffel"
+# MultiThread (#304 trial) keeps its objects apart: they are compiled with EIF_THREADS.
+$EcfObjectRoot = Join-Path $RepoRoot $(if ($BuildTier -eq "MultiThread") { "build\native-eiffel-mt" } else { "build\native-eiffel" })
 
 # Many runners call this script unless they get a skip flag (#319). Say which DLL
 # is replaced, and refuse when the caller froze the tested DLL ("build once, test
 # many"): set XPACT_FROZEN_DLL=1 before a test run; child scripts inherit it.
-$TargetDll = Join-Path $OutputRoot $(if ($BuildTier -eq "Assertions") { "xpact_assertions.dll" } else { "xpact.dll" })
+$TargetDll = Join-Path $OutputRoot $(switch ($BuildTier) { "Assertions" { "xpact_assertions.dll" } "MultiThread" { "xpact_mt.dll" } default { "xpact.dll" } })
 function Get-DllHash([string] $Path) {
 	if (Test-Path -LiteralPath $Path -PathType Leaf) { (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash } else { "(none)" }
 }
@@ -99,11 +100,12 @@ function Compile-CObject {
 		[string] $Object,
 		[switch] $BuildingDll
 	)
+	$Threads = if ($BuildTier -eq "MultiThread") { "/DEIF_THREADS" } else { "" }
 	$IseInclude = Get-IseInclude
 	$Include = Join-Path $RepoRoot "include"
 	$Native = Join-Path $RepoRoot "native"
 	$Defines = if ($BuildingDll) { "/DXPACT_BUILDING_DLL" } else { "" }
-	$Command = "cl /nologo /O2 /MT /c $Defines /I`"$Include`" /I`"$Native`" /I`"$IseInclude`" `"$Source`" /Fo:`"$Object`""
+	$Command = "cl /nologo /O2 /MT /c $Defines $Threads /I`"$Include`" /I`"$Native`" /I`"$IseInclude`" `"$Source`" /Fo:`"$Object`""
 	Invoke-VcCommand $Command
 }
 
@@ -125,9 +127,9 @@ function Get-LinkResponseFile {
 	throw "Expected Eiffel link response file not found: $Expected"
 }
 
-$EiffelTarget = if ($BuildTier -eq "Assertions") { "xpact_native_library_assertions" } else { "xpact_native_library" }
-$DllName = if ($BuildTier -eq "Assertions") { "xpact_assertions.dll" } else { "xpact.dll" }
-$LibName = if ($BuildTier -eq "Assertions") { "xpact_assertions.lib" } else { "xpact.lib" }
+$EiffelTarget = switch ($BuildTier) { "Assertions" { "xpact_native_library_assertions" } "MultiThread" { "xpact_native_library_mt" } default { "xpact_native_library" } }
+$DllName = switch ($BuildTier) { "Assertions" { "xpact_assertions.dll" } "MultiThread" { "xpact_mt.dll" } default { "xpact.dll" } }
+$LibName = switch ($BuildTier) { "Assertions" { "xpact_assertions.lib" } "MultiThread" { "xpact_mt.lib" } default { "xpact.lib" } }
 $SmokeName = if ($BuildTier -eq "Assertions") { "xpact_assertions_eiffel_dll_smoke.exe" } else { "xpact_eiffel_dll_smoke.exe" }
 
 $NativeObj = Join-Path $EcfObjectRoot "xpact_native.obj"
@@ -207,6 +209,7 @@ $Lib = Join-Path $OutputRoot $LibName
 $DllLink = Join-Path $FinalCode "$EiffelTarget.dll.lnk"
 $Response = New-Object System.Collections.Generic.List[string]
 $Response.Add("-DLL -NOLOGO -NODEFAULTLIB:libc -OUT:`"$Dll`" -IMPLIB:`"$Lib`"")
+if ($BuildTier -eq "MultiThread") { $Response.Add("-DEBUG") }  # #304 trial: function names for cdb
 $Response.Add("`"$DllMainObj`"")
 foreach ($Line in Get-Content -Path $OriginalLink) {
 	$Trimmed = $Line.Trim()

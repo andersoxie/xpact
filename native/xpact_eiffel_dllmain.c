@@ -3,6 +3,7 @@
 #include "eif_main.h"
 #include "eif_macros.h"
 #include "eif_sig.h"
+#include "eif_garcol.h"
 
 extern void egc_init_plug(void);
 extern void egc_rcdt_init(void);
@@ -45,6 +46,10 @@ xp_initialize_eiffel_bridge(HINSTANCE instance) {
 		emain(argc, argv);
 	}
 	xp_eiffel_initialized = 1;
+#ifdef EIF_THREADS
+	if (GetEnvironmentVariableA("XPACT_GC_OFF", NULL, 0) > 0) { eif_gc_stop(); } /* TRACE #304: GC experiment */
+	EIF_ENTER_C; /* #304 trial: the loading thread is in C until it calls xpact */
+#endif
 }
 
 BOOL WINAPI
