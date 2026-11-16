@@ -64,7 +64,7 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
         if (!TryEnterClient(request.Client))
         {
             if (_log.IsEnabled(LogLevel.Information))
-                _log.LogInformation("Client {Client} already uses {Max} worker(s); request refused", request.Client, _options.MaxWorkersPerClient);
+                _log.LogInformation("Client {Client} already uses {Max} worker(s); request refused", LogText.OneLine(request.Client), _options.MaxWorkersPerClient);
             throw new WorkerBusyException(StatusCodes.Status429TooManyRequests, "Too many documents at once",
                 $"You already have {_options.MaxWorkersPerClient} document(s) being checked. Wait until they finish.", 5);
         }
@@ -77,7 +77,8 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
                 result.TotalMs = Math.Round(clock.Elapsed.TotalMilliseconds, 3);
                 if (_log.IsEnabled(LogLevel.Information))
                     _log.LogInformation("Parsed {Bytes} bytes from {Client} with {Build}: {Verdict} in {Ms} ms",
-                        request.Document.Length, request.Client, request.Build, result.Verdict, result.TotalMs);
+                        request.Document.Length, LogText.OneLine(request.Client), LogText.OneLine(request.Build),
+                        result.Verdict, result.TotalMs);
                 return result;
             }
             finally
@@ -221,7 +222,7 @@ public sealed class WorkerRunner : IWorkerRunner, IDisposable
             // The worker's error output can name server paths or show a stack trace:
             // it goes to the server log only, never to the visitor.
             if (!string.IsNullOrWhiteSpace(errors))
-                _log.LogWarning("Worker error output ({Build}): {Errors}", request.Build, Trim(errors));
+                _log.LogWarning("Worker error output ({Build}): {Errors}", LogText.OneLine(request.Build), LogText.OneLine(Trim(errors)));
 
             if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
             {
