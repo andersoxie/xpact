@@ -234,6 +234,13 @@ XML_ParserCreate_MM(
 	XML_Parser parser;
 	XML_Memory_Handling_Suite localMemory;
 
+#ifdef XP_GOBO_RUNTIME
+	{
+		/* Gobo Eiffel build (reports/gobo-dll): start the Eiffel runtime on first use, not in DllMain. */
+		extern void xp_gobo_ensure_runtime(void);
+		xp_gobo_ensure_runtime();
+	}
+#endif
 	if (memsuite != NULL) {
 		if (memsuite->malloc_fcn == NULL || memsuite->realloc_fcn == NULL || memsuite->free_fcn == NULL) {
 			return NULL;

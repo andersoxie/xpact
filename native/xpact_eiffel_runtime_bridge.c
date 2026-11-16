@@ -26,8 +26,16 @@ xp_init_eiffel_lock(PINIT_ONCE once, PVOID parameter, PVOID *context) {
 	return TRUE;
 }
 
+#ifdef XP_GOBO_RUNTIME
+/* Gobo Eiffel build (reports/gobo-dll): a thread that Gobo did not create gets a Gobo context first. */
+extern void xp_gobo_ensure_thread(void);
+#endif
+
 static void
 xp_eiffel_lock_enter(void) {
+#ifdef XP_GOBO_RUNTIME
+	xp_gobo_ensure_thread();
+#endif
 	InitOnceExecuteOnce(&xp_eiffel_lock_once, xp_init_eiffel_lock, NULL, NULL);
 	EnterCriticalSection(&xp_eiffel_lock);
 }
