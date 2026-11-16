@@ -219,6 +219,10 @@ XPACT_RegisterEiffelRuntimeBridgePointers(
 XPACT_NATIVE_API void XMLCALL
 XPACT_UnregisterEiffelRuntimeBridge(void);
 
+/* Short lock around the Eiffel installer's shared tables (#418): real in the Gobo build, no-op otherwise. */
+void xp_registry_lock(void);
+void xp_registry_unlock(void);
+
 #ifdef __cplusplus
 }
 #endif

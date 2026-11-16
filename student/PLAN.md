@@ -237,7 +237,9 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 - [x] ✅ [#407](https://github.com/andersoxie/xpact/issues/407) faster parser: DLL median 1.07×, elements 1.16×, results unchanged (PR #411, [report](../reports/perf-allocations/README.md)).
 - [x] ✅ [#304](https://github.com/andersoxie/xpact/issues/304) / [#408](https://github.com/andersoxie/xpact/issues/408): EiffelStudio's runtime cannot scale threads; under Gobo the parser scales and the W3C results are identical (PR #412, [threads](../reports/issue-0304/README.md), [Gobo](../reports/gobo-2026-11-16/README.md)).
 - [x] ✅ [#414](https://github.com/andersoxie/xpact/issues/414) xpact.dll built with Gobo + msc: identical results (test 2, 204 speed cells), any thread; 0.59× the EiffelStudio DLL (0.90× GC tuned) ([report](../reports/gobo-dll/README.md)).
-- [ ] Gobo DLL: remove the global bridge lock (parallel C API), profile the callback cost (#414 follow-ups).
+- [x] ✅ [#418](https://github.com/andersoxie/xpact/issues/418) Gobo DLL without the global bridge lock: 4 threads 0.40 s vs 0.61 s EiffelStudio DLL ([PR #430](https://github.com/andersoxie/xpact/pull/430)).
+- [x] ✅ [#428](https://github.com/andersoxie/xpact/issues/428) callback strings reused + GC tuning inside the DLL: Gobo 1.69× faster, now 0.92× ES on one thread ([PR #429](https://github.com/andersoxie/xpact/pull/429), [report](../reports/gobo-dll/README.md)).
+- [ ] Gobo DLL: namespaces cells (0.74×) and 256 B-64 KB pieces (~0.89×); full 204-cell run; 16 vs 8 threads.
 - [ ] [#415](https://github.com/andersoxie/xpact/issues/415) `build_native_eiffel.ps1 -OutputDir` still writes `.obj` files into `build
 ative-eiffel`.
 - [x] ✅ [#409](https://github.com/andersoxie/xpact/issues/409) shared Gobo ECF builds on Windows: Eric Bezault's quoted `eif_misc.h` include, W3C identical on 4 engines ([report](../reports/issue-0409/README.md)).

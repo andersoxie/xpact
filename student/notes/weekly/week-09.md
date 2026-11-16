@@ -31,6 +31,7 @@
   - Threads: EiffelStudio's runtime gets slower with more threads (#304); Gobo 26.11.14: W3C identical, the parser scales (4 threads 1.8× the best EiffelStudio setting) ([#408](https://github.com/andersoxie/xpact/issues/408)).
   - Tooling fixes #404-#406; Gobo ECF on Windows needed an include path ([#409](https://github.com/andersoxie/xpact/issues/409)); fixed with Eric Bezault's quoted include, W3C identical on 4 engines.
   - xpact.dll built with Gobo + msc ([#414](https://github.com/andersoxie/xpact/issues/414)): identical results (test 2, 204 speed cells), any thread after 4 fixes; 0.59× the EiffelStudio DLL (0.90× GC tuned); not parallel yet (bridge lock). Same C compiler for both: Zig = msc speed. Finding [#415](https://github.com/andersoxie/xpact/issues/415).
+  - Gobo DLL follow-ups: global bridge lock removed for Gobo ([#418](https://github.com/andersoxie/xpact/issues/418), 4 threads 0.40 s vs 0.61 s ES); callback cost was Boehm finalizers from per-callback strings, fixed by reuse ([#428](https://github.com/andersoxie/xpact/issues/428)): Gobo 1.69× faster, 0.92× ES on one thread; GC tuning now inside the DLL.
 
 ## What the evidence shows
 **Observed, not expected:**
