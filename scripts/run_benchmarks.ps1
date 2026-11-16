@@ -3,7 +3,8 @@ param(
 	[int] $Iterations = 1000,
 	[int] $Repetitions = 3,
 	[string] $OutputDir = "build\benchmarks",
-	[ValidateSet("Finalized", "FinalizedAssertions", "Workbench")]
+	# One or more of Finalized, FinalizedAssertions, Workbench. A single comma-separated string also works:
+	# `powershell -File` passes "-EiffelBuild Finalized,FinalizedAssertions" as one string.
 	[string[]] $EiffelBuild = @("Finalized", "FinalizedAssertions"),
 	[switch] $SkipBuild,
 	# Use the DLLs already in build\native-eiffel (built and tested before) instead of rebuilding them;
@@ -25,6 +26,12 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$EiffelBuild = @($EiffelBuild | ForEach-Object { $_ -split "," } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+foreach ($Build in $EiffelBuild) {
+	if ($Build -notin @("Finalized", "FinalizedAssertions", "Workbench")) {
+		throw "Unknown -EiffelBuild '$Build'. Use Finalized, FinalizedAssertions and/or Workbench."
+	}
+}
 
 if ($Iterations -le 0) {
 	throw "Iterations must be positive."
