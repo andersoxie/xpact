@@ -1,3 +1,7 @@
+FROZEN 2026-11-16 (#422): moved from the repository root and no longer updated.
+Current state: student/CONTINUE-HERE.md. To-do: the open GitHub issues,
+summarised with time estimates in student/HANDOVER.md.
+
 XPACT - WHAT IS LEFT OPEN                                   state 2026-11-13
 =============================================================================
 Hand-in: 27 November 2026. Branch: incremental-test (up to date, nothing to push).

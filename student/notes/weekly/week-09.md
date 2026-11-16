@@ -13,7 +13,7 @@
 - [x] **Hand-in report** updated to 2026-11-12 with recounted numbers ([#346](https://github.com/andersoxie/xpact/issues/346), PR #347, #349).
 - [x] ✅ **[#316](https://github.com/andersoxie/xpact/issues/316) fixed** (PR #355): under `cdb` the 3 crashes were all inside .NET (finalizer thread twice, main thread once) when it loaded a type at the cap; only 20-63 KB of stack used. Worker: warm-up, 4 MB reserve, tiered JIT off. [Report](../../../reports/issue-0316/report.md).
 - [x] ✅ **10 MB upload** ([#352](https://github.com/andersoxie/xpact/issues/352), [#353](https://github.com/andersoxie/xpact/issues/353), PR #354): the page froze (editor drew 2 rows per line); now a read-only 256 KB preview; a timeout explains the assertions build / small pieces. [Report](../../../reports/issue-0352/report.md).
-- [x] #262 and #130 closed (Jenkins dropped). Full to-do list with time estimates: [TOOODOOO.txt](../../../TOOODOOO.txt).
+- [x] #262 and #130 closed (Jenkins dropped). Full to-do list with time estimates: [TOOODOOO.txt](../../archive/TOOODOOO.txt).
 
 - [x] ✅ **Hosting safety and full scan, 14 Nov** ([report](../../../reports/security-scan-2026-11-14/README.md)):
   - WAF test (OWASP CRS 4.25, stands in for Cloudflare/Azure): it **blocks every pasted XML** and does not stop XML attacks → documented: exclude `/api/validate` if a WAF is used.

@@ -1,5 +1,7 @@
 # 10-week plan
 
+> 📌 **Since 2026-11-16 ([#422](https://github.com/andersoxie/xpact/issues/422)) this file is the plan and the history, not the live status.** Current state: [CONTINUE-HERE.md](CONTINUE-HERE.md) · to-do: the [open GitHub issues](https://github.com/andersoxie/xpact/issues) and [HANDOVER.md](HANDOVER.md) · frozen older lists: [archive/](archive/).
+>
 > **Last updated:** 2026-11-11 (week 8) · work branch **`incremental-test`** of andersoxie/xpact (since 2026-11-08; `student-Mass` was fully contained in it, deleted 2026-11-10) · CodTanium/mass-xpact was a mirror from 2026-11-09; on 2026-11-11 its `incremental-test` (`f37178d`, PR #93) is no longer in sync and is not used · state: [week-08](notes/weekly/week-08.md), [CONTINUE-HERE](CONTINUE-HERE.md)
 > · earlier: 2026-11-04 evening (week 8) · **speed work** in [CodTanium/mass-xpact](https://github.com/CodTanium/mass-xpact): ✅ all speed PRs merged into `student-Mass` @ `8ccf51b` and #21 (static input), and verified together ([post-merge check](../reports/mass-xpact-merge-2026-11-04/report.md)); the GC heap corruption [mass-xpact#20](https://github.com/CodTanium/mass-xpact/issues/20) is pre-existing (open); status and notes in [`docs/notes/`](../docs/notes/README.md), reports in [`reports/README.md`](../reports/README.md#speed-work-codtaniummass-xpact-2026-110304)
 > · earlier: 2026-11-02 (week 8) · the XPact website [#210](https://github.com/andersoxie/xpact/issues/210) (pull request open) and the finding [#211](https://github.com/andersoxie/xpact/issues/211) · earlier: 2026-10-31 (week 7, night) · `student-Mass` @ `32bc80a` · today: [#122](https://github.com/andersoxie/xpact/issues/122), [#124](https://github.com/andersoxie/xpact/issues/124), [#125](https://github.com/andersoxie/xpact/issues/125), [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175) fixed and closed; [#88](https://github.com/andersoxie/xpact/issues/88), [#90](https://github.com/andersoxie/xpact/issues/90), [#93](https://github.com/andersoxie/xpact/issues/93) closed (already done on `main`) · **issues close after a local check on `student-Mass`; no Jenkins run is needed** (student, 2026-10-31) · earlier: the supervisor merged `student-Mass` into `main` ([#177](https://github.com/andersoxie/xpact/pull/177), `733688e`) and the Jenkins run on it passed
@@ -226,6 +228,8 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 ## ➡️ Next
 
+> 🧊 History from here on. The current "Next" list is in [CONTINUE-HERE.md §3](CONTINUE-HERE.md#3-next-in-this-order).
+
 **State 2026-11-16 (read first):** [CONTINUE-HERE.md](CONTINUE-HERE.md) is current.
 
 - [x] ✅ [#197](https://github.com/andersoxie/xpact/issues/197) test 2 on 16 cores verified (PR #403); [#401](https://github.com/andersoxie/xpact/issues/401) script audit (PR #402).
@@ -246,13 +250,13 @@ ative-eiffel`.
 - [ ] Supervisor: Dependabot alerts + secret scanning (repo Settings → Code security); host the image (#210).
 - [ ] Nothing pushed from the 14 Nov docs update until the student says so.
 
-**State 2026-11-13:** the full to-do list with time estimates is [TOOODOOO.txt](../TOOODOOO.txt).
+**State 2026-11-13:** the full to-do list with time estimates is [TOOODOOO.txt](archive/TOOODOOO.txt) (frozen 2026-11-16).
 
 - [x] ✅ [#316](https://github.com/andersoxie/xpact/issues/316) fixed in the worker (PR #355, 2026-11-12): WinDbg showed every crash is inside .NET (type loading / JIT / finalizers at the cap), not in the DLL; warm-up + 4 MB reserve + tiered JIT off; 0 crashes in 50 runs ([report](../reports/issue-0316/report.md)).
 - [x] ✅ [#352](https://github.com/andersoxie/xpact/issues/352) / [#353](https://github.com/andersoxie/xpact/issues/353) 10 MB upload (PR #354, 2026-11-12): the editor froze the page (one DOM row per line) → read-only 256 KB preview; a timeout now explains the assertions build and small pieces ([report](../reports/issue-0352/report.md)).
 - [x] ✅ #262 and #130 closed as not planned (Jenkins dropped 2026-11-03).
 - [x] ✅ Website release with #316 + #352/#353: `website-2026-11-14-1`/`-2` (2026-11-14). Open: the Docker memory-cap check can require code 1 again.
-- [ ] Ask the supervisor in one go: #293, #211, #304, #171, #13, licence, assertions timeout, SonarQube hotspot rights ([TOOODOOO.txt](../TOOODOOO.txt) section B).
+- [ ] Ask the supervisor in one go: #293, #211, #304, #171, #13, licence, assertions timeout, SonarQube hotspot rights ([TOOODOOO.txt](archive/TOOODOOO.txt) section B).
 
 **State 2026-11-12:**
 
@@ -269,7 +273,7 @@ ative-eiffel`.
 
 - [x] `main` and `incremental-test` synced 2026-11-11 (#290): PR #291 brought `main` (Jenkins plot fix) in, then `main` was fast-forwarded to `75600aa` (0 / 0; student approved).
 - [x] ✅ #211 rechecked on a fresh DLL (PR #294): code 43 ✅, ~1.5 s vs Expat ~0.1 s 🟡, left open for the supervisor; found [#293](https://github.com/andersoxie/xpact/issues/293) (entity depth > 32 → "syntax error").
-- [x] Handover to PC2: [CONTINUE-HERE.md](CONTINUE-HERE.md) and [notes/left-to-do-2026-11-11.md](notes/left-to-do-2026-11-11.md).
+- [x] Handover to PC2: [CONTINUE-HERE.md](CONTINUE-HERE.md) and [archive/left-to-do-2026-11-11.md](archive/left-to-do-2026-11-11.md).
 - [x] Website: [#227](https://github.com/andersoxie/xpact/issues/227) memory-cap test and the load test ([#255](https://github.com/andersoxie/xpact/issues/255)), 2026-11-10.
 - [x] ✅ **Website checked and fixed (2026-11-11)**: see "Website quality check" below. Merged: PR #282 (docs, #281), #285 (Docker checklist, #284), #288 (security findings 3-6, #283), #287 (quality, #286).
 - [x] ✅ Website code-review findings 1-2 fixed: memory cap fails closed (#295, PR #296), per-visitor worker cap + queue timeout/cap (#297, PR #298); worker with no privileges at Low integrity (#299, PR #300).
