@@ -226,7 +226,16 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 ## ➡️ Next
 
-**State 2026-11-14 (read first):** website ready to host: image `ghcr.io/andersoxie/xpact-website:website-2026-11-14-2` (= `latest`), checklist in [docker.md](../website/docs/docker.md#hosting-on-the-internet-safely), full scan [report](../reports/security-scan-2026-11-14/README.md). Message for the supervisor: [to-supervisor-2026-11-14.md](notes/to-supervisor-2026-11-14.md).
+**State 2026-11-16 (read first):** [CONTINUE-HERE.md](CONTINUE-HERE.md) is current.
+
+- [x] ✅ [#197](https://github.com/andersoxie/xpact/issues/197) test 2 on 16 cores verified (PR #403); [#401](https://github.com/andersoxie/xpact/issues/401) script audit (PR #402).
+- [x] ✅ [#404](https://github.com/andersoxie/xpact/issues/404)-[#406](https://github.com/andersoxie/xpact/issues/406) matrix lock retry, `-EiffelBuild` list, Python resolver (PR #410).
+- [x] ✅ [#407](https://github.com/andersoxie/xpact/issues/407) faster parser: DLL median 1.07×, elements 1.16×, results unchanged (PR #411, [report](../reports/perf-allocations/README.md)).
+- [x] ✅ [#304](https://github.com/andersoxie/xpact/issues/304) / [#408](https://github.com/andersoxie/xpact/issues/408): EiffelStudio's runtime cannot scale threads; under Gobo the parser scales and the W3C results are identical (PR #412, [threads](../reports/issue-0304/README.md), [Gobo](../reports/gobo-2026-11-16/README.md)).
+- [ ] Port xpact.dll to Gobo (C bridge on Gobo's `eif_cecil.h` layer, outside threads registered with the Boehm GC). Several days.
+- [ ] [#409](https://github.com/andersoxie/xpact/issues/409) include path for the shared Gobo ECF on Windows (supervisor's file).
+
+**State 2026-11-14:** website ready to host: image `ghcr.io/andersoxie/xpact-website:website-2026-11-14-2` (= `latest`), checklist in [docker.md](../website/docs/docker.md#hosting-on-the-internet-safely), full scan [report](../reports/security-scan-2026-11-14/README.md). Message for the supervisor: [to-supervisor-2026-11-14.md](notes/to-supervisor-2026-11-14.md).
 
 - [x] ✅ [#368](https://github.com/andersoxie/xpact/issues/368) image older than the security fixes + `AllowedHosts` missing from the docs (PR #372, #379); releases `website-2026-11-14-1`, `-2`.
 - [x] ✅ [#370](https://github.com/andersoxie/xpact/issues/370) tests crashed under coverage (PR #374). [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube with C#: 76 → **0** issues (PR #375-#378). [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL + Dependabot (PR #373).
