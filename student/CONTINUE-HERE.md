@@ -31,12 +31,14 @@
 | SonarQube | ✅ **quality gate passes** (2026-11-15: 0 issues, 0 hotspots to review, new-code coverage 81.8 %, #397); run `reports\security-scan-2026-11-14\sonar-net.ps1` · ✅ 2026-11-14: first scan with C#, 76 → 0 issues (#371); hotspots reviewed (#380) · ✅ scan works with the student's token (2026-11-12); **196 → 0 issues**, duplication 14 % → 0 % (#325-#332, PRs #333-#340) ([summary](../reports/sonarqube-2026-11-12/README.md)) · 🟡 3 hotspots need review rights · 🔴 gate: no coverage report yet · run: `student\tools\sonar\run-sonar.ps1 -Scanner %USERPROFILE%\tools\sonar\sonar-scanner-7.0.2.4839-windows-x64\bin\sonar-scanner.bat` |
 
 | Parser speed | ✅ 2026-11-16: DLL median 1.07×, elements 1.16×, 0 checksum mismatches; vs Expat 17.15× ([#407](https://github.com/andersoxie/xpact/issues/407), [report](../reports/perf-allocations/README.md)) |
-| Threads / Gobo | ✅ EiffelStudio's runtime cannot scale threads (#304); ✅ under Gobo 26.11.14 the parser scales and W3C is identical (#408); 🟡 xpact.dll not yet built with Gobo ([report](../reports/gobo-2026-11-16/README.md)). Gobo installed in `%USERPROFILE%\tools\gobo-26.11.14` |
+| Threads / Gobo | ✅ EiffelStudio's runtime cannot scale threads (#304); ✅ under Gobo 26.11.14 the parser scales and W3C is identical (#408); ✅ xpact.dll built with Gobo + msc: identical results, any thread, 0.59× ES speed (0.90× GC tuned), not parallel yet ([#414](https://github.com/andersoxie/xpact/issues/414), [DLL report](../reports/gobo-dll/README.md)) ([report](../reports/gobo-2026-11-16/README.md)). Gobo installed in `%USERPROFILE%\tools\gobo-26.11.14` |
 | Tooling | ✅ script audit `student/tools/audit-scripts.py` (#401); matrix lock retry, `-EiffelBuild` list, Python resolver (#404-#406); test 2 `--jobs 16` (#197); fair speed `--jobs N` |
 
 ## 3. Next (in this order)
 
-- [ ] **Port xpact.dll to Gobo** so programs and the website get multi-threaded parsing. Several days.
+- [ ] **Gobo DLL next:** remove the global bridge lock so programs get multi-threaded parsing; profile the callback cost ([#414](https://github.com/andersoxie/xpact/issues/414)).
+- [ ] [#415](https://github.com/andersoxie/xpact/issues/415) `build_native_eiffel.ps1 -OutputDir` writes `.obj` files into `build
+ative-eiffel`.
 - [ ] [#409](https://github.com/andersoxie/xpact/issues/409) Gobo ECF include path on Windows (decide with the supervisor; workaround in the Gobo report).
 
 - [x] ✅ **Hand-in report** updated to 2026-11-12 (#346): numbers recounted, SonarQube, tooling, `main` sync. Left for the student: the ✏️ reflection sections in your own words, then the demonstration.

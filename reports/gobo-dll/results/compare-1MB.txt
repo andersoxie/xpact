@@ -1,0 +1,14 @@
+== ES vs gobo (1 MB)
+cells measured in both: 80 of 84
+median xpact/Expat ratio: old 17.00x slower, new 29.50x slower
+median new-vs-old speed-up: 0.58x (best 1.52x, worst 0.37x)
+checksum mismatches: old 0, new 0
+not measured (old): 4 elements-1MB-latin1 1 B TIMEOUT, elements-1MB-latin1 16 B TIMEOUT
+== ES vs gobotuned (1 MB)
+cells measured in both: 80 of 84
+median xpact/Expat ratio: old 17.00x slower, new 19.74x slower
+median new-vs-old speed-up: 0.90x (best 1.75x, worst 0.60x)
+checksum mismatches: old 0, new 0
+not measured (old): 4 elements-1MB-latin1 1 B TIMEOUT, elements-1MB-latin1 16 B TIMEOUT
+gobo->tuned: median xpact/Expat ratio: old 29.50x slower, new 19.74x slower
+gobo->tuned: median new-vs-old speed-up: 1.64x (best 1.82x, worst 1.06x)

@@ -34,7 +34,11 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
           Fix: profile (1/2 day) + bulk entity expansion (1-3 days)
           = 1 1/2 - 3 1/2 days, uncertain. See section C.
 [~] #304  Parallel parsing: EiffelStudio runtime cannot scale threads; under Gobo it
-          scales (4 threads 1.8x). Next: port xpact.dll to Gobo (days).
+          scales (4 threads 1.8x).
+[x] #414  xpact.dll built with Gobo + msc: identical results, any thread; 0.59x ES
+          speed (0.90x GC tuned). Next: remove the bridge lock, profile callbacks.
+[ ] #415  build_native_eiffel.ps1 -OutputDir still writes .obj into build
+ative-eiffel
           "no" (likely): document it ............................... 30 min
           "yes": multi-threaded Eiffel runtime, remove #274 lock,
                  thread tests ...................................... 3-5 days, risky
