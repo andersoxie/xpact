@@ -29,7 +29,7 @@
   - Test 2 on 16 cores: identical results, 148 s → 27.5 s ([#197](https://github.com/andersoxie/xpact/issues/197)).
   - Faster parser, 4 allocation changes found with a sampling profiler: DLL median 1.07×, elements 1.16× ([#407](https://github.com/andersoxie/xpact/issues/407)).
   - Threads: EiffelStudio's runtime gets slower with more threads (#304); Gobo 26.11.14: W3C identical, the parser scales (4 threads 1.8× the best EiffelStudio setting) ([#408](https://github.com/andersoxie/xpact/issues/408)).
-  - Tooling fixes #404-#406; Gobo ECF on Windows needs an include path ([#409](https://github.com/andersoxie/xpact/issues/409)).
+  - Tooling fixes #404-#406; Gobo ECF on Windows needed an include path ([#409](https://github.com/andersoxie/xpact/issues/409)); fixed with Eric Bezault's quoted include, W3C identical on 4 engines.
   - xpact.dll built with Gobo + msc ([#414](https://github.com/andersoxie/xpact/issues/414)): identical results (test 2, 204 speed cells), any thread after 4 fixes; 0.59× the EiffelStudio DLL (0.90× GC tuned); not parallel yet (bridge lock). Same C compiler for both: Zig = msc speed. Finding [#415](https://github.com/andersoxie/xpact/issues/415).
 
 ## What the evidence shows

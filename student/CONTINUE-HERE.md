@@ -39,7 +39,7 @@
 - [ ] **Gobo DLL next:** remove the global bridge lock so programs get multi-threaded parsing; profile the callback cost ([#414](https://github.com/andersoxie/xpact/issues/414)).
 - [ ] [#415](https://github.com/andersoxie/xpact/issues/415) `build_native_eiffel.ps1 -OutputDir` writes `.obj` files into `build
 ative-eiffel`.
-- [ ] [#409](https://github.com/andersoxie/xpact/issues/409) Gobo ECF include path on Windows (decide with the supervisor; workaround in the Gobo report).
+- [x] ✅ [#409](https://github.com/andersoxie/xpact/issues/409) Gobo ECF on Windows fixed in `src` (Eric Bezault's quoted include); W3C identical ([report](../reports/issue-0409/README.md)).
 
 - [x] ✅ **Hand-in report** updated to 2026-11-12 (#346): numbers recounted, SonarQube, tooling, `main` sync. Left for the student: the ✏️ reflection sections in your own words, then the demonstration.
 - [ ] **Ask Anders in one go:** #304 parallel parsing, #293 depth limit, #211 1.5 s, #171, #13, #210 deployment, licence. See [left-to-do §3](notes/left-to-do-2026-11-11.md#3-questions-for-anders-ask-in-one-go).

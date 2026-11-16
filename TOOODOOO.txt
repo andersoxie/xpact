@@ -35,6 +35,7 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
           = 1 1/2 - 3 1/2 days, uncertain. See section C.
 [~] #304  Parallel parsing: EiffelStudio runtime cannot scale threads; under Gobo it
           scales (4 threads 1.8x).
+[x] #409  Gobo ECF on Windows: quoted eif_misc.h include (Eric's suggestion), W3C identical
 [x] #414  xpact.dll built with Gobo + msc: identical results, any thread; 0.59x ES
           speed (0.90x GC tuned). Next: remove the bridge lock, profile callbacks.
 [ ] #415  build_native_eiffel.ps1 -OutputDir still writes .obj into build

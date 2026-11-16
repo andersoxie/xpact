@@ -236,7 +236,7 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 - [ ] Gobo DLL: remove the global bridge lock (parallel C API), profile the callback cost (#414 follow-ups).
 - [ ] [#415](https://github.com/andersoxie/xpact/issues/415) `build_native_eiffel.ps1 -OutputDir` still writes `.obj` files into `build
 ative-eiffel`.
-- [ ] [#409](https://github.com/andersoxie/xpact/issues/409) include path for the shared Gobo ECF on Windows (supervisor's file).
+- [x] ✅ [#409](https://github.com/andersoxie/xpact/issues/409) shared Gobo ECF builds on Windows: Eric Bezault's quoted `eif_misc.h` include, W3C identical on 4 engines ([report](../reports/issue-0409/README.md)).
 
 **State 2026-11-14:** website ready to host: image `ghcr.io/andersoxie/xpact-website:website-2026-11-14-2` (= `latest`), checklist in [docker.md](../website/docs/docker.md#hosting-on-the-internet-safely), full scan [report](../reports/security-scan-2026-11-14/README.md). Message for the supervisor: [to-supervisor-2026-11-14.md](notes/to-supervisor-2026-11-14.md).
 

@@ -63,7 +63,7 @@ What this shows:
 | Assertion modes | runtime option table per class | compiled in; 26.11 fixes make them agree with EiffelStudio (supervisor) |
 | Release channel | stable releases | **nightly** (26.11.12 replaced by 26.11.14 within two days): pin the build you test |
 | xpact.dll / C API | ✅ today | ✅ built ([report](../gobo-dll/README.md)); slower until the bridge is tuned |
-| Tooling in this repo | test matrix, W3C runner, Sonar, website | benchmark ECF (`benchmarks/xpact_gobo_benchmarks.ecf`); on Windows/gecc it needs Gobo's runtime folder as include path (`src` uses `<eif_misc.h>`): [Windows copy](xpact_gobo_benchmarks_win.ecf) |
+| Tooling in this repo | test matrix, W3C runner, Sonar, website | benchmark ECF (`benchmarks/xpact_gobo_benchmarks.ecf`); on Windows/gecc it needed Gobo's runtime folder as include path ([Windows copy](xpact_gobo_benchmarks_win.ecf)); fixed in `src` since [#409](../issue-0409/README.md), the copy is no longer needed |
 
 ## What we can do with Gobo
 - [x] Build and run the parser with Gobo on this PC (done: `gec` 26.11.14 in `%USERPROFILE%\tools\gobo-26.11.14`).
