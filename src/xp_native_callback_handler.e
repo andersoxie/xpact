@@ -881,6 +881,7 @@ feature -- Events
 			i, j: INTEGER
 			l_attribute_name: C_STRING
 			l_attribute_value: C_STRING
+			l_reuse: BOOLEAN
 		do
 			start_element_count := start_element_count + 1
 			current_specified_attribute_count := a_attributes.specified_attribute_count * 2
@@ -894,9 +895,17 @@ feature -- Events
 			end
 			if start_element_callback /= default_pointer then
 				if not suppress_next_callback then
-					create l_name.make (a_name)
-					create l_attribute_strings.make (a_attributes.count * 2)
-					create l_attributes.make ((a_attributes.count * 2 + 1) * Pointer_bytes)
+					l_reuse := not callback_strings_busy
+					callback_strings_busy := True
+					l_name := callback_string (0, a_name, l_reuse)
+					if l_reuse then
+							-- The reused strings stay reachable from `callback_string_pool'.
+						create l_attribute_strings.make (0)
+					else
+							-- Keep the fresh strings alive while C holds their pointers.
+						create l_attribute_strings.make (a_attributes.count * 2)
+					end
+					l_attributes := callback_pointers ((a_attributes.count * 2 + 1) * Pointer_bytes, l_reuse)
 					from
 						i := 1
 						j := 0
@@ -906,10 +915,12 @@ feature -- Events
 					until
 						i > a_attributes.count
 					loop
-						create l_attribute_name.make (a_attributes.i_th_name (i))
-						create l_attribute_value.make (a_attributes.i_th_value (i))
-						l_attribute_strings.extend (l_attribute_name)
-						l_attribute_strings.extend (l_attribute_value)
+						l_attribute_name := callback_string (j + 1, a_attributes.i_th_name (i), l_reuse)
+						l_attribute_value := callback_string (j + 2, a_attributes.i_th_value (i), l_reuse)
+						if not l_reuse then
+							l_attribute_strings.extend (l_attribute_name)
+							l_attribute_strings.extend (l_attribute_value)
+						end
 						l_attributes.put_pointer (l_attribute_name.item, j * Pointer_bytes)
 						l_attributes.put_pointer (l_attribute_value.item, (j + 1) * Pointer_bytes)
 						i := i + 1
@@ -919,6 +930,7 @@ feature -- Events
 					end
 					l_attributes.put_pointer (default_pointer, j * Pointer_bytes)
 					call_start_element_callback (start_element_callback, user_data, l_name.item, l_attributes.item)
+					callback_strings_busy := not l_reuse
 					record_callback_stop_if_requested
 				end
 			end
@@ -928,6 +940,7 @@ feature -- Events
 		local
 			l_event: STRING_8
 			l_name: C_STRING
+			l_reuse: BOOLEAN
 		do
 			end_element_count := end_element_count + 1
 			if diagnostic_events_enabled then
@@ -937,8 +950,11 @@ feature -- Events
 			end
 			if end_element_callback /= default_pointer then
 				if not suppress_next_callback then
-					create l_name.make (a_name)
+					l_reuse := not callback_strings_busy
+					callback_strings_busy := True
+					l_name := callback_string (0, a_name, l_reuse)
 					call_end_element_callback (end_element_callback, user_data, l_name.item)
+					callback_strings_busy := not l_reuse
 					record_callback_stop_if_requested
 				end
 			end
@@ -951,6 +967,7 @@ feature -- Events
 			l_suppressed: BOOLEAN
 			l_already_delivered: INTEGER
 			l_suffix: STRING_8
+			l_reuse: BOOLEAN
 		do
 			if not a_text.is_empty then
 				character_data_count := character_data_count + 1
@@ -975,10 +992,13 @@ feature -- Events
 							forget_default_text
 						end
 					else
-						create l_text.make (a_text)
+						l_reuse := not callback_strings_busy
+						callback_strings_busy := True
+						l_text := callback_string (0, a_text, l_reuse)
 						remember_default_text (a_text)
 						set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
 						call_character_data_callback (character_data_callback, user_data, l_text.item, a_text.count)
+						callback_strings_busy := not l_reuse
 						set_native_active_callback_kind (native_parser_handle, Native_callback_none)
 						record_delivered_character_data_length (callback_sequence_count, a_text.count)
 						record_callback_stop_if_requested
@@ -1530,6 +1550,66 @@ feature -- External entity resolution
 			next_resolution_is_parameter_literal := False
 		ensure then
 			no_pending_literal: not next_resolution_is_parameter_literal
+		end
+
+feature {NONE} -- Reused callback strings
+
+	callback_strings_busy: BOOLEAN
+			-- Are the reused callback strings handed to C right now? Then a nested callback uses fresh ones.
+
+	callback_string_pool: detachable ARRAYED_LIST [C_STRING]
+			-- Reused C strings for callback arguments, by slot (0 = name or text, 1.. = attribute names and values).
+			-- Expat's callback arguments are valid only during the callback, so one set per handler is enough.
+			-- A fresh C_STRING per callback was the main cost under Gobo's Boehm GC (each has a finalizer, #414).
+
+	callback_pointer_array: detachable MANAGED_POINTER
+			-- Reused attribute pointer array for `on_start_element'.
+
+	Callback_string_reuse_limit: INTEGER = 65536
+			-- Longer values get a fresh C string, so the pool does not keep the largest text alive.
+
+	callback_string (a_slot: INTEGER; a_value: READABLE_STRING_8; a_reuse: BOOLEAN): C_STRING
+			-- C copy of `a_value': the pooled string of `a_slot' when `a_reuse', otherwise a fresh one.
+		require
+			slot_not_negative: a_slot >= 0
+			value_is_string_8: a_value.is_valid_as_string_8
+		local
+			l_pool: like callback_string_pool
+		do
+			if a_reuse and a_value.count <= Callback_string_reuse_limit then
+				l_pool := callback_string_pool
+				if l_pool = Void then
+					create l_pool.make (8)
+					callback_string_pool := l_pool
+				end
+				from
+				until
+					l_pool.count > a_slot
+				loop
+					l_pool.extend (create {C_STRING}.make_empty (32))
+				end
+				Result := l_pool.i_th (a_slot + 1)
+				Result.set_string (a_value)
+			else
+				create Result.make (a_value)
+			end
+		end
+
+	callback_pointers (a_bytes: INTEGER; a_reuse: BOOLEAN): MANAGED_POINTER
+			-- Memory for `a_bytes' bytes: the reused array when `a_reuse', otherwise a fresh one.
+		require
+			bytes_positive: a_bytes > 0
+		do
+			if a_reuse and then attached callback_pointer_array as l_array and then l_array.count >= a_bytes then
+				Result := l_array
+			elseif a_reuse then
+				create Result.make (a_bytes.max (16 * Pointer_bytes))
+				callback_pointer_array := Result
+			else
+				create Result.make (a_bytes)
+			end
+		ensure
+			large_enough: Result.count >= a_bytes
 		end
 
 feature {NONE} -- Native callback calls
