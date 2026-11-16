@@ -20,6 +20,7 @@ feature {NONE} -- Initialization
 		do
 			Precursor
 			set_diagnostic_events_enabled (False)
+			set_registry_routines (c_registry_lock_address, c_registry_unlock_address)
 		ensure then
 			diagnostics_disabled: not diagnostic_events_enabled
 		end
@@ -100,6 +101,22 @@ feature -- Bridge registration
 		end
 
 feature {NONE} -- Native calls
+
+	c_registry_lock_address: POINTER
+			-- Address of the bridge's registry lock (#418).
+		external
+			"C inline use %"xpact_eiffel_runtime_bridge.h%""
+		alias
+			"(EIF_POINTER) xp_registry_lock"
+		end
+
+	c_registry_unlock_address: POINTER
+			-- Address of the bridge's registry unlock (#418).
+		external
+			"C inline use %"xpact_eiffel_runtime_bridge.h%""
+		alias
+			"(EIF_POINTER) xp_registry_unlock"
+		end
 
 	c_register_eiffel_runtime_bridge (
 		a_installer: XP_NATIVE_BRIDGE_EXPORT;
