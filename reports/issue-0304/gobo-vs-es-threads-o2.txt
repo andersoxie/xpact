@@ -1,0 +1,6 @@
+threads               ES         Gobo-O2    Gobo-O2-noGC   (16,000 parses, median of 3, alternating; ! = runs with a crash or wrong result)
+      1          0.44 s          0.79 s          0.36 s 
+      2          0.49 s          0.69 s          0.21 s 
+      4          0.63 s          0.65 s          0.15 s 
+      8          0.97 s          0.95 s          0.11 s 
+     16          1.83 s          1.24 s          0.12 s 

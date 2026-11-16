@@ -1,0 +1,5 @@
+threads                  default               heap 512M   heap 512M + 8 markers                 heap 2G
+      1                  0.80 s                 1.66 s                 1.57 s                 4.30 s
+      4                  0.64 s                 1.62 s                 1.36 s                 3.99 s
+      8                  0.88 s                 1.68 s                 1.57 s                 3.60 s
+     16                  1.22 s                 1.70 s                 1.63 s                 3.21 s
