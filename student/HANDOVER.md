@@ -2,7 +2,7 @@
 
 > ✏️ **DRAFT** written by the AI assistant on 2026-11-16. The student checks and completes it before the hand-in on 27 November 2026.
 > Repo: [andersoxie/xpact](https://github.com/andersoxie/xpact), work branch **`incremental-test`** @ `0c7e114`. Setup on a new PC: [CONTINUE-HERE.md §4](CONTINUE-HERE.md#4-setup-on-a-new-pc).
-> Full report: [ActualReport.md](report/ActualReport.md) · short: [ActualReportShorter.md](report/ActualReportShorter.md) · status tracker: [PLAN.md](PLAN.md) · to-do with times: [TOOODOOO.txt](../TOOODOOO.txt).
+> Full report: [ActualReport.md](report/ActualReport.md) · short: [ActualReportShorter.md](report/ActualReportShorter.md) · live status: [CONTINUE-HERE.md](CONTINUE-HERE.md) · plan and history: [PLAN.md](PLAN.md) · to-do: the [open issues](https://github.com/andersoxie/xpact/issues) (summary below).
 
 ## 1. Where things are
 
@@ -29,7 +29,7 @@
 | [#418](https://github.com/andersoxie/xpact/issues/418) | Gobo DLL: remove the global bridge lock (parallel C API) | days |
 | Gobo follow-ups | Rerun the Gobo vs EiffelStudio thread test with msc (Eric Bezault's advice on #304); profile callback cost; GC tuning inside the DLL | ½-1 day each |
 | Speed | Rerun the fair speed matrix (#275) on an idle PC before quoting final numbers | 1-2 h machine time |
-| Dependabot | PRs #393-#396 (C# test packages): run the tests, merge one by one (#388-#392 merged by the supervisor, 16 Nov) | 30 min each |
+| Dependabot | All 9 PRs from 14 Nov merged by the supervisor (16 Nov); rerun `website\scripts\test.ps1` after the test-package updates #393-#396 | 10 min |
 | Docker | Let the memory-cap check require exit code 1 again | 1 h |
 
 ### Needs the supervisor's decision

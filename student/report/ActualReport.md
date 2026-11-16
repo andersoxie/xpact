@@ -776,7 +776,7 @@ In the first five weeks of the eight-week internship, the project went from a pa
 
 ### 13.2 Future work
 
-**Follow-up list** (state 2026-11-13; the full list with time estimates is [TOOODOOO.txt](../../TOOODOOO.txt) at the repository root):
+**Follow-up list** (state 2026-11-13; the current list is the [open GitHub issues](https://github.com/andersoxie/xpact/issues), summarised with time estimates in [HANDOVER.md](../HANDOVER.md)):
 - [x] ~~Rerun the G03 comparison on the final code~~ (2026-11-06, 62 / 93 identical)
 - [x] ~~Selected SVG or libxml2 cases~~ (week 8)
 - [x] ~~Speed: resume from a saved state instead of replaying~~ (7.7, the "middle path" suggested on 1 November)
