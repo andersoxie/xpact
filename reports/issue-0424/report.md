@@ -33,6 +33,7 @@ Used for every visitor-dependent value in `WorkerRunner.cs` (lines 67, 79-81, 22
 |---|---|---|
 | `website\scripts\test.ps1` | all pass | ✅ **56 / 56** (48 before + 8 new in `LogTextTests.cs`), frontend build OK |
 | New tests | `\r\n`, `\r`, `\n` → ` | `; other control characters → `?`; null → empty; no control character left | ✅ all pass |
-| CodeQL on the PR | 0 `cs/log-forging` alerts | see the PR checks / Security tab |
+| CodeQL on the PR, first version | 0 `cs/log-forging` alerts | ❌ still 2: the empty-input shortcut returned the input itself, so CodeQL saw an uncleaned path |
+| CodeQL on the PR, after `4806915` | 0 `cs/log-forging` alerts | ✅ **0** (C# analysis of the PR merge commit: 0 results) |
 
 Log: [test-424.txt](test-424.txt).
