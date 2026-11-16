@@ -40,9 +40,14 @@ def relink_with_debug():
 def feature_names():
     names = {}
     pattern = re.compile(r"/\* (\{[A-Z_0-9]+\}\.[a-z_0-9]+) \*/\s*\n[^\n]*?\b(F\d+_\d+)\s*\(")
+    # Gobo Eiffel (gec) writes "/* CLASS.feature */" above functions named T<type>f<n> / T<type>c<n> (#414).
+    gobo = re.compile(r"/\* ([A-Z_0-9]+\.[a-z_0-9]+) \*/\s*\n[^\n]*?\b(T\d+[fcx]\d+\w*)\s*\(")
     for c in FCODE.rglob("*.c"):
-        for m in pattern.finditer(c.read_text(encoding="latin-1")):
+        text = c.read_text(encoding="latin-1")
+        for m in pattern.finditer(text):
             names[m.group(2)] = m.group(1)
+        for m in gobo.finditer(text):
+            names[m.group(2)] = "{" + m.group(1).replace(".", "}.", 1)
     return names
 
 
@@ -52,7 +57,7 @@ def main():
     ap.add_argument("--rounds", type=int, default=400)
     ap.add_argument("--samples", type=int, default=60)
     ap.add_argument("--top", type=int, default=15)
-    ap.add_argument("--fcode", help="F_code folder of the DLL's Eiffel target (feature names); with --command")
+    ap.add_argument("--fcode", help="F_code folder of the DLL's Eiffel target, or Gobo's .gobo folder (feature names); with --command")
     ap.add_argument("--symbols", help="folder with the DLL's .pdb; with --command")
     ap.add_argument("--command", nargs=argparse.REMAINDER, help="profile this command line instead of the probe")
     args = ap.parse_args()
