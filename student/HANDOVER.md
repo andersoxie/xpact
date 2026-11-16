@@ -29,7 +29,7 @@
 | [#418](https://github.com/andersoxie/xpact/issues/418) | Gobo DLL: remove the global bridge lock (parallel C API) | days |
 | Gobo follow-ups | Rerun the Gobo vs EiffelStudio thread test with msc (Eric Bezault's advice on #304); profile callback cost; GC tuning inside the DLL | ½-1 day each |
 | Speed | Rerun the fair speed matrix (#275) on an idle PC before quoting final numbers | 1-2 h machine time |
-| Dependabot | PRs #390, #393-#396: run the tests, merge one by one | 30 min each |
+| Dependabot | PRs #393-#396 (C# test packages): run the tests, merge one by one (#388-#392 merged by the supervisor, 16 Nov) | 30 min each |
 | Docker | Let the memory-cap check require exit code 1 again | 1 h |
 
 ### Needs the supervisor's decision
