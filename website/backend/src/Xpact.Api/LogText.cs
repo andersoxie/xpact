@@ -9,7 +9,8 @@ public static class LogText
 {
     public static string OneLine(string? value)
     {
-        if (string.IsNullOrEmpty(value)) return value ?? "";
+        // Return a new empty string, never the input itself: every path out of here is cleaned.
+        if (string.IsNullOrEmpty(value)) return "";
         string oneLine = value.Replace("\r\n", " | ").Replace("\r", " | ").Replace("\n", " | ");
         return string.Create(oneLine.Length, oneLine, static (span, source) =>
         {
