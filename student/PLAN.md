@@ -239,7 +239,7 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 - [x] ✅ [#414](https://github.com/andersoxie/xpact/issues/414) xpact.dll built with Gobo + msc: identical results (test 2, 204 speed cells), any thread; 0.59× the EiffelStudio DLL (0.90× GC tuned) ([report](../reports/gobo-dll/README.md)).
 - [x] ✅ [#418](https://github.com/andersoxie/xpact/issues/418) Gobo DLL without the global bridge lock: 4 threads 0.40 s vs 0.61 s EiffelStudio DLL ([PR #430](https://github.com/andersoxie/xpact/pull/430)).
 - [x] ✅ [#428](https://github.com/andersoxie/xpact/issues/428) callback strings reused + GC tuning inside the DLL: Gobo 1.69× faster, now 0.92× ES on one thread ([PR #429](https://github.com/andersoxie/xpact/pull/429), [report](../reports/gobo-dll/README.md)).
-- [ ] Gobo DLL: namespaces cells (0.74×) and 256 B-64 KB pieces (~0.89×); full 204-cell run; 16 vs 8 threads.
+- [ ] Gobo DLL: namespaces cells (0.74×) and 256 B-64 KB pieces (~0.89×); full 204-cell run; [#431](https://github.com/andersoxie/xpact/issues/431) scaling stops at 4 threads; [#432](https://github.com/andersoxie/xpact/issues/432) one parse = one core.
 - [ ] [#415](https://github.com/andersoxie/xpact/issues/415) `build_native_eiffel.ps1 -OutputDir` still writes `.obj` files into `build
 ative-eiffel`.
 - [x] ✅ [#409](https://github.com/andersoxie/xpact/issues/409) shared Gobo ECF builds on Windows: Eric Bezault's quoted `eif_misc.h` include, W3C identical on 4 engines ([report](../reports/issue-0409/README.md)).

@@ -139,11 +139,14 @@ Also found (not fixed, outside this work): `scripts/build_native_eiffel.ps1 -Out
 - [x] GC tuning inside the DLL instead of environment variables
 - [ ] Namespaces cells (0.74×) and 256 B-64 KB pieces (~0.89×): profile next
 - [ ] Full 204-cell run of the new DLLs; W3C runner and C#/Python tests against the Gobo DLL
-- [ ] Threads with callbacks under heavy load; why 16 threads (0.56 s) is slower than 8 (0.41 s)
+- [ ] Why scaling stops at 4 threads and 16 threads (0.56 s) is slower than 8 (0.41 s): [#431](https://github.com/andersoxie/xpact/issues/431)
 - [ ] Gobo assertions variant of the DLL
 
 ## Limits
 - One PC, Windows only; Gobo nightly 26.11.14 (the supervisor qualified 26.11.12).
 - Section 4 speed: 1 MB inputs only (84 of 204 cells).
 - Lock removal is Gobo-only; the ES DLL still serializes threads.
+- **Multi-core means several parses at once**: one parse still runs on one core ([#432](https://github.com/andersoxie/xpact/issues/432)).
+- Scaling stops at about 4 threads; 16 is slower than 8 (cause unknown, [#431](https://github.com/andersoxie/xpact/issues/431)).
+- The Boehm GC uses up to 8 marker threads in the Gobo build (set in `gobo_dllmain.c`).
 - Section 4 changes are not committed yet (waiting for the student's go).

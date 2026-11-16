@@ -37,7 +37,8 @@
 - [ ] Ask Anders in one go: #304, #293, #211, #171, #13, #210 deployment, licence, assertions timeout, 10 MB limit.
 - [ ] Rerun `website\scripts\test.ps1` after the Dependabot test-package updates (#393-#396).
 - [x] ✅ [#418](https://github.com/andersoxie/xpact/issues/418) Gobo DLL without the global lock; thread test rerun with msc: 4 threads 0.40 s vs 0.61 s ES ([report](../reports/gobo-dll/README.md)).
-- [ ] Gobo DLL: profile namespaces cells (0.74×) and 256 B-64 KB pieces; full 204-cell run; why 16 threads is slower than 8.
+- [ ] Gobo DLL: profile namespaces cells (0.74×) and 256 B-64 KB pieces; full 204-cell run.
+- [ ] [#431](https://github.com/andersoxie/xpact/issues/431) thread scaling stops at 4 threads, 16 slower than 8 · [#432](https://github.com/andersoxie/xpact/issues/432) one parse = one core (question for Anders).
 - [ ] [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces; then #123/#176, #126, #170.
 - [ ] [#415](https://github.com/andersoxie/xpact/issues/415) build script `.obj` files.
 - [ ] Rerun the fair speed matrix (#275) on an **idle** PC before quoting final numbers.
