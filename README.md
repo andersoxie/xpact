@@ -15,6 +15,8 @@ is not intended to become a second C parser.
 
 **Version 0.9.0** (launch candidate). What each version contains: [CHANGELOG.md](CHANGELOG.md).
 
+**Find anything:** [project knowledge and traceability map](docs/PROJECT-KNOWLEDGE.md) (planning, history, testing, technical docs, decisions) · [overview with all numbers](docs/Comprehensive-Overview-Summary-of-the-Project.md) · [decision log](docs/decision-log.md) · live status: [student/CONTINUE-HERE.md](student/CONTINUE-HERE.md)
+
 This checkpoint is a Windows-only Phase 1 preview, not a final drop-in
 replacement for libexpat.
 
@@ -41,7 +43,7 @@ Implemented and verified now:
   reports for both finalized assertion modes and Jenkins publication.
 - An opt-in large XML benchmark runner for caller-supplied, pre-decompressed
   real corpora.
-- Safe use from several threads, each with its own parsers: calls take turns
+- Safe use from several threads, each with its own parsers: calls take turns (EiffelStudio build); the Gobo build of the DLL parses on several cores at once ([#418](https://github.com/andersoxie/xpact/issues/418): 4 threads 0.40 s vs 0.61 s)
   inside the single-threaded Eiffel runtime, so they do not run in parallel (#274).
 - An internal Eiffel exception (for example out of memory) makes the call fail
   with an error code instead of ending the process (#273).

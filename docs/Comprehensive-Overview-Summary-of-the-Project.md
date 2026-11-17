@@ -1,6 +1,7 @@
 # Comprehensive Overview Summary of the Project
 
 > **Period:** September to November 2026 (commits 14 Oct to 16 Nov 2026) · **Branch:** `incremental-test` @ `295ce61` · **Repository:** [andersoxie/xpact](https://github.com/andersoxie/xpact)
+> **Map of everything:** [PROJECT-KNOWLEDGE.md](PROJECT-KNOWLEDGE.md) · [decision log](decision-log.md)
 > **Web version with charts:** https://claude.ai/artifact/81LoL9FT7bobHBN5Ps98cu (private until shared) · Part 1 report copy: [student/report/internship-part1-report.md](../student/report/internship-part1-report.md)
 > **Part 2:** resumes in a few weeks. Start with [CONTINUE-HERE.md](../student/CONTINUE-HERE.md) and [section 9](#9-plan-for-part-2) of this report.
 
