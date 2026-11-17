@@ -783,25 +783,25 @@ In the first five weeks of the eight-week internship, the project went from a pa
 - [x] ~~File mass-xpact#73, #75, #84 on andersoxie/xpact, one issue each~~ (#273, #274, #272)
 - [x] ✅ An exception guard on each exported DLL function ([#273](https://github.com/andersoxie/xpact/issues/273), 2026-11-11)
 - [x] ✅ Thread safety: calls serialized, safe from several threads ([#274](https://github.com/andersoxie/xpact/issues/274), 2026-11-11)
-- [ ] Parallel parsing ([#304](https://github.com/andersoxie/xpact/issues/304)) and the 10 MB limit: design decisions for the supervisor
+- [ ] Parallel parsing ([#304](https://github.com/andersoxie/xpact/issues/304)) and the 10 MB limit: design decisions for the supervisor *(answered for the Gobo build: parallel since [#418](https://github.com/andersoxie/xpact/issues/418); the EiffelStudio build stays serial)*
 - [ ] ISO-8859-1 in pieces ([#272](https://github.com/andersoxie/xpact/issues/272)): copy the UTF-16 resume path
 - [ ] [#293](https://github.com/andersoxie/xpact/issues/293) entity depth limit of 32: remove or give it its own error code (supervisor)
 - [ ] [#176](https://github.com/andersoxie/xpact/issues/176) and the rest of [#123](https://github.com/andersoxie/xpact/issues/123), together; [#170](https://github.com/andersoxie/xpact/issues/170); [#126](https://github.com/andersoxie/xpact/issues/126)
 - [ ] [#171](https://github.com/andersoxie/xpact/issues/171) and [#13](https://github.com/andersoxie/xpact/issues/13): ask the supervisor first
 - [ ] [#211](https://github.com/andersoxie/xpact/issues/211): billion-laughs documents are stopped, but ~15× slower than Expat
 - [ ] The 3 contracts the Boogie models need (7.8)
-- [ ] [#197](https://github.com/andersoxie/xpact/issues/197) the W3C-in-pieces test on several cores
+- [x] ✅ [#197](https://github.com/andersoxie/xpact/issues/197) the W3C-in-pieces test on several cores *(done: `run.py --jobs 16`, 148.4 s → 27.5 s, results identical)*
 - [x] ✅ Website code-review findings 1-7 and a worker with no privileges at Low integrity (#295, #297, #299, 2026-11-11)
 - [ ] Website deployment and HTTPS ([#210](https://github.com/andersoxie/xpact/issues/210), the supervisor's server); optionally a separate worker account
 - [x] ✅ Website build `website-2026-11-12-1` with the accessibility fixes: release and Docker image `latest`, tested in the container ([#345](https://github.com/andersoxie/xpact/issues/345), 2026-11-12)
 - [x] ✅ SonarQube: 196 issues → 0 ([#325](https://github.com/andersoxie/xpact/issues/325)–[#332](https://github.com/andersoxie/xpact/issues/332), 2026-11-12); SHA-1 hotspot resolved ([#342](https://github.com/andersoxie/xpact/issues/342))
-- [ ] SonarQube: mark the 2 remaining hotspots "Safe" (reasons in [#342](../../reports/issue-0342/report.md)); send a Python coverage report so the quality gate can pass
+- [x] ✅ SonarQube: mark the 2 remaining hotspots "Safe" (reasons in [#342](../../reports/issue-0342/report.md)); send a Python coverage report so the quality gate can pass *(done: quality gate passes, 0 hotspots, coverage 81.8 %, [#397](https://github.com/andersoxie/xpact/issues/397))*
 - [x] ✅ [#316](https://github.com/andersoxie/xpact/issues/316): found with WinDbg (no recursion: .NET loading types at the cap) and fixed in the worker (PR #355, 2026-11-12)
 - [x] ✅ [#352](https://github.com/andersoxie/xpact/issues/352)/[#353](https://github.com/andersoxie/xpact/issues/353): a 10 MB upload no longer freezes the page; timeouts explained (PR #354, 2026-11-12)
 - [x] Website release with #316 + #352/#353 (and the security fixes): `website-2026-11-14-3`, 14 November
 - [ ] The Docker memory-cap check can require code 1 again
 - [x] ✅ Fair speed test against native Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275)): median 18× slower, 0 checksum mismatches → [results](../results/fair-speed-2026-11-10/README.md); rerun on an idle PC before quoting final numbers
-- [ ] Speed: profile the callback and 1-byte cases, then read by index and reuse buffers (leads in [mass-xpact-issue-0014](../../reports/mass-xpact-issue-0014/report.md))
+- [ ] Speed: profile the callback and 1-byte cases, then read by index and reuse buffers (leads in [mass-xpact-issue-0014](../../reports/mass-xpact-issue-0014/report.md)) *(callbacks: profiled and fixed in [#428](https://github.com/andersoxie/xpact/issues/428); 1-byte cases still open)*
 - [ ] A Linux build
 
 **Remaining speed work**: the "small steps" from 1 November are still open: check characters while tokenizing instead of in a separate pass, reuse one C buffer for callback strings, and use `XP_TOKEN_SLICE` more widely.

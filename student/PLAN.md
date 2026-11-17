@@ -250,7 +250,7 @@ ative-eiffel`.
 - [x] ✅ [#370](https://github.com/andersoxie/xpact/issues/370) tests crashed under coverage (PR #374). [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube with C#: 76 → **0** issues (PR #375-#378). [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL + Dependabot (PR #373).
 - [x] ✅ [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (closed 2026-11-14: 0 left to review; worker callbacks hardened in #384) · (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
 - [ ] Supervisor: Dependabot alerts + secret scanning (repo Settings → Code security); host the image (#210).
-- [ ] Nothing pushed from the 14 Nov docs update until the student says so.
+- [x] ✅ Nothing pushed from the 14 Nov docs update until the student says so. *(done: pushed and merged later, 2026-11-16/17)*
 
 **State 2026-11-13:** the full to-do list with time estimates is [TOOODOOO.txt](archive/TOOODOOO.txt) (frozen 2026-11-16).
 
@@ -263,7 +263,7 @@ ative-eiffel`.
 **State 2026-11-12:**
 
 - [x] ✅ **SonarQube (2026-11-12):** scan works with the student's token; issues 196 → **0** in eight PRs (SonarQube issue 1-8 = [#325](https://github.com/andersoxie/xpact/issues/325)-[#332](https://github.com/andersoxie/xpact/issues/332), PRs #333-#340), duplication 14 % → 0 %; Python suite 239 OK, website 42/42. [Summary](../reports/sonarqube-2026-11-12/README.md).
-- [ ] SonarQube: 2 security hotspots (3 → 2 with #342) need someone with review rights (supervisor); quality gate fails only on "coverage of new code" (send a `coverage.py` report, or agree to drop that condition).
+- [x] ✅ SonarQube: 2 security hotspots (3 → 2 with #342) need someone with review rights (supervisor); quality gate fails only on "coverage of new code" (send a `coverage.py` report, or agree to drop that condition). *(done: quality gate passes, 0 issues, 0 hotspots, new-code coverage 81.8 %, [#397](https://github.com/andersoxie/xpact/issues/397))*
 - [x] ✅ #131 closed (student's permission). SHA-1 hotspot resolved ([#342](https://github.com/andersoxie/xpact/issues/342), PR #343); 2 hotspots left to mark Safe in the UI.
 - [x] ✅ `main` = `incremental-test`, 0 ahead / 0 behind (PR #344 merge commit, then PR #350 and a fast-forward of `main` to `fff0d2d`; student's explicit request, 2026-11-12).
 - [x] ✅ Hand-in report updated to 2026-11-12 ([#346](https://github.com/andersoxie/xpact/issues/346)); ✏️ reflection still in the student's own words.
@@ -283,7 +283,7 @@ ative-eiffel`.
 - [x] ✅ DLL: [#273](https://github.com/andersoxie/xpact/issues/273) exceptions → error code (PR #301); [#274](https://github.com/andersoxie/xpact/issues/274) safe from many threads, calls serialized (PR #303); parallel parsing → question [#304](https://github.com/andersoxie/xpact/issues/304).
 - [x] ✅ Tooling: [#302](https://github.com/andersoxie/xpact/issues/302) `-UseExistingNativeDll -NoDocsUpdate` (PR #305); [#306](https://github.com/andersoxie/xpact/issues/306) report logs committed (PR #307); [#308](https://github.com/andersoxie/xpact/issues/308) Store python alias (PR #309); [#318](https://github.com/andersoxie/xpact/issues/318) `fix.ps1` merge commits into `incremental-test` (PR #321); [#319](https://github.com/andersoxie/xpact/issues/319) DLL SHA-256 on every rebuild, `XPACT_FROZEN_DLL` (PR #322); [#320](https://github.com/andersoxie/xpact/issues/320) text files outside `docs/` brought up to date.
 - [ ] Aikido: mark the 14 checksum alerts as false positives (student, in the Aikido dashboard).
-- [ ] Open issues on andersoxie (15 on 2026-11-11 night): #304, #293, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13.
+- [ ] Open issues on andersoxie (15 on 2026-11-11 night): #304, #293, #272, #262, #211, #210, #197, #176, #171, #170, #131, #130, #126, #123, #13. *(2026-11-17: 15 open: #13, #123, #126, #170, #171, #176, #210, #211, #272, #293, #304, #415, #420, #431, #432; #262, #197, #131, #130 closed since)*
 - [x] ✅ Fair speed test vs Expat 2.8.1 ([#275](https://github.com/andersoxie/xpact/issues/275), PR #276): median 18× slower, 0 checksum mismatches → [results](results/fair-speed-2026-11-10/README.md); after #273/#274: whole documents unchanged, 1-byte pieces 2-4 % ([check](../reports/issue-0276-check/README.md)). Rerun the full matrix on an idle PC before quoting final numbers.
 - [x] Refile mass-xpact #84, #73, #75 on andersoxie: [#272](https://github.com/andersoxie/xpact/issues/272), [#273](https://github.com/andersoxie/xpact/issues/273), [#274](https://github.com/andersoxie/xpact/issues/274). #20 stays inconclusive and is not refiled.
 - [x] `report/ActualReport.md` and `ActualReportShorter.md` updated with 2026-11-11 (website findings, worker rights, #273, #274, #275, tooling).
@@ -343,7 +343,7 @@ Not checked yet (need the public site): PageSpeed Insights, GTmetrix, Google Sea
 11. 🟡 **G03 and C03/C10 findings (2026-10-31):** ✅ fixed and closed: [#122](https://github.com/andersoxie/xpact/issues/122), [#124](https://github.com/andersoxie/xpact/issues/124), [#125](https://github.com/andersoxie/xpact/issues/125), [#172](https://github.com/andersoxie/xpact/issues/172), [#173](https://github.com/andersoxie/xpact/issues/173), [#174](https://github.com/andersoxie/xpact/issues/174), [#175](https://github.com/andersoxie/xpact/issues/175). Each fix was checked on both builds against Expat 2.8.1 (probe, G03, C# DLL tests, W3C verdicts and output test, Expat's C tests, Eiffel matrix, Python suite); reports under `reports/issue-NNNN/`.
 12. ⬜ **Left to do (saved 2026-10-31, paused by the student):**
     - [x] ✅ [#197](https://github.com/andersoxie/xpact/issues/197) test 2 on several cores: verified 2026-11-15, identical results, 148.4 s → 27.5 s with `--jobs 16` ([report](../reports/issue-0197/README.md))
-    - [ ] one W3C benchmark stage on `student-Mass` for the fixes since #172 (agreed: once per batch, both builds)
+    - [x] ✅ one W3C benchmark stage on `student-Mass` for the fixes since #172 (agreed: once per batch, both builds) *(superseded: `student-Mass` deleted; W3C 0 failed in both builds on `incremental-test`, 2026-11-16, [#407](https://github.com/andersoxie/xpact/issues/407))*
     - [ ] [#176](https://github.com/andersoxie/xpact/issues/176) `]]>` in pieces and the rest of [#123](https://github.com/andersoxie/xpact/issues/123) (133 CDATA cases), together
     - [ ] [#170](https://github.com/andersoxie/xpact/issues/170) error codes (14 W3C cases), then [#126](https://github.com/andersoxie/xpact/issues/126) raw CR to the default handler (large: about 41 call sites)
     - [ ] [#171](https://github.com/andersoxie/xpact/issues/171) error columns and [#13](https://github.com/andersoxie/xpact/issues/13) GC exceptions: ask the supervisor first (large or design questions)
@@ -491,7 +491,7 @@ Run early (2026-10-22) with the C# DLL test program ([#37](https://github.com/an
 **Activity:** Demonstrate the work, address review comments and hand it over.
 **Bring to review:** Final report, tests, code or proposals, setup guide and follow-up list.
 - [ ] [Report, demonstration and handover](github/issues/18-report-handover.md)
-- [ ] [A06](github/issues/03-A06.md) All weekly notes and result records complete. Weeks 1-7 written (2026-10-31)
+- [ ] [A06](github/issues/03-A06.md) All weekly notes and result records complete. Weeks 1-9 written, week 10 drafted (2026-11-17)
 
 ## Not in the plan (unless the supervisor asks)
 The other tasks in the register (A03, A05, B03–B07, C01, C04–C09, D, E, F03–F09,
