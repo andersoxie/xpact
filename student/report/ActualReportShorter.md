@@ -25,8 +25,8 @@ xpact is an XML parser written in Eiffel with a C interface compatible with **Ex
 | ✅ Website | Upload XML and test it with xpact; three security rounds (code review, scan, hosting check), 48/48 backend tests, attack battery 27/27; Docker image `website-2026-11-14-3` with a hosting checklist; 🟡 not deployed yet (supervisor) |
 | 🟡 Speed | Chunked input is incremental: 50 min → 106 ms. Against native Expat 2.8.1: median **18× slower**, same events in every cell ([results](../results/fair-speed-2026-11-10/README.md)); 16 Nov profiling: 1.07× faster again ([#407](https://github.com/andersoxie/xpact/issues/407)). 🔴 ISO-8859-1 in pieces is still slow (#272) |
 | 🟡 Details differ | Error positions and a few events and error codes (6 open findings) |
-| 🟡 Blockers for 1.0 | ✅ exception → error code (#273); ✅ safe from several threads (#274). Open: parallel parsing (#304; Gobo DLL works on any thread but still has one global lock, [#418](https://github.com/andersoxie/xpact/issues/418)), documents over 10 MB |
-| ✅ Gobo Eiffel | W3C profile identical to EiffelStudio (1,974 passed, 0 different); parser scales on threads; `xpact.dll` built with Gobo + msc: identical results, 0.59× the speed (0.90× with GC tuning) ([report](../../reports/gobo-dll/README.md)) |
+| 🟡 Blockers for 1.0 | ✅ exception → error code (#273); ✅ safe from several threads (#274). Open: parallel parsing (#304; Gobo DLL parallel since [#418](https://github.com/andersoxie/xpact/issues/418): 4 threads 0.40 s vs 0.61 s), documents over 10 MB |
+| ✅ Gobo Eiffel | W3C profile identical to EiffelStudio (1,974 passed, 0 different); parser scales on threads; `xpact.dll` built with Gobo + msc: identical results, 0.92× the speed after the callback fix ([#428](https://github.com/andersoxie/xpact/issues/428)), parallel on several cores ([report](../../reports/gobo-dll/README.md)) |
 
 ---
 

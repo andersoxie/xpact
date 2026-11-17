@@ -230,13 +230,20 @@ Since #318 (2026-11-11) it targets `incremental-test`, merges with a merge commi
 
 > 🧊 History from here on. The current "Next" list is in [CONTINUE-HERE.md §3](CONTINUE-HERE.md#3-next-in-this-order).
 
-**State 2026-11-16 (read first):** [CONTINUE-HERE.md](CONTINUE-HERE.md) is current.
+**State 2026-11-17:** [CONTINUE-HERE.md](CONTINUE-HERE.md) is current; map of the whole project: [PROJECT-KNOWLEDGE.md](../docs/PROJECT-KNOWLEDGE.md).
+
+- [x] ✅ Thread limits recorded as issues [#431](https://github.com/andersoxie/xpact/issues/431) (scaling stops at 4 threads) and [#432](https://github.com/andersoxie/xpact/issues/432) (one parse = one core), PR #433.
+- [x] ✅ [#434](https://github.com/andersoxie/xpact/issues/434) Comprehensive overview summary of the project (PR #435): mileage, groups, open issues, limits, commercial road, part 2 plan.
+- [x] ✅ [#436](https://github.com/andersoxie/xpact/issues/436) checkbox review (PR #437): 6 ticked with evidence; 76 live boxes open, 238 frozen.
+- [x] ✅ [#438](https://github.com/andersoxie/xpact/issues/438) all live docs brought to 17 Nov; [traceability map](../docs/PROJECT-KNOWLEDGE.md) and [decision log](../docs/decision-log.md).
+
+**State 2026-11-16:**
 
 - [x] ✅ [#197](https://github.com/andersoxie/xpact/issues/197) test 2 on 16 cores verified (PR #403); [#401](https://github.com/andersoxie/xpact/issues/401) script audit (PR #402).
 - [x] ✅ [#404](https://github.com/andersoxie/xpact/issues/404)-[#406](https://github.com/andersoxie/xpact/issues/406) matrix lock retry, `-EiffelBuild` list, Python resolver (PR #410).
 - [x] ✅ [#407](https://github.com/andersoxie/xpact/issues/407) faster parser: DLL median 1.07×, elements 1.16×, results unchanged (PR #411, [report](../reports/perf-allocations/README.md)).
 - [x] ✅ [#304](https://github.com/andersoxie/xpact/issues/304) / [#408](https://github.com/andersoxie/xpact/issues/408): EiffelStudio's runtime cannot scale threads; under Gobo the parser scales and the W3C results are identical (PR #412, [threads](../reports/issue-0304/README.md), [Gobo](../reports/gobo-2026-11-16/README.md)).
-- [x] ✅ [#414](https://github.com/andersoxie/xpact/issues/414) xpact.dll built with Gobo + msc: identical results (test 2, 204 speed cells), any thread; 0.59× the EiffelStudio DLL (0.90× GC tuned) ([report](../reports/gobo-dll/README.md)).
+- [x] ✅ [#414](https://github.com/andersoxie/xpact/issues/414) xpact.dll built with Gobo + msc: identical results (test 2, 204 speed cells), any thread; 0.59× the EiffelStudio DLL (0.90× GC tuned) ([report](../reports/gobo-dll/README.md)). *(→ 0.92× after [#428](https://github.com/andersoxie/xpact/issues/428))*
 - [x] ✅ [#418](https://github.com/andersoxie/xpact/issues/418) Gobo DLL without the global bridge lock: 4 threads 0.40 s vs 0.61 s EiffelStudio DLL ([PR #430](https://github.com/andersoxie/xpact/pull/430)).
 - [x] ✅ [#428](https://github.com/andersoxie/xpact/issues/428) callback strings reused + GC tuning inside the DLL: Gobo 1.69× faster, now 0.92× ES on one thread ([PR #429](https://github.com/andersoxie/xpact/pull/429), [report](../reports/gobo-dll/README.md)).
 - [ ] Gobo DLL: namespaces cells (0.74×) and 256 B-64 KB pieces (~0.89×); full 204-cell run; [#431](https://github.com/andersoxie/xpact/issues/431) scaling stops at 4 threads; [#432](https://github.com/andersoxie/xpact/issues/432) one parse = one core.

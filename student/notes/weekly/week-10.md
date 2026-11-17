@@ -20,10 +20,12 @@
 - [ ] Address the supervisor's review comments (none yet).
 - [ ] Rerun the website tests after the Dependabot test-package updates (#393-#396).
 - [ ] Handover: [HANDOVER.md](../../HANDOVER.md) complete and current.
-- [ ] Optional if time: #272 ISO-8859-1 in pieces; #418 Gobo DLL without the global lock; rerun the Gobo vs EiffelStudio thread test with msc.
+- [x] ✅ #418 Gobo DLL without the global lock and the thread test rerun with msc (done 16 Nov, PR #430); callbacks #428 (PR #429).
+- [ ] Optional if time: #272 ISO-8859-1 in pieces.
 
 ## Tried
 
+- [x] ✅ 17 Nov: thread limits #431/#432 recorded; [overview report](../../../docs/Comprehensive-Overview-Summary-of-the-Project.md) (#434); checkbox review (#436); all docs to 17 Nov with a [traceability map](../../../docs/PROJECT-KNOWLEDGE.md) and [decision log](../../../docs/decision-log.md) (#438).
 - [ ] *(fill in during the week)*
 
 ## What the evidence shows

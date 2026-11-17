@@ -5,8 +5,8 @@ folder, so it stays separate from the parser code. The plan, the task register
 (A01–H06) and the suggested task selection come from
 [`docs/xpact-student-introduction.md`](../docs/xpact-student-introduction.md).
 
-> **Updated 2026-11-11 (week 8)** · work branch is **`incremental-test`** (andersoxie/xpact, since 2026-11-08); `student-Mass` was contained in it and deleted 2026-11-10.
-> Weeks 1-7 ✅, week 8 🟡 · state and next steps: [CONTINUE-HERE.md](CONTINUE-HERE.md), [PLAN.md](PLAN.md) ("Next", "Known problems"), [week-08](notes/weekly/week-08.md).
+> **Updated 2026-11-17 (week 10)** · work branch is **`incremental-test`** (andersoxie/xpact, since 2026-11-08); `student-Mass` was contained in it and deleted 2026-11-10.
+> Weeks 1-9 ✅, week 10 (handover) 🟡 · **map of everything:** [PROJECT-KNOWLEDGE.md](../docs/PROJECT-KNOWLEDGE.md) · · state and next steps: [CONTINUE-HERE.md](CONTINUE-HERE.md), [PLAN.md](PLAN.md) ("Next", "Known problems"), [week-08](notes/weekly/week-08.md).
 
 ## Start here
 
@@ -21,6 +21,9 @@ folder, so it stays separate from the parser code. The plan, the task register
 
 | I want to see… | Open |
 |---|---|
+| The whole project by topic (planning, history, testing, docs, decisions) | [PROJECT-KNOWLEDGE.md](../docs/PROJECT-KNOWLEDGE.md) |
+| All numbers, open issues, limits, part 2 plan | [Comprehensive overview](../docs/Comprehensive-Overview-Summary-of-the-Project.md) |
+| Why things were decided | [decision-log.md](../docs/decision-log.md) |
 | Where things stand and what's next | [PLAN.md](PLAN.md): "At a glance", "Known problems", "Next" |
 | Every open problem and its cause | [PLAN.md, Known problems](PLAN.md#-known-problems-living-list) |
 | The newest test results | W3C, all 2,585 cases: [`../reports/latest-2026-10-28/`](../reports/latest-2026-10-28/README.md) · xpact vs Expat across chunks: [`results/G03-comparison/`](results/G03-comparison/README.md) · each fix since: [`../reports/README.md`](../reports/README.md) |
@@ -33,7 +36,7 @@ folder, so it stays separate from the parser code. The plan, the task register
 | Issues not on GitHub yet | [`github/issues/`](github/issues/), listed in [`github/README.md`](github/README.md) |
 | How to make and revert a fix | [VERSIONING.md](VERSIONING.md) |
 
-The clone on this PC is `C:\Users\masou\Desktop\Lia\xpact\xpactGit`
+The clone on this PC is `C:\xpact\xpact-student-Mass` (earlier: `C:\Users\masou\Desktop\Lia\xpact\xpactGit`)
 (`xpact\w10-attr-defaults` and `xpact\w11-plan` are extra worktrees of it, used to
 build several fixes side by side). Make every change there, never in a copied
 folder: a copy has no commit hash, so its results can't be traced.
