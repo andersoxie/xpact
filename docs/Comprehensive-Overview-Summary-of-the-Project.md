@@ -26,7 +26,7 @@
 | Issues still open | 15 (listed in [section 4](#4-open-issues-all-15)) |
 | Lines of code and scripts added (Eiffel, C, Python, PowerShell, C#, TypeScript) | **~47,500** |
 | Lines of documentation and reports added | **~38,100** |
-| Checklist items ticked in the docs | **458** |
+| Checklist items ticked in the docs | **464** |
 
 | 🏆 Headline result | Before | After |
 |---|---|---|
@@ -124,7 +124,7 @@ Also known, from the earlier fork: **heap corruption under GC stress and load** 
 
 ## 5. Verifiable items not yet ticked
 
-The repository's Markdown files have **458 ticked and 320 unticked** checkboxes. Many unticked ones are in frozen, archived reports. These are the ones that still matter:
+The repository's Markdown files have **464 ticked and 314 unticked** checkboxes (after the review of 17 Nov: 238 unticked are in frozen reports, result records and dated notes, 76 in live files). Many unticked ones are in frozen, archived reports. These are the ones that still matter:
 
 <details open>
 <summary><b>XPact parser and DLL</b></summary>
