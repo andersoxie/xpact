@@ -25,7 +25,7 @@
 | 🏷️ Labels | `bug`, `test`, `build`, `documentation`, `regression`, `investigation`, `type:finding`, `type:task`, `group:*`, `P0`/`P1`, `D1`-`D4` | recorded in [student/github/](../student/github/README.md) |
 | 📅 Milestones and plan | [PLAN.md](../student/PLAN.md) (10-week plan, task status, history) | weeks 1-9 ✅, week 10 (handover) 🟡 |
 | ➡️ What to do next | [CONTINUE-HERE.md §3](../student/CONTINUE-HERE.md#3-next-in-this-order), [HANDOVER.md §2](../student/HANDOVER.md) | with time estimates |
-| 🗺️ Roadmap | website: [roadmap.md](../website/docs/roadmap.md) · parser: [overview §7-§9](Comprehensive-Overview-Summary-of-the-Project.md#7-left-to-do) | incl. the road to commercial use |
+| 🗺️ Roadmap | strategy: [Xpact-future-plan.md](Xpact-future-plan.md) · website: [roadmap.md](../website/docs/roadmap.md) · parser: [overview §7-§9](Comprehensive-Overview-Summary-of-the-Project.md#7-left-to-do) | incl. the road to commercial use |
 | 📋 Requirements | W3C XML 1.0 conformance; same behaviour as Expat 2.8.1 ([libexpat-parity.md](libexpat-parity.md), [libexpat-api-compatibility.md](libexpat-api-compatibility.md)) | |
 | ❓ Questions for the supervisor | #304, #293, #211, #171, #13, licence, deployment ([HANDOVER.md](../student/HANDOVER.md)) | 🟡 to send in one batch |
 
