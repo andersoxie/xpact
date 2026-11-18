@@ -24,8 +24,34 @@ Windows 11 Home, .NET 10 SDK, DLLs `xpact.dll` `32171ECD…` / `xpact_assertions
 - Worker error output: ❔ unknown whether it can carry visitor text.
 
 ## Fix
-New `LogText.OneLine` (`website/backend/src/Xpact.Api/LogText.cs`): line breaks become ` | `, any other control character becomes `?`.
-Used for every visitor-dependent value in `WorkerRunner.cs` (lines 67, 79-81, 225). This closes both alerts whatever the answer to the open question above.
+**In short:** before a visitor-related value is written to the server log, a new helper puts it on one line. Line breaks become ` | ` and other hidden characters become `?`. A visitor can then never add a fake line to the log.
+
+*Illustration (made up, not a real log):*
+
+**Before:** a value with a line break could add a fake line to the log.
+```
+info: Parsed 120 bytes from 1.2.3.4 with production: Valid in 5 ms
+info: Admin logged in          ← fake line, typed by a visitor
+```
+
+**After:** the same value stays on its own line, so the fake text is easy to spot.
+```
+info: Parsed 120 bytes from 1.2.3.4 with production | info: Admin logged in: Valid in 5 ms
+```
+
+**What changed:**
+
+| File | Change |
+|---|---|
+| `website/backend/src/Xpact.Api/LogText.cs` (new) | `LogText.OneLine(value)`: line breaks → ` \| `, other control characters → `?`; an empty or missing value → `""` |
+| `website/backend/src/Xpact.Api/Workers/WorkerRunner.cs` | The 3 log lines that write a visitor value (client, build, the worker's error text; lines 67, 79-81, 225) now pass it through `LogText.OneLine` |
+| `website/backend/tests/Xpact.Api.Tests/LogTextTests.cs` (new) | 8 tests: normal text unchanged; `\r\n`, `\r`, `\n` turned into ` \| `; tabs, bell and color codes turned into `?`; no control character left |
+
+**Why it fixes both alerts, whatever the cause turns out to be:** the alerts are only suspected false alarms, so the fix doesn't rely on that. Every value now gets cleaned before it reaches the log.
+
+**One mistake on the way:** in the first version, an empty value was handed back unchanged, so CodeQL still saw an uncleaned path and kept both alerts. The second commit (`4806915`) returns a new empty string instead, and CodeQL then found 0 alerts.
+
+Pull request: [#427](https://github.com/andersoxie/xpact/pull/427) (merge commit `4c958cb`).
 
 ## Verification
 
