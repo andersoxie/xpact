@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\invalid\P32\out\ibm32i01.xml
+'<animal color="yellow"></animal>'
+
+GOT (xpact)
+'<animal></animal>'

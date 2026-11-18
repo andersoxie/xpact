@@ -1,0 +1,30 @@
+id	status	expected	xpact	xpact_s	xpact_mb	xpact_message	expat	expat_s	expat_mb	expat_message	size_mb	note
+billion-laughs	FAIL (crash/timeout)	REJECT	TIMEOUT				REJECT	0.3425	82.8	limit on input amplification factor (from DTD and entities) breached	0.0	10^9 x 'lol' in content: amplification limit
+billion-laughs-attr	pass	REJECT	REJECT	0.0464	9.0	e0:1:1:e0:1:1:parse error	REJECT	0.1015	21.8	limit on input amplification factor (from DTD and entities) breached	0.0	same, in an attribute value
+billion-laughs-pe	pass	REJECT	REJECT	0.0386	7.9	STRING:1:49:STRING:1:49:PE reference only allowed in DTD	REJECT	0.0009	17.8	illegal parameter entity reference	0.0	same with parameter entities in the DTD
+quadratic-blowup	FAIL (crash/timeout)	REJECT	TIMEOUT				REJECT	0.0103	34.0	limit on input amplification factor (from DTD and entities) breached	0.06	one 50 KB entity used 4,000 times (200 MB of text)
+small-amplification-ok	pass	ACCEPT	ACCEPT	0.1197	9.4		ACCEPT	0.001	17.7		0.0	100 x 'lol': must stay allowed
+recursive-direct	pass	REJECT	REJECT	0.0395	7.9	a:1:1:a:1:1:Entity cannot be recursively included	REJECT	0.001	17.7	recursive entity reference	0.0	entity refers to itself
+recursive-indirect	pass	REJECT	REJECT	0.038	8.0	b:1:1:b:1:1:Entity cannot be recursively included	REJECT	0.001	17.8	recursive entity reference	0.0	a -> b -> a
+recursive-pe	pass	REJECT	REJECT	0.0383	7.9	STRING:1:28:STRING:1:28:PE reference only allowed in DTD	REJECT	0.0009	17.9	illegal parameter entity reference	0.0	parameter entity refers to itself
+entity-chain-10k	pass	ACCEPT	ACCEPT	0.6157	221.8		ACCEPT	0.0123	22.9		0.24	CVE-2024-8176: 10,000 nested entity references (stack depth)
+entity-chain-100k	FAIL	ACCEPT	EXCEPTION	5.3892	2045.0	EIFFEL EXCEPTION: see engine	ACCEPT	0.1562	69.7		2.55	CVE-2024-8176: 100,000 nested entity references
+deep-nesting-100k	pass	ACCEPT	ACCEPT	3.4948	159.1		ACCEPT	0.1481	82.2		0.67	100,000 nested elements
+deep-nesting-1m	FAIL (crash/timeout)	ACCEPT	TIMEOUT				ACCEPT	2.5024	504.4		6.68	1,000,000 nested elements
+huge-name-10mb	pass	ACCEPT	ACCEPT	1.0055	174.2		ACCEPT	0.0718	78.7		10.0	a 10 MB element name
+huge-attribute-50mb	pass	ACCEPT	ACCEPT	2.8462	486.5		ACCEPT	0.1571	217.8		50.0	a 50 MB attribute value
+huge-text-100mb	pass	ACCEPT	ACCEPT	5.4447	965.5		ACCEPT	0.1599	319.4		100.0	100 MB of text
+huge-comment-50mb	pass	ACCEPT	ACCEPT	2.8849	486.5		ACCEPT	0.117	218.0		50.0	a 50 MB comment
+many-attributes-100k	pass	ACCEPT	ACCEPT	0.3606	59.3		ACCEPT	0.0417	40.7		1.04	100,000 different attributes on one element
+duplicate-attribute-late	pass	REJECT	REJECT	0.0487	8.5	STRING:1:8899:STRING:1:8899:Attribute declared twice	REJECT	0.0011	17.8	duplicate attribute	0.01	1,000 attributes (under the limit), the first repeated at the end
+many-namespaces-50k	pass	ACCEPT	ACCEPT	0.1435	37.8		ACCEPT	0.0896	53.6		1.03	50,000 namespace declarations (namespace parser)
+big-token-small-chunks	pass	ACCEPT	ACCEPT	0.3077	52.9		ACCEPT	0.0184	38.9		4.0	CVE-2023-52425: one 4 MB start tag fed in 4 KB chunks (must not be quadratic)
+big-text-byte-chunks	pass	ACCEPT	ACCEPT	0.0721	10.2		ACCEPT	0.0623	23.9		0.19	200 KB text fed byte by byte
+xxe-general-no-handler	FAIL	ACCEPT	REJECT	0.0386	7.9	STRING:1:66:STRING:1:66:external entities not supported	ACCEPT	0.001	18.0		0.0	external entity without a handler: must not be read
+xxe-parameter-no-handler	FAIL	ACCEPT	REJECT	0.0388	7.9	STRING:1:64:STRING:1:64:external entities not supported	ACCEPT	0.0009	17.7		0.0	external parameter entity without a handler: must not be read
+xxe-dtd-no-handler	FAIL	ACCEPT	REJECT	0.0408	7.9	STRING:1:48:STRING:1:48:Parser is not configured to support external DTDs	ACCEPT	0.0009	17.8		0.0	external DTD without a handler: must not be read
+ns-separator-in-uri	FAIL	REJECT	ACCEPT	0.0379	7.9		REJECT	0.001	18.0	syntax error	0.0	CVE-2022-25236: namespace URI contains the separator '|'
+bad-utf8-in-name-2byte	pass	REJECT	REJECT	0.0396	7.9	STRING:1:3:STRING:1:3:parse error	REJECT	0.001	17.7	not well-formed (invalid token)	0.0	CVE-2022-25235: invalid 2-byte UTF-8 in a name
+bad-utf8-in-name-3byte	pass	REJECT	REJECT	0.0386	7.9	STRING:1:3:STRING:1:3:parse error	REJECT	0.0009	17.8	not well-formed (invalid token)	0.0	CVE-2022-25235: invalid 3-byte UTF-8 in a name
+bad-utf8-in-attr	pass	REJECT	REJECT	0.0394	7.9	STRING:1:7:STRING:1:7:parse error	REJECT	0.0008	17.7	not well-formed (invalid token)	0.0	invalid 4-byte UTF-8 in an attribute value
+nul-byte	pass	REJECT	REJECT	0.0379	7.9	STRING:1:4:STRING:1:4:parse error	REJECT	0.0009	17.9	not well-formed (invalid token)	0.0	a NUL byte in text

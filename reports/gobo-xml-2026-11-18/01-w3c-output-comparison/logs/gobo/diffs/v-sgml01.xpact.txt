@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\sun\valid\out\sgml01.xml
+'<root position="first" status="initial-draft"></root>'
+
+GOT (xpact)
+'<root></root>'

@@ -1,0 +1,25 @@
+W3C XML: xpact: 2585 catalog cases
+  xpact: 250/2585
+  xpact: 500/2585
+  xpact: 750/2585
+  xpact: 1000/2585
+  xpact: 1250/2585
+  xpact: 1500/2585
+  xpact: 1750/2585
+  xpact: 2000/2585
+  xpact: 2250/2585
+  xpact: 2500/2585
+W3C XML: gobo: 2585 catalog cases
+  gobo: 250/2585
+  gobo: 500/2585
+  gobo: 750/2585
+  gobo: 1000/2585
+  gobo: 1250/2585
+  gobo: 1500/2585
+  gobo: 1750/2585
+  gobo: 2000/2585
+  gobo: 2250/2585
+  gobo: 2500/2585
+{"engine": "xpact", "total": 2585, "passed": 2283, "no_crash_only": 302, "failed": 0, "errors": 0, "skipped": 0, "accepted": 1109, "rejected": 1476, "known": 0, "unexpected": 0, "elapsed_ms": 125373.573}
+{"engine": "gobo", "total": 2585, "passed": 1919, "no_crash_only": 302, "failed": 364, "errors": 0, "skipped": 0, "accepted": 1282, "rejected": 1303, "known": 0, "unexpected": 364, "elapsed_ms": 127228.992}
+W3C XML reports: C:\xpact\xpact-student-Mass\build\gobo-xml-cmp\w3c

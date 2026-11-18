@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\xmltest\valid\sa\out\111.xml
+'<doc a="x y"></doc>'
+
+GOT (xpact)
+'<doc a=" x  y "></doc>'

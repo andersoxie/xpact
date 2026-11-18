@@ -1,0 +1,282 @@
+{
+ "files": 1417,
+ "same": 1055,
+ "stats": {
+  "xpact ACCEPT / expat ACCEPT": 1104,
+  "xpact REJECT / expat ACCEPT": 11,
+  "xpact REJECT / expat REJECT": 294,
+  "xpact ACCEPT / expat REJECT": 4,
+  "xpact TIMEOUT / expat REJECT": 3,
+  "xpact EXCEPTION / expat REJECT": 1
+ }
+}
+   32  events: xpact start / expat start field 2
+         e.g. att11, att5, att7, att9
+   29  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?SVG?(TRUNCATED):3:52:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?SVG?(TRUNCATED):3:52:No handler for URL scheme / expat error in processing external entity reference
+         e.g. SVG/4rects.xml, SVG/a-valid.xml, SVG/bike.xml, SVG/circle.xml
+   23  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?XPat(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?XPat(TRUNCATED):1:1:parse error / expat not well-formed (invalid token)
+         e.g. XPath/expr/compare, XPath/expr/equality, XPath/expr/functions, XPath/expr/strings
+   20  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?rege(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?rege(TRUNCATED):1:1:parse error / expat not well-formed (invalid token)
+         e.g. regexp/branch, regexp/bug316338, regexp/bug420596, regexp/bug649244
+   14  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?html(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?html(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. html-tokenizer/contentModelFlags.test, html-tokenizer/domjs.test, html-tokenizer/entities.test, html-tokenizer/escapeFlag.test
+   12  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:2:parse error / expat syntax error
+         e.g. valid/dtds/127772.dtd, valid/dtds/766956.dtd, valid/dtds/cond_sect1.dtd, valid/dtds/cond_sect2.dtd
+   11  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. catalogs/catal.script, catalogs/catal.sgml, catalogs/catal1.sgml, catalogs/catal2.sgml
+   10  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?c14n(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?c14n(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. c14n/exc-without-comments/merlin-c14n-two-18.ns, c14n/exc-without-comments/merlin-c14n-two-19.ns, c14n/exc-without-comments/merlin-c14n-two-20.ns, c14n/exc-without-comments/merlin-c14n-two-21.ns
+    9  events: xpact start / expat comment
+         e.g. c14n/1-1-without-comments/example-1.xml, c14n/with-comments/example-1.xml, c14n/without-comments/example-1.xml, intsubset.xml
+    9  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?thre(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?thre(TRUNCATED):1:2:parse error / expat syntax error
+         e.g. threads/a/a.dtd, threads/abc.dtd, threads/acb.dtd, threads/b/b.dtd
+    8  events: xpact comment / expat comment field 1
+         e.g. comment6.xml, relaxng/docbook_0.xml, relaxng/tutor11_1_3.xml, SVG/mathswitch.xml
+    7  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?scri(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?scri(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. scripts/base.script, scripts/base2.script, scripts/long_command.script, scripts/set1.script
+    6  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?thre(TRUNCATED):1:50:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?thre(TRUNCATED):1:50:No handler for URL scheme / expat error in processing external entity reference
+         e.g. threads/abc.xml, threads/acb.xml, threads/bac.xml, threads/bca.xml
+    5  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?auto(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?auto(TRUNCATED):1:1:parse error / expat not well-formed (invalid token)
+         e.g. automata/a, automata/aba, automata/abaa, automata/abba
+    5  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:Entity is not defined / expat not well-formed (invalid token)
+         e.g. recurse/g1.ent, recurse/g2.ent, recurse/g3.ent, recurse/gb.ent
+    5  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:parse error / expat illegal parameter entity reference
+         e.g. recurse/p1.ent, recurse/p2.ent, recurse/p3.ent, recurse/pb.ent
+    5  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?thre(TRUNCATED):2:150:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?thre(TRUNCATED):2:150:No handler for URL scheme / expat error in processing external entity reference
+         e.g. threads/a.example.org.xml, threads/b.example.org.xml, threads/c.example.org.xml, threads/complex.xml
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?c14n(TRUNCATED):1:19:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?c14n(TRUNCATED):1:19:parse error / expat no element found
+         e.g. c14n/1-1-without-comments/doc.dtd, c14n/with-comments/doc.dtd, c14n/without-comments/doc.dtd
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):2:150:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):2:150:No handler for URL scheme / expat error in processing external entity reference
+         e.g. catalogs/docbook.xml, catalogs/registry.xml, catalogs/whitex.xml
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:1:parse error / expat unclosed token
+         e.g. errors/attr1.xml, errors/attr2.xml, errors/name.xml
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?patt(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?patt(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. pattern/conj.pat, pattern/multiple.pat, pattern/simple.pat
+    3  xpact TIMEOUT
+         e.g. recurse/lol_classic.xml, recurse/lol_ig_content.xml, recurse/lol_param.xml
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?URI?(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?URI?(TRUNCATED):1:1:parse error / expat not well-formed (invalid token)
+         e.g. URI/file.uri, URI/port.uri, URI/smith.uri
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:2:parse error / expat syntax error
+         e.g. valid/dtds/694228.dtd, valid/dtds/objednavka.dtd, valid/dtds/pe-latin1.ent
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):24:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):24:2:parse error / expat syntax error
+         e.g. valid/dtds/xhtml1-frameset.dtd, valid/dtds/xhtml1-strict.dtd, valid/dtds/xhtml1-transitional.dtd
+    3  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?XPat(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?XPat(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. XPath/expr/base, XPath/expr/floats, XPath/tests/mixedpat
+    2  events: xpact pi / expat comment
+         e.g. boundaries1.xml, valid/xhtml1.xhtml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:14:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:14:parse error / expat not well-formed (invalid token)
+         e.g. errors/754946.xml, errors/cdata.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:15:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:15:parse error / expat not well-formed (invalid token)
+         e.g. errors/759573.xml, errors/attr4.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:2:parse error / expat not well-formed (invalid token)
+         e.g. errors/invalid-start-tag-2.xml, errors/name3.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:3:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:3:Name misformed / expat not well-formed (invalid token)
+         e.g. namespaces/err_2.xml, namespaces/err_3.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:6:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:6:Name misformed / expat not well-formed (invalid token)
+         e.g. namespaces/err_5.xml, namespaces/err_6.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. recurse/g0.ent, recurse/ga.ent
+    2  error code: xpact laugh0:1:1:laugh0:1:1:parse error / expat limit on input amplification factor (from DTD and entities) breached
+         e.g. recurse/lol_ig_attr.xml, recurse/lol_long_value.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:2:parse error / expat syntax error
+         e.g. recurse/lol_ip_content.dtd, recurse/lol_ip_value.dtd
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?SVG?(TRUNCATED):2:104:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?SVG?(TRUNCATED):2:104:No handler for URL scheme / expat error in processing external entity reference
+         e.g. SVG/defs.xml, SVG/gradient.xml
+    2  verdict: xpact REJECT (C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?utf1(TRUNCATED):1:57:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?utf1(TRUNCATED):1:57:unsupported character encoding) / expat ACCEPT ()
+         e.g. utf16bebom.xml, utf16lebom.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):13:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):13:2:parse error / expat syntax error
+         e.g. valid/dtds/notes.dtd, valid/dtds/xhtml-lat1.ent
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):25:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):25:2:parse error / expat syntax error
+         e.g. valid/dtds/xhtml-special.ent, valid/dtds/xhtml-symbol.ent
+    2  error code: xpact defroot:1:1:defroot:1:1:parse error / expat not well-formed (invalid token)
+         e.g. valid/t8.xml, valid/t8a.xml
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?VC?d(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?VC?d(TRUNCATED):1:2:parse error / expat syntax error
+         e.g. VC/dtds/a.dtd, VC/dtds/doc.dtd
+    2  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?VC?P(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?VC?P(TRUNCATED):1:2:parse error / expat syntax error
+         e.g. VC/PENesting, VC/PENesting2
+    1  verdict: xpact REJECT (d:1:1:d:1:1:parse error) / expat ACCEPT ()
+         e.g. att10
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):1:1:parse error / expat no element found
+         e.g. catalogs/recursive.script
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):3:79:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?cata(TRUNCATED):3:79:No handler for URL scheme / expat error in processing external entity reference
+         e.g. catalogs/stylesheet.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?dtd1(TRUNCATED):3:64:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?dtd1(TRUNCATED):3:64:No handler for URL scheme / expat error in processing external entity reference
+         e.g. dtd1
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?dtds(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?dtds(TRUNCATED):1:2:parse error / expat syntax error
+         e.g. dtds/eve.dtd
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ebcd(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ebcd(TRUNCATED):1:1:parse error / expat not well-formed (invalid token)
+         e.g. ebcdic_566012.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent1(TRUNCATED):4:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent1(TRUNCATED):4:2:Cannot open file /C%3A/xpact/xpact-student-Mass/reports/gobo-xml-2026-11-18/07-libxml2-corpus/download/libxml2/test/example.dtd / expat error in processing external entity reference
+         e.g. ent1
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent2(TRUNCATED):6:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent2(TRUNCATED):6:2:Cannot open file /C%3A/xpact/xpact-student-Mass/reports/gobo-xml-2026-11-18/07-libxml2-corpus/download/libxml2/test/example.dtd / expat error in processing external entity reference
+         e.g. ent2
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent3(TRUNCATED):4:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent3(TRUNCATED):4:2:Cannot open file /C%3A/xpact/xpact-student-Mass/reports/gobo-xml-2026-11-18/07-libxml2-corpus/download/libxml2/test/example.dtd / expat error in processing external entity reference
+         e.g. ent3
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent4(TRUNCATED):4:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?ent4(TRUNCATED):4:2:Cannot open file /C%3A/xpact/xpact-student-Mass/reports/gobo-xml-2026-11-18/07-libxml2-corpus/download/libxml2/test/example.dtd / expat error in processing external entity reference
+         e.g. ent4
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:26:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:26:parse error / expat not well-formed (invalid token)
+         e.g. errors/754947.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:10244:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:10244:parse error / expat unclosed token
+         e.g. errors/758588.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):46:68:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):46:68:parse error / expat unclosed token
+         e.g. errors/759020.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:58:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:58:unsupported character encoding / expat error in processing external entity reference
+         e.g. errors/759398.xml
+    1  error code: xpact ??:1:9:??:1:9:parse error / expat not well-formed (invalid token)
+         e.g. errors/759573-2.xml
+    1  error code: xpact ?:2:9:?:2:9:Entity cannot be recursively included / expat recursive entity reference
+         e.g. errors/759579.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:16:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:16:Attribute declared twice / expat duplicate attribute
+         e.g. errors/attr5.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):3:1088:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):3:1088:Attribute declared twice / expat duplicate attribute
+         e.g. errors/attr6.xml
+    1  verdict: xpact ACCEPT () / expat REJECT (reference to invalid character number)
+         e.g. errors/charref1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):5:10:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):5:10:parse error / expat not well-formed (invalid token)
+         e.g. errors/comment1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):7:26:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):7:26:parse error / expat not well-formed (invalid token)
+         e.g. errors/content1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:15:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:15:parse error / expat syntax error
+         e.g. errors/doctype1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:10:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:10:parse error / expat not well-formed (invalid token)
+         e.g. errors/doctype2.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):5:32:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):5:32:parse error / expat not well-formed (invalid token)
+         e.g. errors/dtd13
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:32:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:32:Attribute declared twice / expat duplicate attribute
+         e.g. errors/dup-xml-attr.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:30:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:30:Attribute declared twice / expat duplicate attribute
+         e.g. errors/dup-xml-attr2.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:1:parse error / expat no element found
+         e.g. errors/empty.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):5:7:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):5:7:Cannot open file /etc/doesnotexist / expat error in processing external entity reference
+         e.g. errors/extparsedent.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:5:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:5:parse error / expat junk after document element
+         e.g. errors/extra-content.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. errors/invalid-start-tag-1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):8:4:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):8:4:parse error / expat not well-formed (invalid token)
+         e.g. errors/issue151.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):3:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):3:1:parse error / expat not well-formed (invalid token)
+         e.g. errors/issue868.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:5647:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:5647:parse error / expat unclosed token
+         e.g. errors/name2.xml
+    1  error code: xpact a:1:1:a:1:1:Entity is not defined / expat error in processing external entity reference
+         e.g. errors/rec_att_default.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:6:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:6:Entity is not defined / expat undefined entity
+         e.g. errors/rec_ext.ent
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:6:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:6:Entity cannot be recursively included / expat error in processing external entity reference
+         e.g. errors/rec_ext_ent.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:5:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:5:parse error / expat not well-formed (invalid token)
+         e.g. errors/trailing-null-1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:4:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:4:parse error / expat not well-formed (invalid token)
+         e.g. errors/trailing-null-2.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:1:unsupported character encoding / expat unclosed token
+         e.g. errors/truncated-utf16.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):2:1:parse error / expat no element found
+         e.g. errors/unclosed-element.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:85:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:85:parse error / expat not well-formed (invalid token)
+         e.g. errors/utf8-1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:6:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):1:6:parse error / expat not well-formed (invalid token)
+         e.g. errors/utf8-2.xml
+    1  error code: xpact a:1:1:a:1:1:parse error / expat syntax error
+         e.g. errors10/781205.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):4:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?erro(TRUNCATED):4:1:parse error / expat incomplete markup in parameter entity
+         e.g. errors10/781361.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?expr(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?expr(TRUNCATED):1:1:parse error / expat not well-formed (invalid token)
+         e.g. expr/base
+    1  verdict: xpact REJECT (C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?iso?(TRUNCATED):1:42:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?iso?(TRUNCATED):1:42:unsupported character encoding) / expat ACCEPT ()
+         e.g. iso-8859-5.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:12:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:12:Name misformed / expat not well-formed (invalid token)
+         e.g. namespaces/err_1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:60:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:60:Attribute declared twice / expat duplicate attribute
+         e.g. namespaces/err_10.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:64:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:64:Attribute declared twice / expat duplicate attribute
+         e.g. namespaces/err_11.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:4:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:4:Name misformed / expat not well-formed (invalid token)
+         e.g. namespaces/err_4.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?name(TRUNCATED):1:7:End tag without start tag / expat unbound prefix
+         e.g. namespaces/err_7.xml
+    1  verdict: xpact ACCEPT () / expat REJECT (reserved prefix (xml) must not be undeclared or bound to another namespace name)
+         e.g. namespaces/err_8.xml
+    1  verdict: xpact ACCEPT () / expat REJECT (duplicate attribute)
+         e.g. namespaces/err_9.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?patt(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?patt(TRUNCATED):1:1:parse error / expat not well-formed (invalid token)
+         e.g. pattern/namespaces.pat
+    1  verdict: xpact REJECT (f:1:5:f:1:5:parse error) / expat ACCEPT ()
+         e.g. recurse/good_attr.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):2:36:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):2:36:Cannot open file /C%3A/xpact/xpact-student-Mass/reports/gobo-xml-2026-11-18/07-libxml2-corpus/download/libxml2/test/recurse/huge_dtd.dtd / expat error in processing external entity reference
+         e.g. recurse/huge_dtd.xml
+    1  error code: xpact ?:1:1:?:1:1:Cannot open file /C%3A/xpact/xpact-student-Mass/reports/gobo-xml-2026-11-18/07-libxml2-corpus/download/libxml2/test/recurse/g0.ent / expat error in processing external entity reference
+         e.g. recurse/lol_eg.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:1:parse error / expat error in processing external entity reference
+         e.g. recurse/lol_ep.xml
+    1  verdict: xpact ACCEPT () / expat REJECT (error in processing external entity reference)
+         e.g. recurse/lol_ip_content.xml
+    1  verdict: xpact EXCEPTION (EIFFEL EXCEPTION: see engine) / expat REJECT (error in processing external entity reference)
+         e.g. recurse/lol_ip_value.xml
+    1  error code: xpact laughhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh(TRUNCATED):1:1:laughhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh(TRUNCATED):1:1:parse error / expat limit on input amplification factor (from DTD and entities) breached
+         e.g. recurse/lol_long_name.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):5:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):5:1:parse error / expat no element found
+         e.g. recurse/p0.ent
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:17:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?recu(TRUNCATED):1:17:parse error / expat no element found
+         e.g. recurse/pa.ent
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?rela(TRUNCATED):2:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?rela(TRUNCATED):2:1:parse error / expat unclosed token
+         e.g. relaxng/broken-xml.rng
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?SVG?(TRUNCATED):2:71:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?SVG?(TRUNCATED):2:71:No handler for URL scheme / expat error in processing external entity reference
+         e.g. SVG/desc.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?svg1(TRUNCATED):3:51:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?svg1(TRUNCATED):3:51:No handler for URL scheme / expat error in processing external entity reference
+         e.g. svg1
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?svg2(TRUNCATED):3:51:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?svg2(TRUNCATED):3:51:No handler for URL scheme / expat error in processing external entity reference
+         e.g. svg2
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?unde(TRUNCATED):2:27:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?unde(TRUNCATED):2:27:Cannot open file /C%3A/xpact/xpact-student-Mass/reports/gobo-xml-2026-11-18/07-libxml2-corpus/download/libxml2/test/foo / expat error in processing external entity reference
+         e.g. undeclared-entity.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?URI?(TRUNCATED):2:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?URI?(TRUNCATED):2:1:parse error / expat syntax error
+         e.g. URI/uri.data
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:1:parse error / expat error in processing external entity reference
+         e.g. valid/766956.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):17:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):17:1:parse error / expat error in processing external entity reference
+         e.g. valid/cond_sect2.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):104:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):104:2:parse error / expat syntax error
+         e.g. valid/dtds/huge.ent
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):256:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):256:2:parse error / expat syntax error
+         e.g. valid/dtds/NewsMLv1.2.dtd
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):21:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):21:2:parse error / expat syntax error
+         e.g. valid/dtds/nitf-2-5.dtd
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:21:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:21:parse error / expat XML declaration not well-formed
+         e.g. valid/dtds/pe-in-text-decl.dtd
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:1:parse error / expat syntax error
+         e.g. valid/dtds/pe-val-latin1.ent
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):50:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):50:2:parse error / expat syntax error
+         e.g. valid/dtds/spec.dtd
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:1:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:1:parse error / expat syntax error
+         e.g. valid/dtds/xhtml.cat
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):51:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):51:2:parse error / expat syntax error
+         e.g. valid/dtds/xmlspec.dtd
+    1  verdict: xpact REJECT (C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):52:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):52:2:PE reference only allowed in DTD) / expat ACCEPT ()
+         e.g. valid/index.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:21:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):1:21:parse error / expat error in processing external entity reference
+         e.g. valid/pe-in-text-decl.xml
+    1  verdict: xpact REJECT (C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:18:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:18:parse error) / expat ACCEPT ()
+         e.g. valid/pe-latin1.xml
+    1  verdict: xpact REJECT (C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):3:11:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):3:11:parse error) / expat ACCEPT ()
+         e.g. valid/pe-test.xml
+    1  verdict: xpact REJECT (latin1:1:1:latin1:1:1:parse error) / expat ACCEPT ()
+         e.g. valid/pe-val-latin1.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:11:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:11:parse error / expat error in processing external entity reference
+         e.g. valid/t4.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:9:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:9:parse error / expat error in processing external entity reference
+         e.g. valid/t4a.xml
+    1  verdict: xpact REJECT (C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:12:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?vali(TRUNCATED):2:12:parse error) / expat ACCEPT ()
+         e.g. valid/t6.xml
+    1  verdict: xpact REJECT (defmiddle:1:1:defmiddle:1:1:parse error) / expat ACCEPT ()
+         e.g. valid/t9a.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?wap?(TRUNCATED):3:54:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?wap?(TRUNCATED):3:54:No handler for URL scheme / expat error in processing external entity reference
+         e.g. wap.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?wml?(TRUNCATED):2:94:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?wml?(TRUNCATED):2:94:No handler for URL scheme / expat error in processing external entity reference
+         e.g. wml.xml
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?xhtm(TRUNCATED):4:56:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?xhtm(TRUNCATED):4:56:No handler for URL scheme / expat error in processing external entity reference
+         e.g. xhtml1
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?xhtm(TRUNCATED):3:52:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?xhtm(TRUNCATED):3:52:No handler for URL scheme / expat error in processing external entity reference
+         e.g. xhtmlcomp
+    1  error code: xpact C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?XInc(TRUNCATED):1:2:C??xpact?xpact?student?Mass?reports?gobo?xml?2026?11?18?07?libxml2?corpus?download?libxml2?test?XInc(TRUNCATED):1:2:parse error / expat syntax error
+         e.g. XInclude/ents/issue733.dtd

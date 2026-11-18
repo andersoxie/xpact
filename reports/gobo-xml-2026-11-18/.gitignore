@@ -1,0 +1,6 @@
+# Downloaded test suites and generated inputs: not committed (CLAUDE.md)
+07-libxml2-corpus/download/
+05-security-limits/inputs/
+11-large-real-files/inputs/
+03-fuzzing/findings/
+__pycache__/

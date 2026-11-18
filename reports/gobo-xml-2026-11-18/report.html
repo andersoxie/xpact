@@ -1,0 +1,347 @@
+<title>xpact vs Gobo XML</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: one reading column; summary scoreboard first, each test opens into its own detail (overview -> detail). */
+:root {
+  --bg: #f6f7f5; --panel: #ffffff; --fg: #1b2420; --muted: #5d6a64; --line: #d9dfdb;
+  --xp: #0f7a63; --xp-soft: #dff1ec; --gb: #a8561a; --gb-soft: #f7e8dc;
+  --good: #1f8a4c; --good-soft: #e1f3e8; --bad: #b3312b; --bad-soft: #f8e3e1; --warn: #9a6a00; --warn-soft: #f7efd6;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111614; --panel: #18201d; --fg: #e4ebe7; --muted: #95a39c; --line: #2c3833;
+  --xp: #4fc7a8; --xp-soft: #173a31; --gb: #e59a5f; --gb-soft: #3d2a1b;
+  --good: #5cc98a; --good-soft: #17352a; --bad: #ef7d74; --bad-soft: #3d1f1d; --warn: #e2b54f; --warn-soft: #3a3019; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111614; --panel: #18201d; --fg: #e4ebe7; --muted: #95a39c; --line: #2c3833;
+  --xp: #4fc7a8; --xp-soft: #173a31; --gb: #e59a5f; --gb-soft: #3d2a1b;
+  --good: #5cc98a; --good-soft: #17352a; --bad: #ef7d74; --bad-soft: #3d1f1d; --warn: #e2b54f; --warn-soft: #3a3019; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--f-body); }
+.wrap { max-width: 980px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.05; }
+h2 { font-size: 24px; }
+h3 { font-size: 18px; }
+p { margin: 0; max-width: 68ch; }
+code, .mono { font-family: var(--f-mono); font-size: .9em; }
+.eyebrow { font: 600 12px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.xp { color: var(--xp); font-weight: 600; } .gb { color: var(--gb); font-weight: 600; }
+header { display: grid; gap: 12px; }
+.tag { display: inline-flex; align-items: center; gap: 6px; font: 600 12px var(--f-mono); padding: 3px 9px; border-radius: 99px; border: 1px solid var(--line); background: var(--panel); white-space: nowrap; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.lead { font-size: 17px; }
+.score { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; }
+.tile .big { font: 700 30px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.tile .sub { color: var(--muted); font-size: 13px; }
+.tile.xpt { border-top: 4px solid var(--xp); } .tile.gbt { border-top: 4px solid var(--gb); }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: color-mix(in srgb, var(--panel) 85%, var(--line)); }
+tr:last-child td { border-bottom: 0; }
+td.n { text-align: right; white-space: nowrap; }
+.chip { display: inline-block; font: 600 12px var(--f-mono); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+.win-xp { background: var(--xp-soft); color: var(--xp); } .win-gb { background: var(--gb-soft); color: var(--gb); }
+.tie { background: var(--line); color: var(--fg); } .run { background: var(--warn-soft); color: var(--warn); }
+.ok { color: var(--good); font-weight: 600; } .no { color: var(--bad); font-weight: 600; } .wa { color: var(--warn); font-weight: 600; }
+details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+details > summary { cursor: pointer; list-style: none; padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: space-between; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary:focus-visible { outline: 2px solid var(--xp); outline-offset: 2px; border-radius: 10px; }
+details > summary h3::before { content: "▸ "; color: var(--muted); }
+details[open] > summary h3::before { content: "▾ "; }
+.body { padding: 0 16px 16px; display: grid; gap: 12px; min-width: 0; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.box { border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; min-width: 0; }
+.box.xpb { background: var(--xp-soft); } .box.gbb { background: var(--gb-soft); }
+ul.check { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+ul.check li { padding-left: 26px; position: relative; }
+ul.check li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
+ul.check li.y::before { content: "✓"; color: var(--good); }
+ul.check li.x::before { content: "✗"; color: var(--bad); }
+ul.check li.p::before { content: "◷"; color: var(--warn); }
+ul.check li.o::before { content: "☐"; color: var(--muted); }
+pre { margin: 0; padding: 12px; overflow-x: auto; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; font: 13px/1.5 var(--f-mono); }
+.note { color: var(--muted); font-size: 13px; }
+section { display: grid; gap: 14px; }
+@media (prefers-reduced-motion: no-preference) { details > .body { animation: open .18s ease-out; } @keyframes open { from { opacity: .4; transform: translateY(-3px); } } }
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">XPact · Issue #442 · 18 Nov 2026 · local results, not committed</span>
+  <h1><span class="xp">xpact</span> vs <span class="gb">Gobo XML</span></h1>
+  <p class="lead">xpact against Gobo's own pure-Eiffel XML parser (<code>XM_EIFFEL_PARSER</code>), on every test suite we have. Expat 2.8.5 is the reference where the XML spec gives no answer.</p>
+  <div class="tags">
+    <span class="tag">incremental-test @ dd75cb8</span>
+    <span class="tag">xpact.dll 6E74C312…</span>
+    <span class="tag">gx_engine 8FEDBE32…</span>
+    <span class="tag">Gobo 26.11.14</span>
+    <span class="tag">assertions off</span>
+  </div>
+</header>
+
+<section>
+  <h2>In short</h2>
+  <div class="score">
+    <div class="tile xpt"><span class="eyebrow">W3C, core profile</span><span class="big xp">1,974 / 1,974</span><span class="sub">xpact: every case right</span></div>
+    <div class="tile gbt"><span class="eyebrow">W3C, core profile</span><span class="big gb">1,910 / 1,974</span><span class="sub">Gobo: 64 wrong (32 bad docs accepted)</span></div>
+    <div class="tile xpt"><span class="eyebrow">Fuzzing, 10 min</span><span class="big xp">870,295</span><span class="sub">xpact inputs, 0 crashes</span></div>
+    <div class="tile gbt"><span class="eyebrow">Fuzzing, 10 min</span><span class="big gb">79,717</span><span class="sub">Gobo inputs, 0 crashes</span></div>
+  </div>
+  <p>xpact is better on correctness, attack resistance, streaming and speed. Gobo is better on one thing: it has no size limits, so it accepts very large or very deep documents that xpact deliberately rejects.</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>#</th><th>Test</th><th>xpact</th><th>Gobo XML</th><th>Better</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Project W3C runner, core (1,974)</td><td class="n ok">1,974 ✓</td><td class="n no">1,910 · 64 ✗</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>1b</td><td>W3C legacy names, editions 1–4 (309)</td><td class="n ok">309 ✓</td><td class="n no">9 · 300 ✗</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>2</td><td>W3C canonical output (432)</td><td class="n">375 exact</td><td class="n">319 exact</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>3</td><td>Fuzzing, 10 min</td><td class="n">99.996 % = Expat</td><td class="n">97.6 % = Expat</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>4</td><td>Differential vs Expat, 10 min</td><td class="n">99.995 % = Expat</td><td class="n">running</td><td><span class="chip run">running</span></td></tr>
+      <tr><td>5</td><td>Encodings (146)</td><td class="n">3 cases differ</td><td class="n">UTF-16 + decl ✗</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>6</td><td>libxml2 corpus (1,417 files)</td><td class="n">1,412 = Expat</td><td class="n">1,398 = Expat</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>7</td><td>Security attacks</td><td class="n ok">all rejected fast</td><td class="n no">2 hang, 1 exception</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>8</td><td>Huge / deep documents</td><td class="n wa">rejected (limits)</td><td class="n ok">accepted</td><td><span class="chip win-gb">Gobo</span></td></tr>
+      <tr><td>9</td><td>Large files 1–9 MB</td><td class="n">2–8× faster</td><td class="n">slower</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>10</td><td>Streaming (document in pieces)</td><td class="n ok">supported</td><td class="n no">not supported</td><td><span class="chip win-xp">xpact</span></td></tr>
+      <tr><td>11</td><td>Speed, Eiffel vs Eiffel (17 files)</td><td class="n ok">3.4–34× faster</td><td class="n">slower</td><td><span class="chip win-xp">xpact</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Where each one is better</h2>
+  <div class="cols">
+    <div class="box xpb">
+      <h3 class="xp">xpact does better</h3>
+      <ul class="check">
+        <li class="y">Every W3C core case right; Gobo gets 64 wrong</li>
+        <li class="y">Rejects the 32 malformed W3C documents Gobo accepts: namespace rules, char-ref overflow, entity rules</li>
+        <li class="y">Reads UTF-16 documents that have an encoding declaration (Gobo: "unsupported character encoding")</li>
+        <li class="y">Billion laughs rejected in 3 s; Gobo runs into the 60 s timeout</li>
+        <li class="y">Quadratic blowup rejected in 0.17 s; Gobo runs into the timeout</li>
+        <li class="y">Streaming: a document can be fed in pieces (Expat API); Gobo's Eiffel parser needs the whole document</li>
+        <li class="y">Both XML 1.0 name tables (5th edition and editions 1–4); Gobo has only the 5th</li>
+        <li class="y">Caller can set the encoding (<code>XML_ParserCreate(encoding)</code>); Gobo can't</li>
+        <li class="y">11× more fuzz inputs in the same 10 minutes; 2–8× faster on 1–9 MB files</li>
+      </ul>
+    </div>
+    <div class="box gbb">
+      <h3 class="gb">Gobo does better</h3>
+      <ul class="check">
+        <li class="y">No 10 MB input limit: 20 MB files accepted, xpact rejects them</li>
+        <li class="y">100k-deep nesting, 10–100 MB names, text and comments accepted; xpact rejects (hard limits)</li>
+        <li class="y">50k namespaces and 100k attributes accepted; xpact rejects</li>
+        <li class="y">Lower memory in the harness, but xpact's figure includes the Python process, so this isn't a clean comparison</li>
+      </ul>
+      <p class="note">xpact's limits are known and deliberate; they are why the attack cases above pass. Work on them is ⏸ paused (by student): entity depth over 32, <a href="https://github.com/andersoxie/xpact/issues/293">#293</a>, and the 10 MB input limit.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Each test in detail</h2>
+
+  <details>
+    <summary><h3>1 · Project W3C runner (all 2,585 cases)</h3><span class="chip win-xp">xpact</span></summary>
+    <div class="body">
+      <p>The project's own runner, <code>scripts/run_w3c_conformance.py --all-cases</code>, XML 1.0 5th-edition profile. Each case is a fresh process.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Engine</th><th>core</th><th>legacy-names</th><th>optional-error</th><th>xml-1.1</th></tr></thead>
+        <tbody>
+          <tr><td class="xp">xpact</td><td class="n ok">1,974 / 0</td><td class="n ok">309 / 0</td><td class="n">28 / 0</td><td class="n">274 / 0</td></tr>
+          <tr><td class="gb">Gobo (strict)</td><td class="n">1,910 / <span class="no">64</span></td><td class="n">9 / <span class="no">300</span></td><td class="n">28 / 0</td><td class="n">274 / 0</td></tr>
+          <tr><td class="gb">Gobo, no Unicode filter</td><td class="n">1,863 / <span class="no">111</span></td><td class="n">7 / <span class="no">302</span></td><td class="n">28 / 0</td><td class="n">274 / 0</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">pass / fail. "Strict" uses Gobo's namespace resolver, Unicode validation filter, end-tag checker and stop-on-error filter. It's Gobo's best setup: without the Unicode filter it gets worse.</p>
+      <h3>Gobo's 64 core failures</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Group</th><th>Cases</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>Namespace rules not checked (accepts bad docs)</td><td class="n">17</td><td class="mono">rmt-ns10-009…012, 029…033, 036, 042…044, rmt-ns-e1.0-13a/b</td></tr>
+          <tr><td>Valid docs rejected because of the 5th-edition name/char tables</td><td class="n">17</td><td class="mono">x-ibm-1-0.5-*, x-rmt5-014/016/019, ibm89n06…12, invalid-sa-140/141</td></tr>
+          <tr><td>Entity and DTD rules not checked (accepts bad docs)</td><td class="n">11</td><td class="mono">not-wf-sa-074/104, not-wf-sa03, ibm32n09, ibm68n06, ibm77n01, ibm85n01/02, ibm89n01/02, hst-lhs-007</td></tr>
+          <tr><td>UTF-16 documents rejected</td><td class="n">7</td><td class="mono">valid-sa-049/050/051, pr-xml-little, pr-xml-utf-16, weekly-little, weekly-utf-16</td></tr>
+          <tr><td>Errata / external DTD documents rejected</td><td class="n">7</td><td class="mono">rmt-e2e-18/38/60, rmt-e3e-13, x-rmt-008b, ibm49i01, ibm51i01</td></tr>
+          <tr><td>Char-ref overflow accepted</td><td class="n">4</td><td class="mono">hst-bh-001…004</td></tr>
+          <tr><td>Other</td><td class="n">1</td><td class="mono">ht-ns10-047, not-wf-sa-175</td></tr>
+        </tbody>
+      </table></div>
+      <p>Example, <code>eduni/misc/001.xml</code>: the character number below does not fit in 32 bits, so the document must be rejected. Gobo accepts it; xpact rejects it.</p>
+      <pre>&lt;p&gt;Fa&amp;#xFF000000F6;il&lt;/p&gt;   &lt;!-- 32 bit integer overflow --&gt;</pre>
+    </div>
+  </details>
+
+  <details>
+    <summary><h3>2 · W3C canonical output (432 cases)</h3><span class="chip win-xp">xpact</span></summary>
+    <div class="body">
+      <p>The events of each engine are written as James Clark canonical XML and compared with the suite's expected OUTPUT files. Events are compared on start, end, text, PI and comment, the kinds all three engines report.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Engine</th><th>Exact</th><th>Only this engine wrong</th><th>Wrong in both (Expat too)</th></tr></thead>
+        <tbody>
+          <tr><td class="xp">xpact</td><td class="n ok">375</td><td class="n">4</td><td class="n">53</td></tr>
+          <tr><td class="gb">Gobo</td><td class="n">319</td><td class="n no">60</td><td class="n">53</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </details>
+
+  <details>
+    <summary><h3>3 · Fuzzing and 4 · differential vs Expat</h3><span class="chip win-xp">xpact</span></summary>
+    <div class="body">
+      <p>Fuzzing mutates W3C documents (bit flips, inserted tokens, splices). The differential test generates new documents. Both are 10 minutes with seed 1 and compare each verdict with Expat.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Test</th><th>Engine</th><th>Inputs</th><th>Same verdict as Expat</th><th>Accepts what Expat rejects</th><th>Crashes / hangs</th></tr></thead>
+        <tbody>
+          <tr><td>Fuzzing</td><td class="xp">xpact</td><td class="n">870,295</td><td class="n ok">99.996 %</td><td class="n">9</td><td class="n ok">0</td></tr>
+          <tr><td>Fuzzing</td><td class="gb">Gobo</td><td class="n">79,717</td><td class="n">97.6 %</td><td class="n no">1,692</td><td class="n ok">0</td></tr>
+          <tr><td>Differential</td><td class="xp">xpact</td><td class="n">1,039,865</td><td class="n ok">99.995 %</td><td class="n">3</td><td class="n ok">0</td></tr>
+          <tr><td>Differential</td><td class="gb">Gobo</td><td class="n" colspan="4"><span class="chip run">running</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">"Accept" is the final verdict: the parser read the whole document and reported it as well-formed. Gobo's parser takes the whole document in one call, so nothing later can change it.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><h3>5 · Encodings (146 cases)</h3><span class="chip win-xp">xpact</span></summary>
+    <div class="body">
+      <p>UTF-8 sequences in every position, UTF-16 with and without BOM and declaration, Latin-1, and character references.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Case</th><th>Expected</th><th>xpact</th><th>Gobo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">utf16le-decl-utf16le</td><td>ACCEPT</td><td class="ok">ACCEPT</td><td class="no">REJECT: unsupported character encoding</td></tr>
+          <tr><td class="mono">bom-utf8-decl-utf16</td><td>REJECT</td><td class="no">ACCEPT</td><td class="ok">REJECT</td></tr>
+          <tr><td class="mono">create-* (4 cases)</td><td>caller sets encoding</td><td class="ok">supported</td><td class="no">no such API</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Every other case gets the same verdict from both engines. <code>bom-utf8-decl-utf16</code> is a small xpact difference from Expat (already known).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><h3>6 · libxml2 test corpus (1,417 files)</h3><span class="chip win-xp">xpact</span></summary>
+    <div class="body">
+      <p>libxml2's own test files (git <code>21c8223</code>, 11 Nov 2026, downloaded, not committed). There are no expected verdicts, so Expat is the reference.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Engine</th><th>Same verdict</th><th>Same verdict + events</th><th>Timeouts</th><th>Exceptions</th></tr></thead>
+        <tbody>
+          <tr><td class="xp">xpact</td><td class="n ok">1,412</td><td class="n ok">1,295</td><td class="n">2</td><td class="n">0</td></tr>
+          <tr><td class="gb">Gobo</td><td class="n">1,398</td><td class="n">1,055</td><td class="n">3</td><td class="n no">1</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </details>
+
+  <details>
+    <summary><h3>7 · Security and limits (29 cases)</h3><span class="chip win-xp">xpact</span></summary>
+    <div class="body">
+      <p>Each case runs in a fresh process with a 60 s timeout. Gobo is capped at 2 GB of memory to protect the PC. "Expected" is what a safe, Expat-compatible parser does.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Case</th><th>Expected</th><th>xpact</th><th>Gobo</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">billion-laughs</td><td>REJECT</td><td class="ok">REJECT 3.1 s</td><td class="no">TIMEOUT 60 s</td></tr>
+          <tr><td class="mono">quadratic-blowup</td><td>REJECT</td><td class="ok">REJECT 0.17 s</td><td class="no">TIMEOUT 60 s</td></tr>
+          <tr><td class="mono">entity-chain-100k</td><td>ACCEPT</td><td class="ok">ACCEPT 1.2 s</td><td class="no">EXCEPTION at the 2 GB cap</td></tr>
+          <tr><td class="mono">billion-laughs-attr, -pe, recursive-*</td><td>REJECT</td><td class="ok">REJECT</td><td class="ok">REJECT</td></tr>
+          <tr><td class="mono">xxe-* (3, no handler)</td><td>ACCEPT (skip)</td><td class="ok">ACCEPT</td><td class="wa">REJECT: external entities not supported</td></tr>
+          <tr><td class="mono">deep-nesting-100k / 1m</td><td>ACCEPT</td><td class="wa">REJECT (limit)</td><td>ACCEPT 3.5 s / TIMEOUT</td></tr>
+          <tr><td class="mono">huge-name 10 MB, attribute 50 MB, text 100 MB, comment 50 MB</td><td>ACCEPT</td><td class="wa">REJECT (limits)</td><td class="ok">ACCEPT</td></tr>
+          <tr><td class="mono">many-attributes-100k, many-namespaces-50k</td><td>ACCEPT</td><td class="wa">REJECT (limits)</td><td class="ok">ACCEPT</td></tr>
+          <tr><td class="mono">ns-separator-in-uri</td><td>REJECT</td><td class="no">ACCEPT</td><td class="no">ACCEPT</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">The other cases (bad UTF-8, NUL byte, a duplicate attribute after 8 KB, small chunks) give the same verdict for both.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><h3>8 · Large files (1–20 MB)</h3><span class="chip win-xp">xpact</span> <span class="chip win-gb">Gobo for 20 MB</span></summary>
+    <div class="body">
+      <p>Whole document, handlers off / on. Seconds include the test harness for both engines.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>File</th><th>xpact, no handlers</th><th>Gobo, no handlers</th><th>xpact, all handlers</th><th>Gobo, all handlers</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">records 9 MB</td><td class="n ok">0.25 s</td><td class="n">1.37 s</td><td class="n ok">1.67 s</td><td class="n">3.38 s</td></tr>
+          <tr><td class="mono">text 9 MB</td><td class="n ok">0.49 s</td><td class="n">1.75 s</td><td class="n ok">1.23 s</td><td class="n">6.33 s</td></tr>
+          <tr><td class="mono">ns 9 MB</td><td class="n ok">1.39 s</td><td class="n">2.00 s</td><td class="n ok">5.46 s</td><td class="n">6.94 s</td></tr>
+          <tr><td class="mono">nested 9 MB</td><td class="n ok">0.27 s</td><td class="n">1.85 s</td><td class="n ok">2.38 s</td><td class="n">4.52 s</td></tr>
+          <tr><td class="mono">any 20 MB file</td><td class="n wa">REJECT (10 MB limit)</td><td class="n ok">ACCEPT 2.6–3.7 s</td><td class="n wa">REJECT</td><td class="n ok">ACCEPT 7–16 s</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">xpact can also take these files in 64 KB pieces at almost the same speed. Gobo cannot take pieces.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary><h3>9 · Speed, Eiffel against Eiffel (17 files)</h3><span class="chip win-xp">xpact</span></summary>
+    <div class="body">
+      <p>xpact's EiffelStudio benchmark exe against Gobo's <code>gx_engine --bench</code>, on the <code>build/perf-inputs</code> documents. Time per document, start-up removed, runs alternate, median of 3, PC otherwise idle. Expat (pyexpat, no handlers, C) for scale.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>File</th><th>xpact ms</th><th>Gobo ms</th><th>Expat ms</th><th>Gobo / xpact</th></tr></thead>
+        <tbody>
+          <tr><td>attributes 10 KB</td><td class="n">0.368</td><td class="n">2.2</td><td class="n">0.077</td><td class="n">5.98×</td></tr>
+          <tr><td>attributes 1 MB</td><td class="n">36.4</td><td class="n">198.7</td><td class="n">7.3</td><td class="n">5.45×</td></tr>
+          <tr><td>attributes 10 MB</td><td class="n">360.5</td><td class="n">1,599.7</td><td class="n">74.7</td><td class="n">4.44×</td></tr>
+          <tr><td>dtd 10 KB</td><td class="n">0.897</td><td class="n">30.1</td><td class="n">0.081</td><td class="n no">33.59×</td></tr>
+          <tr><td>dtd 1 MB</td><td class="n">85.3</td><td class="n">2,790.6</td><td class="n">7.1</td><td class="n no">32.73×</td></tr>
+          <tr><td>dtd 10 MB</td><td class="n">831.1</td><td class="n">21,084.5</td><td class="n">74.4</td><td class="n no">25.37×</td></tr>
+          <tr><td>elements 10 KB</td><td class="n">0.553</td><td class="n">3.057</td><td class="n">0.078</td><td class="n">5.53×</td></tr>
+          <tr><td>elements 1 MB (UTF-8)</td><td class="n">52.4</td><td class="n">256.9</td><td class="n">6.9</td><td class="n">4.90×</td></tr>
+          <tr><td>elements 1 MB (Latin-1)</td><td class="n">82.6</td><td class="n">281.3</td><td class="n">7.2</td><td class="n">3.41×</td></tr>
+          <tr><td>elements 1 MB (UTF-16)</td><td class="n">89.7</td><td class="n">424.1</td><td class="n">7.8</td><td class="n">4.73×</td></tr>
+          <tr><td>elements 10 MB</td><td class="n">511.3</td><td class="n">1,980.8</td><td class="n">69.0</td><td class="n">3.87×</td></tr>
+          <tr><td>namespaces 10 KB</td><td class="n">0.35</td><td class="n">2.612</td><td class="n">0.069</td><td class="n">7.46×</td></tr>
+          <tr><td>namespaces 1 MB</td><td class="n">32.9</td><td class="n">228.3</td><td class="n">6.1</td><td class="n">6.94×</td></tr>
+          <tr><td>namespaces 10 MB</td><td class="n">320.3</td><td class="n">1,676.1</td><td class="n">62.5</td><td class="n">5.23×</td></tr>
+          <tr><td>text 10 KB</td><td class="n">0.172</td><td class="n">1.486</td><td class="n">0.019</td><td class="n">8.64×</td></tr>
+          <tr><td>text 1 MB</td><td class="n">16.4</td><td class="n">133.2</td><td class="n">1.4</td><td class="n">8.10×</td></tr>
+          <tr><td>text 10 MB</td><td class="n">166.1</td><td class="n">1,025.6</td><td class="n">16.6</td><td class="n">6.17×</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">All 17 documents accepted by both. This is Gobo's XML library; the Gobo compiler building xpact itself is a different topic.</p>
+    </div>
+  </details>
+</section>
+
+<section>
+  <h2>How it was tested</h2>
+  <details>
+    <summary><h3>Setup, fairness and limits of this comparison</h3></summary>
+    <div class="body">
+      <ul class="check">
+        <li class="y">Fresh builds of xpact from <code>dd75cb8</code>: DLL (smoke test ok) and benchmark exe. The stale <code>build\native-eiffel</code> was not used.</li>
+        <li class="y">New Gobo test engine <code>gx_engine.exe</code> (about 300 lines of Eiffel), built with <code>gec --finalize --gc=boehm</code> and MSVC. It speaks the W3C runner protocol and the AlotOfTests harness protocol.</li>
+        <li class="y">Raw bytes go to Gobo through <code>parse_from_stream</code>, because <code>parse_from_string</code> would re-encode them as Latin-1. String mode is mixed, giving full Unicode.</li>
+        <li class="y">The AlotOfTests scripts ran unchanged on a copy of the harness, with <code>XP_ENGINE=xpact|gobo</code>. The original evidence was not touched.</li>
+        <li class="y">Gobo has no Expat error codes, so scoring uses verdicts only and Expat-only event kinds are left out.</li>
+        <li class="y">Fuzzing and differential ran at the same time for both engines (same CPU load). Security limits, large files and speed ran alone.</li>
+        <li class="x">Not compared: W3C in pieces (Test 2) and the chunked tests, because Gobo cannot take pieces. Memory and leak checks were not run for Gobo.</li>
+        <li class="x">The memory figures in the harness are not like-for-like (xpact's include the Python process).</li>
+        <li class="o">Expat is the reference in fuzzing, differential and libxml2, and Expat isn't always right. The W3C results are judged against the spec.</li>
+      </ul>
+      <pre>bash reports/gobo-xml-2026-11-18/run_all.sh A|B|C|W|S
+python reports/gobo-xml-2026-11-18/analyze.py</pre>
+    </div>
+  </details>
+  <details>
+    <summary><h3>Status</h3></summary>
+    <div class="body">
+      <ul class="check">
+        <li class="y">Issue <a href="https://github.com/andersoxie/xpact/issues/442">#442</a> created</li>
+        <li class="y">W3C runner, W3C output, fuzzing, encodings, libxml2, security, large files</li>
+        <li class="y">Speed test</li>
+        <li class="p">Gobo differential: running</li>
+        <li class="o">⏸ <a href="https://github.com/andersoxie/xpact/issues/293">#293</a> entity depth and the 10 MB limit: paused (by student)</li>
+        <li class="y">Report committed to the repo as README.md</li>
+      </ul>
+    </div>
+  </details>
+</section>
+</div>

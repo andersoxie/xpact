@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\xmltest\valid\sa\out\076.xml
+"<!DOCTYPE doc [\n<!NOTATION n1 SYSTEM 'http://www.w3.org/'>\n<!NOTATION n2 SYSTEM 'http://www.w3.org/'>\n]>\n<doc></doc>"
+
+GOT (xpact)
+'<doc></doc>'

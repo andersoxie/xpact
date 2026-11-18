@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\invalid\P56\out\ibm56i03.xml
+'<tokenizer UniqueName="AC1999">&#10;This is a Negative validity test for ID Attribute Default.&#10;Giving the attribute default as #FIXED&#10;</tokenizer>'
+
+GOT (xpact)
+'<tokenizer>&#10;This is a Negative validity test for ID Attribute Default.&#10;Giving the attribute default as #FIXED&#10;</tokenizer>'

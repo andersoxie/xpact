@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\sun\valid\out\not-sa01.xml
+"<!DOCTYPE root [\n<!NOTATION bar SYSTEM 'file:/dev/tty'>\n<!NOTATION foo PUBLIC '-//public id//foo' 'file:/dev/null'>\n<!NOTATION nonce SYSTEM 'file:/dev/null'>\n]>\n<root>&#10;    <child>&#10;    The whitespace before and after this element keeps&#10;    this from being standalone.&#10;    </child>&#10;</root>"
+
+GOT (xpact)
+'<root>&#10;    <child>&#10;    The whitespace before and after this element keeps&#10;    this from being standalone.&#10;    </child>&#10;</root>'

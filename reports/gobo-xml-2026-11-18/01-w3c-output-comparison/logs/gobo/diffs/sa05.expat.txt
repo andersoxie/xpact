@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\sun\valid\out\sa05.xml
+"<!DOCTYPE root [\n<!NOTATION bar SYSTEM 'file:/dev/tty'>\n<!NOTATION foo PUBLIC '-//public id//foo' 'file:/dev/null'>\n<!NOTATION nonce SYSTEM 'file:/dev/null'>\n]>\n<root><child>&#10;    No whitespace before or after this standalone element.&#10;</child></root>"
+
+GOT (expat)
+'<root><child>&#10;    No whitespace before or after this standalone element.&#10;</child></root>'
