@@ -1,0 +1,65 @@
+file	size_mb	mode	handlers	xpact	xpact_s	xpact_mb	xpact_message	xpact_hash	xpact_events	expat	expat_s	expat_mb	expat_message	expat_hash	expat_events	events
+records-1mb.xml	1.0	whole	none	ACCEPT	0.0306	31.6				ACCEPT	0.0098	19.7				
+records-1mb.xml	1.0	whole	all	ACCEPT	0.1537	50.1		08cc36258f7e03de	36085	ACCEPT	0.0476	34.6		08cc36258f7e03de	36085	same
+records-1mb.xml	1.0	every:65536	none	ACCEPT	0.0398	34.2				ACCEPT	0.0095	20.1				
+records-1mb.xml	1.0	every:65536	all	ACCEPT	0.1644	50.6		08cc36258f7e03de	36085	ACCEPT	0.049	33.7		08cc36258f7e03de	36085	same
+records-5mb.xml	5.1	whole	none	ACCEPT	0.143	52.4				ACCEPT	0.0422	23.8				
+records-5mb.xml	5.1	whole	all	ACCEPT	0.8688	138.4		29bf29862a4b2e76	178323	ACCEPT	0.4064	92.6		29bf29862a4b2e76	178323	same
+records-5mb.xml	5.1	every:65536	none	ACCEPT	0.1876	63.3				ACCEPT	0.0446	28.0				
+records-5mb.xml	5.1	every:65536	all	ACCEPT	0.9018	136.8		29bf29862a4b2e76	178323	ACCEPT	0.3312	93.1		29bf29862a4b2e76	178323	same
+records-9mb.xml	9.1	whole	none	ACCEPT	0.2514	72.7				ACCEPT	0.075	28.0				
+records-9mb.xml	9.1	whole	all	ACCEPT	1.6693	223.5		72b8e5439e93eeb3	321649	ACCEPT	0.6864	144.7		72b8e5439e93eeb3	321649	same
+records-9mb.xml	9.1	every:65536	none	ACCEPT	0.3288	103.1				ACCEPT	0.076	36.3				
+records-9mb.xml	9.1	every:65536	all	ACCEPT	1.7345	220.6		72b8e5439e93eeb3	321649	ACCEPT	0.6477	145.7		72b8e5439e93eeb3	321649	same
+records-20mb.xml	20.2	whole	none	REJECT	0.0845	79.9	out of memory			ACCEPT	0.1648	39.3				
+records-20mb.xml	20.2	whole	all	REJECT	0.0841	79.9	out of memory	4f53cda18c2baa0c	0	ACCEPT	2.2052	300.9		ca4579c91698df90	712868	
+records-20mb.xml	20.2	every:65536	none	REJECT	0.3617	125.3	out of memory			ACCEPT	0.1691	58.6				
+records-20mb.xml	20.2	every:65536	all	REJECT	2.0475	246.5	out of memory	16dc5e72203f1c78	352725	ACCEPT	2.1407	299.4		ca4579c91698df90	712868	
+text-1mb.xml	1.1	whole	none	ACCEPT	0.0541	33.1				ACCEPT	0.0061	20.0				
+text-1mb.xml	1.1	whole	all	ACCEPT	0.1128	44.7		cbf99d70cb40ffe1	20649	ACCEPT	0.0555	34.4		cbf99d70cb40ffe1	20649	same
+text-1mb.xml	1.1	every:65536	none	ACCEPT	0.0646	36.3				ACCEPT	0.0066	20.2				
+text-1mb.xml	1.1	every:65536	all	ACCEPT	0.124	45.9		cbf99d70cb40ffe1	20649	ACCEPT	0.0572	33.6		cbf99d70cb40ffe1	20649	same
+text-5mb.xml	5.5	whole	none	ACCEPT	0.2731	55.8				ACCEPT	0.0265	24.8				
+text-5mb.xml	5.5	whole	all	ACCEPT	0.5882	109.9		c489b555318c37a1	101847	ACCEPT	0.307	95.7		c489b555318c37a1	101847	same
+text-5mb.xml	5.5	every:65536	none	ACCEPT	0.3113	65.7				ACCEPT	0.029	28.8				
+text-5mb.xml	5.5	every:65536	all	ACCEPT	0.6032	116.3		c489b555318c37a1	101847	ACCEPT	0.3052	94.3		c489b555318c37a1	101847	same
+text-9mb.xml	9.9	whole	none	ACCEPT	0.4938	79.4				ACCEPT	0.0465	29.6				
+text-9mb.xml	9.9	whole	all	ACCEPT	1.2288	158.8		47994b1f7f359704	183171	ACCEPT	0.6821	131.9		47994b1f7f359704	183171	same
+text-9mb.xml	9.9	every:65536	none	ACCEPT	0.5506	97.2				ACCEPT	0.0516	37.6				
+text-9mb.xml	9.9	every:65536	all	ACCEPT	1.2386	162.6		47994b1f7f359704	183171	ACCEPT	0.6937	133.2		47994b1f7f359704	183171	same
+text-20mb.xml	21.9	whole	none	REJECT	0.0891	84.7	out of memory			ACCEPT	0.1043	41.7				
+text-20mb.xml	21.9	whole	all	REJECT	0.0913	84.7	out of memory	4f53cda18c2baa0c	0	ACCEPT	2.1575	256.8		66d89aca0e1a820a	406281	
+text-20mb.xml	21.9	every:65536	none	REJECT	0.5581	117.2	out of memory			ACCEPT	0.112	61.7				
+text-20mb.xml	21.9	every:65536	all	REJECT	1.3153	183.0	out of memory	5dbf7c484683d3b4	185822	ACCEPT	2.143	273.9		66d89aca0e1a820a	406281	
+ns-1mb.xml	1.0	whole	none	ACCEPT	0.1602	32.1				ACCEPT	0.0098	19.8				
+ns-1mb.xml	1.0	whole	all	ACCEPT	0.4941	70.2		cc7ee949f153e729	101782	ACCEPT	0.1556	50.3		cc7ee949f153e729	101782	same
+ns-1mb.xml	1.0	every:65536	none	ACCEPT	0.1784	34.7				ACCEPT	0.01	20.0				
+ns-1mb.xml	1.0	every:65536	all	ACCEPT	0.5172	72.3		cc7ee949f153e729	101782	ACCEPT	0.1447	49.8		cc7ee949f153e729	101782	same
+ns-5mb.xml	5.0	whole	none	ACCEPT	0.7502	52.4				ACCEPT	0.0426	23.8				
+ns-5mb.xml	5.0	whole	all	ACCEPT	2.9592	239.7		214d6f7b3f69c040	499650	ACCEPT	1.2739	170.4		214d6f7b3f69c040	499650	same
+ns-5mb.xml	5.0	every:65536	none	ACCEPT	0.8447	56.4				ACCEPT	0.045	28.1				
+ns-5mb.xml	5.0	every:65536	all	ACCEPT	3.0879	236.1		214d6f7b3f69c040	499650	ACCEPT	1.2409	169.0		214d6f7b3f69c040	499650	same
+ns-9mb.xml	9.1	whole	none	ACCEPT	1.3854	72.4				ACCEPT	0.0754	27.8				
+ns-9mb.xml	9.1	whole	all	ACCEPT	5.4643	404.0		3e761418018fe7c5	896005	ACCEPT	2.4579	289.7		3e761418018fe7c5	896005	same
+ns-9mb.xml	9.1	every:65536	none	ACCEPT	1.5018	83.7				ACCEPT	0.0771	36.0				
+ns-9mb.xml	9.1	every:65536	all	ACCEPT	5.6119	393.8		3e761418018fe7c5	896005	ACCEPT	2.5146	289.7		3e761418018fe7c5	896005	same
+ns-20mb.xml	20.1	whole	none	REJECT	0.084	79.3	out of memory			ACCEPT	0.1681	39.2				
+ns-20mb.xml	20.1	whole	all	REJECT	0.0829	79.3	out of memory	4f53cda18c2baa0c	0	ACCEPT	5.7368	622.2		b85682c5ef850b26	1979772	
+ns-20mb.xml	20.1	every:65536	none	REJECT	1.6627	105.8	out of memory			ACCEPT	0.1709	58.1				
+ns-20mb.xml	20.1	every:65536	all	REJECT	6.212	439.3	out of memory	fafd29d0f7c2fb1a	989578	ACCEPT	5.3755	619.9		b85682c5ef850b26	1979772	
+nested-1mb.xml	1.0	whole	none	ACCEPT	0.031	25.3				ACCEPT	0.0084	19.7				
+nested-1mb.xml	1.0	whole	all	ACCEPT	0.2134	60.6		551b1f8ae0ff3132	86940	ACCEPT	0.0722	43.6		551b1f8ae0ff3132	86940	same
+nested-1mb.xml	1.0	every:65536	none	ACCEPT	0.0545	32.8				ACCEPT	0.0091	19.8				
+nested-1mb.xml	1.0	every:65536	all	ACCEPT	0.2416	63.6		551b1f8ae0ff3132	86940	ACCEPT	0.1019	42.8		551b1f8ae0ff3132	86940	same
+nested-5mb.xml	5.0	whole	none	ACCEPT	0.1528	50.5				ACCEPT	0.0394	23.9				
+nested-5mb.xml	5.0	whole	all	ACCEPT	1.3088	186.0		1c4fcf057733f73c	434672	ACCEPT	0.5904	133.3		1c4fcf057733f73c	434672	same
+nested-5mb.xml	5.0	every:65536	none	ACCEPT	0.2633	60.5				ACCEPT	0.0395	28.0				
+nested-5mb.xml	5.0	every:65536	all	ACCEPT	1.4015	182.2		1c4fcf057733f73c	434672	ACCEPT	0.6127	133.4		1c4fcf057733f73c	434672	same
+nested-9mb.xml	9.0	whole	none	ACCEPT	0.2728	72.1				ACCEPT	0.0701	28.0				
+nested-9mb.xml	9.0	whole	all	ACCEPT	2.3828	314.1		1043f05e9773dae6	781738	ACCEPT	1.109	226.4		1043f05e9773dae6	781738	same
+nested-9mb.xml	9.0	every:65536	none	ACCEPT	0.4836	91.5				ACCEPT	0.0713	35.9				
+nested-9mb.xml	9.0	every:65536	all	ACCEPT	2.5818	304.7		1043f05e9773dae6	781738	ACCEPT	1.0952	227.0		1043f05e9773dae6	781738	same
+nested-20mb.xml	20.0	whole	none	REJECT	0.0808	79.3	out of memory			ACCEPT	0.1521	38.9				
+nested-20mb.xml	20.0	whole	all	REJECT	0.0835	79.1	out of memory	4f53cda18c2baa0c	0	ACCEPT	2.8365	481.1		1ee16da02377dbf9	1735826	
+nested-20mb.xml	20.0	every:65536	none	REJECT	0.5279	113.5	out of memory			ACCEPT	0.1577	58.2				
+nested-20mb.xml	20.0	every:65536	all	REJECT	3.0919	342.3	out of memory	d5b8f7ceb118962f	867130	ACCEPT	2.7779	480.7		1ee16da02377dbf9	1735826	

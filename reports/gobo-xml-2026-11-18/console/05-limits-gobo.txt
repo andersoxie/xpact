@@ -1,0 +1,30 @@
+billion-laughs               expected REJECT xpact TIMEOUT         s        MB | expat REJECT    0.3425s    82.8MB | FAIL (crash/timeout) 
+billion-laughs-attr          expected REJECT xpact REJECT    0.0464s     9.0MB | expat REJECT    0.1015s    21.8MB | pass e0:1:1:e0:1:1:parse error
+billion-laughs-pe            expected REJECT xpact REJECT    0.0386s     7.9MB | expat REJECT    0.0009s    17.8MB | pass STRING:1:49:STRING:1:49:PE reference only allowed in DTD
+quadratic-blowup             expected REJECT xpact TIMEOUT         s        MB | expat REJECT    0.0103s    34.0MB | FAIL (crash/timeout) 
+small-amplification-ok       expected ACCEPT xpact ACCEPT    0.1197s     9.4MB | expat ACCEPT     0.001s    17.7MB | pass 
+recursive-direct             expected REJECT xpact REJECT    0.0395s     7.9MB | expat REJECT     0.001s    17.7MB | pass a:1:1:a:1:1:Entity cannot be recursively included
+recursive-indirect           expected REJECT xpact REJECT     0.038s     8.0MB | expat REJECT     0.001s    17.8MB | pass b:1:1:b:1:1:Entity cannot be recursively included
+recursive-pe                 expected REJECT xpact REJECT    0.0383s     7.9MB | expat REJECT    0.0009s    17.9MB | pass STRING:1:28:STRING:1:28:PE reference only allowed in DTD
+entity-chain-10k             expected ACCEPT xpact ACCEPT    0.6157s   221.8MB | expat ACCEPT    0.0123s    22.9MB | pass 
+entity-chain-100k            expected ACCEPT xpact EXCEPTION   5.3892s  2045.0MB | expat ACCEPT    0.1562s    69.7MB | FAIL EIFFEL EXCEPTION: see engine
+deep-nesting-100k            expected ACCEPT xpact ACCEPT    3.4948s   159.1MB | expat ACCEPT    0.1481s    82.2MB | pass 
+deep-nesting-1m              expected ACCEPT xpact TIMEOUT         s        MB | expat ACCEPT    2.5024s   504.4MB | FAIL (crash/timeout) 
+huge-name-10mb               expected ACCEPT xpact ACCEPT    1.0055s   174.2MB | expat ACCEPT    0.0718s    78.7MB | pass 
+huge-attribute-50mb          expected ACCEPT xpact ACCEPT    2.8462s   486.5MB | expat ACCEPT    0.1571s   217.8MB | pass 
+huge-text-100mb              expected ACCEPT xpact ACCEPT    5.4447s   965.5MB | expat ACCEPT    0.1599s   319.4MB | pass 
+huge-comment-50mb            expected ACCEPT xpact ACCEPT    2.8849s   486.5MB | expat ACCEPT     0.117s   218.0MB | pass 
+many-attributes-100k         expected ACCEPT xpact ACCEPT    0.3606s    59.3MB | expat ACCEPT    0.0417s    40.7MB | pass 
+duplicate-attribute-late     expected REJECT xpact REJECT    0.0487s     8.5MB | expat REJECT    0.0011s    17.8MB | pass STRING:1:8899:STRING:1:8899:Attribute declared twice
+many-namespaces-50k          expected ACCEPT xpact ACCEPT    0.1435s    37.8MB | expat ACCEPT    0.0896s    53.6MB | pass 
+big-token-small-chunks       expected ACCEPT xpact ACCEPT    0.3077s    52.9MB | expat ACCEPT    0.0184s    38.9MB | pass 
+big-text-byte-chunks         expected ACCEPT xpact ACCEPT    0.0721s    10.2MB | expat ACCEPT    0.0623s    23.9MB | pass 
+xxe-general-no-handler       expected ACCEPT xpact REJECT    0.0386s     7.9MB | expat ACCEPT     0.001s    18.0MB | FAIL STRING:1:66:STRING:1:66:external entities not supported
+xxe-parameter-no-handler     expected ACCEPT xpact REJECT    0.0388s     7.9MB | expat ACCEPT    0.0009s    17.7MB | FAIL STRING:1:64:STRING:1:64:external entities not supported
+xxe-dtd-no-handler           expected ACCEPT xpact REJECT    0.0408s     7.9MB | expat ACCEPT    0.0009s    17.8MB | FAIL STRING:1:48:STRING:1:48:Parser is not configured to support external DTDs
+ns-separator-in-uri          expected REJECT xpact ACCEPT    0.0379s     7.9MB | expat REJECT     0.001s    18.0MB | FAIL 
+bad-utf8-in-name-2byte       expected REJECT xpact REJECT    0.0396s     7.9MB | expat REJECT     0.001s    17.7MB | pass STRING:1:3:STRING:1:3:parse error
+bad-utf8-in-name-3byte       expected REJECT xpact REJECT    0.0386s     7.9MB | expat REJECT    0.0009s    17.8MB | pass STRING:1:3:STRING:1:3:parse error
+bad-utf8-in-attr             expected REJECT xpact REJECT    0.0394s     7.9MB | expat REJECT    0.0008s    17.7MB | pass STRING:1:7:STRING:1:7:parse error
+nul-byte                     expected REJECT xpact REJECT    0.0379s     7.9MB | expat REJECT    0.0009s    17.9MB | pass STRING:1:4:STRING:1:4:parse error
+{"FAIL (crash/timeout)": 3, "FAIL": 5, "pass": 21}

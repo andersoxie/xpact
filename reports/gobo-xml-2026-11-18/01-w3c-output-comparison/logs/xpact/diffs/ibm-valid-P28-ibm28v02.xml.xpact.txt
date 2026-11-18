@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\valid\P28\out\ibm28v02.xml
+'<?sound "This is a PI" ?><!DOCTYPE animal [\n<!NOTATION animal_class SYSTEM \'ibm28v02.txt\'>\n]>\n<animal>&#10;   <cat>This is a small cat</cat>&#10;   <tiger color="white">This is a white tiger in Mirage!!</tiger>&#10;   <cat></cat>&#10;   <leopard>&#10;      <small></small>&#10;      <big></big>&#10;   </leopard>&#10;</animal>'
+
+GOT (xpact)
+'<?sound "This is a PI" ?><animal>&#10;   <cat>This is a small cat</cat>&#10;   <tiger color="white">This is a white tiger in Mirage!!</tiger>&#10;   <cat></cat>&#10;   <leopard>&#10;      <small></small>&#10;      <big></big>&#10;   </leopard>&#10;</animal>'

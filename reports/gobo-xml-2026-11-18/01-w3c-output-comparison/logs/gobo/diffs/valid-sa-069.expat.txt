@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\xmltest\valid\sa\out\069.xml
+"<!DOCTYPE doc [\n<!NOTATION n PUBLIC 'whatever'>\n]>\n<doc></doc>"
+
+GOT (expat)
+'<doc></doc>'

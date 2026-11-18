@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\valid\P58\out\ibm58v01.xml
+"<!DOCTYPE test [\n<!NOTATION that SYSTEM 'beta'>\n<!NOTATION this SYSTEM 'alpha'>\n]>\n<test>&#10;This is a positive test with different patterns for NOTATION&#10;</test>"
+
+GOT (expat)
+'<test>&#10;This is a positive test with different patterns for NOTATION&#10;</test>'

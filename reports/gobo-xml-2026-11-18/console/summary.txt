@@ -1,0 +1,18 @@
+01-output-gobo rc=0 seconds=6
+01-output-xpact rc=0 seconds=6
+01-verdicts-xpact rc=0 seconds=7
+01-verdicts-gobo rc=0 seconds=9
+08-enc-xpact rc=0 seconds=0
+08-enc-gobo rc=0 seconds=1
+07-libxml2-xpact rc=0 seconds=95
+07-libxml2-gobo rc=0 seconds=141
+w3c rc=1
+03-fuzz-xpact rc=0 seconds=604
+03-fuzz-gobo rc=0 seconds=604
+04-diff-xpact rc=0 seconds=604
+04-diff-gobo rc=127 seconds=3090
+05-limits-xpact rc=0 seconds=16
+05-limits-gobo rc=0 seconds=212
+11-large-xpact rc=0 seconds=126
+11-large-gobo rc=0 seconds=282
+speed rc=0

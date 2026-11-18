@@ -1,0 +1,65 @@
+file             mode    handlers |                    xpact |                    expat | events
+records-1mb.xml  whole   none     | ACCEPT   0.2322s   10.3MB | ACCEPT   0.0091s   19.7MB |  
+records-1mb.xml  whole   all      | ACCEPT   0.4708s   16.2MB | ACCEPT   0.0464s   34.4MB | same 
+records-1mb.xml  every:65536 none     | ACCEPT   0.2431s   10.3MB | ACCEPT   0.0099s   20.1MB |  
+records-1mb.xml  every:65536 all      | ACCEPT   0.4717s   15.7MB | ACCEPT   0.0472s   33.7MB | same 
+records-5mb.xml  whole   none     | ACCEPT   0.8523s   15.0MB | ACCEPT   0.0399s   23.8MB |  
+records-5mb.xml  whole   all      | ACCEPT   1.8962s   44.0MB | ACCEPT   0.3242s   92.0MB | same 
+records-5mb.xml  every:65536 none     | ACCEPT   0.8341s   14.9MB | ACCEPT   0.0442s   28.0MB |  
+records-5mb.xml  every:65536 all      | ACCEPT   1.9041s   44.0MB | ACCEPT     0.34s   93.0MB | same 
+records-9mb.xml  whole   none     | ACCEPT   1.3741s   19.5MB | ACCEPT   0.0718s   28.2MB |  
+records-9mb.xml  whole   all      | ACCEPT   3.3811s   76.5MB | ACCEPT   0.6754s  146.0MB | same 
+records-9mb.xml  every:65536 none     | ACCEPT   1.3736s   19.4MB | ACCEPT   0.0759s   36.3MB |  
+records-9mb.xml  every:65536 all      | ACCEPT   3.3845s   76.5MB | ACCEPT   0.6757s  144.9MB | same 
+records-20mb.xml whole   none     | ACCEPT   2.5917s   30.9MB | ACCEPT    0.161s   39.4MB |  
+records-20mb.xml whole   all      | ACCEPT   7.2067s  158.9MB | ACCEPT   2.1225s  299.8MB | same 
+records-20mb.xml every:65536 none     | ACCEPT   2.6128s   31.0MB | ACCEPT   0.1745s   58.6MB |  
+records-20mb.xml every:65536 all      | ACCEPT   7.3639s  158.9MB | ACCEPT   2.1481s  299.4MB | same 
+text-1mb.xml     whole   none     | ACCEPT   0.2899s   10.2MB | ACCEPT   0.0061s   20.0MB |  
+text-1mb.xml     whole   all      | ACCEPT   0.8902s   29.2MB | ACCEPT   0.0559s   34.6MB | same 
+text-1mb.xml     every:65536 none     | ACCEPT   0.2859s   10.2MB | ACCEPT   0.0064s   20.2MB |  
+text-1mb.xml     every:65536 all      | ACCEPT   0.8974s   29.1MB | ACCEPT   0.0579s   33.8MB | same 
+text-5mb.xml     whole   none     | ACCEPT   1.0791s   15.4MB | ACCEPT   0.0264s   24.8MB |  
+text-5mb.xml     whole   all      | ACCEPT   3.5685s  111.3MB | ACCEPT   0.3002s   96.6MB | same 
+text-5mb.xml     every:65536 none     | ACCEPT   1.0779s   15.5MB | ACCEPT   0.0295s   29.1MB |  
+text-5mb.xml     every:65536 all      | ACCEPT   3.5551s  109.4MB | ACCEPT      0.3s   95.4MB | same 
+text-9mb.xml     whole   none     | ACCEPT   1.7538s   20.2MB | ACCEPT   0.0468s   29.6MB |  
+text-9mb.xml     whole   all      | ACCEPT   6.3332s  207.7MB | ACCEPT    0.698s  131.3MB | same 
+text-9mb.xml     every:65536 none     | ACCEPT   1.7496s   20.2MB | ACCEPT   0.0526s   37.8MB |  
+text-9mb.xml     every:65536 all      | ACCEPT   6.3453s  206.4MB | ACCEPT   0.7056s  133.1MB | same 
+text-20mb.xml    whole   none     | ACCEPT   3.5854s   34.0MB | ACCEPT   0.1039s   41.8MB |  
+text-20mb.xml    whole   all      | ACCEPT  13.5672s  452.4MB | ACCEPT   2.0802s  256.9MB | same 
+text-20mb.xml    every:65536 none     | ACCEPT   3.4093s   34.0MB | ACCEPT   0.1134s   61.6MB |  
+text-20mb.xml    every:65536 all      | ACCEPT  13.5651s  451.4MB | ACCEPT   2.0646s  274.2MB | same 
+ns-1mb.xml       whole   none     | ACCEPT   0.3371s   10.0MB | ACCEPT   0.0094s   19.6MB |  
+ns-1mb.xml       whole   all      | ACCEPT   0.8267s   23.3MB | ACCEPT   0.1303s   50.3MB | same 
+ns-1mb.xml       every:65536 none     | ACCEPT   0.3346s   10.0MB | ACCEPT   0.0099s   19.8MB |  
+ns-1mb.xml       every:65536 all      | ACCEPT    0.832s   23.3MB | ACCEPT   0.1335s   50.3MB | same 
+ns-5mb.xml       whole   none     | ACCEPT   1.2395s   14.4MB | ACCEPT   0.0434s   23.8MB |  
+ns-5mb.xml       whole   all      | ACCEPT   4.0232s   79.9MB | ACCEPT   1.2647s  170.5MB | same 
+ns-5mb.xml       every:65536 none     | ACCEPT   1.2338s   14.3MB | ACCEPT   0.0452s   27.9MB |  
+ns-5mb.xml       every:65536 all      | ACCEPT    4.067s   79.9MB | ACCEPT   1.2724s  169.0MB | same 
+ns-9mb.xml       whole   none     | ACCEPT   2.0031s   18.6MB | ACCEPT   0.0752s   27.8MB |  
+ns-9mb.xml       whole   all      | ACCEPT   6.9379s  146.2MB | ACCEPT   2.4902s  289.1MB | same 
+ns-9mb.xml       every:65536 none     | ACCEPT    1.989s   18.7MB | ACCEPT   0.0794s   36.2MB |  
+ns-9mb.xml       every:65536 all      | ACCEPT   6.9733s  146.4MB | ACCEPT   2.4903s  290.4MB | same 
+ns-20mb.xml      whole   none     | ACCEPT   3.6749s   30.2MB | ACCEPT   0.1659s   39.2MB |  
+ns-20mb.xml      whole   all      | ACCEPT  15.7505s  314.4MB | ACCEPT   5.5183s  620.2MB | same 
+ns-20mb.xml      every:65536 none     | ACCEPT   3.6786s   30.2MB | ACCEPT    0.183s   58.1MB |  
+ns-20mb.xml      every:65536 all      | ACCEPT  15.5472s  314.6MB | ACCEPT   5.6679s  619.9MB | same 
+nested-1mb.xml   whole   none     | ACCEPT   0.3153s   10.5MB | ACCEPT   0.0085s   19.7MB |  
+nested-1mb.xml   whole   all      | ACCEPT   0.6084s   17.6MB | ACCEPT   0.0715s   43.8MB | same 
+nested-1mb.xml   every:65536 none     | ACCEPT   0.3083s   10.3MB | ACCEPT   0.0091s   20.0MB |  
+nested-1mb.xml   every:65536 all      | ACCEPT   0.5946s   17.5MB | ACCEPT   0.0728s   42.6MB | same 
+nested-5mb.xml   whole   none     | ACCEPT   1.1723s   14.7MB | ACCEPT   0.0399s   24.0MB |  
+nested-5mb.xml   whole   all      | ACCEPT   2.6741s   53.2MB | ACCEPT   0.5864s  133.3MB | same 
+nested-5mb.xml   every:65536 none     | ACCEPT   1.1684s   14.7MB | ACCEPT   0.0412s   27.8MB |  
+nested-5mb.xml   every:65536 all      | ACCEPT   2.6644s   53.3MB | ACCEPT   0.5906s  133.4MB | same 
+nested-9mb.xml   whole   none     | ACCEPT   1.8507s   19.0MB | ACCEPT   0.0687s   27.9MB |  
+nested-9mb.xml   whole   all      | ACCEPT   4.5196s   84.8MB | ACCEPT   1.1178s  226.0MB | same 
+nested-9mb.xml   every:65536 none     | ACCEPT   1.8604s   18.9MB | ACCEPT   0.0735s   36.1MB |  
+nested-9mb.xml   every:65536 all      | ACCEPT   4.5417s   84.8MB | ACCEPT    1.096s  226.7MB | same 
+nested-20mb.xml  whole   none     | ACCEPT   3.4563s   30.6MB | ACCEPT   0.1508s   39.0MB |  
+nested-20mb.xml  whole   all      | ACCEPT    9.285s  177.3MB | ACCEPT   2.9481s  480.5MB | same 
+nested-20mb.xml  every:65536 none     | ACCEPT   3.4717s   30.5MB | ACCEPT   0.1598s   58.0MB |  
+nested-20mb.xml  every:65536 all      | ACCEPT   9.2245s  177.4MB | ACCEPT   2.7921s  482.5MB | same 

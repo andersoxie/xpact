@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\valid\P82\out\ibm82v01.xml
+'<!DOCTYPE root [\n<!NOTATION JPGformat PUBLIC \'-//image//notreal\'>\n]>\n<root entatt1="unparsed1">test PublicID in P82</root>'
+
+GOT (expat)
+'<root entatt1="unparsed1">test PublicID in P82</root>'
