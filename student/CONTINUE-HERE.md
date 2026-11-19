@@ -1,6 +1,6 @@
 # Continue here
 
-> **The only live status page.** State on **2026-11-17** (start of week 10). Hand-in: **27 November 2026**.
+> **The only live status page.** State on **2026-11-19** (week 10) · **Version 0.10.0** (milestone, [CHANGELOG](../CHANGELOG.md#0100--2026-11-19)). Hand-in: **27 November 2026**.
 > - **Map of everything** (planning, history, testing, technical docs, decisions): [PROJECT-KNOWLEDGE.md](../docs/PROJECT-KNOWLEDGE.md) · numbers: [overview](../docs/Comprehensive-Overview-Summary-of-the-Project.md) · [decision log](../docs/decision-log.md)
 > - **Current state** = this file. Update it in the same PR as the change it describes.
 > - **To-do** = the [open GitHub issues](https://github.com/andersoxie/xpact/issues). Summary with time estimates: [HANDOVER.md](HANDOVER.md).
@@ -11,7 +11,7 @@
 ## 1. Branches
 
 - Work branch: **`incremental-test`** on andersoxie/xpact (`origin`). Not `student-Mass` (deleted), not CodTanium/mass-xpact.
-- `main` ≠ `incremental-test` (2026-11-16: `main` 8 ahead / 45 behind). `main` has the supervisor's Gobo work (PR #366, #367) and the 14 Nov sync (PR #387); everything after that is on `incremental-test` only. Claude asks before touching `main`.
+- `main` ≠ `incremental-test` (2026-11-19: `main` 8 ahead / 74 behind; decided 2026-11-19 to stay on `incremental-test` and not merge `main`, see the [decision log](../docs/decision-log.md)). `main` has the supervisor's Gobo work (PR #366, #367) and the 14 Nov sync (PR #387); everything after that is on `incremental-test` only. Claude asks before touching `main`.
 - Every PR merges with a **merge commit**, never squash. Claude merges its own verified PRs into `incremental-test`, pulls, rechecks on the merged commit, then closes the issue.
 
 ## 2. State
@@ -21,6 +21,7 @@
 | Parser (Eiffel) | ✅ changed 2026-11-16: 4 allocation changes, DLL median 1.07× faster, W3C 0 failed in both builds, test 2 identical ([#407](https://github.com/andersoxie/xpact/issues/407), [report](../reports/perf-allocations/README.md)); Gobo include fix in `src` ([#409](https://github.com/andersoxie/xpact/issues/409), PR #417) |
 | DLL | ✅ `xpact.dll` `32171ECD…`, `xpact_assertions.dll` `4B224D0A…` (built 2026-11-16 from `0c7e114`; smoke ok, website 48/48) · earlier: `ADAE03D2…` / `75F43A5B…` (from `2935a8a`) |
 | DLL blockers | ✅ exception → error code ([#273](https://github.com/andersoxie/xpact/issues/273)); ✅ safe from many threads, calls take turns ([#274](https://github.com/andersoxie/xpact/issues/274)) · 🟡 parallel parsing: question [#304](https://github.com/andersoxie/xpact/issues/304) | · ✅ Gobo build parallel ([#418](https://github.com/andersoxie/xpact/issues/418))
+| Gobo XML parser | ✅ compared on every suite: W3C 1,974/1,974 vs Gobo 1,910; fuzzing 99.996 % vs 97.6 % same as Expat; 3.4-8.6× faster; Gobo wins only on huge/deep input (⏸️ paused (by student), [#293](https://github.com/andersoxie/xpact/issues/293)) ([#442](https://github.com/andersoxie/xpact/issues/442), [report](../reports/gobo-xml-2026-11-18/README.md)) |
 | Threads / Gobo | ✅ EiffelStudio's runtime does not scale threads; ✅ under Gobo the parser scales and W3C is identical ([#408](https://github.com/andersoxie/xpact/issues/408), [report](../reports/gobo-2026-11-16/README.md)); ✅ `xpact.dll` built with Gobo + msc: identical results, any thread, 0.92× EiffelStudio speed after the callback fix ([#414](https://github.com/andersoxie/xpact/issues/414), [report](../reports/gobo-dll/README.md)) · ✅ Gobo DLL without the global lock: 4 threads 0.40 s vs 0.61 s ES ([#418](https://github.com/andersoxie/xpact/issues/418)); callbacks fixed, 0.92× ES on one thread ([#428](https://github.com/andersoxie/xpact/issues/428)). Gobo in `%USERPROFILE%\tools\gobo-26.11.14` |
 | Speed vs Expat | ✅ fair test: median ~17-18× slower, 0 checksum mismatches ([#275](https://github.com/andersoxie/xpact/issues/275)) · 🔴 ISO-8859-1 in pieces quadratic ([#272](https://github.com/andersoxie/xpact/issues/272)) |
 | Same behaviour as Expat | 🔴 [#123](https://github.com/andersoxie/xpact/issues/123), [#126](https://github.com/andersoxie/xpact/issues/126), [#170](https://github.com/andersoxie/xpact/issues/170), [#171](https://github.com/andersoxie/xpact/issues/171), [#176](https://github.com/andersoxie/xpact/issues/176) · 🟡 [#211](https://github.com/andersoxie/xpact/issues/211) billion laughs: right error, ~1.5 s vs ~0.1 s · 🔴 [#293](https://github.com/andersoxie/xpact/issues/293) entity depth > 32 |

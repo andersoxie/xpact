@@ -14,6 +14,8 @@
 | 2026-11-16 | Gobo GC tuning is set inside the DLL; environment variables still override | no setup needed by the caller | S | #428 |
 | 2026-11-16 | The Gobo runtime starts on the first `XML_ParserCreate*`, not in `DllMain` | Boehm's marker threads hang under the Windows loader lock | S | [#414](https://github.com/andersoxie/xpact/issues/414) |
 | 2026-11-16 | Eric Bezault's quoted `eif_misc.h` include adopted in `src/` | makes the shared Gobo ECF build on Windows | S+SV | [#409](https://github.com/andersoxie/xpact/issues/409) |
+| 2026-11-19 | Milestone **0.10.0** on `incremental-test`; `incremental-test` stays the work branch, `main` is not merged | mark the state after the thread, Gobo, speed and SonarQube work without changing `main` | S | [CHANGELOG](../CHANGELOG.md#0100--2026-11-19) |
+| 2026-11-18 | Entity depth > 32 ([#293](https://github.com/andersoxie/xpact/issues/293)) and the 10 MB input limit: ⏸️ paused (by student) | the only area where Gobo's parser beats xpact; not needed for the hand-in | S | [#442](https://github.com/andersoxie/xpact/issues/442) |
 | 2026-11-16 | One live status page; issues are the to-do list; older to-do lists frozen in `student/archive/` | status was spread over 6+ files that disagreed | S | [#422](https://github.com/andersoxie/xpact/issues/422) |
 | 2026-11-15 | No commits or GitHub actions until the student says so, per batch | the student reviews every batch | S | CONTINUE-HERE rules |
 | 2026-11-12 | Aikido checksum alerts put aside (14, false positives) | not real findings; dashboard work only | S | PLAN.md |
