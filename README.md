@@ -13,7 +13,17 @@ is not intended to become a second C parser.
 
 ## Current Status
 
-**Version 0.9.0** (launch candidate). What each version contains: [CHANGELOG.md](CHANGELOG.md).
+**Version 0.10.0** (milestone, 2026-11-19). What each version contains: [CHANGELOG.md](CHANGELOG.md).
+
+| Highlights at 0.10.0 | Result |
+|---|---|
+| ✅ W3C XML Conformance Suite | **2,585 / 2,585** cases, 0 failed, both builds (production and assertions) |
+| ✅ Same verdict as Expat 2.8.1 through the C API | **4,308 / 4,308** cases |
+| ✅ Speed | whole documents **4-7× faster** than the baseline; chunked input 50 min → 106 ms |
+| ✅ Threads | DLL safe from many threads; the Gobo build parses on several cores |
+| ✅ vs Gobo's Eiffel XML parser | W3C 1,974 vs 1,910, fuzzing 99.996 % vs 97.6 % same as Expat, 3.4-8.6× faster ([report](reports/gobo-xml-2026-11-18/README.md)) |
+| ✅ Code quality | SonarQube **0 issues**, CodeQL and Gitleaks on every pull request |
+| 🔴 Open | speed vs native Expat (~18× slower), ISO-8859-1 in pieces ([#272](https://github.com/andersoxie/xpact/issues/272)); ⏸️ entity depth and 10 MB limit paused (by student) |
 
 **Find anything:** [project knowledge and traceability map](docs/PROJECT-KNOWLEDGE.md) (planning, history, testing, technical docs, decisions) · [overview with all numbers](docs/Comprehensive-Overview-Summary-of-the-Project.md) · [decision log](docs/decision-log.md) · live status: [student/CONTINUE-HERE.md](student/CONTINUE-HERE.md)
 
@@ -43,8 +53,10 @@ Implemented and verified now:
   reports for both finalized assertion modes and Jenkins publication.
 - An opt-in large XML benchmark runner for caller-supplied, pre-decompressed
   real corpora.
-- Safe use from several threads, each with its own parsers: calls take turns (EiffelStudio build); the Gobo build of the DLL parses on several cores at once ([#418](https://github.com/andersoxie/xpact/issues/418): 4 threads 0.40 s vs 0.61 s)
-  inside the single-threaded Eiffel runtime, so they do not run in parallel (#274).
+- Safe use from several threads, each with its own parsers. In the EiffelStudio
+  build the calls take turns inside the single-threaded Eiffel runtime (#274);
+  the Gobo build of the DLL parses on several cores at once
+  ([#418](https://github.com/andersoxie/xpact/issues/418): 4 threads 0.40 s vs 0.61 s).
 - An internal Eiffel exception (for example out of memory) makes the call fail
   with an error code instead of ending the process (#273).
 
@@ -59,10 +71,9 @@ The expected-failure list expands to 86 rows:
 
 Before calling xpact a credible drop-in replacement, the project still needs:
 
-- true incremental parsing in the Eiffel parser/session core; the current
-  native adapter accepts chunks and now has CRC coverage for replayed character
-  data, but it still relies on accumulated-buffer replay rather than a
-  suspendable parser session;
+- ~~true incremental parsing in the Eiffel parser/session core~~ ✅ done in
+  0.6.0: chunked input continues where the previous call stopped
+  ([CHANGELOG](CHANGELOG.md#060--2026-11-05));
 - a stronger native-suite gate that reports actual unexpected failures by
   upstream test name, not only the current expected-failure manifest expansion;
 - Phase 2 performance work: buffer-backed token slices, lazy materialization,

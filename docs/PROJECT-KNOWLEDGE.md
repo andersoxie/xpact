@@ -38,7 +38,7 @@
 | 🌿 Branches | work branch **`incremental-test`**; one branch per fix (`fix/…`, `docs/…`, `perf/…`); `main` only by the supervisor | rules: [VERSIONING.md](../student/VERSIONING.md), [CLAUDE.md](../CLAUDE.md) |
 | 🔀 Pull requests | [merged PRs](https://github.com/andersoxie/xpact/pulls?q=is%3Apr+is%3Amerged) | **214** by the student; merge commits only since 2026-11-12 (#318) |
 | 👀 Code reviews | PR descriptions carry the test evidence; [TODO_CODE_REVIEW.md](../TODO_CODE_REVIEW.md) (July review); SonarQube and CodeQL on every PR | review comments from the supervisor: none received by 2026-11-17 |
-| 🏷️ Versions | [CHANGELOG.md](../CHANGELOG.md), git tags `v0.1.0`-`v0.9.0` | next: tag the Unreleased section |
+| 🏷️ Versions | [CHANGELOG.md](../CHANGELOG.md), [VERSION](../VERSION) = **0.10.0** (milestone 2026-11-19); git tags `v0.1.0`-`v0.10.0` | next: the Unreleased section |
 | 🔗 Issue → PR → report index | [reports/README.md](../reports/README.md) | one row per fix: issue, PR, branch, report |
 
 **Trace one change, end to end (example #418):** issue [#418](https://github.com/andersoxie/xpact/issues/418) (why) → branch `fix/418-gobo-no-global-lock` → PR [#430](https://github.com/andersoxie/xpact/pull/430) (test evidence) → merge commit `49a8b2c` → report [gobo-dll §4](../reports/gobo-dll/README.md) → issue closed after local verification.
