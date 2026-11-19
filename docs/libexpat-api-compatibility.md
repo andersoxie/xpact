@@ -47,7 +47,8 @@ contract-tested manifest of the public names.
   `tests/native/xpact_eiffel_dll_smoke.c` verifying an external C caller can
   link against the DLL import library and parse through the Eiffel core.
 - `scripts/package_windows_release.ps1` publishes the initial Windows x64
-  native package with the Eiffel-backed DLL, MSVC import library, public header,
+  native package with production and assertion-enabled Eiffel-backed DLLs,
+  their MSVC import libraries, the public header,
   release notes, and consumer smoke source.
 - The upstream libexpat C-suite adapter can configure, build, and run through
   `scripts/run_libexpat_adapter.ps1 -Mode NativeSuite` with an explicit
@@ -68,10 +69,14 @@ ceiling, 1 MiB token ceiling, and XML 1.0 fifth-edition name rules; the native
 adapter uses Expat's older name ranges.
 
 The Eiffel parser core currently implements the behavior needed by the covered
-streaming path: parser reset semantics, start/end element callbacks, character
+event path: parser reset semantics, start/end element callbacks, character
 data, XML 1.0 tokenization, XML declaration callbacks/diagnostics, DTD
 declaration callbacks, entity expansion, external-entity resolver policy,
 external-subset loading, and error reporting.
+The direct core entry consumes complete input buffers. The native chunk adapter
+also supports [checkpoint resume](incremental-resume.md) for eligible UTF-8 and
+UTF-16 input, while retaining the full input and documented replay fallbacks.
+This does not establish bounded-memory streaming across every API path.
 
 ## Tracked Parity Gaps
 
@@ -79,10 +84,15 @@ external-subset loading, and error reporting.
   skipped for the current Eiffel release scope, but a final drop-in claim needs
   a product decision: either emulate the behavior at the C ABI boundary or
   document it as unsupported.
-- Stronger native-suite reporting that maps actual failures back to upstream
-  `START_TEST(...)` names.
+- The native-suite gate already maps reported failures to upstream test names
+  and rejects unknown, unexpected, setup/teardown and incomplete results. It
+  does not yet detect every expected test that starts passing while other
+  expected failures remain; see [drop-in verification](drop-in-verification.md).
 - Public-application replacement verification, documented in
   `docs/drop-in-verification.md`.
 
 Linux/WSL `libxpact.so` packaging is future platform work. It is not part of
-the initial Windows-only native release.
+the initial Windows-only native release. The existing
+[EiffelStudio/Gobo WSL benchmarks](wsl-benchmarks.md) exercise direct Eiffel
+executables, not the Linux C ABI. Their compiler qualification does not establish
+additional libexpat API parity.

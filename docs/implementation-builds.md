@@ -1,11 +1,12 @@
 # Pinned implementation builds
 
-This is the first step towards running the same functional tests and benchmarks
-against our parser (`xpact`) and Finnian Reilly's parser (`xpact-core`). It builds
-two independent Eiffel executables and records exactly what each build used.
+This infrastructure builds our parser (`xpact`) and Finnian Reilly's parser
+(`xpact-core`) independently and records exactly what each build used. It now
+supports the implemented probe, catalog, W3C and regression profiles; the default
+command below selects the small build probe.
 
-The next step is the [coverage inventory](implementation-coverage.md), which
-maps existing cases and workloads to their shared or backend-specific coverage.
+The [coverage inventory](implementation-coverage.md) preserves the original
+source snapshot and maps cases to shared or backend-specific boundaries.
 The [focused dual catalog lane](dual-catalog-lane.md) uses the same build
 infrastructure for assertion-enabled audits and assertion-discarded benchmarks.
 The [dual W3C lane](dual-w3c-lane.md) uses separate harnesses for original-byte
@@ -106,17 +107,20 @@ or failed run must not be treated as a verified pair.
 
 ## Scope of this step
 
-These are build probes, not the shared functional suite or a performance
-comparison. No parser verdicts beyond this tiny XML case have been established.
+The default command runs build probes, not the shared functional suite or a
+performance comparison. Its result establishes only the tiny XML case; use the
+catalog, W3C and regression commands linked above for their wider evidence.
 The core probe observes raw events through `XT_XML_PARSER_BASE`; it does not
 use the higher-level text-normalizing wrapper. The pinned upstream checkout
 is not modified by our build.
 
-The native C/.NET adapter and independently named DLLs belong to the later
-native integration step. WSL builds, additional assertion/build configurations,
-shared cases, benchmark timing and CI execution of both engines follow in the
-remaining plan steps. The existing production build and test commands keep
-their current entry points.
+The native C/.NET adapter and independently named core DLL remain separate
+integration work. Both assertion configurations, shared cases, catalog timing
+and Jenkins catalog/W3C orchestration are implemented in the focused lanes.
+These dual-parser builds still use Windows EiffelStudio/MSVC. The
+[WSL Gobo/EiffelStudio comparison](wsl-benchmarks.md) compiles xpact with two
+compilers; it does not qualify Xpact-core, a core DLL or these Windows lanes
+under Gobo. The existing production commands keep their current entry points.
 
 Run the setup's infrastructure tests without EiffelStudio or network access:
 

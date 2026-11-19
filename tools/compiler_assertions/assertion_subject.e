@@ -18,8 +18,8 @@ feature
     test_post (expected: BOOLEAN)
         do
         ensure
-            -- Use a dynamic expression: EiffelStudio treats literal `ensure False'
-            -- as a nonreturning routine even when ordinary assertions are off.
+            -- Use a dynamic expression: EiffelStudio raises on literal `ensure False'
+            -- even when ordinary postcondition monitoring is off.
             deliberate_postcondition: expected
         end
     test_check

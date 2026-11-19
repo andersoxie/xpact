@@ -1,0 +1,1398 @@
+{
+  "schema_version": 1,
+  "verification_date": "2026-11-13",
+  "repository_revision": "01e963dabf3ec85d17f7be575b59eebb64c24c5c",
+  "purpose": "Requalify the documented Gobo 26.10 defects on the 26.11.12 nightly; identify the compiler actually used by Jenkins.",
+  "release": {
+    "channel": "nightly",
+    "version": "26.11.12+ca6541c",
+    "commit": "ca6541cacb6d3ce388bc312c884f321d183de411",
+    "official_release": "https://github.com/gobo-eiffel/gobo/releases/tag/nightly",
+    "stable_release_at_verification": "26.10.18+c84ee2f",
+    "linux_asset_url": "https://github.com/gobo-eiffel/gobo/releases/download/nightly/gobo-linux-x86_64-26.11.12%2Bca6541c.tar.xz",
+    "linux_asset_size": 71817520,
+    "linux_asset_sha256": "c8354dd0503b50bb013ef75b203f1f772cb1bbc5ee2738ce39ef46f7c774af2f",
+    "fix_commits": {
+      "check_option": "https://github.com/gobo-eiffel/gobo/commit/196c23725e6b45fba943d8c8e37420eeb2058dc3",
+      "loop_variant": "https://github.com/gobo-eiffel/gobo/commit/b861e06463b6a3fb55f7ce513fd58bd5983ff654",
+      "supplier_precondition_context": "https://github.com/gobo-eiffel/gobo/commit/17c6b3756e5787f401988e45d1e96cb466ccc273",
+      "imported_library_assertion_scope": "https://github.com/gobo-eiffel/gobo/commit/5b083f9674d72a40faa1c77e61d63e9d34fb5b62",
+      "basic_scalar_inlining_and_assertions": "https://github.com/gobo-eiffel/gobo/commit/894098e1c154610bfc4522864e5611b3d4e6552d",
+      "ordinary_assertion_setjmp_removal": "https://github.com/gobo-eiffel/gobo/commit/f51e634011e2ce136badd9b5ce238ddd1b3bc33a",
+      "boehm_gc_controls": "https://github.com/gobo-eiffel/gobo/commit/51c91d46cb3f482d76e0e2f84890017ac322aecd"
+    },
+    "source_verification": "The official compare c84ee2f...ca6541c contains these fixes. Behavioral qualification is recorded separately below.",
+    "official_api_snapshot": {
+      "checked_utc": "2026-11-13T18:08:04.7813358Z",
+      "release": {
+        "tag_name": "nightly",
+        "name": "Nightly Build",
+        "updated_at": "2026-11-13T12:26:57Z",
+        "html_url": "https://github.com/gobo-eiffel/gobo/releases/tag/nightly"
+      },
+      "assets": [
+        {
+          "name": "gobo-linux-x86_64-26.11.12+ca6541c.tar.xz",
+          "size": 71817520,
+          "digest": "sha256:c8354dd0503b50bb013ef75b203f1f772cb1bbc5ee2738ce39ef46f7c774af2f",
+          "browser_download_url": "https://github.com/gobo-eiffel/gobo/releases/download/nightly/gobo-linux-x86_64-26.11.12%2Bca6541c.tar.xz",
+          "updated_at": "2026-11-13T12:26:55Z"
+        },
+        {
+          "name": "gobo-windows-x86_64-26.11.12+ca6541c.7z",
+          "size": 66849164,
+          "digest": "sha256:76cab527159b0c914046df092d3c5cbff5329f2449ee9cd584a2221260e2688d",
+          "browser_download_url": "https://github.com/gobo-eiffel/gobo/releases/download/nightly/gobo-windows-x86_64-26.11.12%2Bca6541c.7z",
+          "updated_at": "2026-11-13T12:26:57Z"
+        }
+      ],
+      "comparison": {
+        "status": "ahead",
+        "ahead_by": 48,
+        "behind_by": 0,
+        "total_commits": 48
+      },
+      "commits": [
+        {
+          "sha": "95135d3224b814857e06f2c802373b695b58d562",
+          "message": "cicd: on Gitlab, the variable $CI_RUNNER_EXECUTABLE_ARCH erroneously returns `linux/amd64` on Windows. Use another variable ($CI_RUNNER_DESCRIPTION) to determine the underlying platform.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/95135d3224b814857e06f2c802373b695b58d562"
+        },
+        {
+          "sha": "d8715ff6f37d9426ff905e128572057c065153ba",
+          "message": "cicd: on Gitlab, the variable $CI_RUNNER_EXECUTABLE_ARCH erroneously returns `linux/amd64` on Windows. Use another variable ($CI_RUNNER_DESCRIPTION) to determine the underlying platform.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/d8715ff6f37d9426ff905e128572057c065153ba"
+        },
+        {
+          "sha": "bb455213dfedef034d6199ac5deb110de7db8cf1",
+          "message": "cicd: don't use Giltab pipelines anymore: they don't have platforms no available elsewhere, their usage is limited, and some jobs take a lot of effort to maintain.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/bb455213dfedef034d6199ac5deb110de7db8cf1"
+        },
+        {
+          "sha": "c5e547ee6f6d3b2e39a194c2c00e9c976b55dbd5",
+          "message": "cicd: don't use Giltab pipelines anymore: they don't have platforms no available elsewhere, their usage is limited, and some jobs take a lot of effort to maintain.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/c5e547ee6f6d3b2e39a194c2c00e9c976b55dbd5"
+        },
+        {
+          "sha": "3529f889801f079187884fe13ee29f5571ca83ae",
+          "message": "cicd: don't use Giltab pipelines anymore: they don't have platforms no available elsewhere, their usage is limited, and some jobs take a lot of effort to maintain.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/3529f889801f079187884fe13ee29f5571ca83ae"
+        },
+        {
+          "sha": "5d4fa15156dfcaa4649801dadc24daa017d62203",
+          "message": "cicd: don't use Giltab pipelines anymore: they don't have platforms no available elsewhere, their usage is limited, and some jobs take a lot of effort to maintain.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/5d4fa15156dfcaa4649801dadc24daa017d62203"
+        },
+        {
+          "sha": "96703a5edb24ffc52025e9d0855aba981479c107",
+          "message": "gelsp: added option to ignore validity errors in classes which are not reachable from the root class.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/96703a5edb24ffc52025e9d0855aba981479c107"
+        },
+        {
+          "sha": "620ff4b4c0586d7adea14a34e6264caac4a227a0",
+          "message": "gelsp: added option to ignore validity errors in classes which are not reachable from the root class.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/620ff4b4c0586d7adea14a34e6264caac4a227a0"
+        },
+        {
+          "sha": "b00183c32e65e66571641327f2046e6097b9bd1d",
+          "message": "gelsp: avoid reporting validity errors which are the consequence of other errors in previous Degrees.\ngelsp: indicate `*UNKNOWN*` instead of a wrong type when hoverring the mouse over the text of a class which contains errors.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/b00183c32e65e66571641327f2046e6097b9bd1d"
+        },
+        {
+          "sha": "46f96bd0c4f889c04c0a02ba0a5e6b8ab084ac83",
+          "message": "gelsp: avoid reporting validity errors which are the consequence of other errors in previous Degrees.\ngelsp: indicate `*UNKNOWN*` instead of a wrong type when hoverring the mouse over the text of a class which contains errors.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/46f96bd0c4f889c04c0a02ba0a5e6b8ab084ac83"
+        },
+        {
+          "sha": "2ef9730f7a9fc21d7694eb64bc21e1b8602ed1b4",
+          "message": "gelsp: stop reporting validity errors in a class whose file has just been deleted.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/2ef9730f7a9fc21d7694eb64bc21e1b8602ed1b4"
+        },
+        {
+          "sha": "e98b5a4e182a48fe8f6d820d984998c8ed896605",
+          "message": "gelsp: stop reporting validity errors in a class whose file has just been deleted.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/e98b5a4e182a48fe8f6d820d984998c8ed896605"
+        },
+        {
+          "sha": "aee394278411d896aad43eafb52f90d1a53efa1b",
+          "message": "gelsp: added option to ignore unused local variable warnings.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/aee394278411d896aad43eafb52f90d1a53efa1b"
+        },
+        {
+          "sha": "fc41fa3e77df410e193118f6af3e8f253d84b057",
+          "message": "gelsp: added option to ignore unused local variable warnings.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/fc41fa3e77df410e193118f6af3e8f253d84b057"
+        },
+        {
+          "sha": "7ac1ca217078cc32b530de845028519a512dcff2",
+          "message": "gec: avoid reporting validity errors which are the consequence of other errors.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/7ac1ca217078cc32b530de845028519a512dcff2"
+        },
+        {
+          "sha": "55d66b72ba5c13c3696f52e738b447ea6beecab9",
+          "message": "gec: avoid reporting validity errors which are the consequence of other errors.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/55d66b72ba5c13c3696f52e738b447ea6beecab9"
+        },
+        {
+          "sha": "14ad117da1b42fcb2fbab94e7d1850080792feb7",
+          "message": "gec: updated the list of supported platforms and C compilers.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/14ad117da1b42fcb2fbab94e7d1850080792feb7"
+        },
+        {
+          "sha": "0f70feb6df6c5ed90e153472669e15343294a744",
+          "message": "gec: updated the list of supported platforms and C compilers.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/0f70feb6df6c5ed90e153472669e15343294a744"
+        },
+        {
+          "sha": "6f7289b442ed01b093cd46be9241b8debc0c69be",
+          "message": "gec: avoid using signals on Android, otherwise `setjmp` is too slow.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/6f7289b442ed01b093cd46be9241b8debc0c69be"
+        },
+        {
+          "sha": "22db86c48d8466996a379f1b99ec32c49ac9a00a",
+          "message": "gec: avoid using signals on Android, otherwise `setjmp` is too slow.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/22db86c48d8466996a379f1b99ec32c49ac9a00a"
+        },
+        {
+          "sha": "db814b066a9fc21d104e52d9d21e2a4e1f81e80f",
+          "message": "gec: downgraded Zig toolchain to version 0.16.0 because the caching mechanism is broken in version 0.17.0.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/db814b066a9fc21d104e52d9d21e2a4e1f81e80f"
+        },
+        {
+          "sha": "4b8084992bd4aa5bb0cf340bf7cfb89db21c9697",
+          "message": "gec: downgraded Zig toolchain to version 0.16.0 because the caching mechanism is broken in version 0.17.0.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/4b8084992bd4aa5bb0cf340bf7cfb89db21c9697"
+        },
+        {
+          "sha": "62005fa3219946b193188bec484c6377a7c1afb4",
+          "message": "gec: downgraded zig even further.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/62005fa3219946b193188bec484c6377a7c1afb4"
+        },
+        {
+          "sha": "5d2df87def729803171e2dd7d449abd12845f417",
+          "message": "gec: downgraded zig even further.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/5d2df87def729803171e2dd7d449abd12845f417"
+        },
+        {
+          "sha": "ace1c92792403899f8c535998effa4c0f392ac77",
+          "message": "gec: the default value for `exception_trace` in ECF files is `True` unless no assertions are monitored at the target level in finalize mode.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/ace1c92792403899f8c535998effa4c0f392ac77"
+        },
+        {
+          "sha": "c459059283bc8aee8be3032d65e581db9186e7dc",
+          "message": "gec: the default value for `exception_trace` in ECF files is `True` unless no assertions are monitored at the target level in finalize mode.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/c459059283bc8aee8be3032d65e581db9186e7dc"
+        },
+        {
+          "sha": "377c99d186b3a6e9ed1beff6273b1098c2387b28",
+          "message": "boehm_gc: workaround for the deadlock when using clang on Android in multithreaded mode.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/377c99d186b3a6e9ed1beff6273b1098c2387b28"
+        },
+        {
+          "sha": "3f301a16d9a808cad661509bb7a8f0c0cb33ff80",
+          "message": "boehm_gc: workaround for the deadlock when using clang on Android in multithreaded mode.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/3f301a16d9a808cad661509bb7a8f0c0cb33ff80"
+        },
+        {
+          "sha": "985ecc4650791de8ef0f010af2a7518cc06b29b1",
+          "message": "gelsp: filenames are case-insensitive on Windows.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/985ecc4650791de8ef0f010af2a7518cc06b29b1"
+        },
+        {
+          "sha": "0dcfcaea06f514967eff6d9995c7900cca545101",
+          "message": "gelsp: filenames are case-insensitive on Windows.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/0dcfcaea06f514967eff6d9995c7900cca545101"
+        },
+        {
+          "sha": "09f9c26922af7403cf403f6fb24e19f01e724143",
+          "message": "gec: fixed implementation of unique attribute synonyms which should have their own values.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/09f9c26922af7403cf403f6fb24e19f01e724143"
+        },
+        {
+          "sha": "f4b10ced730d7b120bb9935a8b609e38c9d97af2",
+          "message": "gec: fixed implementation of unique attribute synonyms which should have their own values.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/f4b10ced730d7b120bb9935a8b609e38c9d97af2"
+        },
+        {
+          "sha": "8fed4c879dc55707d3a507824f716046db967048",
+          "message": "library/tools: validity rule `VYCP-4` is too strict to accept some existing classes in ISE's libraries. ISE Eiffel and Gobo Eiffel (as of 26.11 and after) both accept a relaxed version where the two conversion types can have the same base class, provided that they are not the same type and they are part of two *Conversion_procedure*s with the same feature name `fn`. There is no ambiguity in that case.\nlibrary/tools: validity rule `VYCQ-4` is too strict to accept some existing classes in ISE's libraries. ISE Eiffel and Gobo Eiffel (as of 26.11 and after) both accept a relaxed version where the two conversion types can have the same base class, provided that they are not the same type and they are part of two *Conversion_query*s with the same feature name `fn`. There is no ambiguity in that case.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/8fed4c879dc55707d3a507824f716046db967048"
+        },
+        {
+          "sha": "6eef0541a77bcfd1fe292145fa0f0b7ab6e31a53",
+          "message": "library/tools: validity rule `VYCP-4` is too strict to accept some existing classes in ISE's libraries. ISE Eiffel and Gobo Eiffel (as of 26.11 and after) both accept a relaxed version where the two conversion types can have the same base class, provided that they are not the same type and they are part of two *Conversion_procedure*s with the same feature name `fn`. There is no ambiguity in that case.\nlibrary/tools: validity rule `VYCQ-4` is too strict to accept some existing classes in ISE's libraries. ISE Eiffel and Gobo Eiffel (as of 26.11 and after) both accept a relaxed version where the two conversion types can have the same base class, provided that they are not the same type and they are part of two *Conversion_query*s with the same feature name `fn`. There is no ambiguity in that case.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/6eef0541a77bcfd1fe292145fa0f0b7ab6e31a53"
+        },
+        {
+          "sha": "51c91d46cb3f482d76e0e2f84890017ac322aecd",
+          "message": "gec: implemented routines `collection_on`, `collection_off` and `collecting` in class `MEMORY`.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/51c91d46cb3f482d76e0e2f84890017ac322aecd"
+        },
+        {
+          "sha": "46bad5ab2e50eeddae4370dd7c5debd16af8c49c",
+          "message": "gec: implemented routines `collection_on`, `collection_off` and `collecting` in class `MEMORY`.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/46bad5ab2e50eeddae4370dd7c5debd16af8c49c"
+        },
+        {
+          "sha": "b4f2b5e83c11602f3b551818af97002bc57a09b1",
+          "message": "gec: use C flag `-O2` by default when using `gcc` as backend C compiler.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/b4f2b5e83c11602f3b551818af97002bc57a09b1"
+        },
+        {
+          "sha": "f63f0e6e352366e0643d50c9904433a556f71ca3",
+          "message": "gec: use C flag `-O2` by default when using `gcc` as backend C compiler.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/f63f0e6e352366e0643d50c9904433a556f71ca3"
+        },
+        {
+          "sha": "196c23725e6b45fba943d8c8e37420eeb2058dc3",
+          "message": "gec: fixed bug where `check` assertions were not checked even when turned on in the ECF file.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/196c23725e6b45fba943d8c8e37420eeb2058dc3"
+        },
+        {
+          "sha": "b861e06463b6a3fb55f7ce513fd58bd5983ff654",
+          "message": "gec: fixed bug where loop `variant` assertions were not correctly checked (decreasing after each iteration) even when turned on in the ECF file.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/b861e06463b6a3fb55f7ce513fd58bd5983ff654"
+        },
+        {
+          "sha": "17c6b3756e5787f401988e45d1e96cb466ccc273",
+          "message": "gec: implemented support for `supplier_precondition` assertion monitoring.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/17c6b3756e5787f401988e45d1e96cb466ccc273"
+        },
+        {
+          "sha": "f51e634011e2ce136badd9b5ce238ddd1b3bc33a",
+          "message": "gec: do not call `setjmp/longjmp` anymore when checking assertions.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/f51e634011e2ce136badd9b5ce238ddd1b3bc33a"
+        },
+        {
+          "sha": "5b083f9674d72a40faa1c77e61d63e9d34fb5b62",
+          "message": "gec: do not propagate anymore assertion options (nor any other options) from ECF targets to the libraries they use (interoperability with ISE Eiffel).",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/5b083f9674d72a40faa1c77e61d63e9d34fb5b62"
+        },
+        {
+          "sha": "894098e1c154610bfc4522864e5611b3d4e6552d",
+          "message": "gec: in finalize mode, inline routines from basic types and do not check their assertions (interoperability with ISE Eiffel).",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/894098e1c154610bfc4522864e5611b3d4e6552d"
+        },
+        {
+          "sha": "317a0cb0e3d6ce09131b31e4b7aa2502f3f15852",
+          "message": "gec: raise a postcondition violation when a postcondition is the 'False' entity, even when postcondition assertions are not monitored (interoperability with ISE Eiffel).",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/317a0cb0e3d6ce09131b31e4b7aa2502f3f15852"
+        },
+        {
+          "sha": "6b85f34b2c5b7ec8bb6077b834ce7a56a1ebe2ad",
+          "message": "gec: fixed bug where `check` assertions were not checked even when turned on in the ECF file.\ngec: fixed bug where loop `variant` assertions were not correctly checked (decreasing after each iteration) even when turned on in the ECF file.\ngec: implemented support for `supplier_precondition` assertion monitoring.\ngec: do not call `setjmp/longjmp` anymore when checking assertions.\ngec: do not propagate anymore assertion options (nor any other options) from ECF targets to the libraries they use (interoperability with ISE Eiffel).\ngec: in finalize mode, inline routines from basic types and do not check their assertions (interoperability with ISE Eiffel).\ngec: raise a postcondition violation when a postcondition is the 'False' entity, even when postcondition assertions are not monitored (interoperability with ISE Eiffel).",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/6b85f34b2c5b7ec8bb6077b834ce7a56a1ebe2ad"
+        },
+        {
+          "sha": "fc08136d5083164a17bdd8fb14463f5a9f04dd31",
+          "message": "cicd: nightly and release builds are compiled on older versions of operating systems (the oldest available on Github build runners) so that they can run on old computers.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/fc08136d5083164a17bdd8fb14463f5a9f04dd31"
+        },
+        {
+          "sha": "ca6541cacb6d3ce388bc312c884f321d183de411",
+          "message": "cicd: nightly and release builds are compiled on older versions of operating systems (the oldest available on Github build runners) so that they can run on old computers.",
+          "html_url": "https://github.com/gobo-eiffel/gobo/commit/ca6541cacb6d3ce388bc312c884f321d183de411"
+        }
+      ]
+    }
+  },
+  "jenkins_build_inspected": {
+    "job": "xpact",
+    "number": 134,
+    "result": "SUCCESS",
+    "timestamp_epoch_ms": 1794576644877,
+    "duration_ms": 2234259,
+    "metadata_path": "C:\\Users\\ander\\AppData\\Local\\Jenkins\\.jenkins\\jobs\\xpact\\builds\\134\\archive\\build\\wsl-benchmarks\\metadata.json",
+    "metadata_sha256": "c39fe550e83227e9c94d4ce64c6e899c8bf37bd62e221c7285c9630a7be8c7d8",
+    "generated_utc": "2026-11-13T14:07:50.121691+00:00",
+    "gobo_version": "gec version 26.10.18+c84ee2f",
+    "gobo_root": "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.10/gobo",
+    "gec": "/mnt/c/Users/ander/Documents/xpact/build/gobo-toolchain/26.10/gobo/bin/gec",
+    "environment_script": "build/gobo-toolchain/gobo-env.sh",
+    "environment_sha256": "402f6a8aa389deb1cf70c99bb4ea1117f3c4924424625d6a693bd62403add036",
+    "interpretation": "The Jenkins WSL benchmark still used 26.10.18+c84ee2f after the new Windows archive was downloaded. No Jenkins or shared toolchain setting was changed for qualification."
+  },
+  "linux_assertion_matrix": {
+    "generated_utc": "2026-11-13T17:58:36.047119+00:00",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "compilers": {
+      "Gobo": {
+        "path": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/bin/gec",
+        "version": "gec version 26.11.12+ca6541c"
+      },
+      "EiffelStudio": {
+        "path": "/mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/Eiffel_25.02/studio/spec/linux-x86-64/bin/ec",
+        "version": "ISE EiffelStudio version 25.02.9.8723 - linux-x86-64"
+      }
+    },
+    "cases": [
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre               deliberate_precondition:     \n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre                                            \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "post",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post              deliberate_postcondition:    \n<0000000000000000>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post                                           \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "check",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check             deliberate_check:            \n<0000000000000000>                         Assertion violated.           Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check                                          \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_invariant         deliberate_invariant:        \n<0000000000000000>                         Class invariant violated.     Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_invariant                                      \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "loop_invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant    deliberate_loop_invariant:   \n<0000000000000000>                         Loop invariant violated.      Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant                                 \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "loop_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant      deliberate_loop_variant:     \n<0000000000000000>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant                                   \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_on",
+        "assertion": "negative_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant  deliberate_negative_variant: \n<0000000000000000>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant                               \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "pre",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED pre\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "all_off",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre               deliberate_precondition:     \n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre                                            \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "Gobo",
+        "selection": "supplier_only",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre @1            deliberate_precondition:     \n<00007E395B7FE598>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @6                                             \n<00007E395B7FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007E395B7FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "post",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post @1           deliberate_postcondition:    \n<000077DEE8DFE598>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post @1                                        \n<000077DEE8DFE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @8                                             \n<000077DEE8DFE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<000077DEE8DFE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "check",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check @1          deliberate_check:            \n<0000719B663FE598>                         Assertion violated.           Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check @1                                       \n<0000719B663FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @10                                            \n<0000719B663FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000719B663FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   _invariant @3          deliberate_invariant:        \n<00007C0A595FE598>  (From NATIVE_ARRAY)    Class invariant violated.     Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   _invariant                                          \n<00007C0A595FE598>  (From NATIVE_ARRAY)    Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_invariant @1                                   \n<00007C0A595FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @12                                            \n<00007C0A595FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007C0A595FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "loop_invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant @2 deliberate_loop_invariant:   \n<00007E71E87FE598>                         Loop invariant violated.      Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant @2                              \n<00007E71E87FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @14                                            \n<00007E71E87FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007E71E87FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "loop_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant @2   deliberate_loop_variant:     \n<00007BED839FE598>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant @2                                \n<00007BED839FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @16                                            \n<00007BED839FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007BED839FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_on",
+        "assertion": "negative_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant @2\n                                           deliberate_negative_variant:\n<00007960527FE598>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant @2\n<00007960527FE598>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @18                                            \n<00007960527FE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<00007960527FE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "pre",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED pre\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "all_off",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre @1            deliberate_precondition:     \n<0000758BE0FFE598>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make @6                                             \n<0000758BE0FFE558>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000758BE0FFE558>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "compiler": "EiffelStudio",
+        "selection": "supplier_only",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      }
+    ],
+    "source_sha256": {
+      "assertion_probe.e": "4c0d9d34ef85925cce1bd042c450138174ae0a4a238987d94bb775b11edb3f58",
+      "assertion_subject.e": "60119ae1d24b247a88b7a2728c9e08dd8d1765a557088ddc202e53797e2312d1"
+    },
+    "gcc_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "all_requested_checks_match": true
+  },
+  "windows_assertions_and_runtime": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "compiler": "C:\\gobo\\bin\\gec.exe",
+    "version": "gec version 26.11.12+ca6541c",
+    "backend": "bundled Zig, native Windows",
+    "gc": "boehm",
+    "source_sha256": {
+      "assertion_probe.e": "4c0d9d34ef85925cce1bd042c450138174ae0a4a238987d94bb775b11edb3f58",
+      "assertion_subject.e": "60119ae1d24b247a88b7a2728c9e08dd8d1765a557088ddc202e53797e2312d1"
+    },
+    "cases": [
+      {
+        "selection": "all_on",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre               deliberate_precondition:     \n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre                                            \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "all_on",
+        "assertion": "post",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post              deliberate_postcondition:    \n<0000000000000000>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_post                                           \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "all_on",
+        "assertion": "check",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check             deliberate_check:            \n<0000000000000000>                         Assertion violated.           Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_check                                          \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "all_on",
+        "assertion": "invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_invariant         deliberate_invariant:        \n<0000000000000000>                         Class invariant violated.     Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_invariant                                      \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "all_on",
+        "assertion": "loop_invariant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant    deliberate_loop_invariant:   \n<0000000000000000>                         Loop invariant violated.      Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_invariant                                 \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "all_on",
+        "assertion": "loop_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant      deliberate_loop_variant:     \n<0000000000000000>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_loop_variant                                   \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "all_on",
+        "assertion": "negative_variant",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant  deliberate_negative_variant: \n<0000000000000000>                         Non-decreasing loop variant or negative value reached.\n                                                                         Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_negative_variant                               \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "all_off",
+        "assertion": "pre",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED pre\n"
+      },
+      {
+        "selection": "all_off",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "selection": "all_off",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "selection": "all_off",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "selection": "all_off",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "selection": "all_off",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "selection": "all_off",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      },
+      {
+        "selection": "supplier_only",
+        "assertion": "pre",
+        "expected_violation": true,
+        "detected_violation": true,
+        "matches_requested_setting": true,
+        "exit_code": 1,
+        "diagnostic": "\nassertion_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre               deliberate_precondition:     \n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nASSERTION_SUBJECT   test_pre                                            \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nASSERTION_PROBE     root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+      },
+      {
+        "selection": "supplier_only",
+        "assertion": "post",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED post\n"
+      },
+      {
+        "selection": "supplier_only",
+        "assertion": "check",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED check\n"
+      },
+      {
+        "selection": "supplier_only",
+        "assertion": "invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED invariant\n"
+      },
+      {
+        "selection": "supplier_only",
+        "assertion": "loop_invariant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_invariant\n"
+      },
+      {
+        "selection": "supplier_only",
+        "assertion": "loop_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED loop_variant\n"
+      },
+      {
+        "selection": "supplier_only",
+        "assertion": "negative_variant",
+        "expected_violation": false,
+        "detected_violation": false,
+        "matches_requested_setting": true,
+        "exit_code": 0,
+        "diagnostic": "PROBE_COMPLETED negative_variant\n"
+      }
+    ],
+    "memory_lifecycle": {
+      "exit_code": 0,
+      "output": "GC_STATE initial True\nGC_STATE off False\nGC_STATE off_again False\nGC_STATE on True\nGC_STATE on_again True\nGC_STATE off_after_on False\nGC_STATE restored True\nGC_LIFECYCLE_PASSED\n",
+      "passed": true
+    },
+    "all_requested_checks_match": true,
+    "recorded_utc": "2026-11-13T18:02:32.583958+00:00",
+    "compiler_flags": [
+      "--finalize",
+      "--gc=boehm",
+      "--cc=no"
+    ],
+    "config_external_cflag": "-O2",
+    "environment": {
+      "GOBO": "C:/gobo",
+      "GOBO_EIFFEL": "ge",
+      "GOBO_CC": "zig",
+      "ISE_PLATFORM": "win64",
+      "ZIG_GLOBAL_CACHE_DIR": "C:\\Users\\ander\\Documents\\xpact\\build\\gobo-update-2026-11-13\\windows\\zig-global-cache",
+      "ZIG_LOCAL_CACHE_DIR": "C:\\Users\\ander\\Documents\\xpact\\build\\gobo-update-2026-11-13\\windows\\zig-local-cache"
+    },
+    "compiler_sha256": "a033a362c67df338ca8a1abb4c8a9db69d015d944bf215f0aa7470de4a74db43",
+    "backend_executable": "C:/gobo/tool/gec/backend/c/zig/zig.exe",
+    "backend_version": "0.15.2",
+    "artifacts": {
+      "all_on": {
+        "all_on\\probe.ecf": "57b995c8f13415d59be78e88d989ba73d32641c5884b51f44aab28caf9ee8ef3",
+        "all_on\\eiffel.log": "e491b94c168c5d353f18c54c0da181c2bccfe2ee450243955bdf0c66a12a76d8",
+        "all_on\\c.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "all_on\\.gobo\\assertion_probe.exe": "f3e3a5687b74a4db7efff22782e470f1384d8037748dc7259dccc58f726186c1",
+        "all_on\\.gobo\\assertion_probe.bat": "288fefe403552c3f4b1d3008ae79936f1fb87158990fb173bb08e8e625b53dbc"
+      },
+      "all_off": {
+        "all_off\\probe.ecf": "ad073713b46627b1110fc87baea06a869cfa0cf8bf24cb74968b9a223d721370",
+        "all_off\\eiffel.log": "caf5066b971b7c3f00c86064591a2a082858f6ab3975872ee45099f6ed1317ca",
+        "all_off\\c.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "all_off\\.gobo\\assertion_probe.exe": "ff149c6ddb86b4f5f110b8a160dae62ee989e81eb3db2b0db733f48e8f86eab9",
+        "all_off\\.gobo\\assertion_probe.bat": "288fefe403552c3f4b1d3008ae79936f1fb87158990fb173bb08e8e625b53dbc"
+      },
+      "supplier_only": {
+        "supplier_only\\probe.ecf": "302cf243bcb2cb919e25b37472553727ef00951f120f99d996c6f1d428aff670",
+        "supplier_only\\eiffel.log": "239e0a092300077d3b9756851fc226a492efe6340caef5598e3e7670a038ae55",
+        "supplier_only\\c.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "supplier_only\\.gobo\\assertion_probe.exe": "ae94dbfed11bb7a994342cb376aa3d4afdaa45499d56b38a0d39c86869abc71a",
+        "supplier_only\\.gobo\\assertion_probe.bat": "288fefe403552c3f4b1d3008ae79936f1fb87158990fb173bb08e8e625b53dbc"
+      },
+      "memory-lifecycle": {
+        "memory-lifecycle\\probe.ecf": "9b208028af43be0a69ec1afa08e0623a90d991be754c6ef46d640bae1003523c",
+        "memory-lifecycle\\eiffel.log": "764cbe618acfcf64f5512aa6d627a1120a99c388fd6d2cd73adb8598fc6a0324",
+        "memory-lifecycle\\c.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "memory-lifecycle\\.gobo\\gc_probe.exe": "a23e0136072075cbccc0a5676f96420297c9de18607706e6fd47f4d4fd21c010",
+        "memory-lifecycle\\.gobo\\gc_probe.bat": "31c427533961a9a17cdbea2aed1af50069309379434d7f9ba96abd2dd9dd0079"
+      },
+      "library-scope": {
+        "library-scope\\probe.ecf": "d759ae625086c1fef7f96fdcb71a2f2238094c15d3cc912ec629e87438bfb847",
+        "library-scope\\eiffel.log": "fea18b330e5addd67f08447aa94328ac3fa0d347e226ed75ff39dd6f7e5b1a2b",
+        "library-scope\\c.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "library-scope\\.gobo\\library_scope_probe.exe": "93f3a4e4fb013045c230c7e3aa6d1aa6911444353e576a1c3d5ee798bf80fefb",
+        "library-scope\\.gobo\\library_scope_probe.bat": "583c4e07460f88bd5fafa6f91a2a76034b93fb9dc8ebb7f66fddd355d3e07241"
+      }
+    },
+    "library_scope": {
+      "executable": "C:\\Users\\ander\\Documents\\xpact\\build\\gobo-update-2026-11-13\\windows\\library-scope\\.gobo\\library_scope_probe.exe",
+      "cases": [
+        {
+          "case": "library_pre",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               scope_library_pre:\n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        },
+        {
+          "case": "library_internal_pre",
+          "expected_detection": false,
+          "detected": false,
+          "completed": true,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 0,
+          "output": "SCOPE_COMPLETED library_internal_pre\n"
+        },
+        {
+          "case": "library_return_pre",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               scope_library_pre:\n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        },
+        {
+          "case": "library_post",
+          "expected_detection": false,
+          "detected": false,
+          "completed": true,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 0,
+          "output": "SCOPE_COMPLETED library_post\n"
+        },
+        {
+          "case": "library_invariant",
+          "expected_detection": false,
+          "detected": false,
+          "completed": true,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 0,
+          "output": "SCOPE_COMPLETED library_invariant\n"
+        },
+        {
+          "case": "root_check",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                   scope_root_check:            \n<0000000000000000>                         Assertion violated.           Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        },
+        {
+          "case": "root_post",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE test_root_post         scope_root_post:             \n<0000000000000000>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE test_root_post                                      \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        }
+      ],
+      "all_match": true,
+      "source_sha256": {
+        "app\\library_scope_probe.e": "2e711108b51456f04a1cd40ff5ec26975fcf904a369140c4f5f3357259756948",
+        "library\\scope_library_subject.e": "4839d8e7863126054bf019b72d98a37614a3470a9fcbb58de43824d4d4998bd8",
+        "probe.ecf": "74dad54d9d0817cdf367847172d553c4559c6b622d6f51ff324106c5aa464c26",
+        "scope_library.ecf": "926f609607a53ff629da94fc089d7b1d4552a3406e112524a736a06548422ca4"
+      }
+    }
+  },
+  "linux_runtime": {
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "compiler": {
+      "path": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo/bin/gec",
+      "version": "gec version 26.11.12+ca6541c"
+    },
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "commands": [
+      {
+        "argv": [
+          "gec",
+          "--version"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/version.log"
+      },
+      {
+        "argv": [
+          "gcc",
+          "--version"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gcc.log"
+      },
+      {
+        "argv": [
+          "gec",
+          "--finalize",
+          "--gc=boehm",
+          "--cc=no",
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/probe.ecf"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/eiffel.log"
+      },
+      {
+        "argv": [
+          "sh",
+          "-e",
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/.gobo/library_scope_probe.sh"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/.gobo",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/c.log"
+      },
+      {
+        "argv": [
+          "/usr/bin/python3",
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/library-scope/check_cases.py",
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/.gobo/library_scope_probe",
+          "--output",
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/scope-results.json"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/cases.log"
+      },
+      {
+        "argv": [
+          "gec",
+          "--finalize",
+          "--gc=boehm",
+          "--cc=no",
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe/probe.ecf"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe/eiffel.log"
+      },
+      {
+        "argv": [
+          "sh",
+          "-e",
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe/.gobo/gc_probe.sh"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe/.gobo",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe/c.log"
+      },
+      {
+        "argv": [
+          "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe/.gobo/gc_probe"
+        ],
+        "cwd": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe",
+        "log": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/gc_probe/cases.log"
+      }
+    ],
+    "sources_sha256": {
+      "library-scope/app/library_scope_probe.e": "2e711108b51456f04a1cd40ff5ec26975fcf904a369140c4f5f3357259756948",
+      "library-scope/library/scope_library_subject.e": "4839d8e7863126054bf019b72d98a37614a3470a9fcbb58de43824d4d4998bd8",
+      "library-scope/probe.ecf": "74dad54d9d0817cdf367847172d553c4559c6b622d6f51ff324106c5aa464c26",
+      "library-scope/scope_library.ecf": "926f609607a53ff629da94fc089d7b1d4552a3406e112524a736a06548422ca4",
+      "library-scope/check_cases.py": "bf2a9fb204ab209522a109fab6ac602e834284cacf3d837e5bf8ea9b9ba022a5",
+      "windows/gc-source/gc_probe.e": "e0ef4ba72952a442678ef3d4a7e99f9dd8781e172d4391bf87730ade97fb2757"
+    },
+    "executable_sha256": {
+      "linux-runtime/library_scope_probe/.gobo/library_scope_probe": "4745685cd54a7c06cdc22e8ee4e0f595f47b79e0c6da0823fafae1380936a142",
+      "linux-runtime/gc_probe/.gobo/gc_probe": "a81ddee1a030c04dcef85e8261ccab7a94a399ab4dbcdea86cb2bb20bb52f38f"
+    },
+    "scope": {
+      "executable": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/linux-runtime/library_scope_probe/.gobo/library_scope_probe",
+      "cases": [
+        {
+          "case": "library_pre",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               scope_library_pre:\n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        },
+        {
+          "case": "library_internal_pre",
+          "expected_detection": false,
+          "detected": false,
+          "completed": true,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 0,
+          "output": "SCOPE_COMPLETED library_internal_pre\n"
+        },
+        {
+          "case": "library_return_pre",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               scope_library_pre:\n<0000000000000000>                         Precondition violated.        Fail\n-------------------------------------------------------------------------------\nSCOPE_LIBRARY_SUBJECT\n                    test_pre               \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        },
+        {
+          "case": "library_post",
+          "expected_detection": false,
+          "detected": false,
+          "completed": true,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 0,
+          "output": "SCOPE_COMPLETED library_post\n"
+        },
+        {
+          "case": "library_invariant",
+          "expected_detection": false,
+          "detected": false,
+          "completed": true,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 0,
+          "output": "SCOPE_COMPLETED library_invariant\n"
+        },
+        {
+          "case": "root_check",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                   scope_root_check:            \n<0000000000000000>                         Assertion violated.           Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        },
+        {
+          "case": "root_post",
+          "expected_detection": true,
+          "detected": true,
+          "completed": false,
+          "valid_result": true,
+          "matches": true,
+          "exit_code": 1,
+          "output": "\nlibrary_scope_probe: system execution failed.\nFollowing is the set of recorded exceptions:\n\n-------------------------------------------------------------------------------\nClass / Object      Routine                Nature of exception           Effect\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE test_root_post         scope_root_post:             \n<0000000000000000>                         Postcondition violated.       Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE test_root_post                                      \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE make                                                \n<0000000000000000>                         Routine failure.              Fail\n-------------------------------------------------------------------------------\nLIBRARY_SCOPE_PROBE root's creation                                     \n<0000000000000000>                         Routine failure.              Exit\n-------------------------------------------------------------------------------\n"
+        }
+      ],
+      "all_match": true
+    },
+    "gc": {
+      "states": [
+        "GC_STATE initial True",
+        "GC_STATE off False",
+        "GC_STATE off_again False",
+        "GC_STATE on True",
+        "GC_STATE on_again True",
+        "GC_STATE off_after_on False",
+        "GC_STATE restored True"
+      ],
+      "output": "GC_STATE initial True\nGC_STATE off False\nGC_STATE off_again False\nGC_STATE on True\nGC_STATE on_again True\nGC_STATE off_after_on False\nGC_STATE restored True\nGC_LIFECYCLE_PASSED\n",
+      "passed": true
+    },
+    "all_passed": true
+  },
+  "benchmark_smoke": {
+    "version": "gec version 26.11.12+ca6541c",
+    "generated_utc": "2026-11-13T18:03:48.360485+00:00",
+    "repository_revision": "01e963dabf3ec85d17f7be575b59eebb64c24c5c",
+    "modes": [
+      "Finalized",
+      "FinalizedAssertions"
+    ],
+    "iterations": 100,
+    "repetitions": 3,
+    "warmups_per_engine": 1,
+    "completed_gobo_runs": 6,
+    "metadata_sha256": "3ea1f7d7b06e40d850a2d18ebe4539fd3c2e428cd7926922f930df48b7e35ea9",
+    "raw_results_sha256": "c7bd4d865f1e0e6ec6c6fb8131dcd338e0a95f7616733986c265c57d700289bd",
+    "runner_sha256_at_execution": "c9c86de2458f8c49eaa82ff2c3cc35569a76365d5196a743d518b06114a5c983",
+    "command": "python3 scripts/run_wsl_benchmarks.py --eiffel-compiler Gobo --iterations 100 --repetitions 3 --output-dir build/gobo-update-2026-11-13/benchmark-smoke",
+    "interpretation": "Both finalized xpact assertion modes built and ran successfully. This is a compatibility smoke test, not a new performance comparison. The runner at this revision incorrectly labels GC suspension unavailable for all Gobo versions; actual GC controls passed the separate lifecycle probes.",
+    "environment_reference": "linux_qualification_environment"
+  },
+  "raw_report_sha256": {
+    "qualification/results.json": "645fa63ca1675fd6e7fa19ec1b395d8e6147f364af7437be4c5c79ed5eaa827f",
+    "windows/results.json": "a95a0a4718bf01a000ced4924896b9acedf12d65724692df67e4be0a57194c39",
+    "linux-runtime/results.json": "6f92ca800c0cdace2f64567e566fb502b77b71d4bd2345b658c3ce13d509768c"
+  },
+  "additional_probe_sources": {
+    "library-scope/probe.ecf": {
+      "sha256": "74dad54d9d0817cdf367847172d553c4559c6b622d6f51ff324106c5aa464c26",
+      "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<system xmlns=\"http://www.eiffel.com/developers/xml/configuration-1-20-0\" name=\"library_scope_probe\" uuid=\"127D7AB1-641F-4BD7-B6A8-93F48CA90CE1\">\n  <target name=\"library_scope_probe\">\n    <root class=\"LIBRARY_SCOPE_PROBE\" feature=\"make\"/>\n    <option>\n      <assertions precondition=\"true\" postcondition=\"true\" check=\"true\" invariant=\"true\" loop=\"true\" supplier_precondition=\"true\"/>\n    </option>\n    <setting name=\"console_application\" value=\"true\"/>\n    <capability>\n      <concurrency support=\"none\"/>\n      <void_safety support=\"all\" use=\"all\"/>\n    </capability>\n    <library name=\"base\" location=\"$GOBO/library/free_elks/library.ecf\"/>\n    <library name=\"scope_library\" location=\"scope_library.ecf\"/>\n    <cluster name=\"app\" location=\"app/\"/>\n  </target>\n</system>\n"
+    },
+    "library-scope/scope_library.ecf": {
+      "sha256": "926f609607a53ff629da94fc089d7b1d4552a3406e112524a736a06548422ca4",
+      "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<system xmlns=\"http://www.eiffel.com/developers/xml/configuration-1-20-0\" name=\"scope_library\" uuid=\"D38E419C-65DC-461B-8BBE-F0EA9B3A2BCD\" library_target=\"scope_library\">\n  <target name=\"scope_library\">\n    <root all_classes=\"true\"/>\n    <capability>\n      <concurrency support=\"none\"/>\n      <void_safety support=\"all\" use=\"all\"/>\n    </capability>\n    <library name=\"base\" location=\"$GOBO/library/free_elks/library.ecf\"/>\n    <cluster name=\"library\" location=\"library/\"/>\n  </target>\n</system>\n"
+    },
+    "library-scope/app/library_scope_probe.e": {
+      "sha256": "2e711108b51456f04a1cd40ff5ec26975fcf904a369140c4f5f3357259756948",
+      "text": "class\n    LIBRARY_SCOPE_PROBE\ncreate\n    make\nfeature {NONE}\n    make\n        local\n            args: ARGUMENTS\n            subject: SCOPE_LIBRARY_SUBJECT\n            mode: STRING\n            exceptions: EXCEPTIONS\n        do\n            create args\n            create subject.make\n            if args.argument_count = 1 then\n                mode := args.argument (1)\n                if mode.same_string (\"library_pre\") then\n                    subject.test_pre (False)\n                elseif mode.same_string (\"library_internal_pre\") then\n                    subject.test_internal_pre\n                elseif mode.same_string (\"library_return_pre\") then\n                    subject.test_internal_pre\n                    subject.test_pre (False)\n                elseif mode.same_string (\"library_post\") then\n                    subject.test_post (False)\n                elseif mode.same_string (\"library_invariant\") then\n                    subject.test_invariant\n                elseif mode.same_string (\"root_check\") then\n                    check scope_root_check: False end\n                elseif mode.same_string (\"root_post\") then\n                    test_root_post (False)\n                else\n                    create exceptions\n                    exceptions.die (2)\n                end\n                io.put_string (\"SCOPE_COMPLETED \" + mode + \"%N\")\n            else\n                create exceptions\n                exceptions.die (2)\n            end\n        end\n\n    test_root_post (expected: BOOLEAN)\n        do\n        ensure\n            scope_root_post: expected\n        end\nend\n"
+    },
+    "library-scope/library/scope_library_subject.e": {
+      "sha256": "4839d8e7863126054bf019b72d98a37614a3470a9fcbb58de43824d4d4998bd8",
+      "text": "class\n    SCOPE_LIBRARY_SUBJECT\ncreate\n    make\nfeature\n    make\n        do\n            is_valid := True\n        end\n\n    is_valid: BOOLEAN\n\n    test_pre (allowed: BOOLEAN)\n        require\n            scope_library_pre: allowed\n        do\n        end\n\n    test_internal_pre\n        local\n            other: SCOPE_LIBRARY_SUBJECT\n        do\n            create other.make\n            other.test_pre (False)\n        end\n\n    test_post (expected: BOOLEAN)\n        do\n        ensure\n            scope_library_post: expected\n        end\n\n    test_invariant\n        do\n            is_valid := False\n        end\ninvariant\n    scope_library_invariant: is_valid\nend\n"
+    },
+    "library-scope/check_cases.py": {
+      "sha256": "bf2a9fb204ab209522a109fab6ac602e834284cacf3d837e5bf8ea9b9ba022a5",
+      "text": "\"\"\"Run seven bounded library-scope cases against an already-built executable.\"\"\"\nimport argparse\nimport json\nfrom pathlib import Path\nimport subprocess\nimport sys\n\nparser = argparse.ArgumentParser()\nparser.add_argument(\"executable\", type=Path)\nparser.add_argument(\"--output\", type=Path, required=True)\nargs = parser.parse_args()\nexecutable = args.executable.resolve()\nargs.output.unlink(missing_ok=True)\ncases = {\n    \"library_pre\": (True, \"scope_library_pre\"),\n    \"library_internal_pre\": (False, \"scope_library_pre\"),\n    \"library_return_pre\": (True, \"scope_library_pre\"),\n    \"library_post\": (False, \"scope_library_post\"),\n    \"library_invariant\": (False, \"scope_library_invariant\"),\n    \"root_check\": (True, \"scope_root_check\"),\n    \"root_post\": (True, \"scope_root_post\"),\n}\nrows = []\nfor mode, (expected, tag) in cases.items():\n    result = subprocess.run([str(executable), mode], cwd=executable.parent,\n                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,\n                            text=True, timeout=15)\n    completed = \"SCOPE_COMPLETED \" + mode in result.stdout\n    detected = result.returncode != 0 and tag in result.stdout and not completed\n    valid_result = detected or (result.returncode == 0 and completed)\n    row = {\"case\": mode, \"expected_detection\": expected,\n           \"detected\": detected, \"completed\": completed,\n           \"valid_result\": valid_result,\n           \"matches\": valid_result and detected == expected,\n           \"exit_code\": result.returncode, \"output\": result.stdout}\n    rows.append(row)\n    print(mode, \"PASS\" if row[\"matches\"] else \"FAIL\", flush=True)\nreport = {\"executable\": str(executable), \"cases\": rows,\n          \"all_match\": all(row[\"matches\"] for row in rows)}\nargs.output.write_text(json.dumps(report, indent=2) + \"\\n\", encoding=\"utf-8\")\nsys.exit(0 if report[\"all_match\"] else 1)\n"
+    },
+    "windows/gc-source/gc_probe.e": {
+      "sha256": "e0ef4ba72952a442678ef3d4a7e99f9dd8781e172d4391bf87730ade97fb2757",
+      "text": "class\n    GC_PROBE\ncreate\n    make\nfeature {NONE}\n    memory: MEMORY\n\n    make\n        do\n            create memory\n            expect_collecting (\"initial\", True)\n            memory.collection_off\n            expect_collecting (\"off\", False)\n            memory.collection_off\n            expect_collecting (\"off_again\", False)\n            memory.collection_on\n            expect_collecting (\"on\", True)\n            memory.collection_on\n            expect_collecting (\"on_again\", True)\n            memory.collection_off\n            expect_collecting (\"off_after_on\", False)\n            memory.collection_on\n            expect_collecting (\"restored\", True)\n            io.put_string (\"GC_LIFECYCLE_PASSED%N\")\n        end\n\n    expect_collecting (a_step: STRING; expected: BOOLEAN)\n        local\n            actual: BOOLEAN\n            exceptions: EXCEPTIONS\n        do\n            actual := memory.collecting\n            io.put_string (\"GC_STATE \" + a_step + \" \")\n            io.put_boolean (actual)\n            io.put_new_line\n            if actual /= expected then\n                io.error.put_string (\"GC_STATE_MISMATCH \" + a_step + \"%N\")\n                create exceptions\n                exceptions.die (3)\n            end\n        end\nend\n"
+    },
+    "linux-runtime/gc_probe/probe.ecf": {
+      "sha256": "5da49d674cfd53aa6275efccf43c6595b6e88ed9f77b7b1b41fa1f1ae04a41a8",
+      "text": "<system xmlns=\"http://www.eiffel.com/developers/xml/configuration-1-20-0\" name=\"gc_probe\" uuid=\"B360C71F-958A-4636-AABB-E893AC52B413\"><target name=\"gc_probe\"><root class=\"GC_PROBE\" feature=\"make\" /><option><assertions precondition=\"true\" postcondition=\"true\" check=\"true\" invariant=\"true\" loop=\"true\" supplier_precondition=\"true\" /></option><setting name=\"console_application\" value=\"true\" /><capability><concurrency support=\"none\" /><void_safety support=\"all\" use=\"all\" /></capability><external_cflag value=\"-O2\" /><library name=\"base\" location=\"$GOBO/library/free_elks/library.ecf\" /><cluster name=\"probe\" location=\"/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/windows/gc-source\" /></target></system>"
+    },
+    "run_linux_runtime.py": {
+      "sha256": "78bed92bc716309c8166b7caa286de23d7695a6b3263434b19d1e520e5ea887b",
+      "text": "\"\"\"Bounded runtime qualification of library scope and Boehm GC state changes.\"\"\"\nimport hashlib\nimport importlib.util\nimport json\nimport os\nfrom pathlib import Path\nimport platform\nimport shutil\nimport sys\nimport xml.etree.ElementTree as ET\n\nROOT = Path(__file__).resolve().parent\nREPO = ROOT.parents[1]\nOUT = ROOT / \"linux-runtime\"\nOUT.mkdir(exist_ok=True)\nREPORT = OUT / \"results.json\"\nREPORT.unlink(missing_ok=True)\nspec = importlib.util.spec_from_file_location(\"assertion_probe\", REPO / \"tools/compiler_assertions/run_probe.py\")\nprobe = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(probe)\nenvironment = {key: value for key, value in os.environ.items()\n               if not key.startswith((\"GOBO_CLI_\", \"GOBO_DEFAULT_\"))}\nfor key in (\"LD_LIBRARY_PATH\", \"LD_PRELOAD\", \"LIBRARY_PATH\", \"CPATH\", \"C_INCLUDE_PATH\",\n            \"CPLUS_INCLUDE_PATH\", \"BOEHM_GC\"):\n    environment.pop(key, None)\nenvironment.update(GOBO_CC=\"gcc\", GOBO_EIFFEL=\"ge\", LC_ALL=\"C\")\ncommands = []\n\ndef checked(command, directory, log, timeout=300):\n    commands.append({\"argv\": [str(x) for x in command], \"cwd\": str(directory), \"log\": str(log)})\n    result = probe.run(command, directory, environment, log, timeout)\n    if result.returncode:\n        raise RuntimeError(\"Command failed; see \" + str(log))\n    return result.stdout\n\ndef build(name, config):\n    directory = OUT / name\n    directory.mkdir(exist_ok=True)\n    ecf = directory / \"probe.ecf\"\n    ecf.write_text(config, encoding=\"utf-8\")\n    code = directory / \".gobo\"\n    executable = code / name\n    script = code / (name + \".sh\")\n    executable.unlink(missing_ok=True)\n    script.unlink(missing_ok=True)\n    checked([\"gec\", \"--finalize\", \"--gc=boehm\", \"--cc=no\", ecf], directory, directory / \"eiffel.log\")\n    if not script.exists():\n        raise RuntimeError(\"Fresh C build script missing\")\n    checked([\"sh\", \"-e\", script], code, directory / \"c.log\")\n    with executable.open(\"rb\") as stream:\n        if stream.read(4) != b\"\\x7fELF\":\n            raise RuntimeError(\"Expected native Linux executable\")\n    return executable, directory\n\nif not sys.platform.startswith(\"linux\"):\n    raise RuntimeError(\"Use configured Linux Python\")\nns = \"{\" + probe.NAMESPACE + \"}\"\nET.register_namespace(\"\", probe.NAMESPACE)\nfixture = ROOT / \"library-scope\"\ndocument = ET.parse(fixture / \"probe.ecf\").getroot()\ntarget = document.find(ns + \"target\")\ntarget.find(ns + \"cluster\").set(\"location\", str(fixture / \"app\"))\nfor library in target.findall(ns + \"library\"):\n    if library.get(\"name\") == \"scope_library\":\n        library.set(\"location\", str(fixture / \"scope_library.ecf\"))\nversion = checked([\"gec\", \"--version\"], OUT, OUT / \"version.log\").strip()\ngcc = checked([\"gcc\", \"--version\"], OUT, OUT / \"gcc.log\").splitlines()[0]\nscope_exe, scope_dir = build(\"library_scope_probe\", ET.tostring(document, encoding=\"unicode\"))\nchecked([sys.executable, fixture / \"check_cases.py\", scope_exe,\n         \"--output\", scope_dir / \"scope-results.json\"], scope_dir, scope_dir / \"cases.log\")\nscope = json.loads((scope_dir / \"scope-results.json\").read_text())\nprint(\"Library scope:\", len(scope[\"cases\"]), \"passed\", flush=True)\n\ngc_source = ROOT / \"windows/gc-source/gc_probe.e\"\ndocument = ET.parse(ROOT / \"windows/memory-lifecycle/probe.ecf\").getroot()\ndocument.find(ns + \"target\").find(ns + \"cluster\").set(\"location\", str(gc_source.parent))\ngc_exe, gc_dir = build(\"gc_probe\", ET.tostring(document, encoding=\"unicode\"))\ngc_output = checked([gc_exe], gc_dir, gc_dir / \"cases.log\", 15)\ngc_states = [line for line in gc_output.splitlines() if line.startswith(\"GC_STATE \")]\nexpected_states = [\"GC_STATE initial True\", \"GC_STATE off False\", \"GC_STATE off_again False\",\n                   \"GC_STATE on True\", \"GC_STATE on_again True\", \"GC_STATE off_after_on False\",\n                   \"GC_STATE restored True\"]\ngc_passed = gc_states == expected_states and \"GC_LIFECYCLE_PASSED\" in gc_output\nif not gc_passed:\n    raise RuntimeError(\"GC lifecycle output mismatch\")\nprint(\"GC lifecycle: 7 states passed\", flush=True)\nsources = [fixture / \"app/library_scope_probe.e\", fixture / \"library/scope_library_subject.e\",\n           fixture / \"probe.ecf\", fixture / \"scope_library.ecf\", fixture / \"check_cases.py\", gc_source]\nreport = {\"platform\": platform.platform(), \"compiler\": {\"path\": shutil.which(\"gec\"), \"version\": version},\n          \"gcc\": gcc, \"commands\": commands,\n          \"sources_sha256\": {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest() for path in sources},\n          \"executable_sha256\": {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest() for path in (scope_exe, gc_exe)},\n          \"scope\": scope, \"gc\": {\"states\": gc_states, \"output\": gc_output, \"passed\": gc_passed},\n          \"all_passed\": scope[\"all_match\"] and gc_passed}\nstaging = REPORT.with_suffix(\".staging\")\nstaging.write_text(json.dumps(report, indent=2) + \"\\n\", encoding=\"utf-8\")\nstaging.replace(REPORT)\nprint(\"Evidence:\", REPORT)\n"
+    },
+    "windows/run_windows_probe.py": {
+      "sha256": "98ad7a7ea5eecdbc40ebc60ee83653b6859681670e5216c3098b728e5a629f23",
+      "text": "import importlib.util\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport platform\nimport subprocess\nimport sys\nimport time\nimport xml.etree.ElementTree as ET\n\nROOT = Path(__file__).resolve().parent\nREPO = ROOT.parents[2]\nsource = REPO / 'tools/compiler_assertions/run_probe.py'\nspec = importlib.util.spec_from_file_location('probe_config', source)\nprobe = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(probe)\nENV = {key: value for key, value in os.environ.items()\n       if not key.startswith(('GOBO_CLI_', 'GOBO_DEFAULT_'))}\nfor key in ('BOEHM_GC', 'LIBRARY_PATH', 'CPATH', 'C_INCLUDE_PATH', 'CPLUS_INCLUDE_PATH'):\n    ENV.pop(key, None)\nENV.update(GOBO='C:/gobo', GOBO_EIFFEL='ge', GOBO_CC='zig', ISE_PLATFORM='win64',\n           ZIG_GLOBAL_CACHE_DIR=str(ROOT/'zig-global-cache'),\n           ZIG_LOCAL_CACHE_DIR=str(ROOT/'zig-local-cache'))\nENV['PATH'] = r'C:\\gobo\\bin;' + ENV.get('PATH', '')\nCOMPILER = Path('C:/gobo/bin/gec.exe')\n\ndef run(command, cwd, log, timeout=240):\n    command = [str(part) for part in command]\n    with subprocess.Popen(command, cwd=cwd, env=ENV, stdout=subprocess.PIPE,\n                          stderr=subprocess.STDOUT, text=True,\n                          creationflags=subprocess.CREATE_NO_WINDOW) as process:\n        try:\n            output, _ = process.communicate(timeout=timeout)\n        except BaseException:\n            subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],\n                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT,\n                           creationflags=subprocess.CREATE_NO_WINDOW)\n            output, _ = process.communicate()\n            log.write_text(output, encoding='utf-8')\n            raise\n    log.write_text(output, encoding='utf-8')\n    return subprocess.CompletedProcess(command, process.returncode, output)\n\ndef checked(command, cwd, log):\n    result = run(command, cwd, log)\n    if result.returncode:\n        raise RuntimeError('Failed {}: {}\\n{}'.format(result.returncode, command, result.stdout[-5000:]))\n    return result.stdout.strip()\n\ndef build(directory, config, system='assertion_probe'):\n    directory.mkdir(exist_ok=True, parents=True)\n    config_path = directory/'probe.ecf'\n    config_path.write_text(config, encoding='utf-8')\n    code = directory/'.gobo'\n    executable = code/(system+'.exe')\n    script = code/(system+'.bat')\n    for path in (executable, script, directory/(system+'.exe'), directory/(system+'.bat')):\n        if path.exists():\n            path.unlink()\n    print('Building '+directory.name, flush=True)\n    try:\n        checked([COMPILER, '--finalize', '--gc=boehm', '--cc=no', config_path], directory, directory/'eiffel.log')\n        if not script.is_file():\n            raise RuntimeError('Missing fresh generated batch script '+str(script))\n        checked(['cmd.exe', '/d', '/c', script], code, directory/'c.log')\n        if executable.read_bytes()[:2] != b'MZ':\n            raise RuntimeError('Expected native Windows executable '+str(executable))\n    except BaseException:\n        if executable.exists():\n            executable.unlink()\n        raise\n    return executable\n\ndef gc_config():\n    document = ET.fromstring(probe.config_text('Gobo', 'all_on'))\n    ns = '{'+probe.NAMESPACE+'}'\n    document.set('name', 'gc_probe')\n    target = document.find(ns+'target')\n    target.set('name', 'gc_probe')\n    target.find(ns+'root').set('class', 'GC_PROBE')\n    target.find(ns+'cluster').set('location', (ROOT/'gc-source').as_posix())\n    return ET.tostring(document, encoding='unicode')\n\ndef main():\n    result_path = ROOT/'results.json'\n    result_path.unlink(missing_ok=True)\n    results = {\n        'platform': platform.platform(), 'compiler': str(COMPILER),\n        'version': checked([COMPILER, '--version'], ROOT, ROOT/'version.log'),\n        'backend': 'bundled Zig, native Windows', 'gc': 'boehm',\n        'source_sha256': {p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in probe.SOURCE.glob('*.e')},\n        'cases': [],\n    }\n    for selection in ('all_on', 'all_off', 'supplier_only'):\n        directory = ROOT/selection\n        executable = build(directory, probe.config_text('Gobo', selection))\n        for mode, tag in probe.TAGS.items():\n            result = run([executable, mode], directory, directory/(mode+'.log'), timeout=30)\n            completed = 'PROBE_COMPLETED '+mode in result.stdout\n            detected = result.returncode != 0 and tag in result.stdout and not completed\n            if not detected and not (result.returncode == 0 and completed):\n                raise RuntimeError('Unrelated probe failure: {} {}\\n{}'.format(selection,mode,result.stdout))\n            expected = selection == 'all_on' or (selection == 'supplier_only' and mode == 'pre')\n            row = dict(selection=selection, assertion=mode, expected_violation=expected,\n                       detected_violation=detected, matches_requested_setting=detected==expected,\n                       exit_code=result.returncode, diagnostic=result.stdout)\n            results['cases'].append(row)\n            print(json.dumps({k:v for k,v in row.items() if k!='diagnostic'}), flush=True)\n    gc_directory = ROOT/'memory-lifecycle'\n    gc_binary = build(gc_directory, gc_config(), 'gc_probe')\n    gc_result = run([gc_binary], gc_directory, gc_directory/'lifecycle.log', timeout=30)\n    results['memory_lifecycle'] = dict(exit_code=gc_result.returncode, output=gc_result.stdout,\n                                     passed=gc_result.returncode==0 and 'GC_LIFECYCLE_PASSED' in gc_result.stdout)\n    if not results['memory_lifecycle']['passed']:\n        raise RuntimeError('GC lifecycle failed\\n'+gc_result.stdout)\n    results['all_requested_checks_match'] = all(r['matches_requested_setting'] for r in results['cases'])\n    result_path.write_text(json.dumps(results, indent=2)+'\\n', encoding='utf-8')\n    print('Published '+str(result_path), flush=True)\n\nif __name__ == '__main__':\n    main()\n"
+    },
+    "windows/run_scope_probe.py": {
+      "sha256": "85f45c3a09fb09dcb2133d748982f24e555b18a805caaea773ad33b5b7d4f066",
+      "text": "import json\nimport sys\nimport xml.etree.ElementTree as ET\n\nimport run_windows_probe as adapter\n\nfixture = adapter.ROOT.parent/'library-scope'\ndirectory = adapter.ROOT/'library-scope'\ndocument = ET.parse(fixture/'probe.ecf').getroot()\nns = '{'+adapter.probe.NAMESPACE+'}'\ntarget = document.find(ns+'target')\ntarget.find(ns+'cluster').set('location', (fixture/'app').as_posix())\nfor library in target.findall(ns+'library'):\n    if library.get('name') == 'scope_library':\n        library.set('location', (fixture/'scope_library.ecf').as_posix())\nexecutable = adapter.build(directory, ET.tostring(document, encoding='unicode'), 'library_scope_probe')\nadapter.checked([sys.executable, fixture/'check_cases.py', executable,\n                 '--output', directory/'scope-results.json'], directory, directory/'cases.log')\nprint((directory/'cases.log').read_text())\n"
+    }
+  },
+  "limitations": [
+    "The bounded assertion matrix and library-scope cases do not establish complete Eiffel semantic equivalence.",
+    "GC probes verify collecting/on/off state transitions and repeated operations, not reclamation, other MEMORY APIs, or multithreaded behavior.",
+    "Basic-scalar and assertion-frame optimizations are source/generated-code findings; no new speedup or collection-count comparison is claimed.",
+    "The nightly was installed separately for Linux qualification; the Jenkins-selected compiler remains unchanged."
+  ],
+  "generated_code_audit": {
+    "path": "build\\gobo-update-2026-11-13\\benchmark-smoke\\builds\\Gobo\\FinalizedAssertions\\.gobo\\xpact_benchmarks_2.c",
+    "sha256": "74c05747830cf819056bb9db127c5b6a197c448984f4c09ec2d52dd571a3fa20",
+    "integer_type": "T108 (INTEGER_32)",
+    "integer_box_helper_occurrences": 1,
+    "integer_box_helper_interpretation": "Definition only; no calls in this generated translation unit.",
+    "integer_invariant_function_present": false,
+    "ordinary_precondition_example": {
+      "first_line": 55812,
+      "text": "\t/* Preconditions */\n\tif (!tassert) {\n\t\tac->in_assertion = 1;\n\t\t{\n\t\t\tt1 = (T113)(a1!=EIF_VOID);\n\t\t\tif (!(t1)) {\n\t\t\t\tGE_raise_with_message(GE_EX_PRE, \"name_attached\");\n\t\t\t}\n\t\t}\n\t\t{\n\t\t\tt1 = (T113)(a2!=EIF_VOID);\n\t\t\tif (!(t1)) {\n\t\t\t\tGE_raise_with_message(GE_EX_PRE, \"attributes_attached\");\n\t\t\t}\n\t\t}\n\t\t{\n\t\t\tt2 = (GE_qualified(ac, T68f10(ac, a2)));\n\t\t\t/* -> T108f5 */\n\t\t\tt1 = ((T113)((((T89*)(C))->a24)<(t2)));\n\t\t\tt1 = ((T113)(!(t1)));\n\t\t\t/* <- */\n\t\t\tt3 = (t1);\n\t\t\tif (!(t3)) {\n\t\t\t\tGE_raise_with_message(GE_EX_PRE, \"attributes_bounded\");\n\t\t\t}\n\t\t}\n\t\tac->in_assertion = tassert;\n\t}"
+    },
+    "ordinary_check_example": {
+      "first_line": 55915,
+      "text": "\t\t\t\t\t\t\tif (!tassert) {\n\t\t\t\t\t\t\t\tac->in_assertion = 1;\n\t\t\t\t\t\t\t\tif (!(EIF_FALSE)) {\n\t\t\t\t\t\t\t\t\tGE_raise_with_message(GE_EX_CHECK, \"namespace_scope_available\");\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t\tac->in_assertion = tassert;"
+    },
+    "retained_old_expression_frame": {
+      "first_line": 55840,
+      "text": "\t/*  Old expressions */\n\tif (!tassert) {\n\t\tGE_rescue ra;\n\t\tra.previous = ac->last_rescue;\n\t\tac->last_rescue = &ra;\n\t\tif (GE_setjmp(ra.jb) != 0) {\n\t\t\tac->last_rescue = &ra;\n\t\t\tac->in_assertion = tassert;\n\t\t\tt4 = GE_last_exception_raised(ac);\n\t\t\tac->last_rescue = ra.previous;\n\t\t\tac->call = &tc;\n\t\t} else {\n\t\t\tac->in_assertion = 1;\n\t\t\tt4 = 0;\n\t\t\tt2 = (T212f3(ac, ((T89*)(C))->a5));\n\t\t\tac->in_assertion = tassert;\n\t\t\tac->last_rescue = ra.previous;\n\t\t}"
+    },
+    "interpretation": "Ordinary assertions use direct violation raises; old expressions still use GE_setjmp. Base assertions were already explicitly disabled, so absence of integer invariant boxing does not isolate the effect of the primitive compiler fix."
+  },
+  "repository_validation": {
+    "command": "python -m unittest discover -s tests/python -p test_wsl_benchmarks.py",
+    "passed": 28,
+    "purpose": "Validate the benchmark runner after correcting its GC capability label; benchmark selection is unchanged."
+  },
+  "linux_qualification_environment": {
+    "distro": "Ubuntu-24.04",
+    "path": "/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/qualification-env.sh",
+    "sha256": "5c3b54a6bdaa977af8fc05c687c17c758b1c7d8aadf693b79230bbf4dbae9050",
+    "text": "source /mnt/c/Users/ander/Documents/xpact/build/wsl-toolchain/eiffel-env.sh\nexport GOBO=/mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/toolchain/gobo\nexport GOBO_EIFFEL=ge\nexport GOBO_CC=gcc\nexport PATH=\"$GOBO/bin:$PATH\"\n",
+    "selection": "Each Linux invocation sourced this isolated environment. The shared build/gobo-toolchain/gobo-env.sh was not modified or selected.",
+    "invocations": {
+      "assertion_matrix": "source /mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/qualification-env.sh; gec --version; python3 /mnt/c/Users/ander/Documents/xpact/tools/compiler_assertions/run_probe.py --output-dir /mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/qualification",
+      "runtime_scope_and_gc": "source /mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/qualification-env.sh; python3 /mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/run_linux_runtime.py",
+      "benchmark_smoke": "source /mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/qualification-env.sh; python3 /mnt/c/Users/ander/Documents/xpact/scripts/run_wsl_benchmarks.py --eiffel-compiler Gobo --iterations 100 --repetitions 3 --output-dir /mnt/c/Users/ander/Documents/xpact/build/gobo-update-2026-11-13/benchmark-smoke"
+    }
+  }
+}

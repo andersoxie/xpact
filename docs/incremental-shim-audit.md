@@ -1,14 +1,16 @@
 # Incremental Shim Audit
 
-This audit records the current native chunk adapter behavior before replacing
-the accumulated-buffer replay path with a true incremental parser session.
+This audit records native chunk-adapter behavior shared by the production
+checkpoint-resume path and its replay fallbacks.
 
 It is intentionally a focused native API audit, not a claim that the production
 parser has already stopped using replay internally. Since mass-xpact #2 the
 adapter resumes from a checkpoint and replays only as a fallback
 ([incremental-resume.md](incremental-resume.md)); all rows are unchanged by it. Rows classified as
 `current_gap` identify expected observations that should guide the
-incremental-core design; the current audit rows are green.
+incremental-core design. The six current cases all require `passes` outcomes.
+The [recorded October validation](../reports/issue-0104/report.md) includes a
+successful shim-audit run; this documentation update does not rerun the DLL.
 
 ## Run
 
@@ -23,11 +25,11 @@ The output is written to:
 build\incremental-shim-audit\incremental-shim-audit.tsv
 ```
 
-## Current Observations
+## Covered behaviors
 
 The audit covers these native API behaviors:
 
-| Case | Classification | Current observation |
+| Case | Required classification | Expected observation |
 |---|---|---|
 | `plain_start_nonfinal` | `passes` | A completed plain start tag in a non-final `XML_Parse` chunk emits a start callback and leaves the parser in `XML_PARSING`. |
 | `parse_buffer_plain_start_nonfinal` | `passes` | The same plain start-tag case works through `XML_GetBuffer` / `XML_ParseBuffer`. |

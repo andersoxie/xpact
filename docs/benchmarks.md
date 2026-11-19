@@ -7,7 +7,15 @@ An additional [WSL2 Eiffel/GCC benchmark lane](wsl-benchmarks.md) compiles the
 same xpact parser with EiffelStudio and Gobo Eiffel and compares them with
 libexpat inside Linux, with its own reports and toolchain metadata.
 
-Generated: 2026-06-21 17:06:04 +02:00
+The tables below preserve the **June 2026 Windows campaign** and its focused
+updates. They are not the current compiler comparison or a claim about the
+latest Jenkins build. See the [13 November WSL comparison](wsl-benchmarks.md)
+for Gobo 26.11.12 versus EiffelStudio 25.02 on the same parser, and the
+[assertion qualification](gobo-assertions.md) for the fixed Gobo checks and GC
+controls plus the remaining literal-`ensure False` difference. The later
+toolchain measurements must not be treated as a parser speedup over these rows.
+
+Historical report generated: 2026-06-21 17:06:04 +02:00
 
 Machine: AMD64 Family 23 Model 49 Stepping 0, AuthenticAMD; Windows_NT
 
@@ -41,7 +49,8 @@ Interpretation: the `pyexpat` rows are same-machine Expat baselines through CPyt
 
 Native ABI note: the Windows `xpact native C ABI` rows are generated from a C executable linked against `include/xpact.h` and `build\native-eiffel\xpact.lib` and run against the Eiffel-backed `build\native-eiffel\xpact.dll`. Any WSL `xpact native C ABI` status row still targets the older bridge-only `build\native\libxpact.so` path and remains `not measured` until the Linux/WSL Eiffel-backed shared object is packaged.
 
-See `docs/performance-analysis.md` for the current interpretation of the xpact-vs-libexpat performance gap and optimization priorities.
+See [performance analysis](performance-analysis.md) for the measurement chronology,
+completed parser optimizations, and the scope of each comparison.
 
 For opt-in macro-benchmarks against caller-supplied, pre-decompressed real XML
 corpora, see `docs/large-xml-benchmarks.md`.
@@ -69,12 +78,12 @@ finalized-build timing runs against the same 1000-document workload.
 | catalog-100-items | xpact Eiffel finalized, assertions discarded, earlier focused row | Phase 1 finalized | 1000 | 2611 | 271.328 | 3685.576 | 9.177 | Parser object reused; no-op event handler; finalized Eiffel C compilation; slice/no-event fast paths before normalized-input aliasing |
 | catalog-100-items | xpact Eiffel finalized, assertions discarded, GC suspended during parse, earlier focused row | Phase 1 finalized | 1000 | 2611 | 276.164 | 3621.037 | 9.017 | Parser object reused; no-op event handler; finalized Eiffel C compilation; slice/no-event fast paths; calls parse_without_garbage_collection |
 
-This reduces the direct Eiffel tokenizer/no-op median from the previous
+This June change reduced the direct Eiffel tokenizer/no-op median from the previous
 controlled 774.653 ms measurement to 184.700 ms, about a 76.2% reduction. The
-latest ASCII/name-scanner work improved the focused direct row from 247.600 ms
+June ASCII/name-scanner work improved the focused direct row from 247.600 ms
 to 184.700 ms, about 25.4%. Against the same-run `pyexpat` tokenizer row, the
-remaining direct Eiffel gap is about 1.60x. Compared with the 2026-06-18
-published direct Eiffel row of 874.84 ms, the new focused measurement is about
+direct Eiffel gap in that focused campaign was about 1.60x. Compared with the 2026-06-18
+published direct Eiffel row of 874.84 ms, the June focused measurement was about
 78.9% faster. The native tokenizer rows also improved substantially versus the
 2026-06-18 publication, from 3474.593 ms to 787.427 ms for parser creation per
 document and from 3420.794 ms to 784.110 ms with parser reuse.
@@ -82,9 +91,9 @@ document and from 3420.794 ms to 784.110 ms with parser reuse.
 ## Previous Published Values
 
 The previous published same-machine run was generated on 2026-06-03. Keep these
-rows for trend comparison against the current 2026-06-19 full publication.
+rows for the historical comparison against the 2026-06-19 full publication.
 
-| Engine | Previous median ms | Current median ms | Change |
+| Engine | 3 June median ms | 19 June median ms | Change |
 |---|---:|---:|---:|
 | xpact Eiffel finalized, assertions discarded | 851.331 | 193.8 | -77.2% |
 | xpact Eiffel finalized, assertions discarded, GC suspended during parse | 860.699 | 194.754 | -77.4% |

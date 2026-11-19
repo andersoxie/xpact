@@ -1,7 +1,8 @@
 # Platform Build Preparation
 
-The source layout is intended to support Windows, Linux, and Eiffel .NET builds
-from the same Eiffel parser core.
+The same Eiffel parser core runs in the Windows builds and Linux/WSL benchmarks.
+The native release package targets Windows x64; Eiffel .NET integration and an
+Eiffel-backed Linux shared-library package remain future work.
 
 ## Shared Core
 
@@ -31,17 +32,29 @@ parser plus the C ABI bridge.
 
 ## Linux
 
-Linux should use the same Eiffel source and the same assertion matrix. The first
-Linux target is the core parser and tests:
+The verified Linux path builds the parser benchmark with EiffelStudio or Gobo
+and GCC inside Ubuntu 24.04/WSL2. It uses the same parser and harness sources as
+the Windows benchmarks. Configure the Linux compiler environments first, then
+run from Windows:
 
-```sh
-ec -batch -config tests/xpact_tests.ecf -target xpact_tests
-(cd EIFGENs/xpact_tests/W_code && finish_freezing)
-./EIFGENs/xpact_tests/W_code/xpact_tests
-ec -batch -config tests/xpact_tests.ecf -target xpact_tests_assertions
-(cd EIFGENs/xpact_tests_assertions/W_code && finish_freezing)
-./EIFGENs/xpact_tests_assertions/W_code/xpact_tests
+```powershell
+.\scripts\run_wsl_benchmarks.ps1 -Distribution Ubuntu-24.04
 ```
+
+Both compilers are selected by default; use `-EiffelCompiler EiffelStudio` or
+`-EiffelCompiler Gobo` to select one. Pass Linux Bash setup-file paths with
+`-EiffelEnvironment` and `-GoboEnvironment` if the tools are not exposed by the
+Linux login environment. The runner builds both finalized assertion modes and
+the direct libexpat C baseline. Linux benchmark targets compile Base from source;
+the EiffelStudio benchmark ECF restricts its safe Base precompile to Windows.
+
+The 13 November 2026 comparison used Gobo `26.11.12+ca6541c` and EiffelStudio
+`25.02.9.8723`. The shared Jenkins Gobo environment was updated, then its benchmark
+launcher was run locally; those results are not a new Jenkins job build. See
+[WSL setup and results](wsl-benchmarks.md) and
+[compiler assertion qualification](gobo-assertions.md). These benchmark and
+bounded compiler probes do not establish that the complete Windows regression
+matrix or native library has been qualified on Linux.
 
 The repository already has a bridge-only WSL/Linux C build path for
 `build/native/libxpact.so`. The missing Linux native-release step is the
@@ -56,12 +69,6 @@ That future script should:
 - run the same native ABI smoke tests and libexpat adapter suite.
 
 No parser-source fork is intended for Linux.
-
-For an additional same-environment performance comparison, use
-[`scripts/run_wsl_benchmarks.ps1`](../scripts/run_wsl_benchmarks.ps1).
-It builds the Eiffel benchmark with Linux EiffelStudio/GCC and runs it
-alongside the direct libexpat C benchmark inside WSL2. See
-[WSL2 benchmark setup and interpretation](wsl-benchmarks.md).
 
 ## Eiffel .NET
 

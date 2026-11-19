@@ -1,28 +1,38 @@
 # xpact Phase 1
 
-Phase 1 is the credible-release track described in the Eiffel.org article:
+Phase 1 is the credible-release track described in the Eiffel.org article. Its
+release goals are:
 
 - xpact passes the libexpat test suite.
 - Benchmark results are published honestly, including slower paths.
 - Contract annotations are visible in the public repository.
 
-This repository starts that track with a contracted parser core:
+The Windows native preview and portable parser benchmarks advance that track;
+they do not establish full libexpat replacement compatibility. The repository
+provides a contracted parser core:
 
-- `src/xp_parser.e` implements a streaming event parser with explicit preconditions, postconditions, class invariants, loop invariants, and loop variants.
+- `src/xp_parser.e` parses complete input buffers or continues eligible native
+  chunks from checkpoints, with explicit preconditions, postconditions, class
+  invariants, loop invariants, and loop variants. Full-input retention and
+  documented replay fallbacks remain; see [incremental resume](incremental-resume.md).
 - `src/xp_event_handler.e` defines the SAX-style callback surface used internally and by tests.
 - `include/xpact.h` records the libexpat 2.8.1-compatible public API surface.
 - `src/xp_expat_api.e` keeps the public API manifest under the regression
   tests.
-- The Eiffel targets enable void safety explicitly with `support="all" use="all"` and use the safe Base precompile.
+- The Eiffel targets enable void safety explicitly with `support="all" use="all"`.
+  Windows EiffelStudio targets use the safe Base precompile; Linux benchmarks
+  compile Base from source.
 - `src/xp_gc_critical_section.e` provides a contract-backed way to suspend
   garbage collection temporarily during critical parser sections and restore
   the previous collection state afterwards.
 - `tests/xpact_tests.ecf` defines both `xpact_tests` with Eiffel runtime
   assertions disabled and `xpact_tests_assertions` with all Eiffel assertion
   categories enabled.
-- `scripts/run_eiffel_test_matrix.ps1` runs both assertion modes in workbench
-  and finalized builds.
-- `benchmarks/xpact_benchmarks.ecf` gives a repeatable harness for publishing early results.
+- `scripts/run_eiffel_test_matrix.ps1` runs both assertion modes in Windows
+  EiffelStudio workbench and finalized builds, retaining requested assertions
+  with `-keep` during finalization.
+- `benchmarks/xpact_benchmarks.ecf` supplies the EiffelStudio benchmark targets;
+  the WSL runner also supports Gobo through `benchmarks/xpact_gobo_benchmarks.ecf`.
 
 ## Current Phase 1 Scope
 
@@ -38,9 +48,11 @@ Implemented now:
 - Internal parameter entity declarations and parameter-entity expansion inside the internal subset.
 - Entity-generated markup in element content.
 - Recursive entity detection and entity expansion byte/depth limits.
+- A no-event fast path with slice-backed element names, deferred string
+  materialization, normalized-input reuse where safe, and lazy position accounting.
 - External entity resolver API and loader policy:
   - default policy is `No_external_entities`;
-  - xpact never opens files, URLs, or sockets itself;
+  - the parser core never opens files, URLs, or sockets itself;
   - callers opt in with `set_external_entity_resolver` and `set_external_entity_policy`;
   - external general entities, external parameter entities, and external DTD subsets are separately policy-gated;
   - resolver denial (`Void`) is a parse error;
@@ -51,7 +63,11 @@ Implemented now:
   - `XP_PARSER.parse_without_garbage_collection` gives Eiffel callers an
     explicit critical-section parse entry point;
   - `XP_NATIVE_PARSER.set_suspend_gc_during_parse` lets the Eiffel-backed
-    native parser suspend collection while servicing parse calls.
+    native parser suspend collection while servicing parse calls;
+  - support depends on the runtime: Gobo 26.10's controls were stubs, while
+    `26.11.12+ca6541c` passed the bounded collection-state probes. This does not
+    establish reclamation behavior or eliminate parsing allocations; see
+    [the compiler qualification](gobo-assertions.md).
 - Full libexpat 2.8.1 public API compatibility at the header/manifest level, including parser creation, parse-buffer, handler, DTD, namespace, external entity, error, position, memory, feature, attack-protection, hash-salt, and reparse-deferral declarations.
 - Adapter for the upstream libexpat test suite:
   - `scripts/run_libexpat_adapter.ps1` extracts a `START_TEST(...)` manifest from an upstream Expat checkout;
@@ -59,7 +75,13 @@ Implemented now:
   - `adapters/libexpat` contains the CMake overlay and header shims needed to build upstream `runtests` against xpact's native libexpat ABI;
   - `adapters/libexpat/expected-failures.tsv` records specific red expected-failure patterns and no longer allows a suite-wide wildcard;
   - `adapters/libexpat/parity.tsv` records green, red, and blocked parity rows for the Windows-only native release scope and is expanded against the upstream `START_TEST(...)` manifest.
-- Published benchmark table against same-machine libexpat baselines in `docs/benchmarks.md`, with raw rows generated by `scripts/run_benchmarks.ps1` and the current interpretation in `docs/performance-analysis.md`.
+- Published Windows benchmark rows in [benchmarks.md](benchmarks.md), generated
+  by `scripts/run_benchmarks.ps1`, with optimization history in
+  [performance-analysis.md](performance-analysis.md).
+- Direct Linux/WSL parser benchmarks with EiffelStudio, Gobo and libexpat,
+  documented in [wsl-benchmarks.md](wsl-benchmarks.md). The 13 November comparison
+  used the updated shared Jenkins environment through a local launcher run,
+  not a new Jenkins job build; assertion equivalence remains bounded by the probes.
 - Opt-in large XML macro-benchmark scaffolding in
   `scripts/run_large_xml_benchmarks.ps1` and `docs/large-xml-benchmarks.md`;
   it requires caller-supplied, pre-decompressed real XML files and keeps those
@@ -81,7 +103,7 @@ Implemented now:
   - `scripts/build_native.ps1` builds `build/native/xpact.dll`, `build/native/xpact.lib`, and `build/native/libxpact.so`;
   - `native/xpact_eiffel_dllmain.c`, `tests/xpact_native_library.ecf`, and `scripts/build_native_eiffel.ps1` package the verified bridge path as `build/native-eiffel/xpact.dll` on Windows;
   - `tests/native/xpact_eiffel_dll_smoke.c` links as an external C caller against that DLL import library and verifies `XML_Parse` reaches the Eiffel parser;
-  - `scripts/package_windows_release.ps1` creates the initial Windows x64 release archive with `xpact.dll`, `xpact.lib`, `include/xpact.h`, release notes, and smoke-test source.
+  - `scripts/package_windows_release.ps1` creates the Windows x64 preview archive with production and assertion-enabled DLLs/import libraries, `include/xpact.h`, release notes, and smoke-test source.
 - ABI/link tests for C callers against the native export layer:
   - `tests/native/xpact_abi_smoke.c` links against the public `include/xpact.h` surface only;
   - `tests/native/xpact_bridge_smoke.c` links against the private bridge header and verifies forwarding to a fake Eiffel bridge;
@@ -91,8 +113,8 @@ Implemented now:
 ## Initial Native Release Scope
 
 The first native-library package is Windows x64 only. It ships the
-Eiffel-backed `xpact.dll` and MSVC import library produced by
-`scripts/build_native_eiffel.ps1`. Linux/WSL `libxpact.so` packaging is deferred
+Eiffel-backed `xpact.dll`, `xpact_assertions.dll` and their MSVC import libraries
+produced by `scripts/build_native_eiffel.ps1`. Linux/WSL `libxpact.so` packaging is deferred
 platform expansion, not part of this Windows-only release promise.
 
 Windows-only Phase 1 closeout:
@@ -101,13 +123,13 @@ Windows-only Phase 1 closeout:
 - the Windows native C ABI benchmark is published in `docs/benchmarks.md` and interpreted in `docs/performance-analysis.md`;
 - the upstream libexpat adapter now uses specific expected-failure/parity rows rather than a suite-wide failure wildcard.
 
-Beyond this Windows-only Phase 1 scope:
+Beyond the Windows native package:
 
-- Phase 2 performance work should follow the article's updated architecture:
-  buffer-backed token slices, lazy `STRING_8` materialization, string-pool
-  recycling, native byte-buffer parsing, and only later optional SCOOP pipeline
-  parallelism.
-- Linux/WSL `libxpact.so` packaging and benchmark parity remain future platform work.
+- Further performance work extends the existing slices and lazy `STRING_8`
+  materialization, investigates string-pool recycling and native byte-buffer
+  parsing, and leaves SCOOP pipeline parallelism as a later option.
+- Eiffel-backed Linux/WSL `libxpact.so` packaging and native ABI benchmark parity
+  remain future work; direct Eiffel parser benchmarks already run under WSL.
 - Remaining red libexpat parity gaps are tracked in `adapters/libexpat/parity.tsv`.
 - Drop-in replacement verification in public applications is tracked in
   `docs/drop-in-verification.md`.
@@ -172,6 +194,13 @@ Generate the published same-machine benchmark table:
 
 ```powershell
 .\scripts\run_benchmarks.ps1
+```
+
+Run the direct Linux compiler comparison after configuring its compiler
+environments, as described in [the WSL guide](wsl-benchmarks.md):
+
+```powershell
+.\scripts\run_wsl_benchmarks.ps1 -Distribution Ubuntu-24.04
 ```
 
 Run the opt-in large XML macro-benchmark with pre-decompressed real XML files:

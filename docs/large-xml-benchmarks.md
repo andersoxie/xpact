@@ -1,5 +1,12 @@
 ﻿# Large XML Benchmarks
 
+This is the historical **4 June 2026** whole-file campaign. Later
+[parser profiling](parser-profile-performance.md) and the
+[PubMed follow-ups](pubmed-doctype-performance.md) measured subsequent parser
+changes on this corpus. The [13 November WSL compiler comparison](wsl-benchmarks.md)
+uses the small catalog instead; its Gobo/EiffelStudio results do not remeasure
+large XML throughput. Jenkins artifacts identify each CI build's own results.
+
 Generated: 2026-06-04 08:09:55 +02:00
 
 Machine: AMD Ryzen Threadripper 3970X 32-Core Processor ; 63.9 GiB RAM; Microsoft Windows 11 Pro
@@ -7,7 +14,7 @@ Machine: AMD Ryzen Threadripper 3970X 32-Core Processor ; 63.9 GiB RAM; Microsof
 Runtime context:
 
 - Inputs are real XML files supplied by the caller and must already be decompressed.
-- Current first slice is a whole-file benchmark: each engine loads the complete XML file before parsing.
+- This campaign is a whole-file benchmark: each engine loads the complete XML file before parsing.
 - Maximum accepted file size for this run: 524288 bytes.
 - Eiffel target: `benchmarks\xpact_benchmarks.ecf` built as `Finalized`.
 - Python: `Python 3.14.0`.
@@ -29,9 +36,10 @@ original XML declaration, DOCTYPE, root element, and the first 53 complete
 
 Raw run data is written to `build\large-xml-benchmarks\large-xml-benchmark-results.tsv`.
 
-Interpretation: this is a macro-benchmark companion to `docs\benchmarks.md`. It intentionally uses caller-supplied real XML corpora and does not include download or decompression time. Because the current Eiffel parser consumes a complete `STRING_8`, these rows are not a substitute for the future Phase 2 byte-buffer streaming benchmark.
+Interpretation: this is a macro-benchmark companion to `docs\benchmarks.md`. It uses caller-supplied real XML corpora and excludes download and decompression. The measured Eiffel harness consumes a complete `STRING_8`; these rows do not measure incremental parsing or streaming memory use.
 
-First comparison note: on this 512 KiB real-data subset, direct Eiffel xpact is
+First comparison note: in this June campaign on the 512 KiB subset, direct Eiffel xpact was
 roughly 62x slower than the WSL2 direct C libexpat tokenizer row and roughly 74x
 slower than the CPython `pyexpat` tokenizer row. Temporary GC suspension does
-not improve this workload.
+not improve this measured configuration. Later parser and compiler changes
+require their own GC measurements.

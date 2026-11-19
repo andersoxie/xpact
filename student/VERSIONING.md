@@ -1,5 +1,11 @@
 # Versioning workflow
 
+**Scope reviewed 13 November 2026:** this is the student assignment's workflow,
+now based on `incremental-test`; the older examples retain their recorded branch
+names. Unrelated authorized work follows its own agreed target and repository
+instructions. Keep one logical change per commit, reviewable evidence and a clear
+PR. This documentation review did not refresh historical issue or merge status.
+
 > **Last updated:** 2026-11-11 · the rules below were written for `student-Mass` (2026-10-22); the box says what changed since.
 
 > ### ✅ Current rules (2026-11-11, these win over anything older below)
@@ -174,7 +180,7 @@ gh auth status                    # GitHub CLI must be logged in
 ```
 
 `gh` was installed with `winget install GitHub.cli`; see
-[README.md](README.md#tools-on-this-pc-2026-10-21) for where it and Python are
+[README.md](README.md#tools-on-this-pc-2026-10-31) for where it and Python are
 on this PC.
 
 ## Already on `student-Mass` before this workflow

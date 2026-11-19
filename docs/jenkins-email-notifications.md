@@ -1,6 +1,7 @@
 # Jenkins email notifications
 
-Both xpact Jenkinsfiles provide an `EMAIL_RECIPIENTS` string parameter.
+The main `ci/Jenkinsfile.all-tests` and `ci/Jenkinsfile.windows-phase1` pipelines
+provide an `EMAIL_RECIPIENTS` string parameter.
 After Jenkins first loads the updated Jenkinsfile, open the xpact job's
 **Build with Parameters** page and enter comma-separated addresses, for example
 `first@example.com,second@example.com`.
@@ -10,8 +11,8 @@ becomes the default for subsequent builds of that job. Clear the field and run
 a build to disable notifications again. Surrounding whitespace is removed.
 Addresses stay in the Jenkins job's parameters rather than the repository.
 
-Each build sends one email when its final result is `FAILURE` or `UNSTABLE`,
-including yellow builds caused by failing tests. Successful, aborted, and
+With nonempty recipients, each build attempts one email when its final result
+is `FAILURE` or `UNSTABLE`, including yellow builds caused by failing tests. Successful, aborted, and
 not-built results do not send email. The message includes the result, build
 number, build page, and console link.
 
@@ -33,7 +34,8 @@ Keep the quotes: a bare `.trim()` expression is accepted by ordinary Groovy
 but rejected by Jenkins' Declarative parser before any stages can run.
 
 On Windows, use an extracted Jenkins WAR and installed plugin libraries to run
-the offline Declarative regression and the notification behavior tests:
+the offline Declarative regression, notification behavior tests and consolidated
+plot-publication checks:
 
 ```powershell
 .\scripts\test_jenkins_pipelines.ps1 `
@@ -47,6 +49,9 @@ complete Jenkinsfiles. It uses the installed Declarative parser and validator
 with process-local metadata for the agents, parameters, and options used here.
 It does not start Jenkins or validate runtime steps, SCM integration, or CPS
 execution. Java argument files are written under the ignored `build` directory.
+The same command also runs `test_plot_report_publication.groovy`; see
+[Jenkins plots](jenkins-plots.md) for that separate publication path. These local
+checks do not trigger a Jenkins build or send email.
 
 `tests/jenkins/test_email_notifications.groovy` loads both complete Jenkinsfiles
 with stubbed Pipeline steps and a stubbed mail sender. Run it with a Groovy

@@ -6,14 +6,33 @@ and padded to four digits so the folders sort by number. Each folder holds
 test scripts that back it up. The rules are in
 [`student/VERSIONING.md`](../student/VERSIONING.md) and [`CLAUDE.md`](../CLAUDE.md).
 
-> **Branch note 2026-11-10:** the work branch is now `incremental-test` (andersoxie/xpact); `student-Mass` below is the earlier integration branch. Newest (2026-11-11): [issue-0273](issue-0273/report.md) (DLL exception guard), [issue-0274](issue-0274/report.md) (threads), [issue-0299](issue-0299/report.md) (worker rights).
-> **Updated 2026-10-28** (`student-Mass` after PR #152, which brings in `main` @ `1714f31`). Latest W3C result:
-> [latest-2026-10-28](latest-2026-10-28/README.md) (2,585 cases, 0 failed, 0 errors, 0 skipped).
+**Status navigation, 13 November 2026:** use the [project overview](../README.md)
+for current capabilities, the [W3C guide](../docs/w3c-xml-conformance.md) for the
+current profile, and the [WSL benchmark](../docs/wsl-benchmarks.md) and
+[Gobo qualification](../docs/gobo-assertions.md) reports for the November compiler
+comparison. Each report below remains evidence for its own revision and run;
+historical issue and Jenkins states are not live tracker queries.
+
+> **Branch note, 10 November 2026:** the recorded work branch changed to
+> `incremental-test` (andersoxie/xpact); `student-Mass` below is the earlier
+> integration branch. Reports added on 11 November include
+> [issue-0273](issue-0273/report.md) (DLL exception guard),
+> [issue-0274](issue-0274/report.md) (threads), and
+> [issue-0299](issue-0299/report.md) (worker rights).
+
+> **Historical student snapshot, 28–29 October 2026** (`student-Mass` after PR #152, which brings in `main` @ `1714f31`). Recorded W3C result:
+> [latest-2026-10-28](latest-2026-10-28/README.md): 2,283 verdict checks plus 302 no-crash-only cases per assertion mode, 0 failed, 0 errors, 0 skipped. This was a local reproduction of the Jenkins stages, not a Jenkins job run.
 > W3C **output** (content, not only the verdict): [issue-0154](issue-0154/report.md), [issue-0156](issue-0156/report.md), [issue-0157](issue-0157/report.md), [issue-0158](issue-0158/report.md), [issue-0159](issue-0159/report.md): 399 of 432 right (was 359); every xpact-only difference fixed.
 > W3C **in pieces** (whole vs split vs byte by byte): [issue-0165](issue-0165/report.md), 2,438 of 2,585 stable (was 1,995).
 > `main` @ `2488f44` (the supervisor merged PR #139 on 2026-10-29) has the same files as `student-Mass` @ `e5d59e2`.
-> ✅ **2026-10-31:** the supervisor merged `student-Mass` into `main` ([#177](https://github.com/andersoxie/xpact/pull/177), `733688e`) and the Jenkins run on it passed; #74, #79, #142, #146, #148, #151, #153, #154, #155, #156, #157, #158, #159 and #165 are closed with that run as evidence (#73 verified on Jenkins, closed 2026-10-26)
-> · open problems are listed in
+> At that snapshot, #74, #79, #142, #146, #148, #151, #153, #154, #155, #156, #157, #158, #159 and #165 awaited a Jenkins run (#73 verified on Jenkins, closed 2026-10-26).
+>
+> **Follow-up, 31 October 2026:** the supervisor merged `student-Mass` into `main`
+> ([#177](https://github.com/andersoxie/xpact/pull/177), `733688e`), and the Jenkins
+> run on that revision passed. The issues then awaiting a Jenkins run were
+> closed with that run as evidence.
+>
+> The historical problem list is retained in
 > [`student/PLAN.md`, Known problems](../student/PLAN.md#-known-problems-living-list).
 > Test results that are not a fix are in [`student/results/`](../student/results/README.md).
 

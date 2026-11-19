@@ -36,6 +36,27 @@ invalidated before rebuilding, and the complete report is published only after
 all selected builds and cases finish.
 
 The postcondition uses a boolean argument instead of a literal `ensure False`:
-EiffelStudio treats the latter as a nonreturning routine even when ordinary
-postcondition monitoring is disabled. Both loop-variant probes terminate after
+EiffelStudio raises a postcondition violation for the latter even when ordinary
+postcondition monitoring is disabled. This runtime behavior does not establish
+the same attachment-analysis rules as `check False then end`.
+Both loop-variant probes terminate after
 two iterations when checking is absent.
+
+## Recorded qualification: 13 November 2026
+
+Gobo `26.11.12+ca6541c` and EiffelStudio `25.02.9.8723` each match all 21
+Linux/GCC cases in this runner. The three Gobo 26.10 omissions (plain `check`,
+non-decreasing variant, and supplier-only precondition) no longer reproduce in
+that nightly. A separate Windows Gobo qualification also matches those 21 cases.
+
+Separate probes check imported-library scope, caller-policy restoration, and
+repeated Boehm GC on/off transitions. These pass on the qualified Gobo build.
+An additional Linux probe still differs: finalized Gobo removes an empty
+routine's literal `ensure False` with assertions off, whereas EiffelStudio
+raises. The dynamic postcondition in this runner deliberately does not test
+that special case, so `all_requested_checks_match` is not a claim of full
+compiler equivalence.
+
+See [the assertion investigation](../../docs/gobo-assertions.md) for the scope,
+diagnostics and saved supplementary probe sources, and
+[WSL setup](../../docs/wsl-benchmarks.md) for compiler environment selection.

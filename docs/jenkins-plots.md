@@ -163,11 +163,20 @@ and the Windows-to-WSL launch are excluded.
 
 EiffelStudio, Gobo, and direct C libexpat rows identify their compiler and
 runtime paths. Gobo uses its own runtime and Boehm GC, and has no published
-GC-suspended variant. Its label **xpact assertions requested** is deliberate:
-the investigated Gobo release does not execute all checks that EiffelStudio
-executes. Comparing Windows and WSL bars cannot isolate compiler effects from
+GC-suspended variant in this runner. Gobo 26.10 missed checks and had stub GC
+controls; the qualified `26.11.12+ca6541c` nightly passes the original assertion
+matrix and GC-control sequence. The label **xpact assertions requested** remains
+appropriate because qualification is bounded and an inlined literal-`ensure False`
+case still differs from EiffelStudio. See the [assertion evidence](gobo-assertions.md).
+Comparing Windows and WSL bars cannot isolate compiler effects from
 OS, runtime, launch, and iteration-count differences. See
 [WSL benchmark configuration and interpretation](wsl-benchmarks.md).
+
+The 13 November Gobo/EiffelStudio comparison is a separate local campaign.
+Jenkins build #134 still recorded Gobo 26.10; the shared WSL environment was
+switched to 26.11.12 later that day. Read each build's archived compiler version
+rather than applying the local result or the environment change retroactively
+to its plots. A toolchain change is not by itself a parser-code speedup.
 
 ### Large XML benchmark
 

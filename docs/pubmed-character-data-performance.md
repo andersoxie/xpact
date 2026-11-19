@@ -1,7 +1,7 @@
 # PubMed character-data profiling, 26 October 2026
 
 The [text-position follow-up](pubmed-position-performance.md) records the next
-profile, allocation-free position batching and the latest direct core
+profile, allocation-free position batching and that campaign's direct core
 comparison. The tables below retain this earlier campaign's results.
 
 This follows the [first profiling pass](parser-profile-performance.md), where
