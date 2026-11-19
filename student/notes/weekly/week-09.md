@@ -1,6 +1,6 @@
 # Week 9 - Analyse and draft
 
-> **10-16 November 2026, state on 2026-11-14** · work branch `incremental-test` of andersoxie/xpact; `main` is behind `incremental-test` since PR #354/#355 (not touched).
+> **10-16 November 2026, state on 2026-11-16** · work branch `incremental-test` of andersoxie/xpact; `main` is behind `incremental-test` since PR #354/#355 (not touched).
 > Week goal (guide): analyse the results and draft the report. Hand-in: 27 November.
 > 10-11 November (DLL blockers, website review findings, fair speed test) are in [week 8](week-08.md) under "2026-11-10" and "Next".
 
@@ -13,7 +13,7 @@
 - [x] **Hand-in report** updated to 2026-11-12 with recounted numbers ([#346](https://github.com/andersoxie/xpact/issues/346), PR #347, #349).
 - [x] ✅ **[#316](https://github.com/andersoxie/xpact/issues/316) fixed** (PR #355): under `cdb` the 3 crashes were all inside .NET (finalizer thread twice, main thread once) when it loaded a type at the cap; only 20-63 KB of stack used. Worker: warm-up, 4 MB reserve, tiered JIT off. [Report](../../../reports/issue-0316/report.md).
 - [x] ✅ **10 MB upload** ([#352](https://github.com/andersoxie/xpact/issues/352), [#353](https://github.com/andersoxie/xpact/issues/353), PR #354): the page froze (editor drew 2 rows per line); now a read-only 256 KB preview; a timeout explains the assertions build / small pieces. [Report](../../../reports/issue-0352/report.md).
-- [x] #262 and #130 closed (Jenkins dropped). Full to-do list with time estimates: [TOOODOOO.txt](../../../TOOODOOO.txt).
+- [x] #262 and #130 closed (Jenkins dropped). Full to-do list with time estimates: [TOOODOOO.txt](../../archive/TOOODOOO.txt).
 
 - [x] ✅ **Hosting safety and full scan, 14 Nov** ([report](../../../reports/security-scan-2026-11-14/README.md)):
   - WAF test (OWASP CRS 4.25, stands in for Cloudflare/Azure): it **blocks every pasted XML** and does not stop XML attacks → documented: exclude `/api/validate` if a WAF is used.
@@ -23,6 +23,15 @@
   - [#371](https://github.com/andersoxie/xpact/issues/371) SonarQube had **never analysed C#**: first .NET scan 76 issues → **0** (PRs #375-#378: worker, Program.cs split, `LibraryImport`, log guard).
   - [#369](https://github.com/andersoxie/xpact/issues/369) CodeQL (security-extended) on every PR + Dependabot weekly (PR #373). Snyk account (CodTanium) set up.
   - [#380](https://github.com/andersoxie/xpact/issues/380) 9 SonarQube hotspots (#380), read with a User Token (the old analysis token got 403): 3 `unsafe` in WorkerLauncher removed (PR for #380); 6 safe (worker interop ×4, probe namespace URI, probe `killpg`) to be marked Safe by the student in the SonarQube page.
+
+- [x] ✅ **15-16 Nov:**
+  - SonarQube quality gate passes (#397); script audit for hidden actions, safe `publish.ps1` (#401).
+  - Test 2 on 16 cores: identical results, 148 s → 27.5 s ([#197](https://github.com/andersoxie/xpact/issues/197)).
+  - Faster parser, 4 allocation changes found with a sampling profiler: DLL median 1.07×, elements 1.16× ([#407](https://github.com/andersoxie/xpact/issues/407)).
+  - Threads: EiffelStudio's runtime gets slower with more threads (#304); Gobo 26.11.14: W3C identical, the parser scales (4 threads 1.8× the best EiffelStudio setting) ([#408](https://github.com/andersoxie/xpact/issues/408)).
+  - Tooling fixes #404-#406; Gobo ECF on Windows needed an include path ([#409](https://github.com/andersoxie/xpact/issues/409)); fixed with Eric Bezault's quoted include, W3C identical on 4 engines.
+  - xpact.dll built with Gobo + msc ([#414](https://github.com/andersoxie/xpact/issues/414)): identical results (test 2, 204 speed cells), any thread after 4 fixes; 0.59× the EiffelStudio DLL (0.90× GC tuned); not parallel yet (bridge lock). Same C compiler for both: Zig = msc speed. Finding [#415](https://github.com/andersoxie/xpact/issues/415).
+  - Gobo DLL follow-ups: global bridge lock removed for Gobo ([#418](https://github.com/andersoxie/xpact/issues/418), 4 threads 0.40 s vs 0.61 s ES); callback cost was Boehm finalizers from per-callback strings, fixed by reuse ([#428](https://github.com/andersoxie/xpact/issues/428)): Gobo 1.69× faster, 0.92× ES on one thread; GC tuning now inside the DLL.
 
 ## What the evidence shows
 **Observed, not expected:**
@@ -45,6 +54,10 @@
 | WAF (CRS 4.25) | pasted XML 14/14 blocked (403); file upload XXE passes the WAF (the parser still refuses it) |
 | Host filter | `Host: xpact.example.com` → 400; with `AllowedHosts` → 200 |
 
+| Parser speed (16 Nov, DLL, idle, 60 cells) | median 1.07×, elements 1.16×; W3C 0 failed both builds; test 2 identical |
+| Threads, 16,000 parses | EiffelStudio 1 → 16 threads: 0.44 → 1.83 s; Gobo (tuned GC) 0.39 → 0.24 s at 4 threads |
+| Gobo W3C profile | 1,974 passed, 0 failed, 0 cases different from EiffelStudio (both modes) |
+
 ## Blocked
 - Website deployment ([#210](https://github.com/andersoxie/xpact/issues/210)): image and checklist are ready (docker.md "Hosting on the internet safely"); the server, domain, HTTPS and `AllowedHosts` are the supervisor's.
 - Dependabot alerts and secret scanning: repo admin only.
@@ -55,7 +68,8 @@
 - [ ] ✏️ Reflection sections of the report in the student's own words; prepare the demonstration.
 - [ ] Ask the supervisor the open questions in one message.
 - [ ] [#272](https://github.com/andersoxie/xpact/issues/272) ISO-8859-1 in pieces (the last known speed problem).
-- [ ] SonarQube: mark the 6 safe hotspots Safe (text in `security-report-11-14.txt` §7, #380); send a Python coverage report for the gate.
+- [x] ✅ SonarQube: 6 safe hotspots marked Safe (#380 closed); 0 left to review.
+- [x] ✅ SonarQube quality gate passes: new-code coverage 81.4 % (Python coverage sent, 12 new tests, worker excluded from measurement).
 - [x] ✅ Website releases with #316, #352/#353, #357-#360 and #371: `website-2026-11-14-2` (14 Nov).
 - [ ] Send the supervisor the hosting package ([to-supervisor-2026-11-14.md](../to-supervisor-2026-11-14.md)).
 - [ ] Open issues on andersoxie (13 on 2026-11-13): #342, #304, #293, #272, #211, #210, #197, #176, #171, #170, #126, #123, #13.

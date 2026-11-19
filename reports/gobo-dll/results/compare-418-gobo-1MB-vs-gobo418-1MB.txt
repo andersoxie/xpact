@@ -1,0 +1,19 @@
+cells measured in both: 80 of 84
+median xpact/Expat ratio: old 29.50x slower, new 17.30x slower
+median new-vs-old speed-up: 1.69x (best 3.04x, worst 1.07x)
+checksum mismatches: old 0, new 0
+not measured (old): 4 elements-1MB-latin1 1 B TIMEOUT, elements-1MB-latin1 16 B TIMEOUT
+not measured (new): 4 elements-1MB-latin1 1 B TIMEOUT, elements-1MB-latin1 16 B TIMEOUT
+
+median new-vs-old speed-up by group:
+  piece 1 B              1.61x  (12 cells)
+  piece 16 B             1.71x  (12 cells)
+  piece 256 B            1.73x  (14 cells)
+  piece 4 KB             1.78x  (14 cells)
+  piece 64 KB            1.78x  (14 cells)
+  piece whole            1.72x  (14 cells)
+  shape attributes       1.52x  (12 cells)
+  shape dtd              1.73x  (12 cells)
+  shape elements         1.67x  (32 cells)
+  shape namespaces       1.80x  (12 cells)
+  shape text             1.36x  (12 cells)

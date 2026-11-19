@@ -1,0 +1,4 @@
+elements-1MB-utf8 cb=1: ES-old 162 ms  ES-new 124 ms  Gobo-old 282 ms  Gobo-new 149 ms  | checksums equal: True
+attributes-1MB-utf8 cb=1: ES-old 89 ms  ES-new 68 ms  Gobo-old 165 ms  Gobo-new 79 ms  | checksums equal: True
+text-1MB-utf8 cb=1: ES-old 49 ms  ES-new 44 ms  Gobo-old 64 ms  Gobo-new 54 ms  | checksums equal: True
+elements-1MB-utf8 cb=0: ES-old 43 ms  ES-new 43 ms  Gobo-old 25 ms  Gobo-new 25 ms  | checksums equal: True

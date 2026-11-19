@@ -1,3 +1,7 @@
+FROZEN 2026-11-16 (#422): moved from the repository root and no longer updated.
+Current state: student/CONTINUE-HERE.md. To-do: the open GitHub issues,
+summarised with time estimates in student/HANDOVER.md.
+
 XPACT - WHAT IS LEFT OPEN                                   state 2026-11-13
 =============================================================================
 Hand-in: 27 November 2026. Branch: incremental-test (up to date, nothing to push).
@@ -33,7 +37,13 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
 [ ] #211  Billion laughs: right error (code 43) but 1.5 s vs Expat 0.1 s
           Fix: profile (1/2 day) + bulk entity expansion (1-3 days)
           = 1 1/2 - 3 1/2 days, uncertain. See section C.
-[ ] #304  Parallel parsing on several threads needed for 1.0?
+[~] #304  Parallel parsing: EiffelStudio runtime cannot scale threads; under Gobo it
+          scales (4 threads 1.8x).
+[x] #409  Gobo ECF on Windows: quoted eif_misc.h include (Eric's suggestion), W3C identical
+[x] #414  xpact.dll built with Gobo + msc: identical results, any thread; 0.59x ES
+          speed (0.90x GC tuned). Next: remove the bridge lock, profile callbacks.
+[ ] #415  build_native_eiffel.ps1 -OutputDir still writes .obj into build
+ative-eiffel
           "no" (likely): document it ............................... 30 min
           "yes": multi-threaded Eiffel runtime, remove #274 lock,
                  thread tests ...................................... 3-5 days, risky
@@ -43,9 +53,9 @@ B. WAITING FOR ANDERS  (ask all in one go)  - fix time AFTER his answer
 [ ] Licence: LICENSE file + README line ............................ 30 min
 [ ] Raise 10 s timeout for the assertions build? (from #353)
           one config value, ships with next release ................ 15 min
-[ ] #380 SonarQube hotspots: 3 removed (PR), 6 safe -> student marks them
+[x] #380 SonarQube hotspots: 3 removed (PR), 6 safe -> student marked them
           Safe in the UI (text: security-report-11-14.txt §7) ........ 5 min
-[ ] #210  Website online: image website-2026-11-14-2 + checklist ready
+[ ] #210  Website online: image website-2026-11-14-3 + checklist ready
           (student/notes/to-supervisor-2026-11-14.md) ............... Anders
 [ ] Repo Settings -> Code security: Dependabot alerts + secret
           scanning on (needs repo admin) ........................... 2 min (Anders)
@@ -72,12 +82,10 @@ D. SONARQUBE
 -----------------------------------------------------------------------------
 [x] 0 issues (196 -> 0, 2026-11-12)
 [x] #342  SHA-1 hotspot already fixed (PR #343, 2026-11-12)
-[ ] #342  2 security hotspots left (killpg on the probe's own process group,
-          the ECF XML namespace): not weaknesses, need a "Safe" review.
-          Student account has NO review rights: hotspot API returns
-          403 Forbidden. -> Anders (section B)
-[ ] Quality gate fails only on coverage: send a coverage report
-          (Python + C# only; Eiffel has no easy coverage tool) ..... 1/2-1 day
+[x] #342  2 hotspots left (killpg, ECF namespace): reviewed Safe 2026-11-14
+          (user token can read them; 0 hotspots to review)
+[x] Quality gate passes (2026-11-14/15): Python + C# coverage sent by
+          sonar-net.ps1, new-code coverage 81.8 % (#397)
 
 -----------------------------------------------------------------------------
 E. #197 - W3C "TEST 2" ON SEVERAL CORES
@@ -90,7 +98,8 @@ very slow on 1-byte pieces: 8 KB takes 58 s, Expat 5 ms).
 Task: run.py --jobs N, N documents at once (PC has 6 cores) -> ~5 min.
 Results must be identical, same row order. Does not speed up the parser.
 Worth it only if test 2 is run often (when chunked input changes, e.g. #272).
-[ ] #197 ............................................................ 1/2-1 day
+[x] #197 verified 2026-11-15: --jobs 16 gives byte-identical results,
+          median 148.4 s -> 27.5 s (5.4x). reports/issue-0197/README.md
 
 -----------------------------------------------------------------------------
 F. OTHER
@@ -99,7 +108,7 @@ F. OTHER
           website-2026-11-14-2 (2026-11-14). Still open: Docker
           memory-cap check may require code 1 again ................ ~1 h
 [x] #262 and #130 closed as not planned (Jenkins dropped) ...... 2026-11-13
-[ ] Speed rerun vs Expat (#275 fair test) for final report numbers
+[x] Speed rerun vs Expat (#275 fair test): 2026-11-16, 18.27x -> 17.15x (#407)
           (currently median 18x slower). ~30 min work + 1-2 h machine.
           PC must be IDLE the whole time (no browser, no builds).
           Do AFTER speed fixes (#211, #272). Say "run the speed test".

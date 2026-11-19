@@ -1,0 +1,147 @@
+id	status	expected	spec	xpact	xpact_message	expat	expat_message	problems
+utf8	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-bom	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-no-decl	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf16le-bom	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf16be-bom	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf16le-no-bom	pass	ACCEPT	(Expat)	ACCEPT		ACCEPT		
+utf16be-no-bom	pass	ACCEPT	(Expat)	ACCEPT		ACCEPT		
+utf16le-decl-utf16le	FAIL	ACCEPT	(Expat)	REJECT	STRING:1:40:STRING:1:40:unsupported character encoding	ACCEPT		verdict REJECT (expected ACCEPT)
+utf16-unpaired-high-surrogate	FAIL	REJECT	REJECT	REJECT	STRING:1:1:STRING:1:1:unsupported character encoding	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf16-unpaired-low-surrogate	FAIL	REJECT	REJECT	REJECT	STRING:1:1:STRING:1:1:unsupported character encoding	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf16-odd-length	FAIL	REJECT	REJECT	REJECT	STRING:1:126:STRING:1:126:parse error	REJECT	unclosed token	error -1 vs Expat 5
+latin1	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+us-ascii	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+us-ascii-high-byte	FAIL	REJECT	(Expat)	REJECT	STRING:1:50:STRING:1:50:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+windows-1252-no-handler	pass	REJECT	REJECT	REJECT	STRING:1:44:STRING:1:44:unsupported character encoding	ACCEPT		
+unknown-encoding	pass	REJECT	REJECT	REJECT	STRING:1:42:STRING:1:42:unsupported character encoding	REJECT	python LookupError: unknown encoding: x-nonsense	
+create-latin1-overrides-utf8	FAIL	ACCEPT	(Expat)	ACCEPT		ACCEPT		events differ from Expat
+create-utf8-overrides-latin1	FAIL	REJECT	REJECT	ACCEPT		REJECT	not well-formed (invalid token)	verdict ACCEPT (expected REJECT)
+create-utf16-on-utf8	FAIL	REJECT	(Expat)	ACCEPT		REJECT	not well-formed (invalid token)	verdict ACCEPT (expected REJECT)
+bom-utf8-decl-utf16	FAIL	REJECT	(Expat)	REJECT	STRING:1:38:STRING:1:38:unsupported character encoding	REJECT	encoding specified in XML declaration is incorrect	error -1 vs Expat 19
+utf8-overlong-2-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-2-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-2-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-2-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-2-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-2-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-3-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-3-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-3-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-3-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-3-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-3-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-4-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-4-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-4-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-4-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-4-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-overlong-4-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-surrogate-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-surrogate-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:7:STRING:1:7:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-surrogate-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-surrogate-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-surrogate-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:13:STRING:1:13:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-surrogate-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:2:STRING:1:2:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-above-10ffff-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-above-10ffff-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:7:STRING:1:7:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-above-10ffff-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-above-10ffff-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-above-10ffff-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:13:STRING:1:13:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-above-10ffff-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:2:STRING:1:2:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-f5-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-f5-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:7:STRING:1:7:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-f5-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-f5-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-f5-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:13:STRING:1:13:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-f5-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:2:STRING:1:2:Invalid UTF8 character sequence	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-ff-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-ff-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-ff-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-ff-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-ff-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-byte-ff-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-lone-continuation-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-lone-continuation-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-lone-continuation-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-lone-continuation-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-lone-continuation-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-lone-continuation-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-2-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-2-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-2-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-2-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-2-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-2-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-3-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-3-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-3-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-3-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-3-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-3-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-4-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-4-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-4-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-4-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-4-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-truncated-4-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-fffe-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:4:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-fffe-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:12:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-fffe-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:13:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-fffe-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:13:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-fffe-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:13:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-fffe-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:8:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-ffff-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:4:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-ffff-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:12:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-ffff-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:13:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-ffff-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:13:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-ffff-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:13:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-ffff-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:8:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-c1-control-0x85-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-comment	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-pi	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-c1-control-0x85-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:7:Invalid unicode character	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-control-0x01-in-text	FAIL	REJECT	REJECT	REJECT	STRING:1:5:STRING:1:5:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-control-0x01-in-attribute	FAIL	REJECT	REJECT	REJECT	STRING:1:8:STRING:1:8:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-control-0x01-in-comment	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-control-0x01-in-pi	FAIL	REJECT	REJECT	REJECT	STRING:1:9:STRING:1:9:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-control-0x01-in-cdata	FAIL	REJECT	REJECT	REJECT	STRING:1:14:STRING:1:14:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-control-0x01-in-name	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	not well-formed (invalid token)	error -1 vs Expat 4
+utf8-U+007F-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+007F-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+007F-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0080-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0080-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0080-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+07FF-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+07FF-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+07FF-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0800-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0800-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+0800-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+D7FF-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+D7FF-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+D7FF-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+E000-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+E000-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+E000-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+FFFD-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+FFFD-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+FFFD-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10000-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10000-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10000-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10FFFF-in-text	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10FFFF-in-attribute	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+utf8-U+10FFFF-in-cdata	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-x0	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	reference to invalid character number	error -1 vs Expat 14
+charref-x9	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-xD7FF	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-xD800	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	reference to invalid character number	error -1 vs Expat 14
+charref-xFFFE	FAIL	REJECT	REJECT	REJECT	STRING:1:4:Invalid unicode character	REJECT	reference to invalid character number	error -1 vs Expat 14
+charref-x10FFFF	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		
+charref-x110000	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	reference to invalid character number	error -1 vs Expat 14
+charref-99999999999	FAIL	REJECT	REJECT	REJECT	STRING:1:4:STRING:1:4:parse error	REJECT	reference to invalid character number	error -1 vs Expat 14
+charref-x85	pass	ACCEPT	ACCEPT	ACCEPT		ACCEPT		

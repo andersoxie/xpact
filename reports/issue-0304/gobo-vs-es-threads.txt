@@ -1,0 +1,6 @@
+threads   EiffelStudio       Gobo  ES/Gobo   (16,000 parses, median of 3; bad = runs with wrong results or a crash)
+      1         0.44 s     0.78 s    0.56x   bad ES 0 Gobo 0
+      2         0.49 s     0.69 s    0.71x   bad ES 0 Gobo 0
+      4         0.63 s     0.64 s    0.98x   bad ES 0 Gobo 0
+      8         0.96 s     0.99 s    0.97x   bad ES 0 Gobo 0
+     16         1.75 s     1.23 s    1.43x   bad ES 0 Gobo 0

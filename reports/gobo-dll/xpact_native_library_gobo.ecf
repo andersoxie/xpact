@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" name="xpact_native_library" uuid="2F8A4C1E-0B7D-4E3A-9C5F-0D11A0B0B0B1">
+	<!-- xpact.dll's Eiffel part compiled with Gobo (gec): same root and sources as tests/xpact_native_library.ecf,
+	     Gobo's free_elks instead of EiffelBase; the C bridge is compiled and linked separately (build_gobo_dll.ps1). -->
+	<target name="xpact_native_library">
+		<root class="XP_NATIVE_LIBRARY_ROOT" feature="make"/>
+		<option warning="true">
+			<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+		</option>
+		<setting name="console_application" value="false"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="thread"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<external_include location="$GOBO/tool/gec/backend/c/runtime"/>
+		<external_include location="..\..\include"/>
+		<external_include location="..\..\native"/>
+		<library name="base" location="$GOBO/library/free_elks/library.ecf">
+			<option>
+				<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+			</option>
+		</library>
+		<cluster name="src" location="..\..\src\"/>
+	</target>
+</system>

@@ -11,7 +11,8 @@ The versions up to 0.9.0 were assigned **afterwards** (2026-11-10) to commits th
 
 | Version | Date | Commit | In one line |
 |---|---|---|---|
-| [Unreleased](#unreleased-on-incremental-test-after-090) | 2026-11-12 | `incremental-test` (in `main` via PR #344) | DLL exception guard and thread safety, website hardening and new Docker image, fair speed test, script safety, SonarQube 0 issues |
+| [Unreleased](#unreleased-on-incremental-test-after-0100) | - | `incremental-test` | (nothing yet)  |
+| [0.10.0](#0100--2026-11-19) | 2026-11-19 | `v0.10.0` | **Milestone:** thread-safe DLL, Gobo DLL, 1.07× faster parser, SonarQube 0 issues, Gobo XML comparison, one live status page |
 | [0.9.0](#090--2026-11-10) | 2026-11-10 | `1b8696f` | Launch candidate: website hardening tests, .NET tests in Jenkins, `main` = `incremental-test` |
 | [0.8.0](#080--2026-11-09) | 2026-11-09 | `68abdcb` | Boogie proofs of two parser loops; main's Gobo benchmark work merged |
 | [0.7.0](#070--2026-11-09) | 2026-11-09 | `f067a9d` | Final parser fully retested; website release and Docker image |
@@ -22,9 +23,13 @@ The versions up to 0.9.0 were assigned **afterwards** (2026-11-10) to commits th
 | [0.2.0](#020--2026-10-23) | 2026-10-23 | `9e1747d` | Build and test-runner fixes; first student merge into `main` (#72) |
 | [0.1.0](#010--2026-10-14) | 2026-10-14 | `fee611a` | Baseline: the supervisor's XPact and the W3C benchmark runner |
 
-## Unreleased (on `incremental-test` after 0.9.0)
+## Unreleased (on `incremental-test` after 0.10.0)
 
-Not tagged yet. The Eiffel parser classes are unchanged; the DLL bridge changed.
+Nothing yet.
+
+## 0.10.0 – 2026-11-19
+
+**Milestone** on `incremental-test` (git tag `v0.10.0` on the merge commit of the milestone pull request). The Eiffel parser classes changed only for speed (#407); the DLL bridge changed.
 
 - **DLL:** an Eiffel exception inside a call (e.g. out of memory) returns `XML_ERROR_NO_MEMORY` / `XML_ERROR_UNEXPECTED_STATE` instead of ending the process without a trace; `XPACT_EXCEPTION_TRACE=1` prints the trace (#273, PR #301).
 - **DLL:** safe from several threads, each with its own parsers: calls into the single-threaded Eiffel runtime take turns; no single-thread cost (#274, PR #303). Parallel parsing is an open question (#304).
@@ -36,6 +41,13 @@ Not tagged yet. The Eiffel parser classes are unchanged; the DLL bridge changed.
 - **SonarQube (2026-11-12):** 196 issues → 0, duplication 14 % → 0 % (#325-#332, PRs #333-#340): evidence folders excluded from the scan; website accessibility (real `figcaption`, screen-reader text, labelled editor) and React fixes; Python scripts split into smaller functions with no behaviour change. SHA-1 for git blob ids marked `usedforsecurity=False` (#342, PR #343): hotspots 3 → 2, both to be reviewed as Safe.
 - **Website:** build `website-2026-11-12-1` with the accessibility and React fixes; release and Docker image `ghcr.io/andersoxie/xpact-website:website-2026-11-12-1` = `latest` (digest `sha256:08b77a5b…`) (#345, PR #348).
 - **`main`:** synced with `incremental-test` on 2026-11-12 (PR #344, merge commit).
+- **Speed (2026-11-16):** four allocation changes in the parser, DLL median 1.07×, elements 1.16×, results unchanged ([#407](https://github.com/andersoxie/xpact/issues/407), PR #411).
+- **Gobo Eiffel (2026-11-16):** shared Gobo ECF builds on Windows with Eric Bezault's quoted `eif_misc.h` include ([#409](https://github.com/andersoxie/xpact/issues/409), PR #417); `xpact.dll` built with Gobo + msc, identical results ([#414](https://github.com/andersoxie/xpact/issues/414), PR #416); global bridge lock removed in the Gobo build, 4 threads 0.40 s vs 0.61 s ES ([#418](https://github.com/andersoxie/xpact/issues/418), PR #430); callback strings reused and GC tuning inside the DLL, Gobo 0.92× ES on one thread, ES callbacks 10-25 % faster ([#428](https://github.com/andersoxie/xpact/issues/428), PR #429).
+- **Docs (2026-11-16/17):** one live status page ([#422](https://github.com/andersoxie/xpact/issues/422)); thread limits #431/#432 (PR #433); overview report ([#434](https://github.com/andersoxie/xpact/issues/434), PR #435); checkbox review ([#436](https://github.com/andersoxie/xpact/issues/436), PR #437); traceability map and decision log ([#438](https://github.com/andersoxie/xpact/issues/438)).
+- **Security (2026-11-16/18):** visitor values written to the log on one line, CodeQL log forging ([#424](https://github.com/andersoxie/xpact/issues/424), PR #427, explained in PR #444); Gitleaks secret scan on every push and PR ([#425](https://github.com/andersoxie/xpact/issues/425), PR #426).
+- **Dependencies (2026-11-16):** Dependabot groups minor and patch updates per ecosystem ([#420](https://github.com/andersoxie/xpact/issues/420), PR #421); test SDK, xUnit runner, coverlet, Vite, actions/checkout, setup-python and CodeQL action updated (PRs #388-#396).
+- **Comparison (2026-11-18):** xpact against Gobo's pure-Eiffel XML parser on every suite: W3C 1,974/1,974 vs 1,910, fuzzing 99.996 % vs 97.6 % same as Expat, 3.4-8.6× faster ([#442](https://github.com/andersoxie/xpact/issues/442), PR #443).
+- **Docs (2026-11-16/17):** hand-in drafts: short report, reflection, demonstration, handover (PR #419); strategic action plan [docs/Xpact-future-plan.md](docs/Xpact-future-plan.md) ([#440](https://github.com/andersoxie/xpact/issues/440), PR #441).
 - **Findings:** #211 rechecked (right error, ~1.5 s); #293 entity depth > 32 rejected as "syntax error"; #316 under a 40 MB cap the container worker can end in a stack overflow instead of "out of memory".
 
 ## 0.9.0 – 2026-11-10

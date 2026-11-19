@@ -16,9 +16,9 @@ The 7 phases from [guide.txt](../guide.txt), section 6.
 
 ## Next
 
-- [ ] Choose the host (Windows VM suggested by the guide) and deploy `website/dist`
-- [ ] A low-privilege worker account ([security.md](security.md#known-gaps-before-a-public-deployment)). Forwarded headers are done (#224); HTTPS is the supervisor's.
-- [ ] Fix the code-review findings 1-2 ([security.md](security.md#findings-from-the-code-review-2026-11-11)) before the site goes public
+- [ ] Choose the host and deploy: Docker image `website-2026-11-14-3` and [hosting checklist](docker.md#hosting-on-the-internet-safely) are ready (supervisor, [#210](https://github.com/andersoxie/xpact/issues/210))
+- [x] ✅ Low-privilege worker: Low integrity, no privileges ([#299](https://github.com/andersoxie/xpact/issues/299)) ([security.md](security.md#known-gaps-before-a-public-deployment)). Forwarded headers are done (#224); HTTPS is the supervisor's.
+- [x] ✅ Code-review findings 1-2 fixed ([#295](https://github.com/andersoxie/xpact/issues/295), [#297](https://github.com/andersoxie/xpact/issues/297)) ([security.md](security.md#findings-from-the-code-review-2026-11-11))
 - [x] Open a GitHub issue for the entity-expansion finding: [#211](https://github.com/andersoxie/xpact/issues/211) ([report](../../reports/issue-0211/report.md))
 - [ ] Fix #211 in the parser (not part of the website)
 - [ ] Compare with Expat live: an optional second worker that runs the same document through `libexpat.dll` and shows both results side by side

@@ -1,0 +1,13 @@
+W3C XML: gobo-nouf: 2585 catalog cases
+  gobo-nouf: 250/2585
+  gobo-nouf: 500/2585
+  gobo-nouf: 750/2585
+  gobo-nouf: 1000/2585
+  gobo-nouf: 1250/2585
+  gobo-nouf: 1500/2585
+  gobo-nouf: 1750/2585
+  gobo-nouf: 2000/2585
+  gobo-nouf: 2250/2585
+  gobo-nouf: 2500/2585
+{"engine": "gobo-nouf", "total": 2585, "passed": 1870, "no_crash_only": 302, "failed": 413, "errors": 0, "skipped": 0, "accepted": 1373, "rejected": 1212, "known": 0, "unexpected": 413, "elapsed_ms": 123116.454}
+W3C XML reports: C:\xpact\xpact-student-Mass\build\gobo-xml-cmp\w3c-nouf

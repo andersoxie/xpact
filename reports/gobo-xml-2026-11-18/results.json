@@ -1,0 +1,604 @@
+{
+ "01_w3c_verdicts": {
+  "xpact": {
+   "core_pass": 1654,
+   "core_fail": 320,
+   "same_as_expat_core": 1973,
+   "crash_timeout_exception": 0
+  },
+  "gobo": {
+   "core_pass": 1910,
+   "core_fail": 64,
+   "same_as_expat_core": 1627,
+   "crash_timeout_exception": 0
+  },
+  "differences": {
+   "not-wf expected REJECT: xpact REJECT, Gobo ACCEPT, Expat REJECT": 31,
+   "valid expected ACCEPT: xpact ACCEPT, Gobo REJECT, Expat ACCEPT": 11,
+   "invalid expected ACCEPT: xpact ACCEPT, Gobo REJECT, Expat ACCEPT": 3,
+   "not-wf expected ACCEPT: xpact ACCEPT, Gobo REJECT, Expat ACCEPT": 1,
+   "valid expected ACCEPT: xpact REJECT, Gobo ACCEPT, Expat REJECT": 301,
+   "not-wf expected REJECT: xpact ACCEPT, Gobo REJECT, Expat REJECT": 1
+  }
+ },
+ "01_w3c_output": {
+  "xpact": {
+   "pass": 375,
+   "both-differ": 53,
+   "xpact-only": 4,
+   "total": 432
+  },
+  "gobo": {
+   "xpact-only": 60,
+   "pass": 319,
+   "both-differ": 53,
+   "total": 432
+  }
+ },
+ "08_encodings": {
+  "xpact": {
+   "right": 144,
+   "judged": 146,
+   "not_supported": 0,
+   "wrong": [
+    "create-utf8-overrides-latin1",
+    "bom-utf8-decl-utf16"
+   ]
+  },
+  "gobo": {
+   "right": 142,
+   "judged": 143,
+   "not_supported": 3,
+   "wrong": [
+    "utf16le-decl-utf16le"
+   ]
+  }
+ },
+ "07_libxml2": {
+  "xpact": {
+   "files": 1417,
+   "same_verdict_as_expat": 1412,
+   "same_verdict_and_events": 1295,
+   "verdicts": {
+    "ACCEPT": 1116,
+    "REJECT": 299,
+    "TIMEOUT": 2
+   },
+   "crash_timeout": [
+    "recurse/lol_eg.xml",
+    "recurse/lol_ep.xml"
+   ]
+  },
+  "gobo": {
+   "files": 1417,
+   "same_verdict_as_expat": 1398,
+   "same_verdict_and_events": 1055,
+   "verdicts": {
+    "ACCEPT": 1108,
+    "REJECT": 305,
+    "TIMEOUT": 3,
+    "EXCEPTION": 1
+   },
+   "crash_timeout": [
+    "recurse/lol_classic.xml",
+    "recurse/lol_ig_content.xml",
+    "recurse/lol_ip_value.xml",
+    "recurse/lol_param.xml"
+   ]
+  }
+ },
+ "w3c_runner_w3c": {
+  "xpact/core/passed": 1974,
+  "xpact/legacy-names/passed": 309,
+  "xpact/optional-error/passed": 28,
+  "xpact/xml-1.1/passed": 274,
+  "gobo/core/passed": 1910,
+  "gobo/core/failed": 64,
+  "gobo/legacy-names/passed": 9,
+  "gobo/optional-error/passed": 28,
+  "gobo/legacy-names/failed": 300,
+  "gobo/xml-1.1/passed": 274
+ },
+ "w3c_runner_w3c-nouf": {
+  "gobo-nouf/core/passed": 1863,
+  "gobo-nouf/core/failed": 111,
+  "gobo-nouf/legacy-names/failed": 302,
+  "gobo-nouf/optional-error/passed": 28,
+  "gobo-nouf/legacy-names/passed": 7,
+  "gobo-nouf/xml-1.1/passed": 274
+ },
+ "03-fuzzing": {
+  "xpact": {
+   "inputs": 870295,
+   "seconds": 600,
+   "same_verdict_as_expat": 870263,
+   "crash_timeout_exception": {},
+   "both_accept_events_differ": 0,
+   "verdicts": {
+    "xpact REJECT / expat REJECT": 859413,
+    "xpact ACCEPT / expat ACCEPT": 10850,
+    "xpact REJECT / expat ACCEPT": 23,
+    "xpact ACCEPT / expat REJECT": 9
+   }
+  },
+  "gobo": {
+   "inputs": 79717,
+   "seconds": 600,
+   "same_verdict_as_expat": 77837,
+   "crash_timeout_exception": {},
+   "both_accept_events_differ": 0,
+   "verdicts": {
+    "xpact REJECT / expat REJECT": 77041,
+    "xpact ACCEPT / expat REJECT": 1692,
+    "xpact ACCEPT / expat ACCEPT": 796,
+    "xpact REJECT / expat ACCEPT": 188
+   }
+  }
+ },
+ "04-differential-vs-expat": {
+  "xpact": {
+   "inputs": 1039865,
+   "seconds": 600,
+   "same_verdict_as_expat": 1039813,
+   "crash_timeout_exception": {},
+   "both_accept_events_differ": 0,
+   "verdicts": {
+    "xpact REJECT / expat REJECT": 448364,
+    "xpact ACCEPT / expat ACCEPT": 591449,
+    "xpact REJECT / expat ACCEPT": 49,
+    "xpact ACCEPT / expat REJECT": 3
+   }
+  }
+ },
+ "05_security_limits": {
+  "xpact": {
+   "pass": 20,
+   "total": 29,
+   "timeout_crash_exception": []
+  },
+  "gobo": {
+   "pass": 21,
+   "total": 29,
+   "timeout_crash_exception": [
+    "billion-laughs",
+    "quadratic-blowup",
+    "entity-chain-100k",
+    "deep-nesting-1m"
+   ]
+  }
+ },
+ "11_large_files": {
+  "rows": [
+   [
+    "records-1mb.xml",
+    "none",
+    "ACCEPT 0.0306 s",
+    "ACCEPT 0.2322 s",
+    "7.6x"
+   ],
+   [
+    "records-1mb.xml",
+    "all",
+    "ACCEPT 0.1537 s",
+    "ACCEPT 0.4708 s",
+    "3.1x"
+   ],
+   [
+    "records-5mb.xml",
+    "none",
+    "ACCEPT 0.143 s",
+    "ACCEPT 0.8523 s",
+    "6.0x"
+   ],
+   [
+    "records-5mb.xml",
+    "all",
+    "ACCEPT 0.8688 s",
+    "ACCEPT 1.8962 s",
+    "2.2x"
+   ],
+   [
+    "records-9mb.xml",
+    "none",
+    "ACCEPT 0.2514 s",
+    "ACCEPT 1.3741 s",
+    "5.5x"
+   ],
+   [
+    "records-9mb.xml",
+    "all",
+    "ACCEPT 1.6693 s",
+    "ACCEPT 3.3811 s",
+    "2.0x"
+   ],
+   [
+    "records-20mb.xml",
+    "none",
+    "REJECT 0.0845 s",
+    "ACCEPT 2.5917 s",
+    "-"
+   ],
+   [
+    "records-20mb.xml",
+    "all",
+    "REJECT 0.0841 s",
+    "ACCEPT 7.2067 s",
+    "-"
+   ],
+   [
+    "text-1mb.xml",
+    "none",
+    "ACCEPT 0.0541 s",
+    "ACCEPT 0.2899 s",
+    "5.4x"
+   ],
+   [
+    "text-1mb.xml",
+    "all",
+    "ACCEPT 0.1128 s",
+    "ACCEPT 0.8902 s",
+    "7.9x"
+   ],
+   [
+    "text-5mb.xml",
+    "none",
+    "ACCEPT 0.2731 s",
+    "ACCEPT 1.0791 s",
+    "4.0x"
+   ],
+   [
+    "text-5mb.xml",
+    "all",
+    "ACCEPT 0.5882 s",
+    "ACCEPT 3.5685 s",
+    "6.1x"
+   ],
+   [
+    "text-9mb.xml",
+    "none",
+    "ACCEPT 0.4938 s",
+    "ACCEPT 1.7538 s",
+    "3.6x"
+   ],
+   [
+    "text-9mb.xml",
+    "all",
+    "ACCEPT 1.2288 s",
+    "ACCEPT 6.3332 s",
+    "5.2x"
+   ],
+   [
+    "text-20mb.xml",
+    "none",
+    "REJECT 0.0891 s",
+    "ACCEPT 3.5854 s",
+    "-"
+   ],
+   [
+    "text-20mb.xml",
+    "all",
+    "REJECT 0.0913 s",
+    "ACCEPT 13.5672 s",
+    "-"
+   ],
+   [
+    "ns-1mb.xml",
+    "none",
+    "ACCEPT 0.1602 s",
+    "ACCEPT 0.3371 s",
+    "2.1x"
+   ],
+   [
+    "ns-1mb.xml",
+    "all",
+    "ACCEPT 0.4941 s",
+    "ACCEPT 0.8267 s",
+    "1.7x"
+   ],
+   [
+    "ns-5mb.xml",
+    "none",
+    "ACCEPT 0.7502 s",
+    "ACCEPT 1.2395 s",
+    "1.7x"
+   ],
+   [
+    "ns-5mb.xml",
+    "all",
+    "ACCEPT 2.9592 s",
+    "ACCEPT 4.0232 s",
+    "1.4x"
+   ],
+   [
+    "ns-9mb.xml",
+    "none",
+    "ACCEPT 1.3854 s",
+    "ACCEPT 2.0031 s",
+    "1.4x"
+   ],
+   [
+    "ns-9mb.xml",
+    "all",
+    "ACCEPT 5.4643 s",
+    "ACCEPT 6.9379 s",
+    "1.3x"
+   ],
+   [
+    "ns-20mb.xml",
+    "none",
+    "REJECT 0.084 s",
+    "ACCEPT 3.6749 s",
+    "-"
+   ],
+   [
+    "ns-20mb.xml",
+    "all",
+    "REJECT 0.0829 s",
+    "ACCEPT 15.7505 s",
+    "-"
+   ],
+   [
+    "nested-1mb.xml",
+    "none",
+    "ACCEPT 0.031 s",
+    "ACCEPT 0.3153 s",
+    "10.2x"
+   ],
+   [
+    "nested-1mb.xml",
+    "all",
+    "ACCEPT 0.2134 s",
+    "ACCEPT 0.6084 s",
+    "2.9x"
+   ],
+   [
+    "nested-5mb.xml",
+    "none",
+    "ACCEPT 0.1528 s",
+    "ACCEPT 1.1723 s",
+    "7.7x"
+   ],
+   [
+    "nested-5mb.xml",
+    "all",
+    "ACCEPT 1.3088 s",
+    "ACCEPT 2.6741 s",
+    "2.0x"
+   ],
+   [
+    "nested-9mb.xml",
+    "none",
+    "ACCEPT 0.2728 s",
+    "ACCEPT 1.8507 s",
+    "6.8x"
+   ],
+   [
+    "nested-9mb.xml",
+    "all",
+    "ACCEPT 2.3828 s",
+    "ACCEPT 4.5196 s",
+    "1.9x"
+   ],
+   [
+    "nested-20mb.xml",
+    "none",
+    "REJECT 0.0808 s",
+    "ACCEPT 3.4563 s",
+    "-"
+   ],
+   [
+    "nested-20mb.xml",
+    "all",
+    "REJECT 0.0835 s",
+    "ACCEPT 9.285 s",
+    "-"
+   ]
+  ]
+ },
+ "speed": [
+  {
+   "file": "attributes-10KB-utf8.xml",
+   "bytes": 9905,
+   "n": 2000,
+   "xpact_ms": 0.368,
+   "gobo_ms": 2.2,
+   "expat_ms": 0.077,
+   "xpact_MBps": 25.7,
+   "gobo_MBps": 4.3,
+   "gobo_over_xpact": 5.98,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "attributes-10MB-utf8.xml",
+   "bytes": 9999913,
+   "n": 3,
+   "xpact_ms": 360.546,
+   "gobo_ms": 1599.714,
+   "expat_ms": 74.702,
+   "xpact_MBps": 26.5,
+   "gobo_MBps": 6.0,
+   "gobo_over_xpact": 4.44,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "attributes-1MB-utf8.xml",
+   "bytes": 999914,
+   "n": 20,
+   "xpact_ms": 36.445,
+   "gobo_ms": 198.746,
+   "expat_ms": 7.323,
+   "xpact_MBps": 26.2,
+   "gobo_MBps": 4.8,
+   "gobo_over_xpact": 5.45,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "dtd-10KB-utf8.xml",
+   "bytes": 9983,
+   "n": 2000,
+   "xpact_ms": 0.897,
+   "gobo_ms": 30.122,
+   "expat_ms": 0.081,
+   "xpact_MBps": 10.6,
+   "gobo_MBps": 0.3,
+   "gobo_over_xpact": 33.59,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "dtd-10MB-utf8.xml",
+   "bytes": 9999992,
+   "n": 3,
+   "xpact_ms": 831.055,
+   "gobo_ms": 21084.501,
+   "expat_ms": 74.448,
+   "xpact_MBps": 11.5,
+   "gobo_MBps": 0.5,
+   "gobo_over_xpact": 25.37,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "dtd-1MB-utf8.xml",
+   "bytes": 999990,
+   "n": 20,
+   "xpact_ms": 85.258,
+   "gobo_ms": 2790.617,
+   "expat_ms": 7.076,
+   "xpact_MBps": 11.2,
+   "gobo_MBps": 0.3,
+   "gobo_over_xpact": 32.73,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "elements-10KB-utf8.xml",
+   "bytes": 9934,
+   "n": 2000,
+   "xpact_ms": 0.553,
+   "gobo_ms": 3.057,
+   "expat_ms": 0.078,
+   "xpact_MBps": 17.1,
+   "gobo_MBps": 3.1,
+   "gobo_over_xpact": 5.53,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "elements-10MB-utf8.xml",
+   "bytes": 9999932,
+   "n": 3,
+   "xpact_ms": 511.272,
+   "gobo_ms": 1980.773,
+   "expat_ms": 69.044,
+   "xpact_MBps": 18.7,
+   "gobo_MBps": 4.8,
+   "gobo_over_xpact": 3.87,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "elements-1MB-latin1.xml",
+   "bytes": 1010647,
+   "n": 20,
+   "xpact_ms": 82.563,
+   "gobo_ms": 281.286,
+   "expat_ms": 7.231,
+   "xpact_MBps": 11.7,
+   "gobo_MBps": 3.4,
+   "gobo_over_xpact": 3.41,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "elements-1MB-utf16.xml",
+   "bytes": 1999968,
+   "n": 20,
+   "xpact_ms": 89.68,
+   "gobo_ms": 424.107,
+   "expat_ms": 7.803,
+   "xpact_MBps": 21.3,
+   "gobo_MBps": 4.5,
+   "gobo_over_xpact": 4.73,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "elements-1MB-utf8.xml",
+   "bytes": 999982,
+   "n": 20,
+   "xpact_ms": 52.371,
+   "gobo_ms": 256.859,
+   "expat_ms": 6.933,
+   "xpact_MBps": 18.2,
+   "gobo_MBps": 3.7,
+   "gobo_over_xpact": 4.9,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "namespaces-10KB-utf8.xml",
+   "bytes": 9916,
+   "n": 2000,
+   "xpact_ms": 0.35,
+   "gobo_ms": 2.612,
+   "expat_ms": 0.069,
+   "xpact_MBps": 27.0,
+   "gobo_MBps": 3.6,
+   "gobo_over_xpact": 7.46,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "namespaces-10MB-utf8.xml",
+   "bytes": 9999918,
+   "n": 3,
+   "xpact_ms": 320.324,
+   "gobo_ms": 1676.068,
+   "expat_ms": 62.498,
+   "xpact_MBps": 29.8,
+   "gobo_MBps": 5.7,
+   "gobo_over_xpact": 5.23,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "namespaces-1MB-utf8.xml",
+   "bytes": 999928,
+   "n": 20,
+   "xpact_ms": 32.914,
+   "gobo_ms": 228.327,
+   "expat_ms": 6.058,
+   "xpact_MBps": 29.0,
+   "gobo_MBps": 4.2,
+   "gobo_over_xpact": 6.94,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "text-10KB-utf8.xml",
+   "bytes": 9960,
+   "n": 2000,
+   "xpact_ms": 0.172,
+   "gobo_ms": 1.486,
+   "expat_ms": 0.019,
+   "xpact_MBps": 55.2,
+   "gobo_MBps": 6.4,
+   "gobo_over_xpact": 8.64,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "text-10MB-utf8.xml",
+   "bytes": 9999885,
+   "n": 3,
+   "xpact_ms": 166.115,
+   "gobo_ms": 1025.575,
+   "expat_ms": 16.597,
+   "xpact_MBps": 57.4,
+   "gobo_MBps": 9.3,
+   "gobo_over_xpact": 6.17,
+   "gobo_verdict": "ok"
+  },
+  {
+   "file": "text-1MB-utf8.xml",
+   "bytes": 999854,
+   "n": 20,
+   "xpact_ms": 16.441,
+   "gobo_ms": 133.155,
+   "expat_ms": 1.407,
+   "xpact_MBps": 58.0,
+   "gobo_MBps": 7.2,
+   "gobo_over_xpact": 8.1,
+   "gobo_verdict": "ok"
+  }
+ ]
+}

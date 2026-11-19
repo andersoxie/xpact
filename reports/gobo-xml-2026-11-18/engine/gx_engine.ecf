@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-23-0" name="gx_engine" uuid="5C1E7F3A-2B4D-4E8A-9F11-6A7B8C9D0E21">
+	<target name="gx_engine">
+		<root class="GX_ENGINE" feature="make"/>
+		<option warning="none">
+			<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<capability>
+			<concurrency use="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<library name="free_elks" location="$GOBO/library/free_elks/library_${GOBO_EIFFEL}.ecf" readonly="true"/>
+		<library name="kernel" location="$GOBO/library/kernel/library.ecf" readonly="true"/>
+		<library name="utility" location="$GOBO/library/utility/library.ecf" readonly="true"/>
+		<library name="xml" location="$GOBO/library/xml/library.ecf" readonly="true"/>
+		<cluster name="engine" location="./"/>
+	</target>
+</system>

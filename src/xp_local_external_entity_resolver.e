@@ -125,7 +125,7 @@ feature {NONE} -- Local file boundary
 
 	is_local_drive (a_root: POINTER): BOOLEAN
 		external
-			"C inline use <eif_misc.h>"
+			"C inline use %"eif_misc.h%""
 		alias
 			"[
 #ifdef EIF_WINDOWS
@@ -179,7 +179,7 @@ feature {NONE} -- Local file boundary
 
 	is_link_path (a_path: POINTER): BOOLEAN
 		external
-			"C inline use <eif_misc.h>, <sys/stat.h>"
+			"C inline use %"eif_misc.h%", <sys/stat.h>"
 		alias
 			"[
 #ifdef EIF_WINDOWS

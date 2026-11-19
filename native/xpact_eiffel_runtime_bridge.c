@@ -26,6 +26,67 @@ xp_init_eiffel_lock(PINIT_ONCE once, PVOID parameter, PVOID *context) {
 	return TRUE;
 }
 
+#ifdef XP_GOBO_RUNTIME
+/*
+ * Gobo Eiffel build (reports/gobo-dll, #418): Gobo's runtime is multi-threaded (Boehm GC), so parsers on
+ * different threads parse in parallel: no process-wide lock. A thread that Gobo did not create gets a Gobo
+ * context first. The installer's shared tables have their own short lock (xp_registry_lock below).
+ * XPACT_GLOBAL_LOCK=1 in the environment brings back the #274 process-wide lock (for comparisons).
+ */
+extern void xp_gobo_ensure_thread(void);
+static INIT_ONCE xp_global_lock_once = INIT_ONCE_STATIC_INIT;
+static int xp_global_lock_on;
+
+static BOOL CALLBACK
+xp_init_global_lock_mode(PINIT_ONCE once, PVOID parameter, PVOID *context) {
+	char value[8];
+	(void)once;
+	(void)parameter;
+	(void)context;
+	xp_global_lock_on = GetEnvironmentVariableA("XPACT_GLOBAL_LOCK", value, sizeof(value)) > 0 && value[0] == '1';
+	InitializeCriticalSectionAndSpinCount(&xp_eiffel_lock, 4000);
+	return TRUE;
+}
+
+static void
+xp_eiffel_lock_enter(void) {
+	xp_gobo_ensure_thread();
+	InitOnceExecuteOnce(&xp_global_lock_once, xp_init_global_lock_mode, NULL, NULL);
+	if (xp_global_lock_on) {
+		EnterCriticalSection(&xp_eiffel_lock);
+	}
+}
+
+static void
+xp_eiffel_lock_leave(void) {
+	if (xp_global_lock_on) {
+		LeaveCriticalSection(&xp_eiffel_lock);
+	}
+}
+
+static INIT_ONCE xp_registry_once = INIT_ONCE_STATIC_INIT;
+static CRITICAL_SECTION xp_registry_cs;
+
+static BOOL CALLBACK
+xp_init_registry(PINIT_ONCE once, PVOID parameter, PVOID *context) {
+	(void)once;
+	(void)parameter;
+	(void)context;
+	InitializeCriticalSectionAndSpinCount(&xp_registry_cs, 4000);
+	return TRUE;
+}
+
+void
+xp_registry_lock(void) {
+	InitOnceExecuteOnce(&xp_registry_once, xp_init_registry, NULL, NULL);
+	EnterCriticalSection(&xp_registry_cs);
+}
+
+void
+xp_registry_unlock(void) {
+	LeaveCriticalSection(&xp_registry_cs);
+}
+#else
 static void
 xp_eiffel_lock_enter(void) {
 	InitOnceExecuteOnce(&xp_eiffel_lock_once, xp_init_eiffel_lock, NULL, NULL);
@@ -36,6 +97,16 @@ static void
 xp_eiffel_lock_leave(void) {
 	LeaveCriticalSection(&xp_eiffel_lock);
 }
+
+/* EiffelStudio build: the process-wide lock above already serializes everything; the registry lock is a no-op. */
+void
+xp_registry_lock(void) {
+}
+
+void
+xp_registry_unlock(void) {
+}
+#endif
 #else
 #error "xpact: the Eiffel runtime bridge needs a call lock on this platform (#274)"
 #endif

@@ -84,3 +84,13 @@ TO MARK "SAFE" in the SonarQube page (Security Hotspots tab -> each one -> Chang
 [OK] run_probe.py:25 and :44 already marked Safe
 [!!] 4 left to mark Safe: Worker EventRecorder.cs:12, Native.cs:12, Program.cs:81, Program.cs:107 (text in section 7)
 [!!] Quality gate red only because of: hotspots not reviewed yet, and new-code coverage 30 % (frontend/Python have no coverage)
+
+9. QUALITY GATE FIXED - 2026-11-14 10:30
+----------------------------------------
+Before: gate FAILED, new-code coverage 30 % (no Python coverage was ever sent to SonarQube).
+Fix:    the scan script now runs the Python suite under coverage.py and sends the report;
+        12 new tests for benchmarks/fair_speed/summarize.py, gen_inputs.py and website/scripts/export-data.py;
+        Xpact.Worker excluded from coverage measurement (tested end to end, but in its own Low-integrity
+        process where the coverage collector cannot write, see #370).
+After:  [OK] Quality gate PASSED: new-code coverage 81.4 % (needs 80 %), 0 issues, 0 hotspots to review.
+        Python tests 251/251, C# tests 48/48. Overall coverage 77.6 %.

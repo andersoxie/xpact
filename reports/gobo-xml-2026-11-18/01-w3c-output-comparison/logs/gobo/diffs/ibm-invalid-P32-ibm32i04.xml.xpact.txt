@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\invalid\P32\out\ibm32i04.xml
+'<animal xml:space="preserve"><a>This is a &#10;&#10;yellow tiger</a> <b></b>&#10;<c></c>&#10;&#10;</animal>'
+
+GOT (xpact)
+'<animal><a>This is a &#10;&#10;yellow tiger</a> <b></b>&#10;<c></c>&#10;&#10;</animal>'

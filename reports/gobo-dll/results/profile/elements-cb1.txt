@@ -1,0 +1,55 @@
+samples: 150
+
+Innermost frame (where the time is spent):
+   23.3 %  GC_noop6
+    8.7 %  GC_expand_hp
+    7.3 %  GC_push_finalizer_structures
+    4.7 %  GC_register_finalizer_ignore_self
+    4.7 %  GE_boehm_dispose
+    4.7 %  GC_mark_and_push
+    4.7 %  GC_malloc_kind
+    4.0 %  T90c12
+    4.0 %  memset
+    3.3 %  _free_base
+    3.3 %  {XP_PARSER}.note_position
+    2.7 %  GC_push_thread_structures
+    2.7 %  GC_realloc
+    2.0 %  {MANAGED_POINTER}.dispose
+    2.0 %  _calloc_base
+    2.0 %  GC_try_to_collect
+    2.0 %  GC_invoke_finalizers
+    2.0 %  GC_beginthreadex
+    1.3 %  {XP_PARSER}.has_at
+    1.3 %  GC_abort_on_oom
+    1.3 %  {STRING_8}.append_character
+    1.3 %  {STRING_8}.twin
+    0.7 %  GC_free
+    0.7 %  {XP_PARSER}.parse_end_tag
+    0.7 %  GC_use_threads_discovery
+
+Inclusive (routine or anything it calls):
+  100.0 %  {XP_NATIVE_BRIDGE_EXPORT}.parse
+  100.0 %  T147a15
+  100.0 %  XPACT_UnregisterEiffelRuntimeBridge
+  100.0 %  XML_Parse
+   97.3 %  {XP_NATIVE_PARSER}.parse_with_current_gc_policy
+   94.7 %  {XP_PARSER}.parse
+   74.7 %  GC_malloc_kind
+   72.0 %  {XP_PARSER}.parse_start_tag
+   68.0 %  GC_generic_malloc_many
+   35.3 %  GC_noop6
+   32.0 %  {XP_ATTRIBUTES}.make
+   26.0 %  {XP_PARSER}.open_element
+   21.3 %  T54c45
+   16.7 %  {MANAGED_POINTER}.make
+   16.7 %  {STRING_8}.make_from_string
+   16.7 %  GC_stop_world_external
+   16.7 %  GC_collect_a_little
+   14.0 %  {XP_NATIVE_CALLBACK_HANDLER}.on_start_element
+   14.0 %  GC_mark_and_push
+   12.7 %  {C_STRING}.make
+   12.0 %  GC_finalized_malloc
+   12.0 %  GC_invoke_finalizers
+   11.3 %  {XP_PARSER}.close_element
+   10.0 %  {XP_PARSER}.parse_end_tag
+   10.0 %  GE_boehm_dispose

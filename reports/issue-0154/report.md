@@ -108,7 +108,7 @@ After the squash merge: `.\student\tools\fix.ps1 revert -Issue 154 -Commit <merg
 
 ## 9. Next
 
-- [ ] Jenkins run on `student-Mass`, then close #154 and #155
-- [ ] #156: normalize the declared default value of tokenized types (`valid-sa-096`)
-- [ ] #157, #158, #159, one at a time
+- [x] ✅ #154 and #155 closed as completed · Jenkins run on `student-Mass`, then close #154 and #155
+- [x] ✅ closed as completed · #156: normalize the declared default value of tokenized types (`valid-sa-096`)
+- [x] ✅ all three closed as completed · #157, #158, #159, one at a time
 - [ ] Add test 1 as a lane next to the W3C verdict run

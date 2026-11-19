@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\ibm\valid\P09\out\ibm09v05.xml
+'<student>This is a test of My Name is first , last , middle and my age is 21 Again first , last , middle first , last , middle and my status is &#10;&#9;&#9;freshman freshman and first , last , middle 21 first , last , middle freshman That is all.</student>'
+
+GOT (xpact)
+'<student>This is a test of My Name is first , last , middle and my age is 21 Again first , last , middle first , last , middle and my status is &#13;&#10;&#9;&#9;freshman freshman and first , last , middle 21 first , last , middle freshman That is all.</student>'

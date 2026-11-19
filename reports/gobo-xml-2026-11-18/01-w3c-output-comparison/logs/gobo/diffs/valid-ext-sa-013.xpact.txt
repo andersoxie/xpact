@@ -1,0 +1,5 @@
+EXPECTED C:\xpact\xpact-student-Mass\build\validation-corpora\w3c-xml-20130923\xmlconf\xmltest\valid\ext-sa\out\013.xml
+'<doc><e a1="a1 default" a2="a2 default"></e></doc>'
+
+GOT (xpact)
+'<doc><e></e></doc>'
