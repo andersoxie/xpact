@@ -2,8 +2,8 @@
 
 ## A technical investigation of the xpact parser: build, assertions, conformance and comparison with Expat
 
-> **Student:** Masoud Dehdar · **Programme:** Software Developer .NET · **University:** Medieinstitutet
-> **Company:** Bsharp · **Supervisor:** Anders Persson · **Internship:** 6 October – 27 November 2026 (eight weeks; build preparation from September)
+> **Student:** Masoud Dehdar · **Programme:** Software Developer · **YH:** [Medieinstitutet](https://medieinstitutet.se/) · **LIA supervisor:** [Hossein Niromand](https://www.linkedin.com/in/hossein-niromand/)
+> **Company:** [Bsharp](https://bsharp.se/) · **Supervisor:** [Anders Persson](https://www.linkedin.com/in/andersperssonbsharpab/) · **Internship:** 6 October – 27 November 2026 (eight weeks; build preparation from September)
 > **Repository:** [github.com/andersoxie/xpact](https://github.com/andersoxie/xpact), branch `incremental-test` · **Report state:** `incremental-test` @ `40c6428` (2026-11-13; `main` @ `266401f` is the 2026-11-12 state) · first version: `student-Mass` @ `1280aee` (2026-11-01)
 >
 > ✅ done and verified · 🟡 partly done or waiting · 🔴 open problem · ⏭️ dropped by decision · ✏️ for the student to check or complete
