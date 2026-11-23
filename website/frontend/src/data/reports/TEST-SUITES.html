@@ -270,18 +270,19 @@
 </table></markdown-accessiblity-table>
 <p>Exit codes: <strong>0</strong> = all passed, any other value = at least one failure or the run could not be done (the C# DLL tests use 1 = failure, 2 = could not run). The exit code of every step is in <code class="notranslate">logs\00-steps.tsv</code>.</p>
 <h2>5. In CI (Jenkins)</h2>
+<p>The repo already has Jenkins pipelines in <a href="https://github.com/andersoxie/xpact/blob/incremental-test/ci/"><code class="notranslate">ci/</code></a>; <a href="https://github.com/andersoxie/xpact/blob/incremental-test/ci/Jenkinsfile.all-tests"><code class="notranslate">ci/Jenkinsfile.all-tests</code></a> runs most suites above on every build.</p>
 <markdown-accessiblity-table><table role="table">
 <thead>
 <tr>
-<th>Already in Jenkins</th>
+<th>In Jenkins (<code class="notranslate">all-tests</code>, <code class="notranslate">dual-w3c</code>, <code class="notranslate">dual-catalog</code>, <code class="notranslate">windows-phase1</code>)</th>
 <th>Not in Jenkins yet</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>W3C (#1) and regression (#3) as the dual lanes, with plots and e-mail (<a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/dual-implementation-jenkins.md">dual-implementation-jenkins</a>)</td>
-<td>everything else in the table above; the one-command run is a PowerShell script, so a Windows Jenkins agent with the tools from §3 can call <code class="notranslate">run_four_way.ps1 -SkipLinux</code> as one stage and archive <code class="notranslate">reports\four-way-&lt;date&gt;\</code></td>
+<td>#1 W3C and #3 regression (dual lanes), #2 W3C all cases, #4 dual catalog, #5 libexpat suite, #6 Eiffel test matrix, #8 chunked CRC corpus, #9 native ABI (Windows + WSL), #10 runtime smoke, #11 contributed examples, #12 shim audit, #13 Python unit tests, #14 large XML, #17 Linux/Gobo benchmarks</td>
+<td>#7 C# DLL tests, #8 chunked CRC <em>harness</em> script, #15 four-way comparison (expat and Gobo engines), #18 website tests</td>
 </tr>
 </tbody>
 </table></markdown-accessiblity-table>
-<p>Proposal (not done; needs the Jenkins server): one nightly stage that runs <code class="notranslate">run_four_way.ps1 -SkipLinux</code>, compares <code class="notranslate">logs\00-steps.tsv</code> with a list of expected exit codes (the dual lanes exit 1 on purpose: they record xpact-core's known gaps), and archives the report folder.</p>
+<p>So a reviewer can either re-run Jenkins' <code class="notranslate">all-tests</code> job, or run the commands in §2 on a Windows PC. Proposal (not done; needs the Jenkins server): add stages for #7, #15 (<code class="notranslate">run_four_way.ps1 -SkipLinux</code>, checking <code class="notranslate">logs\00-steps.tsv</code> against expected exit codes; the dual lanes exit 1 on purpose for xpact-core's known gaps) and #18.</p>

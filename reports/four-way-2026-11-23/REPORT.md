@@ -183,8 +183,8 @@ Checked locally with scripts: broken links (`scripts/check_markdown_links.py`), 
 | 3 | Website README status said 42 / 42 backend tests; today it is 56 / 56 | ✅ updated |
 | 4 | The C# DLL suite `tests/dotnet/XpactDllTests` (4,308 cases) was in no run script | ✅ added to `run_four_way.ps1` (step 17b), passes 4,308 / 4,308 |
 | 5 | `NativeSearchPath.cs` is a byte-identical copy in `Xpact.Api` and `Xpact.Worker` | 🚫 not changed: could move to `Xpact.Contracts` or be linked from one file; a small refactor for its own PR |
-| 6 | Eiffel test matrix fails one documentation assertion in all 4 modes (§4.5) | 🚫 not changed: test and doc drifted on `main`; one issue for Anders |
-| 7 | Native C ABI "out of memory" from 10 MB whole-file (§4.6); the Gobo run of 18 November also shows xpact rejecting 20 MB | 🚫 not changed: issue candidate, cause unknown |
+| 6 | Eiffel test matrix fails one documentation assertion in all 4 modes (§4.5) | 🚫 not changed: test and doc drifted on `main`; issue [#451](https://github.com/andersoxie/xpact/issues/451) |
+| 7 | Native C ABI "out of memory" from 10 MB whole-file (§4.6); the Gobo run of 18 November also shows xpact rejecting 20 MB | 🚫 not changed: issue [#450](https://github.com/andersoxie/xpact/issues/450), cause unknown |
 | 8 | Old `reports/` and `student/results/` folders hold 47 broken links (e.g. `summary.md` files pointing at `compare.py` next to them) and many byte-identical log copies | 🚫 not changed: baseline evidence, never edited |
-| 9 | Only the W3C and regression lanes run in Jenkins | 🚫 proposal in [TEST-SUITES §5](TEST-SUITES.md#5-in-ci-jenkins) |
+| 9 | Jenkins (`ci/Jenkinsfile.all-tests`) already runs most suites; not yet: the C# DLL tests, the chunked CRC harness script, the four-way comparison and the website tests | 🚫 proposal in [TEST-SUITES §5](TEST-SUITES.md#5-in-ci-jenkins) |
 | 10 | With `core.autocrlf=true` a Windows clone gets CRLF `.sh` files (seen on 3 example scripts), and bash fails on them; that would also break `wsl_four_way.sh` on a fresh clone | ✅ new `.gitattributes`: `*.sh text eol=lf` |

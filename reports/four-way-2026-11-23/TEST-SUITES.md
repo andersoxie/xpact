@@ -71,8 +71,10 @@ Exit codes: **0** = all passed, any other value = at least one failure or the ru
 
 ## 5. In CI (Jenkins)
 
-| Already in Jenkins | Not in Jenkins yet |
-|---|---|
-| W3C (#1) and regression (#3) as the dual lanes, with plots and e-mail ([dual-implementation-jenkins](../../docs/dual-implementation-jenkins.md)) | everything else in the table above; the one-command run is a PowerShell script, so a Windows Jenkins agent with the tools from §3 can call `run_four_way.ps1 -SkipLinux` as one stage and archive `reports\four-way-<date>\` |
+The repo already has Jenkins pipelines in [`ci/`](../../ci/); [`ci/Jenkinsfile.all-tests`](../../ci/Jenkinsfile.all-tests) runs most suites above on every build.
 
-Proposal (not done; needs the Jenkins server): one nightly stage that runs `run_four_way.ps1 -SkipLinux`, compares `logs\00-steps.tsv` with a list of expected exit codes (the dual lanes exit 1 on purpose: they record xpact-core's known gaps), and archives the report folder.
+| In Jenkins (`all-tests`, `dual-w3c`, `dual-catalog`, `windows-phase1`) | Not in Jenkins yet |
+|---|---|
+| #1 W3C and #3 regression (dual lanes), #2 W3C all cases, #4 dual catalog, #5 libexpat suite, #6 Eiffel test matrix, #8 chunked CRC corpus, #9 native ABI (Windows + WSL), #10 runtime smoke, #11 contributed examples, #12 shim audit, #13 Python unit tests, #14 large XML, #17 Linux/Gobo benchmarks | #7 C# DLL tests, #8 chunked CRC *harness* script, #15 four-way comparison (expat and Gobo engines), #18 website tests |
+
+So a reviewer can either re-run Jenkins' `all-tests` job, or run the commands in §2 on a Windows PC. Proposal (not done; needs the Jenkins server): add stages for #7, #15 (`run_four_way.ps1 -SkipLinux`, checking `logs\00-steps.tsv` against expected exit codes; the dual lanes exit 1 on purpose for xpact-core's known gaps) and #18.
