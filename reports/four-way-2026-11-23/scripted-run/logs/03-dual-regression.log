@@ -1,0 +1,15 @@
+Visual Studio C++ x64 environment already loaded (18.6.1)
+Dual regression results: C:\xpact\xpact-incremental\build\dual-regression\20261123T093057Z-dedc02ba1e49
+Building xpact (finalized/assertions-on/msvc-x64)
+Verified xpact: C:\xpact\xpact-incremental\build\dual-regression\20261123T093057Z-dedc02ba1e49\assertions-on\xpact\build.json
+xpact/assertions-on          910 chunked runs
+Building xpact-core (finalized/assertions-on/msvc-x64)
+Verified xpact-core: C:\xpact\xpact-incremental\build\dual-regression\20261123T093057Z-dedc02ba1e49\assertions-on\xpact-core\build.json
+xpact-core/assertions-on     910 chunked runs
+Building xpact (finalized/assertions-off/msvc-x64)
+Verified xpact: C:\xpact\xpact-incremental\build\dual-regression\20261123T093057Z-dedc02ba1e49\assertions-off\xpact\build.json
+xpact/assertions-off         910 chunked runs
+Building xpact-core (finalized/assertions-off/msvc-x64)
+Verified xpact-core: C:\xpact\xpact-incremental\build\dual-regression\20261123T093057Z-dedc02ba1e49\assertions-off\xpact-core\build.json
+xpact-core/assertions-off    910 chunked runs
+Complete: C:\xpact\xpact-incremental\build\dual-regression\20261123T093057Z-dedc02ba1e49\summary.md

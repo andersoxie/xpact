@@ -1,0 +1,11 @@
+xpact_native_c_benchmark.c
+Large XML benchmark doc publication skipped by -NoPublishDocs
+Raw large XML benchmark rows written to C:\xpact\xpact-incremental\reports\four-way-2026-11-23\scripted-run\large-xml-5\large-xml-benchmark-results.tsv
+| large-5 | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1 | 5243005 | 208.486 | 4.796478 | 23.983 | Whole pre-decompressed XML file loaded into Eiffel STRING_8; no-op event handler |
+| large-5 | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1 | 5243005 | 247.843 | 4.034811 | 20.175 | Whole pre-decompressed XML file loaded into Eiffel STRING_8; no-op event handler; calls parse_without_garbage_collection |
+| large-5 | libexpat via CPython pyexpat tokenizer | expat_2.8.5 | 1 | 5243005 | 119.432 | 8.372965 | 41.866 | Whole pre-decompressed XML file loaded by Python; no callbacks |
+| large-5 | libexpat via CPython pyexpat callbacks | expat_2.8.5 | 1 | 5243005 | 198.31 | 5.042623 | 25.214 | Whole pre-decompressed XML file loaded by Python; Python callbacks |
+| large-5 | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1 | 1 | 5243005 | 188.767 | 5.297539 | 26.488 | Whole pre-decompressed XML file loaded by C; linked through include/xpact.h and Eiffel-backed xpact.dll; no callbacks |
+| large-5 | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1 | 1 | 5243005 | 421.287 | 2.373681 | 11.869 | Whole pre-decompressed XML file loaded by C; linked through include/xpact.h and Eiffel-backed xpact.dll; C callbacks |
+| large-5 | libexpat C tokenizer via WSL2 gcc | expat_2.6.1 | 1 | 5243005 | 155.687 | 6.423131 | 32.116 | gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; whole pre-decompressed XML file loaded by C; no callbacks; launched through wsl.exe |
+| large-5 | libexpat C callbacks via WSL2 gcc | expat_2.6.1 | 1 | 5243005 | 154.033 | 6.492103 | 32.461 | gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0; whole pre-decompressed XML file loaded by C; C callbacks; launched through wsl.exe |

@@ -1,0 +1,8 @@
+xpact_native_c_benchmark.c
+xpact_native_windows_c_benchmark.exe : parse failed: out of memory
+At C:\xpact\xpact-incremental\scripts\run_large_xml_benchmarks.ps1:64 char:13
++         $Output = & $Executable @Arguments 2>&1
++                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (parse failed: out of memory:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

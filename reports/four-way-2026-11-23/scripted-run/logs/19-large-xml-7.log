@@ -1,0 +1,9 @@
+xpact_native_c_benchmark.c
+Large XML benchmark doc publication skipped by -NoPublishDocs
+Raw large XML benchmark rows written to C:\xpact\xpact-incremental\reports\four-way-2026-11-23\scripted-run\large-xml-7\large-xml-benchmark-results.tsv
+| large-7 | xpact Eiffel finalized, assertions discarded | Phase 1 finalized | 1 | 7340305 | 290.695 | 3.440028 | 24.081 | Whole pre-decompressed XML file loaded into Eiffel STRING_8; no-op event handler |
+| large-7 | xpact Eiffel finalized, assertions discarded, GC suspended during parse | Phase 1 finalized | 1 | 7340305 | 327.597 | 3.052529 | 21.368 | Whole pre-decompressed XML file loaded into Eiffel STRING_8; no-op event handler; calls parse_without_garbage_collection |
+| large-7 | libexpat via CPython pyexpat tokenizer | expat_2.8.5 | 1 | 7340305 | 122.837 | 8.140863 | 56.988 | Whole pre-decompressed XML file loaded by Python; no callbacks |
+| large-7 | libexpat via CPython pyexpat callbacks | expat_2.8.5 | 1 | 7340305 | 226.103 | 4.422755 | 30.96 | Whole pre-decompressed XML file loaded by Python; Python callbacks |
+| large-7 | xpact native C ABI tokenizer via Windows MSVC DLL | expat_2.8.1 | 1 | 7340305 | 265.33 | 3.768892 | 26.383 | Whole pre-decompressed XML file loaded by C; linked through include/xpact.h and Eiffel-backed xpact.dll; no callbacks |
+| large-7 | xpact native C ABI callbacks via Windows MSVC DLL | expat_2.8.1 | 1 | 7340305 | 579.163 | 1.72663 | 12.087 | Whole pre-decompressed XML file loaded by C; linked through include/xpact.h and Eiffel-backed xpact.dll; C callbacks |

@@ -53,6 +53,8 @@ The Benchmarks page never hard-codes results. [`scripts/export-data.py`](../scri
 
 Each file keeps a link to its source report; the page shows that link.
 
+The **Comparison** page shows a whole report instead of numbers: [`scripts/export-report.ps1`](../scripts/export-report.ps1) renders `reports/four-way-2026-11-23/REPORT.md` and `TEST-SUITES.md` with GitHub's Markdown renderer into `frontend/src/data/reports/*.html`, which the page bundles at build time (no run-time fetch, so the CSP stays `'self'`). Its look comes from `frontend/src/styles/github-markdown.css` (GitHub's stylesheet, MIT, rewritten to follow the theme toggle) and `report.css` (banner, coloured result cells, entrance animations that respect reduced motion).
+
 ## 5. Deployment (not done yet)
 
 `scripts/publish.ps1` produces `website/dist/`: one folder with the API, the worker, the DLLs, the data and the built site in `wwwroot/`. As the guide suggests, a **Windows VM** is the simplest first host, because the DLL needs the Windows x64 build. Azure App Service (Windows) should also work, but is not tested. See [roadmap.md](roadmap.md).

@@ -2,7 +2,9 @@
 
 A website where anyone can **upload or paste an XML document and see what XPact does with it**: accepted or rejected, the error with its line and column, and the parser events. It also explains the parser, shows the W3C conformance and benchmark results, and links to the project.
 
-> 🟢 **Status (2026-11-11):** working locally, `scripts\test.ps1` passes (42 / 42 backend tests + frontend build, `incremental-test` @ `af7eaf1`); Lighthouse 100, ZAP 0 medium, W3C HTML 0 errors ([#286](../reports/issue-0286/report.md)). Docker image `ghcr.io/andersoxie/xpact-website:website-2026-11-11-1` built from release `website-2026-11-11-1` (PR #315). 🟡 Under a 40 MB memory cap the container worker can end in a stack overflow ([#316](https://github.com/andersoxie/xpact/issues/316)). ⬜ Not deployed online yet (HTTPS, domain: [#210](https://github.com/andersoxie/xpact/issues/210)).
+> 🟢 **Status (2026-11-23):** new **Comparison** page (four-way parser report + test-suite list, same look as the styled report preview); `scripts\test.ps1` passes (56 / 56 backend tests + frontend build); checked through the real API with its strict CSP.
+>
+> **Status (2026-11-11):** working locally, `scripts\test.ps1` passes (42 / 42 backend tests + frontend build, `incremental-test` @ `af7eaf1`); Lighthouse 100, ZAP 0 medium, W3C HTML 0 errors ([#286](../reports/issue-0286/report.md)). Docker image `ghcr.io/andersoxie/xpact-website:website-2026-11-11-1` built from release `website-2026-11-11-1` (PR #315). 🟡 Under a 40 MB memory cap the container worker can end in a stack overflow ([#316](https://github.com/andersoxie/xpact/issues/316)). ⬜ Not deployed online yet (HTTPS, domain: [#210](https://github.com/andersoxie/xpact/issues/210)).
 >
 > Earlier: 20 / 20 backend tests and browser QA of all 5 pages with 0 console errors, 2026-11-06, final parser `45d2f53`.
 
@@ -16,16 +18,17 @@ You need: Windows x64, .NET SDK 10, Node.js 20+, and the XPact build tools (Eiff
 # from the repository root
 .\website\scripts\build-dll.ps1        # build xpact.dll + xpact_assertions.dll, copy them into the website
 .\website\scripts\publish.ps1          # build the site, the API and the worker into website\dist
-.\website\dist\Xpact.Api.exe --urls http://localhost:5099
+cd website\dist; .\Xpact.Api.exe --urls http://localhost:5099   # start it from its own folder (it serves .\wwwroot)
 ```
 
-Open **http://localhost:5099** and press **Validate**.
+Open **http://localhost:5099** and press **Validate**. Started from another folder, the API still answers but every page is 404 (it looks for `wwwroot` in the current folder).
 
 | I want to … | Run |
 |---|---|
 | work on the site with hot reload | `.\website\scripts\dev.ps1` → http://localhost:5173 |
 | run every check | `.\website\scripts\test.ps1` |
 | refresh the numbers from the reports | `python website\scripts\export-data.py` |
+| refresh the Comparison page from a report folder | `.\website\scripts\export-report.ps1 [-Report reports\four-way-<date>]` |
 | reuse DLLs that are already built | `.\website\scripts\build-dll.ps1 -SkipBuild` |
 
 ---
@@ -53,7 +56,7 @@ A crash inside the parser ends only that worker; the server reports `crashed` an
 
 | Folder | What is in it |
 |---|---|
-| [`frontend/`](frontend/) | React + TypeScript site (Vite). Pages: Home, Validator, Documentation, Benchmarks, Project |
+| [`frontend/`](frontend/) | React + TypeScript site (Vite). Pages: Home, Validator, Documentation, Benchmarks, Comparison, Project |
 | [`backend/src/Xpact.Api/`](backend/src/Xpact.Api/) | REST API, limits, worker management, serves the built site |
 | [`backend/src/Xpact.Worker/`](backend/src/Xpact.Worker/) | Isolated process that calls `xpact.dll` and prints one JSON result |
 | [`backend/src/Xpact.Contracts/`](backend/src/Xpact.Contracts/) | The JSON result shared by the worker and the API |

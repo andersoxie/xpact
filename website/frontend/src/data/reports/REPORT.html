@@ -1,0 +1,637 @@
+<h1>Four-way comparison: xpact vs expat vs Gobo vs xpact-core, plus Gobo's own XML parser (23 November 2026)</h1>
+<p><strong>What:</strong> the latest xpact (<code class="notranslate">main</code> @ <code class="notranslate">2862a18</code>) against libexpat, xpact compiled by the Gobo Eiffel compiler, and the pinned xpact-core, on every available test suite.<br>
+<strong>Where:</strong> <code class="notranslate">reports/four-way-2026-11-23/</code>. <strong>Final numbers come from the one-command run in <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/scripted-run/">scripted-run/</a></strong> (<code class="notranslate">benchmarks/four_way/run_four_way.ps1</code>, 22 minutes); the earlier manual run is kept for history in the sibling folders.<br>
+Tables: <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/scripted-run/w3c-four-way.md">W3C four-way</a> · <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/scripted-run/w3c/expat-lenient-cases.md">expat lenient cases</a> · <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/scripted-run/logs/00-steps.tsv">steps and exit codes</a> · <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/scripted-run/logs/">logs</a></p>
+<h2>1. Summary</h2>
+<p><strong>Legend:</strong> ✅ passed · ❌ failed · 🚫 no result (not run / not applicable — the footnote says why)</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Test</th>
+<th>xpact (EiffelStudio)</th>
+<th>xpact (Gobo)</th>
+<th>expat</th>
+<th>xpact-core</th>
+<th>Gobo XML parser ⁴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>W3C conformance, profile</strong> (1,974 cases run, same 611 excluded for all)</td>
+<td>✅ <strong>1,974 / 1,974</strong></td>
+<td>✅ <strong>1,974 / 1,974</strong></td>
+<td>1,655 (83.8%)</td>
+<td>1,232 (62.4%) + 14 errors</td>
+<td>1,910 (96.8%), 64 failed</td>
+</tr>
+<tr>
+<td><strong>W3C conformance, all 2,585 cases</strong></td>
+<td>✅ <strong>0 failed, 0 errors</strong></td>
+<td>🚫 not available ³</td>
+<td>🚫 not available ³</td>
+<td>🚫 not available ³</td>
+<td>legacy names 9/309 ❌, XML 1.1 274/274, optional errors 28/28</td>
+</tr>
+<tr>
+<td><strong>Regression</strong> (910 runs: whole, every split point, byte by byte)</td>
+<td>✅ <strong>910 / 910</strong></td>
+<td>909 / 910 + 10/10 lifecycle ¹</td>
+<td>✅ <strong>910 / 910</strong> ²</td>
+<td>887 / 910</td>
+<td>🚫 not run (no trace engine)</td>
+</tr>
+<tr>
+<td><strong>libexpat 2.8.1 unit suite</strong> through xpact's libexpat ABI</td>
+<td>✅ gate passed (361/399, 38 listed expected failures)</td>
+<td>🚫 not run ⁵</td>
+<td>reference</td>
+<td>🚫 not applicable ⁶</td>
+<td>🚫 not applicable ⁶</td>
+</tr>
+<tr>
+<td><strong>Speed, same Linux machine</strong> (µs per document, lower is better)</td>
+<td>98.4</td>
+<td>90.3</td>
+<td><strong>19.6</strong></td>
+<td>40.4</td>
+<td>≈ 4–9× slower than xpact (25–34× on DTD-heavy files) ⁴</td>
+</tr>
+<tr>
+<td><strong>Large file</strong> (whole-file parse)</td>
+<td>✅ all xpact engines at 5 MB; ❌ native C ABI "out of memory" from 10 MB</td>
+<td>🚫 not run ⁵</td>
+<td>✅</td>
+<td>🚫 not run ⁷</td>
+<td>✅ up to 20 MB, but slower (2–8× xpact) ⁴</td>
+</tr>
+<tr>
+<td><strong>xpact's own test sets</strong></td>
+<td>8 of 9 ✅; test matrix ❌ one doc assertion in all 4 modes</td>
+<td>🚫 not run ⁵</td>
+<td>🚫 not applicable ⁸</td>
+<td>🚫 not applicable ⁸</td>
+<td>🚫 not applicable ⁸</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>¹ The one failure is the <strong>test harness</strong>, not the parser: Gobo's <code class="notranslate">RAW_FILE.read_stream</code> refuses an empty file (<code class="notranslate">is_readable</code> precondition) before the parser is called.<br>
+² expat has no equivalent of the 10 lifecycle steps (their inputs live inside the Eiffel harness).<br>
+³ All-cases mode needs an entity checker built against the parser's native DLL; only xpact has one.<br>
+⁴ <strong>Gobo XML parser</strong> = Gobo's own Eiffel parser <code class="notranslate">XM_EIFFEL_PARSER</code> (Gobo 26.11), not xpact compiled by Gobo. Numbers come from the earlier committed run <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/gobo-xml-2026-11-18/results.md">reports/gobo-xml-2026-11-18/</a> (commit <code class="notranslate">d3e4b92</code>, #442), not from today's script; same W3C profile, speed on a separate per-file workload (see §4.7).<br>
+⁵ <strong>Not run with the Gobo build:</strong> these scripts (<code class="notranslate">run_libexpat_adapter</code>, <code class="notranslate">run_large_xml_benchmarks</code>, <code class="notranslate">run_eiffel_test_matrix</code> and the other test-set scripts) only build with EiffelStudio on Windows; the repo has no Gobo build for them. Same source code, so the result is expected to match (suspected, not tested).<br>
+⁶ <strong>Not applicable:</strong> the libexpat suite calls a libexpat-compatible C interface. Only xpact has one; xpact-core and the Gobo XML parser are Eiffel libraries without it.<br>
+⁷ <strong>Not run:</strong> <code class="notranslate">run_large_xml_benchmarks.ps1</code> measures only xpact's engines; it has no xpact-core option.<br>
+⁸ <strong>Not applicable:</strong> these are xpact's own unit/integration tests, written against xpact's code; they cannot run on another parser.</p>
+<p><strong>Main findings</strong></p>
+<ol>
+<li>✅ <strong>xpact is the only parser with zero conformance failures</strong> — in the profile and in all 2,585 cases — and the Gobo build gives exactly the same verdicts.</li>
+<li><strong>expat</strong> is correct on every regression event stream; its 319 W3C failures are 318 XML 1.0 <strong>5th-edition</strong> names it rejects (it uses 4th-edition rules — confirmed) plus 1 accepted case (<code class="notranslate">hst-lhs-007</code>, UTF-8 BOM with an ISO-8859-1 declaration).</li>
+<li><strong>xpact-core</strong> is the least correct (728 W3C failures + 14 errors, 23 regression verdicts) but <strong>≈ 2.4× faster than xpact</strong> (Linux 40.4 vs 98.4 µs/doc; Windows ratio 2.05).</li>
+<li><strong>libexpat C is ≈ 5× faster than xpact</strong>, 2× faster than xpact-core. Gobo-built xpact is ≈ 8% faster than EiffelStudio-built xpact.</li>
+<li><strong>Gobo's own XML parser</strong> fails 64 core W3C cases and 300 of 309 legacy-name cases, is ≈ 4–9× slower than xpact, and times out or crashes on 4 attack/limit inputs (billion laughs, quadratic blowup, 100k entity chain, 1M-deep nesting) that xpact rejects safely or handles (§4.7).</li>
+<li>❌ Two problems on xpact <code class="notranslate">main</code>: the Eiffel test matrix fails one <strong>documentation</strong> assertion in every mode (§4.5), and the <strong>native C ABI cannot parse a whole file of 10 MB or more</strong> (§4.6).</li>
+</ol>
+<h2>2. Environment</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Machine</td>
+<td>Windows 11 Home 10.0.26300; WSL2 Ubuntu 24.04 (glibc 2.39) on the same machine</td>
+</tr>
+<tr>
+<td>xpact / xpact-core</td>
+<td><code class="notranslate">main</code> @ <code class="notranslate">2862a1802b11</code> (branch <code class="notranslate">work/four-way-compare</code>) / pinned <code class="notranslate">6c017fb5b6e0</code></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>EiffelStudio 25.12 Standard, MSVC 19.51 (Visual Studio 2026) and its CMake, Python 3.15 (uv)</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>EiffelStudio 25.12 rev 98922, Gobo <code class="notranslate">gec</code> 26.11.14+55e703f, gcc 13.3.0, Python 3.12</td>
+</tr>
+<tr>
+<td>expat</td>
+<td>Windows libexpat <strong>2.8.5</strong> (CPython <code class="notranslate">pyexpat</code>); Linux libexpat <strong>2.6.1</strong> (<code class="notranslate">pyexpat</code> and C)</td>
+</tr>
+<tr>
+<td>Suites</td>
+<td>W3C xmlts 20130923; libexpat tests <code class="notranslate">R_2_8_1</code>; regression cases of <code class="notranslate">scripts/run_dual_regression.py</code></td>
+</tr>
+<tr>
+<td>Assertions</td>
+<td>dual W3C full catalog on assertions-off builds with assertions-on directed controls (runner design); regression on both; Gobo W3C/regression binaries assertions on; speed builds assertions off</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2>3. How it was run</h2>
+<p>One command: <code class="notranslate">.\benchmarks\four_way\run_four_way.ps1</code> (Windows lanes, then <code class="notranslate">benchmarks/four_way/wsl_four_way.sh</code> in WSL). Every step and its exit code: <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/scripted-run/logs/00-steps.tsv">00-steps.tsv</a>. Exit 1 of <code class="notranslate">03-dual-w3c</code> means "parser gaps recorded" (xpact-core); exit 1 of the test-matrix steps is §4.5.</p>
+<p><strong>Same cases for everyone:</strong> Gobo and expat run the exact case list, expected verdicts and exclusions of the dual-W3C run (<code class="notranslate">suite-manifest.json</code>) and the official regression cases and <code class="notranslate">judge()</code> rule, through the runners' own protocols. expat reads external entities and the external DTD subset from inside the suite folder (standard <code class="notranslate">ExternalEntityRefHandler</code>), like the Eiffel engines under this profile.</p>
+<h2>4. Results in detail</h2>
+<h3>4.1 W3C conformance (XML 1.0 5th edition, namespaces unless NAMESPACE=no, non-validating)</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Parser</th>
+<th align="right">Passed</th>
+<th align="right">Failed</th>
+<th align="right">Errors</th>
+<th align="right">Too lenient</th>
+<th align="right">Too strict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xpact (EiffelStudio)</td>
+<td align="right">1,974</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td>xpact (Gobo)</td>
+<td align="right">1,974</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td>expat 2.8.5 / 2.6.1 (identical)</td>
+<td align="right">1,655</td>
+<td align="right">319</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">318</td>
+</tr>
+<tr>
+<td>xpact-core</td>
+<td align="right">1,232</td>
+<td align="right">728</td>
+<td align="right">14</td>
+<td align="right">400</td>
+<td align="right">328</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>expat problem</th>
+<th>Investigation</th>
+<th>Cause</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>318 valid documents rejected (<code class="notranslate">not well-formed (invalid token)</code>)</td>
+<td>re-parsed every case; e.g. <code class="notranslate">invalid-sa-140</code> (<code class="notranslate">&amp;#x309a;</code> in a name), <code class="notranslate">ibm-valid-P87-*</code></td>
+<td><strong>Confirmed:</strong> 4th-edition name characters vs the 5th-edition profile</td>
+</tr>
+<tr>
+<td>first run: 60 not-wf documents accepted</td>
+<td>grouped by W3C section: 3.4 conditional sections, 4.3 text declarations, parameter entities — all inside external files</td>
+<td><strong>Confirmed:</strong> the first expat engine did not read external files; with external entities enabled 59 disappear</td>
+</tr>
+<tr>
+<td>1 not-wf document accepted (<code class="notranslate">hst-lhs-007</code>)</td>
+<td>UTF-8 BOM followed by an ISO-8859-1 declaration</td>
+<td>expat tolerates the conflicting declaration (behaviour, not investigated further)</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>4.2 Regression</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Parser</th>
+<th align="right">Runs</th>
+<th align="right">PASS</th>
+<th align="right">WRONG-VERDICT</th>
+<th align="right">WRONG-EVENTS</th>
+<th align="right">CRASH</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>xpact (EiffelStudio), assertions on and off</td>
+<td align="right">910</td>
+<td align="right">910</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td>xpact (Gobo) + 10 lifecycle steps</td>
+<td align="right">920</td>
+<td align="right">919</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1 ¹</td>
+</tr>
+<tr>
+<td>expat 2.8.5 and 2.6.1</td>
+<td align="right">910</td>
+<td align="right">910</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td>xpact-core, assertions on and off</td>
+<td align="right">910</td>
+<td align="right">887</td>
+<td align="right">23</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>4.3 libexpat 2.8.1 suite through xpact's ABI</h3>
+<p>399 checks, 38 failures — all listed in <code class="notranslate">adapters/libexpat/expected-failures.tsv</code> (custom allocator failure paths). Gate passed.</p>
+<h3>4.4 Speed</h3>
+<p><strong>Same Linux machine, same work</strong> — catalog-100-items (2,611 bytes), 16,000 documents, process wall time, median of 5, assertions off:</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Parser</th>
+<th align="right">Median ms</th>
+<th align="right">µs / document</th>
+<th align="right">MiB/s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>libexpat C (callbacks, gcc -O2)</td>
+<td align="right">313.7</td>
+<td align="right">19.6</td>
+<td align="right">127.0</td>
+</tr>
+<tr>
+<td>xpact-core via EiffelStudio</td>
+<td align="right">646.5</td>
+<td align="right">40.4</td>
+<td align="right">61.6</td>
+</tr>
+<tr>
+<td>xpact via Gobo</td>
+<td align="right">1,445.1</td>
+<td align="right">90.3</td>
+<td align="right">27.6</td>
+</tr>
+<tr>
+<td>xpact via EiffelStudio</td>
+<td align="right">1,574.1</td>
+<td align="right">98.4</td>
+<td align="right">25.3</td>
+</tr>
+<tr>
+<td>Windows dual catalog (its own harness): xpact 26.2 MiB/s vs xpact-core 53.5 MiB/s, ratio 2.05 (core turns its GC off internally).</td>
+<td align="right"></td>
+<td align="right"></td>
+<td align="right"></td>
+</tr>
+<tr>
+<td>Correction: an earlier manual run showed xpact-core at 89.9 µs/doc on Linux; that binary was a stale build (the C include path was missing). The value above is from a clean build.</td>
+<td align="right"></td>
+<td align="right"></td>
+<td align="right"></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>4.5 xpact's own test sets (Windows)</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Test set</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Eiffel test matrix, 4 modes (assertions off/on × workbench/finalized)</td>
+<td>❌ every mode: only <code class="notranslate">FAIL: incremental shim audit docs present</code></td>
+</tr>
+<tr>
+<td>Chunked CRC harness · corpus · native ABI (Windows + Linux) · native runtime smoke · contributed examples · shim audit</td>
+<td>✅ all exit 0</td>
+</tr>
+<tr>
+<td>Python unit tests</td>
+<td>✅ 257 tests OK</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Field</th>
+<th>Test matrix failure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem</td>
+<td><code class="notranslate">tests/xp_test_root.e:2693</code> expects "accumulated-buffer replay" in <code class="notranslate">docs/incremental-shim-audit.md</code>; the doc on <code class="notranslate">main</code> lacks it</td>
+</tr>
+<tr>
+<td>Command</td>
+<td><code class="notranslate">.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode Off|On -BuildMode Workbench|Finalized</code></td>
+</tr>
+<tr>
+<td>Expected / actual</td>
+<td>all assertions pass / one FAIL line, test executable exits non-zero, in all 4 modes</td>
+</tr>
+<tr>
+<td>Cause</td>
+<td><strong>Confirmed:</strong> test text and documentation drifted apart on <code class="notranslate">main</code>; the doc file is unchanged by this run. Not a parser behaviour</td>
+</tr>
+<tr>
+<td>Fix</td>
+<td>none (out of scope)</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>4.6 Large XML (whole-file parse, generated catalog file, <code class="notranslate">run_large_xml_benchmarks.ps1</code>)</h3>
+<p>5 MB file (5,243,005 bytes), 1 iteration × 3:</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Engine</th>
+<th align="right">Median ms</th>
+<th align="right">MiB/s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>libexpat pyexpat tokenizer</td>
+<td align="right">119.4</td>
+<td align="right">41.9</td>
+</tr>
+<tr>
+<td>xpact native C ABI tokenizer (Windows DLL)</td>
+<td align="right">188.8</td>
+<td align="right">26.5</td>
+</tr>
+<tr>
+<td>libexpat pyexpat callbacks</td>
+<td align="right">198.3</td>
+<td align="right">25.2</td>
+</tr>
+<tr>
+<td>xpact Eiffel finalized</td>
+<td align="right">208.5</td>
+<td align="right">24.0</td>
+</tr>
+<tr>
+<td>libexpat C (WSL) tokenizer / callbacks</td>
+<td align="right">155.7 / 154.0</td>
+<td align="right">32.1 / 32.5</td>
+</tr>
+<tr>
+<td>xpact native C ABI callbacks (Windows DLL)</td>
+<td align="right">421.3</td>
+<td align="right">11.9</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Field</th>
+<th>Native ABI large-file failure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Problem</td>
+<td><code class="notranslate">xpact_native_windows_c_benchmark.exe: parse failed: out of memory</code></td>
+</tr>
+<tr>
+<td>Command</td>
+<td><code class="notranslate">.\scripts\run_large_xml_benchmarks.ps1 -XmlFile build\four-way\large-&lt;N&gt;.xml -NoPublish -SkipBuild</code></td>
+</tr>
+<tr>
+<td>Observed</td>
+<td>passes at 5, 7, 8, 9 MB (9,437,220 bytes); fails at 10, 15, 20, 25, 50, 100 MB. The files are valid (expat parses the 25 MB file: 670,643 elements)</td>
+</tr>
+<tr>
+<td>Cause</td>
+<td><strong>Unknown</strong> — a size limit near 10 MB in the native C ABI whole-file path is suspected; the docs allow up to 512 MB (<code class="notranslate">MaxFileBytes</code>)</td>
+</tr>
+<tr>
+<td>Fix</td>
+<td>none; <code class="notranslate">run_four_way.ps1</code> uses a 5 MB file by default so the run stays comparable</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>4.7 Gobo's own XML parser (<code class="notranslate">XM_EIFFEL_PARSER</code>), from the 18 November run</h3>
+<p>Source: <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/gobo-xml-2026-11-18/results.md">reports/gobo-xml-2026-11-18/results.md</a> (commit <code class="notranslate">d3e4b92</code>, #442). Not re-run today; xpact numbers in this subsection are from that run too.</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Test</th>
+<th>xpact</th>
+<th>Gobo XML parser</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W3C core profile (project runner, 1,974)</td>
+<td>✅ 1,974 / 0</td>
+<td>1,910 / 64</td>
+</tr>
+<tr>
+<td>W3C legacy names (309)</td>
+<td>✅ 309 / 0</td>
+<td>9 / 300 ❌</td>
+</tr>
+<tr>
+<td>W3C optional errors (28) / XML 1.1 (274)</td>
+<td>✅ 28/0 · 274/0</td>
+<td>✅ 28/0 · 274/0</td>
+</tr>
+<tr>
+<td>W3C canonical output exact (432)</td>
+<td>375</td>
+<td>319</td>
+</tr>
+<tr>
+<td>Encodings right (146)</td>
+<td>144</td>
+<td>142 (+3 not supported)</td>
+</tr>
+<tr>
+<td>libxml2 corpus, same verdict + events as Expat (1,417)</td>
+<td>1,295</td>
+<td>1,055</td>
+</tr>
+<tr>
+<td>Fuzzing, same verdict as Expat</td>
+<td>99.996 % (870k inputs)</td>
+<td>97.642 % (80k inputs)</td>
+</tr>
+<tr>
+<td>Security/limits as expected (29)</td>
+<td>20</td>
+<td>21</td>
+</tr>
+<tr>
+<td>Crash / timeout on limits</td>
+<td>0</td>
+<td>4 (billion-laughs, quadratic-blowup timeout; entity-chain-100k exception at 2 GB; deep-nesting-1m timeout)</td>
+</tr>
+<tr>
+<td>Speed per document vs xpact</td>
+<td>1×</td>
+<td>3.4–8.6× slower; 25–34× slower on DTD-heavy files</td>
+</tr>
+<tr>
+<td>Large file 20 MB</td>
+<td>❌ REJECT (size limit)</td>
+<td>✅ ACCEPT</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>Notes: xpact's 9 "unexpected" limit results there are size limits (huge names/text/attributes, deep nesting) that xpact rejects on purpose; the same size limit shows as the 20 MB REJECT above and matches today's native-ABI failure from 10 MB (§4.6) — link suspected, not confirmed.</p>
+<h2>5. Known failures (observed, not fixed)</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Incomplete task"> xpact <code class="notranslate">main</code>: test-matrix documentation assertion (§4.5).</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Incomplete task"> xpact <code class="notranslate">main</code>: native C ABI whole-file parse fails from ~10 MB (§4.6).</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Incomplete task"> xpact-core: 728 W3C failures + 14 errors; 23 regression wrong verdicts; 3 failed audit controls.</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Incomplete task"> expat: 318 names (profile difference), 1 BOM/encoding case.</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Incomplete task"> Gobo: regression harness cannot read an empty file (library precondition).</li>
+<li class="task-list-item"><input type="checkbox" id="" disabled="" class="task-list-item-checkbox" aria-label="Incomplete task"> libexpat suite: 38 expected failures (allocator tests), unchanged.</li>
+</ul>
+<h2>6. Limitations</h2>
+<ul>
+<li>W3C all-cases ran for xpact only (native-DLL entity checker needed).</li>
+<li>expat was driven through <code class="notranslate">pyexpat</code> for conformance and regression; C libexpat for speed.</li>
+<li>One machine, one run per lane; speed medians of 5 runs, no variance study; WSL file I/O adds overhead to the WSL C large-file rows.</li>
+<li><code class="notranslate">run_benchmarks.ps1</code> and the large-XML script can republish files under <code class="notranslate">docs/</code>; the orchestrator keeps those versions in <code class="notranslate">logs/published-*</code> and restores the tracked files.</li>
+</ul>
+<h2>7. Files added</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>File</th>
+<th>Job</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="notranslate">benchmarks/four_way/run_four_way.ps1</code></td>
+<td>the whole comparison in one command</td>
+</tr>
+<tr>
+<td><code class="notranslate">benchmarks/four_way/wsl_four_way.sh</code></td>
+<td>its Linux half (Gobo, Linux EiffelStudio, Linux expat, speed race)</td>
+</tr>
+<tr>
+<td><code class="notranslate">benchmarks/four_way/expat_conformance_engine.py</code> / <code class="notranslate">expat_trace_engine.py</code></td>
+<td>expat as a W3C engine / as a regression engine</td>
+</tr>
+<tr>
+<td><code class="notranslate">benchmarks/four_way/run_manifest_engine.py</code> / <code class="notranslate">run_regression_engine.py</code></td>
+<td>any engine on the exact W3C case list / through the official regression rules</td>
+</tr>
+<tr>
+<td><code class="notranslate">benchmarks/four_way/gobo/{conformance,regression,catalog}_gobo.ecf</code></td>
+<td>the three harnesses for Gobo <code class="notranslate">gec</code></td>
+</tr>
+<tr>
+<td><code class="notranslate">benchmarks/four_way/summarize_four_way.py</code> · <code class="notranslate">expat_lenient_cases.py</code> · <code class="notranslate">make_large_xml.py</code></td>
+<td>tables, expat case analysis, large input file</td>
+</tr>
+<tr>
+<td><code class="notranslate">benchmarks/four_way/README.md</code></td>
+<td>what each tool in the folder does</td>
+</tr>
+<tr>
+<td><code class="notranslate">reports/four-way-2026-11-23/TEST-SUITES.md</code></td>
+<td>every test suite: what it proves, size, command, last result (for reviewers who want to re-run)</td>
+</tr>
+<tr>
+<td><code class="notranslate">website/</code> Comparison page (<code class="notranslate">pages/Comparison.tsx</code>, <code class="notranslate">styles/report.css</code>, <code class="notranslate">styles/github-markdown.css</code>, <code class="notranslate">data/reports/*.html</code>)</td>
+<td>this report and the suite list on the website, same look as the styled preview</td>
+</tr>
+<tr>
+<td><code class="notranslate">website/scripts/export-report.ps1</code></td>
+<td>re-renders the report into the website (run after the report changes)</td>
+</tr>
+<tr>
+<td><code class="notranslate">scripts/check_markdown_links.py</code></td>
+<td>finds broken relative links in Markdown files (exit 1 if any)</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2>8. Audit of scripts and docs (23 November 2026)</h2>
+<p>Checked locally with scripts: broken links (<code class="notranslate">scripts/check_markdown_links.py</code>), duplicate files, garbled UTF-8, large tracked files, stale numbers. Old <code class="notranslate">reports/</code> folders are evidence and were not changed.</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>#</th>
+<th>Finding</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Living docs (README, <code class="notranslate">docs/</code>, <code class="notranslate">website/</code>, <code class="notranslate">benchmarks/</code>, <code class="notranslate">tests/</code>, <code class="notranslate">scripts/</code>): <strong>0 broken links</strong>, no garbled text, no tracked file &gt; 1 MB</td>
+<td>✅ checked</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Website README + <code class="notranslate">website/docs/development.md</code>: the start command <code class="notranslate">.\website\dist\Xpact.Api.exe</code> run from the repo root serves <strong>404 for every page</strong> (the API looks for <code class="notranslate">wwwroot</code> in the current folder). Confirmed: <code class="notranslate">/</code> and <code class="notranslate">/benchmarks</code> 404 from the repo root, 200 from <code class="notranslate">website\dist</code></td>
+<td>✅ docs fixed (start from <code class="notranslate">website\dist</code>); code fix (content root = exe folder) left to Anders</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Website README status said 42 / 42 backend tests; today it is 56 / 56</td>
+<td>✅ updated</td>
+</tr>
+<tr>
+<td>4</td>
+<td>The C# DLL suite <code class="notranslate">tests/dotnet/XpactDllTests</code> (4,308 cases) was in no run script</td>
+<td>✅ added to <code class="notranslate">run_four_way.ps1</code> (step 17b), passes 4,308 / 4,308</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code class="notranslate">NativeSearchPath.cs</code> is a byte-identical copy in <code class="notranslate">Xpact.Api</code> and <code class="notranslate">Xpact.Worker</code></td>
+<td>🚫 not changed: could move to <code class="notranslate">Xpact.Contracts</code> or be linked from one file; a small refactor for its own PR</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Eiffel test matrix fails one documentation assertion in all 4 modes (§4.5)</td>
+<td>🚫 not changed: test and doc drifted on <code class="notranslate">main</code>; one issue for Anders</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Native C ABI "out of memory" from 10 MB whole-file (§4.6); the Gobo run of 18 November also shows xpact rejecting 20 MB</td>
+<td>🚫 not changed: issue candidate, cause unknown</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Old <code class="notranslate">reports/</code> and <code class="notranslate">student/results/</code> folders hold 47 broken links (e.g. <code class="notranslate">summary.md</code> files pointing at <code class="notranslate">compare.py</code> next to them) and many byte-identical log copies</td>
+<td>🚫 not changed: baseline evidence, never edited</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Only the W3C and regression lanes run in Jenkins</td>
+<td>🚫 proposal in <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/TEST-SUITES.md#5-in-ci-jenkins">TEST-SUITES §5</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td>With <code class="notranslate">core.autocrlf=true</code> a Windows clone gets CRLF <code class="notranslate">.sh</code> files (seen on 3 example scripts), and bash fails on them; that would also break <code class="notranslate">wsl_four_way.sh</code> on a fresh clone</td>
+<td>✅ new <code class="notranslate">.gitattributes</code>: <code class="notranslate">*.sh text eol=lf</code></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>

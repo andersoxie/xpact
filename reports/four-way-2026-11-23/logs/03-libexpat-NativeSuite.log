@@ -1,0 +1,11 @@
+﻿libexpat manifest: 399 START_TEST entries -> 
+C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-runtests-manifest.tsv
+libexpat expected failures: 86 manifest entries -> 
+C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-expected-failures-expanded.tsv
+libexpat parity rows: 152 green patterns, 2 red patterns, 0 blocked rows -> 
+C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-parity-expanded.tsv
+build_native_eiffel: replaces C:\xpact\xpact-incremental\build\native-eiffel\xpact.dll (Production); SHA-256 before: (none)
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+xpact_native.c
+xpact_eiffel_runtime_bridge.c
+xpact_eiffel_dllmain.c

@@ -1,0 +1,21 @@
+﻿gec version 26.11.14+55e703f
+Degree 6: 0/0/0 0:0:0.050
+Degree 5: 0/0/0 0:0:0.107
+Degree 4: 0/0/0 0:0:0.018
+Degree 3: 0/0/0 0:0:0.031
+Degree -2: 0/0/0 0:0:0.091
+Degree -3: 0/0/0 0:0:0.093
+
+Degree -4: 0/0/0 0:0:9.483
+Total Time: 0/0/0 0:0:9.874
+wsl : 
+At line:41 char:194
++ ... "").Trim(); wsl -d Ubuntu-24.04 -u root -- bash "$p/gobo-build.sh" >  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+real	0m9.906s
+user	0m12.020s
+sys	0m0.848s
+-rwxr-xr-x 1 root root 1083544 Nov 23 09:27 xpact_w3c_conformance_gobo

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Four-way comparison: the dual-regression xpact harness compiled with the Gobo Eiffel compiler (gec).
+     Same parser source, backend and shared harness as benchmarks/dual_w3c/xpact; Gobo's FreeELKS base library. -->
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" name="xpact_regression_gobo" uuid="7C2E9A41-3B5D-4F68-A1C2-9D0E8B7F6A53">
+	<target name="regression_assertions">
+		<root class="DR_REGRESSION_ROOT" feature="make"/>
+		<option warning="true">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<external_cflag value="-O2"/>
+		<external_include location="$XPACT_SOURCE_ROOT/include"/>
+		<external_include location="$XPACT_SOURCE_ROOT/native"/>
+		<library name="base" location="$GOBO/library/free_elks/library.ecf">
+			<option>
+				<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+			</option>
+		</library>
+		<cluster name="parser" location="$XPACT_SOURCE_ROOT/src/"/>
+		<cluster name="backend" location="$XPACT_SOURCE_ROOT/benchmarks/dual_regression/xpact/"/>
+		<cluster name="shared" location="$XPACT_SOURCE_ROOT/benchmarks/dual_regression/shared/"/>
+		<cluster name="identity" location="$XPACT_PROBE_METADATA/"/>
+	</target>
+</system>

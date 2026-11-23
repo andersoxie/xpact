@@ -1,0 +1,484 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "lane": "catalog-finalized-assertions-off",
+  "input": {
+    "name": "catalog-100-items",
+    "bytes": 2611,
+    "sha256": "edf9b7324f57190602061e9cb16c4641921e623ff8654e134f2b5dbb734b7685"
+  },
+  "artifacts": {
+    "xpact": {
+      "schema_version": 1,
+      "status": "verified",
+      "implementation": "xpact",
+      "profile": "catalog",
+      "source": {
+        "repository": "https://github.com/andersoxie/xpact.git",
+        "revision": "2862a1802b11fecc413bb8a1ea497f5defbb0f49",
+        "source_dir": "C:\\xpact\\xpact-incremental",
+        "source_sha256": "bdc7bab5d46e5480b0c4707435988307f0a32ad722718041283572a69a79a0d7",
+        "worktree_dirty": true
+      },
+      "build_inputs_sha256": "bdc7bab5d46e5480b0c4707435988307f0a32ad722718041283572a69a79a0d7",
+      "build": {
+        "configuration": "finalized/assertions-off/msvc-x64",
+        "mode": "finalized",
+        "assertions": false,
+        "void_safety": "all",
+        "command": [
+          "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+          "-batch",
+          "-clean",
+          "-finalize",
+          "-config",
+          "C:\\xpact\\xpact-incremental\\benchmarks\\dual_catalog\\xpact\\catalog.ecf",
+          "-target",
+          "catalog",
+          "-project_path",
+          "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact\\project"
+        ],
+        "makefile": {
+          "CC": "cl",
+          "CPP": "cl",
+          "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+          "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+          "EIFLIB": "\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+        },
+        "native_helpers": []
+      },
+      "toolchain": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "architecture": "x64",
+        "eiffel_compiler": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+        "eiffel_version": "ISE EiffelStudio version 25.12.9.8922 - win64",
+        "c_compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.EXE",
+        "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.51.36244 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+        "ise_eiffel": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_library": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_c_compiler": "msc_vc140",
+        "dependencies": [
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base\\base.ecf",
+            "sha256": "aebd21bdfa85f5dd943a43166ca5fe52e2818415aa29998237ee93774c8270f5"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base_extension\\base_extension.ecf",
+            "sha256": "3b0bf259b6abefc36baac706c49263da06cbb94b3e58a257b7eca4a331943289"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\time\\time.ecf",
+            "sha256": "e2a97232eb1f5d351083733b23c6e97beef34ee7a4ef4cf6655f8dd2177530ae"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\clibs_zlib.ecf",
+            "sha256": "3e8b23b5db824bdbd3eb39f233f46c18e273925fcbae5a81285f46588406bb41"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\spec\\msc_vc140\\win64\\lib\\zlib.lib",
+            "sha256": "02112e47ebf425f0cd1fe920e966aa89e864c6ff148d16a3469e83bf6900048b"
+          }
+        ]
+      },
+      "executable": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact\\project\\EIFGENs\\catalog\\F_code\\xpact_catalog_benchmark.exe",
+      "executable_sha256": "35337656690a395ae9b4be785dea55889359b0dea4c4744d821ea0d68df28d38",
+      "probe_output": "XPACT_CATALOG_IDENTITY\txpact\t2862a1802b11fecc413bb8a1ea497f5defbb0f49\tfinalized/assertions-off/msvc-x64\tnormal",
+      "gc_policy": "normal"
+    },
+    "xpact-core": {
+      "schema_version": 1,
+      "status": "verified",
+      "implementation": "xpact-core",
+      "profile": "catalog",
+      "source": {
+        "repository": "https://github.com/andersoxie/Xpact-core.git",
+        "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+        "source_dir": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+        "source_sha256": "37f5500ee21e8d392c95a4b68f97f173a3a4e82be411e5ac10e31700ae17de39",
+        "library": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\library\\xpact-core.ecf",
+        "dependencies": [
+          "EiffelStudio Base, Base Extension, Time and bundled zlib libraries",
+          "Eiffel-Loop subset vendored in this pinned checkout",
+          "Vendored Shift-JIS subset C source and header; compiled to an isolated MSVC object on Windows"
+        ],
+        "environment": {
+          "XPACT_CORE": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+          "XPACT_INCLUDE": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\contrib\\xpact\\include",
+          "C_SHIFT_JIS_SUBSET": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset"
+        }
+      },
+      "build_inputs_sha256": "cae239d84f22e924685b9efdbf3b2402747b6ad129bfd9e0c94687f7ac221d37",
+      "build": {
+        "configuration": "finalized/assertions-off/msvc-x64",
+        "mode": "finalized",
+        "assertions": false,
+        "void_safety": "all",
+        "command": [
+          "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+          "-batch",
+          "-clean",
+          "-finalize",
+          "-config",
+          "C:\\xpact\\xpact-incremental\\benchmarks\\dual_catalog\\xpact_core\\catalog.ecf",
+          "-target",
+          "catalog",
+          "-project_path",
+          "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\project"
+        ],
+        "makefile": {
+          "CC": "cl",
+          "CPP": "cl",
+          "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+          "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+          "EIFLIB": "\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+        },
+        "native_helpers": [
+          {
+            "source": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset\\src\\shift_jis_subset.c",
+            "source_sha256": "7566a71a82754b00f09bd01f6f1bceaf9f4317f91ecc88ccd02892af973110b2",
+            "object": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\shift_jis_subset.obj",
+            "object_sha256": "e5bebfe4c3018dd8b5e20c7e01b63394a76a87715388da7af424db7039db6cea",
+            "command": [
+              "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.EXE",
+              "/nologo",
+              "/O2",
+              "/MT",
+              "/c",
+              "/IC:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset\\include",
+              "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset\\src\\shift_jis_subset.c",
+              "/Fo:C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\shift_jis_subset.obj"
+            ]
+          }
+        ]
+      },
+      "toolchain": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "architecture": "x64",
+        "eiffel_compiler": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+        "eiffel_version": "ISE EiffelStudio version 25.12.9.8922 - win64",
+        "c_compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.EXE",
+        "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.51.36244 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+        "ise_eiffel": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_library": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_c_compiler": "msc_vc140",
+        "dependencies": [
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base\\base.ecf",
+            "sha256": "aebd21bdfa85f5dd943a43166ca5fe52e2818415aa29998237ee93774c8270f5"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base_extension\\base_extension.ecf",
+            "sha256": "3b0bf259b6abefc36baac706c49263da06cbb94b3e58a257b7eca4a331943289"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\time\\time.ecf",
+            "sha256": "e2a97232eb1f5d351083733b23c6e97beef34ee7a4ef4cf6655f8dd2177530ae"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\clibs_zlib.ecf",
+            "sha256": "3e8b23b5db824bdbd3eb39f233f46c18e273925fcbae5a81285f46588406bb41"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\spec\\msc_vc140\\win64\\lib\\zlib.lib",
+            "sha256": "02112e47ebf425f0cd1fe920e966aa89e864c6ff148d16a3469e83bf6900048b"
+          }
+        ]
+      },
+      "executable": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\project\\EIFGENs\\catalog\\F_code\\xpact_core_catalog_benchmark.exe",
+      "executable_sha256": "3abf590f4dbe319c88c56a8bdbea691152f2eb9b8b7196bbe96dcea6b95aa399",
+      "probe_output": "XPACT_CATALOG_IDENTITY\txpact-core\t6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\tfinalized/assertions-off/msvc-x64\tcore-managed-off-full-collect",
+      "gc_policy": "core-managed-off-full-collect"
+    }
+  },
+  "qualification": [
+    {
+      "implementation": "xpact",
+      "assertions": true,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\audit\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": true,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\audit\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact",
+      "assertions": false,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": false,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "metadata": {
+      "started_utc": "2026-11-23T08:33:10.036642+00:00",
+      "platform": "Windows-11-10.0.26300-SP0",
+      "python": "3.15.0",
+      "executables": {
+        "A": {
+          "path": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact\\project\\EIFGENs\\catalog\\F_code\\xpact_catalog_benchmark.exe",
+          "sha256": "35337656690a395ae9b4be785dea55889359b0dea4c4744d821ea0d68df28d38"
+        },
+        "B": {
+          "path": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\project\\EIFGENs\\catalog\\F_code\\xpact_core_catalog_benchmark.exe",
+          "sha256": "3abf590f4dbe319c88c56a8bdbea691152f2eb9b8b7196bbe96dcea6b95aa399"
+        }
+      },
+      "warmups": 2,
+      "pairs": 6,
+      "min_sample_seconds": 1.0,
+      "method": "sequential native process wall time; alternating AB/BA pairs; speed ratio = baseline time / candidate time",
+      "workloads": [
+        {
+          "name": "catalog",
+          "path": null,
+          "document_bytes": 2611,
+          "initial_iterations": 1000,
+          "sha256": null
+        }
+      ]
+    },
+    "calibration": [
+      {
+        "Workload": "catalog",
+        "Iterations": 1000,
+        "BaselineElapsedMs": 120.61049998737872,
+        "CandidateElapsedMs": 58.74450001283549
+      },
+      {
+        "Workload": "catalog",
+        "Iterations": 2000,
+        "BaselineElapsedMs": 207.3101999994833,
+        "CandidateElapsedMs": 112.8069999977015
+      },
+      {
+        "Workload": "catalog",
+        "Iterations": 4000,
+        "BaselineElapsedMs": 1123.003200016683,
+        "CandidateElapsedMs": 475.47360000316985
+      },
+      {
+        "Workload": "catalog",
+        "Iterations": 8000,
+        "BaselineElapsedMs": 1688.388299982762,
+        "CandidateElapsedMs": 981.6126000077929
+      },
+      {
+        "Workload": "catalog",
+        "Iterations": 16000,
+        "BaselineElapsedMs": 4067.680100008147,
+        "CandidateElapsedMs": 2065.047100011725
+      }
+    ],
+    "results": [
+      {
+        "Workload": "catalog",
+        "Pair": 1,
+        "Order": "AB",
+        "Iterations": 16000,
+        "DocumentBytes": 2611,
+        "BaselineElapsedMs": 4101.621999987401,
+        "CandidateElapsedMs": 1389.2041000071913,
+        "BaselineMiBPerSecond": 9.713400757629513,
+        "CandidateMiBPerSecond": 28.678794024565047,
+        "CandidateSpeedRatio": 2.9524977647029464
+      },
+      {
+        "Workload": "catalog",
+        "Pair": 2,
+        "Order": "BA",
+        "Iterations": 16000,
+        "DocumentBytes": 2611,
+        "BaselineElapsedMs": 2267.801200010581,
+        "CandidateElapsedMs": 1387.9002000030596,
+        "BaselineMiBPerSecond": 17.567985342807656,
+        "CandidateMiBPerSecond": 28.705737085490494,
+        "CandidateSpeedRatio": 1.6339800224869063
+      },
+      {
+        "Workload": "catalog",
+        "Pair": 3,
+        "Order": "AB",
+        "Iterations": 16000,
+        "DocumentBytes": 2611,
+        "BaselineElapsedMs": 1835.0520000094548,
+        "CandidateElapsedMs": 843.7120999733452,
+        "BaselineMiBPerSecond": 21.71093693365759,
+        "CandidateMiBPerSecond": 47.22072641063956,
+        "CandidateSpeedRatio": 2.174974141140596
+      },
+      {
+        "Workload": "catalog",
+        "Pair": 4,
+        "Order": "BA",
+        "Iterations": 16000,
+        "DocumentBytes": 2611,
+        "BaselineElapsedMs": 1792.3831000225618,
+        "CandidateElapsedMs": 912.2691999946255,
+        "BaselineMiBPerSecond": 22.227780568610584,
+        "CandidateMiBPerSecond": 43.67208521609873,
+        "CandidateSpeedRatio": 1.9647523998761784
+      },
+      {
+        "Workload": "catalog",
+        "Pair": 5,
+        "Order": "AB",
+        "Iterations": 16000,
+        "DocumentBytes": 2611,
+        "BaselineElapsedMs": 1713.0013999994844,
+        "CandidateElapsedMs": 849.828799982788,
+        "BaselineMiBPerSecond": 23.25783168781969,
+        "CandidateMiBPerSecond": 46.880852052783354,
+        "CandidateSpeedRatio": 2.0157017507928403
+      },
+      {
+        "Workload": "catalog",
+        "Pair": 6,
+        "Order": "BA",
+        "Iterations": 16000,
+        "DocumentBytes": 2611,
+        "BaselineElapsedMs": 1613.6456000094768,
+        "CandidateElapsedMs": 820.1270000135992,
+        "BaselineMiBPerSecond": 24.689868854693696,
+        "CandidateMiBPerSecond": 48.578693594439486,
+        "CandidateSpeedRatio": 1.9675557565873574
+      }
+    ],
+    "summary": [
+      {
+        "workload": "catalog",
+        "pairs": 6,
+        "iterations": 16000,
+        "document_bytes": 2611,
+        "median_candidate_speed_ratio": 1.9916287536900987,
+        "min_candidate_speed_ratio": 1.6339800224869063,
+        "max_candidate_speed_ratio": 2.9524977647029464,
+        "median_baseline_ms": 1813.7175500160083,
+        "median_candidate_ms": 881.0489999887068,
+        "min_baseline_ms": 1613.6456000094768,
+        "max_baseline_ms": 4101.621999987401,
+        "min_candidate_ms": 820.1270000135992,
+        "max_candidate_ms": 1389.2041000071913
+      }
+    ]
+  }
+}

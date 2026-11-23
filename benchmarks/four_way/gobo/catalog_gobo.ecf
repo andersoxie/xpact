@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Four-way comparison: the dual-catalog xpact speed harness compiled with the Gobo Eiffel compiler (gec).
+     Same parser source, backend and shared harness as benchmarks/dual_w3c/xpact; Gobo's FreeELKS base library. -->
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-20-0" name="xpact_catalog_gobo" uuid="9A4C2E61-7D3B-4B85-8F12-6E0D4C9A2B18">
+	<target name="catalog">
+		<root class="DC_CATALOG_ROOT" feature="make"/>
+		<option warning="true">
+			<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="dead_code_removal" value="all"/>
+		<capability>
+			<concurrency support="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<external_cflag value="-O2"/>
+		<library name="base" location="$GOBO/library/free_elks/library.ecf">
+			<option>
+				<assertions precondition="false" postcondition="false" check="false" invariant="false" loop="false" supplier_precondition="false"/>
+			</option>
+		</library>
+		<cluster name="parser" location="$XPACT_SOURCE_ROOT/src/"/>
+		<cluster name="backend" location="$XPACT_SOURCE_ROOT/benchmarks/dual_catalog/xpact/"/>
+		<cluster name="shared" location="$XPACT_SOURCE_ROOT/benchmarks/dual_catalog/shared/"/>
+		<cluster name="identity" location="$XPACT_PROBE_METADATA/"/>
+	</target>
+</system>

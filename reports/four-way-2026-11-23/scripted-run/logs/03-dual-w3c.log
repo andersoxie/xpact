@@ -1,0 +1,42 @@
+Visual Studio C++ x64 environment already loaded (18.6.1)
+Dual W3C results: C:\xpact\xpact-incremental\build\dual-w3c\20261123T092605Z-235920f340c6
+Building xpact (finalized/assertions-on/msvc-x64)
+Verified xpact: C:\xpact\xpact-incremental\build\dual-w3c\20261123T092605Z-235920f340c6\audit\xpact\build.json
+Building xpact-core (finalized/assertions-on/msvc-x64)
+Verified xpact-core: C:\xpact\xpact-incremental\build\dual-w3c\20261123T092605Z-235920f340c6\audit\xpact-core\build.json
+Building xpact (finalized/assertions-off/msvc-x64)
+Verified xpact: C:\xpact\xpact-incremental\build\dual-w3c\20261123T092605Z-235920f340c6\primary\xpact\build.json
+Building xpact-core (finalized/assertions-off/msvc-x64)
+Verified xpact-core: C:\xpact\xpact-incremental\build\dual-w3c\20261123T092605Z-235920f340c6\primary\xpact-core\build.json
+W3C xpact: 2585 catalog cases
+  xpact: 250/2585
+  xpact: 500/2585
+  xpact: 750/2585
+  xpact: 1000/2585
+  xpact: 1250/2585
+  xpact: 1500/2585
+  xpact: 1750/2585
+  xpact: 2000/2585
+  xpact: 2250/2585
+  xpact: 2500/2585
+W3C xpact-core: 2585 catalog cases
+  xpact-core: 250/2585
+  xpact-core: 500/2585
+  xpact-core: 750/2585
+  xpact-core: 1000/2585
+  xpact-core: 1250/2585
+  xpact-core: 1500/2585
+  xpact-core: 1750/2585
+  xpact-core: 2000/2585
+  xpact-core: 2250/2585
+  xpact-core: 2500/2585
+complete_with_failures: C:\xpact\xpact-incremental\build\dual-w3c\20261123T092605Z-235920f340c6\summary.md
+Dual W3C returned 1. Parser gaps (exit 1) and incomplete infrastructure (exit 2) are recorded in the printed run 
+directory.
+At C:\xpact\xpact-incremental\scripts\run_dual_w3c.ps1:16 char:5
++     throw "Dual W3C returned $LASTEXITCODE. Parser gaps (exit 1) and  ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Dual W3C return... run directory.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Dual W3C returned 1. Parser gaps (exit 1) and incomplete infrastructure (exit 2) are rec 
+   orded in the printed run directory.
+ 

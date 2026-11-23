@@ -1,0 +1,98 @@
+{
+  "document_bytes": 2611,
+  "eiffel_build_details": {
+    "Finalized": {
+      "code_directory": "/root/wsl-bench/builds/Finalized/EIFGENs/xpact_benchmarks/F_code",
+      "compiler_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "makefile_assignments": {
+        "CC": "gcc",
+        "CCLDFLAGS": "-m64  ",
+        "CFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/opt/Eiffel_25.12/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+        "CPP": "g++",
+        "CPPFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/opt/Eiffel_25.12/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+        "EIFLIB": "\"/opt/Eiffel_25.12/studio/spec/linux-x86-64/lib/libfinalized.a\"",
+        "LDFLAGS": ""
+      }
+    },
+    "FinalizedAssertions": {
+      "code_directory": "/root/wsl-bench/builds/FinalizedAssertions/EIFGENs/xpact_benchmarks_assertions/F_code",
+      "compiler_path": "/usr/bin/x86_64-linux-gnu-gcc-13",
+      "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "makefile_assignments": {
+        "CC": "gcc",
+        "CCLDFLAGS": "-m64  ",
+        "CFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/opt/Eiffel_25.12/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+        "CPP": "g++",
+        "CPPFLAGS": "-O3 -pipe -fPIC -D_GNU_SOURCE -m64  -DEIF_IEEE_BEHAVIOR -I\"/opt/Eiffel_25.12/studio/spec/linux-x86-64/include\" -I. $(INCLUDE_PATH)",
+        "EIFLIB": "\"/opt/Eiffel_25.12/studio/spec/linux-x86-64/lib/libfinalized.a\"",
+        "LDFLAGS": ""
+      }
+    }
+  },
+  "eiffel_builds": [
+    "Finalized",
+    "FinalizedAssertions"
+  ],
+  "eiffel_compilers": [
+    "EiffelStudio",
+    "Gobo"
+  ],
+  "eiffel_version": "ISE EiffelStudio version 25.12.9.8922 - linux-x86-64",
+  "gcc_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "generated_utc": "2026-11-23T08:34:44.733548+00:00",
+  "gobo_build_details": {
+    "Finalized": {
+      "assertion_coverage": "Assertion coverage is compiler-dependent; see docs/gobo-assertions.md",
+      "assertions_requested": false,
+      "base_assertions": false,
+      "c_build_script": "#!/bin/sh\nexport GOBO=${GOBO:-/opt/gobo}\nexport ZIG=${ZIG:-/opt/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/opt/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/opt/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/opt/gobo/tool/gec/backend/c/runtime\" -I\"/opt/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/opt/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/opt/gobo/tool/gec/backend/c/runtime\" -I\"/opt/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o xpact_benchmarks xpact_benchmarks_2.o xpact_benchmarks_1.o -O2 `/opt/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n",
+      "code_directory": "/root/wsl-bench/builds/Gobo/Finalized/.gobo",
+      "compiler_paths": [
+        "/usr/bin/x86_64-linux-gnu-gcc-13"
+      ],
+      "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "gc": "boehm"
+    },
+    "FinalizedAssertions": {
+      "assertion_coverage": "Assertion coverage is compiler-dependent; see docs/gobo-assertions.md",
+      "assertions_requested": true,
+      "base_assertions": false,
+      "c_build_script": "#!/bin/sh\nexport GOBO=${GOBO:-/opt/gobo}\nexport ZIG=${ZIG:-/opt/gobo/tool/gec/backend/c/zig/zig}\nexport BOEHM_GC=${BOEHM_GC:-/opt/gobo/tool/gec/backend/c/boehm_gc}\nexport ISE_PLATFORM=${ISE_PLATFORM:-linux-x86-64}\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/opt/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/opt/gobo/tool/gec/backend/c/runtime\" -I\"/opt/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_2.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -O2 -O2 `/opt/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --include_path` -I\"/opt/gobo/tool/gec/backend/c/runtime\" -I\"/opt/gobo/library/free_elks/src/elks/encoding/implementation/include\" -I$BOEHM_GC/include -c xpact_benchmarks_1.c\ngcc -pipe -fPIC -D_GNU_SOURCE -fno-strict-aliasing -o xpact_benchmarks xpact_benchmarks_2.o xpact_benchmarks_1.o -O2 `/opt/gobo/library/free_elks/src/elks/encoding/implementation/unix/Clib/iconv-config --library` -pthread -lm -ldl \n",
+      "code_directory": "/root/wsl-bench/builds/Gobo/FinalizedAssertions/.gobo",
+      "compiler_paths": [
+        "/usr/bin/x86_64-linux-gnu-gcc-13"
+      ],
+      "compiler_version": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "gc": "boehm"
+    }
+  },
+  "gobo_root": "/opt/gobo",
+  "gobo_version": "gec version 26.11.14+55e703f",
+  "ise_eiffel": "/opt/Eiffel_25.12",
+  "ise_platform": "linux-x86-64",
+  "iterations": 2000,
+  "kernel": "6.18.58.1-microsoft-standard-WSL2",
+  "libexpat_c_flags": [
+    "-O2"
+  ],
+  "libexpat_library": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.9.1",
+  "libexpat_version": "expat_2.6.1",
+  "machine": "x86_64",
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "os_release": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+  "python": "3.12.3",
+  "repetitions": 3,
+  "repository": "/mnt/c/xpact/xpact-incremental",
+  "timing": "perf_counter around Linux subprocess; compilation and wsl.exe launch excluded",
+  "tool_paths": {
+    "ec": "/opt/Eiffel_25.12/studio/spec/linux-x86-64/bin/ec",
+    "finish_freezing": "/opt/Eiffel_25.12/studio/spec/linux-x86-64/bin/finish_freezing",
+    "gcc": "/usr/bin/gcc",
+    "gec": "/opt/gobo/bin/gec",
+    "ldd": "/usr/bin/ldd",
+    "make": "/usr/bin/make",
+    "sh": "/usr/bin/sh"
+  },
+  "warmups_per_engine": 1
+}

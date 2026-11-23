@@ -1,0 +1,22 @@
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+libexpat manifest: 399 START_TEST entries -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-runtests-manifest.tsv
+libexpat expected failures: 86 manifest entries -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-expected-failures-expanded.tsv
+libexpat parity rows: 152 green patterns, 2 red patterns, 0 blocked rows -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-parity-expanded.tsv
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+System Recompiled.
+libexpat corpus: 0 XML files, 0 rejected -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-corpus-results.tsv
+-- Building for: Visual Studio 18 2026
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26300.
+-- The C compiler identification is MSVC 19.51.36244.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done (7.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/xpact/xpact-incremental/build/libexpat-adapter/cbuild
+Configured C adapter build: C:\xpact\xpact-incremental\build\libexpat-adapter\cbuild

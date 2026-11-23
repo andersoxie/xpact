@@ -1,0 +1,12 @@
+{
+  "engine": "gobo",
+  "command": [
+    "/root/gobo-build/xpact_w3c_conformance_gobo"
+  ],
+  "cases": 2585,
+  "seconds": 12.2,
+  "passed": 1974,
+  "failed": 0,
+  "error": 0,
+  "excluded": 611
+}

@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "lane": "catalog-finalized-assertions-off",
+  "builds": [
+    {
+      "implementation": "xpact",
+      "assertions": true,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\audit\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": true,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\audit\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact",
+      "assertions": false,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": false,
+      "status": "qualified",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "catalog_observed",
+          "status": "PASS",
+          "detail": "2611 bytes; ordered root/item events, id=1..100 attributes and exact text value"
+        },
+        {
+          "case_id": "catalog_noop",
+          "status": "PASS",
+          "detail": "same catalog accepted through the timed no-op handler path"
+        },
+        {
+          "case_id": "observed_reuse_recovery",
+          "status": "PASS",
+          "detail": "same parser: catalog twice, malformed, catalog, malformed; clean errors/events and closed references"
+        },
+        {
+          "case_id": "noop_reuse_recovery",
+          "status": "PASS",
+          "detail": "same no-op parser: catalog twice, malformed, catalog, malformed; clean errors and closed references"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "incoming GC on/off restored after valid, mismatched and empty final inputs"
+        }
+      ]
+    }
+  ],
+  "comparison_arguments": [
+    "--baseline",
+    "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact\\project\\EIFGENs\\catalog\\F_code\\xpact_catalog_benchmark.exe",
+    "--candidate",
+    "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\benchmark\\xpact-core\\project\\EIFGENs\\catalog\\F_code\\xpact_core_catalog_benchmark.exe",
+    "--workload",
+    "catalog",
+    "--output-dir",
+    "C:\\xpact\\xpact-incremental\\build\\dual-catalog\\20261123T083142Z-90dda83c460f\\comparison",
+    "--iterations",
+    "1000",
+    "--pairs",
+    "6",
+    "--warmups",
+    "2",
+    "--min-sample-seconds",
+    "1.0",
+    "--timeout-seconds",
+    "120"
+  ]
+}

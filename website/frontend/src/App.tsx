@@ -8,6 +8,7 @@ import { NotFound } from "./pages/NotFound";
 const Validator = lazy(() => import("./pages/Validator").then((m) => ({ default: m.Validator })));
 const Docs = lazy(() => import("./pages/Docs").then((m) => ({ default: m.Docs })));
 const Benchmarks = lazy(() => import("./pages/Benchmarks").then((m) => ({ default: m.Benchmarks })));
+const Comparison = lazy(() => import("./pages/Comparison").then((m) => ({ default: m.Comparison })));
 const Project = lazy(() => import("./pages/Project").then((m) => ({ default: m.Project })));
 
 export function App() {
@@ -20,6 +21,7 @@ export function App() {
             <Route path="validator" element={<Validator />} />
             <Route path="docs" element={<Docs />} />
             <Route path="benchmarks" element={<Benchmarks />} />
+            <Route path="comparison" element={<Comparison />} />
             <Route path="project" element={<Project />} />
             <Route path="*" element={<NotFound />} />
           </Route>

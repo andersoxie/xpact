@@ -1,0 +1,2 @@
+﻿Skipping CMake adapter: no xpact library: build build\native-eiffel\xpact.lib with scripts\build_native_eiffel.ps1, or 
+pass -XpactLibrary or set XPACT_EXPAT_LIBRARY.

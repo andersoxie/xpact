@@ -1,0 +1,13 @@
+{
+  "engine": "expat_linux",
+  "command": [
+    "python3",
+    "/mnt/c/xpact/xpact-incremental/benchmarks/four_way/expat_conformance_engine.py"
+  ],
+  "cases": 2585,
+  "seconds": 13.8,
+  "passed": 1596,
+  "failed": 378,
+  "error": 0,
+  "excluded": 611
+}

@@ -1,0 +1,14 @@
+libexpat manifest: 399 START_TEST entries -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-runtests-manifest.tsv
+libexpat expected failures: 86 manifest entries -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-expected-failures-expanded.tsv
+libexpat parity rows: 152 green patterns, 2 red patterns, 0 blocked rows -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-parity-expanded.tsv
+Eiffel Compilation Manager
+Version 25.12.9.8922 - win64
+
+Degree 6: Examining System
+System Recompiled.
+libexpat corpus: 0 XML files, 0 rejected -> C:\xpact\xpact-incremental\build\libexpat-adapter\libexpat-corpus-results.tsv
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.26300.
+-- Configuring done (0.2s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/xpact/xpact-incremental/build/libexpat-adapter/cbuild
+Configured C adapter build: C:\xpact\xpact-incremental\build\libexpat-adapter\cbuild

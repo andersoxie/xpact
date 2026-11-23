@@ -1,0 +1,18 @@
+Loaded Visual Studio C++ x64 environment from C:\Program Files\Microsoft Visual Studio\18\Community\VC\Auxiliary\Build\vcvars64.bat
+Dual catalog results: C:\xpact\xpact-incremental\build\dual-catalog\20261123T083142Z-90dda83c460f
+Building xpact (finalized/assertions-on/msvc-x64)
+Verified xpact: C:\xpact\xpact-incremental\build\dual-catalog\20261123T083142Z-90dda83c460f\audit\xpact\build.json
+Building xpact-core (finalized/assertions-on/msvc-x64)
+Verified xpact-core: C:\xpact\xpact-incremental\build\dual-catalog\20261123T083142Z-90dda83c460f\audit\xpact-core\build.json
+Building xpact (finalized/assertions-off/msvc-x64)
+Verified xpact: C:\xpact\xpact-incremental\build\dual-catalog\20261123T083142Z-90dda83c460f\benchmark\xpact\build.json
+Building xpact-core (finalized/assertions-off/msvc-x64)
+Verified xpact-core: C:\xpact\xpact-incremental\build\dual-catalog\20261123T083142Z-90dda83c460f\benchmark\xpact-core\build.json
+Comparing catalog...
+  pair 1 AB: candidate speed ratio 2.9525
+  pair 2 BA: candidate speed ratio 1.6340
+  pair 3 AB: candidate speed ratio 2.1750
+  pair 4 BA: candidate speed ratio 1.9648
+  pair 5 AB: candidate speed ratio 2.0157
+  pair 6 BA: candidate speed ratio 1.9676
+Complete: C:\xpact\xpact-incremental\build\dual-catalog\20261123T083142Z-90dda83c460f\summary.md

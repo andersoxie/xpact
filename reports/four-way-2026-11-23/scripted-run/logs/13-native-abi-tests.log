@@ -1,0 +1,15 @@
+xpact_native.c
+   Creating library C:\xpact\xpact-incremental\build\native\xpact.lib and object C:\xpact\xpact-incremental\build\native\xpact.exp
+Built C:\xpact\xpact-incremental\build\native\xpact.dll
+xpact_abi_smoke.c
+xpact_bridge_smoke.c
+xpact public ABI smoke: ok
+xpact bridge ABI smoke: ok
+Built C:\xpact\xpact-incremental\build\native\libxpact.so
+bash: line 1: $'\r': command not found
+bash: line 2: $'\r': command not found
+bash: line 3: $'\r': command not found
+bash: line 4: $'\r': command not found
+xpact public ABI smoke: ok
+bash: line 5: $'\r': command not found
+xpact bridge ABI smoke: ok

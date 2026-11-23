@@ -1,0 +1,2 @@
+# Shell scripts run in WSL/Linux bash, which fails on CRLF line ends: keep them LF on every checkout.
+*.sh text eol=lf

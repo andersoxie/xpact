@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "status": "complete_with_failures",
+  "lane": "w3c-finalized-assertions-off",
+  "builds": [
+    {
+      "implementation": "xpact",
+      "assertions": true,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\audit\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "PASS",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "PASS",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "PASS",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": true,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\audit\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "FAIL",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "FAIL",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "FAIL",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact",
+      "assertions": false,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "PASS",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "PASS",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "PASS",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": false,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "FAIL",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "FAIL",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "FAIL",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    }
+  ],
+  "catalog_cases": 2585,
+  "source": {
+    "source_mode": "verified-archive",
+    "archive_sha256": "f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb"
+  }
+}

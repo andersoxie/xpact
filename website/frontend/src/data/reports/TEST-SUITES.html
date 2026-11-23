@@ -1,0 +1,287 @@
+<h1>XPact test suites: what they test and how to reproduce them</h1>
+<p><strong>What:</strong> every test suite used to check XPact, what each one proves, how big it is, and the one command that reproduces it. Written for a reviewer who wants to re-run the results.<br>
+<strong>Where:</strong> this file is <code class="notranslate">reports/four-way-2026-11-23/TEST-SUITES.md</code>; the results of the last full run are in <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/REPORT.md">REPORT.md</a> and <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/scripted-run/">scripted-run/</a>.<br>
+<strong>Status:</strong> all suites below were run on 23 November 2026 on <code class="notranslate">main</code> @ <code class="notranslate">2862a18</code> (except the Gobo XML parser comparison, run 18 November, #442).</p>
+<p><strong>Legend:</strong> ✅ passed · ❌ failed · 🚫 not part of the one-command run (the note says why)</p>
+<h2>1. Reproduce everything with one command</h2>
+<div class="highlight highlight-source-powershell"><pre class="notranslate">git clone https:<span class="pl-k">//</span><span class="pl-c1">github.com</span><span class="pl-k">/</span>andersoxie<span class="pl-k">/</span>xpact.git; cd xpact; git checkout incremental<span class="pl-k">-</span>test
+.\benchmarks\four_way\run_four_way.ps1          <span class="pl-c"><span class="pl-c">#</span> ~25 min; results in reports\four-way-&lt;date&gt;\</span>
+.\benchmarks\four_way\run_four_way.ps1 <span class="pl-k">-</span>SkipLinux   <span class="pl-c"><span class="pl-c">#</span> Windows only (no WSL needed)</span></pre></div>
+<p>How it works, in short:</p>
+<ol>
+<li><strong>Build</strong> the parser test programs with EiffelStudio and the MSVC C compiler (<code class="notranslate">scripts\build_implementations.ps1</code>, <code class="notranslate">scripts\build_native_eiffel.ps1</code>).</li>
+<li><strong>Run each suite</strong> as its own step in a fresh PowerShell. Every step writes <code class="notranslate">logs\NN-name.log</code>, and its exit code and minutes go to <code class="notranslate">logs\00-steps.tsv</code>. A failing step is recorded and the run goes on.</li>
+<li><strong>Linux half:</strong> the same script calls <code class="notranslate">benchmarks\four_way\wsl_four_way.sh</code> inside WSL (Ubuntu 24.04). It builds xpact with the Gobo compiler and with Linux EiffelStudio, then runs W3C, regression and speed for Gobo, Linux expat and all four parsers.</li>
+<li><strong>Tables:</strong> <code class="notranslate">summarize_four_way.py</code> merges every parser's W3C verdicts into one table; <code class="notranslate">expat_lenient_cases.py</code> explains expat's differences.</li>
+</ol>
+<p>Every parser gets the <strong>same input files and the same expected answer</strong>. The test programs are thin adapters that print one line per document (<code class="notranslate">ACCEPT</code>/<code class="notranslate">REJECT</code>) or one line per parser event, so the judging code is shared.</p>
+<h2>2. The suites</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>#</th>
+<th>Suite</th>
+<th>What it proves</th>
+<th>Size</th>
+<th>Command (repo root)</th>
+<th>Last result</th>
+<th>Docs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>W3C XML Conformance Test Suite</strong> (xmlts 20130923), profile XML 1.0 5th ed.</td>
+<td>The parser accepts every well-formed document and rejects every broken one, as the XML standard says</td>
+<td>1,974 cases run, 611 excluded by profile</td>
+<td><code class="notranslate">.\scripts\run_dual_w3c.ps1</code></td>
+<td>✅ 1,974 / 1,974</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/w3c-xml-conformance.md">w3c-xml-conformance</a>, <a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/dual-w3c-lane.md">dual-w3c-lane</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>W3C, all cases</strong></td>
+<td>No crash or wrong verdict on <em>every</em> case of the suite, including the excluded ones</td>
+<td>2,585 cases</td>
+<td><code class="notranslate">.\scripts\run_benchmarks.ps1 -EiffelBuild FinalizedAssertions -W3cAllCases</code></td>
+<td>✅ 0 failed, 0 errors</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/benchmarks.md">benchmarks</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Dual regression</strong></td>
+<td>Same parser events whether the document comes whole, split at every byte position, or one byte at a time (incremental parsing)</td>
+<td>910 runs + 10 lifecycle steps</td>
+<td><code class="notranslate">.\scripts\run_dual_regression.ps1</code></td>
+<td>✅ 910 / 910</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/dual-regression-lane.md">dual-regression-lane</a></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Dual catalog</strong> (speed + qualification)</td>
+<td>Throughput of xpact vs xpact-core on the same catalog workload, after checking both give the same output</td>
+<td>1 workload, repeated</td>
+<td><code class="notranslate">.\scripts\run_dual_catalog.ps1</code></td>
+<td>✅ ratio 2.05</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/dual-catalog-lane.md">dual-catalog-lane</a></td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>libexpat 2.8.1 unit suite</strong> through xpact's C interface</td>
+<td>XPact can replace libexpat: libexpat's own tests run against xpact's DLL</td>
+<td>399 checks, 38 listed expected failures</td>
+<td><code class="notranslate">.\scripts\run_libexpat_adapter.ps1 -ExpatSourceDir C:\xpact\deps\libexpat -Mode All</code> then <code class="notranslate">-Mode NativeSuite</code></td>
+<td>✅ gate passed (361/399)</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/libexpat-parity.md">libexpat-parity</a>, <a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/libexpat-api-compatibility.md">libexpat-api-compatibility</a></td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Eiffel test matrix</strong> (<code class="notranslate">tests/xp_test_root.e</code>, AutoTest)</td>
+<td>XPact's own unit and integration tests, in 4 build modes</td>
+<td>4 modes × the full Eiffel suite</td>
+<td><code class="notranslate">.\scripts\run_eiffel_test_matrix.ps1 -AssertionMode Off|On -BuildMode Workbench|Finalized</code></td>
+<td>❌ 1 doc assertion, all 4 modes</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/test-matrix.md">test-matrix</a></td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>C# DLL tests</strong> (<code class="notranslate">tests/dotnet/XpactDllTests</code>)</td>
+<td>The DLL behaves like libexpat when called from C (P/Invoke on the Expat C API), whole and chunked</td>
+<td>4,308 cases</td>
+<td><code class="notranslate">dotnet build tests\dotnet\XpactDllTests -c Release</code> then <code class="notranslate">build\dotnet\XpactDllTests\bin\Release\net10.0\XpactDllTests.exe</code></td>
+<td>✅ 4,308 / 4,308</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/tests/dotnet/XpactDllTests/README.md">README</a></td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Chunked CRC harness + corpus</strong></td>
+<td>A checksum of all events is identical for whole and chunked input</td>
+<td>harness + corpus files</td>
+<td><code class="notranslate">.\scripts\run_chunked_crc_harness.ps1</code>, <code class="notranslate">.\scripts\run_chunked_crc_corpus.ps1</code></td>
+<td>✅</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/chunked-parse-crc.md">chunked-parse-crc</a></td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Native ABI tests</strong> (<code class="notranslate">tests/native/*.c</code>)</td>
+<td>The C header <code class="notranslate">include/xpact.h</code> works from plain C, on Windows and Linux</td>
+<td>6 C programs</td>
+<td><code class="notranslate">.\scripts\run_native_abi_tests.ps1</code> (needs a WSL default distro with bash)</td>
+<td>✅</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/platform-builds.md">platform-builds</a></td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Native runtime smoke</strong></td>
+<td>The DLL loads and parses in a clean process</td>
+<td>smoke</td>
+<td><code class="notranslate">.\scripts\run_native_runtime_smoke.ps1</code></td>
+<td>✅</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/drop-in-verification.md">drop-in-verification</a></td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Contributed examples</strong> (<code class="notranslate">examples/</code>)</td>
+<td>The example programs still build and run</td>
+<td>all examples</td>
+<td><code class="notranslate">.\scripts\run_contributed_examples.ps1</code></td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>Incremental shim audit</strong></td>
+<td>The incremental (chunked) layer replays its buffer correctly</td>
+<td>audit program</td>
+<td><code class="notranslate">.\scripts\run_incremental_shim_audit.ps1</code></td>
+<td>✅</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/incremental-shim-audit.md">incremental-shim-audit</a></td>
+</tr>
+<tr>
+<td>13</td>
+<td><strong>Python unit tests</strong> (<code class="notranslate">tests/python</code>)</td>
+<td>The test harness scripts themselves (runners, judges, reports)</td>
+<td>257 tests</td>
+<td><code class="notranslate">python -m unittest discover -s tests\python -p "test_*.py"</code></td>
+<td>✅ 257 OK</td>
+<td></td>
+</tr>
+<tr>
+<td>14</td>
+<td><strong>Large XML</strong></td>
+<td>One big file parsed whole, through every xpact engine</td>
+<td>generated 5 MB file (<code class="notranslate">make_large_xml.py</code>)</td>
+<td><code class="notranslate">.\scripts\run_large_xml_benchmarks.ps1 -XmlFile &lt;file&gt; -NoPublish</code></td>
+<td>✅ 5 MB; ❌ C ABI "out of memory" from 10 MB</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/large-xml-benchmarks.md">large-xml-benchmarks</a></td>
+</tr>
+<tr>
+<td>15</td>
+<td><strong>Four-way W3C + regression + speed</strong> (xpact, xpact via Gobo, expat, xpact-core)</td>
+<td>The same suites #1 and #3 on the other parsers, and speed on one Linux machine</td>
+<td>as #1 and #3</td>
+<td><code class="notranslate">.\benchmarks\four_way\run_four_way.ps1</code></td>
+<td>see <a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/REPORT.md">REPORT</a></td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/four-way-2026-11-23/REPORT.md">REPORT §3</a></td>
+</tr>
+<tr>
+<td>16</td>
+<td><strong>Gobo XML parser comparison</strong></td>
+<td>Gobo's own parser vs xpact: W3C, canonical output, encodings, libxml2 corpus, fuzzing, security limits, large files, speed</td>
+<td>1,974 W3C + 146 encodings + 1,417 libxml2 files + 870k fuzz inputs + 29 limit cases</td>
+<td><code class="notranslate">bash reports/gobo-xml-2026-11-18/run_all.sh</code> (WSL)</td>
+<td>🚫 separate run (#442)</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/reports/gobo-xml-2026-11-18/results.md">results</a></td>
+</tr>
+<tr>
+<td>17</td>
+<td><strong>Linux benchmarks</strong></td>
+<td>xpact speed under Linux EiffelStudio and Gobo vs the distro's libexpat</td>
+<td>catalog workload</td>
+<td><code class="notranslate">.\scripts\run_wsl_benchmarks.ps1</code></td>
+<td>🚫 covered by #15</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/wsl-benchmarks.md">wsl-benchmarks</a></td>
+</tr>
+<tr>
+<td>18</td>
+<td><strong>Website tests</strong> (<code class="notranslate">website/</code>)</td>
+<td>The website's API (upload limits, security, validation) and the frontend build</td>
+<td>56 backend tests + build</td>
+<td><code class="notranslate">.\website\scripts\test.ps1</code> (after <code class="notranslate">.\website\scripts\build-dll.ps1 -SkipBuild</code>)</td>
+<td>✅ 56 / 56 + build</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/website/docs/testing.md">website testing</a></td>
+</tr>
+<tr>
+<td>19</td>
+<td><strong>Jenkins pipeline tests</strong> (<code class="notranslate">tests/jenkins</code>)</td>
+<td>The CI pipeline files are valid and publish plots and e-mails</td>
+<td>3 Groovy tests</td>
+<td><code class="notranslate">.\scripts\test_jenkins_pipelines.ps1</code></td>
+<td>🚫 needs Jenkins</td>
+<td><a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/dual-implementation-jenkins.md">dual-implementation-jenkins</a></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2>3. What you need installed (once)</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Why</th>
+<th>Version used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EiffelStudio</td>
+<td>builds the Eiffel parsers and tests</td>
+<td>25.12 Standard (Windows), 25.12 rev 98922 (Linux)</td>
+</tr>
+<tr>
+<td>Visual Studio C++ (MSVC) + its CMake</td>
+<td>C compiler for EiffelStudio, the DLL and the libexpat suite</td>
+<td>Visual Studio 2026</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>all runners and reports (standard library only)</td>
+<td>3.11+ (<code class="notranslate">uv</code> works)</td>
+</tr>
+<tr>
+<td>.NET SDK</td>
+<td>C# DLL tests, website</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Git</td>
+<td>clones libexpat 2.8.1 for suite #5</td>
+<td>any</td>
+</tr>
+<tr>
+<td>WSL Ubuntu 24.04 (Linux half only)</td>
+<td>Gobo <code class="notranslate">gec</code>, Linux EiffelStudio, gcc, python3, <code class="notranslate">libexpat1-dev</code></td>
+<td>gec 26.11.14, gcc 13.3, expat 2.6.1</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>Downloaded by the scripts themselves: the W3C test suite (into <code class="notranslate">build\</code>) and libexpat 2.8.1 source (into <code class="notranslate">C:\xpact\deps\libexpat</code>).</p>
+<h2>4. Where results land</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Output</th>
+<th>Folder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One-command run (logs, tables, step list)</td>
+<td><code class="notranslate">reports\four-way-&lt;date&gt;\</code></td>
+</tr>
+<tr>
+<td>Single suite runs</td>
+<td><code class="notranslate">build\&lt;suite&gt;\&lt;timestamp&gt;\</code> (<code class="notranslate">summary.md</code>, <code class="notranslate">comparison.tsv</code>, <code class="notranslate">run.json</code>)</td>
+</tr>
+<tr>
+<td>C# DLL tests</td>
+<td><code class="notranslate">build\dotnet-dll-tests\&lt;dll&gt;-&lt;time&gt;\</code> or <code class="notranslate">--out</code></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>Exit codes: <strong>0</strong> = all passed, any other value = at least one failure or the run could not be done (the C# DLL tests use 1 = failure, 2 = could not run). The exit code of every step is in <code class="notranslate">logs\00-steps.tsv</code>.</p>
+<h2>5. In CI (Jenkins)</h2>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>Already in Jenkins</th>
+<th>Not in Jenkins yet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W3C (#1) and regression (#3) as the dual lanes, with plots and e-mail (<a href="https://github.com/andersoxie/xpact/blob/incremental-test/docs/dual-implementation-jenkins.md">dual-implementation-jenkins</a>)</td>
+<td>everything else in the table above; the one-command run is a PowerShell script, so a Windows Jenkins agent with the tools from §3 can call <code class="notranslate">run_four_way.ps1 -SkipLinux</code> as one stage and archive <code class="notranslate">reports\four-way-&lt;date&gt;\</code></td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p>Proposal (not done; needs the Jenkins server): one nightly stage that runs <code class="notranslate">run_four_way.ps1 -SkipLinux</code>, compares <code class="notranslate">logs\00-steps.tsv</code> with a list of expected exit codes (the dual lanes exit 1 on purpose: they record xpact-core's known gaps), and archives the report folder.</p>

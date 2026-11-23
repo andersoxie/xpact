@@ -1,0 +1,17 @@
+﻿native-build exit=0 min=0.6
+libexpat-suite exit=0 min=0.2
+libexpat-suite exit=0 min=0.3
+libexpat-native-suite exit=0 min=2.2
+dual-regression exit=0 min=1.8
+dual-catalog exit=0 min=2.3
+10-eiffel-test-matrix exit=1 min=0.2
+11-chunked-crc-harness exit=0 min=0.6
+12-chunked-crc-corpus exit=0 min=0.6
+13-native-abi-tests exit=1 min=0.2
+14-native-runtime-smoke exit=0 min=0.8
+15-contributed-examples exit=0 min=0.4
+16-incremental-shim-audit exit=0 min=0.6
+10-eiffel-test-matrix (rerun) exit=1 min=0.2
+13-native-abi-tests (rerun) exit=0 min=0.3
+17-python-unittests exit=0 min=1.4
+18-w3c-all-cases-xpact (rerun) exit=0 min=3.3

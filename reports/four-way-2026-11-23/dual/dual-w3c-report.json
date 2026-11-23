@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "status": "complete_with_failures",
+  "lane": "w3c-finalized-assertions-off",
+  "profile": "XML 1.0 fifth edition; namespaces unless NAMESPACE=no; nonvalidating; external-resource cases included; local suite root supplied to each engine; binary verdicts only",
+  "source": {
+    "suite_version": "20130923",
+    "source": "https://www.w3.org/XML/Test/xmlts20130923.zip",
+    "source_mode": "verified-archive",
+    "archive_sha256": "f9510b3532926e1b4c2e54855b021e4b8a66ec98a5337dcf4ff07e8a41968deb",
+    "suite_directory": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\suite\\xmlconf",
+    "suite_sha256": "17603d9ae2b14f7d31dd2fb840a28966f2970cb11c4d88b10596ba592240a215",
+    "catalog_cases": 2585,
+    "expectation_adjustments": [
+      {
+        "case_id": "rmt-e2e-38",
+        "catalog_expected": "REJECT",
+        "expected": "ACCEPT",
+        "reason": "XML 1.0 fifth edition permits this 1.1 text declaration without non-1.0 features; fourth-edition erratum E10 reverses second-edition E38: https://www.w3.org/XML/xml-V10-4e-errata#E10"
+      }
+    ]
+  },
+  "artifacts": {
+    "xpact": {
+      "schema_version": 1,
+      "status": "verified",
+      "implementation": "xpact",
+      "profile": "w3c",
+      "source": {
+        "repository": "https://github.com/andersoxie/xpact.git",
+        "revision": "2862a1802b11fecc413bb8a1ea497f5defbb0f49",
+        "source_dir": "C:\\xpact\\xpact-incremental",
+        "source_sha256": "1229837dd5a9a93643328a2616ccf7c7b3d545b644d8c256a5c712d8a7691b1a",
+        "worktree_dirty": true
+      },
+      "build_inputs_sha256": "1229837dd5a9a93643328a2616ccf7c7b3d545b644d8c256a5c712d8a7691b1a",
+      "build": {
+        "configuration": "finalized/assertions-off/msvc-x64",
+        "mode": "finalized",
+        "assertions": false,
+        "void_safety": "all",
+        "command": [
+          "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+          "-batch",
+          "-clean",
+          "-finalize",
+          "-config",
+          "C:\\xpact\\xpact-incremental\\benchmarks\\dual_w3c\\xpact\\conformance.ecf",
+          "-target",
+          "conformance",
+          "-project_path",
+          "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact\\project"
+        ],
+        "makefile": {
+          "CC": "cl",
+          "CPP": "cl",
+          "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+          "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+          "EIFLIB": "\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+        },
+        "native_helpers": []
+      },
+      "toolchain": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "architecture": "x64",
+        "eiffel_compiler": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+        "eiffel_version": "ISE EiffelStudio version 25.12.9.8922 - win64",
+        "c_compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.EXE",
+        "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.51.36244 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+        "ise_eiffel": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_library": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_c_compiler": "msc_vc140",
+        "dependencies": [
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base\\base.ecf",
+            "sha256": "aebd21bdfa85f5dd943a43166ca5fe52e2818415aa29998237ee93774c8270f5"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base_extension\\base_extension.ecf",
+            "sha256": "3b0bf259b6abefc36baac706c49263da06cbb94b3e58a257b7eca4a331943289"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\time\\time.ecf",
+            "sha256": "e2a97232eb1f5d351083733b23c6e97beef34ee7a4ef4cf6655f8dd2177530ae"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\clibs_zlib.ecf",
+            "sha256": "3e8b23b5db824bdbd3eb39f233f46c18e273925fcbae5a81285f46588406bb41"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\spec\\msc_vc140\\win64\\lib\\zlib.lib",
+            "sha256": "02112e47ebf425f0cd1fe920e966aa89e864c6ff148d16a3469e83bf6900048b"
+          }
+        ]
+      },
+      "executable": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact\\project\\EIFGENs\\conformance\\F_code\\xpact_w3c_conformance.exe",
+      "executable_sha256": "0760a7248738605a8e7e6fcf8b8d72be6c2daf0c20ff3216fd10036620981adc",
+      "probe_output": "XPACT_W3C_IDENTITY\txpact\t2862a1802b11fecc413bb8a1ea497f5defbb0f49\tfinalized/assertions-off/msvc-x64\tnormal",
+      "gc_policy": "normal"
+    },
+    "xpact-core": {
+      "schema_version": 1,
+      "status": "verified",
+      "implementation": "xpact-core",
+      "profile": "w3c",
+      "source": {
+        "repository": "https://github.com/andersoxie/Xpact-core.git",
+        "revision": "6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+        "source_dir": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+        "source_sha256": "37f5500ee21e8d392c95a4b68f97f173a3a4e82be411e5ac10e31700ae17de39",
+        "library": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\library\\xpact-core.ecf",
+        "dependencies": [
+          "EiffelStudio Base, Base Extension, Time and bundled zlib libraries",
+          "Eiffel-Loop subset vendored in this pinned checkout",
+          "Vendored Shift-JIS subset C source and header; compiled to an isolated MSVC object on Windows"
+        ],
+        "environment": {
+          "XPACT_CORE": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676",
+          "XPACT_INCLUDE": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\contrib\\xpact\\include",
+          "C_SHIFT_JIS_SUBSET": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset"
+        }
+      },
+      "build_inputs_sha256": "8995f6d71447d7b1006be66a485245cee303a298e7561ce9f74abc7f29edac4f",
+      "build": {
+        "configuration": "finalized/assertions-off/msvc-x64",
+        "mode": "finalized",
+        "assertions": false,
+        "void_safety": "all",
+        "command": [
+          "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+          "-batch",
+          "-clean",
+          "-finalize",
+          "-config",
+          "C:\\xpact\\xpact-incremental\\benchmarks\\dual_w3c\\xpact_core\\conformance.ecf",
+          "-target",
+          "conformance",
+          "-project_path",
+          "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact-core\\project"
+        ],
+        "makefile": {
+          "CC": "cl",
+          "CPP": "cl",
+          "CFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "CPPFLAGS": "-Ox -MT -w -nologo -D_WIN32_WINNT=0x0500 -DWINVER=0x0500 -D_CRT_SECURE_NO_DEPRECATE -D_UNICODE -DUNICODE -DWIN32_LEAN_AND_MEAN   -I\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\include\" -I. $(INCLUDE_PATH)",
+          "LDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc",
+          "CCLDFLAGS": "-STACK:5000000 -NODEFAULTLIB:libc  -SUBSYSTEM:CONSOLE",
+          "EIFLIB": "\"C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\lib\\msc_vc140\\finalized.lib\""
+        },
+        "native_helpers": [
+          {
+            "source": "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset\\src\\shift_jis_subset.c",
+            "source_sha256": "7566a71a82754b00f09bd01f6f1bceaf9f4317f91ecc88ccd02892af973110b2",
+            "object": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact-core\\shift_jis_subset.obj",
+            "object_sha256": "4f4092f4c375b27491418c2d2392cdc6b6c2dbcee387b9bfb152d6a91e268f45",
+            "command": [
+              "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.EXE",
+              "/nologo",
+              "/O2",
+              "/MT",
+              "/c",
+              "/IC:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset\\include",
+              "C:\\xpact\\xpact-incremental\\build\\dependencies\\xpact-core\\6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\\C-tools\\shift_jis_subset\\src\\shift_jis_subset.c",
+              "/Fo:C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact-core\\shift_jis_subset.obj"
+            ]
+          }
+        ]
+      },
+      "toolchain": {
+        "platform": "Windows-11-10.0.26300-SP0",
+        "architecture": "x64",
+        "eiffel_compiler": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\studio\\spec\\win64\\bin\\ec.EXE",
+        "eiffel_version": "ISE EiffelStudio version 25.12.9.8922 - win64",
+        "c_compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.EXE",
+        "c_compiler_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.51.36244 for x64\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\nusage: cl [ option... ] filename... [ /link linkoption... ]",
+        "ise_eiffel": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_library": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard",
+        "ise_c_compiler": "msc_vc140",
+        "dependencies": [
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base\\base.ecf",
+            "sha256": "aebd21bdfa85f5dd943a43166ca5fe52e2818415aa29998237ee93774c8270f5"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\base_extension\\base_extension.ecf",
+            "sha256": "3b0bf259b6abefc36baac706c49263da06cbb94b3e58a257b7eca4a331943289"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\library\\time\\time.ecf",
+            "sha256": "e2a97232eb1f5d351083733b23c6e97beef34ee7a4ef4cf6655f8dd2177530ae"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\clibs_zlib.ecf",
+            "sha256": "3e8b23b5db824bdbd3eb39f233f46c18e273925fcbae5a81285f46588406bb41"
+          },
+          {
+            "path": "C:\\Program Files\\Eiffel Software\\EiffelStudio 25.12 Standard\\C_library\\zlib\\spec\\msc_vc140\\win64\\lib\\zlib.lib",
+            "sha256": "02112e47ebf425f0cd1fe920e966aa89e864c6ff148d16a3469e83bf6900048b"
+          }
+        ]
+      },
+      "executable": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact-core\\project\\EIFGENs\\conformance\\F_code\\xpact_core_w3c_conformance.exe",
+      "executable_sha256": "30935213f8f5c471bf00740bd7bae6c7e81be80e1ffcc8855a373ba165164b8b",
+      "probe_output": "XPACT_W3C_IDENTITY\txpact-core\t6c017fb5b6e04fd0ae401bc54bb3c6a3c3bd6676\tfinalized/assertions-off/msvc-x64\tcore-managed-off-full-collect",
+      "gc_policy": "core-managed-off-full-collect"
+    }
+  },
+  "qualification": [
+    {
+      "implementation": "xpact",
+      "assertions": true,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\audit\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "PASS",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "PASS",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "PASS",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": true,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\audit\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "FAIL",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "FAIL",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "FAIL",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact",
+      "assertions": false,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "PASS",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "PASS",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "PASS",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    },
+    {
+      "implementation": "xpact-core",
+      "assertions": false,
+      "status": "executed",
+      "manifest": "C:\\xpact\\xpact-incremental\\build\\dual-w3c\\20261123T082355Z-fa59144d573f\\primary\\xpact-core\\build.json",
+      "cases": [
+        {
+          "case_id": "raw_utf8",
+          "status": "PASS",
+          "detail": "UTF-8 non-ASCII bytes with and without BOM; malformed final input rejected"
+        },
+        {
+          "case_id": "raw_utf16",
+          "status": "FAIL",
+          "detail": "Original UTF-16 little- and big-endian BOM control bytes accepted"
+        },
+        {
+          "case_id": "namespace_switch",
+          "status": "FAIL",
+          "detail": "Bound prefix accepted; unbound and multi-colon names rejected with namespaces, accepted when disabled"
+        },
+        {
+          "case_id": "reuse_recovery",
+          "status": "FAIL",
+          "detail": "Same parser reuses original bytes, rejects mismatch/unbound prefix after reset, then accepts valid input"
+        },
+        {
+          "case_id": "gc_restoration",
+          "status": "PASS",
+          "detail": "Incoming GC on/off restored after valid, mismatched and empty final input; closed references released"
+        }
+      ]
+    }
+  ],
+  "engines": [
+    {
+      "engine": "xpact",
+      "total": 2585,
+      "passed": 1974,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 611
+    },
+    {
+      "engine": "xpact-core",
+      "total": 2585,
+      "passed": 1232,
+      "failed": 728,
+      "errors": 14,
+      "skipped": 611
+    }
+  ],
+  "agreement": {
+    "same_outcome": 1843,
+    "different_outcome": 742
+  }
+}

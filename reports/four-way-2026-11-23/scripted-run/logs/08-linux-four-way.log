@@ -1,0 +1,22 @@
+﻿== gec gec version 26.11.14+55e703f, ISE EiffelStudio version 25.12.9.8922 - linux-x86-64
+gobo w3c exit=0
+gobo reg exit=0
+gobo cat exit=0
+== xpact-core copy + Shift-JIS helper, EiffelStudio catalog builds
+helper ok
+es es-xpact exit=0
+es es-core exit=0
+== libexpat C benchmark
+libexpat bench ok
+== W3C (exact dual case list)
+{"engine": "gobo", "command": ["/root/four-way/w3c/xpact_w3c_conformance_gobo"], "cases": 2585, "seconds": 7.8, "passed": 1974, "failed": 0, "error": 0, "excluded": 611}
+{"engine": "expat_linux", "command": ["python3", "/mnt/c/xpact/xpact-incremental/benchmarks/four_way/expat_conformance_engine.py"], "cases": 2585, "seconds": 10.6, "passed": 1655, "failed": 319, "error": 0, "excluded": 611}
+== Regression
+{"engine": "gobo", "runs": 920, "PASS": 919, "CRASH": 1}
+{"engine": "expat_linux", "runs": 910, "PASS": 910}
+== Speed: 16000 documents x 5
+{"engine": "libexpat C (callbacks)", "docs": 16000, "median_ms": 313.7, "us_per_doc": 19.61, "mib_s": 127.0, "all_exit_0": true, "runs_ms": [311.1, 328.5, 323.3, 307.4, 313.7]}
+{"engine": "xpact via Gobo", "docs": 16000, "median_ms": 1445.1, "us_per_doc": 90.32, "mib_s": 27.6, "all_exit_0": true, "runs_ms": [1385.6, 1495.3, 1479.6, 1404.0, 1445.1]}
+{"engine": "xpact-core via EiffelStudio", "docs": 16000, "median_ms": 646.5, "us_per_doc": 40.41, "mib_s": 61.6, "all_exit_0": true, "runs_ms": [670.5, 671.9, 646.5, 635.9, 631.4]}
+{"engine": "xpact via EiffelStudio", "docs": 16000, "median_ms": 1574.1, "us_per_doc": 98.38, "mib_s": 25.3, "all_exit_0": true, "runs_ms": [1609.5, 1598.2, 1495.0, 1519.3, 1574.1]}
+== done

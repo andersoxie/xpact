@@ -1,0 +1,239 @@
+/* Comparison page: the report exactly as the styled Markdown preview shows it (banner title, dark table heads,
+   one colour per result), plus entrance animations. Scoped to .report-page; follows the site's theme toggle. */
+
+.report-page {
+  --r-card: #ffffff;
+  --r-ink: #1f2328;
+  --r-muted: #59636e;
+  --r-line: #d1d9e0;
+  --r-head: #14181f;
+  --r-good: #1a7f37;
+  --r-goodbg: #dafbe1;
+  --r-bad: #cf222e;
+  --r-badbg: #ffebe9;
+  --r-warn: #9a6700;
+  --r-warnbg: #fff8c5;
+  --r-none: #cf222e;
+  --r-nonebg: #f6f8fa;
+  --r-accent: #8a2be2;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .report-page {
+    --r-card: #0d1117;
+    --r-ink: #e6edf3;
+    --r-muted: #9198a1;
+    --r-line: #30363d;
+    --r-head: #010409;
+    --r-good: #3fb950;
+    --r-goodbg: #12261e;
+    --r-bad: #f85149;
+    --r-badbg: #2d1214;
+    --r-warn: #d29922;
+    --r-warnbg: #2b2111;
+    --r-none: #f85149;
+    --r-nonebg: #161b22;
+    --r-accent: #a371f7;
+  }
+}
+:root[data-theme="dark"] .report-page {
+  --r-card: #0d1117;
+  --r-ink: #e6edf3;
+  --r-muted: #9198a1;
+  --r-line: #30363d;
+  --r-head: #010409;
+  --r-good: #3fb950;
+  --r-goodbg: #12261e;
+  --r-bad: #f85149;
+  --r-badbg: #2d1214;
+  --r-warn: #d29922;
+  --r-warnbg: #2b2111;
+  --r-none: #f85149;
+  --r-nonebg: #161b22;
+  --r-accent: #a371f7;
+}
+
+/* tabs: one per document */
+.report-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+.report-tabs button {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--r-line);
+  background: var(--r-card);
+  color: var(--r-ink);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.report-tabs button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+}
+.report-tabs button[aria-selected="true"] {
+  background: linear-gradient(120deg, #14181f, #3b1f5c 60%, #8a2be2);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* file bar + card, as in the preview */
+.report-file {
+  padding: 8px 16px;
+  font: 14px system-ui, sans-serif;
+  color: var(--r-muted);
+  background: var(--r-card);
+  border: 1px solid var(--r-line);
+  border-radius: 6px 6px 0 0;
+}
+.report-page .markdown-body {
+  box-sizing: border-box;
+  background: var(--r-card);
+  border: 1px solid var(--r-line);
+  border-top: 0;
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 0.08);
+  padding: 32px clamp(16px, 4vw, 40px);
+  margin-bottom: 40px;
+  animation: report-rise 0.5s ease-out both;
+}
+
+.report-page .markdown-body h1 {
+  background: linear-gradient(120deg, #14181f, #3b1f5c 45%, #8a2be2 75%, #3b1f5c);
+  background-size: 250% 100%;
+  color: #fff;
+  padding: 22px 26px;
+  border-radius: 12px;
+  border: 0;
+  box-shadow: 0 6px 20px rgb(60 20 100 / 0.35);
+  animation: report-shine 9s ease-in-out infinite alternate;
+}
+.report-page .markdown-body h2 {
+  border-bottom: 0;
+  padding: 6px 0 6px 14px;
+  border-left: 5px solid var(--r-accent);
+}
+.report-page .markdown-body h3 {
+  color: var(--r-accent);
+}
+
+.report-page .markdown-body table {
+  display: table;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--r-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.report-page .markdown-body table th {
+  background: var(--r-head);
+  color: #fff;
+  font-weight: 600;
+  font-size: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: left;
+}
+.report-page .markdown-body table td,
+.report-page .markdown-body table th {
+  border: 0;
+  border-bottom: 1px solid var(--r-line);
+  padding: 9px 13px;
+}
+.report-page .markdown-body table tr:nth-child(2n) {
+  background: transparent;
+}
+.report-page .markdown-body table tbody tr {
+  transition: filter 0.15s;
+}
+.report-page .markdown-body table tbody tr:hover td {
+  filter: brightness(0.96);
+}
+/* wide tables scroll inside the card, never the page */
+.report-page .markdown-body markdown-accessiblity-table,
+.report-page .markdown-body .table-wrap {
+  display: block;
+  overflow-x: auto;
+}
+
+/* one colour per result (set by Comparison.tsx from the cell's ✅ ❌ 🚫) */
+.report-page td.r-good {
+  background: var(--r-goodbg);
+  color: var(--r-good);
+  box-shadow: inset 4px 0 var(--r-good);
+  font-weight: 600;
+}
+.report-page td.r-bad {
+  background: var(--r-badbg);
+  color: var(--r-bad);
+  box-shadow: inset 4px 0 var(--r-bad);
+  font-weight: 600;
+}
+.report-page td.r-warn {
+  background: var(--r-warnbg);
+  color: var(--r-warn);
+  box-shadow: inset 4px 0 var(--r-warn);
+}
+.report-page td.r-none {
+  background: repeating-linear-gradient(135deg, var(--r-nonebg) 0 8px, transparent 8px 16px);
+  color: var(--r-none);
+  box-shadow: inset 4px 0 var(--r-none);
+  font-style: italic;
+}
+.report-page td.r-good *,
+.report-page td.r-bad *,
+.report-page td.r-warn *,
+.report-page td.r-none * {
+  color: inherit;
+}
+
+/* sections slide in as they scroll into view */
+.report-page .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+}
+.report-page .reveal.in {
+  opacity: 1;
+  transform: none;
+}
+.report-page .reveal.in td {
+  animation: report-cell 0.5s ease-out both;
+}
+
+@keyframes report-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes report-shine {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@keyframes report-cell {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+}
+
+@media print {
+  .report-page .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .report-page *,
+  .report-page .markdown-body,
+  .report-page .markdown-body h1 {
+    animation: none !important;
+    transition: none !important;
+  }
+  .report-page .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

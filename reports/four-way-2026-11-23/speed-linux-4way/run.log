@@ -1,0 +1,10 @@
+﻿xpact-es ec exit=0
+/root/catalog4/xpact-es/EIFGENs/catalog/F_code/xpact_catalog_benchmark
+xpact-core-es ec exit=0
+gobo exit=0
+/root/catalog4/xpact-gobo/xpact_catalog_gobo
+== timing: 16000 documents x 5 repetitions
+{"engine": "xpact-es", "docs": 16000, "median_ms": 1597.2, "us_per_doc": 99.82, "mib_s": 24.9, "all_exit_0": true, "runs_ms": [1530.8, 1597.2, 1566.9, 1632.2, 5548.3]}
+{"engine": "xpact-core-es", "docs": 16000, "median_ms": 1438.2, "us_per_doc": 89.89, "mib_s": 27.7, "all_exit_0": true, "runs_ms": [3725.8, 1551.2, 1424.5, 1438.2, 1431.4]}
+{"engine": "xpact-gobo", "docs": 16000, "median_ms": 1409.5, "us_per_doc": 88.09, "mib_s": 28.3, "all_exit_0": true, "runs_ms": [1404.4, 1402.2, 1414.9, 1409.5, 1423.3]}
+{"engine": "libexpat-c-callbacks", "docs": 16000, "median_ms": 334.8, "us_per_doc": 20.92, "mib_s": 119.0, "all_exit_0": true, "runs_ms": [389.0, 337.8, 334.8, 329.8, 334.2]}

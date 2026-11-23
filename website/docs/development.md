@@ -45,7 +45,7 @@ Record the result in [testing.md](testing.md).
 
 ```powershell
 .\website\scripts\publish.ps1
-.\website\dist\Xpact.Api.exe --urls http://localhost:5099
+cd website\dist; .\Xpact.Api.exe --urls http://localhost:5099   # from its own folder, or every page is 404
 ```
 
 > Port 8080 is often taken: on the student PC, Apache `httpd` listens there and answers instead of the site.
