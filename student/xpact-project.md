@@ -26,7 +26,7 @@ It began with an article. **[Finnian Reilly](https://github.com/finnianr)** ([Ei
 | | Who | What they gave |
 |---|---|---|
 | 💡 | [Finnian Reilly](https://github.com/finnianr) | the idea, the article and the first parser (Xpact-core) |
-| 🧭 | [Anders Persson](https://www.linkedin.com/in/andersperssonbsharpab/) · [Bsharp](https://bsharp.se/) | the project, the parser design, the Jenkins CI and the direction |
+| 🧭 | [Anders Persson](https://www.linkedin.com/in/andersperssonbsharpab/) · [Bsharp](https://bsharp.se/) | the project, the parser design, the Jenkins CI and the direction (the second parser) |
 | 🧪 | [Masoud Dehdar](https://github.com/CodTanium) | tests, parser fixes, conformance runs, benchmarks, the website, the reports |
 | 🎓 | [Hossein Niromand](https://www.linkedin.com/in/hossein-niromand/) · [Medieinstitutet](https://medieinstitutet.se/) | the school side: guidance and the internship frame |
 | 🛠️ | [Eric Bezault](https://github.com/gobo-eiffel) · Gobo Eiffel | the second compiler; his fix made our Gobo build work on Windows |
