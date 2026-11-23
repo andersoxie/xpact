@@ -19,7 +19,7 @@ My name is **Masoud Dehdar**, and I want to tell you about a project I helped bu
 
 ## 🌱 Where we started
 
-It began with an article. **[Finnian Reilly](https://github.com/finnianr)** ([Eiffel-Loop](http://www.eiffel-loop.com)) wrote *[Finding a billion-user project for Eiffel: how DbC catches the security flaws that Rust misses](https://www.eiffel.org/blog/Finnian%20Reilly/2026/05/finding-billion-user-project-eiffel-how-dbc-catches-security-flaws-rust-misses)* and built the first parser, Xpact-core. **[Anders Persson](https://www.linkedin.com/in/andersperssonbsharpab/)** ([GitHub](https://github.com/andersoxie)) at **[Bsharp](https://bsharp.se/)** turned that idea into a project and became my supervisor. Through my school, **[Medieinstitutet](https://medieinstitutet.se/)**, with **[Hossein Niromand](https://www.linkedin.com/in/hossein-niromand/)** as my LIA supervisor, I joined for an eight-week internship (6 October – 27 November 2026).
+It began with an article. **[Finnian Reilly](https://github.com/finnianr)** ([Eiffel-Loop](http://www.eiffel-loop.com)) wrote *[Finding a billion-user project for Eiffel: how DbC catches the security flaws that Rust misses](https://www.eiffel.org/blog/Finnian%20Reilly/2026/05/finding-billion-user-project-eiffel-how-dbc-catches-security-flaws-rust-misses)* and built the first parser, Xpact-core. **[Anders Persson](https://www.linkedin.com/in/andersperssonbsharpab/)** ([GitHub](https://github.com/andersoxie)) at **[Bsharp](https://bsharp.se/)** turned that idea into a project and became my supervisor. Through my university, **[Medieinstitutet](https://medieinstitutet.se/)**, with **[Hossein Niromand](https://www.linkedin.com/in/hossein-niromand/)** as my LIA supervisor, I joined for an eight-week internship (6 October – 27 November 2026).
 
 ## 🤝 Who built it
 
@@ -28,7 +28,7 @@ It began with an article. **[Finnian Reilly](https://github.com/finnianr)** ([Ei
 | 💡 | [Finnian Reilly](https://github.com/finnianr) | the idea, the article and the first parser (Xpact-core) |
 | 🧭 | [Anders Persson](https://www.linkedin.com/in/andersperssonbsharpab/) · [Bsharp](https://bsharp.se/) | the project, the parser design, the Jenkins CI and the direction (the second parser) |
 | 🧪 | [Masoud Dehdar](https://github.com/CodTanium) | tests, parser fixes, conformance runs, benchmarks, the website, the reports |
-| 🎓 | [Hossein Niromand](https://www.linkedin.com/in/hossein-niromand/) · [Medieinstitutet](https://medieinstitutet.se/) | the school side: guidance and the internship frame |
+| 🎓 | [Hossein Niromand](https://www.linkedin.com/in/hossein-niromand/) · [Medieinstitutet](https://medieinstitutet.se/) | the university side: guidance and the internship frame |
 | 🛠️ | [Eric Bezault](https://github.com/gobo-eiffel) · Gobo Eiffel | the second compiler; his fix made our Gobo build work on Windows |
 | 🏗️ | [Eiffel Software](https://www.eiffel.org) · [libexpat](https://github.com/libexpat/libexpat) · [W3C](https://www.w3.org/XML/Test/) | the compiler, the reference parser and the official XML test suite we measure against |
 
