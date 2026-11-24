@@ -11,11 +11,27 @@ $ErrorActionPreference = "Stop"
 $Here = $PSScriptRoot
 $Repo = (Resolve-Path "$Here\..\..").Path
 . (Join-Path $Repo "reports\gobo-2026-11-16\gobo-env.ps1") -CC $CC | Out-Host
-$Out = Join-Path $Repo $OutputDir
+$Out = [System.IO.Path]::GetFullPath((Join-Path $Repo $OutputDir))
+# Only ever delete a build-owned output folder: inside build\ (not build\ itself, never build\native-eiffel),
+# and either empty or holding an earlier Gobo output (the marker below, or gen\ from builds before it existed).
+# A mistyped -OutputDir (src, website, .) stops here instead of being wiped. Literal paths: no wildcard expansion.
+$BuildRoot = [System.IO.Path]::GetFullPath((Join-Path $Repo "build")).TrimEnd('\') + '\'
+$Marker = ".xpact-gobo-dll-out"
+if (-not $Out.StartsWith($BuildRoot, [System.StringComparison]::OrdinalIgnoreCase) -or $Out.TrimEnd('\') + '\' -eq $BuildRoot) {
+	throw "refusing to use $Out as output: -OutputDir must be a folder inside $BuildRoot"
+}
 if ($Out -like "*native-eiffel*") { throw "refusing to write into $Out" }
+if (Test-Path -LiteralPath $Out) {
+	$Old = @(Get-ChildItem -LiteralPath $Out -Force)
+	$Earlier = (Test-Path -LiteralPath (Join-Path $Out $Marker)) -or (Test-Path -LiteralPath (Join-Path $Out "gen") -PathType Container)
+	if ($Old.Count -and -not $Earlier) {
+		throw "$Out is not empty and is not an earlier Gobo DLL output (no $Marker or gen\): not deleting it."
+	}
+	Remove-Item -LiteralPath $Out -Recurse -Force
+}
 $Gen = Join-Path $Out "gen"
-Remove-Item -Recurse -Force $Out -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $Gen | Out-Null
+Set-Content -LiteralPath (Join-Path $Out $Marker) -Value "Output of reports\gobo-dll\build_gobo_dll.ps1: may be deleted and rebuilt by it."
 
 Push-Location $Gen
 try {
