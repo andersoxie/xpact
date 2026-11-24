@@ -1,0 +1,85 @@
+pipeline {
+  agent none
+
+  options {
+    disableConcurrentBuilds()
+    timestamps()
+    timeout(time: 20, unit: 'MINUTES')
+  }
+
+  parameters {
+    string(
+      name: 'IMAGE_TAG',
+      defaultValue: 'website-2026-11-14-3',
+      description: 'Immutable ghcr.io/andersoxie/xpact-website tag to deploy'
+    )
+    booleanParam(
+      name: 'DEPLOY',
+      defaultValue: false,
+      description: 'Deploy after validation. Leave clear for a validation-only run.'
+    )
+  }
+
+  stages {
+    stage('Validate deployment input') {
+      agent { label 'xpact-windows-deploy' }
+      steps {
+        powershell '''
+          $Artifact = Join-Path $env:WORKSPACE 'xpact-deployment-state.json'
+          Remove-Item -LiteralPath $Artifact -Force -ErrorAction SilentlyContinue
+        '''
+        script {
+          if (!(params.IMAGE_TAG ==~ /[A-Za-z0-9][A-Za-z0-9._-]{0,127}/)) {
+            error('IMAGE_TAG contains unsupported characters')
+          }
+          if (params.IMAGE_TAG == 'latest') {
+            error("The mutable 'latest' tag is not allowed")
+          }
+          if (env.BRANCH_NAME && env.BRANCH_NAME != 'main') {
+            error("Deployment is allowed only from main, not ${env.BRANCH_NAME}")
+          }
+          withEnv(["XPACT_DEPLOY_TAG=${params.IMAGE_TAG}"]) {
+            powershell '''
+              $ErrorActionPreference = 'Stop'
+              & 'C:/Services/xpact/deploy-xpact.ps1' `
+                -ImageTag $env:XPACT_DEPLOY_TAG `
+                -SettingsPath 'C:/Services/xpact/settings.json' `
+                -ValidateOnly
+            '''
+          }
+        }
+      }
+    }
+
+    stage('Deploy candidate and promote') {
+      when {
+        expression { return params.DEPLOY }
+      }
+      agent { label 'xpact-windows-deploy' }
+      steps {
+        script {
+          withEnv(["XPACT_DEPLOY_TAG=${params.IMAGE_TAG}"]) {
+            powershell '''
+              $ErrorActionPreference = 'Stop'
+              & 'C:/Services/xpact/deploy-xpact.ps1' `
+                -ImageTag $env:XPACT_DEPLOY_TAG `
+                -SettingsPath 'C:/Services/xpact/settings.json'
+            '''
+          }
+        }
+      }
+      post {
+        always {
+          powershell '''
+            $State = 'C:/Services/xpact/deployment-state.json'
+            if (Test-Path -LiteralPath $State -PathType Leaf) {
+              $Artifact = Join-Path $env:WORKSPACE 'xpact-deployment-state.json'
+              Copy-Item -LiteralPath $State -Destination $Artifact -Force
+            }
+          '''
+          archiveArtifacts artifacts: 'xpact-deployment-state.json', allowEmptyArchive: true
+        }
+      }
+    }
+  }
+}
