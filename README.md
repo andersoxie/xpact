@@ -23,9 +23,127 @@ is not intended to become a second C parser.
 | ✅ Threads | DLL safe from many threads; the Gobo build parses on several cores |
 | ✅ vs Gobo's Eiffel XML parser | W3C 1,974 vs 1,910, fuzzing 99.996 % vs 97.6 % same as Expat, 3.4-8.6× faster ([report](reports/gobo-xml-2026-11-18/README.md)) |
 | ✅ Code quality | SonarQube **0 issues**, CodeQL and Gitleaks on every pull request |
-| 🔴 Open | speed vs native Expat (~18× slower), ISO-8859-1 in pieces ([#272](https://github.com/andersoxie/xpact/issues/272)); ⏸️ entity depth and 10 MB limit paused (by student) |
+| 🔴 Open at 0.10.0 | Speed vs native Expat (~18× slower) and ISO-8859-1 in pieces ([#272](https://github.com/andersoxie/xpact/issues/272)). The [24 November timings](#latin-1-checkpoints) measure the subsequent checkpoint improvement. ⏸️ Entity depth and the 10 MB limit were paused by the student. |
 
 **Find anything:** [project knowledge and traceability map](docs/PROJECT-KNOWLEDGE.md) (planning, history, testing, technical docs, decisions) · [overview with all numbers](docs/Comprehensive-Overview-Summary-of-the-Project.md) · [decision log](docs/decision-log.md) · live status: [student/CONTINUE-HERE.md](student/CONTINUE-HERE.md)
+
+### Comparison with Xpact-core and libexpat · 23 November 2026
+
+xpact passed more of the tested XML conformance and regression cases than
+Finnian Reilly's original Xpact-core. Xpact-core and native libexpat were
+faster on the Linux catalog benchmark. The comparison used xpact 0.10.0
+at `2862a18` and Xpact-core at `6c017fb`. [Comparison report][comparison]
+
+| Parser | Linux catalog, µs/document | W3C fifth-edition verdicts, 1,974 cases | Regression runs, 910 total |
+|---|---:|---:|---:|
+| xpact, EiffelStudio | 98.4 | 1,974 | 910 |
+| xpact, Gobo | 90.3 | 1,974 | 909 |
+| Xpact-core, EiffelStudio | 40.4 | 1,232 | 887 |
+| Native libexpat | 19.6 | 1,655 | 910 |
+
+Matching Xpact-core on this workload would take **2.2–2.4×** xpact's measured
+throughput. Matching native libexpat 2.6.1 would take **4.6–5.0×**. Each timing
+is the median of five runs of 16,000 copies of a 2,611-byte catalog on the
+same WSL2 host. Eiffel ran with assertions off and reused a parser with no-op
+handlers. The C runner created and freed each parser and counted callbacks.
+[Catalog timings][timings] · [Benchmark drivers][drivers]
+
+The W3C comparison excluded the same 611 cases for every parser. Of libexpat's
+319 differences, 318 involved names allowed by the XML fifth edition. Its
+regression and W3C counts were identical on 2.6.1 and 2.8.5. The Gobo-built
+xpact regression harness failed to read one empty file before parsing.
+In the separate 2,585-case W3C run, 2,283 cases checked the expected verdict
+and 302 checked for crashes. [W3C results][w3c-results] · [Full W3C run][all-cases]
+
+### Windows DLL profiling and timings · 24 November 2026
+
+In the earlier 1 MB Windows DLL comparison, xpact took a median **15.4×** as
+long as libexpat 2.8.1 with EiffelStudio and **17.3×** with Gobo across 80
+completed configurations. Four additional Latin-1 configurations timed out.
+Profiling identified repeated decoding of Latin-1 input and copying of
+inherited UTF-8 namespace bindings. [DLL comparison](reports/gobo-dll/README.md) · [Original profile](reports/windows-dll-profile-2026-11-23/README.md)
+
+The tables below record the **pre-integration builds** based on `c431fb2`.
+The first comparison added the Latin-1 checkpoint. Its resulting DLL became
+the baseline for the namespace change. The Windows x64 C harness timed parser
+creation, parsing and release with Eiffel assertions off. Times are median
+milliseconds per document over six rounds. Paired speedups are medians of the
+six within-round ratios. All enabled callback checksums matched libexpat's.
+The reports identify the exact DLLs by SHA-256. [Latin-1 measurements][latin1-results] · [Namespace measurements][ns-scope-results]
+
+#### Latin-1 checkpoints
+
+| Latin-1 input | Feed size | xpact before | xpact after | libexpat 2.8.1 | Paired speedup |
+|---|---:|---:|---:|---:|---:|
+| 33,114 bytes | 4 KiB | 44.38 ms | 10.82 ms | 0.555 ms | 4.09× |
+| 66,222 bytes | 4 KiB | 146.85 ms | 21.80 ms | 1.039 ms | 6.86× |
+| 132,422 bytes | 4 KiB | 552.90 ms | 41.89 ms | 2.025 ms | 13.21× |
+| 66,222 bytes | 256 bytes | 2,078.29 ms | 21.84 ms | 1.071 ms | 94.47× |
+| 132,422 bytes | Whole document | 28.73 ms | 30.59 ms | 1.875 ms | 0.93× |
+
+With element and text callbacks on, the 132,422-byte file in 4 KiB feeds
+required decoding 132,422 input bytes, down from 2,295,110. xpact still took
+20.7× as long as libexpat on that row. Whole-document Latin-1 took about 7%
+longer in the paired comparison. All four 1 MB configurations that previously
+timed out completed. With callbacks on, xpact took 0.47 s in 16-byte feeds
+and 2.05 s in one-byte feeds, compared with 0.021 s and 0.049 s for libexpat.
+[Individual timings](reports/windows-dll-latin1-checkpoint-2026-11-24/timings.csv) · [Repeat the benchmark](reports/windows-dll-latin1-checkpoint-2026-11-24/repeat_timings.py)
+
+#### UTF-8 namespace scopes
+
+| UTF-8 input | Feed size | Element/text callbacks | xpact before | xpact after | libexpat 2.8.1 | Paired speedup |
+|---|---:|---|---:|---:|---:|---:|
+| 1 MB namespace document | 4 KiB | Off | 255.43 ms | 221.58 ms | 13.245 ms | 1.15× |
+| 1 MB namespace document | 4 KiB | On | 320.34 ms | 287.70 ms | 14.413 ms | 1.12× |
+| 1 MB namespace document | Whole document | Off | 200.52 ms | 167.37 ms | 11.732 ms | 1.20× |
+| 32 inherited prefixes | 4 KiB | Off | 86.14 ms | 41.41 ms | 2.296 ms | 2.08× |
+| 32 prefixes with nested rebinding | 4 KiB | Off | 101.38 ms | 57.87 ms | 3.483 ms | 1.75× |
+
+On the 999,928-byte fixture, the original implementation copied 134,761
+inherited bindings across 33,691 start tags. The optimized DLL kept one table
+and saved and restored the previous binding for each of 11,233 declarations.
+With 4 KiB feeds and callbacks off, scope construction appeared in 363 of
+2,129 sampled stacks (17.1%) before. Installing declarations appeared in
+103 of 2,188 stacks (4.7%) after, and restoring bindings appeared in 19 (0.9%).
+The optimized DLL took **16.7×** as long as libexpat with callbacks off and
+**20.0×** with callbacks on. The namespace-off controls and separate UTF-8 and
+Latin-1 controls stayed within 0.6% of their previous paired times.
+[Raw timings](reports/windows-dll-namespace-scope-2026-11-24/timings.csv) · [All configurations and stack samples][ns-scope-results] · [Repeat the benchmark](reports/windows-dll-namespace-scope-2026-11-24/repeat_timings.py)
+
+#### Windows DLL correctness
+
+After each optimization, the production and assertion-enabled DLLs passed all
+4,308 C API cases on verdict, error code and error position. In that suite,
+171 callback traces still differed from libexpat after adjacent text events
+were joined. The checkpoint builds matched libexpat on verdicts, error codes,
+element positions and final positions across 214 feed patterns through both
+`XML_Parse` and `XML_ParseBuffer`. A malformed bytewise feed still reported
+its error one call later. Among 35 W3C Latin-1 files, acceptance, element
+positions and coalesced events matched across all 140 runs. Errors on four
+malformed files pointed to the start of the tag or declaration where libexpat
+pointed inside it. [Checkpoint measurements][latin1-results] · [Native regression cases](docs/incremental-shim-audit.md)
+
+Both namespace builds reproduced the Latin-1 baseline's traces on all **466**
+targeted namespace runs. **406** agreed with libexpat on acceptance and error
+code, and **298** matched its full recorded trace. All 60 verdict differences
+came from two existing behaviors. In triplet mode, duplicate attributes were
+accepted when two prefixes resolved to the same name. External child parsers
+could also lose an inherited prefix. On the 48 W3C Namespaces 1.0 fixtures,
+all **288** runs reproduced the baseline, **273** matched libexpat on
+acceptance and **219** matched its full trace. The upstream Expat C suite
+passed 361 of 399 checks with the same 38 expected allocator failures.
+[Namespace correctness results][ns-scope-checks] · [Repeat the comparisons](reports/windows-dll-namespace-scope-2026-11-24/compare_scopes.py)
+
+[comparison]: https://github.com/andersoxie/xpact/blob/732a16e41732e27a3cb037508d4f738a467c11a3/reports/four-way-2026-11-23/REPORT.md
+[timings]: https://github.com/andersoxie/xpact/blob/732a16e41732e27a3cb037508d4f738a467c11a3/reports/four-way-2026-11-23/scripted-run/speed-linux-4way/speed-linux-4way.json
+[drivers]: https://github.com/andersoxie/xpact/blob/732a16e41732e27a3cb037508d4f738a467c11a3/benchmarks/four_way/wsl_four_way.sh
+[w3c-results]: https://github.com/andersoxie/xpact/blob/732a16e41732e27a3cb037508d4f738a467c11a3/reports/four-way-2026-11-23/scripted-run/w3c-four-way.md
+[all-cases]: https://github.com/andersoxie/xpact/blob/732a16e41732e27a3cb037508d4f738a467c11a3/reports/four-way-2026-11-23/scripted-run/logs/18-w3c-all-cases-xpact.log
+[latin1-results]: reports/windows-dll-latin1-checkpoint-2026-11-24/measurements.json
+[ns-scope-results]: reports/windows-dll-namespace-scope-2026-11-24/measurements.json
+[ns-scope-checks]: reports/windows-dll-namespace-scope-2026-11-24/namespace-correctness.json
+
+### Platform and implementation
 
 The native Phase 1 preview package targets Windows x64. The same Eiffel parser
 also builds and runs in Ubuntu 24.04/WSL2 benchmarks with EiffelStudio and Gobo.
@@ -52,7 +170,7 @@ Implemented and verified now:
 - A native C benchmark path against the Windows Eiffel-backed DLL.
 - A chunked `XML_Parse` CRC harness that compares event digests across buffer
   sizes and can be compiled against xpact or libexpat.
-- Native checkpoint resume for eligible UTF-8 and UTF-16 chunked input, with
+- Native checkpoint resume for eligible UTF-8, UTF-16 and ISO-8859-1 chunked input, with
   documented replay fallbacks and full-input retention.
 - An upstream libexpat test-suite adapter with explicit green/red parity rows.
 - A native-suite gate that resolves reported failures to upstream test names
