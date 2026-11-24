@@ -2176,6 +2176,111 @@ check_final_input_regressions(void) {
 	return 1;
 }
 
+struct scope_trace {
+	XML_Parser parser;
+	const char *const *next;
+	int failed;
+	int stopped;
+};
+
+static void
+expect_scope_token(struct scope_trace *trace, const char *value) {
+	if (trace->failed) return;
+	if (*trace->next == NULL || strcmp(*trace->next, value) != 0) {
+		fprintf(stderr, "namespace scope: expected '%s', observed '%s'\n",
+				*trace->next == NULL ? "(end)" : *trace->next, value);
+		trace->failed = 1;
+	} else {
+		trace->next++;
+	}
+}
+
+static void XMLCALL
+scope_bind(void *data, const XML_Char *prefix, const XML_Char *uri) {
+	struct scope_trace *trace = (struct scope_trace *)data;
+	expect_scope_token(trace, "+");
+	expect_scope_token(trace, prefix ? prefix : "");
+	expect_scope_token(trace, uri ? uri : "");
+}
+
+static void XMLCALL
+scope_unbind(void *data, const XML_Char *prefix) {
+	struct scope_trace *trace = (struct scope_trace *)data;
+	expect_scope_token(trace, "-");
+	expect_scope_token(trace, prefix ? prefix : "");
+}
+
+static void XMLCALL
+scope_start(void *data, const XML_Char *name, const XML_Char **atts) {
+	struct scope_trace *trace = (struct scope_trace *)data;
+	expect_scope_token(trace, "<");
+	expect_scope_token(trace, name);
+	while (*atts != NULL) {
+		expect_scope_token(trace, "@");
+		expect_scope_token(trace, *atts++);
+		expect_scope_token(trace, *atts++);
+	}
+	if (strcmp(name, "Q|x|p") == 0 && !trace->stopped) {
+		trace->stopped = 1;
+		if (XML_StopParser(trace->parser, XML_TRUE) != XML_STATUS_OK) trace->failed = 1;
+	}
+}
+
+static void XMLCALL
+scope_end(void *data, const XML_Char *name) {
+	struct scope_trace *trace = (struct scope_trace *)data;
+	expect_scope_token(trace, ">");
+	expect_scope_token(trace, name);
+}
+
+static int
+check_namespace_scope_lifecycle(void) {
+	static const char abandoned[] = "<old xmlns:p='leak'><p:open>";
+	static const char duplicate[] = "<r xmlns:p='P'><s xmlns:q='P' p:a='1' q:a='2'/></r>";
+	static const char document[] =
+		"<r xmlns='D' xmlns:p='P'><s xmlns:p='Q'><leaf/><p:x a='1' p:v='2'/></s>"
+		"<s xmlns=''><p:x/></s><p:x/><z/></r>";
+	static const char *const expected[] = {
+		"+", "", "D", "+", "p", "P", "<", "D|r",
+		"+", "p", "Q", "<", "D|s", "<", "D|leaf", ">", "D|leaf",
+		"<", "Q|x|p", "@", "a", "1", "@", "Q|v|p", "2", ">", "Q|x|p", ">", "D|s", "-", "p",
+		"+", "", "", "<", "s", "<", "P|x|p", ">", "P|x|p", ">", "s", "-", "",
+		"<", "P|x|p", ">", "P|x|p", "<", "D|z", ">", "D|z", ">", "D|r", "-", "p", "-", "", NULL
+	};
+	struct scope_trace trace = {0};
+	int i, valid;
+	enum XML_Status status = XML_STATUS_OK;
+	trace.parser = XML_ParserCreateNS(NULL, '|');
+	if (!check(trace.parser != NULL, "namespace scope parser created")) return 0;
+	/* Reset with live scopes, then after an error, before checking restored names. */
+	valid = XML_SetReparseDeferralEnabled(trace.parser, XML_FALSE)
+		&& XML_Parse(trace.parser, abandoned, (int)sizeof(abandoned) - 1, XML_FALSE) == XML_STATUS_OK
+		&& XML_ParserReset(trace.parser, NULL)
+		&& XML_Parse(trace.parser, "<p:stale/>", 10, XML_TRUE) == XML_STATUS_ERROR
+		&& XML_GetErrorCode(trace.parser) == XML_ERROR_UNBOUND_PREFIX
+		&& XML_ParserReset(trace.parser, NULL)
+		&& XML_Parse(trace.parser, duplicate, (int)sizeof(duplicate) - 1, XML_TRUE) == XML_STATUS_ERROR
+		&& XML_GetErrorCode(trace.parser) == XML_ERROR_DUPLICATE_ATTRIBUTE
+		&& XML_ParserReset(trace.parser, NULL);
+	if (valid) {
+		trace.next = expected;
+		XML_SetUserData(trace.parser, &trace);
+		XML_SetReturnNSTriplet(trace.parser, 1);
+		XML_SetNamespaceDeclHandler(trace.parser, scope_bind, scope_unbind);
+		XML_SetElementHandler(trace.parser, scope_start, scope_end);
+		valid = XML_SetReparseDeferralEnabled(trace.parser, XML_FALSE);
+		for (i = 0; valid && i < (int)sizeof(document) - 1; i++) {
+			status = XML_Parse(trace.parser, document + i, 1, XML_FALSE);
+			if (status == XML_STATUS_SUSPENDED) status = XML_ResumeParser(trace.parser);
+			valid = status == XML_STATUS_OK;
+		}
+		valid = valid && XML_Parse(trace.parser, NULL, 0, XML_TRUE) == XML_STATUS_OK
+			&& trace.stopped && !trace.failed && *trace.next == NULL;
+	}
+	XML_ParserFree(trace.parser);
+	return check(valid, "namespace scopes unwind through suspension, siblings and parser reset");
+}
+
 int
 main(void) {
 	enum XML_Status status;
@@ -4096,6 +4201,7 @@ main(void) {
 	if (!check_parameter_child_survives_parent_replay()) return 1;
 	if (!check_cached_dtd_default_attribute_lifecycle()) return 1;
 	if (!check_final_input_regressions()) return 1;
+	if (!check_namespace_scope_lifecycle()) return 1;
 	puts("xpact Eiffel DLL smoke: ok");
 	return 0;
 }

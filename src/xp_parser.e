@@ -42,8 +42,7 @@ feature {NONE} -- Initialization
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
 			create last_parameter_literal_text.make_empty
-			create namespace_context_stack.make (8)
-			create namespace_declaration_stack.make (8)
+			create namespace_declarations.make (8)
 			create last_error.make_empty
 			create doctype_name.make_empty
 			create position_input.make_empty
@@ -88,8 +87,7 @@ feature {NONE} -- Initialization
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
 			create last_parameter_literal_text.make_empty
-			create namespace_context_stack.make (8)
-			create namespace_declaration_stack.make (8)
+			create namespace_declarations.make (8)
 			create last_error.make_empty
 			create doctype_name.make_empty
 			create position_input.make_empty
@@ -6450,8 +6448,7 @@ feature {NONE} -- Event dispatch
 			l_name: STRING_8
 			l_event_name: detachable STRING_8
 			l_event_attributes: detachable XP_ATTRIBUTES
-			l_namespace_scope: detachable HASH_TABLE [STRING_8, STRING_8]
-			l_namespace_prefixes: detachable ARRAYED_LIST [STRING_8]
+			l_previous_declarations: INTEGER
 			l_wants_start_events: BOOLEAN
 		do
 			l_wants_start_events := handler.wants_start_element_events
@@ -6471,35 +6468,18 @@ feature {NONE} -- Event dispatch
 					document_element_count := 1
 				end
 				apply_default_attributes (a_name, a_attributes)
-				if not has_error then
-					if namespace_mode then
-						create l_namespace_prefixes.make (4)
-						l_namespace_scope := namespace_scope_for_element (a_attributes, l_namespace_prefixes)
-						if not has_error then
-							if attached l_namespace_scope as l_attached_scope then
-									-- Always resolved: an unbound or reserved prefix is an error even without events.
-								l_event_name := expanded_element_name (a_name, l_attached_scope)
-								if not l_wants_start_events then
-									l_event_name := Void
-								end
-							else
-								check namespace_scope_available: False end
-							end
-						end
-						if not has_error then
-							if attached l_namespace_scope as l_attached_scope then
-								l_event_attributes := expanded_attributes (a_attributes, l_attached_scope)
-								if not l_wants_start_events then
-									l_event_attributes := Void
-								end
-							else
-								check namespace_scope_available: False end
-							end
-						end
-					else
-						if l_wants_start_events then
-							l_event_attributes := a_attributes
-						end
+				if not has_error and then namespace_mode then
+					l_previous_declarations := namespace_declarations.count
+					apply_namespace_declarations (a_attributes, element_stack.count + 1)
+					if not has_error then
+							-- Resolve names and check expanded attributes even without callbacks.
+						l_event_name := expanded_element_name (a_name, namespace_bindings)
+					end
+					if not has_error then
+						l_event_attributes := expanded_attributes (a_attributes, namespace_bindings)
+					end
+					if has_error then
+						restore_namespace_bindings (l_previous_declarations)
 					end
 				end
 				if not has_error then
@@ -6512,14 +6492,8 @@ feature {NONE} -- Event dispatch
 						create l_name.make_from_string (a_name)
 					end
 					element_stack.extend (l_name)
-					if namespace_mode then
-						if attached l_namespace_scope as l_attached_scope and then attached l_namespace_prefixes as l_attached_prefixes then
-							namespace_context_stack.extend (l_attached_scope)
-							namespace_declaration_stack.extend (l_attached_prefixes)
-							emit_start_namespace_declarations (l_attached_prefixes, l_attached_scope)
-						else
-							check namespace_state_available: False end
-						end
+					if namespace_mode and then namespace_declarations.count > l_previous_declarations then
+						emit_start_namespace_declarations (l_previous_declarations + 1)
 					end
 				end
 				if not has_error and not is_suspended and l_wants_start_events then
@@ -6585,7 +6559,7 @@ feature {NONE} -- Event dispatch
 			else
 				if l_wants_end_events then
 					if namespace_mode then
-						l_event_name := expanded_element_name (a_name, namespace_context_stack.item)
+						l_event_name := expanded_element_name (a_name, namespace_bindings)
 					else
 						create l_event_name.make_from_string (a_name)
 					end
@@ -6597,8 +6571,10 @@ feature {NONE} -- Event dispatch
 						check_handler_stop
 					end
 				end
-				if namespace_mode then
-					emit_end_namespace_declarations
+				if namespace_mode and then not namespace_declarations.is_empty and then
+					namespace_declarations.last.depth > element_stack.count
+				then
+					end_namespace_declarations (element_stack.count + 1)
 				end
 			end
 		ensure
@@ -6829,18 +6805,17 @@ feature {NONE} -- Event dispatch
 
 feature {NONE} -- Namespace handling
 
-	namespace_scope_for_element (a_attributes: XP_ATTRIBUTES; a_declared_prefixes: ARRAYED_LIST [STRING_8]): HASH_TABLE [STRING_8, STRING_8]
-			-- Namespace bindings in scope for a start tag after applying namespace declarations.
+	apply_namespace_declarations (a_attributes: XP_ATTRIBUTES; a_depth: INTEGER)
+			-- Install this tag's bindings and remember each previous value for the matching close.
 		require
 			attributes_attached: a_attributes /= Void
-			prefixes_attached: a_declared_prefixes /= Void
+			opening_depth: a_depth = element_stack.count + 1
 		local
 			i: INTEGER
 			l_name: STRING_8
 			l_value: STRING_8
 			l_prefix: STRING_8
 		do
-			Result := cloned_namespace_scope (namespace_context_stack.item)
 			from
 				i := 1
 			invariant
@@ -6854,16 +6829,14 @@ feature {NONE} -- Namespace handling
 					l_prefix := namespace_declaration_prefix (l_name)
 					validate_namespace_declaration (l_prefix, l_value)
 					if not has_error then
-						Result.force (l_value.twin, l_prefix.twin)
-						a_declared_prefixes.extend (l_prefix.twin)
+						namespace_declarations.extend ([a_depth, l_prefix, namespace_bindings.item (l_prefix)])
+						namespace_bindings.force (l_value.twin, l_prefix)
 					end
 				end
 				i := i + 1
 			variant
 				a_attributes.count - i + 1
 			end
-		ensure
-			result_attached: Result /= Void
 		end
 
 	expanded_attributes (a_attributes: XP_ATTRIBUTES; a_scope: HASH_TABLE [STRING_8, STRING_8]): XP_ATTRIBUTES
@@ -7002,69 +6975,80 @@ feature {NONE} -- Namespace handling
 			result_not_empty: not Result.is_empty
 		end
 
-	emit_start_namespace_declarations (a_prefixes: ARRAYED_LIST [STRING_8]; a_scope: HASH_TABLE [STRING_8, STRING_8])
+	emit_start_namespace_declarations (a_first: INTEGER)
 			-- Emit start namespace callbacks for declarations on the current element.
 		require
-			prefixes_attached: a_prefixes /= Void
-			scope_attached: a_scope /= Void
+			valid_first: a_first >= 1 and a_first <= namespace_declarations.count
 		local
 			i: INTEGER
 			l_prefix: STRING_8
 		do
 			from
-				i := 1
+				i := a_first
 			invariant
-				index_in_bounds: i >= 1 and i <= a_prefixes.count + 1
+				index_in_bounds: i >= a_first and i <= namespace_declarations.count + 1
 			until
-				i > a_prefixes.count or has_error or is_suspended
+				i > namespace_declarations.count or has_error or is_suspended
 			loop
-				l_prefix := a_prefixes.i_th (i)
-				if attached a_scope.item (l_prefix) as l_uri then
+				l_prefix := namespace_declarations.i_th (i).prefix
+				check attached namespace_bindings.item (l_prefix) as l_uri then
+						-- Keep parser-owned hash keys and URIs private across Eiffel callbacks.
 					if l_prefix.is_empty then
-						handler.on_start_namespace_decl (Void, l_uri)
+						handler.on_start_namespace_decl (Void, l_uri.twin)
 					else
-						handler.on_start_namespace_decl (l_prefix, l_uri)
+						handler.on_start_namespace_decl (l_prefix.twin, l_uri.twin)
 					end
 					check_handler_stop
 				end
 				i := i + 1
 			variant
-				a_prefixes.count - i + 1
+				namespace_declarations.count - i + 1
 			end
 		end
 
-	emit_end_namespace_declarations
-			-- Emit end namespace callbacks for declarations on the current element and pop its namespace scope.
+	end_namespace_declarations (a_depth: INTEGER)
+			-- Report this element's declarations in reverse order, then restore its parent's bindings.
 		local
 			i: INTEGER
 			l_prefix: STRING_8
-			l_prefixes: ARRAYED_LIST [STRING_8]
 		do
-			if namespace_declaration_stack.count > 0 then
-				l_prefixes := namespace_declaration_stack.item
-				from
-					i := l_prefixes.count
-				invariant
-					index_in_bounds: i >= 0 and i <= l_prefixes.count
-				until
-					i < 1 or has_error or is_suspended
-				loop
-					l_prefix := l_prefixes.i_th (i)
+			from i := namespace_declarations.count until i = 0 or else namespace_declarations.i_th (i).depth /= a_depth loop
+				if not has_error and not is_suspended then
+					l_prefix := namespace_declarations.i_th (i).prefix
 					if l_prefix.is_empty then
 						handler.on_end_namespace_decl (Void)
 					else
-						handler.on_end_namespace_decl (l_prefix)
+						handler.on_end_namespace_decl (l_prefix.twin)
 					end
 					check_handler_stop
-					i := i - 1
-				variant
-					i
 				end
-				namespace_declaration_stack.remove
+				i := i - 1
+			variant
+				i
 			end
-			if namespace_context_stack.count > 1 then
-				namespace_context_stack.remove
+			restore_namespace_bindings (i)
+		end
+
+	restore_namespace_bindings (a_count: INTEGER)
+			-- Undo the declarations after `a_count', including any from a rejected start tag.
+		require
+			valid_count: a_count >= 0 and a_count <= namespace_declarations.count
+		local
+			l_prefix: STRING_8
+		do
+			from until namespace_declarations.count = a_count loop
+				l_prefix := namespace_declarations.last.prefix
+				if attached namespace_declarations.last.previous_uri as l_uri then
+					namespace_bindings.force (l_uri, l_prefix)
+				else
+					namespace_bindings.remove (l_prefix)
+				end
+				namespace_declarations.remove_i_th (namespace_declarations.count)
+			variant
+				namespace_declarations.count - a_count
 			end
+		ensure
+			restored: namespace_declarations.count = a_count
 		end
 
 	validate_namespace_declaration (a_prefix, a_uri: READABLE_STRING_8)
@@ -7172,47 +7156,20 @@ feature {NONE} -- Namespace handling
 			Result := is_valid_name (a_name) and then not a_name.has (':')
 		end
 
-	cloned_namespace_scope (a_source: HASH_TABLE [STRING_8, STRING_8]): HASH_TABLE [STRING_8, STRING_8]
-			-- Copy namespace bindings from `a_source'.
-		require
-			source_attached: a_source /= Void
-		local
-			l_key: STRING_8
-			l_value: STRING_8
-		do
-			create Result.make (a_source.count + 1)
-			from
-				a_source.start
-			until
-				a_source.after
-			loop
-				create l_key.make_from_string (a_source.key_for_iteration)
-				create l_value.make_from_string (a_source.item_for_iteration)
-				Result.force (l_value, l_key)
-				a_source.forth
-			end
-		ensure
-			result_attached: Result /= Void
-		end
+feature {XP_NATIVE_PARSER} -- Namespace context lifecycle
 
 	reset_namespace_context
-			-- Reset namespace stacks while preserving namespace mode settings.
-		local
-			l_scope: HASH_TABLE [STRING_8, STRING_8]
-			l_xml_prefix: STRING_8
-			l_xml_uri: STRING_8
+			-- Release this document's namespace state and install the built-in xml binding.
 		do
-			namespace_context_stack.wipe_out
-			namespace_declaration_stack.wipe_out
-			create l_scope.make (4)
-			create l_xml_prefix.make_from_string ("xml")
-			create l_xml_uri.make_from_string (Xml_namespace_uri)
-			l_scope.force (l_xml_uri, l_xml_prefix)
-			namespace_context_stack.extend (l_scope)
+			namespace_declarations.wipe_out
+			create namespace_bindings.make (4)
+			namespace_bindings.force (Xml_namespace_uri, "xml")
 		ensure
-			one_base_scope: namespace_context_stack.count = 1
-			no_element_declarations: namespace_declaration_stack.count = 0
+			base_scope: namespace_bindings.count = 1 and then namespace_bindings.has ("xml")
+			no_element_declarations: namespace_declarations.is_empty
 		end
+
+feature {NONE} -- Namespace constants
 
 	Xml_namespace_uri: STRING_8 = "http://www.w3.org/XML/1998/namespace"
 			-- Reserved XML namespace URI.
@@ -9507,11 +9464,11 @@ feature {NONE} -- State
 	attribute_decl_table: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
 			-- Attribute declarations keyed by element name.
 
-	namespace_context_stack: ARRAYED_STACK [HASH_TABLE [STRING_8, STRING_8]]
-			-- Namespace scopes active at each element depth, plus one base scope.
+	namespace_bindings: HASH_TABLE [STRING_8, STRING_8]
+			-- Current URI per prefix, including the empty prefix for the default namespace.
 
-	namespace_declaration_stack: ARRAYED_STACK [ARRAYED_LIST [STRING_8]]
-			-- Namespace prefixes declared at each element depth.
+	namespace_declarations: ARRAYED_LIST [TUPLE [depth: INTEGER; prefix: STRING_8; previous_uri: detachable STRING_8]]
+			-- Open declarations in document order. Void marks a previously unbound prefix.
 
 	cached_doctype_prefix: detachable STRING_8
 			-- Immutable validated UTF-8 prefix; absent when the optional cache is inactive.
@@ -9684,9 +9641,8 @@ invariant
 	external_entity_table_attached: is_initialized implies external_entity_table /= Void
 	external_parameter_entity_table_attached: is_initialized implies external_parameter_entity_table /= Void
 	attribute_decl_table_attached: is_initialized implies attribute_decl_table /= Void
-	namespace_context_stack_attached: is_initialized implies namespace_context_stack /= Void
-	namespace_declaration_stack_attached: is_initialized implies namespace_declaration_stack /= Void
-	namespace_context_available: is_initialized implies namespace_context_stack.count >= 1
+	namespace_context_available: is_initialized implies namespace_bindings /= Void and then namespace_bindings.count >= 1
+	namespace_declarations_attached: is_initialized implies namespace_declarations /= Void
 	doctype_name_attached: is_initialized implies doctype_name /= Void
 	valid_external_entity_policy: is_initialized implies is_valid_policy (external_entity_policy)
 	input_limit_positive: is_initialized implies max_input_bytes > 0

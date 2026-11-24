@@ -1,0 +1,153 @@
+{
+  "reference": "native libexpat 2.8.1 (Windows x64)",
+  "dll_sha256": {
+    "baseline": "32895b48ba3107723c2b1c0e29696e9a75454489216de65468b05b421b0f8d02",
+    "after_production": "3281007cc34332ec7408bb10f68688902c76ed937ec0d8a51730bbce646af18b",
+    "after_assertions": "bffcb0ec937627f2f20bb61a8ceb10f7665df289e09a2531efc798ebcbecd88d",
+    "libexpat": "c10b956b9e80a8c62ae89fcf6984e5cf1f1f4eea0bee632fe1b8655f7fec0d21"
+  },
+  "scope_oracle": {
+    "main_cases": 336,
+    "additional_handler_cases": 130,
+    "counts_per_engine": 466,
+    "main_matrix": "14 UTF-8 fixtures; triplets on/off; whole input, 1-byte or 17-byte feeds; reparse deferral on/off; XML_Parse or XML_GetBuffer/XML_ParseBuffer. Chunked runs end with an empty final call.",
+    "additional_matrix": "Seven fixtures; no callbacks, namespace-only, start-only, end-only; triplets on/off; whole input or seven-byte feeds, direct parse with deferral disabled (112). One fixture stopped and resumed in each of three callback types (start namespace, end element, end namespace); triplets on/off; whole, 1- or 17-byte direct feeds with deferral disabled (18).",
+    "external_child": "The external entity handler creates a child parser synchronously with the parent-provided context and feeds <p:child><s xmlns:p=\"child\"><p:leaf/></s><p:after/></p:child>.",
+    "reuse": "Reset fixtures reuse the original handle after an error or an open scope, verify <q:stale/> is rejected, then reset again and parse a fresh q binding.",
+    "compared": "Verdict, XML error code, final byte/line/column, namespace and element callback sequence with attributes and byte/line/column in each callback, suspension/resumption, external-child and reset results.",
+    "exact_before_vs_after": 466,
+    "exact_production_vs_assertions": 466,
+    "exact_vs_libexpat": 298,
+    "fields_matching_libexpat": {
+      "verdict": 406,
+      "code": 406,
+      "terminal": 382,
+      "lifecycle": 422,
+      "ordered_callback_names_and_attributes": 348,
+      "callback_position_sequences": 350
+    },
+    "verdict_differences_by_fixture": {
+      "duplicate": 20,
+      "external": 40
+    },
+    "examples_of_existing_differences": [
+      "With triplets enabled, two aliased attributes with identical expanded URI/local name are accepted by xpact and rejected by libexpat.",
+      "The external child misses an inherited prefix binding and rejects a document accepted by libexpat.",
+      "A default namespace undeclaration passes an empty URI string where libexpat supplies a null pointer.",
+      "Some UTF-8 callback columns and positions, callback timing before reset on open input, and namespace notifications before an error differ."
+    ],
+    "transcript_sha256": {
+      "baseline": {
+        "scopes.json": "f38e077f3a5b1fc2e9888c2046b59c1fc4932d84b0691517287f761c65738133",
+        "modes.json": "afe99005631fc884c95afb306decec0568e221fb643c70dc3447cf0f21fa9145"
+      },
+      "after_production": {
+        "scopes.json": "f38e077f3a5b1fc2e9888c2046b59c1fc4932d84b0691517287f761c65738133",
+        "modes.json": "afe99005631fc884c95afb306decec0568e221fb643c70dc3447cf0f21fa9145"
+      },
+      "after_assertions": {
+        "scopes.json": "f38e077f3a5b1fc2e9888c2046b59c1fc4932d84b0691517287f761c65738133",
+        "modes.json": "afe99005631fc884c95afb306decec0568e221fb643c70dc3447cf0f21fa9145"
+      },
+      "libexpat": {
+        "scopes.json": "e763a77bc588ad3df86c7c6fbe0fa860ba1e0ba88562e2c801fba0a05837e6e8",
+        "modes.json": "465435e835a9da820c19d29634cb47f3b80c7d8682e2aa51288a1587033936a9"
+      }
+    },
+    "fixture_utf8": {
+      "boundary": "<r xmlns='u' xmlns:p='outer'><plain a='1'><empty/><p:x p:a='a'/></plain><p:x xmlns:p='inner' xmlns:q='q'><q:b/></p:x><p:s/><d xmlns=''><t/></d><tail/></r>",
+      "identical-bindings": "<r xmlns:p='outer'><a xmlns:p='outer'><p:a/></a><b xmlns:p='other'><c xmlns:p='outer'><p:x/></c><p:y/></b><p:z/></r>",
+      "many": "<root xmlns:p0=\"u0\" xmlns:p1=\"u1\" xmlns:p2=\"u2\" xmlns:p3=\"u3\" xmlns:p4=\"u4\" xmlns:p5=\"u5\" xmlns:p6=\"u6\" xmlns:p7=\"u7\" xmlns:p8=\"u8\" xmlns:p9=\"u9\" xmlns:p10=\"u10\" xmlns:p11=\"u11\" xmlns:p12=\"u12\" xmlns:p13=\"u13\" xmlns:p14=\"u14\" xmlns:p15=\"u15\" xmlns:p16=\"u16\" xmlns:p17=\"u17\" xmlns:p18=\"u18\" xmlns:p19=\"u19\" xmlns:p20=\"u20\" xmlns:p21=\"u21\" xmlns:p22=\"u22\" xmlns:p23=\"u23\" xmlns:p24=\"u24\" xmlns:p25=\"u25\" xmlns:p26=\"u26\" xmlns:p27=\"u27\" xmlns:p28=\"u28\" xmlns:p29=\"u29\" xmlns:p30=\"u30\" xmlns:p31=\"u31\" xmlns:p32=\"u32\" xmlns:p33=\"u33\" xmlns:p34=\"u34\" xmlns:p35=\"u35\" xmlns:p36=\"u36\" xmlns:p37=\"u37\" xmlns:p38=\"u38\" xmlns:p39=\"u39\"><p35:a><s xmlns:p35=\"other\"><p35:b/></s><p35:z/></p35:a></root>",
+      "deep": "<r xmlns:p=\"one\"><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><a><z xmlns:p=\"two\"><p:c/></z><p:d/></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></r>",
+      "unicode": "<r xmlns:p='urn:é' p:å='v'><é xmlns:p='urn:à'><p:æ/></é><p:Ä/></r>",
+      "default-dtd": "<!DOCTYPE r [<!ATTLIST r xmlns:p CDATA 'outer'><!ATTLIST s xmlns:p CDATA 'inner'>]><r><p:a/><s><p:b/></s><p:c/></r>",
+      "duplicate": "<r xmlns:p='u'><s xmlns:q='u' p:x='1' q:x='2'/></r>",
+      "unbound": "<r xmlns:p='u'><s xmlns:q='v'><q:x/></s><q:y/></r>",
+      "reserved": "<r xmlns:p='u'><s xmlns:p='http://www.w3.org/XML/1998/namespace'/></r>",
+      "external": "<!DOCTYPE r [<!ENTITY ext SYSTEM 'e'>]><r xmlns:p='outer'><s xmlns:p='inner'>&ext;</s><p:tail/></r>",
+      "internal": "<!DOCTYPE r [<!ENTITY ext '<p:x xmlns:p=\"inside\"><p:y/></p:x>'>]><r xmlns:p='outer'>&ext;<p:z/></r>",
+      "suspend": "<r xmlns:p='old'><s xmlns:p='new'><p:x/></s><p:y/></r>",
+      "reset-error": "<r xmlns:p='old'><s xmlns:q='new'><z:fail/></s></r>",
+      "reset-open": "<r xmlns:p='old'><s xmlns:q='new'>"
+    },
+    "reproduce": "python compare_scopes.py --reference PATH/TO/libexpat.dll --dll PATH/TO/xpact.dll [--out traces.json]"
+  },
+  "csharp_c_api_suite": {
+    "runner": "tests/dotnet/XpactDllTests",
+    "cases_per_dll": 4308,
+    "passed_per_dll": 4308,
+    "exact_before_vs_after": 4308,
+    "exact_production_vs_assertions": 4308,
+    "vs_libexpat_differences": {
+      "events": 171,
+      "failed-call": 648,
+      "split-only": 2
+    },
+    "results_tsv_sha256": {
+      "baseline": "119d08cf2d1b46dfcfd23f0230e61bec05511e6606692e3f6c12a498cbb4b2a5",
+      "after_production": "119d08cf2d1b46dfcfd23f0230e61bec05511e6606692e3f6c12a498cbb4b2a5",
+      "after_assertions": "119d08cf2d1b46dfcfd23f0230e61bec05511e6606692e3f6c12a498cbb4b2a5",
+      "libexpat": "92f8270196eb82a7f91fca9e679cc9c217115c5eba2e9e61c00ca251bdfcd968"
+    }
+  },
+  "native_regression": {
+    "source": "tests/native/xpact_eiffel_dll_smoke.c",
+    "routine": "check_namespace_scope_lifecycle",
+    "run": "scripts/build_native_eiffel.ps1 (Production or Assertions). The focused lifecycle routine also ran against the reference DLL.",
+    "result": {
+      "baseline": "pass",
+      "after_production": "pass",
+      "after_assertions": "pass",
+      "libexpat": "pass"
+    }
+  },
+  "latin1_regression": {
+    "per_dll_per_api": 214,
+    "parse_apis": [
+      "XML_Parse",
+      "XML_GetBuffer/XML_ParseBuffer"
+    ],
+    "matches_between_parse_apis": 214,
+    "exact_before_after": 214,
+    "fields_with_differences_vs_libexpat": {
+      "failed_call": 1
+    }
+  },
+  "w3c_namespaces_1_0": {
+    "catalogue": "2013-09-23 W3C XML test suite, xmlconf/eduni/namespaces/1.0/rmt-ns10.xml",
+    "catalogue_sha256": "c853f87e10180879e95bd1f924e91c9abd3d277acb654259d4479094dcb4d54e",
+    "documents": 48,
+    "matrix": "XML_ParserCreateNS, triplets on/off, XML_Parse with whole input or 1- or 17-byte feeds, reparse deferral enabled. Compares to the libexpat DLL on the same XML bytes.",
+    "runs_per_dll": 288,
+    "exact_before_vs_after": 288,
+    "exact_production_vs_assertions": 288,
+    "acceptance_matches_vs_libexpat": 273,
+    "error_code_matches_vs_libexpat": 267,
+    "terminal_position_matches_vs_libexpat": 225,
+    "ordered_element_and_namespace_callbacks_including_positions_match_vs_libexpat": 267,
+    "exact_vs_libexpat": 219,
+    "existing_verdict_differences": "009, 010, 011, 012 and 036 accept duplicate expanded attributes when triplets are enabled (three feed sizes each).",
+    "existing_error_code_difference_with_matching_verdict": "042 is rejected by both parsers. xpact returns XML_ERROR_SYNTAX and libexpat XML_ERROR_INVALID_TOKEN with all six feed and triplet combinations.",
+    "combined_transcript_sha256": "45424512e4fba1d48ae4331dcaa3537b13f9c93e59ae97bc9a75bcbc88798135",
+    "reproduce": "python compare_scopes.py --ns10-catalog PATH/TO/rmt-ns10.xml --reference PATH/TO/libexpat.dll --dll PATH/TO/xpact.dll --out traces.json"
+  },
+  "upstream_libexpat_2_8_1": {
+    "runner": "scripts/run_libexpat_adapter.ps1 -Mode NativeSuite -SkipNativeBuild",
+    "production_checks": 399,
+    "passed": 361,
+    "expected_allocator_failures": 38,
+    "failed_test_names_identical_to_baseline": true
+  },
+  "chunked_crc": {
+    "runner": "scripts/run_chunked_crc_corpus.ps1 -SkipBuild",
+    "production_matches_vs_libexpat": 182,
+    "runs": 182,
+    "matrix": "Seven documents, 13 feed sizes, direct and buffer API. Compared status, error code, byte/line/column, semantic CRC and text bytes against the pinned libexpat 2.8.1 reference results."
+  },
+  "eiffel_regressions": {
+    "runner": "scripts/run_eiffel_test_matrix.ps1 -BuildMode Finalized",
+    "result": "Both assertion tiers passed the full suite including test_namespace_callback_ownership. The old implementation failed five name and prefix checks in that test.",
+    "namespace_state_probe": "A separate assertion-enabled build exposed undo counts and active bindings at 27 checkpoints. A declaration-free child kept the same count. After a nested rebind, the count went from two to five and back to two. The parent bindings were restored. Suspension kept the active binding. Terminal success, malformed input, early input cap and parser reset left zero undo records and the built-in xml binding.",
+    "resource_limits_of_probe": "The probe counted active bindings and undo records. EiffelStudio's hash table can retain the last replaced URI in found_item until another table update or terminal cleanup. The existing C-only nonresumable stop between parse calls can retain the current Eiffel state until reset or free."
+  }
+}

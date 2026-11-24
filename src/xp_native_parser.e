@@ -1254,6 +1254,9 @@ feature {NONE} -- Parsing implementation
 				end
 				handler.finish_successful_parse_callbacks
 				parser.clear_cached_doctype
+				if namespace_mode then
+					parser.reset_namespace_context
+				end
 				parsing_status := Xml_finished
 				finish_latin1_positions
 				input_buffer.wipe_out
@@ -1292,6 +1295,9 @@ feature {NONE} -- Parsing implementation
 			handler.prepare_callback_replay (0)
 			handler.finish_successful_parse_callbacks
 			parser.clear_cached_doctype
+			if namespace_mode then
+				parser.reset_namespace_context
+			end
 			clear_doctype_prefix_scan
 			clear_deferred_reparse
 			clear_plain_ascii_text_prefix
