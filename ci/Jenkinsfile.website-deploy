@@ -15,7 +15,7 @@ pipeline {
     )
     booleanParam(
       name: 'DEPLOY',
-      defaultValue: false,
+      defaultValue: true,
       description: 'Deploy after validation. Leave clear for a validation-only run.'
     )
   }
