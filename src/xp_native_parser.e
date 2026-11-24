@@ -238,8 +238,14 @@ feature -- Access
 	resume_utf16_little_endian: BOOLEAN
 			-- Byte order of that UTF-16 input.
 
+	resume_latin1: BOOLEAN
+			-- Does the current checkpoint read an ISO-8859-1 decoding?
+
+	last_input_latin1: BOOLEAN
+			-- Did the decoder actually select Latin-1 for the current input?
+
 	decoded_buffer: STRING_8
-			-- UTF-8 decoding of the first `decoded_raw_count' bytes of UTF-16 `input_buffer'.
+			-- UTF-8 decoding of the first `decoded_raw_count' bytes of `input_buffer'.
 
 	decoded_raw_count: INTEGER
 			-- Bytes of `input_buffer' decoded into `decoded_buffer'.
@@ -332,8 +338,22 @@ feature -- Access
 
 	current_column_number: INTEGER
 			-- Current 0-based XML column number.
+		local
+			l_index: INTEGER
 		do
-			Result := parser.current_column_number + plain_ascii_text_unparsed_count + plain_ascii_start_tag_unparsed_count
+			if has_final_latin1_position then
+				Result := final_latin1_column
+			else
+				Result := parser.current_column_number + plain_ascii_text_unparsed_count + plain_ascii_start_tag_unparsed_count
+				if attached latin1_positions as l_positions then
+					l_index := parser_byte_index
+					if l_index >= Result then
+							-- Latin-1 has one character per raw byte. The core column
+							-- measures normalized UTF-8 bytes from the start of this line.
+						Result := l_positions.raw_offset (l_index, True) - l_positions.raw_offset (l_index - Result, True)
+					end
+				end
+			end
 		ensure
 			column_non_negative: Result >= 0
 		end
@@ -341,15 +361,32 @@ feature -- Access
 	current_byte_index: INTEGER
 			-- Current 0-based byte index, or -1 before parsing starts.
 		do
-			Result := parser.current_byte_index + plain_ascii_text_unparsed_count + plain_ascii_start_tag_unparsed_count
+			if has_final_latin1_position then
+				Result := final_latin1_byte_index
+			else
+				Result := parser_byte_index
+				if Result >= 0 and then attached latin1_positions as l_positions then
+					Result := l_positions.raw_offset (Result, True)
+				end
+			end
 		ensure
 			valid_before_or_after_start: Result >= -1
 		end
 
 	current_byte_count: INTEGER
 			-- Current token byte count, or zero at parse end and errors.
+		local
+			l_index: INTEGER
 		do
-			Result := parser.current_byte_count
+			if not has_final_latin1_position then
+				Result := parser.current_byte_count
+				if Result > 0 and then attached latin1_positions as l_positions then
+					l_index := parser_byte_index
+					if l_index >= 0 then
+						Result := l_positions.raw_offset (l_index + Result, True) - l_positions.raw_offset (l_index, True)
+					end
+				end
+			end
 		ensure
 			byte_count_non_negative: Result >= 0
 		end
@@ -753,6 +790,7 @@ feature -- Element change
 	reset: BOOLEAN
 			-- Reset parser state and callbacks, preserving its native handle.
 		do
+			reset_latin1_positions
 			input_buffer.wipe_out
 			delivered_callback_count := 0
 			resume_ready := False
@@ -888,12 +926,14 @@ feature {NONE} -- Parsing implementation
 			if a_input.count > parser.max_input_bytes - input_buffer.count then
 				last_error_code := Xml_error_no_memory
 				parsing_status := Xml_finished
+				finish_latin1_positions
 				input_buffer.wipe_out
 				clear_terminal_replay_state
 				Result := Xml_status_error
 			elseif has_unsupported_explicit_encoding and then explicit_encoding_overrides_declaration and then not native_unknown_encoding_handler_available then
 				last_error_code := Xml_error_unknown_encoding
 				parsing_status := Xml_finished
+				finish_latin1_positions
 				clear_terminal_replay_state
 				Result := Xml_status_error
 			else
@@ -901,6 +941,7 @@ feature {NONE} -- Parsing implementation
 				if native_amplification_limit_breached (native_parser_handle, input_buffer.count, amplification_estimate) then
 					last_error_code := Xml_error_amplification_limit_breach
 					parsing_status := Xml_finished
+					finish_latin1_positions
 					input_buffer.wipe_out
 					clear_terminal_replay_state
 					Result := Xml_status_error
@@ -941,22 +982,29 @@ feature {NONE} -- Parsing implementation
 							-- Continue from the parser's checkpoint with only the bytes it has not
 							-- received; callback numbering stays that of a full replay.
 						l_resumed := True
+						if resume_latin1 then
+							append_latin1_bytes (input_buffer, decoded_raw_count + 1, decoded_buffer)
+							decoded_raw_count := input_buffer.count
+						end
 						l_input := resume_source
 							-- Decide and parse as the full replay does: without a character cut off
 							-- by the end of non-final input (UTF-16 decodes only complete characters).
-						if a_is_final or resume_utf16 then
+						if a_is_final or resume_utf16 or resume_latin1 then
 							l_complete_count := l_input.count
+							if has_pending_latin1_cr (l_input) then
+								l_complete_count := l_complete_count - 1
+							end
 						else
 							l_complete_count := complete_encoded_prefix_count (input_buffer)
 						end
-						if resume_utf16 then
+						if resume_utf16 or resume_latin1 then
 							l_defer_callbacks := should_defer_reparse_callbacks (decoded_buffer, a_is_final, a_input.count)
 						else
 							l_defer_callbacks := should_defer_reparse_callbacks_on_prefix (l_complete_count, a_is_final, a_input.count)
 						end
 						if l_defer_callbacks then
 							l_parse_end := (deferred_reparse_start_index - 1).max (0)
-							context_source_count := l_parse_end
+							context_source_count := raw_prefix_count (l_parse_end)
 						else
 							l_parse_end := l_complete_count
 							context_source_count := input_buffer.count
@@ -1028,10 +1076,13 @@ feature {NONE} -- Parsing implementation
 						end
 						if l_defer_callbacks and then deferred_reparse_start_index > 1 then
 							l_parse_input := l_input.substring (1, deferred_reparse_start_index - 1)
-							l_context_input := input_buffer.substring (1, deferred_reparse_start_index - 1)
+							l_context_input := input_buffer.substring (1, raw_prefix_count (deferred_reparse_start_index - 1))
 						elseif l_defer_callbacks then
 							create l_parse_input.make_empty
 							create l_context_input.make_empty
+						elseif has_pending_latin1_cr (l_input) then
+							l_parse_input := l_input.substring (1, l_input.count - 1)
+							l_context_input := input_buffer
 						else
 							l_parse_input := l_input
 							l_context_input := input_buffer
@@ -1149,16 +1200,20 @@ feature {NONE} -- Parsing implementation
 							if l_input = input_buffer and then has_stable_encoding (input_buffer) then
 								resume_ready := True
 								resume_utf16 := False
+								resume_latin1 := False
 								if not l_resumed then
 									resume_raw_count := l_parse_end
 								end
-							elseif l_resumed and then resume_utf16 then
+							elseif l_resumed then
 								resume_ready := True
-							elseif not l_resumed and then attached l_input as l_decoded and then is_resumable_utf16_input then
+							elseif attached l_input as l_decoded and then
+								((last_input_latin1 and then has_stable_encoding (input_buffer)) or else is_resumable_utf16_input)
+							then
 									-- Later calls decode only their new bytes and continue in this decoding.
 								resume_ready := True
-								resume_utf16 := True
-								resume_utf16_little_endian := has_utf16le_signature (input_buffer)
+								resume_latin1 := last_input_latin1
+								resume_utf16 := not resume_latin1
+								resume_utf16_little_endian := resume_utf16 and then has_utf16le_signature (input_buffer)
 								decoded_buffer := l_decoded
 								decoded_raw_count := complete_encoded_prefix_count (input_buffer)
 								resume_raw_count := l_parse_end
@@ -1167,9 +1222,13 @@ feature {NONE} -- Parsing implementation
 						if not l_defer_callbacks and then l_direct_callback_count = 0 and then attached l_input as l_consumed_input then
 							l_pending_start := pending_markup_start (l_consumed_input)
 							if l_pending_start = 0 then
-								native_consume_input_prefix (native_parser_handle, 0)
+								if has_pending_latin1_cr (l_consumed_input) then
+									native_consume_input_prefix (native_parser_handle, 1)
+								else
+									native_consume_input_prefix (native_parser_handle, 0)
+								end
 							else
-								native_consume_input_prefix (native_parser_handle, l_consumed_input.count - l_pending_start + 1)
+								native_consume_input_prefix (native_parser_handle, raw_prefix_count (l_consumed_input.count) - raw_prefix_count (l_pending_start - 1))
 							end
 							if l_pending_start = 1 and then not is_external_entity_parser and then not handler.diagnostic_events_enabled and then l_consumed_input.count = input_buffer.count then
 								l_plain_start_name_length := plain_unclosed_start_tag_name_length (l_consumed_input)
@@ -1181,6 +1240,7 @@ feature {NONE} -- Parsing implementation
 						end
 						if not is_external_entity_parser and then not handler.diagnostic_events_enabled and then
 							not handler.has_observable_native_callbacks and then attached l_input as l_complete_input and then
+							not has_pending_latin1_cr (l_complete_input) and then
 							l_complete_input.count > 0 and then
 							(is_plain_completed_start_tag (l_complete_input, 1, l_complete_input.count)
 								or else (not l_defer_callbacks and then has_one_byte_ascii_encoding and then parser.ends_in_plain_text_run))
@@ -1195,6 +1255,7 @@ feature {NONE} -- Parsing implementation
 				handler.finish_successful_parse_callbacks
 				parser.clear_cached_doctype
 				parsing_status := Xml_finished
+				finish_latin1_positions
 				input_buffer.wipe_out
 				resume_raw_count := 0
 				clear_decoded_buffer
@@ -1314,6 +1375,57 @@ feature -- Parsing
 		end
 
 feature {NONE} -- Encoding
+
+	latin1_positions: detachable XP_LATIN1_POSITIONS
+
+	has_final_latin1_position: BOOLEAN
+	final_latin1_column, final_latin1_byte_index: INTEGER
+			-- Scalars retained after the input and its sparse offset index are released.
+
+	parser_byte_index: INTEGER
+			-- Offset in the core's normalized UTF-8 input.
+		do
+			Result := parser.current_byte_index + plain_ascii_text_unparsed_count + plain_ascii_start_tag_unparsed_count
+		end
+
+	enable_latin1_positions
+		do
+			if latin1_positions = Void then
+				create latin1_positions.make (input_buffer)
+				has_final_latin1_position := False
+				parser.set_reports_source_token_spans (True)
+			end
+		end
+
+	latin1_raw_offset (a_decoded_offset: INTEGER): INTEGER
+			-- Raw offset before the core's CRLF normalization, for native input windows.
+		require
+			nonnegative: a_decoded_offset >= 0
+			latin1_input: latin1_positions /= Void
+		do
+			check attached latin1_positions as l_positions then
+				Result := l_positions.raw_offset (a_decoded_offset, False)
+			end
+		end
+
+	finish_latin1_positions
+		do
+			if latin1_positions /= Void then
+				final_latin1_column := current_column_number
+				final_latin1_byte_index := current_byte_index
+				has_final_latin1_position := True
+				latin1_positions := Void
+				parser.clear_prefix_checkpoint
+				parser.set_reports_source_token_spans (False)
+			end
+		end
+
+	reset_latin1_positions
+		do
+			latin1_positions := Void
+			has_final_latin1_position := False
+			parser.set_reports_source_token_spans (False)
+		end
 
 	clear_doctype_prefix_scan
 			-- Forget the append-only initial DOCTYPE scan on reset or completion.
@@ -1549,8 +1661,8 @@ feature {NONE} -- Encoding
 							ready_plain_start_tag_end_index := deferred_reparse_end_index
 							clear_deferred_reparse
 						else
-							l_token_length := deferred_reparse_end_index - deferred_reparse_start_index + 1
-							l_bytes_after_token := a_input.count - deferred_reparse_end_index
+							l_token_length := raw_prefix_count (deferred_reparse_end_index) - raw_prefix_count (deferred_reparse_start_index - 1)
+							l_bytes_after_token := raw_prefix_count (a_input.count) - raw_prefix_count (deferred_reparse_end_index)
 							if l_bytes_after_token < l_token_length and then not (a_recent_count > 0 and then native_buffer_spare_capacity (native_parser_handle) < a_recent_count) then
 								Result := True
 							else
@@ -1596,9 +1708,9 @@ feature {NONE} -- Encoding
 		end
 
 	resume_source: STRING_8
-			-- The input a resumed parse reads: `input_buffer', or its decoding for UTF-16.
+			-- The input a resumed parse reads: `input_buffer', or its UTF-8 decoding.
 		do
-			if resume_utf16 then
+			if resume_utf16 or resume_latin1 then
 				Result := decoded_buffer
 			else
 				Result := input_buffer
@@ -1676,9 +1788,11 @@ feature {NONE} -- Encoding
 		end
 
 	clear_decoded_buffer
-			-- Forget the UTF-16 decoding used by resumed parses.
+			-- Release the decoding used by resumed parses.
 		do
 			resume_utf16 := False
+			resume_latin1 := False
+			last_input_latin1 := False
 			create decoded_buffer.make_empty
 			decoded_raw_count := 0
 		end
@@ -1893,6 +2007,7 @@ feature {NONE} -- Encoding
 				ready_plain_start_tag_start_index > 0
 				and then ready_plain_start_tag_end_index >= ready_plain_start_tag_start_index
 				and then not namespace_mode
+				and then latin1_positions = Void
 				and then not is_external_entity_parser
 				and then not parser.has_document_type
 				and then not use_foreign_dtd
@@ -2233,6 +2348,7 @@ feature {NONE} -- Encoding
 			l_known: BOOLEAN
 		do
 			last_input_byte_order_mark_removed := False
+			last_input_latin1 := False
 			l_source := a_input
 			if not final_buffer then
 				l_complete_count := complete_encoded_prefix_count (a_input)
@@ -2274,6 +2390,9 @@ feature {NONE} -- Encoding
 				else
 					Result := same_or_copied_input (l_source)
 				end
+			end
+			if not last_input_latin1 then
+				reset_latin1_positions
 			end
 		end
 
@@ -2525,22 +2644,48 @@ feature {NONE} -- Encoding
 			-- Decode ISO-8859-1 bytes to UTF-8.
 		require
 			input_attached: a_input /= Void
+		do
+			last_input_latin1 := True
+			enable_latin1_positions
+			create Result.make (a_input.count)
+			append_latin1_bytes (a_input, 1, Result)
+		end
+
+	append_latin1_bytes (a_input: READABLE_STRING_8; a_start: INTEGER; a_target: STRING_8)
+			-- Append the UTF-8 encoding of the raw bytes from `a_start' onward.
+		require
+			valid_start: a_start >= 1 and a_start <= a_input.count + 1
 		local
 			i: INTEGER
 		do
-			create Result.make (a_input.count)
 			from
-				i := 1
+				i := a_start
 			invariant
 				index_in_bounds: i >= 1 and i <= a_input.count + 1
 			until
 				i > a_input.count
 			loop
-				append_utf8_codepoint (Result, a_input.item (i).code)
+				append_utf8_codepoint (a_target, a_input.item (i).code)
 				i := i + 1
 			variant
 				a_input.count - i + 1
 			end
+		end
+
+	raw_prefix_count (a_count: INTEGER): INTEGER
+			-- Raw boundary for a Latin-1 prefix, before the parser normalizes newlines.
+		do
+			if last_input_latin1 then
+				Result := latin1_raw_offset (a_count)
+			else
+				Result := a_count
+			end
+		end
+
+	has_pending_latin1_cr (a_input: STRING_8): BOOLEAN
+			-- A non-final CR needs its next byte before its callback can report a raw width of one or two.
+		do
+			Result := last_input_latin1 and then not final_buffer and then not a_input.is_empty and then a_input.item (a_input.count) = '%R'
 		end
 
 	decoded_ascii_input (a_input: READABLE_STRING_8): detachable STRING_8

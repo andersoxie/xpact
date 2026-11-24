@@ -1,0 +1,32 @@
+--- a/src/xp_native_parser.e
++++ b/src/xp_native_parser.e
+@@ -1020,6 +1020,7 @@
+ 							l_ok := True
+ 						else
+ 							handler.prepare_callback_resume (parser.resume_sequence_count, delivered_callback_count)
++							io.error.put_string ("PROFILE continuation " + (l_parse_end - resume_raw_count).out + "%N")
+ 							l_ok := parser.continue_prefix (resume_source.substring (resume_raw_count + 1, l_parse_end), a_is_final)
+ 							if l_ok then
+ 								resume_raw_count := l_parse_end
+@@ -1144,10 +1145,13 @@
+ 								end
+ 							else
+ 								if l_use_cached_doctype then
++									io.error.put_string ("PROFILE cached-doctype " + (l_parse_input.count).out + "%N")
+ 									l_ok := parser.parse_with_cached_doctype (l_parse_input, a_is_final)
+ 								elseif a_is_final or l_invalid_plain_start_suffix then
++									io.error.put_string ("PROFILE full-document " + (l_parse_input.count).out + "%N")
+ 									l_ok := parser.parse (l_parse_input)
+ 								else
++									io.error.put_string ("PROFILE full-prefix " + (l_parse_input.count).out + "%N")
+ 									l_ok := parser.parse_prefix (l_parse_input)
+ 								end
+ 								if
+@@ -2658,6 +2662,7 @@
+ 		local
+ 			i: INTEGER
+ 		do
++			io.error.put_string ("PROFILE latin1-decode " + (a_input.count - a_start + 1).out + "%N")
+ 			from
+ 				i := a_start
+ 			invariant

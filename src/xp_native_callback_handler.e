@@ -183,6 +183,9 @@ feature -- Access
 	delivered_character_data_lengths: HASH_TABLE [INTEGER, INTEGER]
 			-- Delivered character-data byte counts keyed by replay callback index.
 
+	delivered_source_ends: detachable HASH_TABLE [INTEGER, INTEGER]
+			-- Exclusive source offsets for delivered text/default events when raw spans are requested.
+
 	delivered_default_lengths: HASH_TABLE [INTEGER, INTEGER]
 			-- Delivered raw default-data byte counts keyed by replay callback index.
 
@@ -809,6 +812,7 @@ feature -- Events
 			prepare_callback_replay (0)
 			last_suspending_callback_index := 0
 			delivered_character_data_lengths.wipe_out
+			delivered_source_ends := Void
 			delivered_default_lengths.wipe_out
 			clear_external_entity_replay
 		ensure
@@ -864,6 +868,7 @@ feature -- Events
 			callbacks_to_suppress := 0
 			last_suspending_callback_index := 0
 			delivered_character_data_lengths.wipe_out
+			delivered_source_ends := Void
 			delivered_default_lengths.wipe_out
 			clear_external_entity_replay
 		ensure
@@ -985,6 +990,7 @@ feature -- Events
 							create l_text.make (l_suffix)
 							remember_default_text (l_suffix)
 							set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
+							prepare_source_span (l_already_delivered > 0)
 							call_character_data_callback (character_data_callback, user_data, l_text.item, l_suffix.count)
 							set_native_active_callback_kind (native_parser_handle, Native_callback_none)
 							record_delivered_character_data_length (callback_sequence_count, a_text.count)
@@ -997,6 +1003,7 @@ feature -- Events
 						l_text := callback_string (0, a_text, l_reuse)
 						remember_default_text (a_text)
 						set_native_active_callback_kind (native_parser_handle, Native_callback_character_data)
+						prepare_source_span (False)
 						call_character_data_callback (character_data_callback, user_data, l_text.item, a_text.count)
 						callback_strings_busy := not l_reuse
 						set_native_active_callback_kind (native_parser_handle, Native_callback_none)
@@ -1431,6 +1438,7 @@ feature -- Events
 						l_pending := a_text
 					end
 					create l_text.make (l_pending)
+					prepare_source_span (l_already_delivered > 0)
 					default_callback_active := True
 					call_default_callback (default_callback, user_data, l_text.item, l_pending.count)
 					default_callback_active := False
@@ -1654,6 +1662,25 @@ feature {NONE} -- Native callback calls
 			delivered_character_data_lengths.force (a_count, a_callback_index)
 		ensure
 			recorded: delivered_character_data_length (a_callback_index) = a_count
+		end
+
+	prepare_source_span (a_replayed: BOOLEAN)
+			-- A repeated event only sends its new suffix; its previous output length
+			-- may differ from the source length (references, UTF-8 conversion, CRLF).
+		local
+			l_ends: like delivered_source_ends
+		do
+			if attached external_entity_replay_target as p and then p.reports_source_token_spans then
+				l_ends := delivered_source_ends
+				if l_ends = Void then
+					create l_ends.make (16)
+					delivered_source_ends := l_ends
+				end
+				if a_replayed and then l_ends.has (callback_sequence_count) then
+					p.position_for_replayed_suffix (l_ends.item (callback_sequence_count))
+				end
+				l_ends.force (p.current_byte_index + p.current_byte_count, callback_sequence_count)
+			end
 		end
 
 	remember_default_text (a_text: READABLE_STRING_8)
