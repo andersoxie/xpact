@@ -6,7 +6,14 @@ using Microsoft.Extensions.Options;
 using Xpact.Api;
 using Xpact.Api.Workers;
 
-var builder = WebApplication.CreateBuilder(args);
+// The published layout (scripts/publish.ps1) keeps wwwroot and appsettings.json next to Xpact.Api.exe. The default
+// content root is the current folder, so the exe started from elsewhere (e.g. the repository root) answered
+// /api/health but gave 404 for the site. Use the exe's folder when it holds the built site; otherwise keep the
+// default (dotnet run, tests).
+var exeDir = AppContext.BaseDirectory;
+var builder = WebApplication.CreateBuilder(File.Exists(Path.Combine(exeDir, "wwwroot", "index.html"))
+    ? new WebApplicationOptions { Args = args, ContentRootPath = exeDir }
+    : new WebApplicationOptions { Args = args });
 
 builder.Services.Configure<XpactOptions>(builder.Configuration.GetSection(XpactOptions.Section));
 var xpact = builder.Configuration.GetSection(XpactOptions.Section).Get<XpactOptions>() ?? new XpactOptions();
