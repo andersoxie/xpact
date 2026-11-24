@@ -14,7 +14,14 @@ $Website = Split-Path -Parent $PSScriptRoot
 if (-not $Output) { $Output = Join-Path $Website "dist" }
 # One resolved, literal path for every check and for the delete below: -Path would expand wildcards, so an
 # empty "build[1]" could pass the guard and Remove-Item could then match and wipe a sibling "build1".
-$Output = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Output)
+# Only the FileSystem provider: the one-argument overload drops the provider, so "Env:Path" became a local
+# folder named "Path". Refuse any other provider before anything is built or deleted.
+$Provider = $null; $Drive = $null
+$Resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Output, [ref] $Provider, [ref] $Drive)
+if ($Provider.Name -ne "FileSystem") {
+	throw "-Output must be a file system folder, not a $($Provider.Name) path: $Output"
+}
+$Output = $Resolved
 $Frontend = Join-Path $Website "frontend"
 $Api = Join-Path $Website "backend\src\Xpact.Api\Xpact.Api.csproj"
 
