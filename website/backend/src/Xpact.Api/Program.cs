@@ -6,7 +6,13 @@ using Microsoft.Extensions.Options;
 using Xpact.Api;
 using Xpact.Api.Workers;
 
-var builder = WebApplication.CreateBuilder(args);
+// #455: the exe's folder is the content root only when it holds the built site AND the operator did not set one
+// (--contentRoot, DOTNET_CONTENTROOT, ASPNETCORE_CONTENTROOT); see ContentRoot.
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = ContentRoot.Fallback(args, AppContext.BaseDirectory),
+});
 
 builder.Services.Configure<XpactOptions>(builder.Configuration.GetSection(XpactOptions.Section));
 var xpact = builder.Configuration.GetSection(XpactOptions.Section).Get<XpactOptions>() ?? new XpactOptions();
