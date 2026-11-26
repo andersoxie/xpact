@@ -12,6 +12,16 @@ $ErrorActionPreference = "Stop"
 
 $Website = Split-Path -Parent $PSScriptRoot
 if (-not $Output) { $Output = Join-Path $Website "dist" }
+# One resolved, literal path for every check and for the delete below: -Path would expand wildcards, so an
+# empty "build[1]" could pass the guard and Remove-Item could then match and wipe a sibling "build1".
+# Only the FileSystem provider: the one-argument overload drops the provider, so "Env:Path" became a local
+# folder named "Path". Refuse any other provider before anything is built or deleted.
+$Provider = $null; $Drive = $null
+$Resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Output, [ref] $Provider, [ref] $Drive)
+if ($Provider.Name -ne "FileSystem") {
+	throw "-Output must be a file system folder, not a $($Provider.Name) path: $Output"
+}
+$Output = $Resolved
 $Frontend = Join-Path $Website "frontend"
 $Api = Join-Path $Website "backend\src\Xpact.Api\Xpact.Api.csproj"
 
@@ -31,12 +41,12 @@ try {
 Write-Host "== API and worker"
 # Only ever delete an earlier publish: a folder that is empty or holds Xpact.Api.exe. A mistyped
 # -Output (for example a home or project folder) stops here instead of being wiped.
-if (Test-Path $Output) {
+if (Test-Path -LiteralPath $Output) {
 	$Old = @(Get-ChildItem -LiteralPath $Output -Force)
-	if ($Old.Count -and -not (Test-Path (Join-Path $Output "Xpact.Api.exe"))) {
+	if ($Old.Count -and -not (Test-Path -LiteralPath (Join-Path $Output "Xpact.Api.exe"))) {
 		throw "$Output is not empty and is not an earlier publish (no Xpact.Api.exe): not deleting it. Pick an empty or new folder."
 	}
-	Remove-Item -Recurse -Force $Output
+	Remove-Item -LiteralPath $Output -Recurse -Force
 }
 dotnet publish $Api -c Release -o $Output --nologo
 if ($LASTEXITCODE) { throw "dotnet publish failed" }
