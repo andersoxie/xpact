@@ -1,4 +1,4 @@
-# Builds the XPact website as a Windows container and publishes it to
+﻿# Builds the XPact website as a Windows container and publishes it to
 # ghcr.io/andersoxie/xpact-website (issue #233).
 #
 # The parser DLLs need EiffelStudio + MSVC, which GitHub runners do not have, so the image is
@@ -22,7 +22,7 @@ permissions:
   packages: write
 
 env:
-  WEBSITE_RELEASE: website-2026-11-14-3
+  WEBSITE_RELEASE: website-2026-11-26-1
   IMAGE: ghcr.io/andersoxie/xpact-website
 
 jobs:
