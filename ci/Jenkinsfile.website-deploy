@@ -10,7 +10,7 @@ pipeline {
   parameters {
     string(
       name: 'IMAGE_TAG',
-      defaultValue: 'website-2026-11-14-3',
+      defaultValue: 'website-2026-11-26-1',
       description: 'Immutable ghcr.io/andersoxie/xpact-website tag to deploy'
     )
     booleanParam(
