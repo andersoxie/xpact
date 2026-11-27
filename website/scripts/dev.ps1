@@ -17,6 +17,7 @@ if (-not (Test-Path (Join-Path $Website "backend\native\xpact.dll"))) {
 
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "dotnet run --project '$Api' --launch-profile Xpact.Api"
 
+. (Join-Path $PSScriptRoot "version-env.ps1")
 Push-Location (Join-Path $Website "frontend")
 try {
 	if (-not (Test-Path node_modules)) { npm install }
