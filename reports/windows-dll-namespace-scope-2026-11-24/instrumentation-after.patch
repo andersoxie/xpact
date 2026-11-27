@@ -1,0 +1,18 @@
+--- a/src/xp_parser.e
++++ b/src/xp_parser.e
+@@ -6798,6 +6798,7 @@
+ 					l_prefix := namespace_declaration_prefix (l_name)
+ 					validate_namespace_declaration (l_prefix, l_value)
+ 					if not has_error then
++						io.error.put_string ("NSCOPE declare 1%N")
+ 						namespace_declarations.extend ([a_depth, l_prefix, namespace_bindings.item (l_prefix)])
+ 						namespace_bindings.force (l_value.twin, l_prefix)
+ 					end
+@@ -7012,6 +7013,7 @@
+ 				else
+ 					namespace_bindings.remove (l_prefix)
+ 				end
++				io.error.put_string ("NSCOPE restore 1%N")
+ 				namespace_declarations.remove_i_th (namespace_declarations.count)
+ 			variant
+ 				namespace_declarations.count - a_count

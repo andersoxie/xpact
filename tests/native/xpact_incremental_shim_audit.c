@@ -343,6 +343,288 @@ test_suspend_resume_replay(void) {
 	return observed;
 }
 
+struct latin1_state {
+	XML_Parser parser;
+	int body_index;
+	int body_line;
+	int starts;
+	int ends;
+	size_t text_length;
+	int suspended;
+	int failed;
+};
+
+static void
+check_latin1_position(struct latin1_state *state, const char *token, int index, int count, int line, int column) {
+	XML_Index actual_index = XML_GetCurrentByteIndex(state->parser);
+	int actual_count = XML_GetCurrentByteCount(state->parser);
+	XML_Size actual_line = XML_GetCurrentLineNumber(state->parser);
+	XML_Size actual_column = XML_GetCurrentColumnNumber(state->parser);
+	index += state->body_index;
+	line += state->body_line;
+	if (actual_index != index || actual_count != count || actual_line != (XML_Size)line || actual_column != (XML_Size)column) {
+		fprintf(stderr, "Latin-1 %s: byte %lld+%d at %llu:%llu, expected %d+%d at %d:%d\n",
+			token, (long long)actual_index, actual_count, (unsigned long long)actual_line,
+			(unsigned long long)actual_column, index, count, line, column);
+		state->failed = 1;
+	}
+}
+
+static void XMLCALL
+latin1_start(void *user_data, const XML_Char *name, const XML_Char **atts) {
+	struct latin1_state *state = (struct latin1_state *)user_data;
+	state->starts++;
+	if (state->starts == 1 && strcmp(name, "r") == 0) {
+		check_latin1_position(state, "<r>", 0, 3, 0, 0);
+	} else if (state->starts == 2 && strcmp(name, "n") == 0 && atts != NULL &&
+		atts[0] != NULL && strcmp(atts[0], "q") == 0 && atts[1] != NULL &&
+		strcmp(atts[1], "\xc3\xa4") == 0 && atts[2] == NULL) {
+		check_latin1_position(state, "<n q=...>", 6, 9, 1, 0);
+		if (XML_StopParser(state->parser, XML_TRUE) != XML_STATUS_OK) {
+			state->failed = 1;
+		}
+	} else {
+		state->failed = 1;
+	}
+}
+
+static void XMLCALL
+latin1_end(void *user_data, const XML_Char *name) {
+	struct latin1_state *state = (struct latin1_state *)user_data;
+	state->ends++;
+	if (state->ends == 1 && strcmp(name, "n") == 0) {
+		check_latin1_position(state, "</n>", 16, 4, 1, 10);
+	} else if (state->ends == 2 && strcmp(name, "r") == 0) {
+		check_latin1_position(state, "</r>", 20, 4, 1, 14);
+	} else {
+		state->failed = 1;
+	}
+}
+
+static void XMLCALL
+latin1_text(void *user_data, const XML_Char *s, int length) {
+	static const char expected[] = "\xc3\xa9\n\xc3\xb6";
+	struct latin1_state *state = (struct latin1_state *)user_data;
+	if ((size_t)length > sizeof(expected) - 1 - state->text_length ||
+		memcmp(s, expected + state->text_length, (size_t)length) != 0) {
+		state->failed = 1;
+		return;
+	}
+	state->text_length += (size_t)length;
+	if (state->starts == 2 && state->ends == 0 && length > 0) {
+		int offset = 0;
+		int size = 0;
+		const char *context = XML_GetInputContext(state->parser, &offset, &size);
+		check_latin1_position(state, "child text", 15, 1, 1, 9);
+		if (context == NULL || offset < 0 || offset >= size || (unsigned char)context[offset] != 0xf6) {
+			fprintf(stderr, "Latin-1 child text: input context does not point to raw 0xf6\n");
+			state->failed = 1;
+		}
+	}
+}
+
+static enum XML_Status
+feed_latin1(XML_Parser parser, const char *chunk, int final, int buffered) {
+	int length = (int)strlen(chunk);
+	if (buffered) {
+		void *buffer = XML_GetBuffer(parser, length == 0 ? 1 : length);
+		if (buffer == NULL) return XML_STATUS_ERROR;
+		memcpy(buffer, chunk, (size_t)length);
+		return XML_ParseBuffer(parser, length, final);
+	}
+	return XML_Parse(parser, chunk, length, final);
+}
+
+static int
+parse_latin1_document(XML_Parser parser, int declared, int buffered) {
+	static const char *const chunks[] = {"<r>", "\xe9", "\r", "\n", "<n q='\xe4'>", "\xf6", "</n>", "</r>", ""};
+	static const char declaration_start[] = "<?xml version='1.0' enco";
+	static const char declaration_end[] = "ding='ISO-8859-1'?>\n";
+	struct latin1_state state = {0};
+	size_t i;
+	state.parser = parser;
+	state.body_line = declared ? 2 : 1;
+	XML_SetUserData(parser, &state);
+	XML_SetElementHandler(parser, latin1_start, latin1_end);
+	XML_SetCharacterDataHandler(parser, latin1_text);
+	if (!XML_SetReparseDeferralEnabled(parser, declared ? XML_TRUE : XML_FALSE)) return 0;
+	if (declared) {
+		state.body_index = (int)(sizeof(declaration_start) + sizeof(declaration_end) - 2);
+		if (feed_latin1(parser, declaration_start, XML_FALSE, buffered) != XML_STATUS_OK ||
+			feed_latin1(parser, declaration_end, XML_FALSE, buffered) != XML_STATUS_OK) return 0;
+	}
+	for (i = 0; i < sizeof(chunks) / sizeof(chunks[0]); i++) {
+		enum XML_Status status = feed_latin1(parser, chunks[i], chunks[i][0] == '\0', buffered);
+		if (status == XML_STATUS_SUSPENDED) {
+			state.suspended++;
+			status = XML_ResumeParser(parser);
+		}
+		if (status != XML_STATUS_OK) return 0;
+	}
+	return !state.failed && state.starts == 2 && state.ends == 2 && state.suspended == 1 && state.text_length == 5;
+}
+
+static void
+test_latin1_lifecycle(void) {
+	XML_Parser parser = XML_ParserCreate("ISO-8859-1");
+	struct latin1_state error_state = {0};
+	int observed = parser != NULL && parse_latin1_document(parser, 0, 0);
+	report_case("latin1_explicit_chunked", "passes", observed, "raw token positions, split CRLF, suspend/resume and empty final");
+	if (parser == NULL) return;
+
+	error_state.parser = parser;
+	error_state.body_line = 1;
+	observed = XML_ParserReset(parser, NULL) &&
+		XML_SetEncoding(parser, "ISO-8859-1") == XML_STATUS_OK &&
+		feed_latin1(parser, "<r>\xe9", XML_FALSE, 0) == XML_STATUS_OK &&
+		feed_latin1(parser, "</x>", XML_TRUE, 0) == XML_STATUS_ERROR &&
+		XML_GetErrorCode(parser) == XML_ERROR_TAG_MISMATCH;
+	if (observed) check_latin1_position(&error_state, "mismatched name", 6, 0, 0, 6);
+	report_case("latin1_mismatch_after_reset", "passes", observed && !error_state.failed, "error byte index and column after high byte");
+
+	/* A reset without an encoding must discard the previous Latin-1 decoder. */
+	observed = XML_ParserReset(parser, NULL) &&
+		feed_latin1(parser, "<r>\xe9</r>", XML_TRUE, 1) == XML_STATUS_ERROR &&
+		XML_GetErrorCode(parser) == XML_ERROR_INVALID_TOKEN &&
+		XML_ParserReset(parser, NULL) && parse_latin1_document(parser, 1, 1);
+	report_case("latin1_declared_parse_buffer_after_failure", "passes", observed, "split declaration and fresh positions after reset");
+	XML_ParserFree(parser);
+}
+
+struct latin1_markup_state {
+	struct latin1_state position;
+	size_t next_text;
+	int cdata_boundaries;
+};
+
+static void XMLCALL
+latin1_markup_text(void *user_data, const char *s, int length) {
+	/* Allow adjacent characters to share a callback. References occupy their
+	   entire original spelling even though the callback gets one character. */
+	static const struct {
+		const char *utf8;
+		int raw_index;
+		int raw_count;
+	} pieces[] = {
+		{"\xc3\xa9", 3, 1}, {"\xc3\xa4", 4, 1}, {"&", 5, 5}, {"\xc3\xb6", 10, 6},
+		{"\xc3\xa9", 25, 1}, {"\xc3\xa4", 26, 1}, {"\n", 30, 2}
+	};
+	struct latin1_markup_state *state = (struct latin1_markup_state *)user_data;
+	size_t first = state->next_text;
+	int used = 0;
+	if (length == 0) return;
+	while (used < length && state->next_text < sizeof(pieces) / sizeof(pieces[0])) {
+		const char *expected = pieces[state->next_text].utf8;
+		int size = (int)strlen(expected);
+		if (size > length - used || memcmp(s + used, expected, (size_t)size) != 0) break;
+		used += size;
+		state->next_text++;
+	}
+	if (used == length && state->next_text > first) {
+		size_t last = state->next_text - 1;
+		int index = pieces[first].raw_index;
+		check_latin1_position(&state->position, "text span", index,
+			pieces[last].raw_index + pieces[last].raw_count - index, 0, index);
+	} else {
+		state->position.failed = 1;
+	}
+}
+
+static void XMLCALL
+latin1_cdata_start(void *user_data) {
+	struct latin1_markup_state *state = (struct latin1_markup_state *)user_data;
+	if (state->next_text != 4 || state->cdata_boundaries != 0) state->position.failed = 1;
+	state->cdata_boundaries++;
+	check_latin1_position(&state->position, "<![CDATA[", 16, 9, 0, 16);
+}
+
+static void XMLCALL
+latin1_cdata_end(void *user_data) {
+	struct latin1_markup_state *state = (struct latin1_markup_state *)user_data;
+	if (state->next_text != 6 || state->cdata_boundaries != 1) state->position.failed = 1;
+	state->cdata_boundaries++;
+	check_latin1_position(&state->position, "]]>", 27, 3, 0, 27);
+}
+
+static void
+test_latin1_reference_and_cdata_spans(void) {
+	static const char *const chunks[] = {
+		"<r>\xe9", "\xe4", "&amp;", "&#xF6;", "<![CDATA[", "\xe9", "\xe4]]>", "\r", "", "\n", "</r>"
+	};
+	struct latin1_markup_state state = {0};
+	XML_Parser parser = XML_ParserCreate("ISO-8859-1");
+	int observed = 0;
+	if (parser != NULL) {
+		size_t i;
+		state.position.parser = parser;
+		state.position.body_line = 1;
+		XML_SetUserData(parser, &state);
+		XML_SetCharacterDataHandler(parser, latin1_markup_text);
+		XML_SetCdataSectionHandler(parser, latin1_cdata_start, latin1_cdata_end);
+		observed = XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+		for (i = 0; observed && i < sizeof(chunks) / sizeof(chunks[0]); i++) {
+			observed = feed_latin1(parser, chunks[i], i == sizeof(chunks) / sizeof(chunks[0]) - 1, 0) == XML_STATUS_OK;
+		}
+		observed = observed && !state.position.failed && state.next_text == 7 && state.cdata_boundaries == 2;
+		XML_ParserFree(parser);
+	}
+	report_case("latin1_reference_and_cdata_spans", "passes", observed, "raw reference spelling, CDATA delimiters and split text");
+}
+
+static const char latin1_default_document[] = "<r q='\xe9'>\xe4\xf6<z/></r>";
+
+struct latin1_default_state {
+	struct latin1_state position;
+	int raw_index;
+};
+
+static void XMLCALL
+latin1_default(void *user_data, const XML_Char *s, int length) {
+	static const char utf8[] = "<r q='\xc3\xa9'>\xc3\xa4\xc3\xb6<z/></r>";
+	struct latin1_default_state *state = (struct latin1_default_state *)user_data;
+	int offset = 0, size = 0, count = 0, i;
+	const char *context = XML_GetInputContext(state->position.parser, &offset, &size);
+	if ((size_t)length > sizeof(utf8) - 1 - state->position.text_length ||
+		memcmp(s, utf8 + state->position.text_length, (size_t)length) != 0) {
+		state->position.failed = 1;
+		return;
+	}
+	state->position.text_length += (size_t)length;
+	/* Each code point in this UTF-8 payload came from one source byte. */
+	for (i = 0; i < length; i++) {
+		if (((unsigned char)s[i] & 0xc0) != 0x80) count++;
+	}
+	check_latin1_position(&state->position, "default handler", state->raw_index, count, 0, state->raw_index);
+	if (context == NULL || offset < 0 || offset > size || count > size - offset ||
+		memcmp(context + offset, latin1_default_document + state->raw_index, (size_t)count) != 0) {
+		fprintf(stderr, "Latin-1 default handler: raw context differs at byte %d\n", state->raw_index);
+		state->position.failed = 1;
+	}
+	state->raw_index += count;
+}
+
+static void
+test_latin1_default_spans(void) {
+	struct latin1_default_state state = {0};
+	XML_Parser parser = XML_ParserCreate("ISO-8859-1");
+	int observed = 0;
+	if (parser != NULL) {
+		size_t i;
+		state.position.parser = parser;
+		state.position.body_line = 1;
+		XML_SetUserData(parser, &state);
+		XML_SetDefaultHandler(parser, latin1_default);
+		observed = XML_SetReparseDeferralEnabled(parser, XML_FALSE);
+		for (i = 0; observed && i < sizeof(latin1_default_document) - 1; i++) {
+			observed = XML_Parse(parser, latin1_default_document + i, 1, XML_FALSE) == XML_STATUS_OK;
+		}
+		observed = observed && XML_Parse(parser, "", 0, XML_TRUE) == XML_STATUS_OK &&
+			!state.position.failed && state.raw_index == (int)sizeof(latin1_default_document) - 1;
+		XML_ParserFree(parser);
+	}
+	report_case("latin1_default_spans", "passes", observed, "default callbacks and input context over one-byte chunks");
+}
+
 int
 main(void) {
 	printf("case\tclassification\tresult\tdetail\n");
@@ -352,5 +634,8 @@ main(void) {
 	(void)test_attributed_start_without_deferral();
 	(void)test_bounded_context_window();
 	(void)test_suspend_resume_replay();
+	test_latin1_lifecycle();
+	test_latin1_reference_and_cdata_spans();
+	test_latin1_default_spans();
 	return g_failed ? 1 : 0;
 }

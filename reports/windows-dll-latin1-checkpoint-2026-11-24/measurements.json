@@ -1,0 +1,774 @@
+{
+  "date_local": "2026-11-24",
+  "host": {
+    "cpu": "AMD Ryzen Threadripper 3970X 32-Core Processor",
+    "windows_build": 26300,
+    "arch": "x64"
+  },
+  "builds": {
+    "baseline_git": "c431fb274303251742840b1dd29255c554edb901",
+    "candidate": "Working-tree changes to the baseline, identified by source and DLL hashes.",
+    "compiler": "EiffelStudio 25.02.9.8723 Enterprise, MSVC 19.44.35230.0 x64",
+    "libexpat_revision": "7ed8230aca0f106a324c807e15bc9e098d89952d",
+    "libexpat_version": "2.8.1",
+    "dll_sha256": {
+      "before": "211a841c834740b775680a5cb4dc05bfe2fc198561b4addc49fa052819ba41ec",
+      "before_assertions": "2d7ee2cec2b5ecbc2d9ddf7e7f68d528871bf139c2e72d3de598344337bfc001",
+      "after": "32895b48ba3107723c2b1c0e29696e9a75454489216de65468b05b421b0f8d02",
+      "after_assertions": "d79b1f9d50e301853cd4706ca9e9a9a82be1312947a547128eedf1f17485e2a7",
+      "expat": "c10b956b9e80a8c62ae89fcf6984e5cf1f1f4eea0bee632fe1b8655f7fec0d21"
+    },
+    "fair_speed_sha256": "411659c3b109c01745f81a5c655af76b745fe6842d6c3c3f80790342241a6aa9",
+    "csharp_case_runner_sha256": "586c96cc47565b3b3cdc8f1c262b436897b30fdb298aa4d9a048e2e3c6b4cd34",
+    "changed_eiffel_source_sha256": {
+      "src/xp_latin1_positions.e": {
+        "before_lf": null,
+        "after_lf": "3a0bd2bece9341f5c0fc19feb99078c7f16559dffca8810fe98c79b86005b80b",
+        "after_as_built": "3a0bd2bece9341f5c0fc19feb99078c7f16559dffca8810fe98c79b86005b80b"
+      },
+      "src/xp_native_callback_handler.e": {
+        "before_lf": "8d369603b47729932e7ff228280ba1b8549704868c61adf00f60dbac0b5acedc",
+        "after_lf": "323d3f93675d15ceb85ecd727ce91bb9f0f09e1ed41972522b6bb533606a2953",
+        "after_as_built": "a4e70de1d0d65082aa2fb4242344383a025dd2735c2073dc1f9b8a20ab373c57"
+      },
+      "src/xp_native_parser.e": {
+        "before_lf": "9c25d94b3d1cbfaa8df97b014d738ff9578d974e2fe9bde52bc630d04596598c",
+        "after_lf": "88f705ab87504ce8bd1608a2d5b992d9fd73f02355bdedb0d185421def94e947",
+        "after_as_built": "9ab93efac1f0f4122e853587dbe17bc00ff38e44a421265db7bd763e3503aeea"
+      },
+      "src/xp_parser.e": {
+        "before_lf": "676ca71e6fc73398ab2236cd16c3b2fd91081565be781e5b30d9ef23bda0a330",
+        "after_lf": "c5385bb3c28ea6ea01e86d790e9556dd379c879ec163fbe21ee5288cb5861ccf",
+        "after_as_built": "46a39781bed9c2d971c8f503a60648a1e1b5871223d537787050ae7a52ca97d0"
+      }
+    },
+    "counter_dll_sha256": {
+      "before": "603c9953d9e7b3f563bf1a3baf36699d935dd1c8afef9f157378c09da4238b94",
+      "after": "2edde30feef25124a7c04dd56cd536d717514485bf5d019acc54e8975083692c"
+    }
+  },
+  "method": {
+    "build": "From separate clean directories run scripts/build_native_eiffel.ps1 -BuildTier Production and -BuildTier Assertions. Both use the x64 MSVC backend. Only production DLLs timed.",
+    "harness": "Stock benchmarks/fair_speed/fair_speed.c, cl /O2 /Z7 /link /INCREMENTAL:NO /DEBUG:FULL /OPT:REF /OPT:ICF /MAP. Each timed parse includes parser creation, all XML_Parse calls and parser free. File I/O is outside the timer.",
+    "collection": "6 rounds for 16 configurations. One warm-up per engine and configuration, with ceil(160 ms / warmup ms) parses per timed measurement, clamped to [1, 250]. Random.Random(11024 + zero-based round).shuffle permutes case order. The three engine orders rotate through the six permutations for every case. Checksums and acceptance validated for every run.",
+    "repeat": "python reports/windows-dll-latin1-checkpoint-2026-11-24/repeat_timings.py --harness <fair_speed.exe> --before <before.dll> --after <after.dll> --expat <libexpat.dll> --out <new-directory>",
+    "timing_summary": "Median elapsed milliseconds per parse for each engine. Speedup is the median of paired before/after time ratios across rounds on the same case. Absolute times depend on compiler, CPU and load.",
+    "counters": "Counters came from a separate finalized build with stderr probes at the Latin-1 decoder, full-document, prefix, cached DOCTYPE and continuation calls. Each case ran once. Raw decode counts measure bytes passed to the decoder and parser counts measure UTF-8 bytes passed to parser entry points. The stock DLLs provided all timings.",
+    "oracle": "Declared and explicitly selected Latin-1, with a valid document and a mismatched end tag, accented text/attribute data, CRLF, whole input, all two-part splits, byte-by-byte and explicit empty final calls. Compared status/error, failure call, joined text events, and (byte,line,column) at start/end callbacks and completion. All 214 direct traces were also compared against the XML_GetBuffer/XML_ParseBuffer traces."
+  },
+  "fixture_sha256": {
+    "elements-128k-latin1": "38b60b88e392ea5546fb4a2830a4d716bf808919a2895b206094fd2eb7934249",
+    "elements-128k-utf8": "3791c42ac79d4b439195e9f96170ed495036f8eebba9502ece0a120e7ea6da1f",
+    "elements-1MB-utf8": "3d16227cfa57caa98359ccbe4d6fd5cb5ce0456ab5125165055c55abb6e24434",
+    "elements-32k-latin1": "31599c14424f59d49e4f2213c50529ee793c9ba0fb2f3323f069837edb176be6",
+    "elements-32k-utf8": "c7603942e4fc227d22a34826c893645f3c040bcba548f898aab0382819d9c987",
+    "elements-64k-latin1": "cae789b9e9ac7579082c27b6e1b61e42dc72a71cc6625f5916ef50deedd27834",
+    "elements-64k-utf8": "b7747b5b0e99eede1da797eb7208cf0970bdadbcc919ed50a2c33a9bfcc3ccaa",
+    "namespaces-1MB-utf8": "dd3a7181cd1f887df3f819221017a3f1f87ee1a6e5652fd9e60bcff2a0437893"
+  },
+  "all_event_checksums_matched": true,
+  "timings_summary": [
+    {
+      "case": [
+        "elements-128k-latin1",
+        0,
+        1,
+        0
+      ],
+      "median_ms": {
+        "expat": 1.8751,
+        "after": 30.5904,
+        "before": 28.7258
+      },
+      "paired_speedup": 0.931
+    },
+    {
+      "case": [
+        "elements-128k-latin1",
+        4096,
+        1,
+        0
+      ],
+      "median_ms": {
+        "expat": 2.0248,
+        "before": 552.8989,
+        "after": 41.8876
+      },
+      "paired_speedup": 13.209
+    },
+    {
+      "case": [
+        "elements-128k-utf8",
+        0,
+        1,
+        0
+      ],
+      "median_ms": {
+        "after": 27.6379,
+        "expat": 1.9083,
+        "before": 26.7179
+      },
+      "paired_speedup": 0.978
+    },
+    {
+      "case": [
+        "elements-128k-utf8",
+        4096,
+        1,
+        0
+      ],
+      "median_ms": {
+        "after": 38.725,
+        "before": 38.3914,
+        "expat": 2.1119
+      },
+      "paired_speedup": 0.995
+    },
+    {
+      "case": [
+        "elements-1MB-utf8",
+        4096,
+        1,
+        0
+      ],
+      "median_ms": {
+        "expat": 15.4764,
+        "before": 284.8868,
+        "after": 291.1105
+      },
+      "paired_speedup": 0.982
+    },
+    {
+      "case": [
+        "elements-32k-latin1",
+        0,
+        1,
+        0
+      ],
+      "median_ms": {
+        "before": 7.158,
+        "after": 7.8438,
+        "expat": 0.4909
+      },
+      "paired_speedup": 0.937
+    },
+    {
+      "case": [
+        "elements-32k-latin1",
+        4096,
+        1,
+        0
+      ],
+      "median_ms": {
+        "before": 44.379,
+        "expat": 0.5553,
+        "after": 10.8218
+      },
+      "paired_speedup": 4.088
+    },
+    {
+      "case": [
+        "elements-32k-utf8",
+        0,
+        1,
+        0
+      ],
+      "median_ms": {
+        "expat": 0.503,
+        "after": 6.8065,
+        "before": 6.7938
+      },
+      "paired_speedup": 1.003
+    },
+    {
+      "case": [
+        "elements-32k-utf8",
+        4096,
+        1,
+        0
+      ],
+      "median_ms": {
+        "expat": 0.5491,
+        "before": 9.6634,
+        "after": 9.7651
+      },
+      "paired_speedup": 0.988
+    },
+    {
+      "case": [
+        "elements-64k-latin1",
+        0,
+        1,
+        0
+      ],
+      "median_ms": {
+        "after": 15.2956,
+        "expat": 0.9335,
+        "before": 13.9728
+      },
+      "paired_speedup": 0.93
+    },
+    {
+      "case": [
+        "elements-64k-latin1",
+        256,
+        1,
+        0
+      ],
+      "median_ms": {
+        "before": 2078.2921,
+        "expat": 1.0707,
+        "after": 21.8441
+      },
+      "paired_speedup": 94.468
+    },
+    {
+      "case": [
+        "elements-64k-latin1",
+        4096,
+        0,
+        0
+      ],
+      "median_ms": {
+        "before": 101.6935,
+        "after": 12.2825,
+        "expat": 0.9286
+      },
+      "paired_speedup": 8.265
+    },
+    {
+      "case": [
+        "elements-64k-latin1",
+        4096,
+        1,
+        0
+      ],
+      "median_ms": {
+        "after": 21.7992,
+        "before": 146.8476,
+        "expat": 1.0393
+      },
+      "paired_speedup": 6.861
+    },
+    {
+      "case": [
+        "elements-64k-utf8",
+        0,
+        1,
+        0
+      ],
+      "median_ms": {
+        "before": 13.316,
+        "after": 13.5868,
+        "expat": 0.9791
+      },
+      "paired_speedup": 0.985
+    },
+    {
+      "case": [
+        "elements-64k-utf8",
+        4096,
+        1,
+        0
+      ],
+      "median_ms": {
+        "before": 19.2566,
+        "expat": 1.0818,
+        "after": 19.457
+      },
+      "paired_speedup": 0.988
+    },
+    {
+      "case": [
+        "namespaces-1MB-utf8",
+        4096,
+        0,
+        1
+      ],
+      "median_ms": {
+        "expat": 13.1573,
+        "after": 251.4119,
+        "before": 252.5834
+      },
+      "paired_speedup": 1.004
+    }
+  ],
+  "historical_timeout_cells": {
+    "stock_fixture_sha256": "5e15418bcced46e0f5ae23b3a3a69c5f14ab7d6d14670dbfbfe097472385c29d",
+    "stock_fixture_bytes": 1010647,
+    "stock_generator": "benchmarks/fair_speed/gen_inputs.py",
+    "dll_sha256": {
+      "after": "32895b48ba3107723c2b1c0e29696e9a75454489216de65468b05b421b0f8d02",
+      "expat": "c10b956b9e80a8c62ae89fcf6984e5cf1f1f4eea0bee632fe1b8655f7fec0d21"
+    },
+    "timing_method": "Three rounds of one parse per DLL, alternating order by case and round with a 60-second deadline per process.",
+    "historical_baseline": "https://github.com/andersoxie/xpact/blob/2862a1802b11fecc413bb8a1ea497f5defbb0f49/reports/gobo-dll/results/es418-1MB.tsv",
+    "old_configurations": "An earlier Windows build exceeded 900 seconds during warmup for both chunk sizes with callbacks on and off.",
+    "event_checksum": "f5ea41755f6b57f9",
+    "medians": [
+      {
+        "chunk_bytes": 16,
+        "callbacks": 0,
+        "after_median_ms": 358.0711,
+        "after_samples_ms": [
+          358.0711,
+          362.1365,
+          355.1038
+        ],
+        "expat_median_ms": 19.3018,
+        "expat_samples_ms": [
+          19.2358,
+          20.7229,
+          19.3018
+        ]
+      },
+      {
+        "chunk_bytes": 16,
+        "callbacks": 1,
+        "after_median_ms": 473.5871,
+        "after_samples_ms": [
+          479.6151,
+          470.2111,
+          473.5871
+        ],
+        "expat_median_ms": 20.571,
+        "expat_samples_ms": [
+          20.5147,
+          20.5956,
+          20.571
+        ]
+      },
+      {
+        "chunk_bytes": 1,
+        "callbacks": 0,
+        "after_median_ms": 2041.5812,
+        "after_samples_ms": [
+          2041.5812,
+          2038.4763,
+          2565.161
+        ],
+        "expat_median_ms": 47.1674,
+        "expat_samples_ms": [
+          47.1674,
+          47.1372,
+          47.5436
+        ]
+      },
+      {
+        "chunk_bytes": 1,
+        "callbacks": 1,
+        "after_median_ms": 2047.7377,
+        "after_samples_ms": [
+          2087.0868,
+          2031.8858,
+          2047.7377
+        ],
+        "expat_median_ms": 48.6403,
+        "expat_samples_ms": [
+          48.0486,
+          48.6403,
+          52.6788
+        ]
+      }
+    ]
+  },
+  "replay_counts": {
+    "elements-32k-latin1.xml/4096": {
+      "before": {
+        "raw_bytes_decoded": 180570,
+        "parser_input_bytes": 182515,
+        "call_counts": {
+          "latin1-decode": 9,
+          "full-prefix": 8,
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 33114,
+        "parser_input_bytes": 33473,
+        "call_counts": {
+          "latin1-decode": 9,
+          "full-prefix": 1,
+          "continuation": 8
+        }
+      }
+    },
+    "elements-32k-latin1.xml/0": {
+      "before": {
+        "raw_bytes_decoded": 33114,
+        "parser_input_bytes": 33473,
+        "call_counts": {
+          "latin1-decode": 1,
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 33114,
+        "parser_input_bytes": 33473,
+        "call_counts": {
+          "latin1-decode": 1,
+          "full-document": 1
+        }
+      }
+    },
+    "elements-32k-utf8.xml/4096": {
+      "before": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 33468,
+        "call_counts": {
+          "full-prefix": 1,
+          "continuation": 8
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 33468,
+        "call_counts": {
+          "full-prefix": 1,
+          "continuation": 8
+        }
+      }
+    },
+    "elements-32k-utf8.xml/0": {
+      "before": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 33468,
+        "call_counts": {
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 33468,
+        "call_counts": {
+          "full-document": 1
+        }
+      }
+    },
+    "elements-64k-latin1.xml/4096": {
+      "before": {
+        "raw_bytes_decoded": 623278,
+        "parser_input_bytes": 629990,
+        "call_counts": {
+          "latin1-decode": 17,
+          "full-prefix": 16,
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 66222,
+        "parser_input_bytes": 66937,
+        "call_counts": {
+          "latin1-decode": 17,
+          "full-prefix": 1,
+          "continuation": 16
+        }
+      }
+    },
+    "elements-64k-latin1.xml/0": {
+      "before": {
+        "raw_bytes_decoded": 66222,
+        "parser_input_bytes": 66937,
+        "call_counts": {
+          "latin1-decode": 1,
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 66222,
+        "parser_input_bytes": 66937,
+        "call_counts": {
+          "latin1-decode": 1,
+          "full-document": 1
+        }
+      }
+    },
+    "elements-64k-utf8.xml/4096": {
+      "before": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 66932,
+        "call_counts": {
+          "full-prefix": 1,
+          "continuation": 16
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 66932,
+        "call_counts": {
+          "full-prefix": 1,
+          "continuation": 16
+        }
+      }
+    },
+    "elements-64k-utf8.xml/0": {
+      "before": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 66932,
+        "call_counts": {
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 66932,
+        "call_counts": {
+          "full-document": 1
+        }
+      }
+    },
+    "elements-128k-latin1.xml/4096": {
+      "before": {
+        "raw_bytes_decoded": 2295110,
+        "parser_input_bytes": 2319780,
+        "call_counts": {
+          "latin1-decode": 33,
+          "full-prefix": 32,
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 132422,
+        "parser_input_bytes": 133841,
+        "call_counts": {
+          "latin1-decode": 33,
+          "full-prefix": 1,
+          "continuation": 32
+        }
+      }
+    },
+    "elements-128k-latin1.xml/0": {
+      "before": {
+        "raw_bytes_decoded": 132422,
+        "parser_input_bytes": 133841,
+        "call_counts": {
+          "latin1-decode": 1,
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 132422,
+        "parser_input_bytes": 133841,
+        "call_counts": {
+          "latin1-decode": 1,
+          "full-document": 1
+        }
+      }
+    },
+    "elements-128k-utf8.xml/4096": {
+      "before": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 133836,
+        "call_counts": {
+          "full-prefix": 1,
+          "continuation": 32
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 133836,
+        "call_counts": {
+          "full-prefix": 1,
+          "continuation": 32
+        }
+      }
+    },
+    "elements-128k-utf8.xml/0": {
+      "before": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 133836,
+        "call_counts": {
+          "full-document": 1
+        }
+      },
+      "after": {
+        "raw_bytes_decoded": 0,
+        "parser_input_bytes": 133836,
+        "call_counts": {
+          "full-document": 1
+        }
+      }
+    }
+  },
+  "correctness": {
+    "latin1_cases_per_tier_per_parse_api": 214,
+    "latin1_differences_vs_expat": {
+      "before_production": {
+        "final_position": 214,
+        "element_positions": 214,
+        "failed_call": 1
+      },
+      "after_production": {
+        "failed_call": 1
+      },
+      "after_assertions": {
+        "failed_call": 1
+      }
+    },
+    "csharp_cases_per_tier": 4308,
+    "csharp_changed_rows_before_vs_after": 0,
+    "csharp_differences_vs_expat": {
+      "before_production": {
+        "split-only": 2,
+        "failed-call": 648,
+        "events": 171
+      },
+      "after_production": {
+        "split-only": 2,
+        "failed-call": 648,
+        "events": 171
+      },
+      "after_assertions": {
+        "split-only": 2,
+        "failed-call": 648,
+        "events": 171
+      }
+    },
+    "native_bridge_directed_cases": "native-audit.tsv",
+    "sparse_index_boundary_comparison": {
+      "after_production": {
+        "cases": 576,
+        "differences": {},
+        "first_examples": {},
+        "tested_raw_offsets_zero_based": [
+          253,
+          254,
+          255,
+          256,
+          257,
+          510,
+          511,
+          512,
+          513
+        ]
+      },
+      "after_assertions": {
+        "cases": 576,
+        "differences": {},
+        "first_examples": {},
+        "tested_raw_offsets_zero_based": [
+          253,
+          254,
+          255,
+          256,
+          257,
+          510,
+          511,
+          512,
+          513
+        ]
+      }
+    },
+    "upstream_libexpat_2_8_1": {
+      "total": 399,
+      "passed": 361,
+      "expected_allocator_failures": 38,
+      "failed_test_names_identical_to_before": true
+    },
+    "chunked_crc": {
+      "rows_compared": 182,
+      "matches_vs_expat_2_8_1": 182,
+      "fields": [
+        "event digest",
+        "text length",
+        "status",
+        "error code",
+        "final position"
+      ]
+    },
+    "w3c_declared_latin1_subset": {
+      "cases": 35,
+      "feeds_bytes": [
+        0,
+        1,
+        16,
+        256
+      ],
+      "runs": 140,
+      "verdict_and_coalesced_events_match": 140,
+      "matched_element_positions_before_after": [
+        80,
+        140
+      ],
+      "matched_terminal_positions_before_after": [
+        64,
+        124
+      ],
+      "differences_vs_expat_by_field": {
+        "before_diff": {
+          "final_position": 76,
+          "failed_call": 10,
+          "element_positions": 60,
+          "error": 4
+        },
+        "after_diff": {
+          "final_position": 16,
+          "failed_call": 10,
+          "error": 4
+        }
+      },
+      "remaining_terminal_position_differences": [
+        "eduni/errata-2e/E50.xml",
+        "eduni/xml-1.1/014.xml",
+        "eduni/xml-1.1/054.xml",
+        "eduni/xml-1.1/055.xml"
+      ]
+    },
+    "native_audit": {
+      "candidate_production": "11/11",
+      "candidate_assertions": "11/11",
+      "expat_new_latin1_cases": "5/5",
+      "evidence": "native-audit.tsv"
+    },
+    "internal_lifecycle": {
+      "instrumented_assertion_dll_sha256": "7ac7dd03cf45000b0a47525101570c1bd88eeef93cd6f83f0abe2aaf28c86bd8",
+      "native_fields_checked": [
+        "decoded",
+        "decoded_raw",
+        "indices",
+        "ends",
+        "entries",
+        "rawmode",
+        "latin1",
+        "utf16",
+        "last_latin1",
+        "ready",
+        "resume_count",
+        "input",
+        "callback_replay",
+        "doctype_scan",
+        "doctype_depth",
+        "doctype_quote",
+        "doctype_comment",
+        "doctype_complete",
+        "doctype_cache",
+        "deferred_dtd_start",
+        "deferred_dtd_scanned",
+        "ext_contexts",
+        "ext_counts",
+        "ext_texts"
+      ],
+      "native_terminal_or_reset_snapshots_released": 24,
+      "native_terminal_or_reset_snapshots_checked": 24,
+      "latin1_core_or_reset_snapshots_cleared_by_phase": {
+        "success": 6,
+        "reset": 10,
+        "error": 3
+      },
+      "core_condition": "Resume index returned to zero and all three text carry references detached.",
+      "latin1_suspension_snapshots_retained": 3,
+      "suspensions_followed_by_resume": 2,
+      "suspensions_followed_by_reset": 1,
+      "partial_dtd_reset_checked": true,
+      "active_dtd_cache_bytes_released_after_success": 32,
+      "scope": "Native storage release checked for every terminal or reset snapshot. The core checkpoint release count covers Latin-1 completions, Latin-1 errors, and resets."
+    },
+    "callback_raw_spans": {
+      "runs": 130,
+      "coalesced_raw_span_matches": 130,
+      "default_handler_runs": 65,
+      "default_payload_differences": 25,
+      "difference": "xpact normalized carriage returns in the default-handler payload in both the baseline and final builds."
+    }
+  }
+}

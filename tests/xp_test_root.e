@@ -12,6 +12,7 @@ feature {NONE} -- Initialization
 	make
 		do
 			run_test ("test_well_formed_callbacks", agent test_well_formed_callbacks)
+			run_test ("test_namespace_callback_ownership", agent test_namespace_callback_ownership)
 			run_test ("test_mismatched_tag_is_rejected", agent test_mismatched_tag_is_rejected)
 			run_test ("test_depth_limit_is_enforced", agent test_depth_limit_is_enforced)
 			run_test ("test_comments_and_cdata", agent test_comments_and_cdata)
@@ -117,6 +118,30 @@ feature {NONE} -- Tests
 			assert ("empty start", l_handler.events.i_th (5).same_string ("start:empty:0"))
 			assert ("empty end", l_handler.events.i_th (6).same_string ("end:empty"))
 			assert ("root end", l_handler.events.i_th (7).same_string ("end:root"))
+		end
+
+	test_namespace_callback_ownership
+			-- Callback arguments may be retained or changed while an ancestor binding is still in use.
+		local
+			l_handler: XP_MUTATING_NAMESPACE_HANDLER
+			l_parser: XP_PARSER
+		do
+			create l_handler.make
+			l_handler.events.compare_objects
+			create l_parser.make (l_handler)
+			l_parser.set_namespace_mode ('|')
+			assert ("nested namespace prefix accepted",
+				l_parser.parse_prefix ("<r xmlns:p='outer'><p:same xmlns:p='outer'><p:x xmlns:p='inner'/>"))
+			assert ("namespace bindings survive continuation",
+				l_parser.continue_prefix ("</p:same><p:sibling/></r>", True))
+			assert ("child closing name uses the shadowing URI", l_handler.events.has ("end:inner|x"))
+			assert ("identical child binding survives unwind", l_handler.events.has ("end:outer|same"))
+			assert ("sibling inherits the original binding", l_handler.events.has ("start:outer|sibling:0"))
+			assert ("end callbacks receive original declaration prefixes", l_handler.events.occurrences ("ns-end:p") = 3)
+			assert ("invalid child declaration fails",
+				not l_parser.parse ("<r xmlns:p='outer'><x xmlns:q='new' xmlns:xml='invalid'/></r>"))
+			assert ("next parse starts without failed document bindings", not l_parser.parse ("<p:x/>") and then l_parser.last_error.same_string ("unbound namespace prefix"))
+			assert ("fresh bindings work after failure", l_parser.parse ("<p:x xmlns:p='fresh'/>") and then l_handler.events.has ("end:fresh|x"))
 		end
 
 	test_mismatched_tag_is_rejected

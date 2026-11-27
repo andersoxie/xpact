@@ -42,8 +42,7 @@ feature {NONE} -- Initialization
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
 			create last_parameter_literal_text.make_empty
-			create namespace_context_stack.make (8)
-			create namespace_declaration_stack.make (8)
+			create namespace_declarations.make (8)
 			create last_error.make_empty
 			create doctype_name.make_empty
 			create position_input.make_empty
@@ -88,8 +87,7 @@ feature {NONE} -- Initialization
 			create external_parameter_entity_table.make (4)
 			create attribute_decl_table.make (4)
 			create last_parameter_literal_text.make_empty
-			create namespace_context_stack.make (8)
-			create namespace_declaration_stack.make (8)
+			create namespace_declarations.make (8)
 			create last_error.make_empty
 			create doctype_name.make_empty
 			create position_input.make_empty
@@ -172,6 +170,25 @@ feature -- Access
 
 	current_byte_count: INTEGER
 			-- Current token byte count, or zero at parse end and errors.
+
+	reports_source_token_spans: BOOLEAN
+			-- Does the native adapter translate normalized token spans to original source offsets?
+
+	set_reports_source_token_spans (a_enabled: BOOLEAN)
+		do
+			reports_source_token_spans := a_enabled
+		end
+
+	position_for_replayed_suffix (a_delivered_source_end: INTEGER)
+			-- A growing text event has already sent the source before this zero-based offset.
+		local
+			l_end: INTEGER
+		do
+			l_end := current_byte_index + current_byte_count
+			if a_delivered_source_end > current_byte_index and then a_delivered_source_end < l_end then
+				note_token_position (a_delivered_source_end + 1, l_end - a_delivered_source_end)
+			end
+		end
 
 	accounting_indirect_byte_count: INTEGER
 			-- Bytes accounted as indirect entity replacement output in the most recent parse.
@@ -803,6 +820,24 @@ feature -- Parsing
 	resume_sequence_count: INTEGER
 			-- Handler replay count at `resume_index'; callbacks after it are counted again.
 
+	clear_prefix_checkpoint
+			-- Release incremental text and cursor state while preserving the last reported position.
+		do
+			resume_index := 0
+			resume_sequence_count := 0
+			resume_last_raw_cr := False
+			resume_pending_utf8_count := 0
+			text_position_start := 0
+			resume_text_start := 0
+			resume_entity_bytes := 0
+			resume_text_carry := Void
+			character_data_seed := Void
+			last_text_carry := Void
+			last_general_reference_end := 0
+		ensure
+			checkpoint_released: not can_continue_prefix
+			text_released: resume_text_carry = Void and character_data_seed = Void and last_text_carry = Void
+		end
 
 	cached_doctype_byte_count: INTEGER
 			-- Bytes retained by the optional native completed-DOCTYPE cache.
@@ -1506,6 +1541,9 @@ feature {NONE} -- Resumable prefix parsing
 					resume_text_carry := l_text
 					if last_general_reference_end > 0 then
 						resume_sequence_count := last_general_reference_sequence
+						if reports_source_token_spans then
+							l_run_start := last_general_reference_end
+						end
 					else
 						resume_sequence_count := l_token_sequence
 					end
@@ -1567,7 +1605,7 @@ feature {NONE} -- Resumable prefix parsing
 			else
 					-- No more text in the run yet, or it ends here.
 				if not a_carry.is_empty then
-					note_token_position (text_run_start (a_start_index), a_carry.count)
+					note_text_position (text_run_start (a_start_index), a_start_index, a_carry.count)
 					emit_text (a_carry)
 				end
 				last_text_carry := a_carry
@@ -1920,18 +1958,18 @@ feature {NONE} -- Markup parsing
 						if handler.wants_start_element_default then
 							emit_default_range (a_input, a_start_index, Result - 1)
 						end
-						note_position (a_start_index)
+						note_element_position (a_start_index, Result - a_start_index)
 						if l_use_slice_stack then
 							open_element_range (a_input, name_start, name_end)
 							if l_empty_element and not has_error and not is_suspended then
-								note_position (Result)
+								note_element_position (Result, 0)
 								close_element_range (a_input, name_start, name_end)
 							end
 						else
 							check attached l_name as l_attached_name and attached l_attributes as l_attached_attributes then
 								open_element (l_attached_name, l_attached_attributes)
 								if l_empty_element and not has_error and not is_suspended then
-									note_position (Result)
+									note_element_position (Result, 0)
 									close_element (l_attached_name)
 								end
 							end
@@ -1986,7 +2024,7 @@ feature {NONE} -- Markup parsing
 								-- Compare the end tag with the open element once; the three uses below share it.
 							l_matches_open := element_stack.count > 0 and then open_element_matches_range (a_input, name_start, name_end)
 							if l_matches_open then
-								note_position (a_start_index)
+								note_element_position (a_start_index, i + 1 - a_start_index)
 							else
 								note_position (name_start)
 							end
@@ -2401,7 +2439,7 @@ feature {NONE} -- Markup parsing
 				else
 					create l_text.make_from_string (a_input.substring (a_start_index + 4, l_end - 1))
 					if handler.wants_comment_default then
-						emit_default (a_input.substring (a_start_index, l_end + 2))
+						emit_default_range (a_input, a_start_index, l_end + 2)
 					end
 					note_token_position (a_start_index, l_end + 3 - a_start_index)
 					handler.on_comment (l_text)
@@ -2436,9 +2474,9 @@ feature {NONE} -- Markup parsing
 					Result := a_input.count + 1
 				else
 					if handler.wants_start_cdata_default then
-						emit_default ("<![CDATA[")
+						emit_default_range (a_input, a_start_index, a_start_index + 8)
 					end
-					note_position (a_start_index)
+					note_element_position (a_start_index, 9)
 					handler.on_start_cdata_section
 					check_handler_stop
 					if not is_suspended and then l_end > a_start_index + 9 then
@@ -2454,9 +2492,13 @@ feature {NONE} -- Markup parsing
 					end
 					if not has_error and not is_suspended then
 						if handler.wants_end_cdata_default then
-							emit_default ("]]>")
+							emit_default_range (a_input, l_end, l_end + 2)
 						end
-						note_position (l_end + 3)
+						if reports_source_token_spans then
+							note_element_position (l_end, 3)
+						else
+							note_position (l_end + 3)
+						end
 						handler.on_end_cdata_section
 						check_handler_stop
 					end
@@ -2525,6 +2567,9 @@ feature {NONE} -- Markup parsing
 							if i <= l_end - 1 then
 								l_data.append (a_input.substring (i, l_end - 1))
 							end
+							if reports_source_token_spans then
+								note_token_position (a_start_index, l_end + 2 - a_start_index)
+							end
 							parse_xml_declaration_data (l_data)
 							if not has_error and not is_suspended and then handler.wants_xml_declaration_default then
 								emit_default_range (a_input, a_start_index, l_end + 1)
@@ -2537,7 +2582,7 @@ feature {NONE} -- Markup parsing
 								l_data.append (a_input.substring (i, l_end - 1))
 							end
 							if handler.wants_processing_instruction_default then
-								emit_default (a_input.substring (a_start_index, l_end + 1))
+								emit_default_range (a_input, a_start_index, l_end + 1)
 							end
 							note_token_position (a_start_index, l_end + 2 - a_start_index)
 							handler.on_processing_instruction (l_target, l_data)
@@ -2704,7 +2749,6 @@ feature {NONE} -- Markup parsing
 			l_has_internal_subset: BOOLEAN
 			l_name_end: INTEGER
 			l_attributes: XP_ATTRIBUTES
-			l_previous_subset_offset: INTEGER
 		do
 			create l_attributes.make
 			create l_public_id.make_empty
@@ -2819,10 +2863,7 @@ feature {NONE} -- Markup parsing
 									-- A `]' that does not end the DOCTYPE: deliver the complete declarations in
 									-- front of it first, then report it at that `]', as Expat does (#173).
 								create l_subset.make_from_string (a_input.substring (l_subset_start + 1, l_subset_end - 1))
-								l_previous_subset_offset := dtd_subset_position_offset
-								dtd_subset_position_offset := l_subset_start
-								process_internal_subset_prefix (l_subset, False)
-								dtd_subset_position_offset := l_previous_subset_offset
+								process_doctype_subset (a_input, l_subset, l_subset_start, True)
 								if not has_error and not is_suspended then
 									if is_all_xml_space (l_subset.substring (complete_dtd_prefix_end (l_subset) + 1, l_subset.count)) then
 											-- The `]' ends the subset; Expat reports the content after it.
@@ -2835,17 +2876,14 @@ feature {NONE} -- Markup parsing
 								end
 							else
 								create l_subset.make_from_string (a_input.substring (l_subset_start + 1, l_subset_end - 1))
-								l_previous_subset_offset := dtd_subset_position_offset
-								dtd_subset_position_offset := l_subset_start
-								process_internal_subset (l_subset)
-								dtd_subset_position_offset := l_previous_subset_offset
+								process_doctype_subset (a_input, l_subset, l_subset_start, False)
 							end
 						end
 						if not has_error and not is_suspended and l_has_external_subset then
 							include_external_subset (l_public_id, l_system_id)
 						end
 						if not has_error and not is_suspended and then handler.wants_end_doctype_default then
-							emit_doctype_default_close (l_has_internal_subset)
+							emit_doctype_default_close (a_input, l_subset_end, l_end)
 						end
 						if has_error then
 							Result := a_input.count + 1
@@ -2869,7 +2907,7 @@ feature {NONE} -- Character data and references
 	process_incomplete_doctype_prefix (a_input: STRING_8; a_start_index: INTEGER)
 			-- Process complete declarations before an internal subset's outer ]> arrives.
 		local
-			i, l_subset_start, l_subset_end, l_name_start, l_name_end, l_previous_offset: INTEGER
+			i, l_subset_start, l_subset_end, l_name_start, l_name_end: INTEGER
 			l_subset: STRING_8
 		do
 			if a_start_index + 9 <= a_input.count then
@@ -2899,10 +2937,7 @@ feature {NONE} -- Character data and references
 									l_subset_end := a_input.count + 1
 								end
 								l_subset := a_input.substring (l_subset_start + 1, l_subset_end - 1).to_string_8
-								l_previous_offset := dtd_subset_position_offset
-								dtd_subset_position_offset := l_subset_start
-								process_internal_subset_prefix (l_subset, False)
-								dtd_subset_position_offset := l_previous_offset
+								process_doctype_subset (a_input, l_subset, l_subset_start, True)
 							end
 						end
 					end
@@ -2922,7 +2957,7 @@ feature {NONE} -- Character data and references
 			l_text: detachable STRING_8
 			l_materialize_text: BOOLEAN
 			l_literal_default: BOOLEAN
-			l_default_start, l_default_end, l_reference_end: INTEGER
+			l_default_start, l_default_end, l_reference_end, l_text_start: INTEGER
 			l_all_space: BOOLEAN
 			l_pending_literal_position: INTEGER
 		do
@@ -2930,6 +2965,7 @@ feature {NONE} -- Character data and references
 			l_literal_default := handler.wants_automatic_character_data_default and then handler.wants_literal_character_data_default
 			l_default_start := a_start_index
 			l_default_end := a_start_index - 1
+			l_text_start := text_run_start (a_start_index)
 			if lazy_position_accounting and then not l_materialize_text then
 				Result := parse_character_data_no_events (a_input, a_start_index)
 			end
@@ -2980,11 +3016,14 @@ feature {NONE} -- Character data and references
 								if l_literal_default and then l_reference_end > i + 1 and then a_input.item (i + 1) /= '#' and then not is_valid_predefined_entity_name (a_input.substring (i + 1, l_reference_end - 1)) then
 									emit_default_range (a_input, l_default_start, i - 1)
 									if not has_error and not is_suspended then
-										i := append_reference_in_content (a_input, i, l_attached_text)
+										i := append_reference_in_content (a_input, i, l_attached_text, l_text_start)
 										l_default_start := i
 									end
 								else
-									i := append_reference_in_content (a_input, i, l_attached_text)
+									i := append_reference_in_content (a_input, i, l_attached_text, l_text_start)
+								end
+								if last_general_reference_end = i then
+									l_text_start := i
 								end
 								l_default_end := i - 1
 							end
@@ -3050,10 +3089,10 @@ feature {NONE} -- Character data and references
 									emit_default (l_attached_text)
 								end
 							end
-							if entity_reference_count_stack.count > 0 then
-								note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+							if reports_source_token_spans then
+								note_text_position (l_text_start, i, l_attached_text.count)
 							else
-								note_token_position (text_run_start (a_start_index), l_attached_text.count)
+								note_text_position (text_run_start (a_start_index), i, l_attached_text.count)
 							end
 							emit_text (l_attached_text)
 						end
@@ -3169,7 +3208,7 @@ feature {NONE} -- Character data and references
 			l_text: detachable STRING_8
 			l_materialize_text: BOOLEAN
 			l_literal_default: BOOLEAN
-			l_default_start, l_default_end, l_reference_end: INTEGER
+			l_default_start, l_default_end, l_reference_end, l_text_start, l_text_end: INTEGER
 			l_all_space: BOOLEAN
 			l_pending_literal_position: INTEGER
 			l_done: BOOLEAN
@@ -3178,6 +3217,7 @@ feature {NONE} -- Character data and references
 			l_literal_default := handler.wants_automatic_character_data_default and then handler.wants_literal_character_data_default
 			l_default_start := a_start_index
 			l_default_end := a_start_index - 1
+			l_text_start := text_run_start (a_start_index)
 			if attached character_data_seed as l_seed then
 				l_text := l_seed
 				character_data_seed := Void
@@ -3224,11 +3264,14 @@ feature {NONE} -- Character data and references
 							if l_literal_default and then l_reference_end > i + 1 and then a_input.item (i + 1) /= '#' and then not is_valid_predefined_entity_name (a_input.substring (i + 1, l_reference_end - 1)) then
 								emit_default_range (a_input, l_default_start, i - 1)
 								if not has_error and not is_suspended then
-									i := append_reference_in_content (a_input, i, l_attached_text)
+									i := append_reference_in_content (a_input, i, l_attached_text, l_text_start)
 									l_default_start := i
 								end
 							else
-								i := append_reference_in_content (a_input, i, l_attached_text)
+								i := append_reference_in_content (a_input, i, l_attached_text, l_text_start)
+							end
+							if last_general_reference_end = i then
+								l_text_start := i
 							end
 							l_default_end := i - 1
 						end
@@ -3293,10 +3336,15 @@ feature {NONE} -- Character data and references
 								emit_default (l_attached_text)
 							end
 						end
-						if entity_reference_count_stack.count > 0 then
-							note_token_position (entity_reference_start_stack.i_th (entity_reference_start_stack.count), entity_reference_count_stack.i_th (entity_reference_count_stack.count))
+						if reports_source_token_spans then
+							if l_done then
+								l_text_end := last_text_stop_index
+							else
+								l_text_end := i
+							end
+							note_text_position (l_text_start, l_text_end, l_attached_text.count)
 						else
-							note_token_position (text_run_start (a_start_index), l_attached_text.count)
+							note_text_position (text_run_start (a_start_index), i, l_attached_text.count)
 						end
 						emit_text (l_attached_text)
 					end
@@ -3310,7 +3358,7 @@ feature {NONE} -- Character data and references
 			result_in_bounds: Result <= a_input.count + 1
 		end
 
-	append_reference_in_content (a_input: STRING_8; a_start_index: INTEGER; a_text: STRING_8): INTEGER
+	append_reference_in_content (a_input: STRING_8; a_start_index: INTEGER; a_text: STRING_8; a_text_start: INTEGER): INTEGER
 			-- Expand a reference in element content.
 		require
 			input_attached: a_input /= Void
@@ -3341,6 +3389,9 @@ feature {NONE} -- Character data and references
 					Result := l_end + 1
 				else
 					if a_text.count > 0 then
+						if reports_source_token_spans then
+							note_text_position (a_text_start, a_start_index, a_text.count)
+						end
 						emit_text (a_text)
 						a_text.wipe_out
 					end
@@ -3358,7 +3409,7 @@ feature {NONE} -- Character data and references
 							handler.on_skipped_entity (l_name, False)
 							check_handler_stop
 						else
-							emit_default (a_input.substring (a_start_index, l_end))
+							emit_default_range (a_input, a_start_index, l_end)
 						end
 						Result := l_end + 1
 					end
@@ -3942,6 +3993,35 @@ feature {NONE} -- DTD entity declarations
 			process_dtd_subset (a_subset, False)
 		end
 
+	process_doctype_subset (a_input, a_subset: STRING_8; a_offset: INTEGER; a_is_prefix: BOOLEAN)
+			-- Parse original DOCTYPE bytes, keeping their document origin only while they are in use.
+		local
+			l_source: STRING_8
+			l_previous_source: detachable STRING_8
+			l_previous_offset, l_prefix_end: INTEGER
+		do
+			l_source := a_subset
+			if a_is_prefix then
+				l_prefix_end := complete_dtd_prefix_end (a_subset)
+				if l_prefix_end < a_subset.count then
+					l_source := a_subset.substring (1, l_prefix_end)
+				end
+			end
+			l_previous_offset := dtd_subset_position_offset
+			l_previous_source := dtd_document_subset
+			dtd_subset_position_offset := a_offset
+			if reports_source_token_spans and then a_input = position_input then
+				dtd_document_subset := l_source
+			else
+				dtd_document_subset := Void
+			end
+			if not l_source.is_empty then
+				process_dtd_subset (l_source, False)
+			end
+			dtd_document_subset := l_previous_source
+			dtd_subset_position_offset := l_previous_offset
+		end
+
 	process_dtd_subset (a_subset: STRING_8; a_allow_text_declaration: BOOLEAN)
 			-- Process declarations; only an external resource entry may begin with a text declaration.
 		require
@@ -4008,7 +4088,7 @@ feature {NONE} -- DTD entity declarations
 						i := l_subset.count + 1
 					else
 						if handler.wants_comment_default then
-							emit_default (l_subset.substring (i, l_end + 2))
+							emit_default_range (l_subset, i, l_end + 2)
 						end
 						create l_text.make_from_string (l_subset.substring (i + 4, l_end - 1))
 						if not has_error and not is_suspended then
@@ -4031,7 +4111,7 @@ feature {NONE} -- DTD entity declarations
 								i := l_subset.count + 1
 							else
 								if handler.wants_processing_instruction_default then
-									emit_default (l_subset.substring (i, l_end + 1))
+									emit_default_range (l_subset, i, l_end + 1)
 								end
 								if not has_error and not is_suspended then
 									l_target_end := scan_name (l_subset, i + 2)
@@ -4049,7 +4129,7 @@ feature {NONE} -- DTD entity declarations
 					i := include_parameter_entity_in_subset (l_subset, i)
 				else
 					if is_xml_space (l_subset.item (i)) then
-						emit_default (l_subset.substring (i, i))
+						emit_default_range (l_subset, i, i)
 						i := i + 1
 					elseif is_incomplete_utf8_sequence_at (l_subset, i) then
 						set_error ("partial character")
@@ -4303,7 +4383,7 @@ feature {NONE} -- DTD entity declarations
 					l_status.left_adjust
 					l_status.right_adjust
 					if l_status.same_string ("IGNORE") then
-						emit_default (a_subset.substring (a_start_index, l_end + 2))
+						emit_default_range (a_subset, a_start_index, l_end + 2)
 						Result := l_end + 3
 					elseif l_status.same_string ("INCLUDE") then
 						l_content_start := i + 1
@@ -4934,7 +5014,7 @@ feature {NONE} -- DTD entity declarations
 							Result := a_subset.count + 1
 						elseif attached l_model as l_attached_model then
 							if handler.wants_element_decl_default then
-								emit_default (a_subset.substring (a_start_index, l_end))
+								emit_default_range (a_subset, a_start_index, l_end)
 							end
 							if not has_error and not is_suspended then
 								handler.on_element_decl (l_name, l_attached_model)
@@ -5304,7 +5384,7 @@ feature {NONE} -- DTD entity declarations
 						i := skip_spaces (a_subset, i)
 						if i = l_end then
 							if handler.wants_notation_decl_default then
-								emit_default (a_subset.substring (a_start_index, l_end))
+								emit_default_range (a_subset, a_start_index, l_end)
 							end
 							if not has_error and not is_suspended then
 								handler.on_notation_decl (l_name, Void, l_system, l_public)
@@ -5447,7 +5527,7 @@ feature {NONE} -- DTD entity declarations
 						Result := a_subset.count + 1
 					else
 						if dtd_declarations_disabled or else handler.wants_attlist_decl_default then
-							emit_default (a_subset.substring (a_start_index, l_end))
+								emit_default_range (a_subset, a_start_index, l_end)
 						end
 						Result := l_end + 1
 					end
@@ -5929,7 +6009,7 @@ feature {NONE} -- DTD entity declarations
 							l_default_entity_unparsed := l_external.is_unparsed
 						end
 						if not has_error and not is_suspended and then (not l_process_entity or else handler.wants_entity_decl_default (l_default_entity_unparsed)) then
-							emit_default (a_subset.substring (a_start_index, Result - 1))
+							emit_default_range (a_subset, a_start_index, Result - 1)
 						end
 					end
 				end
@@ -6368,8 +6448,7 @@ feature {NONE} -- Event dispatch
 			l_name: STRING_8
 			l_event_name: detachable STRING_8
 			l_event_attributes: detachable XP_ATTRIBUTES
-			l_namespace_scope: detachable HASH_TABLE [STRING_8, STRING_8]
-			l_namespace_prefixes: detachable ARRAYED_LIST [STRING_8]
+			l_previous_declarations: INTEGER
 			l_wants_start_events: BOOLEAN
 		do
 			l_wants_start_events := handler.wants_start_element_events
@@ -6389,35 +6468,18 @@ feature {NONE} -- Event dispatch
 					document_element_count := 1
 				end
 				apply_default_attributes (a_name, a_attributes)
-				if not has_error then
-					if namespace_mode then
-						create l_namespace_prefixes.make (4)
-						l_namespace_scope := namespace_scope_for_element (a_attributes, l_namespace_prefixes)
-						if not has_error then
-							if attached l_namespace_scope as l_attached_scope then
-									-- Always resolved: an unbound or reserved prefix is an error even without events.
-								l_event_name := expanded_element_name (a_name, l_attached_scope)
-								if not l_wants_start_events then
-									l_event_name := Void
-								end
-							else
-								check namespace_scope_available: False end
-							end
-						end
-						if not has_error then
-							if attached l_namespace_scope as l_attached_scope then
-								l_event_attributes := expanded_attributes (a_attributes, l_attached_scope)
-								if not l_wants_start_events then
-									l_event_attributes := Void
-								end
-							else
-								check namespace_scope_available: False end
-							end
-						end
-					else
-						if l_wants_start_events then
-							l_event_attributes := a_attributes
-						end
+				if not has_error and then namespace_mode then
+					l_previous_declarations := namespace_declarations.count
+					apply_namespace_declarations (a_attributes, element_stack.count + 1)
+					if not has_error then
+							-- Resolve names and check expanded attributes even without callbacks.
+						l_event_name := expanded_element_name (a_name, namespace_bindings)
+					end
+					if not has_error then
+						l_event_attributes := expanded_attributes (a_attributes, namespace_bindings)
+					end
+					if has_error then
+						restore_namespace_bindings (l_previous_declarations)
 					end
 				end
 				if not has_error then
@@ -6430,14 +6492,8 @@ feature {NONE} -- Event dispatch
 						create l_name.make_from_string (a_name)
 					end
 					element_stack.extend (l_name)
-					if namespace_mode then
-						if attached l_namespace_scope as l_attached_scope and then attached l_namespace_prefixes as l_attached_prefixes then
-							namespace_context_stack.extend (l_attached_scope)
-							namespace_declaration_stack.extend (l_attached_prefixes)
-							emit_start_namespace_declarations (l_attached_prefixes, l_attached_scope)
-						else
-							check namespace_state_available: False end
-						end
+					if namespace_mode and then namespace_declarations.count > l_previous_declarations then
+						emit_start_namespace_declarations (l_previous_declarations + 1)
 					end
 				end
 				if not has_error and not is_suspended and l_wants_start_events then
@@ -6503,7 +6559,7 @@ feature {NONE} -- Event dispatch
 			else
 				if l_wants_end_events then
 					if namespace_mode then
-						l_event_name := expanded_element_name (a_name, namespace_context_stack.item)
+						l_event_name := expanded_element_name (a_name, namespace_bindings)
 					else
 						create l_event_name.make_from_string (a_name)
 					end
@@ -6515,8 +6571,10 @@ feature {NONE} -- Event dispatch
 						check_handler_stop
 					end
 				end
-				if namespace_mode then
-					emit_end_namespace_declarations
+				if namespace_mode and then not namespace_declarations.is_empty and then
+					namespace_declarations.last.depth > element_stack.count
+				then
+					end_namespace_declarations (element_stack.count + 1)
 				end
 			end
 		ensure
@@ -6635,6 +6693,14 @@ feature {NONE} -- Event dispatch
 			end_valid: a_end_index <= a_input.count
 		do
 			if handler.wants_default_events and then a_start_index <= a_end_index then
+				if reports_source_token_spans then
+					if a_input = position_input then
+						note_token_position (a_start_index, a_end_index - a_start_index + 1)
+					elseif a_input = dtd_document_subset then
+							-- A substituted parameter entity has its own string and no such offset.
+						note_token_position (dtd_subset_position_offset + a_start_index, a_end_index - a_start_index + 1)
+					end
+				end
 				emit_default (a_input.substring (a_start_index, a_end_index))
 			end
 		end
@@ -6699,14 +6765,14 @@ feature {NONE} -- Event dispatch
 			end
 		end
 
-	emit_doctype_default_close (a_has_internal_subset: BOOLEAN)
+	emit_doctype_default_close (a_input: STRING_8; a_subset_end, a_end: INTEGER)
 			-- Emit Expat-shaped default-handler chunks at the end of a doctype.
 		do
-			if a_has_internal_subset then
-				emit_default ("]")
+			if a_subset_end > 0 then
+				emit_default_range (a_input, a_subset_end, a_subset_end)
 			end
 			if not has_error and not is_suspended then
-				emit_default (">")
+				emit_default_range (a_input, a_end, a_end)
 			end
 		end
 
@@ -6739,18 +6805,17 @@ feature {NONE} -- Event dispatch
 
 feature {NONE} -- Namespace handling
 
-	namespace_scope_for_element (a_attributes: XP_ATTRIBUTES; a_declared_prefixes: ARRAYED_LIST [STRING_8]): HASH_TABLE [STRING_8, STRING_8]
-			-- Namespace bindings in scope for a start tag after applying namespace declarations.
+	apply_namespace_declarations (a_attributes: XP_ATTRIBUTES; a_depth: INTEGER)
+			-- Install this tag's bindings and remember each previous value for the matching close.
 		require
 			attributes_attached: a_attributes /= Void
-			prefixes_attached: a_declared_prefixes /= Void
+			opening_depth: a_depth = element_stack.count + 1
 		local
 			i: INTEGER
 			l_name: STRING_8
 			l_value: STRING_8
 			l_prefix: STRING_8
 		do
-			Result := cloned_namespace_scope (namespace_context_stack.item)
 			from
 				i := 1
 			invariant
@@ -6764,16 +6829,14 @@ feature {NONE} -- Namespace handling
 					l_prefix := namespace_declaration_prefix (l_name)
 					validate_namespace_declaration (l_prefix, l_value)
 					if not has_error then
-						Result.force (l_value.twin, l_prefix.twin)
-						a_declared_prefixes.extend (l_prefix.twin)
+						namespace_declarations.extend ([a_depth, l_prefix, namespace_bindings.item (l_prefix)])
+						namespace_bindings.force (l_value.twin, l_prefix)
 					end
 				end
 				i := i + 1
 			variant
 				a_attributes.count - i + 1
 			end
-		ensure
-			result_attached: Result /= Void
 		end
 
 	expanded_attributes (a_attributes: XP_ATTRIBUTES; a_scope: HASH_TABLE [STRING_8, STRING_8]): XP_ATTRIBUTES
@@ -6912,69 +6975,80 @@ feature {NONE} -- Namespace handling
 			result_not_empty: not Result.is_empty
 		end
 
-	emit_start_namespace_declarations (a_prefixes: ARRAYED_LIST [STRING_8]; a_scope: HASH_TABLE [STRING_8, STRING_8])
+	emit_start_namespace_declarations (a_first: INTEGER)
 			-- Emit start namespace callbacks for declarations on the current element.
 		require
-			prefixes_attached: a_prefixes /= Void
-			scope_attached: a_scope /= Void
+			valid_first: a_first >= 1 and a_first <= namespace_declarations.count
 		local
 			i: INTEGER
 			l_prefix: STRING_8
 		do
 			from
-				i := 1
+				i := a_first
 			invariant
-				index_in_bounds: i >= 1 and i <= a_prefixes.count + 1
+				index_in_bounds: i >= a_first and i <= namespace_declarations.count + 1
 			until
-				i > a_prefixes.count or has_error or is_suspended
+				i > namespace_declarations.count or has_error or is_suspended
 			loop
-				l_prefix := a_prefixes.i_th (i)
-				if attached a_scope.item (l_prefix) as l_uri then
+				l_prefix := namespace_declarations.i_th (i).prefix
+				check attached namespace_bindings.item (l_prefix) as l_uri then
+						-- Keep parser-owned hash keys and URIs private across Eiffel callbacks.
 					if l_prefix.is_empty then
-						handler.on_start_namespace_decl (Void, l_uri)
+						handler.on_start_namespace_decl (Void, l_uri.twin)
 					else
-						handler.on_start_namespace_decl (l_prefix, l_uri)
+						handler.on_start_namespace_decl (l_prefix.twin, l_uri.twin)
 					end
 					check_handler_stop
 				end
 				i := i + 1
 			variant
-				a_prefixes.count - i + 1
+				namespace_declarations.count - i + 1
 			end
 		end
 
-	emit_end_namespace_declarations
-			-- Emit end namespace callbacks for declarations on the current element and pop its namespace scope.
+	end_namespace_declarations (a_depth: INTEGER)
+			-- Report this element's declarations in reverse order, then restore its parent's bindings.
 		local
 			i: INTEGER
 			l_prefix: STRING_8
-			l_prefixes: ARRAYED_LIST [STRING_8]
 		do
-			if namespace_declaration_stack.count > 0 then
-				l_prefixes := namespace_declaration_stack.item
-				from
-					i := l_prefixes.count
-				invariant
-					index_in_bounds: i >= 0 and i <= l_prefixes.count
-				until
-					i < 1 or has_error or is_suspended
-				loop
-					l_prefix := l_prefixes.i_th (i)
+			from i := namespace_declarations.count until i = 0 or else namespace_declarations.i_th (i).depth /= a_depth loop
+				if not has_error and not is_suspended then
+					l_prefix := namespace_declarations.i_th (i).prefix
 					if l_prefix.is_empty then
 						handler.on_end_namespace_decl (Void)
 					else
-						handler.on_end_namespace_decl (l_prefix)
+						handler.on_end_namespace_decl (l_prefix.twin)
 					end
 					check_handler_stop
-					i := i - 1
-				variant
-					i
 				end
-				namespace_declaration_stack.remove
+				i := i - 1
+			variant
+				i
 			end
-			if namespace_context_stack.count > 1 then
-				namespace_context_stack.remove
+			restore_namespace_bindings (i)
+		end
+
+	restore_namespace_bindings (a_count: INTEGER)
+			-- Undo the declarations after `a_count', including any from a rejected start tag.
+		require
+			valid_count: a_count >= 0 and a_count <= namespace_declarations.count
+		local
+			l_prefix: STRING_8
+		do
+			from until namespace_declarations.count = a_count loop
+				l_prefix := namespace_declarations.last.prefix
+				if attached namespace_declarations.last.previous_uri as l_uri then
+					namespace_bindings.force (l_uri, l_prefix)
+				else
+					namespace_bindings.remove (l_prefix)
+				end
+				namespace_declarations.remove_i_th (namespace_declarations.count)
+			variant
+				namespace_declarations.count - a_count
 			end
+		ensure
+			restored: namespace_declarations.count = a_count
 		end
 
 	validate_namespace_declaration (a_prefix, a_uri: READABLE_STRING_8)
@@ -7082,47 +7156,20 @@ feature {NONE} -- Namespace handling
 			Result := is_valid_name (a_name) and then not a_name.has (':')
 		end
 
-	cloned_namespace_scope (a_source: HASH_TABLE [STRING_8, STRING_8]): HASH_TABLE [STRING_8, STRING_8]
-			-- Copy namespace bindings from `a_source'.
-		require
-			source_attached: a_source /= Void
-		local
-			l_key: STRING_8
-			l_value: STRING_8
-		do
-			create Result.make (a_source.count + 1)
-			from
-				a_source.start
-			until
-				a_source.after
-			loop
-				create l_key.make_from_string (a_source.key_for_iteration)
-				create l_value.make_from_string (a_source.item_for_iteration)
-				Result.force (l_value, l_key)
-				a_source.forth
-			end
-		ensure
-			result_attached: Result /= Void
-		end
+feature {XP_NATIVE_PARSER} -- Namespace context lifecycle
 
 	reset_namespace_context
-			-- Reset namespace stacks while preserving namespace mode settings.
-		local
-			l_scope: HASH_TABLE [STRING_8, STRING_8]
-			l_xml_prefix: STRING_8
-			l_xml_uri: STRING_8
+			-- Release this document's namespace state and install the built-in xml binding.
 		do
-			namespace_context_stack.wipe_out
-			namespace_declaration_stack.wipe_out
-			create l_scope.make (4)
-			create l_xml_prefix.make_from_string ("xml")
-			create l_xml_uri.make_from_string (Xml_namespace_uri)
-			l_scope.force (l_xml_uri, l_xml_prefix)
-			namespace_context_stack.extend (l_scope)
+			namespace_declarations.wipe_out
+			create namespace_bindings.make (4)
+			namespace_bindings.force (Xml_namespace_uri, "xml")
 		ensure
-			one_base_scope: namespace_context_stack.count = 1
-			no_element_declarations: namespace_declaration_stack.count = 0
+			base_scope: namespace_bindings.count = 1 and then namespace_bindings.has ("xml")
+			no_element_declarations: namespace_declarations.is_empty
 		end
+
+feature {NONE} -- Namespace constants
 
 	Xml_namespace_uri: STRING_8 = "http://www.w3.org/XML/1998/namespace"
 			-- Reserved XML namespace URI.
@@ -8944,16 +8991,7 @@ feature {NONE} -- State
 			has_error := False
 			last_error.wipe_out
 			is_suspended := False
-			resume_index := 0
-			resume_last_raw_cr := False
-			resume_pending_utf8_count := 0
-			text_position_start := 0
-			resume_text_start := 0
-			resume_entity_bytes := 0
-			resume_text_carry := Void
-			character_data_seed := Void
-			last_text_carry := Void
-			last_general_reference_end := 0
+			clear_prefix_checkpoint
 			lazy_position_accounting := False
 			current_position_index := a_prefix_count + 1
 			position_high_water_index := 0
@@ -8978,6 +9016,7 @@ feature {NONE} -- State
 			current_entity_literal_accounting_adjustment := 0
 			parameter_subset_expansion_depth := 0
 			dtd_subset_position_offset := 0
+			dtd_document_subset := Void
 			dtd_entity_reference_position := 0
 			entity_literal_ended_by_undefined_parameter := False
 			has_doctype := True
@@ -8998,16 +9037,7 @@ feature {NONE} -- State
 			has_error := False
 			last_error.wipe_out
 			invalid_input_character_index := 0
-			resume_index := 0
-			resume_last_raw_cr := False
-			resume_pending_utf8_count := 0
-			text_position_start := 0
-			resume_text_start := 0
-			resume_entity_bytes := 0
-			resume_text_carry := Void
-			character_data_seed := Void
-			last_text_carry := Void
-			last_general_reference_end := 0
+			clear_prefix_checkpoint
 			create position_input.make_empty
 			lazy_position_accounting := False
 			last_attribute_name_start := 0
@@ -9045,6 +9075,7 @@ feature {NONE} -- State
 			current_entity_literal_accounting_adjustment := 0
 			parameter_subset_expansion_depth := 0
 			dtd_subset_position_offset := 0
+			dtd_document_subset := Void
 			dtd_entity_reference_position := 0
 			has_doctype := False
 			document_has_external_subset := False
@@ -9118,6 +9149,31 @@ feature {NONE} -- State
 			line_positive: current_line_number >= 1
 			column_non_negative: current_column_number >= 0
 			byte_count_set: current_byte_count = a_byte_count
+		end
+
+	note_element_position (a_index, a_byte_count: INTEGER)
+			-- Record an element boundary; replacement markup belongs to its source reference.
+		do
+			note_position (a_index)
+			if reports_source_token_spans then
+				if internal_entity_expansion_depth > 0 and then not entity_reference_count_stack.is_empty then
+					current_byte_count := entity_reference_count_stack.last
+				else
+					current_byte_count := a_byte_count
+				end
+			end
+		end
+
+	note_text_position (a_start, a_end, a_output_count: INTEGER)
+			-- The source ends at `a_end' (exclusive). A reference can emit a different number of bytes.
+		do
+			if not entity_reference_count_stack.is_empty then
+				note_token_position (entity_reference_start_stack.last, entity_reference_count_stack.last)
+			elseif reports_source_token_spans then
+				note_token_position (a_start, (a_end - a_start).max (0))
+			else
+				note_token_position (a_start, a_output_count)
+			end
 		end
 
 	force_current_position
@@ -9408,11 +9464,11 @@ feature {NONE} -- State
 	attribute_decl_table: HASH_TABLE [ARRAYED_LIST [XP_ATTRIBUTE_DECL], STRING_8]
 			-- Attribute declarations keyed by element name.
 
-	namespace_context_stack: ARRAYED_STACK [HASH_TABLE [STRING_8, STRING_8]]
-			-- Namespace scopes active at each element depth, plus one base scope.
+	namespace_bindings: HASH_TABLE [STRING_8, STRING_8]
+			-- Current URI per prefix, including the empty prefix for the default namespace.
 
-	namespace_declaration_stack: ARRAYED_STACK [ARRAYED_LIST [STRING_8]]
-			-- Namespace prefixes declared at each element depth.
+	namespace_declarations: ARRAYED_LIST [TUPLE [depth: INTEGER; prefix: STRING_8; previous_uri: detachable STRING_8]]
+			-- Open declarations in document order. Void marks a previously unbound prefix.
 
 	cached_doctype_prefix: detachable STRING_8
 			-- Immutable validated UTF-8 prefix; absent when the optional cache is inactive.
@@ -9473,6 +9529,9 @@ feature {NONE} -- State
 
 	dtd_subset_position_offset: INTEGER
 			-- Raw document offset of the DTD substring currently being parsed.
+
+	dtd_document_subset: detachable STRING_8
+			-- Original DOCTYPE subset (or its complete prefix) to which the offset applies.
 
 	dtd_entity_reference_position: INTEGER
 			-- Source position held during parameter entity replacement processing.
@@ -9582,9 +9641,8 @@ invariant
 	external_entity_table_attached: is_initialized implies external_entity_table /= Void
 	external_parameter_entity_table_attached: is_initialized implies external_parameter_entity_table /= Void
 	attribute_decl_table_attached: is_initialized implies attribute_decl_table /= Void
-	namespace_context_stack_attached: is_initialized implies namespace_context_stack /= Void
-	namespace_declaration_stack_attached: is_initialized implies namespace_declaration_stack /= Void
-	namespace_context_available: is_initialized implies namespace_context_stack.count >= 1
+	namespace_context_available: is_initialized implies namespace_bindings /= Void and then namespace_bindings.count >= 1
+	namespace_declarations_attached: is_initialized implies namespace_declarations /= Void
 	doctype_name_attached: is_initialized implies doctype_name /= Void
 	valid_external_entity_policy: is_initialized implies is_valid_policy (external_entity_policy)
 	input_limit_positive: is_initialized implies max_input_bytes > 0

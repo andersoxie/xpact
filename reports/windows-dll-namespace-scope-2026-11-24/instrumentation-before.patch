@@ -1,0 +1,18 @@
+--- a/src/xp_parser.e
++++ b/src/xp_parser.e
+@@ -6823,6 +6823,7 @@
+ 					l_prefix := namespace_declaration_prefix (l_name)
+ 					validate_namespace_declaration (l_prefix, l_value)
+ 					if not has_error then
++						io.error.put_string ("NSCOPE declare 1%N")
+ 						Result.force (l_value.twin, l_prefix.twin)
+ 						a_declared_prefixes.extend (l_prefix.twin)
+ 					end
+@@ -7149,6 +7150,7 @@
+ 			l_key: STRING_8
+ 			l_value: STRING_8
+ 		do
++			io.error.put_string ("NSCOPE clone " + a_source.count.out + "%N")
+ 			create Result.make (a_source.count + 1)
+ 			from
+ 				a_source.start

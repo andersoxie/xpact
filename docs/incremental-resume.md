@@ -1,9 +1,8 @@
 # Incremental resume in the native parser
 
 > **In short:** when a document arrives in several `XML_Parse` calls, the native
-> parser now continues from where the previous call stopped. It no longer parses
-> the whole buffer again on every call. Callbacks, positions and errors stay the same
-> as before; only the time changes.
+> parser can continue from its last checkpoint. It retains the bytes needed
+> for a full replay if a later call needs one.
 
 | | Before | Now |
 |---|---|---|
@@ -52,7 +51,7 @@ checkpoint (`prepare_callback_resume`), so callback numbering stays exactly that
 a full replay.
 
 Because the numbering is the same, the old full replay can take over at **any**
-call. `input_buffer` is therefore still kept whole (memory use is unchanged).
+call. The native parser therefore keeps the whole raw `input_buffer`.
 
 ## 3. When the old full replay is used
 
@@ -60,7 +59,7 @@ call. `input_buffer` is therefore still kept whole (memory use is unchanged).
 |---|---|
 | The first call, and any call after one that could not record a checkpoint | no checkpoint |
 | An invalid character in the new bytes | the replay reports it exactly (#172 delivers the callbacks in front of it) |
-| Input that is not plain UTF-8 or UTF-16 (Latin-1, ASCII, an explicit or unknown encoding), or an XML declaration that is not complete yet | decoding is still done on the whole buffer |
+| An unresolved encoding, or a decoder outside the UTF-8, signature-detected UTF-16 and ISO-8859-1 checkpoint paths | decoding is still done on the whole buffer |
 | UTF-16: an invalid surrogate, or a partial character at the final call | only the full decode reports it |
 | External entity parsers, diagnostic events | not covered yet |
 | An unfinished DOCTYPE that reports its parts as they arrive | no checkpoint inside a DOCTYPE |
@@ -83,6 +82,23 @@ on `decoded_buffer`. `resume_source` is the input a resumed parse reads: `input_
 for UTF-8, `decoded_buffer` for UTF-16. Deferral, the pending-markup scan and
 `resume_raw_count` work on it, exactly as the full replay works on its fresh decoding.
 `XML_GetInputContext` still shows the raw `input_buffer`, as before.
+
+### ISO-8859-1 input
+
+Once the decoder has selected ISO-8859-1 and the declaration is settled,
+a successful non-final parse can retain its UTF-8 decoding. This works for
+both declared and explicitly selected Latin-1. The next call converts the
+raw bytes after `decoded_raw_count` and gives the core the unparsed suffix of
+`decoded_buffer`. A high Latin-1 byte occupies two bytes in that buffer.
+
+The native adapter indexes every 256 raw bytes to translate positions in both
+the decoded stream and the core's newline-normalized stream. This preserves
+the raw width of a high byte and of a CRLF pair. A CR at the end of a non-final
+chunk waits for the next byte or the final call. During a callback, the byte
+index and input context refer to the original stream. On completion or error
+the adapter saves the final position and releases its index, decoded checkpoint
+and pending text. Suspension retains the source for replay. Reset starts the
+next document with fresh state.
 
 ### Long text runs ([mass-xpact#11](https://github.com/CodTanium/mass-xpact/issues/11))
 
@@ -120,7 +136,8 @@ handler passes on only the new suffix, as it does for a full replay.
 ## 5. Not done yet
 
 - [x] ✅ Resume for UTF-16 input (#7): only the new bytes are decoded.
-- [ ] Resume for Latin-1, ASCII, explicit and unknown encodings.
+- [x] Resume for stable ISO-8859-1 input selected by declaration or parser encoding.
+- [ ] Resume for other transcoding paths, including US-ASCII and custom encodings.
 - [ ] Resume in external entity child parsers.
 - [ ] Trim `input_buffer` once the fallback is no longer needed (memory).
 - [x] ✅ Long text runs and deferral with a partial UTF-8 character (#11): no longer quadratic.
