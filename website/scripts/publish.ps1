@@ -22,6 +22,7 @@ foreach ($Dll in "xpact.dll", "xpact_assertions.dll") {
 }
 
 Write-Host "== Frontend"
+. (Join-Path $PSScriptRoot "version-env.ps1")
 Push-Location $Frontend
 try {
 	if (-not (Test-Path node_modules)) { npm ci; if ($LASTEXITCODE) { throw "npm ci failed" } }

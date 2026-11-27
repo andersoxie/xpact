@@ -12,6 +12,8 @@ The versions up to 0.9.0 were assigned **afterwards** (2026-11-10) to commits th
 | Version | Date | Commit | In one line |
 |---|---|---|---|
 | [Unreleased](#unreleased-on-incremental-test-after-0100) | - | `incremental-test` | (nothing yet)  |
+| [0.10.2](#0102--2026-11-27) | 2026-11-27 | `v0.10.2` | Website: the page shows its version (page source, tab, footer); Jenkins reads the image from `ci/website-image.txt` and checks the live version (image `website-2026-11-27-1`) |
+| [0.10.1](#0101--2026-11-26) | 2026-11-26 | `v0.10.1` | Website: Google Search Console verification meta tag (image `website-2026-11-26-1`) |
 | [0.10.0](#0100--2026-11-19) | 2026-11-19 | `v0.10.0` | **Milestone:** thread-safe DLL, Gobo DLL, 1.07× faster parser, SonarQube 0 issues, Gobo XML comparison, one live status page |
 | [0.9.0](#090--2026-11-10) | 2026-11-10 | `1b8696f` | Launch candidate: website hardening tests, .NET tests in Jenkins, `main` = `incremental-test` |
 | [0.8.0](#080--2026-11-09) | 2026-11-09 | `68abdcb` | Boogie proofs of two parser loops; main's Gobo benchmark work merged |
@@ -26,6 +28,23 @@ The versions up to 0.9.0 were assigned **afterwards** (2026-11-10) to commits th
 ## Unreleased (on `incremental-test` after 0.10.0)
 
 Nothing yet.
+
+## 0.10.2 – 2026-11-27
+
+**Website only**, on `main` (git tag `v0.10.2` on the merge commit) and merged into `incremental-test`. Easy-to-read history: [VERSION-HISTORY.md](VERSION-HISTORY.md).
+
+- **Added:** the website shows its version. `website/scripts/version-env.ps1` (run by `publish.ps1` and `dev.ps1`) sets `VITE_XPACT_VERSION` from `VERSION` and `VITE_XPACT_COMMIT` from git; `website/frontend/index.html` puts them in `<meta name="xpact-version">`, `<meta name="xpact-build">`, a head comment and the title; `Layout.tsx` shows "Version X" in the footer.
+- **Added:** a Jenkins stage *Print and check the live version*: it reads `xpact-version` from `SITE_URL` (default https://xpact.bsharp.se/), prints it with the image tag and fails if it differs from `VERSION` (only a warning with `IMAGE_TAG_OVERRIDE`).
+- **Changed:** Jenkins deploys the tag in `ci/website-image.txt` (`website-2026-11-27-1`), read during the run. Before, the tag was the `IMAGE_TAG` parameter default, and Jenkins applies a changed default only from the next run: build #8 (the first run after 0.10.1) deployed `website-2026-11-14-3`. `IMAGE_TAG` is replaced by `IMAGE_TAG_OVERRIDE` (empty = the file).
+- **Changed:** `.github/workflows/website-docker.yml` builds `website-2026-11-27-1`. That release is `website-2026-11-26-1` with only `wwwroot` rebuilt from `main` + this change and one `BUILD-INFO.txt` line; same backend, same DLLs (the release notes list the check).
+- **Undo:** `git revert -m 1 <merge commit of v0.10.2>` on `main`, or run the Jenkins job with `IMAGE_TAG_OVERRIDE=website-2026-11-26-1`.
+
+## 0.10.1 – 2026-11-26
+**Website only**, on `main` (git tag `v0.10.1` on the merge commit). Easy-to-read history: [VERSION-HISTORY.md](VERSION-HISTORY.md).
+
+- **Added:** the Google Search Console verification meta tag in `website/frontend/index.html`, so Google can verify that we own https://xpact.bsharp.se/.
+- **Changed:** Jenkins deploys image `website-2026-11-26-1` (`ci/Jenkinsfile.website-deploy`). That image is `website-2026-11-14-3` plus only this tag: same code, same DLLs (the [release notes](https://github.com/andersoxie/xpact/releases/tag/website-2026-11-26-1) list the file-by-file check).
+- **Undo:** `git revert -m 1 <merge commit of v0.10.1>` on `main`, or run the Jenkins job with `IMAGE_TAG=website-2026-11-14-3`.
 
 ## 0.10.0 – 2026-11-19
 
