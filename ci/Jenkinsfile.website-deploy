@@ -1,3 +1,16 @@
+// The image to deploy is read from ci/website-image.txt in the checked-out commit, not from a
+// parameter default: Jenkins applies a changed parameter default only from the NEXT run, so build #8
+// (the first run after the 0.10.1 merge) still deployed the old default website-2026-11-14-3.
+// A file is read during the run, so the first run after a merge already deploys the new image.
+def xpactImageTag() {
+  def override = (params.IMAGE_TAG_OVERRIDE ?: '').trim()
+  return override ?: readFile('ci/website-image.txt').trim()
+}
+
+def xpactSiteUrl() {
+  return (params.SITE_URL ?: '').trim() ?: 'https://xpact.bsharp.se/'
+}
+
 pipeline {
   agent none
 
@@ -9,9 +22,14 @@ pipeline {
 
   parameters {
     string(
-      name: 'IMAGE_TAG',
-      defaultValue: 'website-2026-11-26-1',
-      description: 'Immutable ghcr.io/andersoxie/xpact-website tag to deploy'
+      name: 'IMAGE_TAG_OVERRIDE',
+      defaultValue: '',
+      description: 'Leave empty to deploy the tag in ci/website-image.txt. Set an immutable ghcr.io/andersoxie/xpact-website tag only to deploy something else (for example to undo).'
+    )
+    string(
+      name: 'SITE_URL',
+      defaultValue: 'https://xpact.bsharp.se/',
+      description: 'Page that is read after the deploy to print and check the live XPact version.'
     )
     booleanParam(
       name: 'DEPLOY',
@@ -29,16 +47,18 @@ pipeline {
           Remove-Item -LiteralPath $Artifact -Force -ErrorAction SilentlyContinue
         '''
         script {
-          if (!(params.IMAGE_TAG ==~ /[A-Za-z0-9][A-Za-z0-9._-]{0,127}/)) {
-            error('IMAGE_TAG contains unsupported characters')
+          def tag = xpactImageTag()
+          if (!(tag ==~ /[A-Za-z0-9][A-Za-z0-9._-]{0,127}/)) {
+            error('The image tag contains unsupported characters')
           }
-          if (params.IMAGE_TAG == 'latest') {
+          if (tag == 'latest') {
             error("The mutable 'latest' tag is not allowed")
           }
           if (env.BRANCH_NAME && env.BRANCH_NAME != 'main') {
             error("Deployment is allowed only from main, not ${env.BRANCH_NAME}")
           }
-          withEnv(["XPACT_DEPLOY_TAG=${params.IMAGE_TAG}"]) {
+          echo "Image to deploy: ${tag} (VERSION ${readFile('VERSION').trim()})"
+          withEnv(["XPACT_DEPLOY_TAG=${tag}"]) {
             powershell '''
               $ErrorActionPreference = 'Stop'
               & 'C:/Services/xpact/deploy-xpact.ps1' `
@@ -53,12 +73,12 @@ pipeline {
 
     stage('Deploy candidate and promote') {
       when {
-        expression { return params.DEPLOY }
+        expression { return params.DEPLOY == null || params.DEPLOY }
       }
       agent { label 'xpact-windows-deploy' }
       steps {
         script {
-          withEnv(["XPACT_DEPLOY_TAG=${params.IMAGE_TAG}"]) {
+          withEnv(["XPACT_DEPLOY_TAG=${xpactImageTag()}"]) {
             powershell '''
               $ErrorActionPreference = 'Stop'
               & 'C:/Services/xpact/deploy-xpact.ps1' `
@@ -78,6 +98,37 @@ pipeline {
             }
           '''
           archiveArtifacts artifacts: 'xpact-deployment-state.json', allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('Print and check the live version') {
+      when {
+        expression { return params.DEPLOY == null || params.DEPLOY }
+      }
+      agent { label 'xpact-windows-deploy' }
+      steps {
+        script {
+          withEnv(["XPACT_DEPLOY_TAG=${xpactImageTag()}", "XPACT_SITE_URL=${xpactSiteUrl()}",
+                   "XPACT_OVERRIDE=${(params.IMAGE_TAG_OVERRIDE ?: '').trim()}"]) {
+            powershell '''
+              $ErrorActionPreference = 'Stop'
+              $Expected = (Get-Content -LiteralPath (Join-Path $env:WORKSPACE 'VERSION') -TotalCount 1).Trim()
+              $Url = $env:XPACT_SITE_URL + '?deploy=' + $env:BUILD_NUMBER
+              $Html = (Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 60).Content
+              $Version = [regex]::Match($Html, '<meta name="xpact-version" content="([^"]*)"')
+              $Build = [regex]::Match($Html, '<meta name="xpact-build" content="([^"]*)"')
+              $Live = if ($Version.Success) { $Version.Groups[1].Value } else { '(no version on the page)' }
+              $LiveBuild = if ($Build.Success) { $Build.Groups[1].Value } else { '?' }
+              Write-Host "XPact live version: $Live (build $LiveBuild), image $env:XPACT_DEPLOY_TAG, page $env:XPACT_SITE_URL"
+              Write-Host "VERSION on main: $Expected"
+              if ($Live -ne $Expected -and $env:XPACT_OVERRIDE) {
+                Write-Warning "IMAGE_TAG_OVERRIDE is set, so a different version is expected (for example an undo)."
+              } elseif ($Live -ne $Expected) {
+                throw "The live page says '$Live' but VERSION says '$Expected': the wrong image is live, or ci/website-image.txt was not updated."
+              }
+            '''
+          }
         }
       }
     }

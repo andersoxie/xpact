@@ -96,7 +96,10 @@ export function Layout() {
         <div className="container">
           <span>
             <a href={LINKS.repo}>Source</a> · <a href={LINKS.issues}>Issues</a> ·{" "}
-            <a href={LINKS.websiteDocs}>Website docs</a>
+            <a href={LINKS.websiteDocs}>Website docs</a> ·{" "}
+            <span className="site-version" title={`build ${import.meta.env.VITE_XPACT_COMMIT ?? "dev"}`}>
+              Version {import.meta.env.VITE_XPACT_VERSION ?? "dev"}
+            </span>
           </span>
         </div>
       </footer>
